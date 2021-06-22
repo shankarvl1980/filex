@@ -1204,10 +1204,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onCancelled(result);
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,copied_files_name,overwritten_copied_file_name_list,copied_source_file_path_list,cut,true);
+
 
 			if(permanent_cancel)
 			{
+				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,copied_files_name,overwritten_copied_file_name_list,copied_source_file_path_list,cut,true);
 				stopForeground(true);
 				stopSelf();
 				if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
@@ -1251,28 +1252,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return copy_result;
 					}
 				}
-/*
-				String[] dest_file_names;
-				if(destFileObjectType== FileObjectType.FILE_TYPE)
-				{
-					dest_file_names=new File(dest_folder).list();
-				}
-				else if(destFileObjectType==FileObjectType.USB_TYPE)
-				{
-					try {
-						dest_file_names=FileUtil.getUsbFile(MainActivity.usbFileRoot,dest_folder).list();
-					} catch (IOException e) {
-						return copy_result;
-					}
-				}
-				else
-				{
-					List<String> file_list=FileUtil.list(context,dest_folder,tree_uri,tree_uri_path);
-					dest_file_names=file_list.toArray(new String[0]);
-				}
 
-
- */
 				overwritten_copied_file_name_list=new ArrayList<>(dest_file_names);
 				r:for(File file:src_file_list)
 				{
@@ -1423,27 +1403,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return copy_result;
 					}
 				}
-/*
-				String[] dest_file_names;
-				if(destFileObjectType==FileObjectType.FILE_TYPE)
-				{
-					dest_file_names=new File(dest_folder).list();
-				}
-				else if(destFileObjectType==FileObjectType.USB_TYPE)
-				{
-					try {
-						dest_file_names=FileUtil.getUsbFile(MainActivity.usbFileRoot,dest_folder).list();
-					} catch (IOException e) {
-						return copy_result;
-					}
-				}
-				else
-				{
-					List<String> file_list=FileUtil.list(context,dest_folder,tree_uri,tree_uri_path);
-					dest_file_names=file_list.toArray(new String[0]);
-				}
-
- */
 
 				overwritten_copied_file_name_list=new ArrayList<>(dest_file_names);
 				r:for(String src_file_path:src_file_path_list)

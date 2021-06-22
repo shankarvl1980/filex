@@ -46,7 +46,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener
+public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
 	
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
@@ -94,8 +94,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private String tree_uri_path="";
 	ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
-	public boolean local_activity_delete,modification_observed;
+	public boolean local_activity_delete,modification_observed,cleared_cache;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
+	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 
 	
@@ -179,8 +180,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		context=getContext();
-		if(modification_observed)
+		if(cleared_cache)
 		{
+			cleared_cache=false;
 			local_activity_delete=false;
 			modification_observed=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -207,6 +209,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
+		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
+		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
 
 
@@ -297,6 +301,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(local_activity_delete)
 		{
+			cleared_cache=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			after_filledFilePojos_procedure();
@@ -304,6 +309,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
+			cleared_cache=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -324,7 +330,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}).start();
 			}
-			FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
+			//FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -390,12 +396,18 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onStop() {
 		super.onStop();
+		fileModifyObserver.startWatching();
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		fileModifyObserver.stopWatching();
+	}
 
 	@Override
 	public void onDestroy() {
@@ -405,12 +417,22 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	@Override
 	public void onFragmentCacheClear() {
-		modification_observed=true;
+		cleared_cache=true;
 	}
 
 	@Override
 	public void setUsbFileRootNull() {
 		currentUsbFile=null;
+	}
+
+	@Override
+	public void onModificationObserved() {
+		modification_observed=true;
+	}
+
+	@Override
+	public void onFileModified() {
+		modification_observed=true;
 	}
 
 

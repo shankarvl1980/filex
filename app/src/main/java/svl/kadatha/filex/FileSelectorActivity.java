@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter=new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         TinyDB tinyDB = new TinyDB(context);
@@ -209,8 +211,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION,localBroadcastManager);
-
         int size=detailFragmentCommunicationListeners.size();
         for(int i=0;i<size;++i)
         {
@@ -322,7 +322,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 FileSelectorDialog fileSelectorDialog=(FileSelectorDialog)FM.findFragmentById(R.id.file_selector_container);
                 if(fileSelectorDialog!=null) fileSelectorDialog.local_activity_delete=true;
             }
-            else if(intent.getAction().equals(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION))
+            else if(intent.getAction().equals(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION))
             {
                 int size=detailFragmentCommunicationListeners.size();
                 for(int i=0;i<size;++i)
@@ -330,7 +330,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
                     if(listener!=null)
                     {
-                        listener.onFragmentCacheClear();
+                        listener.onModificationObserved();
                     }
                 }
             }
@@ -452,6 +452,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         void onFragmentCacheClear();
         void onSettingUsbFileRootNull();
+        void onModificationObserved();
     }
 
     public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
