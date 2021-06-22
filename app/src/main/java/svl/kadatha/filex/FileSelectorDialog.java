@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FileSelectorDialog extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class FileSelectorDialog extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener
 {
 	static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 	private RecyclerView recycler_view;
@@ -46,7 +46,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private ProgressBarFragment pbf_polling;
 	public TextView folder_selected_textview;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-	private FileModifyObserver fileModifyObserver;
 	public boolean local_activity_delete,modification_observed;
 	private boolean filled_filePOJOs;
 	private Uri tree_uri;
@@ -152,8 +151,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		fileSelectorActivity=(FileSelectorActivity)context;
 		fileSelectorActivity.addFragmentCommunicationListener(this);
 
-		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
-		fileModifyObserver.setFileObserverListener(this);
 
 		TextView current_folder_label=v.findViewById(R.id.file_selector_current_folder_label);
 		current_folder_label.setText(R.string.current_folder_colon);
@@ -216,8 +213,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
 				}
 			}).start();
-			FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
-			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -268,20 +263,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public void onStop() {
 		super.onStop();
-		fileModifyObserver.startWatching();
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
 	}
 
-
-	@Override
-	public void onDestroyView()
-	{
-		super.onDestroyView();
-		fileModifyObserver.stopWatching();
-	}
 
 	@Override
 	public void onDestroy() {
@@ -297,11 +284,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public void onSettingUsbFileRootNull() {
 		currentUsbFile=null;
-	}
-
-	@Override
-	public void onFileModified() {
-		modification_observed=true;
 	}
 
 

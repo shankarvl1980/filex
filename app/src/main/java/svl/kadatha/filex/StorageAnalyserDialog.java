@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class StorageAnalyserDialog extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class StorageAnalyserDialog extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener
 {
     static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
     private RecyclerView recycler_view;
@@ -46,7 +46,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     private ProgressBarFragment pbf_polling;
     public TextView folder_selected_textview;
     private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-    private FileModifyObserver fileModifyObserver;
     public boolean local_activity_delete,modification_observed;
     public boolean filled_filePOJOs;
     private Uri tree_uri;
@@ -155,8 +154,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         storageAnalyserActivity=(StorageAnalyserActivity)context;
         storageAnalyserActivity.addFragmentCommunicationListener(this);
 
-        fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
-        fileModifyObserver.setFileObserverListener(this);
 
         TextView current_folder_label=v.findViewById(R.id.file_selector_current_folder_label);
         //current_folder_label.setText(R.string.current_folder_colon);
@@ -251,8 +248,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
                 }
             }).start();
-            FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
-            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
             after_filledFilePojos_procedure();
         }
     }
@@ -306,7 +301,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     @Override
     public void onStop() {
         super.onStop();
-        fileModifyObserver.startWatching();
         if(pbf_polling!=null && pbf_polling.getDialog()!=null)
         {
             pbf_polling.dismissAllowingStateLoss();
@@ -314,12 +308,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     }
 
 
-    @Override
-    public void onDestroyView()
-    {
-        super.onDestroyView();
-        fileModifyObserver.stopWatching();
-    }
 
     @Override
     public void onDestroy() {
@@ -341,12 +329,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public void onSettingUsbFileRootNull() {
         currentUsbFile=null;
     }
-
-    @Override
-    public void onFileModified() {
-        modification_observed=true;
-    }
-
 
 
     private void set_adapter()

@@ -206,11 +206,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     public void clearCache()
     {
-        //Global.HASHMAP_FILE_POJO=new HashMap<>();
-        //Global.HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
-
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
+
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION,localBroadcastManager);
 
         int size=detailFragmentCommunicationListeners.size();
         for(int i=0;i<size;++i)
@@ -313,7 +312,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-    private static class OtherActivityBroadcastReceiver extends BroadcastReceiver
+    private class OtherActivityBroadcastReceiver extends BroadcastReceiver
     {
 
         @Override
@@ -322,6 +321,18 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             {
                 FileSelectorDialog fileSelectorDialog=(FileSelectorDialog)FM.findFragmentById(R.id.file_selector_container);
                 if(fileSelectorDialog!=null) fileSelectorDialog.local_activity_delete=true;
+            }
+            else if(intent.getAction().equals(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION))
+            {
+                int size=detailFragmentCommunicationListeners.size();
+                for(int i=0;i<size;++i)
+                {
+                    DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+                    if(listener!=null)
+                    {
+                        listener.onFragmentCacheClear();
+                    }
+                }
             }
         }
     }

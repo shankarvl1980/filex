@@ -776,18 +776,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		if(!isChangingConfigurations() && clear_cache)
 		{
-			Log.d("shankar","cache_cleared is cleared");
 			clearCache();
 		}
 	}
 
 	public void clearCache()
 	{
-		//Global.HASHMAP_FILE_POJO=new HashMap<>();
-		//Global.HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
-
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION,localBroadcastManager);
 
 		int size=detailFragmentCommunicationListeners.size();
 		for(int i=0;i<size;++i)
@@ -2144,7 +2142,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
-	private static class OtherActivityBroadcastReceiver extends BroadcastReceiver
+	private class OtherActivityBroadcastReceiver extends BroadcastReceiver
 	{
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -2153,6 +2151,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
 				if(df!=null) df.local_activity_delete=true;
+			}
+			else if(intent.getAction().equals(Global.LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION))
+			{
+				int size=detailFragmentCommunicationListeners.size();
+				for(int i=0;i<size;++i)
+				{
+					DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+					if(listener!=null)
+					{
+						listener.onFragmentCacheClear();
+					}
+				}
 			}
 		}
 	}

@@ -46,7 +46,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener
 {
 	
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
@@ -96,7 +96,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 
 	
@@ -208,8 +207,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
-		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
-		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
 
 
@@ -393,18 +390,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onStop() {
 		super.onStop();
-		fileModifyObserver.startWatching();
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
 	}
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		fileModifyObserver.stopWatching();
-	}
 
 	@Override
 	public void onDestroy() {
@@ -420,12 +411,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void setUsbFileRootNull() {
 		currentUsbFile=null;
-	}
-
-
-	@Override
-	public void onFileModified() {
-		modification_observed=true;
 	}
 
 

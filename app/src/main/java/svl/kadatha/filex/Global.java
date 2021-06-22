@@ -148,6 +148,7 @@ public class Global
 	static public boolean SHARE_USB;
 
 	static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION=FILEX_PACKAGE+".FILE_DELETE";
+	static public final String LOCAL_BROADCAST_FILEPOJO_CACHE_CLEAR_ACTION=FILEX_PACKAGE+".FILEPOJO_CACHE_CLEAR";
 
 	static public int NAVIGATION_BAR_HEIGHT;
 
