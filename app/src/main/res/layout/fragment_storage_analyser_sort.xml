@@ -1,0 +1,170 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/storage_analyser_sort_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sort"
+        android:padding="@dimen/layout_margin"
+        android:background="?attr/dialog_title"
+        android:textSize="18sp"
+        android:layout_gravity="top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/storage_analyser_sort_layout_background"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="?attr/dialog_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/storage_analyser_sort_heading"
+                app:layout_constraintBottom_toBottomOf="@id/storage_analyser_sort_table_layout"
+                />
+
+
+            <TableLayout
+                android:id="@+id/storage_analyser_sort_table_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/layout_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/storage_analyser_sort_heading"
+
+                >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/name"
+                        android:textSize="16sp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/date"
+                        android:textSize="16sp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/size"
+                        android:textSize="16sp"
+                        />
+
+                </TableRow>
+
+                <TableRow
+
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_name_asc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+
+                        android:background="@drawable/select_icon_selection"
+
+                        android:gravity="center"
+                        android:src="@drawable/sort_alphabetical_az_icon"
+
+                        />
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_date_asc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+                        android:background="@drawable/select_icon_selection"
+                        android:gravity="center"
+                        android:src="@drawable/sort_time_asc_icon" />
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_size_asc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+                        android:background="@drawable/select_icon_selection"
+                        android:gravity="center"
+                        android:src="@drawable/sort_size_asc_icon" />
+
+                </TableRow>
+
+                <TableRow
+
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+
+                    >
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_name_desc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+                        android:background="@drawable/select_icon_selection"
+                        android:gravity="center"
+                        android:src="@drawable/sort_alphabetical_za_icon"
+
+                        />
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_date_desc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+                        android:background="@drawable/select_icon_selection"
+                        android:gravity="center"
+                        android:src="@drawable/sort_time_desc_icon"
+
+                        />
+
+                    <ImageButton
+                        android:id="@+id/storage_analyser_size_desc"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_margin="@dimen/layout_margin"
+                        android:background="@drawable/select_icon_selection"
+                        android:gravity="center"
+                        android:src="@drawable/sort_size_desc_icon"
+
+                        />
+
+                </TableRow>
+
+            </TableLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/storage_analyser_button_layout"
+                android:layout_marginTop="@dimen/layout_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/storage_analyser_sort_table_layout"
+
+                />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

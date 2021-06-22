@@ -1,0 +1,233 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	>
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+
+		android:text="@string/storage_access_permission"
+		android:padding="@dimen/layout_margin"
+		android:background="?attr/dialog_title"
+		android:textSize="18sp"
+		android:layout_gravity="top"
+		/>
+
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+
+		>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/layout_margin"
+			>
+
+
+			<ImageView
+				android:id="@+id/fragment_saf_permission_helper_imageview1"
+				android:layout_width="0dp"
+				android:layout_height="100dp"
+				android:padding="@dimen/layout_margin"
+				android:scaleType="fitXY"
+				android:src="@drawable/ak1"
+				android:background="?attr/dialog_background"
+				app:layout_constraintEnd_toStartOf="@id/fragment_saf_permission_helper_imageview2"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<ImageView
+				android:id="@+id/fragment_saf_permission_helper_imageview2"
+				android:layout_width="0dp"
+				android:layout_height="100dp"
+				android:padding="@dimen/layout_margin"
+				android:scaleType="fitXY"
+				android:src="@drawable/ak2"
+				android:background="?attr/dialog_background"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@id/fragment_saf_permission_helper_imageview1"
+				app:layout_constraintTop_toTopOf="parent" />
+
+
+			<ImageView
+				android:id="@+id/fragment_saf_permission_helper_imageview3"
+				android:layout_width="0dp"
+				android:layout_height="100dp"
+				android:padding="@dimen/layout_margin"
+				android:scaleType="fitXY"
+				android:src="@drawable/ak3"
+				android:background="?attr/dialog_background"
+				app:layout_constraintEnd_toStartOf="@id/fragment_saf_permission_helper_imageview4"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_imageview1" />
+
+			<ImageView
+				android:id="@+id/fragment_saf_permission_helper_imageview4"
+				android:layout_width="0dp"
+				android:layout_height="100dp"
+				android:padding="@dimen/layout_margin"
+				android:background="?attr/dialog_background"
+				android:scaleType="fitXY"
+				android:src="@drawable/ak4"
+
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@id/fragment_saf_permission_helper_imageview3"
+				app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_imageview2" />
+
+			<TextView
+				android:id="@+id/fragment_saf_permission_helper_tv"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="?attr/dialog_background"
+				android:padding="@dimen/layout_margin"
+				android:text="@string/external_sd_card_permission_message"
+
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_imageview3" />
+
+
+			<FrameLayout
+				android:id="@+id/fragment_saf_permission_button_layout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/layout_margin"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_tv" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</ScrollView>
+</LinearLayout>
+
+
+
+	<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+       >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="@string/storage_access_permission"
+            android:padding="@dimen/layout_margin"
+            android:background="@color/dialog_title"
+            android:textSize="18sp"
+            android:layout_gravity="top"
+        />
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+        >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+            >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:orientation="horizontal"
+        android:background="@color/dialog_background"
+        >
+
+
+
+
+        <ImageView
+            android:id="@+id/fragment_saf_permission_helper_imagview1"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ak1"
+            android:scaleType="fitXY"
+            android:layout_marginStart="@dimen/layout_margin"
+            android:layout_marginEnd="@dimen/layout_margin"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:layout_weight="1"
+
+        />
+        <ImageView
+            android:id="@+id/fragment_saf_permission_helper_imagview2"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ak2"
+            android:scaleType="fitXY"
+            android:layout_marginStart="@dimen/layout_margin"
+            android:layout_marginEnd="@dimen/layout_margin"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:layout_weight="1"
+
+        />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dialog_background"
+        >
+
+
+
+
+            <ImageView
+                android:id="@+id/fragment_saf_permission_helper_imagview3"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ak3"
+                android:scaleType="fitXY"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_weight="1"
+
+            />
+            <ImageView
+                android:id="@+id/fragment_saf_permission_helper_imagview4"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ak4"
+
+                android:scaleType="fitXY"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_weight="1"
+
+            />
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/fragment_saf_permission_helper_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/external_sd_card_permission_message"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:background="@color/dialog_background"
+
+        />
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:id="@+id/fragment_saf_permission_button_layout"
+                />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout-->

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_3"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_4"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_5"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/toolbar_img_btn_6"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+
+
+        android:background="@null"
+        />
+
+</merge>

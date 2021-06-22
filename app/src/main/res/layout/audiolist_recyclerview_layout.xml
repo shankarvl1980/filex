@@ -1,0 +1,57 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+
+>
+
+	<ImageView
+		android:id="@+id/audio_image"
+		android:layout_height="30dp"
+		android:layout_width="30dp"
+		android:scaleType="centerCrop"
+		android:src="@drawable/audio_file_icon"
+	/>
+
+	<TextView
+		android:id="@+id/audio_file_title"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textColor="?attr/recycler_main_text_color"
+		android:includeFontPadding="false"
+
+
+	/>
+	<ImageView
+		android:id="@+id/audio_select_indicator"
+		android:layout_height="26dp"
+		android:layout_width="26dp"
+		android:src="@drawable/select_indicator_icon"
+		android:visibility="invisible"
+
+		/>
+	<TextView
+		android:id="@+id/audio_file_artist"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textColor="?attr/recycler_text_color"
+
+	/>
+
+
+	<TextView
+	android:id="@+id/audio_file_duration"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+		android:textColor="?attr/recycler_text_color"
+
+	/>
+
+	<TextView
+		android:id="@+id/audio_file_album"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textColor="?attr/recycler_text_color"
+
+	/>
+
+</merge>

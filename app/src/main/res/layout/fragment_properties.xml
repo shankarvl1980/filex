@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+>
+
+	<TextView
+		android:id="@+id/properties_heading"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?attr/dialog_title"
+		android:text="@string/properties"
+		android:textSize="18sp"
+		android:padding="@dimen/layout_margin"
+
+	/>
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+
+	>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		>
+
+		<TableLayout
+			android:id="@+id/fragment_properties_details_table_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/dialog_background"
+			android:layout_marginTop="@dimen/layout_margin"
+			android:padding="@dimen/layout_margin"
+			
+			>
+
+		</TableLayout>
+		
+		<TableLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/fragment_properties_rwh_tablelayout"
+			android:background="?attr/dialog_background"
+			android:layout_marginTop="@dimen/layout_margin"
+			android:padding="@dimen/layout_margin"
+			android:visibility="gone"
+		>
+
+		</TableLayout>
+
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/layout_margin"
+		android:id="@+id/fragment_properties_button_layout"
+		/>
+
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

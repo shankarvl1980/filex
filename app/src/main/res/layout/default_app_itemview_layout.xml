@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/select_detail_grid_recyclerview"
+    android:minHeight="36dp"
+    >
+    <TextView
+        android:id="@+id/default_app_mime_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="36dp"
+        android:layout_margin="-3dp"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:gravity="center_vertical"
+        android:background="@drawable/select_detail_grid_recyclerview"
+
+        />
+    <ImageView
+        android:id="@+id/default_app_image_view"
+        android:layout_height="36dp"
+        android:layout_width="36dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
+        />
+    <TextView
+        android:id="@+id/default_app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="36dp"
+        android:lines="1"
+        android:layout_margin="-3dp"
+        android:gravity="center_vertical"
+        />
+    <CheckBox
+        android:id="@+id/default_app_checkbox"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:minHeight="36dp"
+        android:checked="false"
+        />
+
+</TableRow>

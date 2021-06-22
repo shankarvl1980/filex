@@ -1,0 +1,1000 @@
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/drawer_layout"
+	android:fitsSystemWindows="true"
+
+	>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<FrameLayout
+			android:id="@+id/detail_fragment"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:background="@null"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/top_toolbar_background"
+			app:layout_constraintBottom_toBottomOf="parent"
+			/>
+		<View
+			android:id="@+id/top_toolbar_background"
+			android:layout_width="match_parent"
+			android:layout_height="?android:attr/actionBarSize"
+			android:background="?attr/toolbar_background"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageButton
+			android:id="@+id/top_toolbar_home_button"
+			android:layout_width="50dp"
+			android:layout_height="?android:attr/actionBarSize"
+			android:paddingStart="10dp"
+			android:paddingEnd="10dp"
+			android:src="@drawable/home_icon"
+			android:background="@null"
+			app:layout_constraintEnd_toStartOf="@+id/top_toolbar_parent_dir_imagebutton"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageButton
+
+			android:id="@+id/top_toolbar_parent_dir_imagebutton"
+			android:layout_width="50dp"
+			android:layout_height="?android:attr/actionBarSize"
+			android:paddingStart="10dp"
+			android:paddingEnd="10dp"
+			android:src="@drawable/up_arrow_outlined_icon"
+			android:background="@null"
+			app:layout_constraintEnd_toStartOf="@+id/top_toolbar_current_dir_label"
+			app:layout_constraintStart_toEndOf="@+id/top_toolbar_home_button"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<TextView
+
+			android:id="@+id/top_toolbar_current_dir_label"
+			style="?android:attr/spinnerStyle"
+			android:layout_width="0dp"
+			android:layout_height="?android:attr/actionBarSize"
+			android:gravity="center"
+			android:singleLine="true"
+			android:textColor="?attr/toolbar_text_color"
+			android:textSize="16sp"
+			app:layout_constraintEnd_toStartOf="@+id/detail_fragment_all_select"
+			app:layout_constraintStart_toEndOf="@+id/top_toolbar_parent_dir_imagebutton"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageButton
+			android:id="@+id/detail_fragment_all_select"
+			android:layout_width="50dp"
+			android:layout_height="?android:attr/actionBarSize"
+			android:paddingStart="10dp"
+			android:paddingEnd="10dp"
+			android:src="@drawable/select_icon"
+			android:background="@null"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/top_toolbar_current_dir_label"
+			app:layout_constraintTop_toTopOf="parent" />
+
+
+		<TextView
+			android:id="@+id/filepath_recyclerview_width"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textSize="16sp"
+			android:background="@null"
+			android:minWidth="50dp"
+			android:gravity="center"
+			android:padding="@dimen/layout_margin"
+			android:visibility="invisible"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/top_toolbar_background"
+
+			/>
+		<TextView
+			android:id="@+id/detail_fragment_file_number"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/layout_margin"
+			android:background="@drawable/rounded_rectangle_shape"
+			android:padding="@dimen/layout_margin"
+			android:textColor="?attr/recycler_text_color"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/filepath_recyclerview_width"
+
+			/>
+
+
+
+		<include
+			layout="@layout/search_bar_layout"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+
+		<androidx.viewpager.widget.ViewPager
+			android:id="@+id/view_pager"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+
+			/>
+
+
+
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/floating_action_button_back"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom|end"
+			android:layout_marginEnd="15dp"
+			android:layout_marginBottom="90dp"
+			android:clickable="true"
+			android:focusable="true"
+			android:src="@drawable/back_icon"
+			app:backgroundTint="?attr/toolbar_background"
+			app:elevation="6dp"
+			app:layout_anchorGravity="end"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" />
+
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/bottom_toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/toolbar_background"
+			android:elevation="6dp"
+			app:contentInsetLeft="0dp"
+			app:contentInsetStart="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/extract_toolbar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="?attr/toolbar_background"
+			android:elevation="6dp"
+			android:visibility="gone"
+			app:contentInsetLeft="0dp"
+			app:contentInsetStart="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/actionmode_toolbar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="?attr/toolbar_background"
+			android:elevation="6dp"
+			android:visibility="gone"
+			app:contentInsetLeft="0dp"
+			app:contentInsetStart="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/paste_toolbar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="?attr/toolbar_background"
+			android:elevation="6dp"
+			android:visibility="gone"
+			app:contentInsetLeft="0dp"
+			app:contentInsetStart="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+	<FrameLayout
+		android:id="@+id/drawer_navigation_layout"
+		android:layout_width="260dp"
+		android:layout_height="wrap_content"
+		android:layout_gravity="start"
+		android:clickable="true"
+		android:fitsSystemWindows="true"
+		android:focusable="true">
+
+		<androidx.core.widget.NestedScrollView
+			android:id="@+id/drawerScrollView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:scrollbars="vertical"
+			android:scrollbarThumbVertical="@drawable/scrollbar"
+
+			android:layout_margin="@dimen/layout_margin">
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				>
+
+
+				<androidx.recyclerview.widget.RecyclerView
+					android:id="@+id/drawer_recyclerview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="@dimen/layout_margin"
+					android:choiceMode="singleChoice"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					android:background="?attr/drawer_title"
+
+					/>
+
+				<View
+					android:id="@+id/working_dir_layout_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@id/working_dir_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview" />
+
+				<TextView
+					android:id="@+id/working_dir_heading"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/working_directory"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:padding="@dimen/layout_margin"
+					app:layout_constraintEnd_toStartOf="@id/working_dir_expand_indicator"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/working_dir_layout_background" />
+
+				<ImageView
+					android:id="@+id/working_dir_expand_indicator"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/down_arrow_drawer_icon"
+					app:layout_constraintBottom_toBottomOf="@+id/working_dir_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@id/working_dir_heading"
+					app:layout_constraintTop_toTopOf="@+id/working_dir_heading" />
+
+
+				<androidx.recyclerview.widget.RecyclerView
+					android:id="@+id/working_dir_recyclerview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?attr/drawer_title"
+					android:choiceMode="multipleChoice"
+					android:paddingStart="@dimen/layout_margin"
+					android:paddingEnd="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
+					android:scrollbarThumbVertical="@drawable/scrollbar"
+					android:scrollbars="vertical"
+					android:visibility="gone"
+					app:layout_constraintEnd_toStartOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_layout_background" />
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:background="?attr/drawer_title"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview"
+					app:layout_constraintBottom_toBottomOf="@id/working_dir_button_group"
+					/>
+				<androidx.constraintlayout.widget.Group
+					android:id="@+id/working_dir_button_group"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					app:constraint_referenced_ids="working_dir_add_btn,working_dir_remove_btn"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn"
+					android:visibility="gone"/>
+
+				<Button
+					android:id="@+id/working_dir_add_btn"
+					style="@style/Widget.AppCompat.Button"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginStart="-3dp"
+					android:layout_marginTop="-3dp"
+					android:layout_weight="1"
+					android:text="@string/add"
+					app:layout_constraintEnd_toStartOf="@id/working_dir_remove_btn"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview"
+
+					/>
+
+				<Button
+					android:id="@+id/working_dir_remove_btn"
+					style="@style/Widget.AppCompat.Button"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginTop="-3dp"
+					android:layout_marginEnd="-3dp"
+					android:layout_weight="1"
+					android:text="@string/remove"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@id/working_dir_add_btn"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview" />
+
+
+				<View
+					android:id="@+id/library_layout_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@id/library_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn"
+
+					/>
+
+				<TextView
+					android:id="@+id/library_heading"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/library"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:padding="@dimen/layout_margin"
+					app:layout_constraintEnd_toStartOf="@id/library_expand_indicator"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/library_layout_background" />
+
+				<ImageView
+					android:id="@+id/library_expand_indicator"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/down_arrow_drawer_icon"
+					app:layout_constraintBottom_toBottomOf="@id/library_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@id/library_heading"
+					app:layout_constraintTop_toTopOf="@id/library_heading"
+
+					/>
+
+
+				<androidx.recyclerview.widget.RecyclerView
+					android:id="@+id/library_recyclerview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?attr/drawer_title"
+					android:choiceMode="singleChoice"
+					android:paddingStart="@dimen/layout_margin"
+					android:paddingEnd="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
+					android:visibility="gone"
+
+					app:layout_constraintEnd_toStartOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/library_layout_background" />
+
+				<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/switch_hide_file"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?attr/drawer_title"
+					android:minHeight="44dp"
+					android:padding="@dimen/layout_margin"
+					android:layout_marginTop="@dimen/layout_margin"
+					android:text="@string/show_hidden_files"
+					android:textSize="16sp"
+					android:textColor="?attr/heading_text_color"
+					android:theme="@style/MySwitchCompat"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/library_recyclerview" />
+
+
+				<View
+					android:id="@+id/audio_player_label_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@id/audio_player_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/switch_hide_file"
+
+					/>
+
+				<TextView
+					android:id="@+id/audio_player_label"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/audio_player"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:padding="@dimen/layout_margin"
+
+					app:layout_constraintEnd_toStartOf="@id/audio_player_image_view"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/audio_player_label_background"
+
+
+					/>
+
+				<ImageView
+					android:id="@+id/audio_player_image_view"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/speaker_icon"
+					app:layout_constraintBottom_toBottomOf="@id/audio_player_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@id/audio_player_label"
+					app:layout_constraintTop_toTopOf="@id/audio_player_label" />
+
+				<View
+					android:id="@+id/storage_analyser_label_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@+id/storage_analyser_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/audio_player_label_background"
+
+					/>
+
+				<TextView
+					android:id="@+id/storage_analyser_label"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/analyse_storage"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:padding="@dimen/layout_margin"
+
+					app:layout_constraintEnd_toStartOf="@id/storage_analyser_image_view"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@+id/storage_analyser_label_background"
+					/>
+
+				<ImageView
+					android:id="@+id/storage_analyser_image_view"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/bar_chart_icon"
+					app:layout_constraintBottom_toBottomOf="@id/storage_analyser_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/storage_analyser_label"
+					app:layout_constraintTop_toTopOf="@+id/storage_analyser_label" />
+				<Space
+					android:layout_width="match_parent"
+					android:layout_height="56dp"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/storage_analyser_label_background"
+					/>
+
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+		</androidx.core.widget.NestedScrollView>
+		<FrameLayout
+			android:id="@+id/drawer_end_butt_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/drawer_title"
+			android:layout_marginTop="@dimen/layout_margin"
+			android:layout_marginStart="@dimen/layout_margin"
+			android:layout_marginEnd="@dimen/layout_margin"
+			android:layout_gravity="bottom"
+			/>
+	</FrameLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>
+
+
+
+	<!--androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawer_layout"
+        android:fitsSystemWindows="true"
+
+        >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:background="@color/toolbar_background"
+                        android:elevation="6dp">
+
+                        <ImageButton
+                            android:id="@+id/top_toolbar_home_button"
+                            android:layout_width="50dp"
+                            android:layout_height="0dp"
+                            android:background="@null"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:src="@drawable/home_icon"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/top_toolbar_parent_dir_imagebutton"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+
+                            android:id="@+id/top_toolbar_parent_dir_imagebutton"
+                            android:layout_width="50dp"
+                            android:layout_height="0dp"
+
+                            android:background="@null"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:src="@drawable/up_arrow_icon"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/top_toolbar_current_dir_label"
+                            app:layout_constraintStart_toEndOf="@+id/top_toolbar_home_button"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+
+                            android:id="@+id/top_toolbar_current_dir_label"
+                            style="?android:attr/spinnerStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:textColor="@color/icon_color"
+                            android:textSize="16sp"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/num_selected"
+                            app:layout_constraintStart_toEndOf="@+id/top_toolbar_parent_dir_imagebutton"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/num_selected"
+                            android:layout_width="60dp"
+                            android:layout_height="0dp"
+                            android:background="@color/toolbar_background"
+                            android:elevation="10dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingStart="@dimen/layout_margin"
+                            android:paddingEnd="@dimen/layout_margin"
+                            android:textColor="@color/icon_color"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/top_toolbar_current_dir_label"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <include
+                        layout="@layout/search_bar_layout"
+                        />
+
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+
+                />
+
+            <FrameLayout
+                android:id="@+id/detail_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?android:attr/actionBarSize"
+                android:background="@null"
+                />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/floating_action_button_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="90dp"
+                        android:layout_marginEnd="15dp"
+                        android:clickable="true"
+                        android:src="@drawable/back_icon"
+                        app:backgroundTint="@color/toolbar_background"
+                        app:elevation="6dp"
+                        app:layout_anchorGravity="end"
+                        android:focusable="true" />
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/bottom_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:elevation="6dp"
+                android:background="@color/toolbar_background"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+
+                />
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/extract_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:elevation="6dp"
+                        android:background="@color/toolbar_background"
+                        android:visibility="gone"
+                        app:contentInsetLeft="0dp"
+                        app:contentInsetStart="0dp"
+                        >
+
+
+                    </androidx.appcompat.widget.Toolbar>
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/actionmode_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:elevation="6dp"
+                        android:background="@color/toolbar_background"
+                        android:visibility="gone"
+                        app:contentInsetLeft="0dp"
+                        app:contentInsetStart="0dp"
+                    />
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/paste_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:elevation="6dp"
+                        android:background="@color/toolbar_background"
+                        android:visibility="gone"
+                        app:contentInsetLeft="0dp"
+                        app:contentInsetStart="0dp"
+                    />
+
+
+                </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/drawer_navigation_layout"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:clickable="true"
+            android:fitsSystemWindows="true"
+            android:focusable="true">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/drawerScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@drawable/scrollbar"
+
+                android:layout_margin="@dimen/layout_margin">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    >
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/drawer_recyclerview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/layout_margin"
+                            android:choiceMode="singleChoice"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:background="@color/drawer_title"
+
+                            />
+
+                    <View
+                        android:id="@+id/working_dir_layout_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/layout_margin"
+                        android:background="@color/drawer_title"
+                        app:layout_constraintBottom_toBottomOf="@id/working_dir_heading"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview" />
+
+                    <TextView
+                        android:id="@+id/working_dir_heading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="44dp"
+                        android:text="@string/working_directory"
+                        android:textColor="@color/heading_text_color"
+                        android:textSize="16sp"
+                        android:padding="@dimen/layout_margin"
+                        app:layout_constraintEnd_toStartOf="@id/working_dir_expand_indicator"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/working_dir_layout_background" />
+
+                    <ImageView
+                        android:id="@+id/working_dir_expand_indicator"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/down_arrow_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/working_dir_heading"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/working_dir_heading"
+                        app:layout_constraintTop_toTopOf="@+id/working_dir_heading" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/working_dir_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/drawer_title"
+                        android:choiceMode="multipleChoice"
+                        android:paddingStart="@dimen/layout_margin"
+                        android:paddingEnd="@dimen/layout_margin"
+                        android:paddingBottom="@dimen/layout_margin"
+                        android:scrollbarThumbVertical="@drawable/scrollbar"
+                        android:scrollbars="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toStartOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_layout_background" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:background="@color/drawer_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview"
+                        app:layout_constraintBottom_toBottomOf="@id/working_dir_button_group"
+                        />
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/working_dir_button_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:constraint_referenced_ids="working_dir_add_btn,working_dir_rm_btn"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn"
+                        android:visibility="gone"/>
+
+                    <Button
+                        android:id="@+id/working_dir_add_btn"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="-3dp"
+                        android:layout_marginTop="-3dp"
+                        android:layout_weight="1"
+                        android:onClick="workingDirAdd"
+                        android:text="@string/add"
+                        app:layout_constraintEnd_toStartOf="@id/working_dir_rm_btn"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview"
+
+                        />
+
+                    <Button
+                        android:id="@+id/working_dir_rm_btn"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="-3dp"
+                        android:layout_marginEnd="-3dp"
+                        android:layout_weight="1"
+                        android:onClick="workingDirRemove"
+                        android:text="@string/remove"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/working_dir_add_btn"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview" />
+
+
+                    <View
+                        android:id="@+id/library_layout_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/layout_margin"
+                        android:background="@color/drawer_title"
+                        app:layout_constraintBottom_toBottomOf="@id/library_heading"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/library_heading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="44dp"
+                        android:text="@string/library"
+                        android:textColor="@color/heading_text_color"
+                        android:textSize="16sp"
+                        android:padding="@dimen/layout_margin"
+                        app:layout_constraintEnd_toStartOf="@id/library_expand_indicator"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/library_layout_background" />
+
+                    <ImageView
+                        android:id="@+id/library_expand_indicator"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/down_arrow_icon"
+                        app:layout_constraintBottom_toBottomOf="@id/library_heading"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/library_heading"
+                        app:layout_constraintTop_toTopOf="@id/library_heading"
+
+                        />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/library_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/drawer_title"
+                        android:choiceMode="singleChoice"
+                        android:paddingStart="@dimen/layout_margin"
+                        android:paddingEnd="@dimen/layout_margin"
+                        android:paddingBottom="@dimen/layout_margin"
+                        android:visibility="gone"
+
+                        app:layout_constraintEnd_toStartOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/library_layout_background" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_hide_file"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@color/drawer_title"
+                        android:minHeight="44dp"
+                        android:padding="@dimen/layout_margin"
+                        android:layout_marginTop="@dimen/layout_margin"
+                        android:text="@string/show_hidden_files"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/library_recyclerview" />
+
+
+                    <View
+                        android:id="@+id/audio_player_label_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/layout_margin"
+
+                        android:background="@color/drawer_title"
+                        app:layout_constraintBottom_toBottomOf="@id/audio_player_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switch_hide_file"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/audio_player_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="44dp"
+                        android:text="@string/audio_player"
+                        android:textColor="@color/heading_text_color"
+                        android:textSize="16sp"
+                        android:padding="@dimen/layout_margin"
+
+                        app:layout_constraintEnd_toStartOf="@id/audio_player_image_view"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/audio_player_label_background"
+
+
+                        />
+
+                    <ImageView
+                        android:id="@+id/audio_player_image_view"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/speaker_icon"
+                        app:layout_constraintBottom_toBottomOf="@id/audio_player_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/audio_player_label"
+                        app:layout_constraintTop_toTopOf="@id/audio_player_label" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/audio_player_label_background"
+                        />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.core.widget.NestedScrollView>
+            <FrameLayout
+                android:id="@+id/drawer_end_butt_layout"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:background="@color/drawer_title"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_gravity="bottom"
+                />
+        </FrameLayout>
+
+    </androidx.drawerlayout.widget.DrawerLayout-->

@@ -1,0 +1,430 @@
+package svl.kadatha.filex;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import java.io.*;
+import java.nio.channels.*;
+import java.nio.*;
+import java.util.*;
+import android.net.*;
+
+public class FileSaveService3 extends Service
+{
+	private FileSaveServiceBinder binder=new FileSaveServiceBinder();
+	private FileSaveServiceCompletionListener fileSaveServiceCompletionListener;
+	private boolean isWritable;
+	private File file,temporary_file_for_save;
+	private String content,tree_uri_path;
+	private Uri tree_uri;
+	private int eol,altered_eol;
+	private Context context;
+	private int current_page;
+	long prev_page_end_point,current_page_end_point;
+	final LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
+	private NotifManager nm;
+    static boolean SERVICE_COMPLETED=true;
+
+
+	@Override
+	public void onCreate()
+	{
+		// TODO: Implement this method
+		super.onCreate();
+		SERVICE_COMPLETED=false;
+		context=this;
+		nm=new NotifManager(context);
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
+		// TODO: Implement this method
+		Bundle bundle=intent.getBundleExtra("bundle");
+		if(bundle!=null)
+		{
+			isWritable=bundle.getBoolean("isWritable");
+			file=new File(bundle.getString("file_path"));
+			content=bundle.getString("content");
+			tree_uri_path=bundle.getString("tree_uri_path");
+			tree_uri=bundle.getParcelable("tree_uri");
+			eol=bundle.getInt("eol");
+			altered_eol=bundle.getInt("altered_eol");
+			prev_page_end_point=bundle.getLong("prev_page_end_point");
+			current_page_end_point=bundle.getLong("current_page_end_point");
+			HashMap<Integer,Long>temp  =(HashMap<Integer,Long>)bundle.getSerializable("page_pointer_hashmap");
+			page_pointer_hashmap.putAll(temp);
+			temporary_file_for_save=new File(bundle.getString("temporary_file_path"));
+			current_page=bundle.getInt("current_page");
+
+			new FileSaveAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            int notification_id = 982;
+			startForeground(notification_id,nm.build(getString(R.string.being_updated)+"-"+"'"+file.getName()+"'", notification_id));
+
+		}
+		else
+		{
+			SERVICE_COMPLETED=true;
+			stopSelf();
+		}
+		return START_NOT_STICKY;
+	}
+
+	@Override
+	public IBinder onBind(Intent p1)
+	{
+		// TODO: Implement this method
+		if(binder==null)
+		{
+			binder=new FileSaveServiceBinder();
+		}
+		return binder;
+	}
+
+	class FileSaveServiceBinder extends Binder
+	{
+		public FileSaveService3 getService()
+		{
+			return FileSaveService3.this;
+		}
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		// TODO: Implement this method
+		super.onDestroy();
+		SERVICE_COMPLETED=true;
+	}
+
+
+
+	private class FileSaveAsyncTask extends AsyncTask<Void,Void, Boolean>
+	{
+		FileOutputStream fileOutputStream;
+		String eol_string;
+
+
+		@Override
+		protected void onPreExecute()
+		{
+			// TODO: Implement this method
+			super.onPreExecute();
+			if(file==null || !file.exists())
+			{
+				cancel(true);
+			}
+
+
+			switch(altered_eol) 
+			{
+
+				case FileEditorActivity.EOL_N:
+					eol_string="\n";
+					break;
+				case FileEditorActivity.EOL_R:
+					eol_string="\r";
+					break;
+				case FileEditorActivity.EOL_RN:
+
+					eol_string="\r\n";
+					break;
+			}
+
+
+			if(!eol_string.equals("\n"))
+			{
+				content=content.replaceAll("\n",eol_string);
+
+			}
+
+		}
+
+		@Override
+		protected void onCancelled(Boolean result)
+		{
+			// TODO: Implement this method
+			super.onCancelled(result);
+			if(fileSaveServiceCompletionListener!=null)
+			{
+				fileSaveServiceCompletionListener.onServiceCompletion(false);
+			}
+			stopForeground(true);
+			stopSelf();
+			SERVICE_COMPLETED=true;
+		}
+
+
+
+
+		@Override
+		protected Boolean doInBackground(Void[] p1)
+		{
+			// TODO: Implement this method
+			if(isWritable)
+			{
+				if(eol==altered_eol)
+				{
+					return save_file(null,prev_page_end_point,current_page_end_point,content.getBytes());
+				}
+				else
+				{
+					return save_file_with_altered_eol(null,prev_page_end_point,current_page_end_point,content,eol_string);
+				}
+
+			}
+			else
+			{
+
+				fileOutputStream=FileUtil.get_fileoutputstream(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
+				if(fileOutputStream!=null)
+				{
+					if(eol==altered_eol)
+					{
+						return save_file(fileOutputStream,prev_page_end_point,current_page_end_point,content.getBytes());
+
+					}
+					else
+					{
+						return save_file_with_altered_eol(fileOutputStream,prev_page_end_point,current_page_end_point,content,eol_string);
+					}
+
+
+				}
+				else
+				{
+					return false;
+				}
+
+
+			}
+
+
+		}
+
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			// TODO: Implement this method
+			super.onPostExecute(result);
+			if(fileSaveServiceCompletionListener!=null)
+			{
+				fileSaveServiceCompletionListener.onServiceCompletion(result);
+			}
+			stopForeground(true);
+			stopSelf();
+			SERVICE_COMPLETED=true;
+
+		}
+
+	}
+
+	private boolean save_file(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, byte[] content)
+	{
+		FileChannel source_fc=null,temp_fc=null,r_fc=null;
+		try
+		{
+			long length=file.length();
+
+			RandomAccessFile r_raf=new RandomAccessFile(file,"r");
+			File temp_file=new File(temporary_file_for_save,file.getName());
+			RandomAccessFile temp_raf=new RandomAccessFile(temp_file,"rw");
+
+			r_fc=r_raf.getChannel();
+
+			temp_fc=temp_raf.getChannel();
+
+			if(length==current_page_end_point)
+			{
+				r_fc.transferTo(prev_page_end_point,length-current_page_end_point,temp_fc);
+			}
+			else
+			{
+				r_fc.transferTo(current_page_end_point,length-current_page_end_point,temp_fc);
+			}
+			r_raf.close();
+
+			if(isWritable)
+			{
+				FileOutputStream outputStream=new FileOutputStream(file,true);
+				source_fc=outputStream.getChannel();
+			}
+			else
+			{
+				source_fc=fileOutputStream.getChannel();
+			}
+
+			source_fc.truncate(prev_page_end_point);
+			source_fc.position(prev_page_end_point);
+			ByteBuffer buf=ByteBuffer.wrap(content);
+			long writtenbytes=source_fc.write(buf);
+
+
+			buf.compact();
+			buf.flip();
+			if(buf.hasRemaining())
+			{
+				writtenbytes+=source_fc.write(buf);
+			}
+			long new_offset=source_fc.position();
+
+
+			temp_fc.position(0L);
+			source_fc.transferFrom(temp_fc,new_offset,length-current_page_end_point);
+			current_page_end_point=new_offset;
+			page_pointer_hashmap.put(current_page,current_page_end_point);
+
+
+			temp_fc.close();
+
+			if(temp_file.exists())
+			{
+				temp_file.delete();
+			}
+
+
+			return true;
+
+		}
+		catch(IOException e)
+		{
+			return false;
+		}
+		finally
+		{
+			try
+			{
+				source_fc.close();
+				temp_fc.close();
+				r_fc.close();
+				if(fileOutputStream!=null)
+				{
+					fileOutputStream.close();
+				}
+
+			}
+			catch(IOException e)
+			{
+
+			}
+
+
+		}
+
+	}
+
+	private boolean save_file_with_altered_eol(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, String content, String eol_string)
+	{
+		BufferedReader bufferedReader=null;
+		BufferedWriter bufferedWriter=null;
+		FileChannel fc=null;
+
+
+		try
+		{
+			FileInputStream fileInputStream=new FileInputStream(file);
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+
+
+			bufferedReader.skip(current_page_end_point);
+
+			File temp_file_2=new File(temporary_file_for_save,file.getName()+"_2");
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true)));
+			String line;
+			while((line=bufferedReader.readLine())!=null)
+			{
+
+				bufferedWriter.write(line+eol_string);
+				bufferedWriter.flush();
+			}
+
+			bufferedWriter.close();
+			bufferedReader.close();
+
+
+			if(isWritable)
+			{
+				fc=new FileOutputStream(file,true).getChannel();
+			}
+			else
+			{
+				fc=fileOutputStream.getChannel();
+			}
+
+			fc.truncate(prev_page_end_point);
+
+
+
+			fileInputStream=new FileInputStream(file);
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+
+			File temp_file_1=new File(temporary_file_for_save,file.getName()+"_1");
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true)));
+			while((line=bufferedReader.readLine())!=null)
+			{
+
+				bufferedWriter.write(line+eol_string);
+				bufferedWriter.flush();
+			}
+
+			bufferedWriter.write(content);
+			bufferedWriter.flush();
+			bufferedWriter.close();
+
+			bufferedReader.close();
+
+			fc.truncate(0L);
+
+			current_page_end_point=temp_file_1.length();
+			FileChannel first_part_fc=new FileInputStream(temp_file_1).getChannel();
+			fc.transferFrom(first_part_fc,0,current_page_end_point);
+
+
+			FileChannel second_part_fc=new FileInputStream(temp_file_2).getChannel();
+			fc.transferFrom(second_part_fc,current_page_end_point,temp_file_2.length());
+
+			first_part_fc.close();
+			second_part_fc.close();
+
+			page_pointer_hashmap.put(current_page,current_page_end_point);
+			temp_file_1.delete();
+			temp_file_2.delete();
+
+		} catch(IOException e)
+		{
+
+			return false;
+		} finally
+		{
+			try
+			{
+
+				bufferedWriter.close();
+				bufferedReader.close();
+				fc.close();
+
+				if(fileOutputStream!=null)
+				{
+					fileOutputStream.close();
+				}
+
+			}
+			catch(IOException e)
+			{
+
+			}
+
+		}
+		return true;
+	}
+
+	interface FileSaveServiceCompletionListener
+	{
+		void onServiceCompletion(boolean result);
+	}
+
+	public void setServiceCompletionListener(FileSaveServiceCompletionListener listener)
+	{
+		fileSaveServiceCompletionListener=listener;
+	}
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="light_select_color_picture_recyclerview">@android:color/holo_orange_dark</color>
+    <color name="light_video_play_overlay_background">#800099cc</color>
+    <color name="light_status_bar">#ff3a3a3a</color>
+    <color name="light_toolbar_icon_color">@color/light_icon_color</color>
+    <color name="light_toolbar_text_color">@color/light_recycler_text_color</color>
+    <color name="light_icon_color">#B1C7D2</color>
+    <color name="light_toolbar_background">#ff494848</color>
+    <color name="light_recycler_main_text_color">#DDDCDC</color>
+    <color name="light_recycler_text_color">#d0d0d0</color>
+    <color name="light_heading_text_color">#ff292929</color>
+    <color name="light_edit_text_color">@color/light_recycler_main_text_color</color>
+    <color name="light_activity_background">#ff292929</color>
+    <color name="light_filepath_recyclerview_background">#739DB1</color>
+    <color name="light_drawer_title">#76C6BD</color>
+    <color name="light_dialog_title">#739DB1</color>
+    <color name="light_dialog_background">#ff4A4A43</color>
+    <color name="light_tab_select_text_color">@android:color/holo_blue_dark</color>
+    <color name="light_item_select_text_color">@android:color/holo_blue_dark</color>
+
+    <color name="light_list_popup_window_background">@color/light_toolbar_background</color>
+    <color name="light_dialog_recyclerview_background">@color/light_activity_background</color>
+
+    <color name="light_seek_bar_background">#636363</color>
+    <color name="light_seek_bar_secondary_progress">#3399CC</color>
+    <color name="light_seek_bar_progress">@color/light_icon_color</color>
+    <color name="light_seek_bar_thumb">@color/light_icon_color</color>
+    <color name="light_select_detail_recyclerview_pressed">#80000000</color>
+    <color name="light_select_indicator_border_color">@color/light_icon_color</color>
+    <color name="light_select_indicator_fill_color">#ff000000</color>
+    <color name="light_drawer_icon_color">@color/light_heading_text_color</color>
+
+</resources>

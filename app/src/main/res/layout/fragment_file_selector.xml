@@ -1,0 +1,184 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+
+		<TextView
+			android:id="@+id/file_selector_current_folder_label"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			android:padding="@dimen/layout_margin"
+
+			/>
+
+
+		<EditText
+
+			android:id="@+id/file_selector_folder_selected"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingStart="@dimen/layout_margin"
+			android:paddingEnd="@dimen/layout_margin"
+			android:focusable="false"
+			android:cursorVisible="false"
+			android:textColor="?attr/edit_text_color"
+			android:textSize="16sp"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/file_selector_current_folder_label"
+
+			/>
+
+
+			<androidx.recyclerview.widget.RecyclerView
+
+				android:id="@+id/file_selectorRecyclerView"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:background="?attr/dialog_recyclerview_background"
+				android:layoutAnimation="@anim/layout_animation_fall_down"
+				android:scrollbarThumbVertical="@drawable/scrollbar"
+				android:scrollbars="vertical"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected"
+				app:layout_constraintBottom_toBottomOf="parent"
+				android:paddingBottom="100dp"
+				android:clipToPadding="false"
+				style="@style/my_scrollbar"
+
+				/>
+
+			<TextView
+				android:id="@+id/file_selector_folder_empty"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:gravity="center"
+				android:text="@string/no_file_found"
+				android:paddingBottom="?attr/actionBarSize"
+				android:visibility="gone"
+				android:background="?attr/dialog_recyclerview_background"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected"
+				app:layout_constraintBottom_toBottomOf="parent"
+				/>
+
+		<!--Space
+			android:id="@+id/recyclerview_padding"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/layout_margin"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/fragment_file_selector_button_layout"
+			/-->
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+	<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:orientation="vertical"
+		
+	>
+	
+	
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/file_selector_heading"
+		android:text="@string/choose_folder"
+		
+		android:padding="@dimen/layout_margin"
+		android:background="@color/dialog_title"
+		android:textSize="18sp"
+		android:layout_gravity="top"
+		
+		
+		/>
+	<LinearLayout
+		
+		
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:background="@color/dialog_background"
+		
+		android:layout_marginTop="@dimen/layout_margin"
+		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/layout_margin"
+		>
+	<TextView
+		
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/current_folder_colon"
+		
+		/>
+	<EditText
+		
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/file_selector_folder_selected"
+		android:focusable="false"
+        android:textSize="16sp"
+		android:textColor="@color/edit_text_color"
+		
+		/>
+	</LinearLayout>
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@null"
+		>
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+	android:background="@color/dialog_background"
+		android:layout_marginBottom="52dp"
+
+
+		>
+	<androidx.recyclerview.widget.RecyclerView
+		
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/file_selectorRecyclerView"
+		android:layoutAnimation="@anim/layout_animation_fall_down"
+		android:background="@color/dialog_recyclerview_background"
+		android:layout_margin="@dimen/layout_margin"
+		android:scrollbars="vertical"
+		android:scrollbarThumbVertical="@drawable/scrollbar"
+
+		/>
+		<TextView
+			android:id="@+id/file_selector_folder_empty"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:visibility="gone"
+			android:text="@string/folder_is_empty"
+			/>
+	</FrameLayout>
+
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/layout_margin"
+			android:id="@+id/fragment_file_selector_button_layout"
+			android:layout_gravity="bottom"
+		/>
+		
+	</FrameLayout>
+</LinearLayout-->
+

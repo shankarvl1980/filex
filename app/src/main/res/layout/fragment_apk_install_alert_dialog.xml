@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/fragment_apk_install_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_title"
+        android:padding="@dimen/layout_margin"
+        android:textSize="18sp"
+        android:text="@string/app_installation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/fragment_apk_install_dialog_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/dialog_background"
+        android:layout_marginTop="@dimen/layout_margin"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_apk_install_button_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_title" />
+    <ImageView
+        android:id="@+id/fragment_apk_install_icon_imageview"
+        android:layout_width="@dimen/image_preview_dimen"
+        android:layout_height="@dimen/image_preview_dimen"
+        android:padding="@dimen/layout_margin"
+        app:layout_constraintTop_toTopOf="@id/fragment_apk_install_dialog_background"
+        app:layout_constraintStart_toStartOf="@id/fragment_apk_install_dialog_background"
+
+
+        />
+    <TextView
+        android:id="@+id/fragment_apk_install_apk_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_apk_install_icon_imageview"
+        app:layout_constraintTop_toTopOf="@id/fragment_apk_install_dialog_background"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:maxLines="2"
+        />
+    <TextView
+        android:id="@+id/fragment_apk_install_apk_package_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/fragment_apk_install_apk_name_tv"
+        app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_apk_name_tv"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:maxLines="3"
+        />
+
+    <TableLayout
+        android:id="@+id/fragment_apk_install_version_table_layut"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/fragment_apk_install_apk_name_tv"
+        app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_apk_package_tv"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin">
+
+        <TableRow>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:text="@string/version"
+                />
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:text=": "
+                />
+            <TextView
+                android:id="@+id/fragment_apk_install_apk_version_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:maxLines="1"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/installed_version"
+                android:layout_marginTop="@dimen/layout_margin"
+                />
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:text=": "
+                />
+            <TextView
+                android:id="@+id/fragment_apk_install_apk_installed_version_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:maxLines="1"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/fragment_apk_install_button_barrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="fragment_apk_install_icon_imageview,fragment_apk_install_version_table_layut"
+        app:barrierDirection="bottom"
+        />
+    <TextView
+        android:id="@+id/fragment_apk_install_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_button_barrier"
+        android:background="?attr/dialog_background"
+        android:padding="@dimen/layout_margin"
+        android:textSize="16sp"
+        />
+    <FrameLayout
+        android:id="@+id/fragment_apk_install_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_message"
+         />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

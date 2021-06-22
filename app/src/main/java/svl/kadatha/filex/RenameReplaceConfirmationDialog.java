@@ -1,0 +1,117 @@
+package svl.kadatha.filex;
+import android.widget.*;
+import android.os.*;
+import android.view.*;
+import android.widget.TableRow.*;
+import android.graphics.drawable.*;
+import android.graphics.*;
+import android.content.*;
+
+import androidx.fragment.app.DialogFragment;
+
+public class RenameReplaceConfirmationDialog extends DialogFragment
+{
+
+    private String rename_file_name;
+	private RenameReplaceDialogListener renameDialogListener;
+
+	private RenameReplaceConfirmationDialog(){}
+
+
+   public static RenameReplaceConfirmationDialog getInstance(String new_name)
+   {
+   	   RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=new RenameReplaceConfirmationDialog();
+	   Bundle bundle=new Bundle();
+	   bundle.putString("rename_file_name",new_name);
+	   renameReplaceConfirmationDialog.setArguments(bundle);
+	   return renameReplaceConfirmationDialog;
+   }
+    @Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		// TODO: Implement this method
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+		setCancelable(false);
+		Bundle bundle=getArguments();
+		rename_file_name=bundle.getString("rename_file_name");
+	
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		// TODO: Implement this method
+		//return super.onCreateView(inflater, container, savedInstanceState);
+        Context context = getContext();
+		View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
+        TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
+        ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);
+		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        Button yes_button = buttons_layout.findViewById(R.id.first_button);
+		yes_button.setText(R.string.yes);
+        Button no_button = buttons_layout.findViewById(R.id.second_button);
+		no_button.setText(R.string.no);
+		confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+rename_file_name+"'");
+		
+		yes_button.setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					
+					if(renameDialogListener!=null)
+					{
+						renameDialogListener.rename_file();
+					}
+					dismissAllowingStateLoss();
+
+
+				}
+
+			});
+
+		no_button.setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					dismissAllowingStateLoss();
+				}
+
+			});
+		return v;
+	}
+
+	@Override
+	public void onResume()
+	{
+		// TODO: Implement this method
+		
+		super.onResume();
+		Window window=getDialog().getWindow();
+		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
+		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		
+	}
+
+
+
+	@Override
+	public void onDestroyView() {
+		if (getDialog() != null && getRetainInstance()) {
+			getDialog().setDismissMessage(null);
+		}
+		super.onDestroyView();
+
+	}
+	public void setRenameReplaceDialogListener(RenameReplaceDialogListener listener)
+	{
+		renameDialogListener=listener;
+	}
+
+	interface RenameReplaceDialogListener
+	{
+
+		void rename_file();
+	}
+	
+}

@@ -1,0 +1,102 @@
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+
+	>
+
+	
+	<svl.kadatha.filex.ObservableScrollView
+		android:id="@+id/file_editor_scrollview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scrollbars="vertical"
+		android:scrollbarThumbVertical="@drawable/scrollbar"
+		android:clipToPadding="false"
+		android:layout_marginBottom="?attr/actionBarSize"
+		android:layout_marginTop="?attr/actionBarSize"
+		android:fillViewport="true"
+
+		>
+	
+		<EditText
+		android:id="@+id/textfile_edittext"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:inputType="text|textMultiLine"
+		android:background="?attr/dialog_recyclerview_background"
+		android:padding="@dimen/layout_margin"
+		android:fontFamily="monospace"
+			android:textColor="?attr/edit_text_color"
+			android:gravity="start"
+
+		/>
+		
+	</svl.kadatha.filex.ObservableScrollView>
+
+	<androidx.appcompat.widget.Toolbar
+
+		android:id="@+id/file_editor_top_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:elevation="6dp"
+		android:background="?attr/toolbar_background"
+		app:contentInsetLeft="0dp"
+		app:contentInsetStart="0dp"
+		>
+		<TextView
+			android:id="@+id/file_editor_file_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:textSize="16sp"
+			android:singleLine="true"
+			android:paddingStart="@dimen/layout_margin"
+			android:paddingEnd="@dimen/layout_margin"
+			android:textColor="?attr/toolbar_text_color"
+			android:gravity="center_vertical"
+			android:ellipsize="end"
+			android:layout_marginEnd="50dp"/>
+		<ImageButton
+			android:id="@+id/file_editor_overflow_btn"
+			android:src="@drawable/overflow_icon"
+			android:layout_width="50dp"
+			android:layout_height="match_parent"
+			android:background="?attr/toolbar_background"
+			android:layout_gravity="end"
+			android:padding="10dp"/>
+	</androidx.appcompat.widget.Toolbar>
+
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/file_editor_floating_action_button_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom|end"
+		android:layout_marginBottom="90dp"
+		android:layout_marginEnd="15dp"
+		android:clickable="true"
+		android:focusable="true"
+		android:src="@drawable/back_icon"
+		app:backgroundTint="?attr/toolbar_background"
+		app:elevation="6dp"
+		app:layout_anchorGravity="end"
+	/>
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/file_editor_bottom_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?attr/toolbar_background"
+		android:elevation="6dp"
+		android:layout_gravity="bottom"
+		app:contentInsetLeft="0dp"
+		app:contentInsetStart="0dp"
+		
+	/>
+	
+	
+	
+</merge>
+
+	

@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:padding="@dimen/layout_margin"
+	android:background="@drawable/select_filepathrecyclerview"
+	
+	>
+	<TextView
+		android:id="@+id/filepath_recyclerview_TextView"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:textSize="16sp"
+		android:background="@null"
+		android:minWidth="50dp"
+		android:gravity="center"
+		android:paddingStart="10dp"
+		android:paddingEnd="10dp"
+		android:textColor="?attr/toolbar_text_color"
+		
+		/>
+
+    
+</FrameLayout>

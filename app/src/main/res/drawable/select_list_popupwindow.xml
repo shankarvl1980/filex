@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+<item
+    android:state_pressed="true">
+    <color android:color="?attr/select_detail_recyclerview_pressed"/>
+</item>
+<item>
+    <color android:color="?attr/list_popup_window_background"/>
+</item>
+
+
+</selector>

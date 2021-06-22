@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/dialog_background"
+    >
+
+    <TextView
+        android:id="@+id/settings_heading"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?attr/dialog_title"
+        android:textSize="18sp"
+        android:padding="@dimen/layout_margin"
+        android:layout_gravity="top"
+        android:gravity="center_vertical"
+        android:text="@string/settings"
+
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/file_size_diplay_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+
+                android:text="@string/file_size_display_colon"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"/>
+
+            <RadioGroup
+                android:id="@+id/preferences_file_block_rg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_size_diplay_label"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:visibility="gone"
+                >
+
+                <RadioButton
+                    android:id="@+id/preferences_rb_1024"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_1024"
+                    android:layout_weight="1"
+                    />
+
+                <RadioButton
+                    android:id="@+id/preferences_rb_1000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_1000"
+                    android:layout_weight="1"
+
+                    />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/theme_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_marginTop="8dp"
+                android:text="@string/theme_colon"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_file_block_rg"
+                />
+
+            <RadioGroup
+                android:id="@+id/preferences_theme_rg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/theme_label"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+
+                >
+
+                <RadioButton
+                    android:id="@+id/preferences_rb_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/light"
+                    android:minHeight="36dp"
+                    />
+
+                <RadioButton
+                    android:id="@+id/preferences_rb_dark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dark"
+                    android:minHeight="36dp"
+                    />
+                <RadioButton
+                    android:id="@+id/preferences_rb_system"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/system_default"
+                    android:minHeight="36dp"
+                    />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/default_apps_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_marginTop="8dp"
+                android:text="@string/default_apps_to_open_files_colon"
+
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_theme_rg" />
+
+            <Button
+                android:id="@+id/preferences_remove_all_defaults_btn"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:text="@string/remove_defaults"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/preferences_remove_select_defaults_btn"
+                app:layout_constraintTop_toBottomOf="@id/default_apps_label"
+                />
+
+            <Button
+                android:id="@+id/preferences_remove_select_defaults_btn"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:text="@string/remove_selected"
+                app:layout_constraintStart_toEndOf="@+id/preferences_remove_all_defaults_btn"
+                app:layout_constraintTop_toBottomOf="@id/default_apps_label"/>
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/preferences_switch_show_file_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/layout_margin"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/light_recycler_text_color"
+                android:text="@string/show_file_path_for_library_files"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/preferences_remove_select_defaults_btn" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+    <FrameLayout
+        android:id="@+id/preferences_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="bottom"
+        />
+</FrameLayout>
+
+
+
+    <!--FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+        <TextView
+            android:id="@+id/file_editor_settings_heading"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/toolbar_background"
+            android:textSize="18sp"
+            android:padding="@dimen/layout_margin"
+            android:layout_gravity="top"
+            android:gravity="center_vertical"
+            android:text="@string/settings"
+
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?android:attr/actionBarSize"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/layout_margin"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/file_size_display_colon"
+                    android:textSize="16sp"
+                    />
+
+                <RadioGroup
+                    android:id="@+id/preferences_rg_file_block"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <RadioButton
+                        android:id="@+id/preferences_rb_1024"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/block_1024"
+                        android:paddingEnd="10dp"
+
+                        />
+
+                    <RadioButton
+                        android:id="@+id/preferences_rb_1000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/block_1000"
+                        android:paddingEnd="10dp"
+                        />
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_apps_colon"
+                    android:textSize="16sp"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <Button
+                        android:id="@+id/preferences_remove_all_defaults_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/remove_all"
+                        style="@style/Widget.AppCompat.Button.Colored"
+
+                        />
+                    <Button
+                        android:id="@+id/preferences_remove_select_defaults_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/remove_selected"
+                        style="@style/Widget.AppCompat.Button.Colored"
+
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </ScrollView>
+        <FrameLayout
+            android:id="@+id/preferences_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            />
+    </FrameLayout-->

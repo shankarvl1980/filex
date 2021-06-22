@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/activity_file_selector_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/file_selector_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/layout_margin"
+            android:paddingEnd="@dimen/layout_margin"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:textColor="?attr/toolbar_text_color"
+            />
+
+        <ImageButton
+            android:id="@+id/file_selector_directory_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:background="?attr/toolbar_background"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/down_arrow_toolbar_icon"
+
+            />
+
+    </androidx.appcompat.widget.Toolbar>
+    <FrameLayout
+        android:id="@+id/file_selector_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_file_selector_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/file_selector_button_layout"
+
+        />
+    <TextView
+        android:id="@+id/file_selector_file_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="@drawable/rounded_rectangle_shape"
+        android:padding="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_file_selector_toolbar"
+
+        />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/file_selector_floating_action_button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="90dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_icon"
+        app:backgroundTint="?attr/toolbar_background"
+        app:elevation="6dp"
+        app:layout_anchorGravity="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <FrameLayout
+        android:id="@+id/file_selector_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

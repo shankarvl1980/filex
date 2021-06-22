@@ -1,0 +1,192 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+
+	<TextView
+		android:id="@+id/dialog_fragment_rename_delete_title"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:background="?attr/dialog_title"
+		android:padding="@dimen/layout_margin"
+		android:textSize="18sp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+
+		/>
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginTop="4dp"
+		app:layout_constraintBottom_toBottomOf="@id/barrier4"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_rename_delete_title"
+		android:background="?attr/dialog_background"/>
+
+
+
+	<TextView
+		android:id="@+id/dialog_fragment_rename_delete_message"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/layout_margin"
+		android:padding="@dimen/layout_margin"
+		android:textSize="16sp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_rename_delete_title" />
+
+
+	<EditText
+		android:id="@+id/dialog_fragment_rename_delete_newfilename"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingStart="@dimen/layout_margin"
+		android:paddingEnd="@dimen/layout_margin"
+		android:textColor="?attr/edit_text_color"
+		android:textSize="16sp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_rename_delete_message"
+
+		/>
+
+
+	<TextView
+		android:id="@+id/dialog_fragment_rename_delete_no_of_files"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="start"
+		android:padding="@dimen/layout_margin"
+		android:textSize="14sp"
+		app:layout_constraintEnd_toStartOf="@+id/dialog_fragment_rename_delete_total_size"
+		app:layout_constraintHorizontal_chainStyle="spread"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_rename_delete_newfilename" />
+
+
+	<TextView
+		android:id="@+id/dialog_fragment_rename_delete_total_size"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="end"
+		android:padding="@dimen/layout_margin"
+		android:textSize="14sp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/dialog_fragment_rename_delete_no_of_files"
+		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_rename_delete_newfilename"
+
+		/>
+
+
+	<androidx.constraintlayout.widget.Barrier
+		android:id="@+id/barrier4"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		app:barrierDirection="bottom"
+		app:constraint_referenced_ids="dialog_fragment_rename_delete_no_of_files,dialog_fragment_rename_delete_total_size"
+
+		/>
+
+	<FrameLayout
+		android:id="@+id/fragment_create_rename_delete_button_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="4dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/barrier4" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+	<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:id="@+id/dialog_fragment_rename_delete_title"
+
+                android:background="@color/dialog_title"
+                android:padding="@dimen/layout_margin"
+                android:layout_gravity="top"
+            />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dialog_background"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+
+        >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_fragment_rename_delete_message"
+                android:textSize="16sp"
+
+            />
+
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_fragment_rename_delete_newfilename"
+            android:textSize="16sp"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:layout_below="@+id/dialog_fragment_rename_delete_message"
+            android:textColor="@color/edit_text_color"
+
+        />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_fragment_rename_delete_no_of_files"
+
+            android:textSize="14sp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/dialog_fragment_rename_delete_newfilename"
+
+
+        />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_fragment_rename_delete_total_size"
+            android:textSize="14sp"
+            android:layout_below="@+id/dialog_fragment_rename_delete_newfilename"
+            android:layout_alignParentEnd="true"
+
+        />
+
+    </RelativeLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:id="@+id/fragment_create_rename_delete_button_layout"
+            />
+
+    </LinearLayout-->

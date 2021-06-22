@@ -1,0 +1,595 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/view"
+		android:padding="@dimen/layout_margin"
+		android:background="?attr/dialog_title"
+		android:textSize="18sp"
+		android:layout_gravity="top"/>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginTop="@dimen/layout_margin">
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			>
+
+
+				<TextView
+					android:id="@+id/layout_lable"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/layout_colon"
+					android:gravity="start"
+					android:textSize="16sp"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					android:background="?attr/dialog_background"
+					android:padding="@dimen/layout_margin"
+
+					/>
+
+				<RadioGroup
+
+					android:id="@+id/dialog_view_layout_rg"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					app:layout_constraintTop_toBottomOf="@id/layout_lable"
+					app:layout_constraintStart_toStartOf="parent"
+					android:background="?attr/dialog_background"
+					android:paddingStart="20dp"
+					android:paddingEnd="20dp"
+					android:minHeight="36dp"
+					>
+
+
+					<RadioButton
+						android:id="@+id/dialog_view_rb_list"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/list"
+						android:layout_weight="1"
+
+						/>
+
+					<RadioButton
+
+						android:id="@+id/dialog_view_rb_grid"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/grid"
+						android:layout_weight="1"
+
+						/>
+
+				</RadioGroup>
+
+
+			<View
+				android:id="@+id/seekbar_layout"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginTop="@dimen/layout_margin"
+				android:background="?attr/dialog_background"
+				app:layout_constraintBottom_toBottomOf="@id/font_small_label"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
+					<TextView
+						android:id="@+id/seekbar_heading"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/font_size_colon"
+						android:textSize="16sp"
+						android:padding="@dimen/layout_margin"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="@id/seekbar_layout"
+						/>
+
+			<SeekBar
+				android:id="@+id/seekbar_fontsize"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:elevation="6dp"
+
+				android:max="2"
+				android:paddingStart="34dp"
+				android:paddingEnd="34dp"
+				android:progressDrawable="@drawable/seek_bar"
+				android:progressTint="@null"
+				android:thumb="@drawable/seek_thumb"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/seekbar_heading" />
+
+			<TextView
+				android:id="@+id/font_small_label"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="15dp"
+				android:padding="@dimen/layout_margin"
+				android:text="@string/small"
+				app:layout_constraintEnd_toStartOf="@id/font_medium_label"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
+
+				/>
+
+			<TextView
+				android:id="@+id/font_medium_label"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:padding="@dimen/layout_margin"
+				android:text="@string/medium"
+				android:gravity="center"
+				app:layout_constraintEnd_toStartOf="@id/font_large_label"
+				app:layout_constraintStart_toEndOf="@id/font_small_label"
+				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
+
+				/>
+
+			<TextView
+				android:id="@+id/font_large_label"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="15dp"
+				android:gravity="end"
+				android:padding="@dimen/layout_margin"
+				android:text="@string/large"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@id/font_medium_label"
+				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
+
+				/>
+
+
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:id="@+id/sort_layout_backgroundd"
+					android:layout_marginTop="@dimen/layout_margin"
+					android:background="?attr/dialog_background"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/seekbar_layout"
+					app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
+					/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/sort_colon"
+					android:textSize="16sp"
+
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
+					android:id="@+id/sort_label"
+					android:padding="@dimen/layout_margin"
+					/>
+
+
+			<TableLayout
+				android:id="@+id/sort_table_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="@dimen/layout_margin"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/sort_label"
+
+				>
+
+				<TableRow
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+
+
+					>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:text="@string/name"
+						android:textSize="16sp"
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:text="@string/date"
+						android:textSize="16sp"
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:text="@string/size"
+						android:textSize="16sp"
+						/>
+
+				</TableRow>
+
+				<TableRow
+
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					>
+
+					<ImageButton
+						android:id="@+id/name_asc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+
+						android:background="@drawable/select_icon_selection"
+
+						android:gravity="center"
+						android:src="@drawable/sort_alphabetical_az_icon"
+
+						/>
+
+					<ImageButton
+						android:id="@+id/date_asc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+						android:background="@drawable/select_icon_selection"
+						android:gravity="center"
+						android:src="@drawable/sort_time_asc_icon" />
+
+					<ImageButton
+						android:id="@+id/size_asc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+						android:background="@drawable/select_icon_selection"
+						android:gravity="center"
+						android:src="@drawable/sort_size_asc_icon" />
+
+				</TableRow>
+
+				<TableRow
+
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+
+					>
+
+					<ImageButton
+						android:id="@+id/name_desc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+						android:background="@drawable/select_icon_selection"
+						android:gravity="center"
+						android:src="@drawable/sort_alphabetical_za_icon"
+
+						/>
+
+					<ImageButton
+						android:id="@+id/date_desc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+						android:background="@drawable/select_icon_selection"
+						android:gravity="center"
+						android:src="@drawable/sort_time_desc_icon"
+
+						/>
+
+					<ImageButton
+						android:id="@+id/size_desc"
+						android:layout_width="46dp"
+						android:layout_height="46dp"
+						android:layout_margin="@dimen/layout_margin"
+						android:background="@drawable/select_icon_selection"
+						android:gravity="center"
+						android:src="@drawable/sort_size_desc_icon"
+
+						/>
+
+				</TableRow>
+
+			</TableLayout>
+
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/fragment_view_button_layout"
+				android:layout_marginTop="@dimen/layout_margin"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
+
+				/>
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</ScrollView>
+
+
+
+</LinearLayout>
+
+
+
+
+
+	<!--LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/view"
+            android:padding="@dimen/layout_margin"
+            android:background="@color/dialog_title"
+            android:textSize="18sp"
+            android:layout_gravity="top"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/dialog_background"
+
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:paddingStart="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/layout_margin"
+
+                    >
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/layout_colon"
+                        android:gravity="start"
+                        android:textSize="16sp"
+
+                        />
+
+                    <RadioGroup
+
+                        android:id="@+id/dialog_view_layout_rg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+
+                        <RadioButton
+                            android:id="@+id/dialog_view_rb_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/list"
+                            android:paddingEnd="10dp"
+
+                            />
+
+                        <RadioButton
+
+                            android:id="@+id/dialog_view_rb_grid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/grid"
+                            android:paddingEnd="10dp"
+
+                            />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/dialog_background"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:paddingStart="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/layout_margin">
+
+                    <TextView
+                        android:id="@+id/seekbar_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/font_size_colon"
+                        android:textSize="16sp"/>
+
+                    <SeekBar
+                        android:id="@+id/seekbar_fontsize"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="2"
+                        android:layout_below="@+id/seekbar_heading"
+                        android:progressTint="@null"
+                        android:elevation="6dp"
+                        android:progressDrawable="@drawable/seek_bar"
+                        android:thumb="@drawable/seek_thumb"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/small"
+                        android:layout_below="@+id/seekbar_fontsize"
+                        android:layout_alignParentStart="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/medium"
+                        android:layout_centerInParent="true"
+                        android:layout_below="@+id/seekbar_fontsize"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/large"
+                        android:gravity="end"
+                        android:layout_below="@+id/seekbar_fontsize"
+                        android:layout_alignParentEnd="true"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/dialog_background"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:padding="@dimen/layout_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sort_colon"
+                        android:textSize="16sp"/>
+
+
+                    <TableLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:background="@color/dialog_background"
+                        android:layout_gravity="center"
+
+
+                    >
+                        <TableRow
+                            android:layout_height="0dp"
+                            android:layout_width="match_parent"
+
+
+                        >
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:text="@string/name"
+                                android:textSize="16sp"
+                                android:gravity="center"
+
+
+                            />
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:text="@string/date"
+                                android:textSize="16sp"
+
+                                android:gravity="center"
+
+
+                            />
+
+                        </TableRow>
+                        <TableRow
+
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+
+
+                        >
+
+                            <ImageButton
+                                android:id="@+id/name_asc"
+                                android:src="@drawable/sort_alphabetical_az_icon"
+                                android:layout_height="46dp"
+                                android:layout_width="46dp"
+
+                                android:background="@drawable/select_color_detail_recyclerview"
+
+                                android:gravity="center"
+                                android:layout_margin="@dimen/layout_margin"
+
+                            />
+                            <ImageButton
+                                android:id="@+id/date_asc"
+                                android:src="@drawable/sort_time_asc_icon"
+                                android:layout_height="46dp"
+                                android:layout_width="46dp"
+
+                                android:background="@drawable/select_color_detail_recyclerview"
+
+                                android:gravity="center"
+                                android:layout_margin="@dimen/layout_margin"
+                            />
+
+                        </TableRow>
+
+                        <TableRow
+
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+
+                        >
+
+                            <ImageButton
+                                android:id="@+id/name_desc"
+                                android:src="@drawable/sort_alphabetical_za_icon"
+                                android:layout_height="46dp"
+                                android:layout_width="46dp"
+
+                                android:background="@drawable/select_color_detail_recyclerview"
+
+                                android:gravity="center"
+                                android:layout_margin="@dimen/layout_margin"
+
+                            />
+                            <ImageButton
+                                android:id="@+id/date_desc"
+                                android:src="@drawable/sort_time_desc_icon"
+                                android:layout_height="46dp"
+                                android:layout_width="46dp"
+
+                                android:background="@drawable/select_color_detail_recyclerview"
+
+                                android:gravity="center"
+                                android:layout_margin="@dimen/layout_margin"
+
+                            />
+
+                        </TableRow>
+
+                    </TableLayout>
+
+                </LinearLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:id="@+id/fragment_view_button_layout"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+
+
+    </LinearLayout-->
+

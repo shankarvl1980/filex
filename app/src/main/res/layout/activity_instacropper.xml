@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+	>
+
+    <svl.kadatha.filex.InstaCropperView
+        android:id="@+id/instacropper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+		android:background="#fff"
+
+        />
+	
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/crop_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:layout_alignParentBottom="true"
+		android:elevation="6dp"
+		android:background="?attr/toolbar_background"
+		app:contentInsetLeft="0dp"
+		app:contentInsetStart="0dp"
+	>
+		<ImageButton
+
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:src="@drawable/wallpaper_icon"
+			android:id="@+id/crop_imagebutton"
+			android:layout_gravity="center"
+			android:scaleType="fitCenter"
+			android:adjustViewBounds="true"
+			android:background="@null"
+
+		/>
+
+
+	</androidx.appcompat.widget.Toolbar>
+
+</RelativeLayout>

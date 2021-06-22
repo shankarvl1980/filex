@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<resources>
+		<dimen name="layout_margin">4dp</dimen>
+		<dimen name="image_preview_dimen">60dp</dimen>
+		<dimen name="list_popupwindow_width">160dp</dimen>
+
+	<dimen name="seek_bar_thickness">4dp</dimen>
+	<dimen name="seek_bar_thumb_size">20dp</dimen>
+		
+	</resources>
