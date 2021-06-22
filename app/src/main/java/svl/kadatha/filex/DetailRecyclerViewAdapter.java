@@ -28,8 +28,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	private final MainActivity mainActivity;
 
 	private CardViewClickListener cardViewClickListener;
-	private final Handler handler_refresh;
-	private final Handler handler_remove;
+    private final Handler handler_remove;
 	private boolean show_file_path;
 
 
@@ -38,7 +37,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
-		handler_refresh=new Handler();
+        Handler handler_refresh = new Handler();
 		handler_remove=new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.mselecteditems.size()+"/"+df.file_list_size);

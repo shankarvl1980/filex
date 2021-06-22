@@ -88,9 +88,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 	private String source_other_file_permission,dest_other_file_permission;
 	List<String> dest_file_names;
-	private boolean storage_analyser_delete;
 
-	@Override
+    @Override
 	public void onCreate()
 	{
 		// TODO: Implement this method
@@ -165,7 +164,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					//source_folder=getParentFilePath(files_selected_array.get(0));
 					source_folder=bundle.getString("source_folder");
-					storage_analyser_delete=bundle.getBoolean("storage_analyser_delete");
+                    boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;

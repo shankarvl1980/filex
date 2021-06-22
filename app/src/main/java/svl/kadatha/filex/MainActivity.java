@@ -740,7 +740,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Uri uri=intent.getData();
 		if(receivedAction!=null && receivedAction.equals(Intent.ACTION_VIEW) &&  uri !=null)
 		{
-			Log.d("shankar","new intent");
 			ZIP_FILE=new File(PathUtil.getPath(context,uri));
 			ZipFile zipfile;
 			try
@@ -1632,15 +1631,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					@Override
 					public void run() {
 						PreferencesDialog preferencesDialog = new PreferencesDialog();
-						/*
-						preferencesDialog.setThemeChangeListener(new PreferencesDialog.ThemeChangeListener() {
-							@Override
-							public void onThemeChange() {
-								MainActivity.super.recreate();
-							}
-						});
-
-						 */
 						preferencesDialog.show(FM, "preferences_dialog");
 						pbf.dismissAllowingStateLoss();
 
@@ -2185,21 +2175,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		detailFragmentCommunicationListeners.remove(listener);
 	}
 
-/*
-	public void setDfFileClickSelectedBlank()
-	{
-		int size=detailFragmentCommunicationListeners.size();
-		for(int i=0;i<size;++i)
-		{
-			DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
-			if(listener!=null)
-			{
-				listener.setDfFileClickSelectedBlank();
-			}
-		}
-	}
-
- */
 
 	interface RecentDialogListener
 	{
