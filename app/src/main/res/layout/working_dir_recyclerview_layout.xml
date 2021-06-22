@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+	android:background="@drawable/select_storage_list"
+	android:padding="@dimen/layout_margin"
+	>
+
+	<TextView
+		android:id="@+id/working_dir_name"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:textSize="16sp"
+		android:paddingStart="@dimen/layout_margin"
+		android:paddingEnd="@dimen/layout_margin"
+		android:gravity="center_vertical"
+		android:minHeight="40dp"
+
+		android:textColor="?attr/recycler_text_color"
+	/>
+	<ImageView
+		android:id="@+id/working_dir_select_indicator"
+		android:layout_height="26dp"
+		android:layout_width="26dp"
+		android:src="@drawable/select_indicator_icon"
+		android:visibility="invisible"
+		android:layout_margin="@dimen/layout_margin"
+		android:layout_gravity="end"
+
+
+		/>
+</FrameLayout>

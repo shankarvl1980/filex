@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="package_name">svl.kadatha.filex</string>
+	<string name="application_name">FileX Manager</string>
+
+    <string name="hide">Hide</string>
+	<string name="cancel">Cancel</string>
+
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+    <string name="close">Close</string>
+
+	<string name="ok">OK</string>
+	<string name="list_name_colon">List Name:</string>
+	<string name="enter_name">Enter name</string>
+
+
+	<string name="save">Save</string>
+	<string name="file_has_been_modified_do_you_want_save_the_file">File has been modified. Do you want to save the file?</string>
+    <string name="deleted_selected_audios">Deleted selected audios.</string>
+	<string name="wait_till_all_audios_populated">Wait till all audios are populated in All Songs tab.</string>
+	<string name="added_audios_current_play_list">Added selected audios to the current playing list.</string>
+	<string name="added_audios_to">Added selected audios to</string>
+	<string name="permission_not_granted">Permission was not granted.</string>
+	<string name="audio_list_created">audio list created.</string>
+
+	<string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/\'</string>
+	<string name="maximum_3_services_processed">Maximum 3 services only be processed at a time.</string>
+	<string name="directory_not_exist_not_valid">Directory mentioned does not exist or not valid.</string>
+	<string name="extract">Extract</string>
+
+	<string name="enter_output_folder_name">Enter output folder name.</string>
+	<string name="a_file_with_folder_name_exists_in_selected_directory">A file with output folder name already exists in the selected directory.</string>
+    <string name="archiving">Archiving</string>
+	<string name="archive_file">Archive File</string>
+	<string name="extracting">Extracting</string>
+	<string name="output_folder">Output Folder</string>
+	<string name="deleting">Deleting</string>
+	<string name="moving">Moving</string>
+	<string name="copying">Copying</string>
+	<string name="extracted">Extracted</string>
+	<string name="deleted">Deleted</string>
+
+	<string name="choose_directory">Choose directory</string>
+	<string name="archive">Archive</string>
+	<string name="output_file_colon">Output file:</string>
+
+	<string name="enter_file_name">Enter file name</string>
+	<string name="file_name_colon">File Name:</string>
+	<string name="enter_folder_name">Enter folder name</string>
+	<string name="folder_name_colon">Folder Name:</string>
+
+	<string name="delete">Delete</string>
+
+	<string name="back">Back</string>
+
+	<string name="root_directory">Root Directory</string>
+
+    <string name="clear">Clear</string>
+	<string name="rename">Rename</string>
+	<string name="add_to_list">Add to list</string>
+	<string name="saved_lists">Saved lists</string>
+	<string name="no_file_found">No file found</string>
+	<string name="select_app">Select app</string>
+	<string name="remember_the_choice">Remember the choice</string>
+	<string name="create_folder">Create folder</string>
+	<string name="destination_folder">Destination folder:</string>
+	<string name="replace_file">Replace File</string>
+	<string name="wait_till_the_process_completes">Wait till the process completes…</string>
+	<string name="create_file">Create File</string>
+	<string name="from">From</string>
+	<string name="to">To</string>
+	<string name="current_file_colon">Current File:</string>
+	<string name="settings">Settings</string>
+	<string name="end_of_line_colon">End of line:</string>
+	<string name="wrap_text_colon">Wrap text:</string>
+	<string name="text_size_colon">Text size:</string>
+	<string name="edit">Edit</string>
+	<string name="choose_folder">Choose Folder</string>
+	<string name="current_folder_colon">Current Folder:</string>
+	<string name="folder_is_empty">Folder is empty.</string>
+	<string name="permissions">Permissions</string>
+	<string name="read">Read</string>
+	<string name="write">Write</string>
+	<string name="execute">Execute</string>
+	<string name="owner">Owner</string>
+	<string name="group">Group</string>
+	<string name="other">Other</string>
+	<string name="file_size_display_colon">File size display:</string>
+	<string name="block_1024">Block 1024</string>
+	<string name="block_1000">Block 1000</string>
+	<string name="default_apps_to_open_files_colon">Default apps to open files:</string>
+	<string name="remove_defaults">Remove defaults</string>
+	<string name="properties">Properties</string>
+
+
+	<string name="directories">Directories</string>
+	<string name="recent">Recent</string>
+	<string name="apply_to_all_similarly_named_files">Apply to all similarly named files.</string>
+	<string name="storage_access_permission">Storage Access Permission</string>
+	<string name="search">Search</string>
+	<string name="whole_word">Whole word</string>
+	<string name="case_sensitive">Case sensitive</string>
+	<string name="regex">Regex</string>
+
+	<string name="file_directory">File/Directory</string>
+	<string name="search_in_colon">Search in:</string>
+	<string name="open_as">Open as</string>
+	<string name="view">View</string>
+	<string name="layout_colon">Layout:</string>
+	<string name="list">List</string>
+	<string name="grid">Grid</string>
+	<string name="font_size_colon">Font size:</string>
+	<string name="small">Small</string>
+	<string name="medium">Medium</string>
+	<string name="large">Large</string>
+	<string name="sort_colon">Sort:</string>
+	<string name="date">Date</string>
+	<string name="working_directory">Working Directory</string>
+	<string name="add">Add</string>
+	<string name="remove">Remove</string>
+	<string name="library">Library</string>
+	<string name="show_hidden_files">Show hidden files</string>
+	<string name="audio_player">Audio Player</string>
+	<string name="browse">Browse</string>
+	<string name="are_you_sure_to_delete_the_selected_file">Are you sure to delete the selected file?</string>
+	<string name="are_you_sure_to_delete_the_selected_files">Are you sure to delete the selected files?</string>
+	<string name="a_file_with_same_already_exists_do_you_want_to_replace_it">A file with same name already exists. Do you want to replace it?</string>
+	<string name="a_folder_with_same_already_exists_do_you_want_to_overwrite_it">A folder with same name already exists. Do you want to overwrite it?</string>
+	<string name="remove_selected">Remove selected</string>
+    <string name="file_type">File type</string>
+	<string name="app_name">App name</string>
+    <string name="name">Name</string>
+	<string name="path">Path</string>
+	<string name="type">Type</string>
+	<string name="total_files">Total files</string>
+	<string name="size">Size</string>
+	<string name="modified">Modified</string>
+	<string name="readable">Readable</string>
+	<string name="writable">Writable</string>
+	<string name="hidden">Hidden</string>
+	<string name="symbolic_link">Symbolic link</string>
+	<string name="remove_default_apps">Remove default apps</string>
+	<string name="external_sd_card_permission_message">You need to give permission by selecting \'SD card\' to access files on external SD card.</string>
+	<string name="external_usb_permission_message">You need to give permission by selecting \'USB device\' to access files on USB storage.</string>
+	<string name="name_colon">Name:</string>
+	<string name="type_colon">Type:</string>
+	<string name="document">Document</string>
+	<string name="image">Image</string>
+	<string name="audio">Audio</string>
+	<string name="video">Video</string>
+	<string name="apk">APK</string>
+
+	<string name="deleted_selected_files">Deleted selected files at</string>
+	<string name="could_not_delete_selected_files">Could not delete selected files at</string>
+	<string name="moved_selected_files">Moved selected files to</string>
+	<string name="could_not_move_selected_files">Could not move selected files to</string>
+	<string name="copied_selected_files">Copied selected files to</string>
+	<string name="could_not_copy_selected_files">Could not copy selected files to</string>
+	<string name="could_not_create">Could not create</string>
+	<string name="could_not_extract">Could not extract</string>
+	<string name="created">Created</string>
+	<string name="unzipped">Unzipped</string>
+	<string name="to_symbol">=></string>
+	<string name="at">-></string>
+	<string name="moving_files">Moving files</string>
+	<string name="copying_files">Copying files</string>
+	<string name="deleting_files">Deleting files</string>
+	<string name="a_directory_with_output_file_name_already_exists">A directory with output file name already exists.</string>
+	<string name="enter_zip_file_name">Enter zip file name</string>
+	<string name="album_colon">Album:</string>
+	<string name="artists_colon">Artists:</string>
+	<string name="next_audio_colon">Next audio:</string>
+
+	<string name="total_files_colon">Total files:</string>
+	<string name="files">files</string>
+	<string name="file1">file</string>
+	<string name="size_colon">Size:</string>
+
+	<string name="deleted_colon">Deleted:</string>
+
+	<string name="refresh">Refresh</string>
+
+	<string name="exit">Exit</string>
+
+	<string name="paste">Paste</string>
+	<string name="new_">New</string>
+	<string name="cut">Cut</string>
+	<string name="copy">Copy</string>
+	<string name="more">More</string>
+	<string name="compress">Compress</string>
+	<string name="play">Play</string>
+
+
+	<string name="tracks_colon">Tracks:</string>
+
+	<string name="duration_colon">Duration:</string>
+
+	<string name="not_able_to_process">not able to process</string>
+	<string name="wait_till_all_audios_populated_in_all_songs_tab">wait till all audios are populated in All Songs tab</string>
+
+	<string name="removed_the_selected_audios">Removed the selected audios</string>
+
+	<string name="create_new_list">Create new list</string>
+	<string name="add_to_current_play_list">Add to current play list</string>
+
+	<string name="undo">Undo</string>
+	<string name="redo">Redo</string>
+
+	<string name="file_not_found">File not found</string>
+	<string name="cant_edit_this_file">can\'t edit this file</string>
+	<string name="file_is_big">File is big</string>
+	<string name="maximum_2_services_only_be_processed_at_a_time">Maximum 2 services only be processed at a time.</string>
+	<string name="file_could_not_be_saved">File could not be saved.</string>
+	<string name="opening_the_file">Opening the file</string>
+	<string name="file_could_not_be_opened">File could not be opened.</string>
+
+	<string name="set_as_wallpaper">Set as Wallpaper</string>
+
+	<string name="could_not_be_set_as_wallpaper">could not be set as wallpaper</string>
+    <string name="set_as_ringtone">Set as ringtone</string>
+	<string name="now_ringtone_can_be_set">Now ringtone can be set</string>
+	<string name="ringtone_set">Ringtone is set</string>
+    <string name="up">Up</string>
+	<string name="down">Down</string>
+    <string name="filex_text_editor">FileX Text Editor</string>
+	<string name="filex_pdf_viewer">FileX PDF Viewer</string>
+	<string name="filex_audio_player">FileX Audio Player</string>
+	<string name="filex_image_viewer">FileX Image Viewer</string>
+	<string name="filex_video_player">FileX Video Player</string>
+	<string name="filex_file_selector">FileX File Selector</string>
+    <string name="renamed">Renamed</string>
+	<string name="could_not_be_renamed">could not be renamed</string>
+    <string name="file">File</string>
+	<string name="directory">Directory</string>
+	<string name="file_can_not_be_created_here">File can not be created here.</string>
+	<string name="new_file_can_not_be_created_a_file_with_the_specified_name_exists">New file can not be created. A file with the specified name already exists</string>
+	<string name="folder">Folder</string>
+	<string name="please_wait">please wait</string>
+	<string name="current_play">Current Play</string>
+	<string name="album">Album</string>
+	<string name="audio_list">Audio list</string>
+	<string name="all_songs">All songs</string>
+    <string name="searching">Searching</string>
+    <string name="can_not_open_file">can\'t open file</string>
+    <string name="wait_ellipse">Wait…</string>
+    <string name="more_than_10_directories_cannot_be_added">More than 10 directories cannot be added</string>
+	<string name="select_directories_by_long_pressing">Select directories by long pressing</string>
+    <string name="send">Send</string>
+	<string name="app_installation">App Installation</string>
+	<string name="version">Version</string>
+	<string name="installed_version">Installed version</string>
+	<string name="na">NA</string>
+    <string name="do_you_install_a_new_app">Do you want install a new app?</string>
+	<string name="do_you_want_update_the_app">Do you want to update the app?</string>
+	<string name="read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions">Read and write permissions are must for the app to work. Please grant the permissions</string>
+	<string name="could_not_open_zipe_file">Could not open the zip file</string>
+	<string name="press_again_to_close_app">Press again to close the app</string>
+	<string name="directories_can_not_be_sent_select_one_file">Directories can not be sent. Select at least one file.</string>
+	<string name="select_only_a_zip_file">Select only a zip file</string>
+	<string name="selected_files_have_been_copied">Selected files have been copied.</string>
+	<string name="selected_filed_have_been_moved">Selected files have been moved.</string>
+	<string name="select_files_to_delete">Select files to delete</string>
+	<string name="directory_does_not_exist">Directory does not exist.</string>
+	<string name="selected_audios_deleted">Selected audios deleted</string>
+	<string name="selected_audios_could_not_be_deleted">Selected audios could not be deleted</string>
+    <string name="cannot_be_hidden">cannot be hidden</string>
+	<string name="process_cancelled">process cancelled</string>
+    <string name="removed_default_apps_to_open_files">Removed default apps to open files</string>
+    <string name="theme_colon">Theme:</string>
+	<string name="blue">Blue</string>
+	<string name="dark">Dark</string>
+	<string name="download">Download</string>
+	<string name="select_directories_to_search_in">Select directories to be searched in</string>
+	<string name="a_file_with_given_name_already_exists">A file with the given name already exists</string>
+	<string name="file_can_not_be_renamed_here">File can not be renamed here</string>
+    <string name="zipping">Zipping</string>
+	<string name="unzipping">Unzipping</string>
+    <string name="files_can_not_be_pasted_here">Files can not be pasted here</string>
+    <string name="select">Select</string>
+    <string name="being_updated">Being updated</string>
+    <string name="move_to">Move to</string>
+	<string name="copy_to">Copy to</string>
+    <string name="root_access_not_avaialable">root access not available</string>
+    <string name="light">Light</string>
+	<string name="system_default">System default</string>
+    <string name="seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app">Seems that read and write permissions were not granted. Go to Settings and grant permissions to this app</string>
+    <string name="path_copied">Path copied</string>
+    <string name="path_colon">Path:</string>
+    <string name="show_file_path_for_library_files">Show file path for library files</string>
+    <string name="analyse_storage">Analyse Storage</string>
+    <string name="file_to_storage">File/Storage</string>
+	<string name="files_">Files</string>
+    <string name="sort">Sort</string>
+
+
+    <string-array name="library_categories">
+		<item>@string/download</item>
+		<item>@string/document</item>
+		<item>@string/image</item>
+		<item>@string/audio</item>
+		<item>@string/video</item>
+	</string-array>
+
+</resources>
