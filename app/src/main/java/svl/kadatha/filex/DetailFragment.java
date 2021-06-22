@@ -180,10 +180,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		context=getContext();
-		//if(cache_cleared)
 		if(modification_observed)
 		{
-			//cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -304,7 +302,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			modification_observed=false;
 			local_activity_delete=false;
-			//cache_cleared=false;
 			after_filledFilePojos_procedure();
 		}
 		else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
@@ -312,7 +309,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			mainActivity.actionmode_finish(this,fileclickselected);
 			modification_observed=false;
 			local_activity_delete=false;
-			//cache_cleared=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -368,8 +364,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						pbf_polling.dismissAllowingStateLoss();
 					}
 
-
-					//ProgressBarFragment.dismiss_pbf();
 					if(TO_BE_MOVED_TO_FILE_POJO!=null)
 					{
 						int idx=filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);

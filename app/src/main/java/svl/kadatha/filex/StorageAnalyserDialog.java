@@ -135,10 +135,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         context=getContext();
-        //if(cache_cleared)
         if(modification_observed)
         {
-            //cache_cleared=false;
             local_activity_delete=false;
             modification_observed=false;
             pbf_polling=ProgressBarFragment.getInstance();
@@ -237,14 +235,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             modification_observed=false;
             local_activity_delete=false;
-            //cache_cleared=false;
             after_filledFilePojos_procedure();
         }
         else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
         {
             modification_observed=false;
             local_activity_delete=false;
-            //cache_cleared=false;
             pbf_polling=ProgressBarFragment.getInstance();
             pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
             new Thread(new Runnable() {
@@ -338,7 +334,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     @Override
     public void onFragmentCacheClear() {
-        //cache_cleared=true;
         modification_observed=true;
     }
 
