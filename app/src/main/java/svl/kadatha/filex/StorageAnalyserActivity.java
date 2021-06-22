@@ -65,6 +65,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         IntentFilter localBroadcastIntentFilter=new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         TinyDB tinyDB = new TinyDB(context);
@@ -253,15 +254,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
-        int size=detailFragmentCommunicationListeners.size();
-        for(int i=0;i<size;++i)
-        {
-            DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
-            if(listener!=null)
-            {
-                listener.onFragmentCacheClear();
-            }
-        }
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager);
     }
 
 
@@ -404,22 +397,32 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION))
-            {
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog!=null) storageAnalyserDialog.local_activity_delete=true;
-            }
-            else if(intent.getAction().equals(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION))
-            {
-                int size=detailFragmentCommunicationListeners.size();
-                for(int i=0;i<size;++i)
-                {
-                    DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
-                    if(listener!=null)
-                    {
-                        listener.onModificationObserved();
+            int size = detailFragmentCommunicationListeners.size();
+            switch (intent.getAction()) {
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+                    if (storageAnalyserDialog != null)
+                        storageAnalyserDialog.local_activity_delete = true;
+                    break;
+                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
+
+                    for (int i = 0; i < size; ++i) {
+                        DetailFragmentCommunicationListener listener = detailFragmentCommunicationListeners.get(i);
+                        if (listener != null) {
+                            listener.onModificationObserved();
+                        }
                     }
-                }
+                    break;
+                case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
+                    for(int i=0;i<size;++i)
+                    {
+                        DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+                        if(listener!=null)
+                        {
+                            listener.onFragmentCacheClear();
+                        }
+                    }
+                    break;
             }
         }
     }

@@ -47,7 +47,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public TextView folder_selected_textview;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
-	public boolean local_activity_delete,modification_observed,cleared_cache;
+	public boolean local_activity_delete,modification_observed,cache_cleared;
 	private boolean filled_filePOJOs;
 	private Uri tree_uri;
 	private String tree_uri_path="";
@@ -132,9 +132,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		context=getContext();
-		if(cleared_cache)
+		if(cache_cleared)
 		{
-			cleared_cache=false;
+			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
 			pbf_polling=ProgressBarFragment.getInstance();
@@ -199,14 +199,14 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		super.onResume();
 		if(local_activity_delete)
 		{
-			cleared_cache=false;
+			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			after_filledFilePojos_procedure();
 		}
 		else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
-			cleared_cache=false;
+			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			pbf_polling=ProgressBarFragment.getInstance();
@@ -219,7 +219,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
 				}
 			}).start();
-			//FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
 			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
 			after_filledFilePojos_procedure();
 		}
@@ -294,7 +293,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 	@Override
 	public void onFragmentCacheClear() {
-		cleared_cache=true;
+		cache_cleared=true;
 	}
 
 	@Override

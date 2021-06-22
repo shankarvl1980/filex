@@ -159,6 +159,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		IntentFilter localBroadcastIntentFilter=new IntentFilter();
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
+		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 
@@ -786,15 +787,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
-		int size=detailFragmentCommunicationListeners.size();
-		for(int i=0;i<size;++i)
-		{
-			DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
-			if(listener!=null)
-			{
-				listener.onFragmentCacheClear();
-			}
-		}
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager);
 	}
 
 
@@ -2145,23 +2138,32 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			int size = detailFragmentCommunicationListeners.size();
+			switch (intent.getAction()) {
 
-			if(intent.getAction().equals(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION))
-			{
-				DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
-				if(df!=null) df.local_activity_delete=true;
-			}
-			else if(intent.getAction().equals(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION))
-			{
-				int size=detailFragmentCommunicationListeners.size();
-				for(int i=0;i<size;++i)
-				{
-					DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
-					if(listener!=null)
-					{
-						listener.onModificationObserved();
+				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+					DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
+					if (df != null) df.local_activity_delete = true;
+					break;
+				case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
+
+					for (int i = 0; i < size; ++i) {
+						DetailFragmentCommunicationListener listener = detailFragmentCommunicationListeners.get(i);
+						if (listener != null) {
+							listener.onModificationObserved();
+						}
 					}
-				}
+					break;
+				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
+					for(int i=0;i<size;++i)
+					{
+						DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+						if(listener!=null)
+						{
+							listener.onFragmentCacheClear();
+						}
+					}
+					break;
 			}
 		}
 	}

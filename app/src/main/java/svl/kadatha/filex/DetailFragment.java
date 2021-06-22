@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -94,7 +95,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private String tree_uri_path="";
 	ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
-	public boolean local_activity_delete,modification_observed,cleared_cache;
+	public boolean local_activity_delete,modification_observed,cache_cleared;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
@@ -180,9 +181,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		context=getContext();
-		if(cleared_cache)
+		if(cache_cleared)
 		{
-			cleared_cache=false;
+			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -301,7 +302,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(local_activity_delete)
 		{
-			cleared_cache=false;
+			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			after_filledFilePojos_procedure();
@@ -309,7 +310,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
-			cleared_cache=false;
+			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -330,7 +331,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}).start();
 			}
-			//FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType); //update parent filepojohashmap
+			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -417,7 +418,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	@Override
 	public void onFragmentCacheClear() {
-		cleared_cache=true;
+		cache_cleared=true;
 	}
 
 	@Override
