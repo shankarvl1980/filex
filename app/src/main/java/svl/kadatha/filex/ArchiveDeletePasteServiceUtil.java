@@ -33,14 +33,13 @@ public class ArchiveDeletePasteServiceUtil {
         }
         else
 
- */
 
         if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
         {
             emptyService=ArchiveDeletePasteProgressActivity2.class;
         }
         else
-
+*/
         if(ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 
         {

@@ -211,6 +211,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		mainActivity.addFragmentCommunicationListener(this);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
+		fileModifyObserver.startWatching();
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
 
 
@@ -397,7 +398,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onStop() {
 		super.onStop();
-		fileModifyObserver.startWatching();
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
