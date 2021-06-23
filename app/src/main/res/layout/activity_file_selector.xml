@@ -26,6 +26,8 @@
             android:textSize="18sp"
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
+            android:clickable="false"
+            android:focusable="false"
             />
 
         <ImageButton
@@ -37,7 +39,8 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:src="@drawable/down_arrow_toolbar_icon"
-
+            android:clickable="false"
+            android:focusable="false"
             />
 
     </androidx.appcompat.widget.Toolbar>

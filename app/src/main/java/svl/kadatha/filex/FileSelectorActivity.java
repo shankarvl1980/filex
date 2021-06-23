@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -77,7 +78,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         TinyDB tinyDB = new TinyDB(context);
         FM=getSupportFragmentManager();
         setContentView(R.layout.activity_file_selector);
-
+        Toolbar toolbar=findViewById(R.id.activity_file_selector_toolbar);
         file_number=findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
         Intent intent=getIntent();
         if(intent!=null)
@@ -93,8 +94,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         TextView heading = findViewById(R.id.file_selector_heading);
         if(action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) heading.setText(getString(R.string.choose_folder));
         else heading.setText(getString(R.string.application_name));
-        ImageButton directory_btn = findViewById(R.id.file_selector_directory_btn);
-        directory_btn.setOnClickListener(new View.OnClickListener() {
+        //ImageButton directory_btn = findViewById(R.id.file_selector_directory_btn);
+        toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.FILE_SELECTOR);

@@ -186,7 +186,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         v.layout(x,y,itemWidth-Global.TEN_DP,y+itemHeight);
 
         v=file_select_indicator;
-        int a=itemWidth-Global.THIRTY_FOUR_DP;
+        int a=(itemWidth+imageview_dimension+Global.TEN_DP+Global.TEN_DP-v.getMeasuredWidth())*2/3;
         int file_select_indicator_height=v.getMeasuredHeight();
         int c=(itemHeight-file_select_indicator_height)/2;
         v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
@@ -204,7 +204,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         x+=v.getMeasuredWidth();
 
         v=filesizepercentagetextview;
-        x=(itemWidth+imageview_dimension+Global.TEN_DP-filesizepercentagetextview.getMeasuredWidth())/2;
+        x=(itemWidth+imageview_dimension+Global.TEN_DP-v.getMeasuredWidth())/2;
         v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
 
