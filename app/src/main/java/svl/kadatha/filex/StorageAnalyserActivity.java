@@ -397,13 +397,13 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         @Override
         public void onReceive(Context context, Intent intent) {
             StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+            String activity_name=intent.getStringExtra("activity_name");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
                     if (storageAnalyserDialog != null) storageAnalyserDialog.local_activity_delete = true;
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    String activity_name=intent.getStringExtra("activity_name");
-                    if (storageAnalyserDialog != null && !activity_name.equals(ACTIVITY_NAME)) storageAnalyserDialog.local_activity_delete = true;
+                    if (storageAnalyserDialog != null) storageAnalyserDialog.modification_observed = true;
                     break;
                 case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
                     int size = detailFragmentCommunicationListeners.size();

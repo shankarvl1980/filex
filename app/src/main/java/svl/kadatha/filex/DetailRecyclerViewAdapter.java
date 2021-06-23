@@ -10,6 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -288,6 +289,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			df.mselecteditems=new SparseBooleanArray();
 			df.mselecteditemsFilePath=new SparseArray<>();
 			df.mainActivity.clearCache();
+			df.modification_observed=true;
 		}
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}

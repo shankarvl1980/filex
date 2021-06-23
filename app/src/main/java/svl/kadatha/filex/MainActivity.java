@@ -786,7 +786,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
-
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
@@ -1519,7 +1518,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onClick(View v)
 		{
 			// TODO: Implement this method
-			DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
+			final DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
 			Bundle bundle=new Bundle();
 			ArrayList<String> files_selected_array=new ArrayList<>();
 			ArrayList<Integer> files_selected_index_array=new ArrayList<>();
@@ -1536,6 +1535,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			} else if (id == R.id.toolbar_btn_2) {
 				FM.beginTransaction().detach(df).attach(df).commit();
 			} else if (id == R.id.toolbar_btn_3) {
+				actionmode_finish(df,df.fileclickselected);
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 					print(getString(R.string.files_can_not_be_pasted_here));
@@ -1583,8 +1583,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						files_selected_index_array.add(key);
 					}
 
-					DeleteFileAlertDialog deleteFileAlertDialogBuilder = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
-					deleteFileAlertDialogBuilder.show(FM, "delete_dialog");
+					DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
+					deleteFileAlertDialog.setOKButtonClickListener(new DeleteFileAlertDialog.OKButtonClickListener() {
+						@Override
+						public void okButtonClick() {
+							actionmode_finish(df,df.fileclickselected);
+						}
+					});
+					deleteFileAlertDialog.show(FM, "delete_dialog");
 				} else {
 					print(getString(R.string.select_files_to_delete));
 				}
@@ -2130,14 +2136,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
+			String activity_name=intent.getStringExtra("activity_name");
 			switch (intent.getAction()) {
 
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
 					if (df != null) df.local_activity_delete = true;
 					break;
 				case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-					String activity_name=intent.getStringExtra("activity_name");
-					if (df != null && !activity_name.equals(ACTIVITY_NAME) ) df.local_activity_delete = true;
+					if (df != null) df.modification_observed = true;
 					break;
 				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
 					int size = detailFragmentCommunicationListeners.size();

@@ -331,7 +331,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}).start();
 			}
 			FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
-			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME); //as file observer is triggered only once, not being trigger on default fragment
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -429,7 +428,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	@Override
 	public void onFileModified() {
-		modification_observed=true;
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
 	}
 
 

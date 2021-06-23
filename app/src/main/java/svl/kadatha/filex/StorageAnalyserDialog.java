@@ -256,7 +256,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 }
             }).start();
             FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
-            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context),StorageAnalyserActivity.ACTIVITY_NAME); //as file observer is triggered only once, not being trigger on default fragment
             after_filledFilePojos_procedure();
         }
     }
@@ -349,7 +348,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     @Override
     public void onFileModified() {
-        modification_observed=true;
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),StorageAnalyserActivity.ACTIVITY_NAME);
     }
 
 
@@ -640,10 +639,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     public void clear_cache_and_refresh()
     {
-        //final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
         mselecteditems=new SparseBooleanArray();
         mselecteditemsFilePath=new SparseArray<>();
         storageAnalyserActivity.clearCache();
+        modification_observed=true;
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 

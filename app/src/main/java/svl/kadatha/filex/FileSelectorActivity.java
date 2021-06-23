@@ -313,14 +313,13 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public void onReceive(Context context, Intent intent) {
 
             FileSelectorDialog fileSelectorDialog = (FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
+            String activity_name=intent.getStringExtra("activity_name");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-
                     if (fileSelectorDialog != null) fileSelectorDialog.local_activity_delete = true;
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    String activity_name=intent.getStringExtra("activity_name");
-                    if (fileSelectorDialog != null && !activity_name.equals(ACTIVITY_NAME)) fileSelectorDialog.local_activity_delete = true;
+                    if (fileSelectorDialog != null) fileSelectorDialog.modification_observed = true;
                     break;
                 case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
                     int size = detailFragmentCommunicationListeners.size();
