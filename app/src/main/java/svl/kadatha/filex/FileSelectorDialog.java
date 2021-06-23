@@ -153,7 +153,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
-		fileModifyObserver.startWatching();
 
 		TextView current_folder_label=v.findViewById(R.id.file_selector_current_folder_label);
 		current_folder_label.setText(R.string.current_folder_colon);
@@ -270,6 +269,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public void onStop() {
 		super.onStop();
+		fileModifyObserver.startWatching();
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
