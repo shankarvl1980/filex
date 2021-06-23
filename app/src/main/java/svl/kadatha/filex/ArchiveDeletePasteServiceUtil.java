@@ -77,7 +77,7 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null)storageAnalyserDialog.clear_cache_and_refresh();
     }
 
-    public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder)
+    public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder,FileObjectType fileObjectType)
     {
         DetailFragment df = null;
         FileSelectorDialog fileSelectorDialog = null;
@@ -91,7 +91,7 @@ public class ArchiveDeletePasteServiceUtil {
         String parent_source_folder=new File(source_folder).getParent();
         if(parent_source_folder==null) parent_source_folder=source_folder;
 
-        if(df!=null)
+        if(df!=null && df.fileObjectType==fileObjectType)
         {
             String tag=df.getTag();
             if(tag.startsWith(parent_source_folder))
@@ -101,7 +101,7 @@ public class ArchiveDeletePasteServiceUtil {
 
         }
 
-        if(fileSelectorDialog!=null)
+        if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==fileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
             if(tag.startsWith(parent_source_folder))
@@ -111,7 +111,7 @@ public class ArchiveDeletePasteServiceUtil {
 
         }
 
-        if(storageAnalyserDialog!=null)
+        if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==fileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
             if(tag.startsWith(parent_source_folder))
@@ -121,7 +121,7 @@ public class ArchiveDeletePasteServiceUtil {
         }
     }
 
-    public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(String dest_folder,String source_folder, FilePOJO filePOJO)
+    public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(String dest_folder,String source_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType,FilePOJO filePOJO)
     {
         DetailFragment df = null;
         FileSelectorDialog fileSelectorDialog = null;
@@ -141,7 +141,7 @@ public class ArchiveDeletePasteServiceUtil {
         if(df!=null)
         {
             String tag=df.getTag();
-            if(tag.equals(dest_folder))
+            if(tag.equals(dest_folder) && df.fileObjectType==destFileObjectType)
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
@@ -156,28 +156,28 @@ public class ArchiveDeletePasteServiceUtil {
                 }
 
             }
-            else if (tag.startsWith(parent_dest_folder))
+            else if (tag.startsWith(parent_dest_folder) && df.fileObjectType==destFileObjectType)
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
 
-            if(tag.startsWith(parent_source_folder))
+            if(tag.startsWith(parent_source_folder) && df.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
             }
         }
 
-        if(fileSelectorDialog!=null)
+        if(fileSelectorDialog!=null )
         {
             String tag=fileSelectorDialog.getTag();
-            if (tag.startsWith(parent_dest_folder))
+            if (tag.startsWith(parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if(tag.startsWith(parent_source_folder))
+            if(tag.startsWith(parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
@@ -187,12 +187,12 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null)
         {
             String tag=storageAnalyserDialog.getTag();
-            if (tag.startsWith(parent_dest_folder))
+            if (tag.startsWith(parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if(tag.startsWith(parent_source_folder))
+            if(tag.startsWith(parent_source_folder) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
@@ -233,7 +233,7 @@ public class ArchiveDeletePasteServiceUtil {
             {
 
                 String tag=df.getTag();
-                if(tag.startsWith(parent_dest_folder))
+                if(tag.startsWith(parent_dest_folder)  && df.fileObjectType==destFileObjectType)
                 {
                     Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                     df.clearSelectionAndNotifyDataSetChanged();
@@ -251,7 +251,7 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(fileSelectorDialog!=null)
+        if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==destFileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
             if(tag.startsWith(parent_dest_folder))
@@ -261,7 +261,7 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(storageAnalyserDialog!=null)
+        if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==destFileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
             if(tag.startsWith(parent_dest_folder))
@@ -293,7 +293,7 @@ public class ArchiveDeletePasteServiceUtil {
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_names,sourceFileObjectType);
             }
 
-            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder);
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder,sourceFileObjectType);
             notification_content=context.getString(R.string.deleted_selected_files)+" "+source_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
         }
@@ -343,7 +343,7 @@ public class ArchiveDeletePasteServiceUtil {
 
             }
 
-            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder,source_folder,filePOJO);
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder,source_folder,destFileObjectType,sourceFileObjectType,filePOJO);
             notification_content=(cut ? context.getString(R.string.moved_selected_files)+" "+dest_folder : context.getString(R.string.copied_selected_files)+" "+dest_folder);
             Global.WORKOUT_AVAILABLE_SPACE();
         }
@@ -361,7 +361,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(f.exists())
             {
-                if (FileUtil.isWritable(f.getAbsolutePath()))
+                if (FileUtil.isWritable(destFileObjectType,f.getAbsolutePath()))
                 {
                     FileUtil.deleteNativeDirectory(f);
                 }
@@ -390,7 +390,7 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder);
+        NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
@@ -408,7 +408,7 @@ public class ArchiveDeletePasteServiceUtil {
         else
         {
             notification_content=context.getString(R.string.could_not_create)+" '"+zip_file_name+"'";
-            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder);
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
         }
         return notification_content;
     }
@@ -434,7 +434,7 @@ public class ArchiveDeletePasteServiceUtil {
         else
         {
             notification_content=context.getString(R.string.could_not_extract)+" '"+new File(zip_file_path).getName()+"'";
-            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder);
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
         }
         return notification_content;
 

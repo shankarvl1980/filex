@@ -131,7 +131,7 @@ public class RenameFileDialog extends DialogFragment
 				new_file_path =(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
 
 				overwriting= whether_file_already_exists(new_file_path, fileObjectType);
-				isWritable=FileUtil.isWritable(new_file_path);
+				isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
 
 				if(overwriting)
 				{

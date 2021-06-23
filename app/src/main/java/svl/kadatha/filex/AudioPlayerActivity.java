@@ -65,6 +65,9 @@ public class AudioPlayerActivity extends BaseActivity
 	Uri data;
 	FileObjectType fileObjectType;
 	String file_path;
+	public static final String ACTIVITY_NAME="AUDIO_PLAYER_ACTIVITY";
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{

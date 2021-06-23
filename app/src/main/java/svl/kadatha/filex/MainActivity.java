@@ -79,6 +79,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public ImageButton parent_dir_imagebutton,all_select;
 	private ImageView working_dir_expand_indicator,library_expand_indicator;
 	TextView file_number_view;
+	public static final String ACTIVITY_NAME="MAIN_ACTIVITY";
 
 	Toolbar extract_toolbar,bottom_toolbar,paste_toolbar,actionmode_toolbar;
 	ConstraintLayout search_toolbar;
@@ -786,7 +787,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
-		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager);
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
 
@@ -2128,23 +2129,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int size = detailFragmentCommunicationListeners.size();
+			DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
 			switch (intent.getAction()) {
 
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-					DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
 					if (df != null) df.local_activity_delete = true;
 					break;
 				case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-
-					for (int i = 0; i < size; ++i) {
-						DetailFragmentCommunicationListener listener = detailFragmentCommunicationListeners.get(i);
-						if (listener != null) {
-							listener.onModificationObserved();
-						}
-					}
+					String activity_name=intent.getStringExtra("activity_name");
+					if (df != null && !activity_name.equals(ACTIVITY_NAME) ) df.local_activity_delete = true;
 					break;
 				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
+					int size = detailFragmentCommunicationListeners.size();
 					for(int i=0;i<size;++i)
 					{
 						DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
@@ -2162,7 +2158,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		void onFragmentCacheClear();
 		void setUsbFileRootNull();
-		void onModificationObserved();
 	}
 
 	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)

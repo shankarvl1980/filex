@@ -801,7 +801,7 @@ public class PdfViewFragment_view_pager extends Fragment
                 pdf_view_adapter.notifyDataSetChanged();
                 picture_selector_adapter.notifyDataSetChanged();
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                 ((PdfViewActivity)context).finish();
 
             }
@@ -819,7 +819,7 @@ public class PdfViewFragment_view_pager extends Fragment
 
             if(fileObjectType==FileObjectType.FILE_TYPE)
             {
-                isFromInternal=FileUtil.isFromInternal(src_file_list.get(0).getPath());
+                isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
             }
             success=deleteFromFolder();
             return success;
@@ -837,7 +837,7 @@ public class PdfViewFragment_view_pager extends Fragment
                 pdf_view_adapter.notifyDataSetChanged();
                 picture_selector_adapter.notifyDataSetChanged();
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                 ((PdfViewActivity)context).finish();
 
             }

@@ -45,7 +45,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public String toolbar_shown="bottom";
     private ImageButton all_select;
     public FloatingActionButton floatingActionButton;
-
+    public static final String ACTIVITY_NAME="STORAGE_ANALYSER_ACTIVITY";
 
 
     @Override
@@ -253,7 +253,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
     }
 
 
@@ -396,23 +396,17 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int size = detailFragmentCommunicationListeners.size();
+            StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
-                    if (storageAnalyserDialog != null)
-                        storageAnalyserDialog.local_activity_delete = true;
+                    if (storageAnalyserDialog != null) storageAnalyserDialog.local_activity_delete = true;
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-
-                    for (int i = 0; i < size; ++i) {
-                        DetailFragmentCommunicationListener listener = detailFragmentCommunicationListeners.get(i);
-                        if (listener != null) {
-                            listener.onModificationObserved();
-                        }
-                    }
+                    String activity_name=intent.getStringExtra("activity_name");
+                    if (storageAnalyserDialog != null && !activity_name.equals(ACTIVITY_NAME)) storageAnalyserDialog.local_activity_delete = true;
                     break;
                 case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
+                    int size = detailFragmentCommunicationListeners.size();
                     for(int i=0;i<size;++i)
                     {
                         DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
@@ -464,7 +458,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         void onFragmentCacheClear();
         void onSettingUsbFileRootNull();
-        void onModificationObserved();
     }
 
     public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)

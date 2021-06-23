@@ -460,7 +460,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
 			boolean isWritable;
-			isWritable=FileUtil.isWritable(file_path);
+			isWritable=FileUtil.isWritable(fileObjectType,file_path);
 			if(isWritable)
 			{
 				return true;

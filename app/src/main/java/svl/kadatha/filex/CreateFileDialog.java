@@ -124,7 +124,7 @@ public class CreateFileDialog extends DialogFragment
 				String new_file_path =(parent_folder.endsWith(File.separator)) ? parent_folder+new_name : parent_folder+File.separator+new_name;
 				File file=new File(new_file_path);
 
-				boolean isWritable=FileUtil.isWritable(new_file_path);
+				boolean isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
 				if(!check_name_availability(new_file_path, isWritable,fileObjectType))
 				{
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);

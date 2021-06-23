@@ -111,6 +111,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
     private FragmentManager fm;
 	private LocalBroadcastManager localBroadcastManager;
 	private InputMethodManager imm;
+	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
+
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -397,7 +399,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 
 		file=new File(file_path);
-		isWritable=FileUtil.isWritable(file_path);
+		isWritable=FileUtil.isWritable(fileObjectType,file_path);
 
 		if(savedInstanceState==null)
 		{
@@ -1033,7 +1035,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 									if(result)
 									{
 										eol=altered_eol;
-										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 									}
 									else
 									{
@@ -1082,7 +1084,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 									if(result)
 									{
 										eol=altered_eol;
-										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 									}
 									else
 									{
@@ -1434,7 +1436,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			if(deleted_files.size()>0)
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 				finish();
 
 			}
@@ -1452,7 +1454,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 			if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
-				isFromInternal=FileUtil.isFromInternal(src_file_list.get(0).getPath());
+				isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
 			}
 			success=deleteFromFolder();
 			return success;
@@ -1468,7 +1470,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			if(deleted_files.size()>0)
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 				finish();
 
 			}

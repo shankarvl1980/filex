@@ -535,7 +535,7 @@ public class VideoViewContainerFragment extends Fragment
 
 				adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
 				if(video_list.size()<1)
 				{
 					((VideoViewActivity)context).finish();
@@ -555,7 +555,7 @@ public class VideoViewContainerFragment extends Fragment
 
 			if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
-				isFromInternal=FileUtil.isFromInternal(src_file_list.get(0).getPath());
+				isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
 			}
 			success=deleteFromFolder();
 			return success;
@@ -587,7 +587,7 @@ public class VideoViewContainerFragment extends Fragment
 
 				adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
 				if(video_list.size()<1)
 				{
 					((VideoViewActivity)context).finish();

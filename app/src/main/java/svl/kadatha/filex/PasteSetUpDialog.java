@@ -143,7 +143,7 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			isSourceFromInternal=FileUtil.isFromInternal(file_path);
+			isSourceFromInternal=FileUtil.isFromInternal(fileObjectType,file_path);
 			if(isSourceFromInternal)
 			{
 				return true;
@@ -162,7 +162,7 @@ public class PasteSetUpDialog extends DialogFragment
 			for(int n=0;n<size;++n)
 			{
 				file_path=files_selected_array.get(n);
-				if(!FileUtil.isFromInternal(file_path))
+				if(!FileUtil.isFromInternal(FileObjectType.FILE_TYPE,file_path))
 				{
 					if(!check_SAF_permission_source(file_path,FileObjectType.FILE_TYPE)) return false;
 				}
@@ -178,7 +178,7 @@ public class PasteSetUpDialog extends DialogFragment
 	{
 		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			isWritable=FileUtil.isWritable(file_path);
+			isWritable=FileUtil.isWritable(fileObjectType,file_path);
 			if(isWritable)
 			{
 				return true;

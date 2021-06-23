@@ -778,7 +778,7 @@ public class PdfViewFragment_single_view extends Fragment
 
                 pdf_view_adapter.notifyDataSetChanged();
                 picture_selector_adapter.notifyDataSetChanged();
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
             }
 
             pbf.dismissAllowingStateLoss();
@@ -790,7 +790,7 @@ public class PdfViewFragment_single_view extends Fragment
         {
             // TODO: Implement this method
             boolean success;
-            isFromInternal=FileUtil.isFromInternal(files_selected_for_delete.get(0).getAbsolutePath());
+            isFromInternal=FileUtil.isFromInternal(fileObjectType,files_selected_for_delete.get(0).getAbsolutePath());
             success=deleteFromFolder();
             return success;
         }
@@ -924,7 +924,7 @@ public class PdfViewFragment_single_view extends Fragment
             {
                 pdf_view_adapter.notifyDataSetChanged();
                 picture_selector_adapter.notifyDataSetChanged();
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
 
                 if(!pdf_file.exists())
                 {

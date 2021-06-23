@@ -19,7 +19,7 @@ public class ImageViewActivity extends BaseActivity
 	private Context context;
 	TinyDB tinyDB;
 	public File CacheDir;
-
+	public static final String ACTIVITY_NAME="IMAGE_VIEW_ACTIVITY";
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)

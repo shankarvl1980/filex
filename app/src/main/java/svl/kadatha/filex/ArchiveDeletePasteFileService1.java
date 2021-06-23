@@ -342,7 +342,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			OutputStream outStream=null;
 			if(destFileObjectType==FileObjectType.FILE_TYPE)
 			{
-				if(FileUtil.isWritable(dest_folder))
+				if(FileUtil.isWritable(destFileObjectType,dest_folder))
 				{
 					File f=new File(dest_folder,zip_file_name);
 					try {
@@ -623,7 +623,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			boolean success=false, isWritable=false;
 			if(destFileObjectType==FileObjectType.FILE_TYPE){
-				isWritable=FileUtil.isWritable(zip_dest_path);
+				isWritable=FileUtil.isWritable(destFileObjectType,zip_dest_path);
 				if(isWritable)
 				{
 					if(zip_folder_name!=null)
@@ -907,7 +907,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			{
 				if(sourceFileObjectType==FileObjectType.FILE_TYPE)
 				{
-					isFromInternal=FileUtil.isFromInternal(files_selected_array.get(0));
+					isFromInternal=FileUtil.isFromInternal(sourceFileObjectType,files_selected_array.get(0));
 				}
 				success=deleteFromFolder(isFromInternal);
 			}
@@ -927,7 +927,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				String file_path=files_selected_array.get(i);
 				File f=new File(file_path);
 
-				if(FileUtil.isFromInternal(file_path))
+				if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,file_path))
 				{
 					current_file_name=f.getName();
 					success=deleteNativeDirectory(f);
@@ -1260,7 +1260,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return false;
 					}
 
-					if((dest_folder+File.separator).startsWith(file.getAbsolutePath()+File.separator))  //if copying parent folder to child folder
+					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(file.getAbsolutePath()+File.separator))  //if copying parent folder to child folder
 					{
 						continue;
 					}
@@ -1323,7 +1323,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						replace= (apply_all) && replace;
 						current_file_name=file.getName();
 						String dest_file_path=dest_folder+File.separator+current_file_name;
-						boolean isSourceFromInternal=FileUtil.isFromInternal(file.getAbsolutePath());
+						boolean isSourceFromInternal=FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
 						if(isWritable)
 						{
 							if(isSourceFromInternal)
@@ -1410,7 +1410,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					{
 						return false;
 					}
-					if((dest_folder+File.separator).startsWith(src_file_path+File.separator))
+					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(src_file_path+File.separator))
 					{
 						continue;
 					}

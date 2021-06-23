@@ -32,6 +32,8 @@ public class VideoViewActivity extends BaseActivity
 	public FilePOJO currently_shown_file;
 	public boolean fromThirdPartyApp;
 	public String source_folder;
+	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

@@ -13,7 +13,7 @@ public class PdfViewActivity extends BaseActivity {
     private Context context;
     public FragmentManager fm;
     public Uri data;
-
+    public static final String ACTIVITY_NAME="PDF_VIEW_ACTIVITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

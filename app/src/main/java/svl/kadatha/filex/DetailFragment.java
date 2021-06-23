@@ -129,7 +129,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		file_click_selected_name=new File(fileclickselected).getName();
-		archive_view= fileclickselected.startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && MainActivity.ARCHIVE_VIEW;
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && fileclickselected.startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && MainActivity.ARCHIVE_VIEW;
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
@@ -330,7 +330,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}).start();
 			}
-			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
+			FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+			Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME); //as file observer is triggered only once, not being trigger on default fragment
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -425,10 +426,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		currentUsbFile=null;
 	}
 
-	@Override
-	public void onModificationObserved() {
-		modification_observed=true;
-	}
 
 	@Override
 	public void onFileModified() {

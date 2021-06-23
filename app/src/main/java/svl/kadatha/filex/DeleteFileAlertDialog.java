@@ -129,7 +129,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 					if(sourceFileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);
-						if(!FileUtil.isWritable(file_path))
+						if(!FileUtil.isWritable(sourceFileObjectType,file_path))
 						{
 							if (!check_SAF_permission(file_path, sourceFileObjectType)) return;
 
@@ -148,7 +148,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 						for(int i=0;i<size;++i)
 						{
 							String file_path=files_selected_array.get(i);
-							if(FileUtil.isFromInternal(file_path))
+							if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,file_path))
 							{
 								whether_native_file_exists=true;
 							}

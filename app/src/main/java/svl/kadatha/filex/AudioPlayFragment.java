@@ -846,7 +846,7 @@ public class AudioPlayFragment extends Fragment
 				}
 				((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_files);
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 				AudioPlayerActivity.AUDIO_FILE=null;
 
 			}
@@ -863,7 +863,7 @@ public class AudioPlayFragment extends Fragment
 
 			if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
-				isFromInternal=FileUtil.isFromInternal(src_file_list.get(0).getData());
+				isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getData());
 			}
 			success=deleteFromFolder();
 			return success;
@@ -884,7 +884,7 @@ public class AudioPlayFragment extends Fragment
 				}
 				((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_files);
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 				AudioPlayerActivity.AUDIO_FILE=null;
 
 			}

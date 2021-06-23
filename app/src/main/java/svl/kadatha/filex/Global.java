@@ -445,10 +445,11 @@ public class Global
 		return listviewElementsheight;
 	}
 
-	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager)
+	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name)
 	{
 		Intent intent=new Intent();
 		intent.setAction(action);
+		intent.putExtra("activity_name",activity_name);
 		localBroadcastManager.sendBroadcast(intent);
 	}
 

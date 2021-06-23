@@ -381,7 +381,7 @@ import java.util.List;
 		OutputStream outStream=null;
 		try 
 		{
-			if(FileUtil.isFromInternal(source_file_path))
+			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,source_file_path))
 			{
 				inStream = new FileInputStream(source_file_path);
 
@@ -1168,16 +1168,17 @@ import java.util.List;
 		}
 
 
-	public static boolean isFromInternal(@NonNull final String file_path)
+	public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path)
 	{
+		if(!fileObjectType.equals(FileObjectType.FILE_TYPE)) return  false;
 		String path=Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR();
 		return file_path.startsWith(path);
 	}
 
 
-	public static boolean isWritable(@NonNull final String file_path)
+	public static boolean isWritable(FileObjectType fileObjectType,@NonNull final String file_path)
 	{
-		return isFromInternal(file_path);
+		return isFromInternal(fileObjectType,file_path);
 
 	}
 

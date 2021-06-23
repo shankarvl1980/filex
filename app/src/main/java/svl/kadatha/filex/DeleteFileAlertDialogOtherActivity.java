@@ -104,7 +104,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 					if(fileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);
-						if(!FileUtil.isWritable(file_path))
+						if(!FileUtil.isWritable(fileObjectType,file_path))
 						{
 							if (!check_SAF_permission(file_path, fileObjectType)) return;
 						}
@@ -115,7 +115,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 						for(int i=0;i<size;++i)
 						{
 							String file_path=files_selected_array.get(i);
-							if (!FileUtil.isFromInternal(file_path))
+							if (!FileUtil.isFromInternal(FileObjectType.FILE_TYPE,file_path))
 							{
 								if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) return;
 							}
@@ -297,7 +297,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			String file_path=source_list_files.get(0);
 			if(sourceFileObjectType==FileObjectType.FILE_TYPE)
 			{
-				if(FileUtil.isFromInternal(file_path))
+				if(FileUtil.isFromInternal(sourceFileObjectType,file_path))
 				{
 					File[] f_array=new File[size];
 					for(int i=0;i<size;++i)

@@ -199,7 +199,7 @@ public class DeleteAudioDialog extends DialogFragment
 				{
 					deleteAudioCompleteListener.onDeleteComplete();
 				}
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 			}
 			//if(!permission_requested)
 			{
@@ -215,7 +215,7 @@ public class DeleteAudioDialog extends DialogFragment
 			boolean success;
 			if(whetherFromAlbum)
 			{
-				isFromInternal=FileUtil.isFromInternal(src_file_path_list.get(0));
+				isFromInternal=FileUtil.isFromInternal(FileObjectType.FILE_TYPE,src_file_path_list.get(0));
 				success=deleteFromFolder();
 			}
 			else
@@ -281,7 +281,7 @@ public class DeleteAudioDialog extends DialogFragment
 
 				String file_path=src_file_path_list.get(i);
 				File f=new File(file_path);
-				if(FileUtil.isFromInternal(file_path))
+				if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,file_path))
 				{
 					current_file_name=f.getName();
 					success=deleteNativeDirectory(f);
@@ -416,7 +416,7 @@ public class DeleteAudioDialog extends DialogFragment
 				{
 					deleteAudioCompleteListener.onDeleteComplete();
 				}
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager);
+				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 				print(getString(R.string.selected_audios_deleted));
 
 			}

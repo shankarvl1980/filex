@@ -255,7 +255,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
                 }
             }).start();
-            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context)); //as file observer is triggered only once, not being trigger on default fragment
+            FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context),StorageAnalyserActivity.ACTIVITY_NAME); //as file observer is triggered only once, not being trigger on default fragment
             after_filledFilePojos_procedure();
         }
     }
@@ -345,10 +346,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         currentUsbFile=null;
     }
 
-    @Override
-    public void onModificationObserved() {
-        modification_observed=true;
-    }
 
     @Override
     public void onFileModified() {
