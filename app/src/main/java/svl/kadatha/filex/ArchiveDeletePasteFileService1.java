@@ -116,6 +116,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					dest_folder=bundle.getString("dest_folder");
 					destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
 					zip_file_path=bundle.getString("zip_file_path");
+					source_folder=bundle.getString("source_folder");
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					zip_folder_name=bundle.getString("zip_folder_name");
 					archive_action=bundle.getString("archive_action");
@@ -137,6 +138,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					dest_folder=bundle.getString("dest_folder");
 					destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
 					zip_file_path=bundle.getString("zip_file_path");
+					source_folder=bundle.getString("source_folder");
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					zip_folder_name=bundle.getString("zip_folder_name");
 					archive_action=bundle.getString("archive_action");

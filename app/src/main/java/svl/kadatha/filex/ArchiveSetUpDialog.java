@@ -258,6 +258,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 							bundle.putString("archive_action",archive_action);
 							bundle.putString("tree_uri_path",tree_uri_path);
 							bundle.putParcelable("tree_uri",tree_uri);
+							bundle.putString("source_folder",parent_file_path);
 							bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
 							bundle.putSerializable("destFileObjectType",destFileObjectType);
 
@@ -321,6 +322,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 							bundle.putString("zip_file_path", zip_file_path);
 							bundle.putString("archive_action",archive_action);
 							bundle.putBoolean("archive_view", false);
+							bundle.putString("source_folder",parent_file_path);
 							bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
 
 							String zip_folder_path;

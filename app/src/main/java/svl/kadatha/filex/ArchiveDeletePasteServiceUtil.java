@@ -73,7 +73,7 @@ public class ArchiveDeletePasteServiceUtil {
 
         if(df!=null) df.adapter.clear_cache_and_refresh();
         if(fileSelectorDialog!=null) fileSelectorDialog.clear_cache_and_refresh();
-        if(storageAnalyserDialog!=null)storageAnalyserDialog.clear_cache_and_refresh();
+        if(storageAnalyserDialog!=null) storageAnalyserDialog.clear_cache_and_refresh();
     }
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder,FileObjectType fileObjectType)

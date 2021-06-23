@@ -806,7 +806,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						String dest_folder=bundle.getString("dest_folder");
 						FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 						FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
-						if (source_folder.equals(dest_folder)) {
+						if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
 							print(!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 						}
 						else
@@ -912,7 +912,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			actionmode_finish(df,file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
 		}
 
-		if(file_path.equals(DetailFragment.SEARCH_RESULT))
+		if(file_path.equals(DetailFragment.SEARCH_RESULT) || DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null)
 		{
 			FM.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
 					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
@@ -1544,7 +1544,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				FileObjectType sourceFileObjectType = DetailFragment.CUT_COPY_FILE_OBJECT_TYPE;
 				String source_folder = DetailFragment.CUT_COPY_FILECLICKSELECTED;
-				if (source_folder.equals(df.fileclickselected)) {
+				if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
 					print(DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 				} else  {
 					if(DetailFragment.CUT_COPY_FILE_OBJECT_TYPE==FileObjectType.SEARCH_LIBRARY_TYPE)
