@@ -40,10 +40,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		zip_folder_name=bundle.getString("zip_folder_name");
 		files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 		archive_action=bundle.getString("archive_action");
-		
-	
-		
-		
+
 	}
 
 	@Override

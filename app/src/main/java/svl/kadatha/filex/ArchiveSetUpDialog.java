@@ -232,7 +232,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 							String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 							destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
-							String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
+							final String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
 
 							if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
 								print(getString(R.string.directory_not_exist_not_valid));
@@ -271,6 +271,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 									{
 										public void onYes()
 										{
+											files_selected_array.remove(zip_folder_path+".zip");
+											bundle.putStringArrayList("files_selected_array",files_selected_array);
 											Intent intent=new Intent(context,emptyService);
 											intent.setAction(ARCHIVE_ACTION_ZIP);
 											intent.putExtra("bundle",bundle);

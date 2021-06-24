@@ -107,6 +107,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		context=getContext();
+		mainActivity=(MainActivity)context;
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
@@ -129,7 +130,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		file_click_selected_name=new File(fileclickselected).getName();
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && fileclickselected.startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && MainActivity.ARCHIVE_VIEW;
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && fileclickselected.startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{

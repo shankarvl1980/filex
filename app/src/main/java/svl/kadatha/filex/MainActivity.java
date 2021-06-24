@@ -72,7 +72,7 @@ import java.util.zip.ZipInputStream;
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener
 {
-	static boolean ARCHIVE_VIEW;
+	public boolean archive_view;
 	private boolean working_dir_open,library_or_search_shown;
 	DrawerLayout drawerLayout;
     public Button rename,working_dir_add_btn,working_dir_remove_btn;
@@ -114,7 +114,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static PackageManager PM;
 	static int ARCHIVE_CACHE_DIR_LENGTH;
 	static FragmentManager FM;
-	static String TOOLBAR_SHOWN_PRIOR_ARCHIVE="";
+	//static String TOOLBAR_SHOWN_PRIOR_ARCHIVE="";
+	private String toolbar_shown_prior_archive="";
     private EditText search_view;
 	public boolean search_toolbar_visible;
 	private KeyBoardUtil keyBoardUtil;
@@ -842,6 +843,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		// TODO: Implement this method
 		super.onSaveInstanceState(outState);
 		outState.putString("toolbar_shown",toolbar_shown);
+		outState.putString("toolbar_shown_prior_archive",toolbar_shown_prior_archive);
+		outState.putBoolean("archive_view",archive_view);
 		outState.putBoolean("working_dir_open",working_dir_open);
 		outState.putBoolean("library_or_search_shown",library_or_search_shown);
 		outState.putSerializable("custom_dir_selected_hash_map",workingDirRecyclerAdapter.custom_dir_selected_hash_map);
@@ -874,7 +877,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				bottom_toolbar.setVisibility(View.GONE);
 				break;
 		}
-
+		toolbar_shown_prior_archive=savedInstanceState.getString("toolbar_shown_prior_archive");
+		archive_view=savedInstanceState.getBoolean("archive_view");
 		if(df.mselecteditems.size()>1)
 		{
 			rename.setEnabled(false);
@@ -960,7 +964,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
-			if(df.getTag().equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && ARCHIVE_VIEW)
+			if(df.getTag().equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
 			{
 				archive_exit();
 			}
@@ -996,7 +1000,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df_tag = df.getTag();
 				}
 
-				if(df_tag.equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && ARCHIVE_VIEW)
+				if(df_tag.equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
 				{
 					parent_dir_imagebutton.setEnabled(false);
 					parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
@@ -1065,7 +1069,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)
 	{
 		listPopWindow.dismiss();
-		if(detailfrag_tag.startsWith(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  ARCHIVE_VIEW)
+		if(detailfrag_tag.startsWith(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  archive_view)
 		{
 			extract_toolbar.setVisibility(View.VISIBLE);
 			extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -1081,7 +1085,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
 		{
-			if(ARCHIVE_VIEW)
+			if(archive_view)
 			{
 				archive_exit();   //experimental
 			}
@@ -1131,12 +1135,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		}
 
-		if(TOOLBAR_SHOWN_PRIOR_ARCHIVE.equals("paste"))
+		if(toolbar_shown_prior_archive.equals("paste"))
 		{
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-			toolbar_shown=TOOLBAR_SHOWN_PRIOR_ARCHIVE;
-			TOOLBAR_SHOWN_PRIOR_ARCHIVE="";
+			toolbar_shown=toolbar_shown_prior_archive;
+			toolbar_shown_prior_archive="";
 			bottom_toolbar.setVisibility(View.GONE);
 		}
 		else
@@ -1149,7 +1153,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		actionmode_toolbar.setVisibility(View.GONE);
 		extract_toolbar.setVisibility(View.GONE);
-		ARCHIVE_VIEW=false;
+		archive_view=false;
 	}
 
 
@@ -1166,7 +1170,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(df.fileObjectType== FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
 		{
 			File file=new File(file_path);
-			if(file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !ARCHIVE_VIEW)
+			if(file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !archive_view)
 			{
 				int i=workingDirRecyclerAdapter.insert(file_path);
 				workingDirListRecyclerView.scrollToPosition(i);
@@ -1862,10 +1866,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
 			progressbarFragment.dismissAllowingStateLoss();
-			ARCHIVE_VIEW=result;
+			archive_view=result;
 			if(result)
 			{
-				TOOLBAR_SHOWN_PRIOR_ARCHIVE=toolbar_shown;
+				toolbar_shown_prior_archive=toolbar_shown;
 				createFragmentTransaction(ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
 			}
 
@@ -1939,10 +1943,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			// TODO: Implement this method
 			super.onPostExecute(result);
 			progressbarFragment.dismissAllowingStateLoss();
-			ARCHIVE_VIEW=result;
+			archive_view=result;
 			if(result)
 			{
-				TOOLBAR_SHOWN_PRIOR_ARCHIVE=toolbar_shown;
+				toolbar_shown_prior_archive=toolbar_shown;
 				createFragmentTransaction(ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
 			}
 			else
