@@ -1270,9 +1270,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 									publishProgress(file);
 									String f_name=file.getName();
 									String f_path=file.getAbsolutePath();
-									copied_files_name.add(f_name);
 									files_selected_array.remove(f_path);
-									copied_source_file_path_list.add(f_path);
 									it++;
 									copy_result=true;
 									continue r;
@@ -1304,7 +1302,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 							return false;
 						}
 
-						replace= (apply_all) && replace;
+						replace= (apply_all && replace);
 						current_file_name=file.getName();
 						String dest_file_path=dest_folder+File.separator+current_file_name;
 						boolean isSourceFromInternal=FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
@@ -1419,9 +1417,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 									}
 									publishProgress(new File(src_file_path));
-									copied_files_name.add(src_file_name);
 									files_selected_array.remove(src_file_path);
-									copied_source_file_path_list.add(src_file_path);
 									it++;
 									copy_result=true;
 									continue r;
@@ -1453,7 +1449,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 						{
 							return false;
 						}
-						replace= (apply_all) && replace;
+						replace= (apply_all && replace);
 						current_file_name=src_file_name;
 						UsbFile src_usbfile=FileUtil.getUsbFile(MainActivity.usbFileRoot,src_file_path);
 						if(src_usbfile==null)

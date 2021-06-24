@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileInputStream;
@@ -164,7 +165,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 					source_uri=bundle.getParcelable("source_uri");
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
-					//source_folder=getParentFilePath(files_selected_array.get(0));
 					source_folder=bundle.getString("source_folder");
                     boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
@@ -188,7 +188,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 					source_uri=bundle.getParcelable("source_uri");
 					cut=bundle.getBoolean("cut");
 					isWritable=bundle.getBoolean("isWritable");
-					//source_folder=getParentFilePath(files_selected_array.get(0));
 					source_folder=bundle.getString("source_folder");
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,1);
 					fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -630,7 +629,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					if(zip_folder_name!=null)
 					{
 						success=FileUtil.mkdirNative(new File(zip_dest_path));
-						if(!success) return success;
+						if(!success) return false;
 					}
 
 				}
@@ -638,7 +637,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					if(zip_folder_name!=null)
 					{
 						success=FileUtil.mkdirSAF(context,dest_folder,zip_folder_name,tree_uri,tree_uri_path);
-						if(!success) return success;
+						if(!success) return false;
 					}
 				}
 
@@ -1204,8 +1203,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onCancelled(result);
-
-
 			if(permanent_cancel)
 			{
 				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,copied_files_name,overwritten_copied_file_name_list,copied_source_file_path_list,cut,true);
@@ -1287,9 +1284,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 									publishProgress(file);
 									String f_name=file.getName();
 									String f_path=file.getAbsolutePath();
-									copied_files_name.add(f_name);
 									files_selected_array.remove(f_path);
-									copied_source_file_path_list.add(f_path);
 									it++;
 									copy_result=true;
 									continue r;
@@ -1321,7 +1316,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 							return false;
 						}
 
-						replace= (apply_all) && replace;
+						replace= (apply_all && replace);
 						current_file_name=file.getName();
 						String dest_file_path=dest_folder+File.separator+current_file_name;
 						boolean isSourceFromInternal=FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
@@ -1436,9 +1431,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 									}
 									publishProgress(new File(src_file_path));
-									copied_files_name.add(src_file_name);
 									files_selected_array.remove(src_file_path);
-									copied_source_file_path_list.add(src_file_path);
 									it++;
 									copy_result=true;
 									continue r;
@@ -1470,7 +1463,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						{
 							return false;
 						}
-						replace= (apply_all) && replace;
+						replace= (apply_all && replace);
 						current_file_name=src_file_name;
 						UsbFile src_usbfile=FileUtil.getUsbFile(MainActivity.usbFileRoot,src_file_path);
 						if(src_usbfile==null)

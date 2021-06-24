@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,7 +27,6 @@ public class ArchiveDeletePasteServiceUtil {
     static Class getEmptyService(Context context)
     {
         Class emptyService=null;
-/*
         if(ArchiveDeletePasteFileService1.SERVICE_COMPLETED)
         {
             emptyService=ArchiveDeletePasteProgressActivity1.class;
@@ -39,7 +39,6 @@ public class ArchiveDeletePasteServiceUtil {
             emptyService=ArchiveDeletePasteProgressActivity2.class;
         }
         else
-*/
         if(ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 
         {
