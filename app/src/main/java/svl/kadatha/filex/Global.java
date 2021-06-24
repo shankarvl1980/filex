@@ -588,6 +588,38 @@ public class Global
 		return resolveInfoList.size() != 0;
 	}
 
+	public static void REMOVE_RECURCIVE_PATHS(List<String> files_selected_array,String dest_folder, FileObjectType destFileObjectType,FileObjectType sourceFileObjectType)
+	{
+		if(sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE))
+		{
+			if(FileObjectType.FILE_TYPE.equals(destFileObjectType))
+			{
+				Iterator<String> iterator=files_selected_array.iterator();
+				while(iterator.hasNext())
+				{
+					if(dest_folder.startsWith(iterator.next()))
+					{
+						iterator.remove();
+					}
+				}
+			}
+		}
+		else
+		{
+			if(sourceFileObjectType.equals(destFileObjectType))
+			{
+				Iterator<String> iterator=files_selected_array.iterator();
+				while(iterator.hasNext())
+				{
+					if(dest_folder.startsWith(iterator.next()))
+					{
+						iterator.remove();
+					}
+				}
+			}
+		}
+
+	}
 
 }
 

@@ -162,7 +162,6 @@ public class ArchiveDeletePasteFileService3 extends Service
 					source_uri=bundle.getParcelable("source_uri");
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
-					//source_folder=getParentFilePath(files_selected_array.get(0));
 					source_folder=bundle.getString("source_folder");
                     boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
@@ -186,7 +185,6 @@ public class ArchiveDeletePasteFileService3 extends Service
 					source_uri=bundle.getParcelable("source_uri");
 					cut=bundle.getBoolean("cut");
 					isWritable=bundle.getBoolean("isWritable");
-					//source_folder=getParentFilePath(files_selected_array.get(0));
 					source_folder=bundle.getString("source_folder");
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,3);
 					fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1243,11 +1241,13 @@ public class ArchiveDeletePasteFileService3 extends Service
 					{
 						return false;
 					}
-
+/*
 					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(file.getAbsolutePath()+File.separator))  //if copying parent folder to child folder
 					{
 						continue;
 					}
+
+ */
 					boolean duplicate_found=false;
 					if(!replace) //dont replace, hence look for duplicate
 					{
@@ -1392,10 +1392,13 @@ public class ArchiveDeletePasteFileService3 extends Service
 					{
 						return false;
 					}
+					/*
 					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(src_file_path+File.separator))
 					{
 						continue;
 					}
+
+					 */
 					boolean duplicate_found=false;
 					String src_file_name=new File(src_file_path).getName();
 					if(!replace) //dont replace, hence look for duplicate

@@ -61,6 +61,7 @@ public class PasteSetUpDialog extends DialogFragment
 											   FileObjectType sourceFileObjectType,FileObjectType destFileObjectType,String dest_folder,boolean cut_selected)
 	{
 		PasteSetUpDialog pasteSetUpDialog=new PasteSetUpDialog();
+		Global.REMOVE_RECURCIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
 		Bundle bundle=new Bundle();
 		bundle.putString("source_folder", source_folder);
 		bundle.putStringArrayList("files_selected_array", files_selected_array);

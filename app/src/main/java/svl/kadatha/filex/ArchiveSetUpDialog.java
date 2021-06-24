@@ -128,7 +128,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		create_folder_checkbox=zipdialogview.findViewById(R.id.dialog_archive_checkbox);
 		zip_file_edittext=zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
         RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
-		//rb_zipname_dir=(RadioButton)zipdialogview.findViewById(R.id.dialog_archive_rb_zipname_dir);
 		rb_current_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
 		rb_custom_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
 		customdir_edittext=zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
@@ -250,6 +249,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								print(getString(R.string.maximum_3_services_processed));
 								return;
 							}
+							Global.REMOVE_RECURCIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 							final Bundle bundle=new Bundle();
 							bundle.putStringArrayList("files_selected_array",files_selected_array);
 							bundle.putString("dest_folder",archivedestfolder);
