@@ -38,7 +38,6 @@ public class ArchiveDeletePasteFileService3 extends Service
 	String dest_folder,zip_file_path, zip_folder_name,archive_action;
 
 	private Context context;
-	//private DetailFragment df;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 
@@ -625,7 +624,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					if(zip_folder_name!=null)
 					{
 						success=FileUtil.mkdirNative(new File(zip_dest_path));
-						if(!success) return success;
+						if(!success) return false;
 					}
 
 				}
@@ -633,7 +632,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					if(zip_folder_name!=null)
 					{
 						success=FileUtil.mkdirSAF(context,dest_folder,zip_folder_name,tree_uri,tree_uri_path);
-						if(!success) return success;
+						if(!success) return false;
 					}
 				}
 
@@ -651,7 +650,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				if(zip_folder_name!=null)
 				{
 					success=FileUtil.mkdirsUsb(dest_folder,zip_folder_name);
-					if(!success) return success;
+					if(!success) return false;
 				}
 				return unzip(zip_file_path,tree_uri,tree_uri_path,zip_dest_path,isWritable);
 			}

@@ -39,7 +39,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 	String dest_folder,zip_file_path, zip_folder_name,archive_action;
 	
 	private Context context;
-	//private DetailFragment df;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 
