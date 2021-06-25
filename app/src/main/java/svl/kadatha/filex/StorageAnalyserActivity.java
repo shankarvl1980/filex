@@ -252,8 +252,13 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
-
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+    }
+
+    public void clearCache(String file_path, FileObjectType fileObjectType)
+    {
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
     }
 
 
@@ -398,6 +403,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         public void onReceive(Context context, Intent intent) {
             StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
             String activity_name=intent.getStringExtra("activity_name");
+            String file_path=intent.getStringExtra("file_paht");
+            FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
                     if (storageAnalyserDialog != null) storageAnalyserDialog.local_activity_delete = true;
@@ -412,7 +419,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                         DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
                         if(listener!=null)
                         {
-                            listener.onFragmentCacheClear();
+                            listener.onFragmentCacheClear(file_path,fileObjectType);
                         }
                     }
                     break;
@@ -456,7 +463,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     interface DetailFragmentCommunicationListener
     {
-        void onFragmentCacheClear();
+        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
         void onSettingUsbFileRootNull();
     }
 

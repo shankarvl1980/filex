@@ -212,9 +212,16 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
-
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
     }
+
+    public void clearCache(String file_path, FileObjectType fileObjectType)
+    {
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -314,6 +321,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
             FileSelectorDialog fileSelectorDialog = (FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
             String activity_name=intent.getStringExtra("activity_name");
+            String file_path=intent.getStringExtra("file_paht");
+            FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
                     if (fileSelectorDialog != null) fileSelectorDialog.local_activity_delete = true;
@@ -328,7 +337,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
                         if(listener!=null)
                         {
-                            listener.onFragmentCacheClear();
+                            listener.onFragmentCacheClear(file_path,fileObjectType);
                         }
                     }
                     break;
@@ -449,7 +458,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     interface DetailFragmentCommunicationListener
     {
-        void onFragmentCacheClear();
+        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
         void onSettingUsbFileRootNull();
     }
 

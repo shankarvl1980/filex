@@ -60,7 +60,7 @@ public class ArchiveDeletePasteServiceUtil {
         return emptyService;
     }
 
-    public static void CLEAR_CACHE_AND_REFRESH()
+    public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
     {
         DetailFragment df = null;
         FileSelectorDialog fileSelectorDialog = null;
@@ -70,9 +70,9 @@ public class ArchiveDeletePasteServiceUtil {
         if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
         if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
-        if(df!=null) df.adapter.clear_cache_and_refresh();
-        if(fileSelectorDialog!=null) fileSelectorDialog.clear_cache_and_refresh();
-        if(storageAnalyserDialog!=null) storageAnalyserDialog.clear_cache_and_refresh();
+        if(df!=null) df.adapter.clear_cache_and_refresh(file_path,fileObjectType);
+        if(fileSelectorDialog!=null) fileSelectorDialog.clear_cache_and_refresh(file_path,fileObjectType);
+        if(storageAnalyserDialog!=null) storageAnalyserDialog.clear_cache_and_refresh(file_path,fileObjectType);
     }
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder,FileObjectType fileObjectType)
@@ -278,7 +278,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(cancelled)
             {
-                CLEAR_CACHE_AND_REFRESH();
+                CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);
                 return null;
             }
 
@@ -317,7 +317,8 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(cancelled)
             {
-                CLEAR_CACHE_AND_REFRESH();
+                CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);  //for dest_folder
+                if (cut) CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);  // for source_folder
                 return null;
             }
             overwritten_copied_file_name_list.retainAll(copied_files_name);
@@ -420,7 +421,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(cancelled)
             {
-                CLEAR_CACHE_AND_REFRESH();
+                CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);
                 return null;
             }
             FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,written_file_name_list,destFileObjectType,written_file_path_list);

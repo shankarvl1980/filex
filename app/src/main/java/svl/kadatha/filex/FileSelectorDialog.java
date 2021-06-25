@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -290,9 +292,17 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	}
 
 	@Override
-	public void onFragmentCacheClear() {
-		cache_cleared=true;
+	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+		if(file_path==null || fileObjectType==null)
+		{
+			cache_cleared=true;
+		}
+		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+file_path))
+		{
+			cache_cleared=true;
+		}
 	}
+
 
 	@Override
 	public void onSettingUsbFileRootNull() {
@@ -467,9 +477,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	}
 
 
-	public void clear_cache_and_refresh()
+	public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
 	{
-		fileSelectorActivity.clearCache();
+		//mselecteditems=new SparseBooleanArray();
+		//mselecteditemsFilePath=new SparseArray<>();
+		fileSelectorActivity.clearCache(file_path,fileObjectType);
 		modification_observed=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}

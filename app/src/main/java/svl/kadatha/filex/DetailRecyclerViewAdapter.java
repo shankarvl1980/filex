@@ -87,7 +87,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			{
 				mainActivity.parent_dir_imagebutton.setEnabled(true);
 				mainActivity.parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);
-
 			}
 			else
 			{
@@ -282,13 +281,13 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 
 
-	public void clear_cache_and_refresh()
+	public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
 	{
 		if(df!=null)
 		{
 			df.mselecteditems=new SparseBooleanArray();
 			df.mselecteditemsFilePath=new SparseArray<>();
-			df.mainActivity.clearCache();
+			df.mainActivity.clearCache(file_path,fileObjectType);
 			df.modification_observed=true;
 		}
 		Global.WORKOUT_AVAILABLE_SPACE();

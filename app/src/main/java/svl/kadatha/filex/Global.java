@@ -453,6 +453,16 @@ public class Global
 		localBroadcastManager.sendBroadcast(intent);
 	}
 
+	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name, String file_path, FileObjectType fileObjectType)
+	{
+		Intent intent=new Intent();
+		intent.setAction(action);
+		intent.putExtra("activity_name",activity_name);
+		intent.putExtra("file_path",file_path);
+		intent.putExtra("fileObjectType",fileObjectType);
+		localBroadcastManager.sendBroadcast(intent);
+	}
+
 	static final FilenameFilter File_NAME_FILTER=new FilenameFilter()
 	{
 		@Override
@@ -588,7 +598,7 @@ public class Global
 		return resolveInfoList.size() != 0;
 	}
 
-	public static void REMOVE_RECURCIVE_PATHS(List<String> files_selected_array,String dest_folder, FileObjectType destFileObjectType,FileObjectType sourceFileObjectType)
+	public static void REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType)
 	{
 		if(sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE))
 		{

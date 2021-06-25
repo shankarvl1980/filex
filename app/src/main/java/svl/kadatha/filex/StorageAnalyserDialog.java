@@ -336,8 +336,15 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     }
 
     @Override
-    public void onFragmentCacheClear() {
-        cache_cleared=true;
+    public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+        if(file_path==null || fileObjectType==null)
+        {
+            cache_cleared=true;
+        }
+        else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+file_path))
+        {
+            cache_cleared=true;
+        }
     }
 
     @Override
@@ -637,11 +644,11 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     }
 
 
-    public void clear_cache_and_refresh()
+    public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
     {
         mselecteditems=new SparseBooleanArray();
         mselecteditemsFilePath=new SparseArray<>();
-        storageAnalyserActivity.clearCache();
+        storageAnalyserActivity.clearCache(file_path,fileObjectType);
         modification_observed=true;
         Global.WORKOUT_AVAILABLE_SPACE();
     }

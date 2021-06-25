@@ -249,7 +249,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								print(getString(R.string.maximum_3_services_processed));
 								return;
 							}
-							Global.REMOVE_RECURCIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
+							Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 							final Bundle bundle=new Bundle();
 							bundle.putStringArrayList("files_selected_array",files_selected_array);
 							bundle.putString("dest_folder",archivedestfolder);

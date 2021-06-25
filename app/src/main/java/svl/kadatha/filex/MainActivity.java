@@ -790,6 +790,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
+	public void clearCache(String file_path, FileObjectType fileObjectType)
+	{
+		FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
+	}
+
 
 	 @Override
 	 public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
@@ -2141,6 +2147,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onReceive(Context context, Intent intent) {
 			DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
 			String activity_name=intent.getStringExtra("activity_name");
+			String file_path=intent.getStringExtra("file_paht");
+			FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
 			switch (intent.getAction()) {
 
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
@@ -2156,7 +2164,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
 						if(listener!=null)
 						{
-							listener.onFragmentCacheClear();
+							listener.onFragmentCacheClear(file_path,fileObjectType);
 						}
 					}
 					break;
@@ -2166,7 +2174,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	interface DetailFragmentCommunicationListener
 	{
-		void onFragmentCacheClear();
+		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
 		void setUsbFileRootNull();
 	}
 

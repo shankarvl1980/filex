@@ -417,8 +417,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	}
 
 	@Override
-	public void onFragmentCacheClear() {
-		cache_cleared=true;
+	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+		if(file_path==null || fileObjectType==null)
+		{
+			cache_cleared=true;
+		}
+		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+file_path))
+		{
+			cache_cleared=true;
+		}
 	}
 
 	@Override
