@@ -277,7 +277,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
-
 	@Override
 	public void onDestroyView()
 	{

@@ -1241,13 +1241,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					{
 						return false;
 					}
-/*
-					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(file.getAbsolutePath()+File.separator))  //if copying parent folder to child folder
-					{
-						continue;
-					}
 
- */
 					boolean duplicate_found=false;
 					if(!replace) //dont replace, hence look for duplicate
 					{
@@ -1392,13 +1386,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					{
 						return false;
 					}
-					/*
-					if(destFileObjectType==sourceFileObjectType && (dest_folder+File.separator).startsWith(src_file_path+File.separator))
-					{
-						continue;
-					}
 
-					 */
 					boolean duplicate_found=false;
 					String src_file_name=new File(src_file_path).getName();
 					if(!replace) //dont replace, hence look for duplicate

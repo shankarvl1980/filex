@@ -323,7 +323,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             FileSelectorDialog fileSelectorDialog = (FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
             String activity_name=intent.getStringExtra("activity_name");
             String file_path=intent.getStringExtra("file_paht");
