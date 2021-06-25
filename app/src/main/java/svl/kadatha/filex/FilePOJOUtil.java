@@ -456,7 +456,7 @@ public class FilePOJOUtil {
             remove_from_FilePOJO(name,filePOJOs);
             remove_from_FilePOJO(name,filePOJOs_filtered);
             String folder_to_be_removed=(source_folder.endsWith(File.separator) ? source_folder+name : source_folder+File.separator+name);
-            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(folder_to_be_removed,fileObjectType);
+            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(folder_to_be_removed),fileObjectType);
 
         }
         Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
@@ -610,18 +610,31 @@ public class FilePOJOUtil {
     }
 
 
-    private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(List<String> file_path_list, FileObjectType fileObjectType)
+    public static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(List<String> file_path_list, FileObjectType fileObjectType)
     {
         if(file_path_list==null) return;
+
+        DetailFragment df = null;
+        FileSelectorDialog fileSelectorDialog = null;
+        StorageAnalyserDialog storageAnalyserDialog = null;
+
+        if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
+        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+
         int size=file_path_list.size();
         for(int i=0;i<size;++i)
         {
             String file_path=file_path_list.get(i);
-            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path,fileObjectType);
+
+            if(df!=null) df.mainActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
+            if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
+            if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
         }
     }
 
-    public static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(String file_path, FileObjectType fileObjectType)
+    private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType)
     {
         Iterator iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
         while(iterator.hasNext())

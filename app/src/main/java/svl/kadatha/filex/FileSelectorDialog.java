@@ -39,7 +39,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public FileSelectorAdapter adapter;
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
-	private FileSelectorActivity fileSelectorActivity;
+	public FileSelectorActivity fileSelectorActivity;
 	public String fileclickselected;
 	public FileObjectType fileObjectType;
 	public UsbFile currentUsbFile;

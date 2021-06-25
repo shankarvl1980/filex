@@ -25,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -257,7 +258,11 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     public void clearCache(String file_path, FileObjectType fileObjectType)
     {
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
+    }
+
+    public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
+    {
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
     }
 
@@ -451,7 +456,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH, FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
                 StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserDialog!=null) storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
 

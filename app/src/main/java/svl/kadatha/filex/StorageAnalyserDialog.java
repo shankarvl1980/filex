@@ -39,7 +39,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public StorageAnalyserAdapter adapter;
     public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
     public int totalFilePOJO_list_Size;
-    private StorageAnalyserActivity storageAnalyserActivity;
+    public StorageAnalyserActivity storageAnalyserActivity;
     public String fileclickselected;
     public FileObjectType fileObjectType;
     public UsbFile currentUsbFile;

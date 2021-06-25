@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -792,7 +793,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void clearCache(String file_path, FileObjectType fileObjectType)
 	{
-		FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(file_path,fileObjectType);
+		FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
+	}
+
+	public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
+	{
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
 	}
 
@@ -1137,7 +1142,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(ARCHIVE_EXTRACT_DIR.exists())
 		{
 			new AsyncTaskDeleteDirectory(ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
+			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
 		}
 
@@ -2099,7 +2104,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 
-					FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL("",FileObjectType.USB_TYPE);
+					FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);
 				}
 			}
 			if(recentDialogListener!=null)
@@ -2131,7 +2136,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
 				Global.WORKOUT_AVAILABLE_SPACE();
 				storageRecyclerAdapter.notifyDataSetChanged();
-				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH, FileObjectType.FILE_TYPE);
+				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
 				DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
 				if(df!=null) df.clearSelectionAndNotifyDataSetChanged();
 				if (recentDialogListener != null) {
@@ -2171,6 +2176,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 	}
+
 
 	interface DetailFragmentCommunicationListener
 	{
