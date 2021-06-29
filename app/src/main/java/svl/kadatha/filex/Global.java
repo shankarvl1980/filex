@@ -106,6 +106,7 @@ public class Global
 	static boolean BYTE_COUNT_BLOCK_1000;
 	static boolean FILE_GRID_LAYOUT;
 	static boolean SHOW_FILE_PATH;
+	static boolean IS_TABLET;
 
 	static final Set<String> SORT_CODE_SET=new HashSet<>(Arrays.asList("d_name_asc","d_name_desc","d_date_asc","d_date_desc","d_size_asc","d_size_desc",
 			"f_name_asc","f_name_desc","f_date_asc","f_date_desc","f_size_asc","f_size_desc"));
@@ -294,6 +295,8 @@ public class Global
 			DIALOG_HEIGHT=SCREEN_HEIGHT*90/100;
 
 			SCREEN_RATIO=(float) SCREEN_WIDTH/(float) SCREEN_HEIGHT;
+
+			IS_TABLET=context.getResources().getBoolean(R.bool.isTablet);
 
 		}
 
