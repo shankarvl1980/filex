@@ -40,18 +40,9 @@
 		android:text="@string/no_file_found"
 		android:paddingBottom="?attr/actionBarSize"
     />
-	
-	<ProgressBar
-		android:id="@+id/all_audio_list_progressbar"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
 
-		android:background="@null"
-		android:layout_gravity="center"
-		android:clickable="true"
-		android:focusable="true" />
-	
-	
+
+
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/audio_list_bottom_toolbar"
 		android:layout_width="match_parent"
@@ -61,9 +52,27 @@
         android:elevation="6dp"
 		app:contentInsetLeft="0dp"
 		app:contentInsetStart="0dp"
-	>
-		
-	</androidx.appcompat.widget.Toolbar>
+	/>
+
+		<FrameLayout
+			android:id="@+id/all_audio_list_progressbar"
+			android:layout_height="match_parent"
+			android:layout_width="match_parent"
+			android:clickable="true"
+			android:focusable="true"
+			android:foregroundGravity="center"
+			android:elevation="7dp"
+			>
+		<ProgressBar
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:layout_gravity="center"
+			 />
+		</FrameLayout>
+
+
+
 	
 	
 	

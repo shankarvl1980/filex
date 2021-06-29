@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -60,7 +61,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
 	private AsyncTaskStatus asyncTaskStatus;
-	private ProgressBar progress_bar;
+	private FrameLayout progress_bar;
 	private TextView empty_tv;
 	private int num_all_album;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;

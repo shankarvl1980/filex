@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -66,7 +67,7 @@ public class AllAudioListFragment extends Fragment
 	private int scroll_distance;
 	private AsyncTaskStatus asyncTaskStatus;
 	static boolean FULLY_POPULATED;
-	private ProgressBar progress_bar;
+	private FrameLayout progress_bar;
 	private TextView empty_tv;
 	private int num_all_audio;
 	public boolean whether_audios_set_to_current_list, img_btns_enabled;
@@ -201,6 +202,7 @@ public class AllAudioListFragment extends Fragment
 	private class MediaExtractAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		final Uri media_uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+
 		@Override
 		protected void onPreExecute()
 		{

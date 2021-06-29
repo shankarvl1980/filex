@@ -45,7 +45,7 @@ public class AudioPlayerActivity extends BaseActivity
 	private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
     TinyDB tinyDB;
 	static AudioPOJO AUDIO_FILE;
-	FragmentManager fm;
+	public FragmentManager fm;
     static final String AUDIO_LIST_PREFERENCE_NAME="AudioList";
 	static final int WRITE_SETTINGS_PERMISSION_REQUEST_CODE=59;
 	static ArrayList<String> AUDIO_SAVED_LIST=new ArrayList<>();
