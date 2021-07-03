@@ -6,12 +6,16 @@ import android.content.UriPermission;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -279,15 +283,25 @@ public class Global
 	static void GET_SCREEN_DIMENSIONS(Context context)
 	{
 		ORIENTATION=context.getResources().getConfiguration().orientation;
-		if(SCREEN_WIDTH==0 || SCREEN_HEIGHT==0)
+		//if(SCREEN_WIDTH==0 || SCREEN_HEIGHT==0)
 		{
+			//Point outSize=new Point();
+			//WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+			//Display display = wm.getDefaultDisplay();
+			//display.getSize(outSize);
 			if(ORIENTATION==Configuration.ORIENTATION_LANDSCAPE)
 			{
+
+				//SCREEN_WIDTH=outSize.y;
+				//SCREEN_HEIGHT=outSize.x;
 				SCREEN_WIDTH=context.getResources().getDisplayMetrics().heightPixels;
 				SCREEN_HEIGHT=context.getResources().getDisplayMetrics().widthPixels;
+
 			}
 			else
 			{
+				//SCREEN_WIDTH=outSize.x;
+				//SCREEN_HEIGHT=outSize.y;
 				SCREEN_WIDTH=context.getResources().getDisplayMetrics().widthPixels;
 				SCREEN_HEIGHT=context.getResources().getDisplayMetrics().heightPixels;
 			}
@@ -298,6 +312,9 @@ public class Global
 			SCREEN_RATIO=(float) SCREEN_WIDTH/(float) SCREEN_HEIGHT;
 
 			IS_TABLET=context.getResources().getBoolean(R.bool.isTablet);
+
+			Log.d("shankar","screen width-"+SCREEN_WIDTH+"   screen height-"+SCREEN_HEIGHT);
+
 
 		}
 
@@ -572,7 +589,7 @@ public class Global
 				String name=MainActivity.usbFileRoot.getName();
 				totalspace=MainActivity.usbCurrentFs.getCapacity();
 				availabelspace=MainActivity.usbCurrentFs.getOccupiedSpace();
-				SPACE_ARRAY.put(fileObjectType+MainActivity.usbFileRoot.getName(),new SpacePOJO(MainActivity.usbFileRoot.getName(),totalspace,availabelspace));
+				SPACE_ARRAY.put(fileObjectType+name,new SpacePOJO(name,totalspace,availabelspace));
 			}
 			else if(fileObjectType==FileObjectType.ROOT_TYPE)
 			{

@@ -269,9 +269,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 if(filled_filePOJOs)
                 {
                     long storage_space=0L;
+                    String key=fileObjectType+fileclickselected;
                     for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
                     {
-                        if(!entry.getKey().equals("/") && fileclickselected.startsWith(entry.getKey()))
+                        if(key.startsWith(entry.getKey()))
                         {
                             storage_space=entry.getValue().getTotalSpace();
                             break;
