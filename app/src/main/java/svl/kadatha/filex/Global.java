@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -154,7 +155,7 @@ public class Global
 
 	static public int NAVIGATION_BAR_HEIGHT;
 
-	static final IndexedLinkedHashMap<String,SpacePOJO> SPACE_ARRAY=new IndexedLinkedHashMap<>();
+	static final LinkedHashMap<String,SpacePOJO> SPACE_ARRAY=new LinkedHashMap<>();
 
 	static DividerItemDecoration DIVIDERITEMDECORATION;
 
@@ -564,18 +565,18 @@ public class Global
 				totalspace=new File(filePOJO.getPath()).getTotalSpace();
 				availabelspace=new File(filePOJO.getPath()).getUsableSpace();
 
-				SPACE_ARRAY.put(filePOJO.getPath(),new SpacePOJO(filePOJO.getPath(),totalspace,availabelspace));
+				SPACE_ARRAY.put(fileObjectType+filePOJO.getPath(),new SpacePOJO(filePOJO.getPath(),totalspace,availabelspace));
 			}
 			else if(fileObjectType== FileObjectType.USB_TYPE)
 			{
 				String name=MainActivity.usbFileRoot.getName();
 				totalspace=MainActivity.usbCurrentFs.getCapacity();
 				availabelspace=MainActivity.usbCurrentFs.getOccupiedSpace();
-				SPACE_ARRAY.put(MainActivity.usbFileRoot.getName(),new SpacePOJO(MainActivity.usbFileRoot.getName(),totalspace,availabelspace));
+				SPACE_ARRAY.put(fileObjectType+MainActivity.usbFileRoot.getName(),new SpacePOJO(MainActivity.usbFileRoot.getName(),totalspace,availabelspace));
 			}
 			else if(fileObjectType==FileObjectType.ROOT_TYPE)
 			{
-				SPACE_ARRAY.put(filePOJO.getPath(),new SpacePOJO(filePOJO.getPath(),totalspace,availabelspace));
+				SPACE_ARRAY.put(fileObjectType+filePOJO.getPath(),new SpacePOJO(filePOJO.getPath(),totalspace,availabelspace));
 			}
 
 		}

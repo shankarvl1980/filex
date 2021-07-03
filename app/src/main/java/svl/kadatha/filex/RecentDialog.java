@@ -315,21 +315,19 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			FilePOJO filePOJO = dir_linkedlist.get(p2);
 			if(storage_dir)
 			{
-
 				FileObjectType fileObjectType=filePOJO.getFileObjectType();
+				String space="";
+				SpacePOJO spacePOJO=Global.SPACE_ARRAY.get(fileObjectType+filePOJO.getPath());
+				if(spacePOJO!=null) space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
 				if(fileObjectType== FileObjectType.FILE_TYPE)
 				{
 					if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(filePOJO.getPath()))
 					{
-						SpacePOJO spacePOJO=Global.SPACE_ARRAY.getValueAtIndex(p2);
-						String space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
 						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
 						p1.textView_recent_dir.setText(filePOJO.getName()+space);
 					}
 					else
 					{
-						SpacePOJO spacePOJO=Global.SPACE_ARRAY.getValueAtIndex(p2);
-						String space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
 						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
 						p1.textView_recent_dir.setText(filePOJO.getName()+space);
 					}
@@ -338,10 +336,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 				else if(fileObjectType== FileObjectType.USB_TYPE)
 				{
-					//SpacePOJO spacePOJO=MainActivity.SPACE_ARRAY.getValueAtIndex(p2);
-					//String space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
 					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
-					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName());
+					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName()+space);
 				}
 				else if(fileObjectType==FileObjectType.ROOT_TYPE)
 				{
