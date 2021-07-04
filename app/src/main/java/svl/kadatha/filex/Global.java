@@ -6,16 +6,12 @@ import android.content.UriPermission;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -506,10 +502,19 @@ public class Global
 
 
 	public static void GET_NAVIGATION_BAR_HEIGHT(Context context){
+
 		Resources resources = context.getResources();
-		int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-		if (resourceId > 0) {
-			NAVIGATION_BAR_HEIGHT=resources.getDimensionPixelSize(resourceId);
+		int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
+		if(id > 0 && resources.getBoolean(id))
+		{
+			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+			if (resourceId > 0) {
+				NAVIGATION_BAR_HEIGHT=resources.getDimensionPixelSize(resourceId);
+			}
+		}
+		else
+		{
+			NAVIGATION_BAR_HEIGHT=0;
 		}
 
 	}

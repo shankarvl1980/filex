@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 

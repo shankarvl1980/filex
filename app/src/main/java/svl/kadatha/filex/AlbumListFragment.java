@@ -24,7 +24,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -674,6 +673,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		private TextView albumtextview, no_of_songs_textview,artisttextview;
 		private int itemWidth,itemHeight;
 		int imageview_dimension;
+		private int select_indicator_offset=Global.THIRTY_FOUR_DP;
 
 		AlbumListRecyclerViewItem(Context context)
 		{
@@ -742,6 +742,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			albumimageview.getLayoutParams().width= imageview_dimension;
 			albumimageview.getLayoutParams().height= imageview_dimension;
 
+			if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_FOUR_DP*2;
+
 		}
 
 
@@ -796,7 +798,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			x+=v.getMeasuredWidth()+Global.TEN_DP;
 
 			v=album_select_indicator;
-			int a=itemWidth-Global.THIRTY_FOUR_DP;
+			int a=itemWidth-select_indicator_offset;
 			int file_select_indicator_height=v.getMeasuredHeight();
 			int c=(itemHeight-file_select_indicator_height)/2;
 			v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);

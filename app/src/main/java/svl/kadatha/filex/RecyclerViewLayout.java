@@ -24,6 +24,7 @@ public class RecyclerViewLayout extends ViewGroup
     private int imageview_dimension;
 	private int itemWidth, itemHeight;
 	private final boolean show_file_path;
+	private int select_indicator_offset=Global.THIRTY_FOUR_DP;
 
 	RecyclerViewLayout(Context context,boolean show_file_path)
 	{
@@ -176,6 +177,9 @@ public class RecyclerViewLayout extends ViewGroup
 			itemWidth=Global.SCREEN_WIDTH;
 
 		}
+
+		if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_FOUR_DP*2;
+
 	}
 	
 	@Override
@@ -255,7 +259,7 @@ public class RecyclerViewLayout extends ViewGroup
 
 			View v=file_select_indicator;
 
-			int a=grid_width-(Global.THIRTY_FOUR_DP);
+			int a=grid_width-(select_indicator_offset);
 			v.layout(a,y,a+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
 			v=fileimageview;
@@ -292,7 +296,7 @@ public class RecyclerViewLayout extends ViewGroup
 			margin_offset_icon=x;
 
 			v=file_select_indicator;
-			int a=itemWidth-Global.THIRTY_FOUR_DP;
+			int a=itemWidth-select_indicator_offset;
 			int file_select_indicator_height=v.getMeasuredHeight();
 			int c=(itemHeight-file_select_indicator_height)/2;
 			v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);

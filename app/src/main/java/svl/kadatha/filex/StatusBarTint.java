@@ -5,7 +5,6 @@ import android.graphics.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.*;
 
-import android.util.Log;
 import android.view.*;
 
 public class StatusBarTint 

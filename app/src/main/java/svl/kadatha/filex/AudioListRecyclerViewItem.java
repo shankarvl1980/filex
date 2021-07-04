@@ -18,6 +18,8 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	public TextView titletextview, albumtextview, durationtextview,artisttextview;
 	private int itemWidth,itemHeight, imageview_dimension;
 	private final boolean whetherDialog;
+	private int select_indicator_offset=Global.THIRTY_FOUR_DP;
+
     AudioListRecyclerViewItem(Context context, boolean whetherDialog)
 	{
 		super(context);
@@ -109,7 +111,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 
 		}
 
-
+		if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_FOUR_DP*2;
 	}
 
 
@@ -157,7 +159,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		x+=v.getMeasuredWidth()+Global.TEN_DP;
 
 		v=audio_select_indicator;
-		int a=itemWidth-Global.THIRTY_FOUR_DP;
+		int a=itemWidth-select_indicator_offset;
 		int file_select_indicator_height=v.getMeasuredHeight();
 		int c=(itemHeight-file_select_indicator_height)/2;
 		v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
