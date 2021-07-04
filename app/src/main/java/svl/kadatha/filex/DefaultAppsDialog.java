@@ -115,7 +115,7 @@ public class DefaultAppsDialog extends DialogFragment
         }
 
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_default_app_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
         Button remove_button=buttons_layout.findViewById(R.id.first_button);
         remove_button.setText(R.string.remove);
         remove_button.setOnClickListener(new View.OnClickListener() {
@@ -158,11 +158,11 @@ public class DefaultAppsDialog extends DialogFragment
         Window window=getDialog().getWindow();
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
-            window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
+            window.setLayout(Global.LANDSCAPE_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
         }
         else
         {
-            window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
+            window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,Global.PORTRAIT_DIALOG_HEIGHT);
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 

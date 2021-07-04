@@ -47,7 +47,8 @@ public class Global
 
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;
-	static int SCREEN_WIDTH,SCREEN_HEIGHT,DIALOG_WIDTH,DIALOG_HEIGHT;
+	static int PORTRAIT_SCREEN_WIDTH,PORTRAIT_SCREEN_HEIGHT,LANDSCAPE_SCREEN_WIDTH,LANDSCAPE_SCREEN_HEIGHT;
+	static int PORTRAIT_DIALOG_WIDTH,PORTRAIT_DIALOG_HEIGHT,LANDSCAPE_DIALOG_WIDTH,LANDSCAPE_DIALOG_HEIGHT;
 	static float SCREEN_RATIO;
 	static String SORT;
 	static String STORAGE_ANALYSER_SORT;
@@ -283,38 +284,33 @@ public class Global
 	static void GET_SCREEN_DIMENSIONS(Context context)
 	{
 		ORIENTATION=context.getResources().getConfiguration().orientation;
-		//if(SCREEN_WIDTH==0 || SCREEN_HEIGHT==0)
+		if(PORTRAIT_SCREEN_WIDTH==0 || PORTRAIT_SCREEN_HEIGHT==0 || LANDSCAPE_SCREEN_WIDTH==0 || LANDSCAPE_SCREEN_HEIGHT==0)
 		{
-			//Point outSize=new Point();
-			//WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-			//Display display = wm.getDefaultDisplay();
-			//display.getSize(outSize);
 			if(ORIENTATION==Configuration.ORIENTATION_LANDSCAPE)
 			{
+				LANDSCAPE_SCREEN_WIDTH=context.getResources().getDisplayMetrics().heightPixels;
+				LANDSCAPE_SCREEN_HEIGHT=context.getResources().getDisplayMetrics().widthPixels;
 
-				//SCREEN_WIDTH=outSize.y;
-				//SCREEN_HEIGHT=outSize.x;
-				SCREEN_WIDTH=context.getResources().getDisplayMetrics().heightPixels;
-				SCREEN_HEIGHT=context.getResources().getDisplayMetrics().widthPixels;
+				LANDSCAPE_DIALOG_WIDTH=LANDSCAPE_SCREEN_WIDTH*90/100;
+				LANDSCAPE_DIALOG_HEIGHT=LANDSCAPE_SCREEN_HEIGHT*90/100;
+
+				SCREEN_RATIO=(float) LANDSCAPE_SCREEN_WIDTH/(float) LANDSCAPE_SCREEN_HEIGHT;
+
 
 			}
 			else
 			{
-				//SCREEN_WIDTH=outSize.x;
-				//SCREEN_HEIGHT=outSize.y;
-				SCREEN_WIDTH=context.getResources().getDisplayMetrics().widthPixels;
-				SCREEN_HEIGHT=context.getResources().getDisplayMetrics().heightPixels;
+				PORTRAIT_SCREEN_WIDTH=context.getResources().getDisplayMetrics().widthPixels;
+				PORTRAIT_SCREEN_HEIGHT=context.getResources().getDisplayMetrics().heightPixels;
+
+				PORTRAIT_DIALOG_WIDTH=PORTRAIT_SCREEN_WIDTH*90/100;
+				PORTRAIT_DIALOG_HEIGHT=PORTRAIT_SCREEN_HEIGHT*90/100;
+
+				SCREEN_RATIO=(float) PORTRAIT_SCREEN_WIDTH/(float) PORTRAIT_SCREEN_HEIGHT;
+
 			}
 
-			DIALOG_WIDTH=SCREEN_WIDTH*90/100;
-			DIALOG_HEIGHT=SCREEN_HEIGHT*90/100;
-
-			SCREEN_RATIO=(float) SCREEN_WIDTH/(float) SCREEN_HEIGHT;
-
 			IS_TABLET=context.getResources().getBoolean(R.bool.isTablet);
-
-			Log.d("shankar","screen width-"+SCREEN_WIDTH+"   screen height-"+SCREEN_HEIGHT);
-
 
 		}
 

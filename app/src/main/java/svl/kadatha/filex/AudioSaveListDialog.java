@@ -57,7 +57,7 @@ public class AudioSaveListDialog extends DialogFragment
 		audio_list_view.addItemDecoration(Global.DIVIDERITEMDECORATION);
 
         ViewGroup button_layout = v.findViewById(R.id.dialog_audio_save_list_button_layout);
-		button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+		button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
         Button cancel_buton = button_layout.findViewById(R.id.first_button);
 		cancel_buton.setText(R.string.cancel);
 		cancel_buton.setOnClickListener(new View.OnClickListener()
@@ -80,11 +80,11 @@ public class AudioSaveListDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
 		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
+			window.setLayout(Global.LANDSCAPE_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
 		}
 		else
 		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
+			window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,Global.PORTRAIT_DIALOG_HEIGHT);
 		}
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 

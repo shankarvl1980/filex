@@ -106,7 +106,7 @@ public class AppInstallAlertDialogFragment extends DialogFragment
         });
 
         FrameLayout button_layout = v.findViewById(R.id.fragment_apk_install_button_layout);
-        button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
         Button ok,cancel;
         ok= button_layout.findViewById(R.id.first_button);
         ok.setText(getString(R.string.ok));

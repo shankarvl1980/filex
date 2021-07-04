@@ -51,7 +51,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);
-		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
         Button yes_button = buttons_layout.findViewById(R.id.first_button);
 		yes_button.setText(R.string.yes);
         Button no_button = buttons_layout.findViewById(R.id.second_button);
@@ -97,7 +97,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
-		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
+		window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 	}

@@ -46,7 +46,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		no_files=findViewById(R.id.fragment_cut_copy_delete_archive_no_files);
 		size_files=findViewById(R.id.fragment_cut_copy_delete_archive_size_files);
         ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
-		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
         Button hide_button = buttons_layout.findViewById(R.id.first_button);
 		hide_button.setText(R.string.hide);
         Button cancel_button = findViewById(R.id.second_button);
@@ -217,7 +217,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	{
 		// TODO: Implement this method
 		super.onResume();
-		getWindow().setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
+		getWindow().setLayout(Global.PORTRAIT_DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		PROGRESS_ACTIVITY_SHOWN=true;
 		Intent service_intent=new Intent(this,ArchiveDeletePasteFileService3.class);
 		bindService(service_intent,serviceConnection,Context.BIND_AUTO_CREATE);

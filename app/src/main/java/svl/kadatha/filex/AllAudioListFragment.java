@@ -99,7 +99,7 @@ public class AllAudioListFragment extends Fragment
 		file_number_view=v.findViewById(R.id.all_audio_file_number);
 		bottom_toolbar=v.findViewById(R.id.audio_list_bottom_toolbar);
 
-		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.PORTRAIT_SCREEN_WIDTH,Global.LANDSCAPE_SCREEN_HEIGHT);
 		int[] bottom_drawables ={R.drawable.search_icon,R.drawable.play_icon,R.drawable.add_list_icon,R.drawable.overflow_icon,R.drawable.select_icon};
 		String [] titles={getString(R.string.search),getString(R.string.play),getString(R.string.list),getString(R.string.more),getString(R.string.select)};
 		tb_layout.setResourceImageDrawables(bottom_drawables,titles);

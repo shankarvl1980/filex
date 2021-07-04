@@ -101,7 +101,7 @@ public class AppSelectorDialog extends DialogFragment
             }
         });
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_app_selector_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
 
         Button close_button = buttons_layout.findViewById(R.id.first_button);
         close_button.setText(R.string.close);
@@ -128,11 +128,11 @@ public class AppSelectorDialog extends DialogFragment
         Window window=getDialog().getWindow();
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
-            window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
+            window.setLayout(Global.LANDSCAPE_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
         }
         else
         {
-            window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
+            window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,Global.PORTRAIT_DIALOG_HEIGHT);
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }

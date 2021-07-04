@@ -52,7 +52,7 @@ public class ProgressBarFragment extends DialogFragment
 		super.onResume();
 		Window w=getDialog().getWindow();
 		w.clearFlags(LayoutParams.FLAG_DIM_BEHIND);
-		w.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
+		w.setLayout(Global.PORTRAIT_DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 	}
