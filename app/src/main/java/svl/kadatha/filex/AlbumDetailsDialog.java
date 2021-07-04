@@ -247,7 +247,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			
 		});
 		
-		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
+		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 		int[] drawables ={R.drawable.delete_icon,R.drawable.play_icon,R.drawable.add_list_icon,R.drawable.overflow_icon};
 		String [] titles={getString(R.string.delete),getString(R.string.play),getString(R.string.list),getString(R.string.more)};
 		tb_layout.setResourceImageDrawables(drawables,titles);
@@ -832,14 +832,7 @@ public class AlbumDetailsDialog extends DialogFragment
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_4) {
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-				if(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION==2)
-				{
-					listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
-				}
-				else
-				{
-					listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP+Global.NAVIGATION_BAR_HEIGHT);
-				}
+				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
 
 			}
 		}

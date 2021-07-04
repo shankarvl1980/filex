@@ -115,7 +115,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static PackageManager PM;
 	static int ARCHIVE_CACHE_DIR_LENGTH;
 	static FragmentManager FM;
-	//static String TOOLBAR_SHOWN_PRIOR_ARCHIVE="";
 	private String toolbar_shown_prior_archive="";
     private EditText search_view;
 	public boolean search_toolbar_visible;
@@ -1491,15 +1490,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				});
 
 				//listPopWindow.showAsDropDown(v,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-                if(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION==2)
-                {
-                    listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
-                }
-                else
-                {
-                    listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP+Global.NAVIGATION_BAR_HEIGHT);
-                }
-
+				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP+Global.NAVIGATION_BAR_HEIGHT);
 
 			}
 		}

@@ -514,6 +514,8 @@ public class Global
 
 	}
 
+
+
 	public static String GET_FILE_PERMISSION(String file_path)
 	{
 		String permission_string = null;

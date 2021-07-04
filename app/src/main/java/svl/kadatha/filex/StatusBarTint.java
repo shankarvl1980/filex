@@ -22,7 +22,7 @@ public class StatusBarTint
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 			window.setStatusBarColor(darkenColor(ContextCompat.getColor(activity, color)));
-			Log.d("shankar","status bar color - "+window.getStatusBarColor());
+
 		}
 
     }
