@@ -85,7 +85,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		View v=inflater.inflate(R.layout.fragment_album_list,container,false);
 		file_number_view=v.findViewById(R.id.album_list_file_number);
 		bottom_toolbar=v.findViewById(R.id.album_list_bottom_toolbar);
-		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.PORTRAIT_SCREEN_WIDTH,Global.LANDSCAPE_SCREEN_HEIGHT);
+		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
 		int[] bottom_drawables ={R.drawable.search_icon,R.drawable.play_icon,R.drawable.add_list_icon,R.drawable.select_icon};
 		String [] titles={getString(R.string.search),getString(R.string.play),getString(R.string.list),getString(R.string.select)};
 		tb_layout.setResourceImageDrawables(bottom_drawables,titles);
@@ -755,11 +755,11 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 			if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
 			{
-				itemWidth =Global.LANDSCAPE_SCREEN_HEIGHT;
+				itemWidth =Global.SCREEN_HEIGHT;
 			}
 			else
 			{
-				itemWidth =Global.PORTRAIT_SCREEN_WIDTH;
+				itemWidth =Global.SCREEN_WIDTH;
 			}
 
 			measureChildWithMargins(album_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);

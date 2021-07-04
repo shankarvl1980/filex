@@ -253,7 +253,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			});
 		
 		
-		EquallyDistributedButtonsWithTextLayout tb_layout=new EquallyDistributedButtonsWithTextLayout(context,number_button,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
+		EquallyDistributedButtonsWithTextLayout tb_layout=new EquallyDistributedButtonsWithTextLayout(context,number_button,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 
 		int[] drawables;
 		String[] titles;
@@ -384,11 +384,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
 		{
-			window.setLayout(Global.LANDSCAPE_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
+			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 		}
 		else
 		{
-			window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,Global.PORTRAIT_DIALOG_HEIGHT);
+			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
 		}
 
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

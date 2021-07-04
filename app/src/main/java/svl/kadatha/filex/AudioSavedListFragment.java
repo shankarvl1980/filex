@@ -64,7 +64,7 @@ public class AudioSavedListFragment extends Fragment
 
 		View v=inflater.inflate(R.layout.fragment_audio_saved_list,container,false);
 		bottom_toolbar=v.findViewById(R.id.audio_saved_list_bottom_toolbar);
-		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,3,Global.PORTRAIT_SCREEN_WIDTH,Global.LANDSCAPE_SCREEN_HEIGHT);
+		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
 		int[] bottom_drawables ={R.drawable.play_icon,R.drawable.remove_list_icon,R.drawable.select_icon};
 		String [] titles={getString(R.string.play),getString(R.string.remove),getString(R.string.select)};
 		tb_layout.setResourceImageDrawables(bottom_drawables,titles);

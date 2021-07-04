@@ -133,7 +133,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		customdir_edittext=zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
 		browsebutton=zipdialogview.findViewById(R.id.dialog_archive_browse_button);
         ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
-		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH));
+		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 		okbutton=zipdialogview.findViewById(R.id.first_button);
 		okbutton.setText(R.string.ok);
 		Button cancelbutton = zipdialogview.findViewById(R.id.second_button);

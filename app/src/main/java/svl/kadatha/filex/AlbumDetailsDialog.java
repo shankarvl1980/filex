@@ -247,7 +247,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			
 		});
 		
-		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.PORTRAIT_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_HEIGHT);
+		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
 		int[] drawables ={R.drawable.delete_icon,R.drawable.play_icon,R.drawable.add_list_icon,R.drawable.overflow_icon};
 		String [] titles={getString(R.string.delete),getString(R.string.play),getString(R.string.list),getString(R.string.more)};
 		tb_layout.setResourceImageDrawables(drawables,titles);
@@ -438,11 +438,11 @@ public class AlbumDetailsDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
 		{
-			window.setLayout(Global.LANDSCAPE_DIALOG_WIDTH,Global.LANDSCAPE_DIALOG_WIDTH);
+			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 		}
 		else
 		{
-			window.setLayout(Global.PORTRAIT_DIALOG_WIDTH,Global.PORTRAIT_DIALOG_HEIGHT);
+			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
 		}
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
