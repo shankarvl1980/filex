@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseArray;
@@ -677,14 +678,26 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				boolean show_rationale= false;
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					show_rationale = shouldShowRequestPermissionRationale(permission);
+					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
+					{
+						Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+						Uri uri = Uri.fromParts("package", getPackageName(), null);
+						intent.setData(uri);
+						startActivityForResult(intent,PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+						break;
+					}
+					else
+					{
+						show_rationale = shouldShowRequestPermissionRationale(permission);
+					}
+
 				}
 				if(!show_rationale)
 				{
 					print(getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
 					finish();
 				}
-				else if(permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+				else if(permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.equals(Manifest.permission.MANAGE_EXTERNAL_STORAGE))
 				{
 					showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
 					{
@@ -842,6 +855,33 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 		 			}
 				break;
+			case PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE:
+				if (resultCode != Activity.RESULT_OK)
+				{
+
+					showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							switch (which)
+							{
+								case DialogInterface.BUTTON_POSITIVE:
+									Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+									Uri uri = Uri.fromParts("package", getPackageName(), null);
+									intent.setData(uri);
+									startActivityForResult(intent,PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+									break;
+								case DialogInterface.BUTTON_NEGATIVE:
+									print(getString(R.string.permission_not_granted));
+									finish();
+									break;
+							}
+						}
+					});
+
+				}
+
 		}
 
 	 }

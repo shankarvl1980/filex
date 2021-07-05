@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.EnvironmentCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +31,32 @@ public class PermissionsUtil
 		
 
 		permissions_list_storage.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		permissions_list_storage.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
 		
 	}
 	
 	public boolean check_storage_permission()
 	{
 		
-		if(Build.VERSION.SDK_INT>=23)
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
 		{
 			for(String permission:permissions_list_storage)
 			{
-				//List<String>permissions_not_granted_list1=new ArrayList<>();
-				int i=ContextCompat.checkSelfPermission(context,android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-				//permissions_not_granted_list.add(permission);
+				int i;
+				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
+				{
+					if(Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
+					else i=PackageManager.PERMISSION_DENIED;
+				}
+				else
+				{
+					i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+				}
 				if(i!=PackageManager.PERMISSION_GRANTED)
 				{
 					permissions_not_granted_list.add(permission);
 				}
+
 			}
 			if(!permissions_not_granted_list.isEmpty())
 			{
