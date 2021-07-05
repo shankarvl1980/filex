@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
@@ -557,7 +558,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		});
 
 
-		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.DRAWER_WIDTH,Global.DRAWER_WIDTH);
+		//tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.DRAWER_WIDTH,Global.DRAWER_WIDTH);
+		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
+		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);
 		int[] drawer_end_drawables ={R.drawable.exit_drawer_icon,R.drawable.settings_drawer_icon};
 		titles=new String[]{getString(R.string.exit),getString(R.string.settings)};
 		tb_layout.setResourceImageDrawables(drawer_end_drawables,titles);
@@ -680,10 +683,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
 					{
-						Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-						Uri uri = Uri.fromParts("package", getPackageName(), null);
-						intent.setData(uri);
-						startActivityForResult(intent,PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+						try {
+							Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+							intent.addCategory("android.intent.category.DEFAULT");
+							intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+							startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+						} catch (Exception e) {
+							Intent intent = new Intent();
+							intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+							startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+						}
 						break;
 					}
 					else
@@ -856,30 +865,43 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		 			}
 				break;
 			case PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE:
-				if (resultCode != Activity.RESULT_OK)
-				{
-
-					showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+					if (Environment.isExternalStorageManager())
 					{
-						@Override
-						public void onClick(DialogInterface dialog, int which)
+						clearCache();
+						Intent in=getIntent();
+						finish();
+						startActivity(in);
+					}
+					else
+					{
+						showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
 						{
-							switch (which)
+							@Override
+							public void onClick(DialogInterface dialog, int which)
 							{
-								case DialogInterface.BUTTON_POSITIVE:
-									Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-									Uri uri = Uri.fromParts("package", getPackageName(), null);
-									intent.setData(uri);
-									startActivityForResult(intent,PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-									break;
-								case DialogInterface.BUTTON_NEGATIVE:
-									print(getString(R.string.permission_not_granted));
-									finish();
-									break;
+								switch (which)
+								{
+									case DialogInterface.BUTTON_POSITIVE:
+										try {
+											Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+											intent.addCategory("android.intent.category.DEFAULT");
+											intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+											startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+										} catch (Exception e) {
+											Intent intent = new Intent();
+											intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+											startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
+										}
+										break;
+									case DialogInterface.BUTTON_NEGATIVE:
+										print(getString(R.string.permission_not_granted));
+										finish();
+										break;
+								}
 							}
-						}
-					});
-
+						});
+					}
 				}
 
 		}
