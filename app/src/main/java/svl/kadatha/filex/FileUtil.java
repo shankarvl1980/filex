@@ -1174,9 +1174,9 @@ import java.util.List;
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE)) return  false;
 		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH)
 		{
-			if(file_path.startsWith(internal_storage_path))
-			{
-				is_from_internal=true;
+			if (file_path.startsWith(internal_storage_path)) {
+				is_from_internal = true;
+				break;
 			}
 		}
 		return is_from_internal;

@@ -93,7 +93,7 @@ public class StorageUtil
 
 		
 		
-
+/*
 		String[] different_sdcard_paths=new String[]
 		{
 
@@ -122,13 +122,15 @@ public class StorageUtil
 			}
 			
 		}
+
+ */
 		
 		
 		if(result.isEmpty())
 			return null;
-
 		return result;
     }
+
 
     private static void verify_add_file_path(File f, List<FilePOJO> result)
 	{
@@ -146,10 +148,7 @@ public class StorageUtil
 		{
 			Global.INTERNAL_STORAGE_PATH.add(f.getAbsolutePath());
 		}
-		else if(Environment.isExternalStorageRemovable(f))
-		{
-			Global.EXTERNAL_STORAGE_PATH=f.getAbsolutePath();
-		}
+		if(Environment.isExternalStorageRemovable(f)) Global.EXTERNAL_STORAGE_PATH = f.getAbsolutePath();
 
 	}
 

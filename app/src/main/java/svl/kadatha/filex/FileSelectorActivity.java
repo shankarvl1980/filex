@@ -265,6 +265,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
         else
         {
+            Global.STORAGE_DIR.clear();
             clearCache();
             Intent in=getIntent();
             finish();
@@ -341,6 +342,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (Environment.isExternalStorageManager())
                     {
+                        Global.STORAGE_DIR.clear();
                         clearCache();
                         Intent in=getIntent();
                         finish();

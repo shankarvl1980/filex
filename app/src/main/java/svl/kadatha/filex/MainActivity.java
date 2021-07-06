@@ -731,6 +731,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
+			Global.STORAGE_DIR.clear();
 			clearCache();
 			Intent in=getIntent();
 			finish();
@@ -868,6 +869,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 					if (Environment.isExternalStorageManager())
 					{
+						Global.STORAGE_DIR.clear();
 						clearCache();
 						Intent in=getIntent();
 						finish();
