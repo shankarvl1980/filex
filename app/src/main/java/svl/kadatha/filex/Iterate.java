@@ -64,7 +64,8 @@ public class Iterate
 		if(f.isDirectory())
 		{
 			File[] files_array=f.listFiles();
-			if (files_array.length != 0) {
+
+			if (files_array!=null && files_array.length != 0) {
 				populate(files_array, target_list_files, include_folder);
 			}
 			target_list_files.add(f);

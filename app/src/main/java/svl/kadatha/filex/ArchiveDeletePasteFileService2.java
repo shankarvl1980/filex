@@ -1021,7 +1021,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=deleteUsbDirectory(f);
 					if(success)
 					{
-						//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),f.getAbsolutePath());
 						deleted_file_names.add(current_file_name);
 						deleted_files_path_list.add(file_path);
 
@@ -1043,17 +1042,21 @@ public class ArchiveDeletePasteFileService2 extends Service
 					return false;
 				}
 				File[] list = folder.listFiles(); //Storing all file name within array
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
+				if(list!=null)
 				{
-					if(isCancelled())
+					int size=list.length;
+					for (int i = 0; i < size; ++i)
 					{
-						return false;
-					}
-					File tmpF = list[i];
-					success=deleteNativeDirectory(tmpF);
+						if(isCancelled())
+						{
+							return false;
+						}
+						File tmpF = list[i];
+						success=deleteNativeDirectory(tmpF);
 
+					}
 				}
+
 
 			}
 
@@ -1076,20 +1079,22 @@ public class ArchiveDeletePasteFileService2 extends Service
 					return false;
 				}
 				File[] list = folder.listFiles(); //Storing all file name within array
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
+				if(list!=null)
 				{
-					if(isCancelled())
+					int size=list.length;
+					for (int i = 0; i < size; ++i)
 					{
-						return false;
-					}
-					File tmpF = list[i];
-					success=deleteSAFDirectory(tmpF);
+						if(isCancelled())
+						{
+							return false;
+						}
+						File tmpF = list[i];
+						success=deleteSAFDirectory(tmpF);
 
+					}
 				}
 
 			}
-
 
 			counter_no_files++;
 			counter_size_files+=folder.length();
@@ -1099,6 +1104,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 			return success;
 		}
+
 
 		public boolean deleteUsbDirectory(final UsbFile folder)
 		{
@@ -1515,6 +1521,12 @@ public class ArchiveDeletePasteFileService2 extends Service
 				}
 
 				String[] files_name_array = source.list();
+				if(files_name_array==null)
+				{
+					++counter_no_files;
+					return true;
+				}
+
 				int size=files_name_array.length;
 				for (int i=0;i<size;++i)
 				{
@@ -1527,7 +1539,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					String inner_dest_file_path=dest_file_path+File.separator+inner_file_name;
 					success=Copy_File_File(srcFile,inner_dest_file_path,cut);
 				}
-				counter_no_files++;
+				++counter_no_files;
 				if(success&&cut)
 				{
 					FileUtil.deleteNativeDirectory(source);
@@ -1598,6 +1610,11 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 
 				String[] files_name_list = source.list();
+				if(files_name_list==null)
+				{
+					++counter_no_files;
+					return true;
+				}
 				int size=files_name_list.length;
 				for (int i=0;i<size;++i)
 				{
@@ -1660,6 +1677,11 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 
 				String[] files_name_list = source.list();
+				if(files_name_list==null)
+				{
+					++counter_no_files;
+					return true;
+				}
 				int size=files_name_list.length;
 				for (int i=0;i<size;++i)
 				{
