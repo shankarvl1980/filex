@@ -12,13 +12,19 @@ import android.provider.DocumentsContract;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.viewpager.widget.ViewPager;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -505,13 +511,34 @@ public class Global
 			WORKOUT_AVAILABLE_SPACE();
 		}
 	}
+	public static boolean HAS_NAVBAR(WindowManager windowManager){
+		Display d = windowManager.getDefaultDisplay();
+
+		DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+		d.getRealMetrics(realDisplayMetrics);
+
+		int realHeight = realDisplayMetrics.heightPixels;
+		int realWidth = realDisplayMetrics.widthPixels;
+
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		d.getMetrics(displayMetrics);
+
+		int displayHeight = displayMetrics.heightPixels;
+		int displayWidth = displayMetrics.widthPixels;
+
+		return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
+	}
 
 
 	public static void GET_NAVIGATION_BAR_HEIGHT(Context context){
 
 		Resources resources = context.getResources();
+
+
 		int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
-		if(id > 0 && resources.getBoolean(id))
+		if(id > 0 && resources.getBoolean(id) && IS_TABLET)
+
+		//if(HAS_NAVBAR((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)))
 		{
 			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
 			if (resourceId > 0) {

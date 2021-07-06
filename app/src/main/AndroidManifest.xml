@@ -23,6 +23,7 @@
         android:icon="@drawable/app_icon"
         android:label="@string/application_name"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/MyLightBaseTheme"
         tools:node="replace">
 
