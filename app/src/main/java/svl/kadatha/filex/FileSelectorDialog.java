@@ -75,17 +75,20 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
-			if(fileclickselected.startsWith(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
+			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;
 			}
-
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			if(new File(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()).getParent().startsWith(fileclickselected))
+			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				fileObjectType=FileObjectType.ROOT_TYPE;
+				if(new File(path).getParent().startsWith(fileclickselected))
+				{
+					fileObjectType=FileObjectType.ROOT_TYPE;
+					break;
+				}
 			}
 		}
 

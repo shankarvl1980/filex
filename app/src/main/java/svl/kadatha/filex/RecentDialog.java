@@ -324,13 +324,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 					if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(filePOJO.getPath()))
 					{
 						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
-						p1.textView_recent_dir.setText(filePOJO.getName()+space);
 					}
 					else
 					{
 						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
-						p1.textView_recent_dir.setText(filePOJO.getName()+space);
 					}
+					p1.textView_recent_dir.setText(filePOJO.getName()+space);
 
 				}
 

@@ -115,7 +115,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
 			//Log.d("shankar","fileclickselected - "+fileclickselected+"    fileobjecttype -"+fileObjectType);
-			if(fileclickselected.startsWith(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
+			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;
 			}
@@ -123,9 +123,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			if(new File(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()).getParent().startsWith(fileclickselected))
+			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				fileObjectType=FileObjectType.ROOT_TYPE;
+				if(new File(path).getParent().startsWith(fileclickselected))
+				{
+					fileObjectType=FileObjectType.ROOT_TYPE;
+					break;
+				}
 			}
 		}
 

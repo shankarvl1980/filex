@@ -232,9 +232,9 @@ public class Iterate
 	}
 
 
-	public static void FILL_FILE_SIZE(List<FilePOJO> filePOJOS,long volume_storage_size)
+	public static boolean FILL_FILE_SIZE(List<FilePOJO> filePOJOS,long volume_storage_size)
 	{
-		if(filePOJOS==null) return;
+		if(filePOJOS==null) return true;
 		int size=filePOJOS.size();
 		for(int i=0;i<size;++i)
 		{
@@ -259,5 +259,6 @@ public class Iterate
 			}
 
 		}
+		return true;
 	}
 }

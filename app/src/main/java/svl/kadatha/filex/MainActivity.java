@@ -1768,13 +1768,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(file_path)) {
 					p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
-					p1.textView_storage_dir.setText(filePOJO.getName());
 				}
 				else
 				{
 					p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
-					p1.textView_storage_dir.setText(filePOJO.getName());
 				}
+				p1.textView_storage_dir.setText(filePOJO.getName());
 
 			}
 			else if(fileObjectType== FileObjectType.USB_TYPE)

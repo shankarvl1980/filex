@@ -55,7 +55,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public int file_list_size;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
-    public boolean is_toolbar_visible=true;
+    public boolean is_toolbar_visible=true, filled_file_size;
 
     private StorageAnalyserDialog(){}
 
@@ -80,17 +80,20 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            if(fileclickselected.startsWith(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
+            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
             {
                 fileObjectType=FileObjectType.FILE_TYPE;
             }
-
         }
         else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
-            if(new File(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()).getParent().startsWith(fileclickselected))
+            for(String path:Global.INTERNAL_STORAGE_PATH)
             {
-                fileObjectType=FileObjectType.ROOT_TYPE;
+                if(new File(path).getParent().startsWith(fileclickselected))
+                {
+                    fileObjectType=FileObjectType.ROOT_TYPE;
+                    break;
+                }
             }
         }
 
@@ -268,6 +271,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             public void run() {
                 if(filled_filePOJOs)
                 {
+                    filled_file_size=false;
                     long storage_space=0L;
                     String key=fileObjectType+fileclickselected;
                     for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
@@ -278,8 +282,37 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                             break;
                         }
                     }
+                    final long final_storage_space = storage_space;
+                    if (pbf_polling == null || pbf_polling.getDialog() == null) {
+                        pbf_polling=ProgressBarFragment.getInstance();
+                        pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            filled_file_size=Iterate.FILL_FILE_SIZE(filePOJOS, final_storage_space);
+                        }
+                    }).start();
 
-                    Iterate.FILL_FILE_SIZE(filePOJOS,storage_space);
+                    fill_size_filepojos();
+                    handler_inter.removeCallbacks(this);
+                }
+                else
+                {
+                    handler_inter.postDelayed(this,50);
+                }
+            }
+        });
+    }
+
+    public void fill_size_filepojos()
+    {
+        final Handler handler=new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(filled_file_size)
+                {
                     totalFilePOJO_list=filePOJOS;
                     filePOJO_list=filePOJOS;
                     totalFilePOJO_list_Size=totalFilePOJO_list.size();
@@ -293,19 +326,17 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     {
                         pbf_polling.dismissAllowingStateLoss();
                     }
+                    handler.removeCallbacks(this);
 
-                    handler_inter.removeCallbacks(this);
                 }
                 else
                 {
-                    handler_inter.postDelayed(this,50);
+                    handler.postDelayed(this,50);
                 }
             }
         });
 
-
     }
-
 
     @Override
     public void onStop() {
