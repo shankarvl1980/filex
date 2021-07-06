@@ -701,12 +701,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 
 				}
+
 				if(!show_rationale)
 				{
 					print(getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
 					finish();
 				}
-				else if(permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.equals(Manifest.permission.MANAGE_EXTERNAL_STORAGE))
+				else if(permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 				{
 					showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
 					{
@@ -2205,7 +2206,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onReceive(Context context, Intent intent) {
 			DetailFragment df = (DetailFragment) FM.findFragmentById(R.id.detail_fragment);
 			String activity_name=intent.getStringExtra("activity_name");
-			String file_path=intent.getStringExtra("file_paht");
+			String file_path=intent.getStringExtra("file_path");
 			FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
 			switch (intent.getAction()) {
 

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -43,7 +44,7 @@ public class Global
 
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;
-	static int SCREEN_WIDTH,SCREEN_HEIGHT,DIALOG_WIDTH,DIALOG_HEIGHT;
+	static int SCREEN_WIDTH,SCREEN_HEIGHT,DIALOG_WIDTH,DIALOG_HEIGHT,WIDTH;
 	static float SCREEN_RATIO;
 	static String SORT;
 	static String STORAGE_ANALYSER_SORT;
@@ -283,12 +284,15 @@ public class Global
 		{
 			SCREEN_WIDTH=context.getResources().getDisplayMetrics().heightPixels;
 			SCREEN_HEIGHT=context.getResources().getDisplayMetrics().widthPixels;
+			WIDTH=SCREEN_HEIGHT;
+
 
 		}
 		else
 		{
 			SCREEN_WIDTH=context.getResources().getDisplayMetrics().widthPixels;
 			SCREEN_HEIGHT=context.getResources().getDisplayMetrics().heightPixels;
+			WIDTH=SCREEN_WIDTH;
 
 		}
 
@@ -301,6 +305,45 @@ public class Global
 	}
 	
 	
+
+	static void GET_IMAGE_VIEW_DIMENSIONS(Context context)
+	{
+		
+		if(IMAGEVIEW_DIMENSION_SMALL_LIST==0)
+		{
+			DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
+			int list_s=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
+			int list_g=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,IS_TABLET ? 10 : 7,displayMetrics);
+			ONE_SP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
+			ONE_DP=list_s/4;
+			TWO_DP=ONE_DP*2;
+			THIRTY_FOUR_DP=ONE_DP*34;
+			FOUR_DP=list_s;
+			EIGHT_DP=list_s*2;
+			RECYCLERVIEW_ITEM_SPACING=list_s*2;
+			TEN_DP=ONE_DP*10;
+			SIX_DP=ONE_DP*6;
+			DRAWER_WIDTH=252*ONE_DP;
+
+			SIXTY_DP=list_s*15;
+			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
+			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
+			IMAGEVIEW_DIMENSION_LARGE_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
+
+			IMAGEVIEW_DIMENSION_SMALL_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
+			IMAGEVIEW_DIMENSION_MEDIUM_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
+			IMAGEVIEW_DIMENSION_LARGE_GRID=list_s*2*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
+
+			BUTTON_HEIGHT=FOUR_DP*12;
+
+			DIVIDERITEMDECORATION=new DividerItemDecoration(context,DividerItemDecoration.VERTICAL);
+		}
+		GRID_COUNT_SMALL=WIDTH/(IMAGEVIEW_DIMENSION_SMALL_GRID+FOUR_DP);
+		GRID_COUNT_MEDIUM=WIDTH/(IMAGEVIEW_DIMENSION_MEDIUM_GRID+FOUR_DP);
+		GRID_COUNT_LARGE=WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+FOUR_DP);
+
+	}
+
 	static void GET_PREFERENCES(TinyDB tinyDB)
 	{
 //
@@ -379,45 +422,8 @@ public class Global
 	}
 
 
-	static void GET_IMAGEVIEW_DIMENSIONS(Context context)
-	{
-		
-		if(IMAGEVIEW_DIMENSION_SMALL_LIST==0)
-		{
-			DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
-			int list_s=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
-			int list_g=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,7,displayMetrics);
-			ONE_SP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
-			ONE_DP=list_s/4;
-			TWO_DP=ONE_DP*2;
-			THIRTY_FOUR_DP=ONE_DP*34;
-			FOUR_DP=list_s;
-			EIGHT_DP=list_s*2;
-			RECYCLERVIEW_ITEM_SPACING=list_s*2;
-			TEN_DP=ONE_DP*10;
-			SIX_DP=ONE_DP*6;
-			DRAWER_WIDTH=252*ONE_DP;
-
-			SIXTY_DP=list_s*15;
-			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
-			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
-			IMAGEVIEW_DIMENSION_LARGE_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
-
-			IMAGEVIEW_DIMENSION_SMALL_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
-			IMAGEVIEW_DIMENSION_MEDIUM_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
-			IMAGEVIEW_DIMENSION_LARGE_GRID=list_s*2*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
 
 
-			GRID_COUNT_SMALL=SCREEN_WIDTH/(IMAGEVIEW_DIMENSION_SMALL_GRID+list_s);
-			GRID_COUNT_MEDIUM=SCREEN_WIDTH/(IMAGEVIEW_DIMENSION_MEDIUM_GRID+list_s);
-			GRID_COUNT_LARGE=SCREEN_WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+list_s);
-
-			BUTTON_HEIGHT=FOUR_DP*12;
-
-			DIVIDERITEMDECORATION=new DividerItemDecoration(context,DividerItemDecoration.VERTICAL);
-		}
-
-	}
 
 	static void GET_ACTION_BAR_HEIGHT(Context context)
 	{

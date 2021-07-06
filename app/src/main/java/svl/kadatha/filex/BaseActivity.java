@@ -20,7 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         Global.GET_SCREEN_DIMENSIONS(context);
         Global.GET_URI_PERMISSIONS_LIST(context);
-        Global.GET_IMAGEVIEW_DIMENSIONS(context);
+        Global.GET_IMAGE_VIEW_DIMENSIONS(context);
         Global.GET_PREFERENCES(tinyDB);
         Global.GET_ACTION_BAR_HEIGHT(context);
         Global.GET_STORAGE_DIR(context);

@@ -26,6 +26,7 @@ import com.github.mjdev.libaums.fs.UsbFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,10 +64,26 @@ public class CreateFileDialog extends DialogFragment
 
 
 		List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
-		for(FilePOJO filePOJO:destFilePOJOs)
+		if(destFilePOJOs==null) //first start of app after installation, hashmap size is zero
 		{
-			dest_file_names.add(filePOJO.getName());
+			if(fileObjectType==FileObjectType.FILE_TYPE)
+			{
+				String [] file_names_array;
+				if((file_names_array=new File(parent_folder).list())!=null)
+				{
+					dest_file_names.addAll(Arrays.asList(file_names_array));
+				}
+
+			}
 		}
+		else
+		{
+			for(FilePOJO filePOJO:destFilePOJOs)
+			{
+				dest_file_names.add(filePOJO.getName());
+			}
+		}
+
 
 
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);

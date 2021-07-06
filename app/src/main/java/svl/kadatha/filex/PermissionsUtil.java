@@ -28,11 +28,7 @@ public class PermissionsUtil
 	{
 		this.context=context;
 		this.activity=activity;
-		
 
-		permissions_list_storage.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-		permissions_list_storage.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
-		
 	}
 	
 	public boolean check_storage_permission()
@@ -40,24 +36,25 @@ public class PermissionsUtil
 		
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
 		{
-			for(String permission:permissions_list_storage)
+			int i;
+			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
 			{
-				int i;
-				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
-				{
-					if(Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
-					else i=PackageManager.PERMISSION_DENIED;
-				}
-				else
-				{
-					i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-				}
+				if(Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
+				else i=PackageManager.PERMISSION_DENIED;
 				if(i!=PackageManager.PERMISSION_GRANTED)
 				{
-					permissions_not_granted_list.add(permission);
+					permissions_not_granted_list.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
 				}
-
 			}
+			else
+			{
+				i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+				if(i!=PackageManager.PERMISSION_GRANTED)
+				{
+					permissions_not_granted_list.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+				}
+			}
+
 			if(!permissions_not_granted_list.isEmpty())
 			{
 				

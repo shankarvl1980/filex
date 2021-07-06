@@ -408,7 +408,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         public void onReceive(Context context, Intent intent) {
             StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
             String activity_name=intent.getStringExtra("activity_name");
-            String file_path=intent.getStringExtra("file_paht");
+            String file_path=intent.getStringExtra("file_path");
             FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
