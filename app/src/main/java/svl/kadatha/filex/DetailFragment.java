@@ -903,51 +903,49 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException
 		{
+			File[] list=new File(search_dir).listFiles();
+			if(list==null) return;
+			int size=list.length;
+			for(int i=0;i<size;++i)
 			{
-				File[] list=new File(search_dir).listFiles();
-				int size=list.length;
-				for(int i=0;i<size;++i)
+				File f=list[i];
+				if(isCancelled())
 				{
-					File f=list[i];
-					if(isCancelled())
-					{
-						return;
-					}
-					try
-					{
-						if(f.isDirectory())
-						{
-							if(Pattern.matches(search_name,f.getName()) && (file_type.equals("d")|| file_type.equals("fd")))
-							{
-								f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
-								f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
-								count++;
-							}
-							search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
-						}
-						else
-						{
-							if(Pattern.matches(search_name,f.getName()) && (file_type.equals("f")||file_type.equals("fd")))
-							{
-								f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
-								f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
-								count++;
-							}
-						}
-						publishProgress(count);
-					}
-					catch(final PatternSyntaxException e)
-					{
-						mainActivity.runOnUiThread(new Runnable() {
-							public void run() {
-								print(e.getMessage());
-							}
-						});
-					}
-
+					return;
 				}
-			}
+				try
+				{
+					if(f.isDirectory())
+					{
+						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("d")|| file_type.equals("fd")))
+						{
+							f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
+							f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
+							count++;
+						}
+						search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
+					}
+					else
+					{
+						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("f")||file_type.equals("fd")))
+						{
+							f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
+							f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
+							count++;
+						}
+					}
+					publishProgress(count);
+				}
+				catch(final PatternSyntaxException e)
+				{
+					mainActivity.runOnUiThread(new Runnable() {
+						public void run() {
+							print(e.getMessage());
+						}
+					});
+				}
 
+			}
 		}
 
 		@Override
