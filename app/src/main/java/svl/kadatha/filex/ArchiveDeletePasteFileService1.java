@@ -397,15 +397,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 					try
 					{
-						zipOutputStream.closeEntry();
-						zipOutputStream.close();
 						return true;
 					}
 
-					catch(IOException e)
-					{
-						//print("Exception thrown");
-					}
+
 					finally
 					{
 						try
@@ -474,8 +469,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 							}
 
 						}
-						zipOutputStream.closeEntry();
-						zipOutputStream.close();
 						return true;
 					}
 
