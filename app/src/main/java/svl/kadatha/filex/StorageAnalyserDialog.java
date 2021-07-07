@@ -377,6 +377,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             cache_cleared=true;
         }
+        else if((fileObjectType+file_path).startsWith(this.fileObjectType+fileclickselected))  // this is only storage analyser dialog as modification has affect all up through the parent hierarchy
+        {
+            cache_cleared=true;
+        }
     }
 
     @Override
