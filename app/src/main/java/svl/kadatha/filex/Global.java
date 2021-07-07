@@ -86,14 +86,14 @@ public class Global
 	static int ONE_DP;
 	static int TWO_DP;
 	static int THIRTY_FOUR_DP;
-	static int SIXTY_DP;
+	//static int SIXTY_DP;
 	static int ONE_SP;
 	static int FOUR_DP;
 	static int SIX_DP;
 	static int EIGHT_DP;
 	static int TEN_DP;
 	static int RECYCLERVIEW_ITEM_SPACING;
-	static int DRAWER_WIDTH;
+	//static int DRAWER_WIDTH;
 
 	static final float DISABLE_ALFA= (float) 0.4;
 	static final float ENABLE_ALFA= (float) 1.0;
@@ -318,27 +318,31 @@ public class Global
 		if(IMAGEVIEW_DIMENSION_SMALL_LIST==0)
 		{
 			DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
-			int list_s=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
-			int list_g=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,IS_TABLET ? 10 : 7,displayMetrics);
 			ONE_SP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
-			ONE_DP=list_s/4;
-			TWO_DP=ONE_DP*2;
-			THIRTY_FOUR_DP=ONE_DP*34;
-			FOUR_DP=list_s;
-			EIGHT_DP=list_s*2;
-			RECYCLERVIEW_ITEM_SPACING=list_s*2;
-			TEN_DP=ONE_DP*10;
-			SIX_DP=ONE_DP*6;
-			DRAWER_WIDTH=252*ONE_DP;
 
-			SIXTY_DP=list_s*15;
+			FOUR_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
+			SIX_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,displayMetrics);
+			EIGHT_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,displayMetrics);
+			TEN_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,displayMetrics);
+
+			int list_s= FOUR_DP;
+			int list_g=IS_TABLET ? TEN_DP : EIGHT_DP;
+
+
+			ONE_DP=FOUR_DP/4;
+			TWO_DP=FOUR_DP/2;
+
+			THIRTY_FOUR_DP=ONE_DP*34;
+
+			RECYCLERVIEW_ITEM_SPACING=list_g;
+
 			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
 			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
 			IMAGEVIEW_DIMENSION_LARGE_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
 
 			IMAGEVIEW_DIMENSION_SMALL_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
 			IMAGEVIEW_DIMENSION_MEDIUM_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
-			IMAGEVIEW_DIMENSION_LARGE_GRID=list_s*2*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
+			IMAGEVIEW_DIMENSION_LARGE_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
 
 			BUTTON_HEIGHT=FOUR_DP*12;
 
