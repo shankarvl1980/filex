@@ -1276,7 +1276,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private void setRecyclerViewHeight(RecyclerView v)
 	{
 		int number_items=Math.min(5,v.getAdapter().getItemCount());
-		v.getLayoutParams().height=number_items*Global.ONE_DP*52;
+		v.getLayoutParams().height=number_items*Global.FOUR_DP*14;
 	}
 
 	public ArrayList<File> iterate_to_attach_file(SparseArray<String> file_list)
