@@ -86,7 +86,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 	final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
 
 	private String source_other_file_permission,dest_other_file_permission;
-	List<String> dest_file_names;
+	private List<String> dest_file_names;
+	private boolean storage_analyser_delete;
 
     @Override
 	public void onCreate()
@@ -163,7 +164,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					source_folder=bundle.getString("source_folder");
-                    boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
+                    storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
@@ -872,7 +873,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			// TODO: Implement this method
 			super.onCancelled(result);
 			int s=deleted_file_names.size();
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
 
@@ -1148,7 +1149,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			// TODO: Implement this method
 			super.onPostExecute(result);
 			int s=deleted_file_names.size();
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,!result);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,!result,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
 			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)

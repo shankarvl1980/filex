@@ -89,7 +89,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         }
 
-        //ImageButton directory_btn = findViewById(R.id.storage_analyser_directory_btn);
         current_dir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

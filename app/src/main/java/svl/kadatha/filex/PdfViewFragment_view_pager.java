@@ -145,7 +145,7 @@ public class PdfViewFragment_view_pager extends Fragment
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
         DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
         floating_button_height=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
-        recyclerview_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,68,displayMetrics);
+        recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
 
     }
 

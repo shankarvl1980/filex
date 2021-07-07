@@ -270,7 +270,7 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
     public static String ON_DELETE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
-                                                      List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled)
+                                                      List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled,boolean storage_analyser_delete)
     {
         String notification_content;
         if(counter_no_files>0)

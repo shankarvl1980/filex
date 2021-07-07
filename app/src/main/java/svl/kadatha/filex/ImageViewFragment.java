@@ -153,7 +153,7 @@ public class ImageViewFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_as_wallpaper)));
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
-		recyclerview_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,68,displayMetrics);
+		recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
 
 	}
 	
