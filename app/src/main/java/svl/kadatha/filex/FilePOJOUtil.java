@@ -458,6 +458,7 @@ public class FilePOJOUtil {
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(folder_to_be_removed),fileObjectType);
 
         }
+
         Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
     }
@@ -631,6 +632,7 @@ public class FilePOJOUtil {
             if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
             if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
         }
+        SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0),fileObjectType);
     }
 
     private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType)
@@ -664,38 +666,32 @@ public class FilePOJOUtil {
         String parent_file_path=new File(file_path).getParent();
         if(parent_file_path!=null)
         {
-            String parent_name=new File(parent_file_path).getName();
-            String parent_parent_file_path=new File(parent_file_path).getParent();
-            List<FilePOJO> filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_parent_file_path);
-            if(filePOJOS!=null)
+            Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+
+            while(iterator.hasNext())
             {
-                for(FilePOJO filePOJO:filePOJOS)
+                Map.Entry<String, List<FilePOJO>> entry=iterator.next();
+                if((fileObjectType+file_path).startsWith(entry.getKey()))
                 {
-                    if(filePOJO.getName().equals(parent_name))
+                    List<FilePOJO> filePOJOS=entry.getValue();
+                    if(filePOJOS!=null)
                     {
-                        filePOJO.setTotalFiles(0);
-                        filePOJO.setTotalSizeLong(0L);
-                        filePOJO.setTotalSize(null);
-                        filePOJO.setTotalSizePercentageDouble(0);
-                        filePOJO.setTotalSizePercentage(null);
-                        break;
+                        for(FilePOJO filePOJO:filePOJOS)
+                        {
+                            filePOJO.setTotalFiles(0);
+                            filePOJO.setTotalSizeLong(0L);
+                            filePOJO.setTotalSize(null);
+                            filePOJO.setTotalSizePercentageDouble(0);
+                            filePOJO.setTotalSizePercentage(null);
+                        }
                     }
                 }
+
             }
-            SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(parent_file_path,fileObjectType);
         }
 
     }
 
-    public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(List<String> file_path_list,FileObjectType fileObjectType)
-    {
-        int size=file_path_list.size();
-        for(int i=0;i<size;++i)
-        {
-            String file_path=file_path_list.get(i);
-            SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path,fileObjectType);
-        }
-    }
 
     public static boolean FILL_FILEPOJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
                                               String fileclickselected,UsbFile usbFile ,boolean archive_view)
