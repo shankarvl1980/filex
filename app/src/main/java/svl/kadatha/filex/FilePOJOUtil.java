@@ -632,7 +632,7 @@ public class FilePOJOUtil {
             if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
             if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
         }
-        SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0),fileObjectType);
+        if(size>0) SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0),fileObjectType);
     }
 
     private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType)
