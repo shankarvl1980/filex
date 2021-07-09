@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -195,7 +196,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 							return;
 						}
 					}
-					if(okButtonClickListener!=null) okButtonClickListener.okButtonClick();
+					if(okButtonClickListener!=null) okButtonClickListener.deleteDialogOKButtonClick();
 					dismissAllowingStateLoss();
 				}
 
@@ -219,6 +220,12 @@ public class DeleteFileAlertDialog extends DialogFragment
 			size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
 		}
 		return v;
+	}
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		okButtonClickListener= (OKButtonClickListener) context;
 	}
 
 	@Override
@@ -559,11 +566,14 @@ public class DeleteFileAlertDialog extends DialogFragment
 
 	interface OKButtonClickListener
 	{
-		void okButtonClick();
+		void deleteDialogOKButtonClick();
 	}
 
+	/*
 	public void setOKButtonClickListener(OKButtonClickListener listener)
 	{
 		this.okButtonClickListener=listener;
 	}
+
+	 */
 }

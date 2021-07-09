@@ -72,7 +72,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
-public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener
+public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
 {
 	public boolean archive_view;
 	private boolean working_dir_open,library_or_search_shown;
@@ -144,7 +144,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		permissionUtil.check_storage_permission();
 		TINYDB=new TinyDB(context);
 
-	
+
 		setContentView(R.layout.main);
 		FM=getSupportFragmentManager();
 		PM=getPackageManager();
@@ -1295,6 +1295,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	}
 
 
+	@Override
+	public void deleteDialogOKButtonClick() {
+		final DetailFragment df=(DetailFragment)FM.findFragmentById(R.id.detail_fragment);
+		actionmode_finish(df,df.fileclickselected);
+	}
+
+
 	private class TopToolbarClickListener implements View.OnClickListener
 	{
 		@Override
@@ -1466,12 +1473,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 
 				DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
-				deleteFileAlertDialog.setOKButtonClickListener(new DeleteFileAlertDialog.OKButtonClickListener() {
-					@Override
-					public void okButtonClick() {
-						actionmode_finish(df,df.fileclickselected);
-					}
-				});
 				deleteFileAlertDialog.show(FM, "delete_dialog");
 
 			} else if (id == R.id.toolbar_btn_5) {
@@ -1654,12 +1655,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 
 					DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
-					deleteFileAlertDialog.setOKButtonClickListener(new DeleteFileAlertDialog.OKButtonClickListener() {
-						@Override
-						public void okButtonClick() {
-							actionmode_finish(df,df.fileclickselected);
-						}
-					});
 					deleteFileAlertDialog.show(FM, "delete_dialog");
 				} else {
 					print(getString(R.string.select_files_to_delete));

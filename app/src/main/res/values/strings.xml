@@ -293,6 +293,7 @@
     <string name="file_to_storage">File/Storage</string>
 	<string name="files_">Files</string>
     <string name="sort">Sort</string>
+    <string name="analysing">Analysing</string>
 
 
     <string-array name="library_categories">

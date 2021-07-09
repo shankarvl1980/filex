@@ -269,7 +269,18 @@ public class AppSelectorDialog extends DialogFragment
                                 }
 
                             });
-                            appInstallAlertDialogFragment.show(MainActivity.FM,"");
+
+                            AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+                            if(appCompatActivity instanceof MainActivity)
+                            {
+                                appInstallAlertDialogFragment.show(MainActivity.FM,"");
+                            }
+                            else if(appCompatActivity instanceof StorageAnalyserActivity)
+                            {
+                                appInstallAlertDialogFragment.show(StorageAnalyserActivity.FM,"");
+                            }
+
+
                         }
                         else
                         {

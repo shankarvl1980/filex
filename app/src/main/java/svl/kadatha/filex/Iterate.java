@@ -17,9 +17,6 @@ public class Iterate
 	private static final List<Integer> FOLDERWISE_NO_OF_FILES=new ArrayList<>();
 	private static final List<Long> FOLDERWISE_SIZE_OF_FILES=new ArrayList<>();
 
-	private static int NO_OF_FILES;
-	private static long SIZE_OF_FILES;
-	
 	public static List<File> populate(File[] source_list_files,List<File> target_list_files, boolean include_folder)
 	{
 		int size=source_list_files.length;
@@ -199,67 +196,5 @@ public class Iterate
 		return target_file_list_array;
 	}
 
-	public static void GET_SIZE(File f, boolean include_folder)
-	{
-		int no_of_files=0;
-		long size_of_files=0L;
-		if(f.isDirectory())
-		{
 
-			File[] files_array=f.listFiles();
-			if(files_array!=null && files_array.length!=0)
-			{
-				for(File file:files_array)
-				{
-					GET_SIZE(file,include_folder);
-				}
-				if(include_folder)
-				{
-					no_of_files++;
-				}
-			}
-
-
-
-		}
-		else
-		{
-			no_of_files++;
-			size_of_files+=f.length();
-		}
-
-		NO_OF_FILES+=no_of_files;
-		SIZE_OF_FILES+=size_of_files;
-	}
-
-
-	public static boolean FILL_FILE_SIZE(List<FilePOJO> filePOJOS,long volume_storage_size)
-	{
-		if(filePOJOS==null) return true;
-		int size=filePOJOS.size();
-		for(int i=0;i<size;++i)
-		{
-			FilePOJO filePOJO=filePOJOS.get(i);
-			NO_OF_FILES=0; SIZE_OF_FILES=0;
-			if(filePOJO.getTotalSizePercentage()!=null) continue;
-			if(filePOJO.getIsDirectory())
-			{
-				GET_SIZE(new File(filePOJO.getPath()),true);
-				filePOJO.setTotalFiles(NO_OF_FILES);
-				filePOJO.setTotalSizeLong(SIZE_OF_FILES);
-				filePOJO.setTotalSize(FileUtil.humanReadableByteCount(SIZE_OF_FILES,Global.BYTE_COUNT_BLOCK_1000));
-				double percentage = SIZE_OF_FILES * 100.0/ volume_storage_size;
-				filePOJO.setTotalSizePercentageDouble(percentage);
-				filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
-			}
-			else
-			{
-				double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
-				filePOJO.setTotalSizePercentageDouble(percentage);
-				filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
-			}
-
-		}
-		return true;
-	}
 }

@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -42,6 +44,8 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     private AppInstallDialogListener appInstallDialogListener;
     private AsyncTaskStatus asyncTaskStatus;
     private Handler handler;
+    private PackageManager packageManager;
+    private FragmentManager fragmentManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,18 +54,28 @@ public class AppInstallAlertDialogFragment extends DialogFragment
         setRetainInstance(true);
         Bundle bundle=getArguments();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+        AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+        if(appCompatActivity instanceof MainActivity)
+        {
+            packageManager=MainActivity.PM;
+            fragmentManager=MainActivity.FM;
+
+        }
+        else if(appCompatActivity instanceof StorageAnalyserActivity)
+        {
+            packageManager=StorageAnalyserActivity.PM;
+            fragmentManager=StorageAnalyserActivity.FM;
+        }
+
         if(bundle!=null)
         {
-            //fileObjectType=(DetailFragment.FileObjectType) bundle.getSerializable("fileObjectType");
-
             file_path=bundle.getString("file_path");
             if(file_path!=null)
             {
                 new ApkArchiveInfoAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-
-
         }
+
     }
 
     @Nullable
@@ -170,23 +184,23 @@ public class AppInstallAlertDialogFragment extends DialogFragment
             super.onPreExecute();
             asyncTaskStatus=AsyncTaskStatus.STARTED;
             progressBarFragment=ProgressBarFragment.getInstance();
-            progressBarFragment.show(MainActivity.FM,"");
+            progressBarFragment.show(fragmentManager,"");
 
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            PackageInfo packageInfo=MainActivity.PM.getPackageArchiveInfo(file_path,0);
+            PackageInfo packageInfo=packageManager.getPackageArchiveInfo(file_path,0);
             if(packageInfo!=null)
             {
                 packageInfo.applicationInfo.publicSourceDir=file_path;
-                Drawable app_icon_drawable=packageInfo.applicationInfo.loadIcon(MainActivity.PM);
+                Drawable app_icon_drawable=packageInfo.applicationInfo.loadIcon(packageManager);
                 if(app_icon_drawable instanceof BitmapDrawable)
                 {
                     app_icon=((BitmapDrawable) app_icon_drawable).getBitmap();
                 }
                 package_name=packageInfo.applicationInfo.packageName;
-                app_name= (String) packageInfo.applicationInfo.loadLabel(MainActivity.PM);
+                app_name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                 version=packageInfo.versionName;
             }
             if(package_name==null)
@@ -199,7 +213,7 @@ public class AppInstallAlertDialogFragment extends DialogFragment
                 return null;
             }
 
-            List<PackageInfo> packageInfoList=MainActivity.PM.getInstalledPackages(PackageManager.GET_META_DATA);
+            List<PackageInfo> packageInfoList=packageManager.getInstalledPackages(PackageManager.GET_META_DATA);
             int size=packageInfoList.size();
             for(int i=0; i<size; ++i)
             {

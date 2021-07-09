@@ -47,7 +47,7 @@ public class FilePOJOUtil {
                 file_ext=name.substring(idx+1);
                 if(extracticon)
                 {
-                    package_name=EXTRACT_ICON(name,path,file_ext,idx);
+                    package_name=EXTRACT_ICON(name,path,file_ext);
                 }
 
                 if(file_ext.matches(Global.VIDEO_REGEX))
@@ -112,7 +112,7 @@ public class FilePOJOUtil {
                 file_ext=name.substring(idx+1);
                 if(extracticon)
                 {
-                    package_name=EXTRACT_ICON(name,path,file_ext,idx);
+                    package_name=EXTRACT_ICON(name,path,file_ext);
                 }
                 if(file_ext.matches(Global.VIDEO_REGEX))
                 {
@@ -316,39 +316,37 @@ public class FilePOJOUtil {
         return filePOJO;
     }
 
-    static String EXTRACT_ICON(String file_name,String file_path, String file_ext, int split_point)
+    static String EXTRACT_ICON(String file_name,String file_path, String file_ext)
     {
-
+        if(MainActivity.PM==null) return null;
         if(file_ext.matches(Global.APK_REGEX))
         {
 
             PackageInfo PI = MainActivity.PM.getPackageArchiveInfo(file_path, 0);
+            if(PI==null) return null;
             PI.applicationInfo.publicSourceDir = file_path;
             String package_name=PI.packageName;
-            if(PI !=null)
+            String file_with_package_name=package_name+".png";
+            if(!MainActivity.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
             {
-                String file_with_package_name=package_name+".png";
-                if(!MainActivity.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
+                Drawable APKicon = PI.applicationInfo.loadIcon(MainActivity.PM);
+                if(APKicon instanceof BitmapDrawable)
                 {
-                    Drawable APKicon = PI.applicationInfo.loadIcon(MainActivity.PM);
-                    if(APKicon instanceof BitmapDrawable)
-                    {
-                        Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
-                        File f=new File(MainActivity.APK_ICON_DIR,file_with_package_name);
-                        try {
-                            FileOutputStream fileOutputStream=new FileOutputStream(f);
-                            bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                            fileOutputStream.close();
-                            MainActivity.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                        } catch (IOException e) {
-
-                        }
+                    Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
+                    File f=new File(MainActivity.APK_ICON_DIR,file_with_package_name);
+                    try {
+                        FileOutputStream fileOutputStream=new FileOutputStream(f);
+                        bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                        fileOutputStream.close();
+                        MainActivity.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                    } catch (IOException e) {
 
                     }
 
                 }
 
             }
+
             return package_name;
         }
         else
@@ -688,6 +686,34 @@ public class FilePOJOUtil {
                 }
 
             }
+        }
+
+    }
+
+    public static void SET_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
+    {
+        Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+
+        while(iterator.hasNext())
+        {
+            Map.Entry<String, List<FilePOJO>> entry=iterator.next();
+            if((fileObjectType+file_path).equals(entry.getKey()))
+            {
+                List<FilePOJO> filePOJOS=entry.getValue();
+                if(filePOJOS!=null)
+                {
+                    for(FilePOJO filePOJO:filePOJOS)
+                    {
+                        filePOJO.setTotalFiles(0);
+                        filePOJO.setTotalSizeLong(0L);
+                        filePOJO.setTotalSize(null);
+                        filePOJO.setTotalSizePercentageDouble(0);
+                        filePOJO.setTotalSizePercentage(null);
+                    }
+                }
+                break;
+            }
+
         }
 
     }

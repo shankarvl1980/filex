@@ -582,6 +582,7 @@ public class ImageViewFragment extends Fragment
 							//toolbar.setVisibility(View.GONE);
 							//recyclerview.setVisibility(View.GONE);
 							//floating_back_button.setVisibility(View.GONE);
+							is_menu_opened=false;
 							toolbar_visible=false;
 							handler.removeCallbacks(runnable);
 

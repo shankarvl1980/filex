@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -29,12 +30,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StorageAnalyserActivity extends  BaseActivity implements MediaMountReceiver.MediaMountListener
+public class StorageAnalyserActivity extends  BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
 {
     private Context context;
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     public static FragmentManager FM;
+    public static PackageManager PM;
     public TextView current_dir, file_number;
     private final List<DetailFragmentCommunicationListener> detailFragmentCommunicationListeners=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
@@ -70,6 +72,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
         TinyDB tinyDB = new TinyDB(context);
         FM=getSupportFragmentManager();
+        PM=getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
         ImageButton back_btn=findViewById(R.id.storage_analyser_back_btn);
         back_btn.setOnClickListener(new View.OnClickListener() {
@@ -191,12 +194,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 }
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,storageAnalyserDialog.fileObjectType,storageAnalyserDialog.fileclickselected,true);
-                deleteFileAlertDialog.setOKButtonClickListener(new DeleteFileAlertDialog.OKButtonClickListener() {
-                    @Override
-                    public void okButtonClick() {
-                        DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
-                    }
-                });
                 deleteFileAlertDialog.show(FM, "delete_dialog");
 
             }
@@ -399,6 +396,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             sad.is_toolbar_visible=true;
             all_select.setImageResource(R.drawable.select_icon);
         }
+    }
+
+    @Override
+    public void deleteDialogOKButtonClick() {
+        final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+        DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
     }
 
     private class OtherActivityBroadcastReceiver extends BroadcastReceiver

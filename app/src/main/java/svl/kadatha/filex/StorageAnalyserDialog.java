@@ -43,7 +43,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public String fileclickselected;
     public FileObjectType fileObjectType;
     public UsbFile currentUsbFile;
-    private ProgressBarFragment pbf_polling;
+    private CancelableProgressBarDialog cancelableProgressBarDialog;
     public TextView folder_selected_textview;
     private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
     private FileModifyObserver fileModifyObserver;
@@ -56,6 +56,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     public boolean is_toolbar_visible=true, filled_file_size;
+    private FillSizeAsyncTask fillSizeAsyncTask;
 
     private StorageAnalyserDialog(){}
 
@@ -113,8 +114,18 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-            pbf_polling=ProgressBarFragment.getInstance();
-            pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            //pbf_polling=ProgressBarFragment.getInstance();
+            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            cancelableProgressBarDialog=new CancelableProgressBarDialog();
+            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
+                @Override
+                public void on_cancel_progress() {
+                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                    storageAnalyserActivity.onBackPressed();
+                }
+            });
+            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
             new Thread(new Runnable() {
 
                 @Override
@@ -143,8 +154,18 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             local_activity_delete=false;
             modification_observed=false;
-            pbf_polling=ProgressBarFragment.getInstance();
-            pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            //pbf_polling=ProgressBarFragment.getInstance();
+            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            cancelableProgressBarDialog=new CancelableProgressBarDialog();
+            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
+                @Override
+                public void on_cancel_progress() {
+                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                    storageAnalyserActivity.onBackPressed();
+                }
+            });
+            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
             new Thread(new Runnable() {
 
                 @Override
@@ -248,8 +269,18 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
-            pbf_polling=ProgressBarFragment.getInstance();
-            pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            //pbf_polling=ProgressBarFragment.getInstance();
+            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
+            cancelableProgressBarDialog=new CancelableProgressBarDialog();
+            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
+                @Override
+                public void on_cancel_progress() {
+                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                    storageAnalyserActivity.onBackPressed();
+                }
+            });
+            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
             new Thread(new Runnable() {
 
                 @Override
@@ -283,17 +314,28 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                         }
                     }
                     final long final_storage_space = storage_space;
+                    /*
                     if (pbf_polling == null || pbf_polling.getDialog() == null) {
                         pbf_polling=ProgressBarFragment.getInstance();
                         pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
                     }
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            filled_file_size=Iterate.FILL_FILE_SIZE(filePOJOS, final_storage_space);
-                        }
-                    }).start();
 
+                     */
+                    if(cancelableProgressBarDialog==null || cancelableProgressBarDialog.getDialog()==null)
+                    {
+                        cancelableProgressBarDialog=new CancelableProgressBarDialog();
+                        cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+                        cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
+                            @Override
+                            public void on_cancel_progress() {
+                                if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                                storageAnalyserActivity.onBackPressed();
+                            }
+                        });
+                        cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
+                    }
+                    fillSizeAsyncTask=new FillSizeAsyncTask(filePOJOS,final_storage_space);
+                    fillSizeAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     fill_size_filepojos();
                     handler_inter.removeCallbacks(this);
                 }
@@ -322,9 +364,16 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                     adapter=new StorageAnalyserAdapter();
                     set_adapter();
+                    /*
                     if(pbf_polling!=null && pbf_polling.getDialog()!=null)
                     {
                         pbf_polling.dismissAllowingStateLoss();
+                    }
+
+                     */
+                    if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
+                    {
+                        cancelableProgressBarDialog.dismissAllowingStateLoss();
                     }
                     handler.removeCallbacks(this);
 
@@ -342,9 +391,16 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public void onStop() {
         super.onStop();
         fileModifyObserver.startWatching();
+        /*
         if(pbf_polling!=null && pbf_polling.getDialog()!=null)
         {
             pbf_polling.dismissAllowingStateLoss();
+        }
+
+         */
+        if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
+        {
+            cancelableProgressBarDialog.dismissAllowingStateLoss();
         }
     }
 
@@ -731,6 +787,110 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
+    private class FillSizeAsyncTask extends AsyncTask<Void,Void,Void>
+    {
+
+        private int NO_OF_FILES;
+        private long SIZE_OF_FILES;
+
+        List<FilePOJO>filePOJOS;
+        long final_storage_space;
+
+        FillSizeAsyncTask(List<FilePOJO>filePOJOS,long final_storage_space)
+        {
+            this.filePOJOS=filePOJOS;
+            this.final_storage_space=final_storage_space;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            filled_file_size=true;
+            FilePOJOUtil.SET_HASHMAP_FILE_POJO_SIZE_NULL(fileclickselected,fileObjectType);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            filled_file_size=fill_file_size(filePOJOS, final_storage_space);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        private void get_size(File f, boolean include_folder)
+        {
+            int no_of_files=0;
+            long size_of_files=0L;
+            if(isCancelled()) return;
+            if(f.isDirectory())
+            {
+
+                File[] files_array=f.listFiles();
+                if(files_array!=null && files_array.length!=0)
+                {
+                    for(File file:files_array)
+                    {
+                        get_size(file,include_folder);
+                    }
+                    if(include_folder)
+                    {
+                        no_of_files++;
+                    }
+                }
+
+
+
+            }
+            else
+            {
+                no_of_files++;
+                size_of_files+=f.length();
+            }
+
+            NO_OF_FILES+=no_of_files;
+            SIZE_OF_FILES+=size_of_files;
+        }
+
+
+        private boolean fill_file_size(List<FilePOJO> filePOJOS,long volume_storage_size)
+        {
+            if(filePOJOS==null) return true;
+            int size=filePOJOS.size();
+            for(int i=0;i<size;++i)
+            {
+                if(isCancelled()) return true;
+                FilePOJO filePOJO=filePOJOS.get(i);
+                NO_OF_FILES=0; SIZE_OF_FILES=0;
+                if(filePOJO.getTotalSizePercentage()!=null) continue;
+                if(filePOJO.getIsDirectory())
+                {
+                    get_size(new File(filePOJO.getPath()),true);
+                    filePOJO.setTotalFiles(NO_OF_FILES);
+                    filePOJO.setTotalSizeLong(SIZE_OF_FILES);
+                    filePOJO.setTotalSize(FileUtil.humanReadableByteCount(SIZE_OF_FILES,Global.BYTE_COUNT_BLOCK_1000));
+                    double percentage = SIZE_OF_FILES * 100.0/ volume_storage_size;
+                    filePOJO.setTotalSizePercentageDouble(percentage);
+                    filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
+                }
+                else
+                {
+                    double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
+                    filePOJO.setTotalSizePercentageDouble(percentage);
+                    filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
+                }
+
+            }
+            return true;
+        }
+    }
 }
 
 

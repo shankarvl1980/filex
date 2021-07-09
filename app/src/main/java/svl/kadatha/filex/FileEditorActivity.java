@@ -796,6 +796,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		outState.putBoolean("file_end",file_end);
 		outState.putString("action_after_save",action_after_save);
 		outState.putBoolean("file_format_supported",file_format_supported);
+		outState.putSerializable("temporary_file_for_save",temporary_file_for_save);
 		textViewUndoRedo.storePersistentState(outState,preference_name);
 
 	}
@@ -819,6 +820,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		file_end=savedInstanceState.getBoolean("file_end");
 		action_after_save=savedInstanceState.getString("action_after_save");
 		file_format_supported=savedInstanceState.getBoolean("file_format_supported");
+		temporary_file_for_save= (File) savedInstanceState.getSerializable("temporary_file_for_save");
 		textViewUndoRedo.restorePersistentState(savedInstanceState,preference_name);
 		textViewUndoRedo.startListening();
 		onClick_edit_button();
