@@ -1427,7 +1427,14 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		protected void onPreExecute()
 		{
 			// TODO: Implement this method
-			pbf.show(fm,"progressbar_dialog");
+			try {
+				pbf.show(fm,"progressbar_dialog");
+			}
+			catch (Exception e)
+			{
+				cancel(true);
+				print(getString(R.string.could_not_delete_file));
+			}
 		}
 
 		@Override

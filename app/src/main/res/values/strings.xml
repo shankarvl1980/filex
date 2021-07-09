@@ -294,6 +294,7 @@
 	<string name="files_">Files</string>
     <string name="sort">Sort</string>
     <string name="analysing">Analysing</string>
+    <string name="could_not_delete_file">could not delete the file</string>
 
 
     <string-array name="library_categories">
