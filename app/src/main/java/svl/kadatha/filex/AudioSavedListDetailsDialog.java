@@ -796,7 +796,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			AudioPOJO audio=clicked_audio_list.get(p2);
 			String title=audio.getTitle();
 			String album=getString(R.string.album_colon)+" "+audio.getAlbum();
-			long duration=Long.parseLong(audio.getDuration());
+			long duration=0L;
+			String duration_string=audio.getDuration();
+			if(duration_string!=null) duration=Long.parseLong(duration_string);
 			String duration_str=getString(R.string.duration_colon)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
 			Bitmap art=audio.getAlbumArt();
