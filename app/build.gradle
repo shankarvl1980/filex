@@ -32,6 +32,7 @@ android {
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release_config
     }
 
     buildTypes {
@@ -42,7 +43,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             resValue "string", "app_version_name", "${defaultConfig.versionName}"
-            signingConfig signingConfigs.release_config
+            signingConfig signingConfigs.debug
         }
 
         release {
