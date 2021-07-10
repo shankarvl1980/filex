@@ -131,6 +131,12 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        if (activity_catering.equals(STORAGE_ANALYSER)) {
+            ((StorageAnalyserActivity)context).recentDialogListener=this;
+        }
+        else {
+            ((FileSelectorActivity)context).recentDialogListener=this;
+        }
     }
 
     /*
