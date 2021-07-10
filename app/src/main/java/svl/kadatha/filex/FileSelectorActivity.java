@@ -63,7 +63,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public int action_sought_request_code;
     private Bundle bundle;
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
-    private RecentDialogListener recentDialogListener;
+    public RecentDialogListener recentDialogListener;
     public FloatingActionButton floatingActionButton;
     public static final String ACTIVITY_NAME="FILE_SELECTOR_ACTIVITY";
 
@@ -112,7 +112,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             @Override
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.FILE_SELECTOR);
-                recentDialogListener=fileSelectorRecentDialog;
                 fileSelectorRecentDialog.show(FM, "file_selector_recent_file_dialog");
             }
         });

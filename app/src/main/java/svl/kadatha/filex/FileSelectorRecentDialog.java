@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,11 +42,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
     public static final String FILE_SELECTOR="file_selector";
     public static final String STORAGE_ANALYSER="storage_analyser";
-    private static String ACTIVITY_CATERING=FILE_SELECTOR;
+    private String activity_catering=FILE_SELECTOR;
 
     FileSelectorRecentDialog(String activity_catering)
     {
-        ACTIVITY_CATERING=activity_catering;
+        this.activity_catering=activity_catering;
     }
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -53,7 +54,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        if (ACTIVITY_CATERING.equals(STORAGE_ANALYSER)) {
+        if (activity_catering.equals(STORAGE_ANALYSER)) {
 
             root_dir_linkedlist.addAll(((StorageAnalyserActivity)getContext()).storage_filePOJO_list); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
@@ -83,7 +84,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         root_dir_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
         root_dir_recyclerview.setAdapter(rootdirrecycleradapter);
         root_dir_recyclerview.setLayoutManager(new LinearLayoutManager(context));
-        if(ACTIVITY_CATERING.equals(STORAGE_ANALYSER))
+        if(activity_catering.equals(STORAGE_ANALYSER))
         {
             recentRecyclerAdapter=new RecentRecyclerAdapter(StorageAnalyserActivity.RECENTS,false);
         }
@@ -101,7 +102,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             public void onClick(View v)
             {
                 recentRecyclerAdapter.clear_recents();
-                if(ACTIVITY_CATERING.equals(STORAGE_ANALYSER))
+                if(activity_catering.equals(STORAGE_ANALYSER))
                 {
                     StorageAnalyserActivity.RECENTS=new LinkedList<>();
                 }
@@ -125,6 +126,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
         return v;
 
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
     }
 
     /*
@@ -224,7 +230,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     public void onMediaAttachedAndRemoved()
     {
         root_dir_linkedlist.clear();
-        if(ACTIVITY_CATERING.equals(STORAGE_ANALYSER))
+        if(activity_catering.equals(STORAGE_ANALYSER))
         {
             root_dir_linkedlist.addAll(((StorageAnalyserActivity)context).storage_filePOJO_list); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
@@ -275,7 +281,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                         final FilePOJO filePOJO=dir_linkedlist.get(pos);
                         if(filePOJO.getIsDirectory())
                         {
-                            if(ACTIVITY_CATERING.equals(STORAGE_ANALYSER))
+                            if(activity_catering.equals(STORAGE_ANALYSER))
                             {
                                 ((StorageAnalyserActivity)context).createFileSelectorFragmentTransaction(filePOJO);
                             }
@@ -284,7 +290,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                                 ((FileSelectorActivity)context).createFileSelectorFragmentTransaction(filePOJO);
                             }
 
-                            ADD_FILE_POJO_TO_RECENT(filePOJO);
+                            ADD_FILE_POJO_TO_RECENT(filePOJO,activity_catering);
                         }
                         dismissAllowingStateLoss();
                     }
@@ -373,10 +379,10 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         }
     }
 
-    public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO)
+    public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO, String activity_catering)
     {
 
-        if(ACTIVITY_CATERING.equals(STORAGE_ANALYSER))
+        if(activity_catering.equals(STORAGE_ANALYSER))
         {
             if(StorageAnalyserActivity.RECENTS.size()!=0)
             {

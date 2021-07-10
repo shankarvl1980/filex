@@ -376,7 +376,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 						if(filePOJO.getIsDirectory())
 						{
 							fileSelectorActivity.createFileSelectorFragmentTransaction(filePOJO);
-							FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
+							FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO,FileSelectorRecentDialog.FILE_SELECTOR);
 						}
 						else
 						{

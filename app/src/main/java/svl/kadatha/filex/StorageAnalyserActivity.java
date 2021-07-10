@@ -40,7 +40,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public TextView current_dir, file_number;
     private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
-    private RecentDialogListener recentDialogListener;
+    public RecentDialogListener recentDialogListener;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
     public boolean clear_cache;
     public List<FilePOJO> storage_filePOJO_list;
@@ -96,7 +96,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.STORAGE_ANALYSER);
-                recentDialogListener=fileSelectorRecentDialog;
                 fileSelectorRecentDialog.show(FM, "storage_analyser_recent_file_dialog");
 
 

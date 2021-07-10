@@ -129,7 +129,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static FileSystem usbCurrentFs;
 	private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
 	public boolean clear_cache;
-	private RecentDialogListener recentDialogListener;
+	public RecentDialogListener recentDialogListener;
 	private ListView listView;
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
@@ -1343,7 +1343,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 			} else if (id == R.id.top_toolbar_current_dir_label) {
 				RecentDialog recentDialogFragment = new RecentDialog();
-				recentDialogListener=recentDialogFragment;
 				recentDialogFragment.show(FM, "recent_file_dialog");
 			} else if (id == R.id.detail_fragment_all_select) {
 				if (df.adapter == null) {

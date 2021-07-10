@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -96,6 +97,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		return v;
 		
+	}
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		((MainActivity)context).recentDialogListener=this;
 	}
 
 	public void seekSAFPermission()

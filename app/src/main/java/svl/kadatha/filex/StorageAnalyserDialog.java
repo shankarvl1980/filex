@@ -528,7 +528,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     {
                         file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
                     }
-                    FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
+                    FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO,FileSelectorRecentDialog.STORAGE_ANALYSER);
                 }
             }
 
