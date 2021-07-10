@@ -251,18 +251,6 @@ public class PreferencesDialog extends DialogFragment
     {
         Toast.makeText(context, getString(R.string.removed_default_apps_to_open_files),Toast.LENGTH_SHORT).show();
     }
-/*
-    interface ThemeChangeListener
-    {
-        void onThemeChange();
-    }
-
-    public void setThemeChangeListener(ThemeChangeListener listener)
-    {
-        themeChangeListener=listener;
-    }
-
- */
 
 
 }

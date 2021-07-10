@@ -68,6 +68,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         setRetainInstance(true);
         AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
         context=getContext();
+        storageAnalyserActivity=(StorageAnalyserActivity)context;
+        storageAnalyserActivity.addFragmentCommunicationListener(this);
+
         fileclickselected=getTag();
         if(fileclickselected==null)
         {
@@ -178,7 +181,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
         View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
         storageAnalyserActivity=(StorageAnalyserActivity)context;
-        storageAnalyserActivity.addFragmentCommunicationListener(this);
 
         fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
         fileModifyObserver.setFileObserverListener(this);

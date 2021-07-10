@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private InputMethodManager imm;
 	static UsbFile usbFileRoot;
 	static FileSystem usbCurrentFs;
-	private final List<DetailFragmentCommunicationListener> detailFragmentCommunicationListeners=new ArrayList<>();
+	private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
 	public boolean clear_cache;
 	private RecentDialogListener recentDialogListener;
 	private ListView listView;
@@ -2134,10 +2134,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 					storageRecyclerAdapter.notifyDataSetChanged();
 
-					int size=detailFragmentCommunicationListeners.size();
+					int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
 					for(int i=0;i<size;++i)
 					{
-						DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
 						if(listener!=null)
 						{
 							listener.setUsbFileRootNull();
@@ -2212,10 +2212,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					if (df != null) df.modification_observed = true;
 					break;
 				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
-					int size = detailFragmentCommunicationListeners.size();
+					int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
 					for(int i=0;i<size;++i)
 					{
-						DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
 						if(listener!=null)
 						{
 							listener.onFragmentCacheClear(file_path,fileObjectType);
@@ -2235,12 +2235,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
 	{
-		detailFragmentCommunicationListeners.add(listener);
+		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
 	}
 
 	public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
 	{
-		detailFragmentCommunicationListeners.remove(listener);
+		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
 	}
 
 

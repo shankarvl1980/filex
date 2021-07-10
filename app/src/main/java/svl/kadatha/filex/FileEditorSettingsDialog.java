@@ -23,7 +23,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 	final static int MIN_TEXT_SIZE=10, MAX_TEXT_SIZE=20;
 	private EOL_ChangeListener eol_changeListener;
 	private boolean fromThirdPartyApp,fromArchiveView,isFileBig;
-	//private File file;
 	FileEditorActivity fileEditorActivity;
 
 	@Override
@@ -39,7 +38,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
 		fromArchiveView=fileEditorActivity.fromArchiveView;
 		fromThirdPartyApp=fileEditorActivity.fromThirdPartyApp;
-		FileObjectType fileObjectType = fileEditorActivity.fileObjectType;
 		isFileBig=fileEditorActivity.isFileBig;
 	}
 
@@ -50,7 +48,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		// TODO: Implement this method
 		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_file_editor_settings,container,false);
-		//fe=(FileEditorActivity)context;
+		fileEditorActivity=((FileEditorActivity)context); //on orientation change, new context created, hence this reinstantiation
 		RadioGroup eol_rg = v.findViewById(R.id.eol_rg);
 
 		

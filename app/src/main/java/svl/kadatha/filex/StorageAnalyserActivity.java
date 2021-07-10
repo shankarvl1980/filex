@@ -38,7 +38,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public static FragmentManager FM;
     public static PackageManager PM;
     public TextView current_dir, file_number;
-    private final List<DetailFragmentCommunicationListener> detailFragmentCommunicationListeners=new ArrayList<>();
+    private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
     private RecentDialogListener recentDialogListener;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
@@ -420,10 +420,10 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     if (storageAnalyserDialog != null) storageAnalyserDialog.modification_observed = true;
                     break;
                 case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
-                    int size = detailFragmentCommunicationListeners.size();
+                    int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
                     for(int i=0;i<size;++i)
                     {
-                        DetailFragmentCommunicationListener listener=detailFragmentCommunicationListeners.get(i);
+                        DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
                         if(listener!=null)
                         {
                             listener.onFragmentCacheClear(file_path,fileObjectType);
@@ -476,12 +476,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
     {
-        detailFragmentCommunicationListeners.add(listener);
+        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
     }
 
     public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
     {
-        detailFragmentCommunicationListeners.remove(listener);
+        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
     }
 
     interface RecentDialogListener

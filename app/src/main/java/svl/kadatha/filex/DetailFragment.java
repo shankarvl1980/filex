@@ -108,6 +108,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		setRetainInstance(true);
 		context=getContext();
 		mainActivity=(MainActivity)context;
+		mainActivity.addFragmentCommunicationListener(this);
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
@@ -213,7 +214,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		mainActivity=(MainActivity)context;
-		mainActivity.addFragmentCommunicationListener(this);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);

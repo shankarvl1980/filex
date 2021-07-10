@@ -62,6 +62,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		setRetainInstance(true);
 		AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
 		context=getContext();
+		fileSelectorActivity=(FileSelectorActivity)context;
+		fileSelectorActivity.addFragmentCommunicationListener(this);
 		fileclickselected=getTag();
 		if(fileclickselected==null)
 		{
@@ -152,7 +154,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
 		fileSelectorActivity=(FileSelectorActivity)context;
-		fileSelectorActivity.addFragmentCommunicationListener(this);
 
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
