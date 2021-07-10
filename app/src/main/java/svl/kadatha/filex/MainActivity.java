@@ -558,7 +558,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		});
 
 
-		//tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.DRAWER_WIDTH,Global.DRAWER_WIDTH);
 		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);
 		int[] drawer_end_drawables ={R.drawable.exit_drawer_icon,R.drawable.settings_drawer_icon};
