@@ -153,31 +153,35 @@ public class AudioPlayerService extends Service
 			this.audioPlayerService=audioPlayerService;
 
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            telephonyManager.listen(new PhoneStateListener()
-            {
-                public void onCallStateChanged(int state, String phonenumber)
-                {
-                    switch(state)
-                    {
-                        case TelephonyManager.CALL_STATE_OFFHOOK:
-                        case TelephonyManager.CALL_STATE_RINGING:
-                            if(mp!=null)
-                            {
-                                handler.obtainMessage(PAUSE).sendToTarget();
-                                ongoingcall=true;
-                            }
-                            break;
+            if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1)
+			{
+				telephonyManager.listen(new PhoneStateListener()
+				{
+					public void onCallStateChanged(int state, String phonenumber)
+					{
+						switch(state)
+						{
+							case TelephonyManager.CALL_STATE_OFFHOOK:
+							case TelephonyManager.CALL_STATE_RINGING:
+								if(mp!=null)
+								{
+									handler.obtainMessage(PAUSE).sendToTarget();
+									ongoingcall=true;
+								}
+								break;
 
-                        case TelephonyManager.CALL_STATE_IDLE:
-                            if(ongoingcall)
-                            {
-                                ongoingcall=false;
-                                handler.obtainMessage(START).sendToTarget();
+							case TelephonyManager.CALL_STATE_IDLE:
+								if(ongoingcall)
+								{
+									ongoingcall=false;
+									handler.obtainMessage(START).sendToTarget();
 
-                            }
-                    }
-                }
-            },PhoneStateListener.LISTEN_CALL_STATE);
+								}
+						}
+					}
+				},PhoneStateListener.LISTEN_CALL_STATE);
+			}
+
 		}
 
 		public void onLooperPreparation()
