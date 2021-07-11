@@ -1171,7 +1171,7 @@ import java.util.List;
 	public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path)
 	{
 		boolean is_from_internal = false;
-		if(!fileObjectType.equals(FileObjectType.FILE_TYPE)) return  false;
+		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
 		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH)
 		{
 			if (file_path.startsWith(internal_storage_path)) {
