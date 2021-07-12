@@ -4,6 +4,7 @@ import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -567,13 +568,20 @@ public class FilePOJOUtil {
             File f=new File(file_path);
             String name=f.getName();
             String parent_file_path=f.getParent();
-            FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(parent_file_path, Collections.singletonList(name),fileObjectType);
-            filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, Collections.singletonList(name),fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
+            List<String> file_name_list=Collections.singletonList(name);
+            FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(parent_file_path,file_name_list,fileObjectType);
+            filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, file_name_list,fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
+            if(filePOJO==null)
+            {
+                file_path=parent_file_path.equals(File.separator) ? parent_file_path+name : parent_file_path+File.separator+name;
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
+            }
             filePOJOs.add(filePOJO);
             if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
             {
                 filePOJOs_filtered.add(filePOJO);
             }
+
         }
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
