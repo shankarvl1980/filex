@@ -104,16 +104,14 @@ public class RecyclerViewLayout extends ViewGroup
 
 				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-
-				imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_GRID;
 
 			}
 			else
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-
-				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
 
 			}
 

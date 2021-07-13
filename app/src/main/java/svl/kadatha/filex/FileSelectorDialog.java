@@ -166,7 +166,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if(Global.FILE_GRID_LAYOUT)
 		{
-			GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT - 1);
+			GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
 			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
 			recycler_view.addItemDecoration(spacesItemDecoration);
 			recycler_view.setLayoutManager(glm);
