@@ -686,7 +686,9 @@ public class Global
 	}
 
 
-	public static Bitmap DECODE_FILE(File f){
+	public static Bitmap GET_BITMAP(String path){
+		if(path==null) return null;
+		File f=new File(path);
 		Bitmap b = null;
 
 		//Decode image size
@@ -728,8 +730,8 @@ public class Global
 	}
 
 
-	public static Bitmap GET_BITMAP(String path)   {
-
+	public static Bitmap GET_BITMAP_FILE_DESCRIPTOR_METHOD(String path)   {
+	if(path==null) return null;
 	Bitmap bitmap = null;
 	BitmapFactory.Options bfOptions=new BitmapFactory.Options();
 	bfOptions.inDither=false;                     //Disable Dithering mode

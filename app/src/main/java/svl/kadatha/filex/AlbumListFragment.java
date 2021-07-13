@@ -221,8 +221,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
 					String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
 					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					Bitmap albumart=null;
-					if(album_path!=null)Global.DECODE_FILE(new File(album_path));//BitmapFactory.decodeFile(album_path);
+					Bitmap albumart=Global.GET_BITMAP(album_path);//BitmapFactory.decodeFile(album_path);
 					album_list.add(new AlbumPOJO(id,album_name,album_name.toLowerCase(),artist,no_of_songs,albumart));
 				}
 				total_album_list=album_list;
