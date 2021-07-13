@@ -6,6 +6,8 @@ import android.content.UriPermission;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
@@ -27,7 +29,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.viewpager.widget.ViewPager;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -680,6 +685,82 @@ public class Global
 
 	}
 
+
+	public static Bitmap DECODE_FILE(File f){
+		Bitmap b = null;
+
+		//Decode image size
+		BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(f);
+			BitmapFactory.decodeStream(fis, null, o);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+
+
+		int scale = 1;
+		if (o.outHeight > IMAGEVIEW_DIMENSION_LARGE_LIST || o.outWidth > IMAGEVIEW_DIMENSION_LARGE_LIST) {
+			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGEVIEW_DIMENSION_LARGE_LIST /
+					(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+		}
+
+		//Decode with inSampleSize
+		BitmapFactory.Options o2 = new BitmapFactory.Options();
+		o2.inSampleSize = scale;
+		try {
+			fis = new FileInputStream(f);
+			b = BitmapFactory.decodeStream(fis, null, o2);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+		finally {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				return null;
+			}
+		}
+		return b;
+	}
+
+
+	public static Bitmap GET_BITMAP(String path)   {
+
+	Bitmap bitmap = null;
+	BitmapFactory.Options bfOptions=new BitmapFactory.Options();
+	bfOptions.inDither=false;                     //Disable Dithering mode
+	bfOptions.inPurgeable=true;                   //Tell to gc that whether it needs free memory, the Bitmap can be cleared
+	bfOptions.inInputShareable=true;              //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+	bfOptions.inTempStorage=new byte[32 * 1024];
+
+	File file=new File(path);
+	FileInputStream fs=null;
+	try {
+		fs = new FileInputStream(file);
+	} catch (FileNotFoundException e) {
+		return null;
+	}
+
+	try {
+		if(fs!=null) bitmap=BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
+	} catch (IOException e) {
+		return null;
+	} finally{
+		if(fs!=null) {
+			try {
+				fs.close();
+			} catch (IOException e) {
+				return null;
+			}
+		}
+	}
+
+	return bitmap;
+}
 }
 
 

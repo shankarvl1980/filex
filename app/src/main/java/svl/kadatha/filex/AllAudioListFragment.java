@@ -231,7 +231,9 @@ public class AllAudioListFragment extends Fragment
 
 					String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
 					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					Bitmap albumart=BitmapFactory.decodeFile(album_path);
+
+					Bitmap albumart=null;
+					if(album_path!=null)Global.DECODE_FILE(new File(album_path));//BitmapFactory.decodeFile(album_path);
 					
 					
 					String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
