@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -295,9 +296,12 @@ public class RenameFileDialog extends DialogFragment
 			//use filePOJOHashmapKeyPath to remove from Search Library also
 			final FilePOJO filePOJO;
 
-			//String new_file_path=parent_file_path.endsWith(File.separator) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
 			if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
+				if(overwriting)
+				{
+					FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path),fileObjectType);
+				}
 				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(filePOJOHashmapKeyPath,Collections.singletonList(new_file_path),fileObjectType, Collections.singletonList(existing_file_path));
 			}
 			else
