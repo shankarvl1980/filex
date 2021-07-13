@@ -295,9 +295,11 @@
     <string name="sort">Sort</string>
     <string name="analysing">Analysing</string>
     <string name="could_not_delete_file">could not delete the file</string>
+    <string name="security_exception_thrown">Security exception thrown.</string>
+	<string name="may_be_password_protected">May be password protected</string>
 
 
-    <string-array name="library_categories">
+	<string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

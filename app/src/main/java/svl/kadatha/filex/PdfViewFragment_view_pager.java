@@ -664,6 +664,7 @@ public class PdfViewFragment_view_pager extends Fragment
     private class AsyncTaskPdfPages extends svl.kadatha.filex.AsyncTask<Void,Bitmap,Void>
     {
         // CancelableProgressBarDialog cancelableProgressBarDialog;
+        boolean security_exception_thrown;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -731,7 +732,13 @@ public class PdfViewFragment_view_pager extends Fragment
                     list_pdf_pages.add(bitmap);
                     page.close();
                 }
-            } catch (IOException | IllegalArgumentException e) {
+            }
+            catch (SecurityException e)
+            {
+                security_exception_thrown=true;
+                return null;
+            }
+            catch (IOException | IllegalArgumentException e) {
                 return null;
             }
             return null;
@@ -747,6 +754,7 @@ public class PdfViewFragment_view_pager extends Fragment
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if(security_exception_thrown) print(getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
             asyncTaskStatus=AsyncTaskStatus.COMPLETED;
             //cancelableProgressBarDialog.dismissAllowingStateLoss();
         }

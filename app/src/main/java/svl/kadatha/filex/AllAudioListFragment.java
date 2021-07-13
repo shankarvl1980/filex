@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -231,7 +232,7 @@ public class AllAudioListFragment extends Fragment
 
 					String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
 					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-
+					Log.d("shankar",""+album_path);
 					Bitmap albumart=null;
 					if(album_path!=null)Global.DECODE_FILE(new File(album_path));//BitmapFactory.decodeFile(album_path);
 					

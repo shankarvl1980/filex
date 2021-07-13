@@ -135,6 +135,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		file_click_selected_name=new File(fileclickselected).getName();
+		if(MainActivity.ARCHIVE_EXTRACT_DIR==null) MainActivity.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && fileclickselected.startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
