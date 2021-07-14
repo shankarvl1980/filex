@@ -894,6 +894,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				int size=file_list.length;
 				for(int i=0;i<size;++i)
 				{
+					if(isCancelled())
+					{
+						return;
+					}
+
 					File file=file_list[i];
 					f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE));
 					f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE));
