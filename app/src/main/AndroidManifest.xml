@@ -83,7 +83,7 @@
             </intent-filter>
         </activity>
 
-        <activity
+        <!--activity
             android:name=".PdfViewActivity"
             android:label="@string/filex_pdf_viewer">
             <intent-filter>
@@ -92,7 +92,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/pdf" />
             </intent-filter>
-        </activity>
+        </activity-->
 
 
         <activity
