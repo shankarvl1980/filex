@@ -130,8 +130,8 @@ public class Global
 			new MimePOJO("Text","text/*",TEXT_REGEX),
 			new MimePOJO("Image","image/*",IMAGE_REGEX),
 			new MimePOJO("Audio","audio/*",AUDIO_REGEX),
-			new MimePOJO("Video","video/*",VIDEO_REGEX),
-			new MimePOJO("PDF","application/pdf",PDF_REGEX)));
+			new MimePOJO("Video","video/*",VIDEO_REGEX)/*,
+			new MimePOJO("PDF","application/pdf",PDF_REGEX)*/));
 
 	static final List<MimePOJO> MIME_POJOS=new ArrayList<>(Arrays.asList(
 			new MimePOJO("MS Word","application/msword",DOC_REGEX),
