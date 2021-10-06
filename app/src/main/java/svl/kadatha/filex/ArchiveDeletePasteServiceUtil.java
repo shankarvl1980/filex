@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileOutputStream;
@@ -68,6 +69,7 @@ public class ArchiveDeletePasteServiceUtil {
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
         if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
         if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+
 
         if(df!=null) df.adapter.clear_cache_and_refresh(file_path,fileObjectType);
         if(fileSelectorDialog!=null) fileSelectorDialog.clear_cache_and_refresh(file_path,fileObjectType);

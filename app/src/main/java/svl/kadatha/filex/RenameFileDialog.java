@@ -21,7 +21,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 
@@ -48,6 +50,7 @@ public class RenameFileDialog extends DialogFragment
 	private boolean isWritable;
 	private RenameFileDialog(){}
 	private String other_file_permission,existing_file_path,new_file_path;
+	private FragmentManager fragmentManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -74,6 +77,7 @@ public class RenameFileDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		context=getContext();
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -98,7 +102,7 @@ public class RenameFileDialog extends DialogFragment
 			l=existing_name.length();
 		}
 		new_file_name_edittext.setSelection(0,l);
-		df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
+		df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		okbutton.setOnClickListener(new View.OnClickListener()
@@ -148,7 +152,7 @@ public class RenameFileDialog extends DialogFragment
 									rename_process(new_file_path,new_name);
 								}
 							});
-							renameReplaceConfirmationDialog.show(MainActivity.FM,"");
+							renameReplaceConfirmationDialog.show(fragmentManager,"");
 
 						}
 						else
@@ -177,7 +181,7 @@ public class RenameFileDialog extends DialogFragment
 								rename_process(new_file_path,new_name);
 							}
 						});
-						renameReplaceConfirmationDialog.show(MainActivity.FM,"");
+						renameReplaceConfirmationDialog.show(fragmentManager,"");
 					}
 				}
 				else
@@ -368,7 +372,7 @@ public class RenameFileDialog extends DialogFragment
 
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(fragmentManager,"saf_permission_dialog");
 			saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			return false;
@@ -469,7 +473,7 @@ public class RenameFileDialog extends DialogFragment
 			// TODO: Implement this method
 			super.onPreExecute();
 			pbf=ProgressBarFragment.getInstance();
-			pbf.show(MainActivity.FM,"progressbar_dialog");
+			pbf.show(fragmentManager,"progressbar_dialog");
 
 		}
 

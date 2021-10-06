@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -109,7 +110,7 @@ public class CreateFileDialog extends DialogFragment
 		okbutton.setText(R.string.ok);
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
-		df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
+		df=(DetailFragment)((AppCompatActivity)context).getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		if(file_type==0)
 		{
@@ -338,7 +339,7 @@ public class CreateFileDialog extends DialogFragment
 				{
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			//saf_permission_requested=true;
 
 			return false;

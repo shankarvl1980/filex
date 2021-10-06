@@ -27,6 +27,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -94,13 +95,20 @@ public class ImageViewFragment extends Fragment
 	private LocalBroadcastManager localBroadcastManager;
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		context=getContext();
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		//context=getContext();
+		//localBroadcastManager=LocalBroadcastManager.getInstance(context);
 		FilenameFilter file_name_filter = new FilenameFilter() {
 			public boolean accept(File fi, String na) {
 				if (MainActivity.SHOW_HIDDEN_FILE) {
@@ -162,7 +170,7 @@ public class ImageViewFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
+		//context=getContext();
 		View v=inflater.inflate(R.layout.fragment_image_view,container,false);
 		toolbar_visible=true;
 		handler=new Handler();

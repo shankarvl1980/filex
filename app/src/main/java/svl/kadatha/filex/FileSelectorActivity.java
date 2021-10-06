@@ -48,6 +48,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 {
     private Context context;
     public static FragmentManager FM;
+    public FragmentManager fm;
     public static final int FOLDER_SELECT_REQUEST_CODE=1564;
     public static final int MOVE_COPY_REQUEST_CODE=351;
     public static final int PICK_FILE_REQUEST_CODE=0;
@@ -89,7 +90,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         TinyDB tinyDB = new TinyDB(context);
-        FM=getSupportFragmentManager();
+        fm=getSupportFragmentManager();
+        FM=fm;
+        
         setContentView(R.layout.activity_file_selector);
         Toolbar toolbar=findViewById(R.id.activity_file_selector_toolbar);
         file_number=findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
@@ -112,7 +115,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             @Override
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.FILE_SELECTOR);
-                fileSelectorRecentDialog.show(FM, "file_selector_recent_file_dialog");
+                fileSelectorRecentDialog.show(fm, "file_selector_recent_file_dialog");
             }
         });
 
@@ -147,7 +150,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             public void onClick(View v)
             {
 
-                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
+                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
                 switch (action_sought_request_code) {
                     case FOLDER_SELECT_REQUEST_CODE:
                         if (fileSelectorDialog.fileclickselected == null) {
@@ -398,19 +401,19 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private void onbackpressed(boolean onBackPressed)
     {
 
-        if(FM.getBackStackEntryCount()>1)
+        if(fm.getBackStackEntryCount()>1)
         {
-            FM.popBackStack();
-            int frag=2, entry_count=FM.getBackStackEntryCount();
-            FileSelectorDialog fileSelectorDialog= (FileSelectorDialog) FM.findFragmentByTag(FM.getBackStackEntryAt(entry_count-frag).getName());
+            fm.popBackStack();
+            int frag=2, entry_count=fm.getBackStackEntryCount();
+            FileSelectorDialog fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
             String tag=fileSelectorDialog.getTag();
 
             while(tag !=null && !new File(tag).exists() && fileSelectorDialog.currentUsbFile == null)
             {
-                FM.popBackStack();
+                fm.popBackStack();
                 ++frag;
                 if(frag>entry_count) break;
-                fileSelectorDialog= (FileSelectorDialog) FM.findFragmentByTag(FM.getBackStackEntryAt(entry_count-frag).getName());
+                fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 tag = fileSelectorDialog.getTag();
             }
             /*
@@ -452,7 +455,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         String fragment_tag;
         String existingFilePOJOkey="";
-        FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
+        FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
         if(fileSelectorDialog!=null)
         {
             fragment_tag=fileSelectorDialog.getTag();
@@ -463,7 +466,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
             FileSelectorDialog ff=FileSelectorDialog.getInstance(fileObjectType);
-            FM.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
+            fm.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         }
 
@@ -474,7 +477,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            FileSelectorDialog fileSelectorDialog = (FileSelectorDialog) FM.findFragmentById(R.id.file_selector_container);
+            FileSelectorDialog fileSelectorDialog = (FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
             String activity_name=intent.getStringExtra("activity_name");
             String file_path=intent.getStringExtra("file_path");
             FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
@@ -527,7 +530,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
-                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog)FM.findFragmentById(R.id.file_selector_container);
+                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog)fm.findFragmentById(R.id.file_selector_container);
                 if(fileSelectorDialog!=null) fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
                 break;
         }

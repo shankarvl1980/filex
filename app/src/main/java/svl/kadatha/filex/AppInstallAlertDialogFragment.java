@@ -44,8 +44,7 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     private AppInstallDialogListener appInstallDialogListener;
     private AsyncTaskStatus asyncTaskStatus;
     private Handler handler;
-    private PackageManager packageManager;
-    private FragmentManager fragmentManager;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,18 +53,7 @@ public class AppInstallAlertDialogFragment extends DialogFragment
         setRetainInstance(true);
         Bundle bundle=getArguments();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
-        AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-        if(appCompatActivity instanceof MainActivity)
-        {
-            packageManager=MainActivity.PM;
-            fragmentManager=MainActivity.FM;
 
-        }
-        else if(appCompatActivity instanceof StorageAnalyserActivity)
-        {
-            packageManager=StorageAnalyserActivity.PM;
-            fragmentManager=StorageAnalyserActivity.FM;
-        }
 
         if(bundle!=null)
         {
@@ -179,10 +167,16 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     private class ApkArchiveInfoAsyncTask extends AsyncTask<Void, Void, Void>
     {
         ProgressBarFragment progressBarFragment;
+        PackageManager packageManager;
+        FragmentManager fragmentManager;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             asyncTaskStatus=AsyncTaskStatus.STARTED;
+            AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+            fragmentManager=appCompatActivity.getSupportFragmentManager();
+            packageManager=appCompatActivity.getPackageManager();
             progressBarFragment=ProgressBarFragment.getInstance();
             progressBarFragment.show(fragmentManager,"");
 

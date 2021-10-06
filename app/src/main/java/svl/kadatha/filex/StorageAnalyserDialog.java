@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,6 +61,22 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     private StorageAnalyserDialog(){}
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+        storageAnalyserActivity=(StorageAnalyserActivity)context;
+        storageAnalyserActivity.addFragmentCommunicationListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        storageAnalyserActivity.removeFragmentCommunicationListener(this);
+        storageAnalyserActivity=null;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -67,9 +84,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
-        context=getContext();
-        storageAnalyserActivity=(StorageAnalyserActivity)context;
-        storageAnalyserActivity.addFragmentCommunicationListener(this);
+        //context=getContext();
+        //storageAnalyserActivity=(StorageAnalyserActivity)context;
+        //storageAnalyserActivity.addFragmentCommunicationListener(this);
 
         fileclickselected=getTag();
         if(fileclickselected==null)
@@ -128,7 +145,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onBackPressed();
                 }
             });
-            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
+            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
             new Thread(new Runnable() {
 
                 @Override
@@ -151,7 +168,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        context=getContext();
+        //context=getContext();
         if(cache_cleared)
         {
             cache_cleared=false;
@@ -168,7 +185,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onBackPressed();
                 }
             });
-            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
+            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
             new Thread(new Runnable() {
 
                 @Override
@@ -180,7 +197,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         }
         View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
-        storageAnalyserActivity=(StorageAnalyserActivity)context;
+        //storageAnalyserActivity=(StorageAnalyserActivity)context;
 
         fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
         fileModifyObserver.setFileObserverListener(this);
@@ -282,7 +299,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onBackPressed();
                 }
             });
-            cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
+            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
             new Thread(new Runnable() {
 
                 @Override
@@ -334,7 +351,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                                 storageAnalyserActivity.onBackPressed();
                             }
                         });
-                        cancelableProgressBarDialog.show(StorageAnalyserActivity.FM,"");
+                        cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
                     }
                     fillSizeAsyncTask=new FillSizeAsyncTask(filePOJOS,final_storage_space);
                     fillSizeAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -435,6 +452,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             cache_cleared=true;
         }
+        else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+new File(file_path).getParent()))
+        {
+            cache_cleared=true;
+        }
 
     }
 
@@ -468,7 +489,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder>
     {
-        StorageAnalyserDialog sad=(StorageAnalyserDialog) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
@@ -691,7 +712,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                 }
             });
-            fileTypeSelectFragment.show(StorageAnalyserActivity.FM,"");
+            fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
         else
         {
@@ -773,7 +794,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                 }
             });
-            safpermissionhelper.show(StorageAnalyserActivity.FM,"saf_permission_dialog");
+            safpermissionhelper.show(storageAnalyserActivity.fm, "saf_permission_dialog");
             return false;
         }
         else

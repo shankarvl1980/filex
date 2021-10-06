@@ -129,6 +129,7 @@ class FileIntentDispatch
 						});
 
 						AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+						/*
 						if(appCompatActivity instanceof MainActivity)
 						{
 							appInstallAlertDialogFragment.show(MainActivity.FM,"");
@@ -138,6 +139,8 @@ class FileIntentDispatch
 							appInstallAlertDialogFragment.show(StorageAnalyserActivity.FM,"");
 						}
 
+						 */
+						appInstallAlertDialogFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 					}
 					else
 					{
@@ -176,6 +179,7 @@ class FileIntentDispatch
 	{
 		AppSelectorDialog appSelectorDialog=AppSelectorDialog.getInstance(uri,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
 		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+		/*
 		if(appCompatActivity instanceof MainActivity)
 		{
 			appSelectorDialog.show(MainActivity.FM,"");
@@ -185,6 +189,8 @@ class FileIntentDispatch
 			appSelectorDialog.show(StorageAnalyserActivity.FM,"");
 		}
 
+		 */
+		appSelectorDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 	}
 	private static void send_file(Context context, ArrayList<File> file_list)
 	{

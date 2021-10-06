@@ -36,7 +36,9 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     public static FragmentManager FM;
-    public static PackageManager PM;
+    public FragmentManager fm;
+    //public static PackageManager PM;
+    public PackageManager pm;
     public TextView current_dir, file_number;
     private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
@@ -71,8 +73,10 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         TinyDB tinyDB = new TinyDB(context);
-        FM=getSupportFragmentManager();
-        PM=getPackageManager();
+        fm=getSupportFragmentManager();
+        FM=fm;
+        //PM=getPackageManager();
+        pm=getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
         ImageButton back_btn=findViewById(R.id.storage_analyser_back_btn);
         back_btn.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +100,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.STORAGE_ANALYSER);
-                fileSelectorRecentDialog.show(FM, "storage_analyser_recent_file_dialog");
+                fileSelectorRecentDialog.show(fm, "storage_analyser_recent_file_dialog");
 
 
             }
@@ -106,7 +110,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         all_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
                 if (storageAnalyserDialog.adapter == null) {
                     return;
                 }
@@ -150,9 +154,9 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         refresh_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)FM.findFragmentById(R.id.storage_analyser_container);
-                FM.beginTransaction().detach(storageAnalyserDialog).commit();
-                FM.beginTransaction().attach(storageAnalyserDialog).commit();
+                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)fm.findFragmentById(R.id.storage_analyser_container);
+                fm.beginTransaction().detach(storageAnalyserDialog).commit();
+                fm.beginTransaction().attach(storageAnalyserDialog).commit();
             }
         });
 
@@ -161,7 +165,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 StorageAnalyserSortDialog storageAnalyserSortDialog=new StorageAnalyserSortDialog();
-                storageAnalyserSortDialog.show(FM,"storage_analyser_sort_dialog");
+                storageAnalyserSortDialog.show(fm,"storage_analyser_sort_dialog");
             }
         });
 
@@ -184,7 +188,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+                final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
                 final ArrayList<String> files_selected_array=new ArrayList<>();
                 int size = storageAnalyserDialog.mselecteditemsFilePath.size();
                 for (int i = 0; i < size; ++i) {
@@ -193,7 +197,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 }
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,storageAnalyserDialog.fileObjectType,storageAnalyserDialog.fileclickselected,true);
-                deleteFileAlertDialog.show(FM, "delete_dialog");
+                deleteFileAlertDialog.show(fm, "delete_dialog");
 
             }
         });
@@ -281,7 +285,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     private void onbackpressed(boolean onBackPressed)
     {
-        StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+        StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
         if(storageAnalyserDialog.mselecteditems.size()>0)
         {
             DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
@@ -302,19 +306,19 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
 
 
-            if(FM.getBackStackEntryCount()>1)
+            if(fm.getBackStackEntryCount()>1)
             {
-                FM.popBackStack();
-                int frag=2, entry_count=FM.getBackStackEntryCount();
-                storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentByTag(FM.getBackStackEntryAt(entry_count-frag).getName());
+                fm.popBackStack();
+                int frag=2, entry_count=fm.getBackStackEntryCount();
+                storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 String tag=storageAnalyserDialog.getTag();
 
                 while(tag !=null && !new File(tag).exists() && storageAnalyserDialog.currentUsbFile == null)
                 {
-                    FM.popBackStack();
+                    fm.popBackStack();
                     ++frag;
                     if(frag>entry_count) break;
-                    storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentByTag(FM.getBackStackEntryAt(entry_count-frag).getName());
+                    storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                     tag = storageAnalyserDialog.getTag();
                 }
 
@@ -364,7 +368,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         String fragment_tag;
         String existingFilePOJOkey="";
-        StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+        StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
         if(storageAnalyserDialog!=null)
         {
             fragment_tag=storageAnalyserDialog.getTag();
@@ -375,7 +379,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         String file_path=filePOJO.getPath();
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
-            FM.beginTransaction().replace(R.id.storage_analyser_container,StorageAnalyserDialog.getInstance(fileObjectType),file_path).addToBackStack(file_path)
+            fm.beginTransaction().replace(R.id.storage_analyser_container,StorageAnalyserDialog.getInstance(fileObjectType),file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         }
 
@@ -399,7 +403,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     @Override
     public void deleteDialogOKButtonClick() {
-        final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+        final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
         DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
     }
 
@@ -407,7 +411,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+            StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
             String activity_name=intent.getStringExtra("activity_name");
             String file_path=intent.getStringExtra("file_path");
             FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
@@ -458,7 +462,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) FM.findFragmentById(R.id.storage_analyser_container);
+                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserDialog!=null) storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
 
                 break;

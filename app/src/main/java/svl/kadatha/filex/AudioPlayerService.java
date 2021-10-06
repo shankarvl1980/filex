@@ -196,7 +196,7 @@ public class AudioPlayerService extends Service
 							Bundle bundle=message.getData();
 							if(bundle!=null)
 							{
-								initMediaPlayer((Uri) bundle.getParcelable("data"),audioPlayerService);
+								initMediaPlayer(bundle.getParcelable("data"),audioPlayerService);
 							}
 							break;
 						case START:

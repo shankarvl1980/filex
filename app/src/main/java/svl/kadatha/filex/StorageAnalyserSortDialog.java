@@ -7,7 +7,9 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.widget.TableRow.*;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 
 public class StorageAnalyserSortDialog extends DialogFragment
@@ -190,14 +192,15 @@ public class StorageAnalyserSortDialog extends DialogFragment
 
             if(!selected_sort.equals(Global.STORAGE_ANALYSER_SORT))
             {
-
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+                FragmentManager fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)fragmentManager.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserDialog!=null && storageAnalyserDialog.filled_filePOJOs)
                 {
                     Global.STORAGE_ANALYSER_SORT=selected_sort;
                     set_selection();
-                    StorageAnalyserActivity.FM.beginTransaction().detach(storageAnalyserDialog).commit();
-                    StorageAnalyserActivity.FM.beginTransaction().attach(storageAnalyserDialog).commit();
+
+                    fragmentManager.beginTransaction().detach(storageAnalyserDialog).commit();
+                    fragmentManager.beginTransaction().attach(storageAnalyserDialog).commit();
                     tinyDB.putString("storage_analyser_sort",Global.STORAGE_ANALYSER_SORT);
                 }
                 else

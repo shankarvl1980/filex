@@ -8,7 +8,9 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.widget.TableRow.*;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 
 public class ViewDialog extends DialogFragment
@@ -18,6 +20,7 @@ public class ViewDialog extends DialogFragment
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private RadioButton list_rb, grid_rb;
     private Context context;
+    private FragmentManager fragmentManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -35,6 +38,7 @@ public class ViewDialog extends DialogFragment
 		// TODO: Implement this method
 		//return super.onCreateView(inflater, container, savedInstanceState);
         context = getContext();
+        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		tinyDB=new TinyDB(context);
 		View v= inflater.inflate(R.layout.fragment_view,container,false);
 
@@ -62,10 +66,10 @@ public class ViewDialog extends DialogFragment
 					Global.FILE_GRID_LAYOUT=true;
 				}
 
-				DetailFragment df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
-				MainActivity.FM.beginTransaction().detach(df).commit();
-				MainActivity.FM.beginTransaction().attach(df).commit();
-				MainActivity.TINYDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
+				DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+				fragmentManager.beginTransaction().detach(df).commit();
+				fragmentManager.beginTransaction().attach(df).commit();
+				tinyDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
 			}
 		});
 
@@ -111,9 +115,9 @@ public class ViewDialog extends DialogFragment
 				public void onStopTrackingTouch(SeekBar p1)
 				{
 					tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-					DetailFragment df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
-					MainActivity.FM.beginTransaction().detach(df).commit();
-					MainActivity.FM.beginTransaction().attach(df).commit();
+					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+					fragmentManager.beginTransaction().detach(df).commit();
+					fragmentManager.beginTransaction().attach(df).commit();
 				
 
 				}
@@ -265,14 +269,14 @@ public class ViewDialog extends DialogFragment
 			if(!selected_sort.equals(Global.SORT))
 			{
 
-				DetailFragment df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
+				DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 				if(df!=null && df.filled_filePOJOs)
 				{
 					Global.SORT=selected_sort;
 					set_selection();
-					MainActivity.FM.beginTransaction().detach(df).commit();
-					MainActivity.FM.beginTransaction().attach(df).commit();
-					MainActivity.TINYDB.putString("sort",Global.SORT);
+					fragmentManager.beginTransaction().detach(df).commit();
+					fragmentManager.beginTransaction().attach(df).commit();
+					tinyDB.putString("sort",Global.SORT);
 				}
 				else
 				{

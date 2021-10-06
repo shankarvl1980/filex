@@ -136,7 +136,6 @@ import java.io.File;
 		 * @param file The audio file.
 		 * @return The Album ID.
 		 */
-		@SuppressWarnings("resource")
 		public static int getAlbumIdFromAudioFile(@NonNull final File file,Context context) {
 			ContentResolver resolver = context.getContentResolver();
 			Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

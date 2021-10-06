@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -158,7 +159,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			//saf_permission_requested=true;
 			return false;
 		}
@@ -224,7 +225,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 					}
 				});
-			fileTypeSelectFragment.show(MainActivity.FM,"");
+			fileTypeSelectFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 		}
 		else
 		{

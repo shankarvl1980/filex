@@ -21,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -283,7 +284,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 										}
 									});
 									archiveReplaceConfirmationDialog.setArguments(bundle);
-									archiveReplaceConfirmationDialog.show(MainActivity.FM,null);
+									archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 
 								}
 								else
@@ -386,7 +387,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 										}
 									});
 									archiveReplaceConfirmationDialog.setArguments(bundle);
-									archiveReplaceConfirmationDialog.show(MainActivity.FM, null);
+									archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
 								} else {
 									print(getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
 
@@ -448,7 +449,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
 			return false;

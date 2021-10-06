@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -235,7 +236,7 @@ public class PasteSetUpDialog extends DialogFragment
 					dismissAllowingStateLoss(); // should be dismissed as this fragment has no view
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			return false;
 		}
@@ -270,7 +271,7 @@ public class PasteSetUpDialog extends DialogFragment
 					dismissAllowingStateLoss(); //should be dismissed as this fragment has no view
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			return false;
 		}

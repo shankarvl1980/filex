@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -162,11 +164,12 @@ public class AppSelectorDialog extends DialogFragment
 
     private class AppListAsyncTask extends svl.kadatha.filex.AsyncTask<Void, Void, Void>
     {
-
+        PackageManager packageManager;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             asyncTaskStatus=AsyncTaskStatus.STARTED;
+            packageManager= context.getPackageManager();
         }
 
         @Override
@@ -178,15 +181,15 @@ public class AppSelectorDialog extends DialogFragment
                 {
                     return  null;
                 }
-                List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
+                List<ResolveInfo> resolveInfoList=packageManager.queryIntentActivities(intent,0);
                 int size=resolveInfoList.size();
 
                 for(int i=0; i<size;++i)
                 {
                     ResolveInfo resolveInfo=resolveInfoList.get(i);
                     String app_package_name=resolveInfo.activityInfo.packageName;
-                    String app_name=resolveInfo.loadLabel(MainActivity.PM).toString();
-                    Drawable app_icon=resolveInfo.loadIcon(MainActivity.PM);
+                    String app_name=resolveInfo.loadLabel(packageManager).toString();
+                    Drawable app_icon=resolveInfo.loadIcon(packageManager);
                     appPOJOList.add(new AppPOJO(app_icon, app_name, app_package_name));
 
                 }
@@ -271,6 +274,8 @@ public class AppSelectorDialog extends DialogFragment
                             });
 
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+                            appInstallAlertDialogFragment.show(appCompatActivity.getSupportFragmentManager(),"");
+                            /*
                             if(appCompatActivity instanceof MainActivity)
                             {
                                 appInstallAlertDialogFragment.show(MainActivity.FM,"");
@@ -279,6 +284,8 @@ public class AppSelectorDialog extends DialogFragment
                             {
                                 appInstallAlertDialogFragment.show(StorageAnalyserActivity.FM,"");
                             }
+
+                             */
 
 
                         }

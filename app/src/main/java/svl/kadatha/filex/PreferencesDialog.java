@@ -17,9 +17,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 public class PreferencesDialog extends DialogFragment
 {
@@ -30,6 +32,7 @@ public class PreferencesDialog extends DialogFragment
     private DefaultAppDatabaseHelper defaultAppDatabaseHelper;
     public static String THEME;
     private boolean light_rb_checked,dark_rb_checked,system_rb_checked;
+    private FragmentManager fragmentManager;
 
 
     @Override
@@ -44,7 +47,8 @@ public class PreferencesDialog extends DialogFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         context=getContext();
-        df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
+        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+        df=(DetailFragment) fragmentManager.findFragmentById(R.id.detail_fragment);
         tinyDB=new TinyDB(context);
         defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
         final View v=inflater.inflate(R.layout.fragment_preferences,container,false);
@@ -67,8 +71,8 @@ public class PreferencesDialog extends DialogFragment
                 {
                     Global.BYTE_COUNT_BLOCK_1000=byte_count_block_1000;
                     tinyDB.putBoolean("byte_count_block_1000",byte_count_block_1000);
-                    MainActivity.FM.beginTransaction().detach(df).commit();
-                    MainActivity.FM.beginTransaction().attach(df).commit();
+                    fragmentManager.beginTransaction().detach(df).commit();
+                    fragmentManager.beginTransaction().attach(df).commit();
                 }
             }
         });
@@ -180,7 +184,7 @@ public class PreferencesDialog extends DialogFragment
             @Override
             public void onClick(View view) {
                 DefaultAppsDialog defaultAppsDialog =new DefaultAppsDialog();
-                defaultAppsDialog.show(MainActivity.FM,"");
+                defaultAppsDialog.show(fragmentManager,"");
             }
         });
 
@@ -195,11 +199,11 @@ public class PreferencesDialog extends DialogFragment
                     public void run() {
                         Global.SHOW_FILE_PATH=b;
                         tinyDB.putBoolean("show_file_path",Global.SHOW_FILE_PATH);
-                        DetailFragment df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
+                        DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
                         if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
                         {
-                            MainActivity.FM.beginTransaction().detach(df).commit();
-                            MainActivity.FM.beginTransaction().attach(df).commit();
+                            fragmentManager.beginTransaction().detach(df).commit();
+                            fragmentManager.beginTransaction().attach(df).commit();
                         }
                     }
                 },500);

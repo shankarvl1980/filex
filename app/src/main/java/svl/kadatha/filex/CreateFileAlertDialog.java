@@ -8,6 +8,7 @@ import android.os.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class CreateFileAlertDialog extends DialogFragment
@@ -54,7 +55,7 @@ public class CreateFileAlertDialog extends DialogFragment
 				public void onItemClick(AdapterView<?> p1, View p2,int p3,long p4)
 				{
 					CreateFileDialog createFileDialig=CreateFileDialog.getInstance(p3,parent_folder,fileObjectType);
-					createFileDialig.show(MainActivity.FM,null);
+					createFileDialig.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 					dismissAllowingStateLoss();
 				}
 

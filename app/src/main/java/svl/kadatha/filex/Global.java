@@ -24,6 +24,7 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.viewpager.widget.ViewPager;
@@ -648,7 +649,7 @@ public class Global
 		}
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,false,uri);
-		List<ResolveInfo> resolveInfoList=MainActivity.PM.queryIntentActivities(intent,0);
+		List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
 		return resolveInfoList.size() != 0;
 	}
 
@@ -763,6 +764,18 @@ public class Global
 
 	return bitmap;
 }
+
+/*
+public static FragmentManager GET_FRAGMENT_MANAGER(Context context)
+{
+	FragmentManager fragmentManager = null;
+	AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+	fragmentManager=appCompatActivity.getSupportFragmentManager();
+
+	return fragmentManager;
+}
+
+ */
 }
 
 

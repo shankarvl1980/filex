@@ -108,7 +108,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private static final int BUFFER_SIZE=8192;
 	public FileObjectType fileObjectType;
 	private PopupWindow listPopWindow;
-    private static FragmentManager FM;
+    //private static FragmentManager FM;
+	public FragmentManager fm;
 	private LocalBroadcastManager localBroadcastManager;
 	private InputMethodManager imm;
 	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
@@ -121,7 +122,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		super.onCreate(savedInstanceState);
 		
 		context=this;
-		FM=getSupportFragmentManager();
+		fm=getSupportFragmentManager();
 		localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		tinyDB=new TinyDB(context);
 
@@ -233,7 +234,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 							}
 						});
-						deleteFileAlertDialogOtherActivity.show(FM,"deletefilealertotheractivity");
+						deleteFileAlertDialogOtherActivity.show(fm,"deletefilealertotheractivity");
 						break;
 
 					case 1:
@@ -266,11 +267,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 						files_selected_array.add(currently_shown_file.getPath());
 						PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,fileObjectType);
-						propertiesDialog.show(FM,"properties_dialog");
+						propertiesDialog.show(fm,"properties_dialog");
 						break;
 
 					case 3:
-						fileEditorSettingsDialog.show(FM,"file_editor_overflow");
+						fileEditorSettingsDialog.show(fm,"file_editor_overflow");
 						break;
 					default:
 						break;
@@ -541,7 +542,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				}
 			});
-			safpermissionhelper.show(FM, "saf_permission_dialog");
+			safpermissionhelper.show(fm, "saf_permission_dialog");
 			return false;
 		}
 		else
@@ -715,7 +716,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							}
 						}
 					});
-					saveConfirmationAlertDialog.show(FM, "saveconfirmationalert_dialog");
+					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 				} else {
 					go_previous();
 				}
@@ -733,7 +734,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							}
 						}
 					});
-					saveConfirmationAlertDialog.show(FM, "saveconfirmationalert_dialog");
+					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 
 				} else {
 					go_next();
@@ -768,7 +769,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 					}
 				});
-			saveConfirmationAlertDialog.show(FM,"saveconfirmationalert_dialog");
+			saveConfirmationAlertDialog.show(fm,"saveconfirmationalert_dialog");
 		}
 		else
 		{
@@ -977,7 +978,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		bundle.putString("tree_uri_path",tree_uri_path);
 		bundle.putParcelable("tree_uri",tree_uri);
 		pbf=ProgressBarFragment.getInstance();
-		pbf.show(FM,"");
+		pbf.show(fm,"");
 		emptyService=getEmptyService();
 		if(emptyService==null)
 		{
@@ -1153,7 +1154,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			// TODO: Implement this method
 			super.onPreExecute();
 			cpbf.set_title(getString(R.string.opening_the_file));
-			cpbf.show(FM,"progress_dialog");
+			cpbf.show(fm,"progress_dialog");
 		}
 
 		@Override
@@ -1428,7 +1429,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			// TODO: Implement this method
 			try {
-				pbf.show(FM,"progressbar_dialog");
+				pbf.show(fm,"progressbar_dialog");
 			}
 			catch (Exception e)
 			{

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -55,15 +56,30 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private FileSelectorDialog(){}
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		fileSelectorActivity=(FileSelectorActivity)context;
+		fileSelectorActivity.addFragmentCommunicationListener(this);
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		fileSelectorActivity.removeFragmentCommunicationListener(this);
+		fileSelectorActivity=null;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
-		context=getContext();
-		fileSelectorActivity=(FileSelectorActivity)context;
-		fileSelectorActivity.addFragmentCommunicationListener(this);
+		//context=getContext();
+		//fileSelectorActivity=(FileSelectorActivity)context;
+		//fileSelectorActivity.addFragmentCommunicationListener(this);
 		fileclickselected=getTag();
 		if(fileclickselected==null)
 		{
@@ -111,7 +127,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
 			pbf_polling=ProgressBarFragment.getInstance();
-			pbf_polling.show(FileSelectorActivity.FM,""); // don't show when archive view to avoid double pbf
+			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 
 				@Override
@@ -134,14 +150,14 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		context=getContext();
+		//context=getContext();
 		if(cache_cleared)
 		{
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
 			pbf_polling=ProgressBarFragment.getInstance();
-			pbf_polling.show(FileSelectorActivity.FM,""); // don't show when archive view to avoid double pbf
+			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 
 				@Override
@@ -153,7 +169,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		}
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
-		fileSelectorActivity=(FileSelectorActivity)context;
+		//fileSelectorActivity=(FileSelectorActivity)context;
 
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
@@ -212,7 +228,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			modification_observed=false;
 			local_activity_delete=false;
 			pbf_polling=ProgressBarFragment.getInstance();
-			pbf_polling.show(FileSelectorActivity.FM,""); // don't show when archive view to avoid double pbf
+			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 
 				@Override
@@ -299,6 +315,10 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=true;
 		}
 		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+file_path))
+		{
+			cache_cleared=true;
+		}
+		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+new File(file_path).getParent()))
 		{
 			cache_cleared=true;
 		}
@@ -515,7 +535,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 				}
 			});
-			safpermissionhelper.show(FileSelectorActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(fileSelectorActivity.fm, "saf_permission_dialog");
 			return false;
 		}
 		else

@@ -36,7 +36,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	{
 		this.context=context;
 		mainActivity=(MainActivity)context;
-		df=(DetailFragment)MainActivity.FM.findFragmentById(R.id.detail_fragment);
+		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
         Handler handler_refresh = new Handler();
 		handler_remove=new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
@@ -298,7 +298,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 		final int size=deleted_files_list.size();
 		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
-		pbf.show(MainActivity.FM,"");
+		pbf.show(mainActivity.fm, "");
 		handler_remove.post(new Runnable() {
 			@Override
 			public void run() {

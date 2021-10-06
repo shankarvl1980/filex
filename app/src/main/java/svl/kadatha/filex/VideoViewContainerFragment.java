@@ -20,6 +20,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -74,6 +75,15 @@ public class VideoViewContainerFragment extends Fragment
 	private boolean fromThirdPartyApp;
 	private String source_folder;
 	private LocalBroadcastManager localBroadcastManager;
+	private VideoViewActivity videoViewActivity;
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		videoViewActivity=((VideoViewActivity)context);
+	}
 
 
 	@Override
@@ -82,17 +92,18 @@ public class VideoViewContainerFragment extends Fragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		context=getContext();
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		//context=getContext();
+		//localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		//VideoViewActivity activity=((VideoViewActivity)context);
 		firststart=true;
-		VideoViewActivity activity=((VideoViewActivity)context);
-		data=activity.data;
-		currently_shown_file=activity.currently_shown_file;
-		video_list=activity.video_list;
-		file_selected_idx=activity.file_selected_idx;
-		fromThirdPartyApp=activity.fromThirdPartyApp;
-		source_folder=activity.source_folder;
-		source_folder=activity.source_folder;
+
+		data=videoViewActivity.data;
+		currently_shown_file=videoViewActivity.currently_shown_file;
+		video_list=videoViewActivity.video_list;
+		file_selected_idx=videoViewActivity.file_selected_idx;
+		fromThirdPartyApp=videoViewActivity.fromThirdPartyApp;
+		source_folder=videoViewActivity.source_folder;
+		source_folder=videoViewActivity.source_folder;
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -113,8 +124,8 @@ public class VideoViewContainerFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+		//context=getContext();
+		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		View v;
 		v=inflater.inflate(R.layout.fragment_video_view_container,container,false);
 		toolbar_visible=true;

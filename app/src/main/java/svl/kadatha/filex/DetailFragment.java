@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
@@ -99,16 +100,30 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 
-	
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		mainActivity=(MainActivity)context;
+		mainActivity.addFragmentCommunicationListener(this);
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mainActivity.removeFragmentCommunicationListener(this);
+		mainActivity=null;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		context=getContext();
-		mainActivity=(MainActivity)context;
-		mainActivity.addFragmentCommunicationListener(this);
+		//context=getContext();
+		//mainActivity=(MainActivity)context;
+		//mainActivity.addFragmentCommunicationListener(this);
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
@@ -161,7 +176,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			else
 			{
                 pbf_polling=ProgressBarFragment.getInstance();
-                if(!archive_view)pbf_polling.show(MainActivity.FM,""); // don't show when archive view to avoid double pbf
+                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
 			    new Thread(new Runnable() {
 
 					@Override
@@ -186,7 +201,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		context=getContext();
+		//context=getContext();
 		if(cache_cleared)
 		{
 			cache_cleared=false;
@@ -200,7 +215,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			else
 			{
                 pbf_polling=ProgressBarFragment.getInstance();
-                if(!archive_view)pbf_polling.show(MainActivity.FM,""); // don't show when archive view to avoid double pbf
+                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
 			    new Thread(new Runnable() {
 
 					@Override
@@ -214,7 +229,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
-		mainActivity=(MainActivity)context;
+		//mainActivity=(MainActivity)context;
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
@@ -326,7 +341,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			else
 			{
                 pbf_polling=ProgressBarFragment.getInstance();
-                if(!archive_view)pbf_polling.show(MainActivity.FM,""); // don't show when archive view to avoid double pbf
+                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
 			    new Thread(new Runnable() {
 
 					@Override
@@ -431,6 +446,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
+		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+new File(file_path).getParent()))
+		{
+			cache_cleared=true;
+		}
+
 	}
 
 	@Override
@@ -510,7 +530,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 					}
 				});
-			fileTypeSelectFragment.show(MainActivity.FM,"");
+			fileTypeSelectFragment.show(mainActivity.fm,"");
 		}
 		else
 		{
@@ -668,7 +688,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 				}
 			});
-			safpermissionhelper.show(MainActivity.FM,"saf_permission_dialog");
+			safpermissionhelper.show(mainActivity.fm,"saf_permission_dialog");
 			return false;
 		}
 		else
@@ -706,7 +726,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			super.onPreExecute();
 			filled_filePOJOs=false;
 			asynctask_status=AsyncTaskStatus.STARTED;
-			cancelableProgressBarDialog.show(MainActivity.FM,"");
+			cancelableProgressBarDialog.show(mainActivity.fm,"");
 			filePOJOS.clear(); filePOJOS_filtered.clear();
 		}
 
