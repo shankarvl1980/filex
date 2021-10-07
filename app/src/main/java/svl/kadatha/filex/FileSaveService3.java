@@ -236,7 +236,7 @@ public class FileSaveService3 extends Service
 
 			if(length==current_page_end_point)
 			{
-				r_fc.transferTo(prev_page_end_point,length-current_page_end_point,temp_fc);
+				r_fc.transferTo(prev_page_end_point, 0,temp_fc);
 			}
 			else
 			{
@@ -270,7 +270,7 @@ public class FileSaveService3 extends Service
 
 
 			temp_fc.position(0L);
-			source_fc.transferFrom(temp_fc,new_offset,length-current_page_end_point);
+			source_fc.transferFrom(temp_fc,new_offset,temp_fc.size());
 			current_page_end_point=new_offset;
 			page_pointer_hashmap.put(current_page,current_page_end_point);
 
@@ -286,7 +286,7 @@ public class FileSaveService3 extends Service
 			return true;
 
 		}
-		catch(IOException e)
+		catch(IOException | NullPointerException | IllegalArgumentException e)
 		{
 			return false;
 		}
@@ -294,16 +294,16 @@ public class FileSaveService3 extends Service
 		{
 			try
 			{
-				source_fc.close();
+
 				temp_fc.close();
 				r_fc.close();
 				if(fileOutputStream!=null)
 				{
 					fileOutputStream.close();
 				}
-
+				source_fc.close();
 			}
-			catch(IOException e)
+			catch(IOException | NullPointerException e)
 			{
 
 			}

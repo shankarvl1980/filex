@@ -749,7 +749,7 @@ public class AudioPlayFragment extends Fragment
 								BufferedInputStream bufferedInputStream = null;
 								if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.FILE_TYPE)
 								{
-									bufferedInputStream=new BufferedInputStream(new FileInputStream(new File(AudioPlayerActivity.AUDIO_FILE.getData())));
+									bufferedInputStream=new BufferedInputStream(new FileInputStream(AudioPlayerActivity.AUDIO_FILE.getData()));
 								}
 								else if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.USB_TYPE)
 								{

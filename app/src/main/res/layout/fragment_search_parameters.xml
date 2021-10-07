@@ -56,7 +56,6 @@
 		android:id="@+id/dialog_fragment_search_wholeword_checkbox"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="-3dp"
 		android:layout_marginTop="-3dp"
 		android:paddingEnd="10dp"
 		android:text="@string/whole_word"
@@ -80,11 +79,9 @@
 
 	<CheckBox
 		android:id="@+id/dialog_fragment_search_regex_checkbox"
-		android:layout_width="0dp"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="-3dp"
 		android:layout_marginTop="-3dp"
-		android:paddingEnd="10dp"
 		android:text="@string/regex"
 		android:textSize="14sp"
 		android:minHeight="36dp"

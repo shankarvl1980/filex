@@ -1031,7 +1031,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									current_page_end_point=fileSaveService1.current_page_end_point;
+									current_page_end_point=fileSaveService1.page_pointer_hashmap.get(current_page);
 									page_pointer_hashmap=fileSaveService1.page_pointer_hashmap;
 									updated=result;
 
@@ -1080,7 +1080,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									current_page_end_point=fileSaveService2.current_page_end_point;
+									current_page_end_point=fileSaveService2.page_pointer_hashmap.get(current_page);
 									page_pointer_hashmap=fileSaveService2.page_pointer_hashmap;
 									updated=result;
 
