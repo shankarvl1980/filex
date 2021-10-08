@@ -268,7 +268,7 @@ public class RecyclerViewLayout extends ViewGroup
 			y+=v.getMeasuredHeight();
 
 
-			x=Global.FOUR_DP;
+			//x=Global.FOUR_DP;
 			v=filenametextview;
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			y+=v.getMeasuredHeight();
