@@ -100,7 +100,6 @@ public class AllAudioListFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		View v=inflater.inflate(R.layout.fragment_all_audio_list,container,false);
 		file_number_view=v.findViewById(R.id.all_audio_file_number);
 		bottom_toolbar=v.findViewById(R.id.audio_list_bottom_toolbar);

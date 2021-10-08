@@ -37,7 +37,6 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     private Context context;
     private ImageView app_icon_image_view;
     private TextView app_name_tv,package_name_tv, version_tv,installed_version_tv, message_tv;
-    //private DetailFragment.FileObjectType fileObjectType;
     private String file_path;
     private Bitmap app_icon;
     private String package_name, app_name, version, installed_version;

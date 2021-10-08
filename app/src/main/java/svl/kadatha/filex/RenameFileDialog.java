@@ -58,7 +58,6 @@ public class RenameFileDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		context=getContext();
 		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 	}
 

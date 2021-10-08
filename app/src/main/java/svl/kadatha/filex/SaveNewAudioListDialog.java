@@ -23,6 +23,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class SaveNewAudioListDialog extends DialogFragment
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
 
-		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 	
 		dialog_heading_textview.setText(R.string.enter_name);
 		file_label_textview.setText(R.string.list_name_colon);

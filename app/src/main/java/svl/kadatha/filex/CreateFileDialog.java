@@ -54,6 +54,7 @@ public class CreateFileDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
 	@Override
@@ -92,8 +93,6 @@ public class CreateFileDialog extends DialogFragment
 			}
 		}
 
-
-
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);
 
 	}
@@ -118,7 +117,7 @@ public class CreateFileDialog extends DialogFragment
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
 		df=(DetailFragment)((AppCompatActivity)context).getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
-		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 		if(file_type==0)
 		{
 			dialog_heading_textview.setText(R.string.enter_file_name);

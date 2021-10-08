@@ -92,9 +92,6 @@ public class VideoViewContainerFragment extends Fragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		//context=getContext();
-		//localBroadcastManager=LocalBroadcastManager.getInstance(context);
-		//VideoViewActivity activity=((VideoViewActivity)context);
 		firststart=true;
 
 		data=videoViewActivity.data;
@@ -124,8 +121,6 @@ public class VideoViewContainerFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//context=getContext();
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		View v;
 		v=inflater.inflate(R.layout.fragment_video_view_container,container,false);
 		toolbar_visible=true;

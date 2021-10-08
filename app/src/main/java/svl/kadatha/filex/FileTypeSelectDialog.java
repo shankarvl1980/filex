@@ -68,7 +68,6 @@ public class FileTypeSelectDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
-		//window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 
 		WindowManager.LayoutParams params=window.getAttributes();
 		int height=params.height;

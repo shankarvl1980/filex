@@ -37,7 +37,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
-        Handler handler_refresh = new Handler();
+        //Handler handler_refresh = new Handler();
 		handler_remove=new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.mselecteditems.size()+"/"+df.file_list_size);

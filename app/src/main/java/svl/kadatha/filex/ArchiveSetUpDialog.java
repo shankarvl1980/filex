@@ -64,6 +64,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
 	@Override
@@ -121,7 +122,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		zipdialogview=inflater.inflate(R.layout.fragment_archive_setup,container,false);
-		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 		TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
 		TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
 		create_folder_checkbox=zipdialogview.findViewById(R.id.dialog_archive_checkbox);

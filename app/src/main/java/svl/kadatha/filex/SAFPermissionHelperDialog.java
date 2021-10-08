@@ -34,7 +34,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//return super.onCreateView(inflater, container, savedInstanceState);
         Context context = getContext();
 		View v=inflater.inflate(R.layout.fragment_saf_permission_helper,container,false);
         ImageView imageView1 = v.findViewById(R.id.fragment_saf_permission_helper_imageview1);

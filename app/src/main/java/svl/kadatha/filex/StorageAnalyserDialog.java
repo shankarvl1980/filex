@@ -84,9 +84,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
-        //context=getContext();
-        //storageAnalyserActivity=(StorageAnalyserActivity)context;
-        //storageAnalyserActivity.addFragmentCommunicationListener(this);
 
         fileclickselected=getTag();
         if(fileclickselected==null)
@@ -134,8 +131,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-            //pbf_polling=ProgressBarFragment.getInstance();
-            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
             cancelableProgressBarDialog=new CancelableProgressBarDialog();
             cancelableProgressBarDialog.set_title(getString(R.string.analysing));
             cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
@@ -168,14 +163,11 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        //context=getContext();
         if(cache_cleared)
         {
             cache_cleared=false;
             local_activity_delete=false;
             modification_observed=false;
-            //pbf_polling=ProgressBarFragment.getInstance();
-            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
             cancelableProgressBarDialog=new CancelableProgressBarDialog();
             cancelableProgressBarDialog.set_title(getString(R.string.analysing));
             cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
@@ -197,8 +189,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         }
         View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
-        //storageAnalyserActivity=(StorageAnalyserActivity)context;
-
         fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
         fileModifyObserver.setFileObserverListener(this);
 
@@ -288,8 +278,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
-            //pbf_polling=ProgressBarFragment.getInstance();
-            //pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
             cancelableProgressBarDialog=new CancelableProgressBarDialog();
             cancelableProgressBarDialog.set_title(getString(R.string.analysing));
             cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
@@ -333,13 +321,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                         }
                     }
                     final long final_storage_space = storage_space;
-                    /*
-                    if (pbf_polling == null || pbf_polling.getDialog() == null) {
-                        pbf_polling=ProgressBarFragment.getInstance();
-                        pbf_polling.show(StorageAnalyserActivity.FM,""); // don't show when archive view to avoid double pbf
-                    }
 
-                     */
                     if(cancelableProgressBarDialog==null || cancelableProgressBarDialog.getDialog()==null)
                     {
                         cancelableProgressBarDialog=new CancelableProgressBarDialog();
@@ -383,13 +365,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                     adapter=new StorageAnalyserAdapter();
                     set_adapter();
-                    /*
-                    if(pbf_polling!=null && pbf_polling.getDialog()!=null)
-                    {
-                        pbf_polling.dismissAllowingStateLoss();
-                    }
 
-                     */
                     if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
                     {
                         cancelableProgressBarDialog.dismissAllowingStateLoss();
@@ -410,13 +386,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public void onStop() {
         super.onStop();
         fileModifyObserver.startWatching();
-        /*
-        if(pbf_polling!=null && pbf_polling.getDialog()!=null)
-        {
-            pbf_polling.dismissAllowingStateLoss();
-        }
 
-         */
         if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
         {
             cancelableProgressBarDialog.dismissAllowingStateLoss();

@@ -50,6 +50,7 @@ public class SearchDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
 	@Override
@@ -57,7 +58,6 @@ public class SearchDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		
 		setRetainInstance(true);
 		for(FilePOJO filepojo:Global.STORAGE_DIR)
 		{
@@ -72,7 +72,6 @@ public class SearchDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		View v=inflater.inflate(R.layout.fragment_search_parameters,container,false);
 		search_file_name=v.findViewById(R.id.dialog_fragment_search_file_edittext);
 		wholeword_checkbox=v.findViewById(R.id.dialog_fragment_search_wholeword_checkbox);

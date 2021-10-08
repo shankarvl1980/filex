@@ -57,10 +57,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_file_editor_settings,container,false);
-		//fileEditorActivity=((FileEditorActivity)context); //on orientation change, new context created, hence this reinstantiation
 		RadioGroup eol_rg = v.findViewById(R.id.eol_rg);
-
-		
 		eol_rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
 		{
 			public void onCheckedChanged(RadioGroup rg, int p1)

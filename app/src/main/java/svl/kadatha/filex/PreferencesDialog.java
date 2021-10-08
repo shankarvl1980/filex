@@ -38,6 +38,10 @@ public class PreferencesDialog extends DialogFragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
+        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+        df=(DetailFragment) fragmentManager.findFragmentById(R.id.detail_fragment);
+        tinyDB=new TinyDB(context);
+        defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
     }
 
     @Override
@@ -50,10 +54,7 @@ public class PreferencesDialog extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
-        df=(DetailFragment) fragmentManager.findFragmentById(R.id.detail_fragment);
-        tinyDB=new TinyDB(context);
-        defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
+
         final View v=inflater.inflate(R.layout.fragment_preferences,container,false);
         RadioGroup file_block_rg = v.findViewById(R.id.preferences_file_block_rg);
         RadioButton block_1024_rb = v.findViewById(R.id.preferences_rb_1024);

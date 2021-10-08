@@ -77,9 +77,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
-		//context=getContext();
-		//fileSelectorActivity=(FileSelectorActivity)context;
-		//fileSelectorActivity.addFragmentCommunicationListener(this);
 		fileclickselected=getTag();
 		if(fileclickselected==null)
 		{
@@ -150,7 +147,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		//context=getContext();
 		if(cache_cleared)
 		{
 			cache_cleared=false;
@@ -169,7 +165,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		}
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
-		//fileSelectorActivity=(FileSelectorActivity)context;
 
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);

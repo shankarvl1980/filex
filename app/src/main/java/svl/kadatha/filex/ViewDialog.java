@@ -46,7 +46,6 @@ public class ViewDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//return super.onCreateView(inflater, container, savedInstanceState);
 		View v= inflater.inflate(R.layout.fragment_view,container,false);
 
         RadioGroup rg = v.findViewById(R.id.dialog_view_layout_rg);

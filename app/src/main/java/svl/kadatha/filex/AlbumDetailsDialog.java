@@ -81,6 +81,9 @@ public class AlbumDetailsDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+
+		//hide keyboard when coming from search list of albumlist dialog
+		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 	}
 
 	@Override
@@ -102,8 +105,6 @@ public class AlbumDetailsDialog extends DialogFragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
 
-		//hide keyboard when coming from search list of albumlist dialog
-		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 	}
 
 	@Override
