@@ -8,6 +8,7 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.widget.TableRow.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
@@ -21,6 +22,15 @@ public class ViewDialog extends DialogFragment
     private RadioButton list_rb, grid_rb;
     private Context context;
     private FragmentManager fragmentManager;
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+		tinyDB=new TinyDB(context);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -37,9 +47,6 @@ public class ViewDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		//return super.onCreateView(inflater, container, savedInstanceState);
-        context = getContext();
-        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
-		tinyDB=new TinyDB(context);
 		View v= inflater.inflate(R.layout.fragment_view,container,false);
 
         RadioGroup rg = v.findViewById(R.id.dialog_view_layout_rg);

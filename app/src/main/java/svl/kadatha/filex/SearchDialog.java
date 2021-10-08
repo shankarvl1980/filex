@@ -21,6 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.DialogFragment;
@@ -43,7 +44,14 @@ public class SearchDialog extends DialogFragment
     private Context context;
 	private final List<FilePOJO> storage_list=new ArrayList<>();
 	private InputMethodManager imm;
-	
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -64,8 +72,6 @@ public class SearchDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		
-		context=getContext();
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		View v=inflater.inflate(R.layout.fragment_search_parameters,container,false);
 		search_file_name=v.findViewById(R.id.dialog_fragment_search_file_edittext);

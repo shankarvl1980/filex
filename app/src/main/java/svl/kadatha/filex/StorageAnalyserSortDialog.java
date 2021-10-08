@@ -7,6 +7,7 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.widget.TableRow.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,6 +19,13 @@ public class StorageAnalyserSortDialog extends DialogFragment
     private TinyDB tinyDB;
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private Context context;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+        tinyDB=new TinyDB(context);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -33,11 +41,8 @@ public class StorageAnalyserSortDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        context = getContext();
-        tinyDB=new TinyDB(context);
+
         View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
-
-
         name_asc_btn=v.findViewById(R.id.storage_analyser_name_asc);
         name_desc_btn=v.findViewById(R.id.storage_analyser_name_desc);
         date_asc_btn=v.findViewById(R.id.storage_analyser_date_asc);

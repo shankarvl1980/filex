@@ -20,7 +20,8 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	{
 		this.forUSB=forUSB;
 	}
-    @Override
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method

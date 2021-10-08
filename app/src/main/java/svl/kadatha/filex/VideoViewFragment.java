@@ -22,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -61,6 +62,18 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private int toolbar_height;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
+		}
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -81,11 +94,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
-		audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
-		}
+
 		View v = inflater.inflate(R.layout.fragment_video_view, container, false);
 		handler=new Handler();
 		handler_seekbar_updation=new Handler();
