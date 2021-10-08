@@ -6,6 +6,7 @@ import android.content.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 
@@ -16,10 +17,14 @@ public class CancelableProgressBarDialog extends DialogFragment
 	private String title_string="";
 	private ProgresBarFragmentCancelListener progresBarFragmentCancelListener;
 
-    CancelableProgressBarDialog()
-	{
+    CancelableProgressBarDialog() { }
 
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -34,7 +39,6 @@ public class CancelableProgressBarDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_cancelable_progressbar,container,false);
 		title=v.findViewById(R.id.fragment_cancelable_pbf_title);
         ProgressBar pb = v.findViewById(R.id.fragment_cancelable_progressbar_pb);

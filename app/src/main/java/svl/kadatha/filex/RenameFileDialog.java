@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
@@ -52,6 +53,15 @@ public class RenameFileDialog extends DialogFragment
 	private String other_file_permission,existing_file_path,new_file_path;
 	private FragmentManager fragmentManager;
 
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		context=getContext();
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -76,8 +86,7 @@ public class RenameFileDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);

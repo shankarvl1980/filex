@@ -8,6 +8,7 @@ import android.os.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -19,8 +20,13 @@ public class CreateFileAlertDialog extends DialogFragment
 	private String parent_folder;
 	private FileObjectType fileObjectType;
 
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
 
-    @Override
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -41,7 +47,7 @@ public class CreateFileAlertDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		
-		context=getContext();
+
 		View v=inflater.inflate(R.layout.fragment_create_file,container,false);
         ListView file_folder_listview = v.findViewById(R.id.file_type_ListView);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_file_button_layout);

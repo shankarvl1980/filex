@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -64,7 +65,14 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	private TextView empty_tv;
 	private int num_all_album;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
-	
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -78,7 +86,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
+
 		Handler handler = new Handler();
 
 		View v=inflater.inflate(R.layout.fragment_album_list,container,false);

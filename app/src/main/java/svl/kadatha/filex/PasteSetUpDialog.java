@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -32,11 +33,16 @@ public class PasteSetUpDialog extends DialogFragment
 	private PasteSetUpDialog(){}
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		context=getContext();
 		this.setRetainInstance(true);
 		setCancelable(false);
 
@@ -86,7 +92,6 @@ public class PasteSetUpDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		if(check_permission_for_source(source_folder,sourceFileObjectType))
 		{
 			if(check_permission_for_destination(dest_folder,destFileObjectType))

@@ -25,14 +25,24 @@ public class FileEditorSettingsDialog extends DialogFragment
 	private boolean fromThirdPartyApp,fromArchiveView,isFileBig;
 	FileEditorActivity fileEditorActivity;
 
+
+	@Override
+	public void onAttach(Context context)
+	{
+		// TODO: Implement this method
+		super.onAttach(context);
+		this.context=context;
+		fileEditorActivity=((FileEditorActivity)context);
+		eol_changeListener=(FileEditorActivity)context;
+
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		context=getContext();
-		fileEditorActivity=((FileEditorActivity)context);
 		selected_eol=fileEditorActivity.eol;
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
@@ -46,9 +56,8 @@ public class FileEditorSettingsDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_file_editor_settings,container,false);
-		fileEditorActivity=((FileEditorActivity)context); //on orientation change, new context created, hence this reinstantiation
+		//fileEditorActivity=((FileEditorActivity)context); //on orientation change, new context created, hence this reinstantiation
 		RadioGroup eol_rg = v.findViewById(R.id.eol_rg);
 
 		
@@ -211,16 +220,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		return v;
 	}
 
-	@Override
-	public void onAttach(Context context)
-	{
-		// TODO: Implement this method
-		super.onAttach(context);
-		
-		eol_changeListener=(FileEditorActivity)context;
-	
-	}
-	
+
 	private void enable_disable_btns()
 	{
 	

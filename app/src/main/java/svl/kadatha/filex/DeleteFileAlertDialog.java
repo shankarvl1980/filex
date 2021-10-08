@@ -56,13 +56,22 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private String source_folder;
 
     private DeleteFileAlertDialog(){}
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		okButtonClickListener= (OKButtonClickListener) context;
+	}
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		this.setRetainInstance(true);
-		context=getContext();
 		bundle=getArguments();
 
 		if(bundle!=null)
@@ -94,7 +103,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -222,11 +230,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 		return v;
 	}
 
-	@Override
-	public void onAttach(@NonNull Context context) {
-		super.onAttach(context);
-		okButtonClickListener= (OKButtonClickListener) context;
-	}
 
 	@Override
 	public void onResume()
@@ -301,17 +304,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 		super.onDestroy();
 		//Global.SET_OTHER_FILE_PERMISSION(other_file_permission,source_folder);
 	}
-/*
-	@Override
-	public void onSaveInstanceState(Bundle outState)
-	{
-		// TODO: Implement this method
-		super.onSaveInstanceState(outState);
-		outState.putInt("total_no_of_files",total_no_of_files);
-		outState.putString("size_of_files_format",size_of_files_to_be_deleted);
-	}
-
- */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{

@@ -7,6 +7,7 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.widget.*;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,14 @@ public class FileTypeSelectDialog extends DialogFragment
 	//private final LinkedHashMap<String,String> file_type_set=new LinkedHashMap<>();
 	//private List<String> file_type_list;
 	//private List<String> file_mime_list;
-	
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -33,7 +41,6 @@ public class FileTypeSelectDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_select_file_type,container,false);
         RecyclerView file_type_recyclerview = v.findViewById(R.id.fragment_file_type_RecyclerView);
 		file_type_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);

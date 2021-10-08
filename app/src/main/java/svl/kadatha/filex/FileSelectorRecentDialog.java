@@ -48,6 +48,20 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     {
         this.activity_catering=activity_catering;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+        if (activity_catering.equals(STORAGE_ANALYSER)) {
+            ((StorageAnalyserActivity)context).recentDialogListener=this;
+        }
+        else {
+            ((FileSelectorActivity)context).recentDialogListener=this;
+        }
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -69,7 +83,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        context=getContext();
         View v=inflater.inflate(R.layout.fragment_recent,container,false);
         RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
         RecyclerView recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
@@ -128,83 +141,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (activity_catering.equals(STORAGE_ANALYSER)) {
-            ((StorageAnalyserActivity)context).recentDialogListener=this;
-        }
-        else {
-            ((FileSelectorActivity)context).recentDialogListener=this;
-        }
-    }
-
-    /*
-
-    public void seekSAFPermission()
-    {
-        ((FileSelectorActivity)context).clear_cache=false;
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        startActivityForResult(intent, request_code);
-    }
-
-
-    @Override
-    public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-    {
-
-        if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-        {
-            Uri treeUri;
-            treeUri = resultData.getData();
-            Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-        }
-        else
-        {
-            print(getString(R.string.permission_not_granted));
-        }
-
-    }
-
-    private boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType)
-    {
-        if(fileObjectType==FileObjectType.USB_TYPE && MainActivity.usbFileRoot==null)
-        {
-            return false;
-        }
-        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-        if(uriPOJO!=null)
-        {
-            tree_uri_path=uriPOJO.get_path();
-            tree_uri=uriPOJO.get_uri();
-        }
-
-        if(tree_uri_path.equals(""))
-        {
-            SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog(true);
-            safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-            {
-                public void onOKBtnClicked()
-                {
-                    seekSAFPermission();
-                }
-
-                public void onCancelBtnClicked()
-                {
-
-                }
-            });
-            safpermissionhelper.show(((FileSelectorActivity)context).fm,"saf_permission_dialog");
-            //saf_permission_requested=true;
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
- */
 
     @Override
     public void onResume()

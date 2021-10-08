@@ -24,6 +24,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	private ArchiveReplaceDialogListener archiveReplaceDialogListener;
 
 
+
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{

@@ -21,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -60,6 +61,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private ArchiveSetUpDialog(){}
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -94,7 +101,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 		folderclickselected=Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR();
 		custom_dir_fileObjectType=FileObjectType.FILE_TYPE;
-		//DetailFragment df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
+
 	}
 
 	public static ArchiveSetUpDialog getInstance(ArrayList<String>files_selected_array,ArrayList<String>zipentry_selected_array,FileObjectType sourceFileObjectType, String archive_action)
@@ -114,26 +121,17 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		zipdialogview=inflater.inflate(R.layout.fragment_archive_setup,container,false);
-		return zipdialogview;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		// TODO: Implement this method
-		super.onActivityCreated(savedInstanceState);
-		context=getContext();
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
-        TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
+		TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
+		TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
 		create_folder_checkbox=zipdialogview.findViewById(R.id.dialog_archive_checkbox);
 		zip_file_edittext=zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
-        RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
+		RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
 		rb_current_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
 		rb_custom_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
 		customdir_edittext=zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
 		browsebutton=zipdialogview.findViewById(R.id.dialog_archive_browse_button);
-        ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
+		ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 		okbutton=zipdialogview.findViewById(R.id.first_button);
 		okbutton.setText(R.string.ok);
@@ -164,7 +162,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				}
 			}
 		});
-	
+
 		rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
 		{
 			public void onCheckedChanged(RadioGroup rg,int pos)
@@ -181,7 +179,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				}
 			}
 		});
-		
+
 		browsebutton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -214,99 +212,99 @@ public class ArchiveSetUpDialog extends DialogFragment
 				zip_file_edittext.setSelection(zip_file_edittext.getText().length());
 
 				okbutton.setOnClickListener(new View.OnClickListener()
+				{
+					public void onClick(View v)
 					{
-						public void onClick(View v)
+
+						String zip_folder_name=zip_file_edittext.getText().toString().trim();
+						if(zip_folder_name.equals(""))
 						{
-							
-							String zip_folder_name=zip_file_edittext.getText().toString().trim();
-							if(zip_folder_name.equals(""))
-							{
-								print(getString(R.string.enter_zip_file_name));
-								return;
-							}
-							if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
-							{
-								print(getString(R.string.avoid_name_involving_special_characters));
-								return;
-							}
+							print(getString(R.string.enter_zip_file_name));
+							return;
+						}
+						if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
+						{
+							print(getString(R.string.avoid_name_involving_special_characters));
+							return;
+						}
 
-							String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-							destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
-							final String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
+						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
+						final String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
 
-							if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
-								print(getString(R.string.directory_not_exist_not_valid));
-								return;
-							}
+						if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
+							print(getString(R.string.directory_not_exist_not_valid));
+							return;
+						}
 
-							if(!is_file_writable(archivedestfolder,destFileObjectType))
+						if(!is_file_writable(archivedestfolder,destFileObjectType))
+						{
+							return;
+						}
+
+						final Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+						if(emptyService==null)
+						{
+							print(getString(R.string.maximum_3_services_processed));
+							return;
+						}
+						Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
+						final Bundle bundle=new Bundle();
+						bundle.putStringArrayList("files_selected_array",files_selected_array);
+						bundle.putString("dest_folder",archivedestfolder);
+						bundle.putString("zip_file_path",zip_file_path);
+						bundle.putString("zip_folder_name",zip_folder_name);
+						bundle.putString("archive_action",archive_action);
+						bundle.putString("tree_uri_path",tree_uri_path);
+						bundle.putParcelable("tree_uri",tree_uri);
+						bundle.putString("source_folder",parent_file_path);
+						bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
+						bundle.putSerializable("destFileObjectType",destFileObjectType);
+
+						if(whether_file_already_exists(zip_folder_path+".zip",destFileObjectType))
+						{
+							if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 							{
-								return;
-							}
-
-							final Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
-							if(emptyService==null)
-							{
-								print(getString(R.string.maximum_3_services_processed));
-								return;
-							}
-							Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
-							final Bundle bundle=new Bundle();
-							bundle.putStringArrayList("files_selected_array",files_selected_array);
-							bundle.putString("dest_folder",archivedestfolder);
-							bundle.putString("zip_file_path",zip_file_path);
-							bundle.putString("zip_folder_name",zip_folder_name);
-							bundle.putString("archive_action",archive_action);
-							bundle.putString("tree_uri_path",tree_uri_path);
-							bundle.putParcelable("tree_uri",tree_uri);
-							bundle.putString("source_folder",parent_file_path);
-							bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
-							bundle.putSerializable("destFileObjectType",destFileObjectType);
-
-							if(whether_file_already_exists(zip_folder_path+".zip",destFileObjectType))
-							{
-								if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
+								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=new ArchiveReplaceConfirmationDialog();
+								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener()
 								{
-									ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=new ArchiveReplaceConfirmationDialog();
-									archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener()
+									public void onYes()
 									{
-										public void onYes()
-										{
-											files_selected_array.remove(zip_folder_path+".zip");
-											bundle.putStringArrayList("files_selected_array",files_selected_array);
-											Intent intent=new Intent(context,emptyService);
-											intent.setAction(ARCHIVE_ACTION_ZIP);
-											intent.putExtra("bundle",bundle);
-											context.startActivity(intent);
-											imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-											dismissAllowingStateLoss();
+										files_selected_array.remove(zip_folder_path+".zip");
+										bundle.putStringArrayList("files_selected_array",files_selected_array);
+										Intent intent=new Intent(context,emptyService);
+										intent.setAction(ARCHIVE_ACTION_ZIP);
+										intent.putExtra("bundle",bundle);
+										context.startActivity(intent);
+										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+										dismissAllowingStateLoss();
 
-										}
-									});
-									archiveReplaceConfirmationDialog.setArguments(bundle);
-									archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+									}
+								});
+								archiveReplaceConfirmationDialog.setArguments(bundle);
+								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 
-								}
-								else
-								{
-									print(getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
-								}
 							}
 							else
 							{
-								Intent intent=new Intent(context,emptyService);
-								intent.setAction(ARCHIVE_ACTION_ZIP);
-								intent.putExtra("bundle",bundle);
-								context.startActivity(intent);
-								imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
-								dismissAllowingStateLoss();
+								print(getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
 							}
 						}
+						else
+						{
+							Intent intent=new Intent(context,emptyService);
+							intent.setAction(ARCHIVE_ACTION_ZIP);
+							intent.putExtra("bundle",bundle);
+							context.startActivity(intent);
+							imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
+							dismissAllowingStateLoss();
+						}
+					}
 
-					});
-					break;
+				});
+				break;
 			}
-			
+
 			case ARCHIVE_ACTION_UNZIP:
 			{
 				dialog_heading.setText(R.string.extract);
@@ -317,93 +315,93 @@ public class ArchiveSetUpDialog extends DialogFragment
 				okbutton.setOnClickListener(new View.OnClickListener()
 				{
 
-						public void onClick(View v) {
-							String zip_output_folder = zip_file_edittext.getText().toString().trim();
-							final Bundle bundle = new Bundle();
-							bundle.putStringArrayList("files_selected_array", files_selected_array);
-							bundle.putStringArrayList("zipentry_selected_array", zipentry_selected_array);
-							bundle.putString("zip_file_path", zip_file_path);
-							bundle.putString("archive_action",archive_action);
-							bundle.putBoolean("archive_view", false);
-							bundle.putString("source_folder",parent_file_path);
-							bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
+					public void onClick(View v) {
+						String zip_output_folder = zip_file_edittext.getText().toString().trim();
+						final Bundle bundle = new Bundle();
+						bundle.putStringArrayList("files_selected_array", files_selected_array);
+						bundle.putStringArrayList("zipentry_selected_array", zipentry_selected_array);
+						bundle.putString("zip_file_path", zip_file_path);
+						bundle.putString("archive_action",archive_action);
+						bundle.putBoolean("archive_view", false);
+						bundle.putString("source_folder",parent_file_path);
+						bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
 
-							String zip_folder_path;
-							String unarchivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-							destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
-							bundle.putSerializable("destFileObjectType", destFileObjectType); //put destfileobjecttype after deciding which one to put
+						String zip_folder_path;
+						String unarchivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
+						bundle.putSerializable("destFileObjectType", destFileObjectType); //put destfileobjecttype after deciding which one to put
 
-							if (create_folder_checkbox.isChecked()) {
-								if (zip_output_folder == null || zip_output_folder.equals("")) {
-									print(getString(R.string.enter_output_folder_name));
-									return;
-								}
-
-								if (CheckStringForSpecialCharacters.whetherStringContains(zip_output_folder)) {
-									print(getString(R.string.avoid_name_involving_special_characters));
-									return;
-								}
-								zip_folder_path=unarchivedestfolder.endsWith(File.separator) ? unarchivedestfolder+zip_output_folder : unarchivedestfolder+File.separator+zip_output_folder;
-							}
-							else
-							{
-								zip_folder_path=unarchivedestfolder;
-								zip_output_folder=null;
-							}
-
-
-							if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
-								print(getString(R.string.directory_not_exist_not_valid));
+						if (create_folder_checkbox.isChecked()) {
+							if (zip_output_folder == null || zip_output_folder.equals("")) {
+								print(getString(R.string.enter_output_folder_name));
 								return;
 							}
 
-							if (!is_file_writable(unarchivedestfolder, destFileObjectType)) {
+							if (CheckStringForSpecialCharacters.whetherStringContains(zip_output_folder)) {
+								print(getString(R.string.avoid_name_involving_special_characters));
 								return;
 							}
-
-
-
-							final Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
-							if (emptyService == null) {
-								print(getString(R.string.maximum_3_services_processed));
-								return;
-							}
-
-							bundle.putString("tree_uri_path", tree_uri_path);
-							bundle.putParcelable("tree_uri", tree_uri);
-							bundle.putString("dest_folder", unarchivedestfolder);
-							bundle.putString("zip_folder_name", zip_output_folder);
-							if (create_folder_checkbox.isChecked() && whether_file_already_exists(zip_folder_path, destFileObjectType)) {
-								if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
-									ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = new ArchiveReplaceConfirmationDialog();
-									archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener() {
-										public void onYes() {
-											Intent intent = new Intent(context, emptyService);
-											intent.setAction(ARCHIVE_ACTION_UNZIP);
-											intent.putExtra("bundle", bundle);
-											context.startActivity(intent);
-											imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-											dismissAllowingStateLoss();
-										}
-									});
-									archiveReplaceConfirmationDialog.setArguments(bundle);
-									archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
-								} else {
-									print(getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
-
-								}
-							} else {
-								Intent intent = new Intent(context, emptyService);
-								intent.setAction(ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
-								intent.putExtra("bundle", bundle);
-								context.startActivity(intent);
-								imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-								dismissAllowingStateLoss();
-							}
+							zip_folder_path=unarchivedestfolder.endsWith(File.separator) ? unarchivedestfolder+zip_output_folder : unarchivedestfolder+File.separator+zip_output_folder;
 						}
-					});
-					break;
-				}
+						else
+						{
+							zip_folder_path=unarchivedestfolder;
+							zip_output_folder=null;
+						}
+
+
+						if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
+							print(getString(R.string.directory_not_exist_not_valid));
+							return;
+						}
+
+						if (!is_file_writable(unarchivedestfolder, destFileObjectType)) {
+							return;
+						}
+
+
+
+						final Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
+						if (emptyService == null) {
+							print(getString(R.string.maximum_3_services_processed));
+							return;
+						}
+
+						bundle.putString("tree_uri_path", tree_uri_path);
+						bundle.putParcelable("tree_uri", tree_uri);
+						bundle.putString("dest_folder", unarchivedestfolder);
+						bundle.putString("zip_folder_name", zip_output_folder);
+						if (create_folder_checkbox.isChecked() && whether_file_already_exists(zip_folder_path, destFileObjectType)) {
+							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
+								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = new ArchiveReplaceConfirmationDialog();
+								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener() {
+									public void onYes() {
+										Intent intent = new Intent(context, emptyService);
+										intent.setAction(ARCHIVE_ACTION_UNZIP);
+										intent.putExtra("bundle", bundle);
+										context.startActivity(intent);
+										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+										dismissAllowingStateLoss();
+									}
+								});
+								archiveReplaceConfirmationDialog.setArguments(bundle);
+								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
+							} else {
+								print(getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
+
+							}
+						} else {
+							Intent intent = new Intent(context, emptyService);
+							intent.setAction(ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+							intent.putExtra("bundle", bundle);
+							context.startActivity(intent);
+							imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+							dismissAllowingStateLoss();
+						}
+					}
+				});
+				break;
+			}
 
 		}
 
@@ -414,9 +412,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 				imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
 				dismissAllowingStateLoss();
 			}
-			
+
 		});
+
+		return zipdialogview;
 	}
+
 
 	private String getParentFilePath(String file_path)
 	{

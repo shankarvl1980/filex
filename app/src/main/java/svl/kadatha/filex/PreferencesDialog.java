@@ -34,11 +34,15 @@ public class PreferencesDialog extends DialogFragment
     private boolean light_rb_checked,dark_rb_checked,system_rb_checked;
     private FragmentManager fragmentManager;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=getContext();
         setRetainInstance(true);
 
     }
@@ -46,7 +50,6 @@ public class PreferencesDialog extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context=getContext();
         fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
         df=(DetailFragment) fragmentManager.findFragmentById(R.id.detail_fragment);
         tinyDB=new TinyDB(context);
@@ -87,7 +90,6 @@ public class PreferencesDialog extends DialogFragment
             block_1024_rb.setChecked(true);
         }
 
-        //RadioGroup theme_rg = v.findViewById(R.id.preferences_theme_rg);
         RadioButton light_rb = v.findViewById(R.id.preferences_rb_light);
         light_rb.setOnClickListener(new View.OnClickListener() {
             @Override

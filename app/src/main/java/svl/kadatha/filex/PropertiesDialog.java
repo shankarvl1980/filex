@@ -7,6 +7,7 @@ import android.view.*;
 import android.widget.*;
 import android.widget.TableRow.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -32,7 +33,13 @@ public class PropertiesDialog extends DialogFragment
 
 	private PropertiesDialog(){}
 
-    @Override
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -86,7 +93,6 @@ public class PropertiesDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_properties,container,false);
 		//private TextView permissions;
 		TableLayout properties_details_table_layout = v.findViewById(R.id.fragment_properties_details_table_layout);

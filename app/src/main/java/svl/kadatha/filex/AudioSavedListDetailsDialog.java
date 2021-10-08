@@ -31,6 +31,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -78,12 +79,17 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private int listview_height;
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		context=getContext();
 		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
 		Bundle bundle=getArguments();
@@ -114,7 +120,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_album_details,container,false);
 		TextView dialog_title = v.findViewById(R.id.album_details_panel_title_TextView);
 		dialog_title.setText(audio_list_clicked_name);

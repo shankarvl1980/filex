@@ -32,6 +32,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -86,14 +87,18 @@ public class AudioPlayFragment extends Fragment
 	private LocalBroadcastManager localBroadcastManager;
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-
-		context=getContext();
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
 		FilenameFilter file_name_filter = new FilenameFilter() {
 			public boolean accept(File fi, String na) {
 				if (MainActivity.SHOW_HIDDEN_FILE) {
@@ -150,8 +155,6 @@ public class AudioPlayFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		View v=inflater.inflate(R.layout.fragment_current_play,container,false);
 		handler=new Handler();
 		service_connection=new ServiceConnection()

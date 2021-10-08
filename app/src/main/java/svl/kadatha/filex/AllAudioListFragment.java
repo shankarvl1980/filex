@@ -26,6 +26,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -75,6 +76,12 @@ public class AllAudioListFragment extends Fragment
 
 
 	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -93,8 +100,7 @@ public class AllAudioListFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		View v=inflater.inflate(R.layout.fragment_all_audio_list,container,false);
 		file_number_view=v.findViewById(R.id.all_audio_file_number);
 		bottom_toolbar=v.findViewById(R.id.audio_list_bottom_toolbar);

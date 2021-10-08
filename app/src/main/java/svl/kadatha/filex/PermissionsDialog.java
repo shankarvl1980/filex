@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.File;
@@ -26,7 +27,13 @@ public class PermissionsDialog extends DialogFragment
 	private PermissionChangeListener permissionChangeListener;
 	private Context context;
 
-    @Override
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -99,7 +106,6 @@ public class PermissionsDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
         View v = inflater.inflate(R.layout.fragment_permissions, container, false);
         CheckBox owner_read_chkbox = v.findViewById(R.id.fragment_permissions_owner_read_chkbox);
         CheckBox owner_write_chkbox = v.findViewById(R.id.fragment_permissions_owner_write_chkbox);

@@ -201,7 +201,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		//context=getContext();
 		if(cache_cleared)
 		{
 			cache_cleared=false;
@@ -229,7 +228,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
-		//mainActivity=(MainActivity)context;
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);

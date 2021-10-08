@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -49,7 +50,13 @@ public class CreateFileDialog extends DialogFragment
 
 	private CreateFileDialog(){}
 
-    @Override
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
@@ -95,7 +102,7 @@ public class CreateFileDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
+
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView file_label_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);

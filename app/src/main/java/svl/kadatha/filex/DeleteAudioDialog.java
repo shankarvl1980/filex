@@ -16,6 +16,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -44,6 +45,12 @@ public class DeleteAudioDialog extends DialogFragment
     private boolean whetherFromAlbum;
     private LocalBroadcastManager localBroadcastManager;
 
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -52,7 +59,6 @@ public class DeleteAudioDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		this.setRetainInstance(true);
 		setCancelable(false);
-		context=getContext();
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -76,8 +82,7 @@ public class DeleteAudioDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		context=getContext();
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+
 		View v=inflater.inflate(R.layout.fragment_cut_copy_delete_archive_progress,container,false);
         TextView dialog_title = v.findViewById(R.id.dialog_fragment_cut_copy_title);
         TextView from_textview = v.findViewById(R.id.dialog_fragment_cut_copy_from);

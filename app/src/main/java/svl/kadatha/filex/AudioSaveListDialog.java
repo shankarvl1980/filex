@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +27,14 @@ public class AudioSaveListDialog extends DialogFragment
 	private final ArrayList<String> saved_audio_list=new ArrayList<>();
     private final ArrayList<String> create_add_array=new ArrayList<>();
 	private SaveAudioListListener saveAudioListListener;
-	//private static SparseBooleanArray MSELECTEDITEMS;
-	//private ArrayList<String> SAVED_AUDIO_LIST_SELECTED_ARRAY=new ArrayList<>();
-	
+
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -45,7 +51,6 @@ public class AudioSaveListDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.audio_save_list_dialog,container,false);
         RecyclerView create_list_view = v.findViewById(R.id.audio_save_list_create_add_recyclerview);
 		create_list_view.setAdapter(new CreateAddListRecyclerAdapter(create_add_array));
@@ -88,26 +93,6 @@ public class AudioSaveListDialog extends DialogFragment
 		}
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-
-		/*
-		Window window=getDialog().getWindow();
-		WindowManager.LayoutParams params=window.getAttributes();
-		int height=params.height;
-		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
-
-		}
-		else
-		{
-			window.setLayout(Global.DIALOG_WIDTH,Math.min(height,Global.DIALOG_HEIGHT));
-
-		}
-
-		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-		 */
-		
 	}
 	
 	interface SaveAudioListListener

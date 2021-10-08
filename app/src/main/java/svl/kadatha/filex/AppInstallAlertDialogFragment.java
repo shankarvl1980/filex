@@ -47,9 +47,14 @@ public class AppInstallAlertDialogFragment extends DialogFragment
 
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=getContext();
         setRetainInstance(true);
         Bundle bundle=getArguments();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
@@ -69,7 +74,6 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context=getContext();
         handler=new Handler();
         View v=inflater.inflate(R.layout.fragment_apk_install_alert_dialog,container,false);
         app_icon_image_view=v.findViewById(R.id.fragment_apk_install_icon_imageview);
@@ -138,7 +142,6 @@ public class AppInstallAlertDialogFragment extends DialogFragment
     {
         AppInstallAlertDialogFragment appInstallAlertDialogFragment=new AppInstallAlertDialogFragment();
         Bundle bundle=new Bundle();
-        //bundle.putSerializable("fileObjectType",fileObjectType);
         bundle.putString("file_path",file_path);
         appInstallAlertDialogFragment.setArguments(bundle);
         return appInstallAlertDialogFragment;

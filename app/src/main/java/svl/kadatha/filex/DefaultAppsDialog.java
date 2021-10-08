@@ -37,11 +37,18 @@ public class DefaultAppsDialog extends DialogFragment
     private TableLayout tableLayout;
     private DefaultAppDatabaseHelper defaultAppDatabaseHelper;
     private int top_row_color,detail_row_color;
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        context=getContext();
         defaultAppPOJOS=new ArrayList<>();
         selectedDefaultPOJOS=new ArrayList<>();
         defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(getContext());
@@ -55,8 +62,6 @@ public class DefaultAppsDialog extends DialogFragment
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context=getContext();
-
         View v=inflater.inflate(R.layout.fragment_default_app,container,false);
         tableLayout=v.findViewById(R.id.default_app_table_layout);
 

@@ -42,7 +42,14 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private String tree_uri_path="";
 	private final int request_code=249;
 	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
-	
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		((MainActivity)context).recentDialogListener=this;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -56,7 +63,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_recent,container,false);
         RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
         RecyclerView recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
@@ -100,11 +106,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		
 	}
 
-	@Override
-	public void onAttach(@NonNull Context context) {
-		super.onAttach(context);
-		((MainActivity)context).recentDialogListener=this;
-	}
+
 
 	public void seekSAFPermission()
 	{

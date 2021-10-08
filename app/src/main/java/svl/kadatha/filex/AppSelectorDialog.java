@@ -46,6 +46,12 @@ public class AppSelectorDialog extends DialogFragment
 
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
@@ -90,7 +96,6 @@ public class AppSelectorDialog extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context=getContext();
         View v=inflater.inflate(R.layout.fragment_app_selector,container,false);
         app_recycler_view=v.findViewById(R.id.dialog_select_app_recyclerview);
         app_recycler_view.addItemDecoration(Global.DIVIDERITEMDECORATION);

@@ -46,7 +46,27 @@ public class AudioSavedListFragment extends Fragment
 	private int scroll_distance;
 	private boolean AsyncExtractIsInProgress;
 	private int num_all_audio_list;
-	
+
+	@Override
+	public void onAttach(Context context)
+	{
+		// TODO: Implement this method
+		super.onAttach(context);
+		this.context=context;
+		((AudioPlayerActivity)context).addAudioCompletionListener(new AudioPlayerActivity.AudioCompletionListener()
+		{
+
+			@Override
+			public void onAudioCompletion() {
+				if(audioSavedListDetailsDialog!=null)
+				{
+					audioSavedListDetailsDialog.onAudioChange();
+				}
+			}
+
+		});
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -59,7 +79,6 @@ public class AudioSavedListFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		context=getContext();
 		Handler handler = new Handler();
 
 		View v=inflater.inflate(R.layout.fragment_audio_saved_list,container,false);
@@ -128,27 +147,6 @@ public class AudioSavedListFragment extends Fragment
 		return v;
 	}
 
-	@Override
-	public void onAttach(Context context)
-	{
-		// TODO: Implement this method
-		super.onAttach(context);
-
-		 ((AudioPlayerActivity)context).addAudioCompletionListener(new AudioPlayerActivity.AudioCompletionListener()
-		 {
-
-			 @Override
-			 public void onAudioCompletion() {
-				 if(audioSavedListDetailsDialog!=null)
-				 {
-					 audioSavedListDetailsDialog.onAudioChange();
-				 }
-			 }
-
-
-
-		 });
-	}
 
 	private void enable_disable_buttons(boolean enable)
 	{
