@@ -25,7 +25,7 @@ public class PasteSetUpDialog extends DialogFragment
 	private final int request_code=103;
 	private String tree_uri_path="",source_uri_path="",source_folder,dest_folder;
     private Uri tree_uri,source_uri;
-	private final ArrayList<String> files_selected_array=new ArrayList<>();
+	private ArrayList<String> files_selected_array=new ArrayList<>();
 	private FileObjectType sourceFileObjectType,destFileObjectType;
 	private int size;
 	private boolean saf_permission_requested;
@@ -49,7 +49,8 @@ public class PasteSetUpDialog extends DialogFragment
 		bundle=getArguments();
 		if(bundle!=null)
 		{
-			files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
+			//files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
+			files_selected_array=bundle.getStringArrayList("files_selected_array");
 			cut=bundle.getBoolean("cut");
 			source_folder=bundle.getString("source_folder");
 			dest_folder=bundle.getString("dest_folder");

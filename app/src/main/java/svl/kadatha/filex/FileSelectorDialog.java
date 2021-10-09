@@ -90,7 +90,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
-			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && fileclickselected.startsWith(Global.EXTERNAL_STORAGE_PATH)))
+			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && (fileclickselected+File.separator).startsWith(Global.EXTERNAL_STORAGE_PATH+File.separator)))
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;
 			}
@@ -99,7 +99,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				if(new File(path).getParent().startsWith(fileclickselected))
+				if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
 				{
 					fileObjectType=FileObjectType.ROOT_TYPE;
 					break;
@@ -309,11 +309,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			cache_cleared=true;
 		}
-		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+file_path))
+		else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
 		{
 			cache_cleared=true;
 		}
-		else if((this.fileObjectType+fileclickselected).startsWith(fileObjectType+new File(file_path).getParent()))
+		else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
 		{
 			cache_cleared=true;
 		}

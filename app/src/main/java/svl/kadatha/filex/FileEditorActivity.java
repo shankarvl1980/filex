@@ -452,7 +452,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						{
 							for(UriPOJO uriPOJO:Global.URI_PERMISSION_LIST)
 							{
-								if(filePOJO.getPath().startsWith(uriPOJO.get_path()))
+								if(filePOJO.getPath()+File.separator.startsWith(uriPOJO.get_path()+File.separator))
 								{
 									external_available_space=new File(filePOJO.getPath()).getUsableSpace();
 									if(file_size*2.5>external_available_space)

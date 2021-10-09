@@ -647,7 +647,7 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            if(((String)entry.getKey()).startsWith(fileObjectType+file_path))
+            if((entry.getKey()+File.separator).startsWith(fileObjectType+file_path+File.separator))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
@@ -658,7 +658,7 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            if(((String)entry.getKey()).startsWith(fileObjectType+file_path))
+            if((entry.getKey() +File.separator).startsWith(fileObjectType+file_path+File.separator))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
@@ -677,7 +677,7 @@ public class FilePOJOUtil {
             while(iterator.hasNext())
             {
                 Map.Entry<String, List<FilePOJO>> entry=iterator.next();
-                if((fileObjectType+file_path).startsWith(entry.getKey()))
+                if((fileObjectType+file_path+File.separator).startsWith(entry.getKey()+File.separator))
                 {
                     List<FilePOJO> filePOJOS=entry.getValue();
                     if(filePOJOS!=null)

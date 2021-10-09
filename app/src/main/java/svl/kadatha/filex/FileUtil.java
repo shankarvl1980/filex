@@ -1174,7 +1174,7 @@ import java.util.List;
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
 		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH)
 		{
-			if (file_path.startsWith(internal_storage_path)) {
+			if ((file_path+File.separator).startsWith(internal_storage_path+File.separator)) {
 				is_from_internal = true;
 				break;
 			}
@@ -1270,7 +1270,7 @@ import java.util.List;
 			{
 				for (String extSdPath : extSdPaths) 
 				{
-					if (file.getCanonicalPath().startsWith(extSdPath)) 
+					if ((file.getCanonicalPath()+File.separator).startsWith(extSdPath+File.separator))
 					{
 						return extSdPath;
 					}

@@ -221,7 +221,7 @@ public class Global
 		while(iterator.hasNext())
 		{
 			UriPOJO uriPOJO=iterator.next();
-			if(uriPOJO.get_authority().equals(uri_authority) && uriPOJO.get_path().startsWith(uri_path) && uriPOJO.get_path().length()>uri_path.length())
+			if(uriPOJO.get_authority().equals(uri_authority) && (uriPOJO.get_path()+File.separator).startsWith(uri_path+File.separator) && uriPOJO.get_path().length()>uri_path.length())
 			{
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 				context.getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
@@ -245,7 +245,7 @@ public class Global
 				if(uriPOJO.get_authority().equals(uri_authority))
 				{
 					//uri_authority_exists_in_list=true;
-					if(uri_path.startsWith(uriPOJO.get_path()))
+					if((uri_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 					{
 						parent_uri_exists=true;
 						break;
@@ -271,7 +271,7 @@ public class Global
 			if(fileObjectType==FileObjectType.USB_TYPE && uriPOJO.get_authority().equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
 			{
 
-				if(file_path.startsWith(uriPOJO.get_path()))
+				if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 				{
 					return uriPOJO;
 				}
@@ -279,7 +279,7 @@ public class Global
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
-				if(file_path.startsWith(uriPOJO.get_path()))
+				if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 				{
 					return uriPOJO;
 				}
@@ -662,7 +662,7 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if(dest_folder.startsWith(iterator.next()))
+					if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
 					{
 						iterator.remove();
 					}
@@ -676,7 +676,7 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if(dest_folder.startsWith(iterator.next()))
+					if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
 					{
 						iterator.remove();
 					}
