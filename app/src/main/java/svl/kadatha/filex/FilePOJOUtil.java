@@ -9,6 +9,8 @@ import android.view.View;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +34,7 @@ public class FilePOJOUtil {
         boolean isDirectory=f.isDirectory();
         long dateLong=f.lastModified();
         String date=SDF.format(dateLong);
-        long sizeLong=f.length();
+        long sizeLong=0L;
         String si;
 
         String file_ext="";
@@ -64,6 +66,10 @@ public class FilePOJOUtil {
 
                 } catch (IOException e) {
                 }
+            }
+            else
+            {
+                sizeLong=f.length();
             }
             si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
         }
@@ -140,6 +146,72 @@ public class FilePOJOUtil {
         int type=GET_FILE_TYPE(isDirectory,file_ext);
         return new FilePOJO(FileObjectType.USB_TYPE,name,name.toLowerCase(),package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
+
+    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, boolean archive_view, FileObjectType fileObjectType,String file_path)
+    {
+        String name=f.getName();
+        String path=file_path;
+        boolean isDirectory=f.isDirectory();
+        long dateLong= 0L;
+        String date="";
+        try {
+            date = MainActivity.FTP_CLIENT.getModificationTime(file_path);
+        } catch (IOException e) {
+
+        }
+
+        long sizeLong=0L;
+        String si="";
+
+        String file_ext="";
+        int overlay_visible= View.INVISIBLE;
+        float alfa=Global.ENABLE_ALFA;
+        String package_name = null;
+
+        if(!isDirectory)
+        {
+            int idx=name.lastIndexOf(".");
+            if(idx!=-1)
+            {
+                file_ext=name.substring(idx+1);
+                if(extracticon)
+                {
+                    package_name=EXTRACT_ICON(name,path,file_ext);
+                }
+                if(file_ext.matches(Global.VIDEO_REGEX))
+                {
+                    overlay_visible=View.VISIBLE;
+                }
+            }
+
+            sizeLong=f.getSize();
+            si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+        }
+        else
+        {
+
+            String sub_file_count=null;
+            String [] file_list;
+            try
+            {
+                if((file_list=MainActivity.FTP_CLIENT.listNames(file_path))!=null)
+                {
+                    sub_file_count="("+file_list.length+")";
+
+                }
+                si=sub_file_count;
+            }
+            catch (IOException e)
+            {
+
+            }
+
+        }
+        int type=GET_FILE_TYPE(isDirectory,file_ext);
+        return new FilePOJO(fileObjectType,name,name.toLowerCase(),package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+    }
+
+
 
     static FilePOJO MAKE_FilePOJO_ROOT(String file_path)
     {
@@ -313,6 +385,15 @@ public class FilePOJOUtil {
         }
 
          */
+        else if(fileObjectType==FileObjectType.FTP_TYPE)
+        {
+            try {
+                FTPFile f=MainActivity.FTP_CLIENT.mlistFile(file_path);
+                filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+            } catch (IOException e) {
+                return null;
+            }
+        }
 
         return filePOJO;
     }
@@ -800,6 +881,35 @@ public class FilePOJOUtil {
 
                 } catch (IOException e) {
                     MainActivity.usbFileRoot=null;
+                    return true;
+                }
+            }
+        }
+        else if(fileObjectType==FileObjectType.FTP_TYPE)
+        {
+            if(MainActivity.FTP_CLIENT==null)
+            {
+                return true;
+            }
+            else
+            {
+                FTPFile[] file_array;
+                try {
+
+                    file_array=MainActivity.FTP_CLIENT.listFiles(fileclickselected);
+                    int size=file_array.length;
+                    for(int i=0;i<size;++i)
+                    {
+                        FTPFile f=file_array[i];
+                        String name=f.getName();
+                        String path=(fileclickselected.endsWith(File.separator) ? fileclickselected+name : fileclickselected+File.separator+name);
+                        FilePOJO filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,path);
+                        filePOJOS_filtered.add(filePOJO);
+                        filePOJOS.add(filePOJO);
+
+                    }
+
+                } catch (IOException e) {
                     return true;
                 }
             }

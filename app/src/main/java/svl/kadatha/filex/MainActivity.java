@@ -55,6 +55,8 @@ import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,6 +139,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
+	public static FTPClient FTP_CLIENT;
+
+
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)

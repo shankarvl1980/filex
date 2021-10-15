@@ -76,6 +76,8 @@ dependencies {
 
     implementation 'me.jahnen:libaums:0.8.0'
     //implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    implementation 'org.apache.commons:commons-io:1.3.2'
+    implementation 'commons-net:commons-net:3.7'
 
 
 

@@ -26,7 +26,10 @@ import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -178,6 +181,15 @@ public class CreateFileDialog extends DialogFragment
 							file_created=FileUtil.createNativeNewFile(file);
 						}
 					}
+					else if(fileObjectType==FileObjectType.FTP_TYPE)
+					{
+						InputStream bin = new ByteArrayInputStream(new byte[0]);
+						try {
+							file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
+						} catch (IOException e) {
+							file_created=false;
+						}
+					}
                 }
 				else if(file_type==1)
 				{
@@ -203,6 +215,13 @@ public class CreateFileDialog extends DialogFragment
 
 						}
 
+					}
+					else if(fileObjectType==FileObjectType.FTP_TYPE)
+					{
+						try {
+							file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
+						} catch (IOException e) {
+						}
 					}
 
 				}
@@ -299,6 +318,10 @@ public class CreateFileDialog extends DialogFragment
 
 			print(getString(R.string.root_access_not_avaialable));
 			return false;
+		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			return true;
 		}
 		else
 		{

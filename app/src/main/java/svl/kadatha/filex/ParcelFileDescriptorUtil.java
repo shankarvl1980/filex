@@ -4,6 +4,8 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 //import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -102,14 +104,14 @@ public class ParcelFileDescriptorUtil {
         @Override
         public void run() {
             try {
-                //IOUtils.copy(mIn, mOut);
+                IOUtils.copy(mIn, mOut);
                 mOut.flush();
             } catch (IOException e) {
                 Log.e("TransferThread", "writing failed");
                 e.printStackTrace();
             } finally {
-                //IOUtils.closeQuietly(mIn);
-                //IOUtils.closeQuietly(mOut);
+                IOUtils.closeQuietly(mIn);
+                IOUtils.closeQuietly(mOut);
             }
         }
     }

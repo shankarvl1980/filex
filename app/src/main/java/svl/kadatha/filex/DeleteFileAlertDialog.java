@@ -26,6 +26,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -203,6 +205,16 @@ public class DeleteFileAlertDialog extends DialogFragment
 							print(getString(R.string.root_access_not_avaialable));
 							return;
 						}
+					}
+					else if(sourceFileObjectType== FileObjectType.FTP_TYPE)
+					{
+						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+						if(emptyService==null)
+						{
+							print(getString(R.string.maximum_3_services_processed));
+							return;
+						}
+						start_delete_progress_activity(emptyService);
 					}
 					if(okButtonClickListener!=null) okButtonClickListener.deleteDialogOKButtonClick();
 					dismissAllowingStateLoss();
@@ -405,6 +417,22 @@ public class DeleteFileAlertDialog extends DialogFragment
 				populate(f_array,include_folder);
 
 			}
+			else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+			{
+				FTPFile[] f_array=new FTPFile[size];
+				for(int i=0;i<size;++i)
+				{
+
+					try {
+						FTPFile f = MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+						f_array[i]=f;
+					} catch (IOException e) {
+					}
+
+				}
+				populate(f_array,include_folder,source_folder);
+
+			}
 			return null;
 		}
 
@@ -471,6 +499,44 @@ public class DeleteFileAlertDialog extends DialogFragment
 				{
 					no_of_files++;
 					size_of_files+=f.getLength();
+				}
+				total_no_of_files+=no_of_files;
+				total_size_of_files+=size_of_files;
+				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+				publishProgress();
+			}
+		}
+
+		private void populate(FTPFile[] source_list_files, boolean include_folder, String path)
+		{
+			int size=source_list_files.length;
+			for(int i=0;i<size;++i)
+			{
+				FTPFile f=source_list_files[i];
+				if(isCancelled())
+				{
+					return;
+				}
+				int no_of_files=0;
+				long size_of_files=0L;
+				if(f.isDirectory())
+				{
+					try {
+						String name=f.getName();
+						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+						populate(MainActivity.FTP_CLIENT.listFiles(),include_folder,path);
+					} catch (IOException e) {
+
+					}
+					if(include_folder)
+					{
+						no_of_files++;
+					}
+				}
+				else
+				{
+					no_of_files++;
+					size_of_files+=f.getSize();
 				}
 				total_no_of_files+=no_of_files;
 				total_size_of_files+=size_of_files;

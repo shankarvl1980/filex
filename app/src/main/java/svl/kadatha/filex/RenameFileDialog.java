@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import com.github.mjdev.libaums.fs.UsbFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 
 public class RenameFileDialog extends DialogFragment
@@ -191,6 +192,19 @@ public class RenameFileDialog extends DialogFragment
 						});
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
 					}
+					else if(fileObjectType==FileObjectType.FTP_TYPE)
+					{
+						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
+						renameReplaceConfirmationDialog.setRenameReplaceDialogListener(new RenameReplaceConfirmationDialog.RenameReplaceDialogListener() {
+							@Override
+							public void rename_file() {
+
+								rename_process(new_file_path,new_name);
+							}
+						});
+						renameReplaceConfirmationDialog.show(fragmentManager,"");
+
+					}
 				}
 				else
 				{
@@ -295,6 +309,14 @@ public class RenameFileDialog extends DialogFragment
 			{
 				print(getString(R.string.root_access_not_avaialable));
 				fileNameChanged=false;
+			}
+			onRenameResult(fileNameChanged,new_name);
+		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			try {
+				fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
+			} catch (IOException e) {
 			}
 			onRenameResult(fileNameChanged,new_name);
 		}
