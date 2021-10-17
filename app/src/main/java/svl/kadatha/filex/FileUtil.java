@@ -17,6 +17,8 @@ import androidx.annotation.RequiresApi;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileStreamFactory;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -315,6 +317,29 @@ import java.util.List;
 		}
 
 		@SuppressWarnings("null")
+		public static boolean copy_FtpFile_File(String src_file_path, File target_file,boolean cut)
+		{
+			boolean success;
+			try {
+
+				OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(target_file));
+				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+				if (cut && success) {
+					deleteFTPFile(src_file_path);
+				}
+
+			} catch (Exception e) {
+
+				return false;
+			}
+			// ignore exception
+
+			// ignore exception
+			return true;
+		}
+
+
+		@SuppressWarnings("null")
 		public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path,String name, boolean cut)
 		{
 			InputStream inStream = null;
@@ -568,6 +593,62 @@ import java.util.List;
 		}
 
 		@SuppressWarnings("null")
+		public static boolean copy_FtpFile_SAFFile(Context context,@NonNull final String source_file_path, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut)
+		{
+			boolean success;
+			OutputStream outStream=null;
+
+			try
+			{
+				Uri uri = createDocumentUri(context,target_file_path,name,false,tree_uri,tree_uri_path);
+
+				if (uri != null)
+				{
+					outStream = context.getContentResolver().openOutputStream(uri);
+				}
+				else
+				{
+					return false;
+				}
+
+
+				if (outStream != null)
+				{
+					success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
+					if(success && cut)
+					{
+						deleteFTPFile(source_file_path);
+					}
+				}
+
+
+
+			}
+			catch(IOException e)
+			{
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+
+			finally
+			{
+
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			return true;
+		}
+
+
+		@SuppressWarnings("null")
 		public static boolean copy_File_UsbFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
 		{
 			FileInputStream fileInStream = null;
@@ -748,6 +829,14 @@ import java.util.List;
 			}
 		}
 
+		private static boolean deleteFTPFile(String file_path)
+		{
+			try {
+				return MainActivity.FTP_CLIENT.deleteFile(file_path);
+			} catch (IOException e) {
+				return false;
+			}
+		}
 
 
 		public static boolean deleteNativeDirectory(final File folder)
@@ -825,6 +914,41 @@ import java.util.List;
 
 			}
 			success=deleteUsbFile(folder);
+
+			return success;
+		}
+
+		public static boolean deleteFTPDirectory(final String file_path)
+		{
+			boolean success=true;
+			FTPFile folder;
+			try {
+				folder = MainActivity.FTP_CLIENT.mlistFile(file_path);
+				if (folder.isDirectory())            //Check if folder file is a real folder
+				{
+
+					FTPFile[] list = MainActivity.FTP_CLIENT.listFiles(file_path); //Storing all file name within array
+					if(list!=null)
+					{
+						int size=list.length;
+						for (int i = 0; i < size; ++i)
+						{
+
+							FTPFile tmpF = list[i];
+							String name=tmpF.getName();
+							String path=(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
+							success=deleteFTPDirectory(path);
+
+						}
+					}
+
+
+				}
+
+				success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+			} catch (IOException e) {
+				return false;
+			}
 
 			return success;
 		}
