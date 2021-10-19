@@ -1050,7 +1050,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					String file_path=files_selected_array.get(i);
 					File file=new File(file_path);
 					current_file_name=file.getName();
-					success=deleteFTPDirectory(file_path);
+					success=deleteFtpDirectory(file_path);
 					if(success)
 					{
 						//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file.getAbsolutePath());
@@ -1179,7 +1179,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			return success;
 		}
 
-		public boolean deleteFTPDirectory(final String file_path)
+		private boolean deleteFtpDirectory(final String file_path)
 		{
 			boolean success=true;
 			FTPFile folder;
@@ -1204,7 +1204,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 							FTPFile tmpF = list[i];
 							String name=tmpF.getName();
 							String path=(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
-							success=deleteFTPDirectory(path);
+							success=deleteFtpDirectory(path);
 
 						}
 					}
@@ -1293,7 +1293,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		protected Boolean doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-			boolean recursive_loop_path;
 			if(sourceFileObjectType==FileObjectType.ROOT_TYPE || destFileObjectType==FileObjectType.ROOT_TYPE)
 			{
 				if(destFileObjectType==FileObjectType.USB_TYPE || sourceFileObjectType==FileObjectType.USB_TYPE)
@@ -1416,6 +1415,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 								{
 									copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),cut);
 								}
+								else if(destFileObjectType==FileObjectType.FTP_TYPE)
+								{
+									copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),cut);
+								}
 
 							}
 							else
@@ -1427,6 +1430,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 								else if (destFileObjectType==FileObjectType.USB_TYPE)
 								{
 									copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),false);
+								}
+								else if(destFileObjectType==FileObjectType.FTP_TYPE)
+								{
+									copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),false);
 								}
 
 								if(copy_result && cut)
@@ -1673,7 +1680,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 							if(copy_result && cut)
 							{
-								FileUtil.deleteFTPDirectory(src_file_path);
+								FileUtil.deleteFtpDirectory(src_file_path);
 							}
 
 							if(copy_result)
@@ -1911,6 +1918,77 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 			return success;
 		}
+
+		public boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut)
+		{
+			boolean success=false;
+
+			if (source.isDirectory())
+			{
+				if(isCancelled())
+				{
+					return false;
+				}
+
+				String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+				try {
+					FTPFile dest_ftpFile=MainActivity.FTP_CLIENT.mlistFile(file_path);
+					if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
+					{
+						if(!(success=FileUtil.mkdirFtp(file_path)))
+						{
+							return false;
+						}
+					}
+					else {
+						if(dest_ftpFile.isDirectory()) success=true;
+					}
+
+				} catch (IOException e) {
+					return false;
+				}
+
+
+				String[] files_name_list = source.list();
+				if(files_name_list==null)
+				{
+					++counter_no_files;
+					return true;
+				}
+				int size=files_name_list.length;
+				for (int i=0;i<size;++i)
+				{
+					String inner_file_name=files_name_list[i];
+					if(isCancelled())
+					{
+						return false;
+					}
+					File srcFile = new File(source, inner_file_name);
+					success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut);
+				}
+				counter_no_files++;
+				if(success&&cut)
+				{
+					FileUtil.deleteNativeDirectory(source);
+				}
+
+			}
+			else
+			{
+				if(isCancelled())
+				{
+					return false;
+				}
+				counter_no_files++;
+				counter_size_files+=source.length();
+				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				publishProgress(source);
+				success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut);
+			}
+
+			return success;
+		}
+
 
 		@SuppressWarnings("null")
 
@@ -2181,7 +2259,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					counter_no_files++;
 					if(success&&cut)
 					{
-						FileUtil.deleteFTPDirectory(src_file_path);
+						FileUtil.deleteFtpDirectory(src_file_path);
 					}
 				}
 				else
@@ -2258,7 +2336,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					counter_no_files++;
 					if(success&&cut)
 					{
-						FileUtil.deleteFTPDirectory(src_file_path);
+						FileUtil.deleteFtpDirectory(src_file_path);
 					}
 
 				}

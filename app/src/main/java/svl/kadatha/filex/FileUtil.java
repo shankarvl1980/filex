@@ -709,6 +709,44 @@ import java.util.List;
 			return true;
 		}
 
+		@SuppressWarnings("null")
+		public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
+		{
+			boolean success;
+			FileInputStream fileInStream = null;
+			//OutputStream outStream=null;
+
+			try
+			{
+				fileInStream = new FileInputStream(source);
+				String file_path=target_file_path.equals(File.separator) ? target_file_path+name : target_file_path+File.separator+name;
+				success=MainActivity.FTP_CLIENT.storeFile(file_path,fileInStream);
+
+				if(success&&cut)
+				{
+					deleteNativeFile(source);
+				}
+			}
+			catch (Exception e)
+			{
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			finally
+			{
+				try
+				{
+					fileInStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			return success;
+		}
 
 
 	public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
@@ -749,6 +787,14 @@ import java.util.List;
 			}
 		}
 
+		public static boolean mkdirFtp(String file_path)
+		{
+			try {
+				return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+			} catch (IOException e) {
+				return false;
+			}
+		}
 
 
 		public static boolean createUsbFile(UsbFile parentUsbFile,String name)
@@ -918,7 +964,7 @@ import java.util.List;
 			return success;
 		}
 
-		public static boolean deleteFTPDirectory(final String file_path)
+		public static boolean deleteFtpDirectory(final String file_path)
 		{
 			boolean success=true;
 			FTPFile folder;
@@ -937,7 +983,7 @@ import java.util.List;
 							FTPFile tmpF = list[i];
 							String name=tmpF.getName();
 							String path=(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
-							success=deleteFTPDirectory(path);
+							success=deleteFtpDirectory(path);
 
 						}
 					}
