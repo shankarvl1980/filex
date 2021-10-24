@@ -1,0 +1,237 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/new_ftp_server"
+        android:padding="@dimen/layout_margin"
+        android:background="?attr/dialog_title"
+        android:textSize="18sp"
+        android:layout_gravity="top"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/layout_margin">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="?attr/dialog_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
+
+                />
+            <TextView
+                android:id="@+id/ftp_details_server_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:padding="@dimen/layout_margin"
+                android:text="@string/server"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_server"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+
+                />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_server"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_server_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
+
+                />
+
+            <TextView
+                android:id="@+id/ftp_details_port_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:padding="@dimen/layout_margin"
+                android:text="@string/port"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_port"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_server_label"
+
+                />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_port"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_port_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_port_label"
+
+                />
+
+            <TextView
+                android:id="@+id/ftp_details_mode_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mode"
+                android:gravity="start"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_mode_rg"
+                android:padding="@dimen/layout_margin"
+
+                />
+
+
+            <RadioGroup
+                android:id="@+id/ftp_details_mode_rg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_mode_label"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:minHeight="36dp"
+                >
+
+                <RadioButton
+                    android:id="@+id/dialog_view_rb_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/active"
+                    android:layout_weight="1"
+
+                    />
+
+                <RadioButton
+                    android:id="@+id/dialog_view_rb_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/passive"
+                    android:layout_weight="1"
+
+                    />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/ftp_details_user_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_name"
+                android:gravity="start"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_mode_rg"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_user_name"
+                android:padding="@dimen/layout_margin"
+
+                />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_user_name"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_user_name_label"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_user_name_label"
+                app:layout_constraintEnd_toEndOf="parent"
+
+
+                />
+            <TextView
+                android:id="@+id/ftp_details_password_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password"
+                android:gravity="start"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_user_name_label"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_password"
+                android:padding="@dimen/layout_margin"
+
+                />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_password"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_password_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
+
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/anonymous"
+                android:text="@string/anonymous"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
+                />
+            <TextView
+                android:id="@+id/ftp_details_encoding_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/layout_colon"
+                android:gravity="start"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/anonymous"
+                android:padding="@dimen/layout_margin"
+                android:visibility="gone"
+                />
+            <TextView
+            android:id="@+id/ftp_details_display_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/display"
+            android:gravity="start"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label"
+            app:layout_constraintEnd_toStartOf="@id/ftp_details_display"
+            android:padding="@dimen/layout_margin"
+
+            />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_display"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_display_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
+
+                />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_details_button_layout"
+                android:layout_marginTop="@dimen/layout_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_display_label"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>
+
+
+

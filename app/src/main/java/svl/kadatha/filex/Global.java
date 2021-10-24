@@ -29,6 +29,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.viewpager.widget.ViewPager;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -765,6 +768,54 @@ public class Global
 	return bitmap;
 }
 
+	public static boolean CHECK_FTP_SERVER_CONNECTED()
+	{
+		int reply_code=MainActivity.FTP_CLIENT.getReplyCode();
+		if(FTPReply.isPositiveCompletion(reply_code))
+		{
+			return true;
+		}
+		else
+		{
+			try {
+				MainActivity.FTP_CLIENT.disconnect();
+				Iterator<FilePOJO> iterator=STORAGE_DIR.iterator();
+				while(iterator.hasNext())
+				{
+					FilePOJO filePOJO= iterator.next();
+					if(filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
+					{
+						iterator.remove();
+						break;
+					}
+
+				}
+
+				return false;
+			} catch (IOException e) {
+				return false;
+			}
+		}
+	}
+
+	public static String GET_TRUNCATED_FILE_PATH_USB(String file_path)
+	{
+		if(file_path.equals(File.separator)) return file_path;
+		if(file_path.startsWith(File.separator))
+		{
+			return file_path.substring(1);
+		}
+		else
+		{
+			return file_path;
+		}
+	}
+
+}
+
+
+
+
 /*
 public static FragmentManager GET_FRAGMENT_MANAGER(Context context)
 {
@@ -776,8 +827,3 @@ public static FragmentManager GET_FRAGMENT_MANAGER(Context context)
 }
 
  */
-}
-
-
-
-

@@ -754,7 +754,7 @@ import java.util.List;
 		UsbFile usbFile=null;
 		try
 		{
-			usbFile=rootUsbFile.search(file_path);
+			usbFile=rootUsbFile.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
 		}
 
 		catch (IOException e)

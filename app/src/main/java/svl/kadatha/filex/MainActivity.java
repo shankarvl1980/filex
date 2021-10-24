@@ -567,6 +567,30 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
+		View ftp_details_heading_layout=findViewById(R.id.ftp_label_background);
+		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+				pbf.show(fm,"");
+				drawerLayout.closeDrawer(drawer);
+
+				Handler h=new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						actionmode_finish(df,df.fileclickselected);
+
+						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
+						ftpDetailsDialog.show(fm,"ftp_dialog_fragment");
+						pbf.dismissAllowingStateLoss();
+
+					}
+				},500);
+
+			}
+		});
 
 		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);
@@ -1341,7 +1365,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						return;
 					}
 					try {
-						UsbFile usbFile = MainActivity.usbFileRoot.search(parent_file_path);
+						UsbFile usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
 						createFragmentTransaction(usbFile.getAbsolutePath(),FileObjectType.USB_TYPE);
 					} catch (IOException e) {
 

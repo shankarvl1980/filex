@@ -57,8 +57,9 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
                         }
                         defaultAppPOJOS.add(new DefaultAppsDialog.DefaultAppPOJO(mime_type,file_type,app_icon,app_name,app_package_name));
                     }
+                    cursor.close();
                 }
-                cursor.close();
+
             }
 
         }
@@ -69,7 +70,6 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
     {
         String app_package_name=null;
         SQLiteDatabase db=getReadableDatabase();
-        //try(Cursor c=db.rawQuery("SELECT name FROM sqlite_master WHERE TYPE='table' AND name!='android_metadata'",null))
         try (Cursor c = db.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name='"+TABLE+"'", null))
         {
             if (c != null && c.moveToFirst()) {

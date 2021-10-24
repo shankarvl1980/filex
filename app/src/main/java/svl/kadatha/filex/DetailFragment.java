@@ -155,7 +155,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			if(MainActivity.usbFileRoot!=null)
 			{
 				try {
-					currentUsbFile=MainActivity.usbFileRoot.search(fileclickselected);
+					currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
 
 				} catch (IOException e) {
 
@@ -1069,7 +1069,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 							try {
 								if(p2==0) file_path.append(File.separator);
 								String fp=file_path.toString();
-								UsbFile f=MainActivity.usbFileRoot.search(fp);
+								UsbFile f=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fp));
 								mainActivity.createFragmentTransaction(fp,fileObjectType);
 							} catch (IOException e) {
 

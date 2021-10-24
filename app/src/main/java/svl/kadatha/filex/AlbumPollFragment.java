@@ -57,7 +57,7 @@ public class AlbumPollFragment extends Fragment
                 if(MainActivity.usbFileRoot!=null)
                 {
                     try {
-                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(selected_file_path),false);
+                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(selected_file_path)),false);
                     } catch (IOException e) {
 
                     }

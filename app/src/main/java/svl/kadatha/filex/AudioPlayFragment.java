@@ -759,7 +759,7 @@ public class AudioPlayFragment extends Fragment
 									UsbFile usbFile = null;
 									if(MainActivity.usbFileRoot!=null)
 									{
-										usbFile=MainActivity.usbFileRoot.search(AudioPlayerActivity.AUDIO_FILE.getData());
+										usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
 									}
 									
 									bufferedInputStream= UsbFileStreamFactory.createBufferedInputStream(usbFile,MainActivity.usbCurrentFs);

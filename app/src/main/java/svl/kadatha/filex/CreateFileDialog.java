@@ -183,12 +183,20 @@ public class CreateFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						InputStream bin = new ByteArrayInputStream(new byte[0]);
-						try {
-							file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
-						} catch (IOException e) {
-							file_created=false;
+						if(Global.CHECK_FTP_SERVER_CONNECTED())
+						{
+							InputStream bin = new ByteArrayInputStream(new byte[0]);
+							try {
+								file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
+							} catch (IOException e) {
+								file_created=false;
+							}
 						}
+						else
+						{
+							print(getString(R.string.ftp_server_is_not_connected));
+						}
+
 					}
                 }
 				else if(file_type==1)
@@ -218,10 +226,18 @@ public class CreateFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						try {
-							file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
-						} catch (IOException e) {
+						if(Global.CHECK_FTP_SERVER_CONNECTED())
+						{
+							try {
+								file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
+							} catch (IOException e) {
+							}
 						}
+						else
+						{
+							print(getString(R.string.ftp_server_is_not_connected));
+						}
+
 					}
 
 				}

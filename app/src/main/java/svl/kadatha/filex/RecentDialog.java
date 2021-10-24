@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,12 +45,15 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private String tree_uri_path="";
 	private final int request_code=249;
 	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
+	private RecyclerView recent_recyclerview;
+	private TextView recent_label;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
 		((MainActivity)context).recentDialogListener=this;
+
 	}
 
 	@Override
@@ -64,9 +70,10 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	{
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_recent,container,false);
-        RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
-        RecyclerView recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
-        ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
+		RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
+        recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
+        recent_label=v.findViewById(R.id.recent_label);
+		ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button recent_clear_button = buttons_layout.findViewById(R.id.first_button);
 		recent_clear_button.setText(R.string.clear);
@@ -179,7 +186,14 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		Window window=getDialog().getWindow();
 		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
 		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
+			if(!Global.IS_TABLET)
+			{
+				recent_label.setVisibility(View.GONE);
+				recent_recyclerview.setAdapter(null);
+			}
+
+			window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
+
 		}
 		else
 		{

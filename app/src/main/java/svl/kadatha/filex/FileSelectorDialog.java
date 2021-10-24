@@ -113,7 +113,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			if(MainActivity.usbFileRoot!=null)
 			{
 				try {
-					currentUsbFile=MainActivity.usbFileRoot.search(fileclickselected);
+					currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
 
 				} catch (IOException e) {
 

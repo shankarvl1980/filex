@@ -208,6 +208,11 @@ public class DeleteFileAlertDialog extends DialogFragment
 					}
 					else if(sourceFileObjectType== FileObjectType.FTP_TYPE)
 					{
+						if(!Global.CHECK_FTP_SERVER_CONNECTED())
+						{
+							print(getString(R.string.ftp_server_is_not_connected));
+							return;
+						}
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{

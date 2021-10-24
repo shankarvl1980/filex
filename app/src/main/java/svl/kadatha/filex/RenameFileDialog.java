@@ -314,10 +314,18 @@ public class RenameFileDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			try {
-				fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
-			} catch (IOException e) {
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try {
+					fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
+				} catch (IOException e) {
+				}
 			}
+			else
+			{
+				print(getString(R.string.ftp_server_is_not_connected));
+			}
+
 			onRenameResult(fileNameChanged,new_name);
 		}
 

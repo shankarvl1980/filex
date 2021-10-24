@@ -43,6 +43,9 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     public static final String FILE_SELECTOR="file_selector";
     public static final String STORAGE_ANALYSER="storage_analyser";
     private String activity_catering=FILE_SELECTOR;
+    private RecyclerView recent_recyclerview;
+    private TextView recent_label;
+
 
     FileSelectorRecentDialog(String activity_catering)
     {
@@ -85,7 +88,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_recent,container,false);
         RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
-        RecyclerView recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
+        recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
+        recent_label=v.findViewById(R.id.recent_label);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button recent_clear_button = buttons_layout.findViewById(R.id.first_button);
@@ -150,6 +154,12 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         Window window=getDialog().getWindow();
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
+            if(!Global.IS_TABLET)
+            {
+                recent_label.setVisibility(View.GONE);
+                recent_recyclerview.setAdapter(null);
+            }
+
             window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
         }
         else

@@ -501,7 +501,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
              */
 
-            return MainActivity.usbFileRoot.search(path);
+            return MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
 
             /*
             Log.d(TAG,"path segments "+path_segments[1]);

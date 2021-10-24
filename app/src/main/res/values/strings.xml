@@ -297,6 +297,18 @@
     <string name="could_not_delete_file">could not delete the file</string>
     <string name="security_exception_thrown">Security exception thrown.</string>
 	<string name="may_be_password_protected">May be password protected</string>
+    <string name="ftp_server_is_not_connected">FTP server is not connected</string>
+    <string name="ftp">FTP</string>
+    <string name="new_ftp_server">New FTP Server</string>
+    <string name="server">Server</string>
+	<string name="port">Port</string>
+	<string name="active">Active</string>
+	<string name="passive">Passive</string>
+    <string name="mode">Mode</string>
+	<string name="user_name">User name</string>
+	<string name="password">Password</string>
+	<string name="anonymous">Anonymous</string>
+	<string name="display">Display</string>
 
 
 	<string-array name="library_categories">

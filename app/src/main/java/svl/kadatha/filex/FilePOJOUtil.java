@@ -372,7 +372,7 @@ public class FilePOJOUtil {
                 return null;
             }
             try {
-                UsbFile f = MainActivity.usbFileRoot.search(file_path);
+                UsbFile f = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
                 filePOJO=MAKE_FilePOJO(f,true);
             }
             catch (IOException e) {
@@ -866,7 +866,7 @@ public class FilePOJOUtil {
                 try {
                     if(usbFile==null)
                     {
-                        usbFile=MainActivity.usbFileRoot.search(fileclickselected);
+                        usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
                     }
                     file_array=usbFile.listFiles();
                     int size=file_array.length;
@@ -887,7 +887,7 @@ public class FilePOJOUtil {
         }
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
-            if(MainActivity.FTP_CLIENT==null)
+            if(!Global.CHECK_FTP_SERVER_CONNECTED())
             {
                 return true;
             }
