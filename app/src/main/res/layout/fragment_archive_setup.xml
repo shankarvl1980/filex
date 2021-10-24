@@ -18,47 +18,6 @@
 
 	/>
 
-	<LinearLayout
-
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-		android:background="?attr/dialog_background"
-		android:layout_marginTop="@dimen/layout_margin"
-		android:orientation="vertical"
-
-
-
-		>
-		<TextView
-
-			android:id="@+id/dialog_archive_outputfilename"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:textSize="16sp"
-
-
-
-			/>
-		<EditText
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/dialog_archive_textview_zipname"
-			android:layout_marginStart="-3dp"
-			android:layout_marginEnd="-3dp"
-			android:textColor="?attr/edit_text_color"
-
-			/>
-		<CheckBox
-			android:id="@+id/dialog_archive_checkbox"
-			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-			android:text="@string/create_folder"
-			android:checked="true"
-
-			/>
-	</LinearLayout>
 	<ScrollView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -67,18 +26,51 @@
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/layout_margin"
+			>
 
 			<View
 
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
-				android:layout_marginTop="@dimen/layout_margin"
 				android:background="?attr/dialog_background"
 				app:layout_constraintBottom_toBottomOf="@id/background_padding"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent" />
+
+			<TextView
+
+			android:id="@+id/dialog_archive_outputfilename"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textSize="16sp"
+			android:padding="@dimen/layout_margin"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+
+
+			/>
+		<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/dialog_archive_textview_zipname"
+			android:textColor="?attr/edit_text_color"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/dialog_archive_outputfilename"
+
+			/>
+		<CheckBox
+			android:id="@+id/dialog_archive_checkbox"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:text="@string/create_folder"
+			android:checked="true"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/dialog_archive_textview_zipname"
+			/>
+
 
 			<TextView
 
@@ -92,7 +84,7 @@
 				android:textSize="16sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dialog_archive_checkbox"
 
 				/>
 
