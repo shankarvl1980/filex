@@ -4,8 +4,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/dialog_fragment_search_parameters_layout"
-
-
         >
         <TextView
             android:layout_width="match_parent"
@@ -17,10 +15,18 @@
 
             />
 
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="4dp"
+		>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content">
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			>
+
+
 	<View
 		android:id="@+id/search_file_label_background"
 		android:layout_width="match_parent"
@@ -87,17 +93,6 @@
 		android:minHeight="36dp"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_wholeword_checkbox" />
-</androidx.constraintlayout.widget.ConstraintLayout>
-	<ScrollView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="4dp"
-		>
-
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			>
 
 			<TextView
 
@@ -112,7 +107,7 @@
 				android:textSize="16sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
 
 				/>
 
