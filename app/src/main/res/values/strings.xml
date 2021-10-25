@@ -309,9 +309,11 @@
 	<string name="password">Password</string>
 	<string name="anonymous">Anonymous</string>
 	<string name="display">Display</string>
+    <string name="server_port_username_fields_can_not_be_empty">Server,port,username fields can not be empty</string>
+    <string name="encoding">Encoding</string>
 
 
-	<string-array name="library_categories">
+    <string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

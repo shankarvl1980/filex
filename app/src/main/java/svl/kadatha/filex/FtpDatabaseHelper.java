@@ -23,7 +23,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT,port INTEGER, mode TEXT, user_name TEXT, password TEXT, anonymous INTEGER,encoding TEXT,display TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT PRIMARY KEY, port INTEGER, mode TEXT, user_name TEXT, password TEXT, anonymous INTEGER,encoding TEXT,display TEXT)");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         return ftpPOJOList;
     }
 
-    public long insert_row(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    public long insert(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
@@ -75,9 +75,32 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public int delete_row(String server)
+    public int delete(String server)
     {
         return getWritableDatabase().delete(TABLE,"server=?",new String[]{server});
+    }
 
+    public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string)
+    {
+        FtpDetailsDialog.FtpPOJO ftpPOJO = null;
+        SQLiteDatabase sqLiteDatabase=getReadableDatabase();
+       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server"+"=",new String[]{server_string},null,null,null);
+       if(cursor!=null && cursor.moveToFirst())
+       {
+           String server = cursor.getString(0);
+           int port = cursor.getInt(1);
+           String mode = cursor.getString(2);
+           String user_name = cursor.getString(3);
+           String password = cursor.getString(4);
+           boolean anonymous = cursor.getInt(5) != 0;
+           String encoding = cursor.getString(6);
+           String display = cursor.getString(7);
+
+           ftpPOJO=new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, anonymous, encoding, display);
+
+           cursor.close();
+       }
+           
+           return ftpPOJO;
     }
 }

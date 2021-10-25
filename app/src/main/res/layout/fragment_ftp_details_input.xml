@@ -113,7 +113,7 @@
                 >
 
                 <RadioButton
-                    android:id="@+id/dialog_view_rb_list"
+                    android:id="@+id/ftp_details_active_radio_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/active"
@@ -122,7 +122,7 @@
                     />
 
                 <RadioButton
-                    android:id="@+id/dialog_view_rb_grid"
+                    android:id="@+id/ftp_details_passive_radio_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/passive"
@@ -165,14 +165,14 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_user_name_label"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_password"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_pword"
                 android:padding="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_password"
+                android:id="@+id/ftp_details_pword"
                 app:layout_constraintStart_toEndOf="@id/ftp_details_password_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
@@ -182,7 +182,7 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/anonymous"
+                android:id="@+id/ftp_details_anonymous_radio_btn"
                 android:text="@string/anonymous"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
@@ -195,7 +195,7 @@
                 android:gravity="start"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/anonymous"
+                app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_radio_btn"
                 android:padding="@dimen/layout_margin"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/layout_margin"

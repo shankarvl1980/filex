@@ -1,0 +1,73 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/dialog_recyclerview_background"
+    android:minHeight="36dp"
+
+    android:padding="@dimen/layout_margin">
+
+    <ImageView
+        android:id="@+id/ftp_list_recyclerview_image_ftp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/folder_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        />
+
+    <TextView
+        android:id="@+id/ftp_list_recyclerview_display"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+
+
+        android:textColor="?attr/recycler_text_color"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/ftp_list_recyclerview_image_ftp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:maxLines="1"
+        />
+
+    <TextView
+        android:id="@+id/ftp_list_recyclerview_server"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+
+
+        android:textColor="?attr/recycler_text_color"
+        android:textSize="14sp"
+
+        app:layout_constraintStart_toStartOf="@id/ftp_list_recyclerview_display"
+        app:layout_constraintTop_toBottomOf="@id/ftp_list_recyclerview_display"
+        android:maxLines="1"
+        />
+
+    <ImageView
+        android:id="@+id/ftp_list_recyclerview_select_indicator"
+        android:layout_height="26dp"
+        android:layout_width="26dp"
+        android:src="@drawable/select_indicator_icon"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

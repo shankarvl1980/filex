@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,26 +20,87 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 
 public class FtpDetailsInputDialog extends DialogFragment {
 
     private Context context;
+    private FtpDatabaseHelper ftpDatabaseHelper;
+    private String server="",mode="",user_name="",password="",encoding,display="";
+    private int port;
+    private int anonymous;
+    private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
+    private RadioButton mode_active_radio_btn,mode_passive_radio_btn,anonymous_radio_btn;
+    private FtpDatabaseModificationListener ftpDatabaseModificationListener;
+
+    private FtpDetailsInputDialog(){}
+
+    public static FtpDetailsInputDialog getInstance(String server)
+    {
+        FtpDetailsInputDialog ftpDetailsInputDialog=new FtpDetailsInputDialog();
+        Bundle bundle=new Bundle();
+        bundle.putString("server",server);
+        ftpDetailsInputDialog.setArguments(bundle);
+        return ftpDetailsInputDialog;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
+        ftpDatabaseHelper=new FtpDatabaseHelper(context);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setReenterTransition(true);
+        setRetainInstance(true);
+        Bundle bundle=getArguments();
+        if(bundle!=null)
+        {
+            server=bundle.getString("server");
+            if(server!=null && !server.equals(""))
+            {
+                FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(server);
+                port=ftpPOJO.port;
+                mode=ftpPOJO.mode;
+                user_name=ftpPOJO.user_name;
+                password=ftpPOJO.password;
+                anonymous=ftpPOJO.anonymous ? 1 : 0;
+                encoding=ftpPOJO.encoding;
+                display=ftpPOJO.encoding;
+            }
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_ftp_details_input,container,false);
+        server_tv=v.findViewById(R.id.ftp_details_server);
+        port_tv=v.findViewById(R.id.ftp_details_port);
+        mode_active_radio_btn=v.findViewById(R.id.ftp_details_active_radio_btn);
+        mode_passive_radio_btn=v.findViewById(R.id.ftp_details_passive_radio_btn);
+        user_name_tv=v.findViewById(R.id.ftp_details_user_name);
+        password_tv=v.findViewById(R.id.ftp_details_pword);
+        anonymous_radio_btn=v.findViewById(R.id.ftp_details_anonymous_radio_btn);
+        //encoding_tv=v.findViewById(R.id.ftp_details_e);
+        display_tv=v.findViewById(R.id.ftp_details_display);
+
+        server_tv.setText(server);
+        port_tv.setText("21");
+        if(mode.equals("active"))
+        {
+            mode_active_radio_btn.setChecked(true);
+        }
+        else
+        {
+            mode_passive_radio_btn.setChecked(true);
+        }
+        user_name_tv.setText(user_name);
+        password_tv.setText(password);
+        anonymous_radio_btn.setChecked(anonymous != 0);
+        display_tv.setText(display);
         ViewGroup buttons_layout = v.findViewById(R.id.ftp_details_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button ok_button = buttons_layout.findViewById(R.id.first_button);
@@ -45,6 +109,29 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
+                server=server_tv.getText().toString().trim();
+                user_name=user_name_tv.getText().toString().trim();
+                if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
+                {
+                    print(getString(R.string.server_port_username_fields_can_not_be_empty));
+                }
+                else
+                {
+                    port=Integer.parseInt(port_tv.getText().toString().trim());
+                    mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
+                    password=password_tv.getText().toString().trim();
+                    anonymous=anonymous_radio_btn.isChecked() ? 1 : 0;
+                    display=display_tv.getText().toString().trim();
+                    long row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,null,display);
+                    if(row_number>0 && ftpDatabaseModificationListener!=null)
+                    {
+
+                        FtpDetailsDialog.FtpPOJO ftpPOJO=new FtpDetailsDialog.FtpPOJO(server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                        ftpDatabaseModificationListener.onInsert(ftpPOJO);
+                    }
+
+                    dismissAllowingStateLoss();
+                }
 
 
             }
@@ -79,6 +166,21 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             getDialog().setDismissMessage(null);
         }
+        ftpDatabaseHelper.close();
         super.onDestroy();
+    }
+
+    public void setFtpDatabaseModificationListener(FtpDatabaseModificationListener listener)
+    {
+        ftpDatabaseModificationListener=listener;
+    }
+
+    interface FtpDatabaseModificationListener {
+        void onInsert(FtpDetailsDialog.FtpPOJO ftpPOJO);
+    }
+
+    private void print(String msg)
+    {
+        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 }
