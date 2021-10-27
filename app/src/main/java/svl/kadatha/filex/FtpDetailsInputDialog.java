@@ -157,13 +157,19 @@ public class FtpDetailsInputDialog extends DialogFragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         if(getDialog()!=null && getRetainInstance())
         {
             getDialog().setDismissMessage(null);
         }
-        ftpDatabaseHelper.close();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
+        ftpDatabaseHelper.close();
+
     }
 
     public void setFtpDatabaseModificationListener(FtpDatabaseModificationListener listener)
