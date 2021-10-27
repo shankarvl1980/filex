@@ -353,18 +353,31 @@ public class FtpDetailsDialog extends DialogFragment {
 
     private class BottomToolbarClickListener implements View.OnClickListener
     {
-
+        int s=mselecteditems.size();
         @Override
         public void onClick(View v) {
             int id=v.getId();
             if(id==R.id.toolbar_btn_1)
             {
-                if(mselecteditems.size()>0)
+                if(s>0)
                 {
+                    FtpPOJO ftpPOJO=ftpPOJO_selected_array.get(0);
+                    String display=ftpPOJO.display;
+                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance((display==null || display.equals("")) ? ftpPOJO.server : display,s);
+                    deleteFtpAlertDialog.setDeleteFtpAlertDialogListener(new DeleteFtpAlertDialog.DeleteFtpAlertDialogListener() {
+                        @Override
+                        public void onOkClick() {
+                            ftpPJO_selected_for_delete.addAll(ftpPOJO_selected_array);
+                            clear_selection();
+                            new DeleteFtpPOJOAsyncTask(ftpPJO_selected_for_delete).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
 
-                    ftpPJO_selected_for_delete.addAll(ftpPOJO_selected_array);
-                    clear_selection();
-                    new DeleteFtpPOJOAsyncTask(ftpPJO_selected_for_delete).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        @Override
+                        public void onCancelClick() {
+                            clear_selection();
+                        }
+                    });
+                    deleteFtpAlertDialog.show(fragmentManager,"");
                 }
 
 
@@ -375,7 +388,24 @@ public class FtpDetailsDialog extends DialogFragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
+                if(s==1)
+                {
+                    FtpPOJO tobe_replaced_ftp=ftpPOJO_selected_array.get(0);
+                    String ftp_server=tobe_replaced_ftp.server;
+                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(ftp_server);
+                    ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
+                        @Override
+                        public void onInsert(FtpPOJO ftpPOJO) {
+                            ftpPOJOList.remove(tobe_replaced_ftp);
+                            ftpPOJOList.add(ftpPOJO);
+                            ftpListAdapter.notifyDataSetChanged();
+                        }
 
+                    });
+                    ftpDetailsInputDialog.show(fragmentManager,"");
+                }
+
+                clear_selection();
             }
         }
     }
