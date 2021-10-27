@@ -18,10 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-
 public class FtpDetailsInputDialog extends DialogFragment {
 
     private Context context;

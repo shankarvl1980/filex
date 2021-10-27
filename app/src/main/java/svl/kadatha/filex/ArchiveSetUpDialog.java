@@ -35,8 +35,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 {
 	private Context context;
 	private String folderclickselected;
-	private View zipdialogview;
-    private CheckBox create_folder_checkbox;
+	private CheckBox create_folder_checkbox;
 	private EditText zip_file_edittext,customdir_edittext;
     private RadioButton rb_current_dir,rb_custom_dir;
 	private Button browsebutton;
@@ -121,20 +120,20 @@ public class ArchiveSetUpDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		zipdialogview=inflater.inflate(R.layout.fragment_archive_setup,container,false);
+		View zipdialogview = inflater.inflate(R.layout.fragment_archive_setup, container, false);
 
 		TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
 		TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
-		create_folder_checkbox=zipdialogview.findViewById(R.id.dialog_archive_checkbox);
-		zip_file_edittext=zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
+		create_folder_checkbox= zipdialogview.findViewById(R.id.dialog_archive_checkbox);
+		zip_file_edittext= zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
 		RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
-		rb_current_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
-		rb_custom_dir=zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
-		customdir_edittext=zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
-		browsebutton=zipdialogview.findViewById(R.id.dialog_archive_browse_button);
+		rb_current_dir= zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
+		rb_custom_dir= zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
+		customdir_edittext= zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
+		browsebutton= zipdialogview.findViewById(R.id.dialog_archive_browse_button);
 		ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-		okbutton=zipdialogview.findViewById(R.id.first_button);
+		okbutton= zipdialogview.findViewById(R.id.first_button);
 		okbutton.setText(R.string.ok);
 		Button cancelbutton = zipdialogview.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);

@@ -12,24 +12,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.viewpager.widget.ViewPager;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
@@ -53,8 +46,8 @@ public class Global
 	static String EXTERNAL_STORAGE_PATH="";
 	static String USB_STORAGE_PATH;
 
-	static HashMap<String, List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
-	static HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
+	static final HashMap<String, List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
+	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
 
 
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();

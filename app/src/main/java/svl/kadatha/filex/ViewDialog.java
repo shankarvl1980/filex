@@ -113,7 +113,7 @@ public class ViewDialog extends DialogFragment
 		seekbar_fontsize.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 		{
 			
-			int progress=0;
+			final int progress=0;
 				public void onStartTrackingTouch(SeekBar p1)
 				{
 

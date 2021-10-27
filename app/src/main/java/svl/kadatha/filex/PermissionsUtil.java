@@ -8,7 +8,6 @@ import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.os.EnvironmentCompat;
 
 import java.util.ArrayList;
 import java.util.List;

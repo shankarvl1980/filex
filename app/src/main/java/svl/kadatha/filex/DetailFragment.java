@@ -252,7 +252,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{
-			int scroll_distance=0;
+			final int scroll_distance=0;
 			final int threshold=5;
 		
 			public void onScrolled(RecyclerView rv, int dx, int dy)

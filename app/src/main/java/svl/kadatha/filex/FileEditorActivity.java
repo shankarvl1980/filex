@@ -305,9 +305,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
 		{
-			boolean visible=true;
+			final boolean visible=true;
 			final int threshold=5;
-			int scroll_distance=0;
+			final int scroll_distance=0;
 			int dy=0;
 			public void onScrollChange(ObservableScrollView v, int old_scrollX, int old_scrollY, int scrollX, int scrollY)
 			{

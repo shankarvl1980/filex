@@ -203,7 +203,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         recycler_view.setLayoutManager(llm);
         recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
-            int scroll_distance=0;
+            final int scroll_distance=0;
             final int threshold=5;
 
             public void onScrolled(RecyclerView rv, int dx, int dy)
@@ -459,7 +459,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder>
     {
-        StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
+        final StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
@@ -786,8 +786,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         private int NO_OF_FILES;
         private long SIZE_OF_FILES;
 
-        List<FilePOJO>filePOJOS;
-        long final_storage_space;
+        final List<FilePOJO>filePOJOS;
+        final long final_storage_space;
 
         FillSizeAsyncTask(List<FilePOJO>filePOJOS,long final_storage_space)
         {

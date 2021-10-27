@@ -1,9 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.SparseBooleanArray;
@@ -13,8 +11,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -245,9 +240,11 @@ public class FtpDetailsDialog extends DialogFragment {
 
         private class VH extends RecyclerView.ViewHolder
         {
-            View v;
-            ImageView ftp_image, ftp_select_indicator;
-            TextView ftp_display, ftp_server;
+            final View v;
+            final ImageView ftp_image;
+            final ImageView ftp_select_indicator;
+            final TextView ftp_display;
+            final TextView ftp_server;
             int pos;
             VH(View view)
             {
