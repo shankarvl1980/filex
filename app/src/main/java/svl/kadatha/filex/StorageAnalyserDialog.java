@@ -203,7 +203,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         recycler_view.setLayoutManager(llm);
         recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
-            final int scroll_distance=0;
+            int scroll_distance=0;
             final int threshold=5;
 
             public void onScrolled(RecyclerView rv, int dx, int dy)
