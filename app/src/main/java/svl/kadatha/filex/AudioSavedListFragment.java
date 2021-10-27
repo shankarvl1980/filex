@@ -79,7 +79,6 @@ public class AudioSavedListFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		Handler handler = new Handler();
 
 		View v=inflater.inflate(R.layout.fragment_audio_saved_list,container,false);
 		bottom_toolbar=v.findViewById(R.id.audio_saved_list_bottom_toolbar);
@@ -504,7 +503,7 @@ public class AudioSavedListFragment extends Fragment
 		public AudioSavedListRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
 			// TODO: Implement this method
-			View itemview=LayoutInflater.from(p1.getContext()).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
+			View itemview=LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(itemview);
 		}
 

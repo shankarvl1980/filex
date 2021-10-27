@@ -764,7 +764,7 @@ public class PdfViewFragment_single_view extends Fragment
         protected void onPreExecute()
         {
             // TODO: Implement this method
-            pbf.show(((VideoViewActivity)context).fm,"progressbar_dialog");
+            pbf.show(((PdfViewActivity)context).fm,"progressbar_dialog");
         }
 
         @Override

@@ -328,7 +328,7 @@ public class AppSelectorDialog extends DialogFragment
         public AppRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
             // TODO: Implement this method
-            View v= LayoutInflater.from(p1.getContext()).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
+            View v= LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
             return new AppRecyclerAdapter.ViewHolder(v);
         }
 

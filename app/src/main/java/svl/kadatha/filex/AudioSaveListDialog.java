@@ -185,7 +185,7 @@ public class AudioSaveListDialog extends DialogFragment
 		{
 			// TODO: Implement this method
 
-			View itemview=LayoutInflater.from(p1.getContext()).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
+			View itemview=LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(itemview);
 		}
 
@@ -263,7 +263,7 @@ public class AudioSaveListDialog extends DialogFragment
 		{
 			// TODO: Implement this method
 			
-			View itemview=LayoutInflater.from(p1.getContext()).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
+			View itemview=LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(itemview);
 		}
 

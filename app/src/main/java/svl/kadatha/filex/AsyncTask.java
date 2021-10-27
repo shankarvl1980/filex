@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 
-
 import android.os.Binder;
 import android.os.Handler;
 import android.os.Looper;
