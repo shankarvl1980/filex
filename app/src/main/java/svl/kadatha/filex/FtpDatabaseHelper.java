@@ -58,10 +58,12 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         return ftpPOJOList;
     }
 
-    public long insert(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+
+    public long insert(String original_server, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
+        sqLiteDatabase.delete(TABLE,"server=? OR server=?",new String[]{original_server,server});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -72,7 +74,6 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
         return sqLiteDatabase.insert(TABLE,null,contentValues);
-
     }
 
     public int delete(String server)
@@ -84,7 +85,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     {
         FtpDetailsDialog.FtpPOJO ftpPOJO = null;
         SQLiteDatabase sqLiteDatabase=getReadableDatabase();
-       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server"+"=",new String[]{server_string},null,null,null);
+       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?",new String[]{server_string},null,null,null);
        if(cursor!=null && cursor.moveToFirst())
        {
            String server = cursor.getString(0);

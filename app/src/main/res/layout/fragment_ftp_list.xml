@@ -23,10 +23,10 @@
 
     <Button
 
-        android:id="@+id/fragment_ftp_add_btn"
+        android:id="@+id/fragment_ftp_scan_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/new_"
+        android:text="@string/scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_ftp_list_heading"
         />
@@ -41,7 +41,7 @@
         android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_add_btn"
+        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         android:paddingBottom="100dp"
         android:clipToPadding="false"
@@ -60,7 +60,7 @@
         android:background="?attr/dialog_recyclerview_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_add_btn"
+        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

@@ -43,6 +43,14 @@ public class DefaultAppsDialog extends DialogFragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
+        defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        defaultAppDatabaseHelper.close();
     }
 
     @Override
@@ -51,7 +59,7 @@ public class DefaultAppsDialog extends DialogFragment
         setRetainInstance(true);
         defaultAppPOJOS=new ArrayList<>();
         selectedDefaultPOJOS=new ArrayList<>();
-        defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(getContext());
+
         defaultAppPOJOS=defaultAppDatabaseHelper.getDefaultAppPOJOList();
         top_row_color=getResources().getColor(R.color.light_tab_select_text_color);
         TypedValue typedValue=new TypedValue();
@@ -189,12 +197,6 @@ public class DefaultAppsDialog extends DialogFragment
             getDialog().setDismissMessage(null);
         }
         super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        defaultAppDatabaseHelper.close();
     }
 
     public static class DefaultAppPOJO

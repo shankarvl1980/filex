@@ -22,7 +22,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
 
     private Context context;
     private FtpDatabaseHelper ftpDatabaseHelper;
-    private String server="",mode="",user_name="",password="",encoding,display="";
+    private String original_server="",server="",mode="",user_name="",password="",encoding,display="";
     private int port;
     private int anonymous;
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
@@ -48,23 +48,34 @@ public class FtpDetailsInputDialog extends DialogFragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        ftpDatabaseHelper.close();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
-            server=bundle.getString("server");
+            original_server=bundle.getString("server");
+            server=original_server;
             if(server!=null && !server.equals(""))
             {
                 FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(server);
-                port=ftpPOJO.port;
-                mode=ftpPOJO.mode;
-                user_name=ftpPOJO.user_name;
-                password=ftpPOJO.password;
-                anonymous=ftpPOJO.anonymous ? 1 : 0;
-                encoding=ftpPOJO.encoding;
-                display=ftpPOJO.encoding;
+                if(ftpPOJO!=null)
+                {
+                    port=ftpPOJO.port;
+                    mode=ftpPOJO.mode;
+                    user_name=ftpPOJO.user_name;
+                    password=ftpPOJO.password;
+                    anonymous=ftpPOJO.anonymous ? 1 : 0;
+                    encoding=ftpPOJO.encoding;
+                    display=ftpPOJO.display;
+                }
+
             }
         }
     }
@@ -118,7 +129,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     password=password_tv.getText().toString().trim();
                     anonymous=anonymous_radio_btn.isChecked() ? 1 : 0;
                     display=display_tv.getText().toString().trim();
-                    long row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,null,display);
+                    long row_number=ftpDatabaseHelper.insert(original_server,server,port,mode,user_name,password, anonymous != 0,encoding,display);
                     if(row_number>0 && ftpDatabaseModificationListener!=null)
                     {
 
@@ -165,12 +176,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
         super.onDestroyView();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ftpDatabaseHelper.close();
-
-    }
 
     public void setFtpDatabaseModificationListener(FtpDatabaseModificationListener listener)
     {

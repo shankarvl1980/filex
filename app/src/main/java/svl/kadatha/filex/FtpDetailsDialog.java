@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FtpDetailsDialog extends DialogFragment {
@@ -42,15 +43,23 @@ public class FtpDetailsDialog extends DialogFragment {
     private FtpListAdapter ftpListAdapter;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
-    private final List<FtpPOJO> ftpPJO_selected_for_delete=new ArrayList<>();
+    private List<FtpPOJO> ftpPJO_selected_for_delete=new ArrayList<>();
     private boolean toolbar_visible=true;
     private int scroll_distance;
+    private Button delete_btn,rename_btn,edit_btn;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
         fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+        ftpDatabaseHelper=new FtpDatabaseHelper(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ftpDatabaseHelper.close();
     }
 
     @Override
@@ -58,7 +67,7 @@ public class FtpDetailsDialog extends DialogFragment {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         this.setRetainInstance(true);
-        ftpDatabaseHelper=new FtpDatabaseHelper(context);
+
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         progressBarFragment=ProgressBarFragment.getInstance();
         progressBarFragment.show(fragmentManager,"");
@@ -96,7 +105,6 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
                 else if(scroll_distance<-threshold && !toolbar_visible)
                 {
-
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     toolbar_visible=true;
                     scroll_distance=0;
@@ -115,34 +123,26 @@ public class FtpDetailsDialog extends DialogFragment {
 
 
 
-        Button add_btn=v.findViewById(R.id.fragment_ftp_add_btn);
-        add_btn.setOnClickListener(new View.OnClickListener() {
+        Button scan_btn=v.findViewById(R.id.fragment_ftp_scan_btn);
+        scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clear_selection();
-                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(null);
-                ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
-                    @Override
-                    public void onInsert(FtpPOJO ftpPOJO) {
-                        ftpPOJOList.add(ftpPOJO);
-                        ftpListAdapter.notifyDataSetChanged();
-                    }
 
-                });
-                ftpDetailsInputDialog.show(fragmentManager,"");
             }
         });
 
-        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.delete_icon,R.drawable.rename_icon,R.drawable.edit_icon};
-        String [] titles=new String[]{getString(R.string.delete),getString(R.string.rename),getString(R.string.edit)};
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.rename_icon,R.drawable.edit_icon};
+        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.rename),getString(R.string.edit)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar=v.findViewById(R.id.fragment_ftp_toolbar);
         bottom_toolbar.addView(tb_layout);
-        Button delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        Button rename_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        Button edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button add_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+        delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        rename_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
         BottomToolbarClickListener bottomToolbarClickListener=new BottomToolbarClickListener();
+        add_btn.setOnClickListener(bottomToolbarClickListener);
         delete_btn.setOnClickListener(bottomToolbarClickListener);
         rename_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
@@ -152,7 +152,7 @@ public class FtpDetailsDialog extends DialogFragment {
             public void run() {
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    ftpListAdapter=new FtpListAdapter(ftpPOJOList);
+                    ftpListAdapter=new FtpListAdapter();
                     ftp_list_recyclerview.setAdapter(ftpListAdapter);
                     if(progressBarFragment!=null && progressBarFragment.getDialog()!=null)
                     {
@@ -166,6 +166,10 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
             }
         });
+
+        int size=mselecteditems.size();
+        enable_disable_buttons(size != 0, size);
+
         return v;
     }
 
@@ -189,35 +193,22 @@ public class FtpDetailsDialog extends DialogFragment {
         super.onDestroyView();
     }
 
-    @Override
-    public void onDestroy() {
-        ftpDatabaseHelper.close();
-        super.onDestroy();
-
-    }
-
     public void clear_selection()
     {
         mselecteditems=new SparseBooleanArray();
         ftpPOJO_selected_array=new ArrayList<>();
 
         if(ftpListAdapter!=null)ftpListAdapter.notifyDataSetChanged();
+        enable_disable_buttons(false,0);
         /*
-        enable_disable_buttons(false);
         file_number_view.setText(mselecteditems.size()+"/"+num_all_audio_list);
         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
-
          */
     }
 
 
     private class FtpListAdapter extends RecyclerView.Adapter<FtpListAdapter.VH>
     {
-
-        FtpListAdapter(List<FtpPOJO> ftpPOJOS)
-        {
-
-        }
 
         @NonNull
         @Override
@@ -235,8 +226,6 @@ public class FtpDetailsDialog extends DialogFragment {
             boolean item_selected=mselecteditems.get(position,false);
             holder.v.setSelected(item_selected);
             holder.ftp_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-
-
         }
 
         @Override
@@ -313,12 +302,12 @@ public class FtpDetailsDialog extends DialogFragment {
                         bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                         toolbar_visible=true;
                         scroll_distance=0;
-                        //enable_disable_buttons(true);
+                        enable_disable_buttons(true,size);
                     }
 
                     if(size==0)
                     {
-                        //enable_disable_buttons(false);
+                        enable_disable_buttons(false,size);
                         //all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
                     }
                 }
@@ -333,14 +322,14 @@ public class FtpDetailsDialog extends DialogFragment {
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     toolbar_visible=true;
                     scroll_distance=0;
-                    //enable_disable_buttons(true);
+
                     ++size;
+                    enable_disable_buttons(true,size);
                     /*
                     if(size==num_all_audio_list)
                     {
                         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
                     }
-
                      */
 
                 }
@@ -351,14 +340,69 @@ public class FtpDetailsDialog extends DialogFragment {
 
     }
 
+    private void enable_disable_buttons(boolean enable, int selection_size)
+    {
+
+        if(enable)
+        {
+            delete_btn.setAlpha(Global.ENABLE_ALFA);
+            if(selection_size==1)
+            {
+                rename_btn.setAlpha(Global.ENABLE_ALFA);
+                edit_btn.setAlpha(Global.ENABLE_ALFA);
+            }
+            else
+            {
+                rename_btn.setAlpha(Global.DISABLE_ALFA);
+                edit_btn.setAlpha(Global.DISABLE_ALFA);
+            }
+
+        }
+        else
+        {
+            delete_btn.setAlpha(Global.DISABLE_ALFA);
+            rename_btn.setAlpha(Global.DISABLE_ALFA);
+            edit_btn.setAlpha(Global.DISABLE_ALFA);
+        }
+        delete_btn.setEnabled(enable);
+        rename_btn.setEnabled(enable && selection_size==1);
+        edit_btn.setEnabled(enable && selection_size==1);
+
+    }
+
+
     private class BottomToolbarClickListener implements View.OnClickListener
     {
-        int s=mselecteditems.size();
+
         @Override
         public void onClick(View v) {
             int id=v.getId();
             if(id==R.id.toolbar_btn_1)
             {
+                clear_selection();
+                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(null);
+                ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
+                    @Override
+                    public void onInsert(FtpPOJO ftpPOJO) {
+                        Iterator<FtpPOJO> iterator=ftpPOJOList.iterator();
+                        while(iterator.hasNext())
+                        {
+                            if(iterator.next().server.equals(ftpPOJO.server))
+                            {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+                        ftpPOJOList.add(ftpPOJO);
+                        ftpListAdapter.notifyDataSetChanged();
+                    }
+
+                });
+                ftpDetailsInputDialog.show(fragmentManager,"");
+            }
+            if(id==R.id.toolbar_btn_2)
+            {
+                int s=mselecteditems.size();
                 if(s>0)
                 {
                     FtpPOJO ftpPOJO=ftpPOJO_selected_array.get(0);
@@ -367,6 +411,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     deleteFtpAlertDialog.setDeleteFtpAlertDialogListener(new DeleteFtpAlertDialog.DeleteFtpAlertDialogListener() {
                         @Override
                         public void onOkClick() {
+                            ftpPJO_selected_for_delete=new ArrayList<>();
                             ftpPJO_selected_for_delete.addAll(ftpPOJO_selected_array);
                             clear_selection();
                             new DeleteFtpPOJOAsyncTask(ftpPJO_selected_for_delete).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -382,12 +427,13 @@ public class FtpDetailsDialog extends DialogFragment {
 
 
             }
-            else if(id==R.id.toolbar_btn_2)
+            else if(id==R.id.toolbar_btn_3)
             {
 
             }
-            else if(id==R.id.toolbar_btn_3)
+            else if(id==R.id.toolbar_btn_4)
             {
+                int s=mselecteditems.size();
                 if(s==1)
                 {
                     FtpPOJO tobe_replaced_ftp=ftpPOJO_selected_array.get(0);
@@ -396,7 +442,25 @@ public class FtpDetailsDialog extends DialogFragment {
                     ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
                         @Override
                         public void onInsert(FtpPOJO ftpPOJO) {
-                            ftpPOJOList.remove(tobe_replaced_ftp);
+                            Iterator<FtpPOJO> iterator=ftpPOJOList.iterator();
+                            while(iterator.hasNext())
+                            {
+                                if(iterator.next().server.equals(ftp_server))
+                                {
+
+                                    iterator.remove();
+                                    break;
+                                }
+                            }
+                            iterator=ftpPOJOList.iterator();
+                            while(iterator.hasNext())
+                            {
+                                if(iterator.next().server.equals(ftpPOJO.server))
+                                {
+                                    iterator.remove();
+                                    break;
+                                }
+                            }
                             ftpPOJOList.add(ftpPOJO);
                             ftpListAdapter.notifyDataSetChanged();
                         }
@@ -413,6 +477,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private class DeleteFtpPOJOAsyncTask extends AsyncTask<Void, Void,Void>
     {
         private final List<FtpPOJO> ftpPOJOS_for_delete;
+        private List<String> ftp_deleted_server;
 
         DeleteFtpPOJOAsyncTask(List<FtpPOJO> list)
         {
@@ -439,6 +504,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
 
             }
+
+
             return null;
         }
 
