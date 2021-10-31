@@ -49,10 +49,12 @@ public class RenameFileDialog extends DialogFragment
     private boolean overwriting;
 	private String filePOJOHashmapKeyPath;
 	private boolean isWritable;
-	private RenameFileDialog(){}
 	private String other_file_permission,existing_file_path,new_file_path;
 	private FragmentManager fragmentManager;
 
+
+
+	private RenameFileDialog(){}
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -140,6 +142,7 @@ public class RenameFileDialog extends DialogFragment
 				if(new_name.equals(""))
 				{
 					print(getString(R.string.enter_file_name));
+					return;
 				}
 				new_file_path =(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
 

@@ -157,124 +157,7 @@ public class CreateFileDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					return;
 				}
-				if(file_type==0)
-				{
-					if(isWritable)
-					{
-						file_created=FileUtil.createNativeNewFile(file);
-					}
-					else if(fileObjectType== FileObjectType.FILE_TYPE)
-					{
-						file_created=FileUtil.createSAFNewFile(context,parent_folder,new_name,tree_uri,tree_uri_path);
-					}
-					else if(fileObjectType== FileObjectType.USB_TYPE)
-					{
-						UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-						file_created=FileUtil.createUsbFile(parentUsbFile,new_name);
-
-					}
-					else if(fileObjectType==FileObjectType.ROOT_TYPE)
-					{
-						//file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
-						if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
-						{
-							file_created=FileUtil.createNativeNewFile(file);
-						}
-					}
-					else if(fileObjectType==FileObjectType.FTP_TYPE)
-					{
-						if(Global.CHECK_FTP_SERVER_CONNECTED())
-						{
-							InputStream bin = new ByteArrayInputStream(new byte[0]);
-							try {
-								file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
-							} catch (IOException e) {
-								file_created=false;
-							}
-						}
-						else
-						{
-							print(getString(R.string.ftp_server_is_not_connected));
-						}
-
-					}
-                }
-				else if(file_type==1)
-				{
-					if(isWritable)
-					{
-						file_created=FileUtil.mkdirNative(file);
-					}
-					else if(fileObjectType== FileObjectType.FILE_TYPE)
-					{
-						file_created=FileUtil.mkdirSAF(context,parent_folder,new_name,tree_uri,tree_uri_path);
-					}
-					else if(fileObjectType== FileObjectType.USB_TYPE)
-					{
-						UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-						file_created=FileUtil.mkdirUsb(parentUsbFile,new_name);
-					}
-					else if(fileObjectType==FileObjectType.ROOT_TYPE)
-					{
-						//file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
-						if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
-						{
-							file_created=FileUtil.mkdirNative(file);
-
-						}
-
-					}
-					else if(fileObjectType==FileObjectType.FTP_TYPE)
-					{
-						if(Global.CHECK_FTP_SERVER_CONNECTED())
-						{
-							try {
-								file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
-							} catch (IOException e) {
-							}
-						}
-						else
-						{
-							print(getString(R.string.ftp_server_is_not_connected));
-						}
-
-					}
-
-				}
-
-				if(file_created)
-				{
-					final FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
-					Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-					new Handler().postDelayed(new Runnable() {
-						@Override
-						public void run() {
-
-
-							df.clearSelectionAndNotifyDataSetChanged();
-							int idx=df.filePOJO_list.indexOf(filePOJO);
-							if(df.llm!=null)
-							{
-								df.llm.scrollToPositionWithOffset(idx,0);
-							}
-							else if(df.glm!=null)
-							{
-								df.glm.scrollToPositionWithOffset(idx,0);
-							}
-
-
-						}
-					},500);
-					
-					print("'"+new_name+ "' "+getString(R.string.created));
-				}
-				else
-				{
-					print(getString(R.string.could_not_create));
-				}
-				Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
-				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
-				dismissAllowingStateLoss();
+				new FileCreateAsyncTask(file,isWritable).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 			}	
 				
@@ -292,6 +175,158 @@ public class CreateFileDialog extends DialogFragment
 				
 		});
 		return v;
+	}
+
+	private class FileCreateAsyncTask extends AsyncTask<Void,Void,Boolean>
+	{
+		File file;
+		boolean isWritable,file_created;
+		String new_file_path,new_name;
+		FilePOJO filePOJO;
+		FileCreateAsyncTask(File file,boolean isWritable)
+		{
+			this.file=file;
+			this.isWritable=isWritable;
+			new_file_path=file.getAbsolutePath();
+			new_name=file.getName();
+		}
+		@Override
+		protected Boolean doInBackground(Void... voids) {
+
+			if(file_type==0)
+			{
+				if(isWritable)
+				{
+					file_created=FileUtil.createNativeNewFile(file);
+				}
+				else if(fileObjectType== FileObjectType.FILE_TYPE)
+				{
+					file_created=FileUtil.createSAFNewFile(context,parent_folder,new_name,tree_uri,tree_uri_path);
+				}
+				else if(fileObjectType== FileObjectType.USB_TYPE)
+				{
+					UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
+					file_created=FileUtil.createUsbFile(parentUsbFile,new_name);
+
+				}
+				else if(fileObjectType==FileObjectType.ROOT_TYPE)
+				{
+					//file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
+					if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+					{
+						file_created=FileUtil.createNativeNewFile(file);
+					}
+				}
+				else if(fileObjectType==FileObjectType.FTP_TYPE)
+				{
+					if(Global.CHECK_FTP_SERVER_CONNECTED())
+					{
+						InputStream bin = new ByteArrayInputStream(new byte[0]);
+						try {
+							file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
+						} catch (IOException e) {
+							file_created=false;
+						}
+					}
+					else
+					{
+						file_created=false;
+					}
+
+				}
+			}
+			else if(file_type==1)
+			{
+				if(isWritable)
+				{
+					file_created=FileUtil.mkdirNative(file);
+				}
+				else if(fileObjectType== FileObjectType.FILE_TYPE)
+				{
+					file_created=FileUtil.mkdirSAF(context,parent_folder,new_name,tree_uri,tree_uri_path);
+				}
+				else if(fileObjectType== FileObjectType.USB_TYPE)
+				{
+					UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
+					file_created=FileUtil.mkdirUsb(parentUsbFile,new_name);
+				}
+				else if(fileObjectType==FileObjectType.ROOT_TYPE)
+				{
+					//file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
+					if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+					{
+						file_created=FileUtil.mkdirNative(file);
+
+					}
+
+				}
+				else if(fileObjectType==FileObjectType.FTP_TYPE)
+				{
+					if(Global.CHECK_FTP_SERVER_CONNECTED())
+					{
+						try {
+							file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
+						} catch (IOException e) {
+						}
+					}
+					else
+					{
+						file_created=false;
+					}
+
+				}
+
+			}
+			if(file_created)
+			{
+				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
+				Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean aBoolean) {
+			super.onPostExecute(aBoolean);
+			if(file_created)
+			{
+				df.clearSelectionAndNotifyDataSetChanged();
+				int idx=df.filePOJO_list.indexOf(filePOJO);
+				if(df.llm!=null)
+				{
+					df.llm.scrollToPositionWithOffset(idx,0);
+				}
+				else if(df.glm!=null)
+				{
+					df.glm.scrollToPositionWithOffset(idx,0);
+				}
+				/*
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+
+
+
+
+
+					}
+				},500);
+
+				 */
+
+				print("'"+new_name+ "' "+getString(R.string.created));
+			}
+			else
+			{
+				print(getString(R.string.could_not_create));
+			}
+			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
+			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
+			dismissAllowingStateLoss();
+
+		}
 	}
 
 	public static CreateFileDialog getInstance(int file_type, String parent_folder, FileObjectType fileObjectType)

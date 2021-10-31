@@ -28,6 +28,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
     private RadioButton mode_active_radio_btn,mode_passive_radio_btn,anonymous_radio_btn;
     private FtpDatabaseModificationListener ftpDatabaseModificationListener;
+    private boolean update;
 
     private FtpDetailsInputDialog(){}
 
@@ -62,8 +63,9 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             original_server=bundle.getString("server");
             server=original_server;
-            if(server!=null && !server.equals(""))
+            if(original_server!=null && !original_server.equals(""))
             {
+                update=true;
                 FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(server);
                 if(ftpPOJO!=null)
                 {
@@ -129,7 +131,17 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     password=password_tv.getText().toString().trim();
                     anonymous=anonymous_radio_btn.isChecked() ? 1 : 0;
                     display=display_tv.getText().toString().trim();
-                    long row_number=ftpDatabaseHelper.insert(original_server,server,port,mode,user_name,password, anonymous != 0,encoding,display);
+
+                    long row_number;
+                    if(update)
+                    {
+                        row_number=ftpDatabaseHelper.update(original_server,server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                    }
+                    else
+                    {
+                        row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                    }
+
                     if(row_number>0 && ftpDatabaseModificationListener!=null)
                     {
 

@@ -36,6 +36,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -764,6 +765,31 @@ import java.util.List;
 		return usbFile;
 	}
 
+	public static FTPFile getFTPFile(String file_path)
+	{
+		FTPFile ftpFile = null;
+		File file=new File(file_path);
+		String parent_path=file.getParent();
+		String name=file.getName();
+		try {
+			FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
+			int size= ftpFiles_array.length;
+			for(int i=0;i<size;++i)
+			{
+				FTPFile  ftpFile_copy=ftpFiles_array[i];
+				if(ftpFile_copy.getName().equals(name))
+				{
+					ftpFile=ftpFile_copy;
+					break;
+				}
+			}
+		} catch (IOException e) {
+			return ftpFile;
+		}
+
+		return ftpFile;
+	}
+
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
 	{
 		try {
@@ -969,7 +995,7 @@ import java.util.List;
 			boolean success=true;
 			FTPFile folder;
 			try {
-				folder = MainActivity.FTP_CLIENT.mlistFile(file_path);
+				folder = FileUtil.getFTPFile(file_path); //MainActivity.FTP_CLIENT.mlistFile(file_path);
 				if (folder.isDirectory())            //Check if folder file is a real folder
 				{
 

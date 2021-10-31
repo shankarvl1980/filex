@@ -314,6 +314,7 @@
     <string name="are_you_sure_to_delete_ftp_details">Are you sure to delete the selected ftp details?</string>
 	<string name="ftp_server_details">FTP server details</string>
     <string name="scan">Scan</string>
+    <string name="server_could_not_be_connected">server could not be connected</string>
 
 
     <string-array name="library_categories">

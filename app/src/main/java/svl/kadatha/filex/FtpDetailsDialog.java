@@ -26,6 +26,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +53,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private boolean toolbar_visible=true;
     private int scroll_distance;
     private Button delete_btn,rename_btn,edit_btn;
+    private Handler handler;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -67,7 +74,7 @@ public class FtpDetailsDialog extends DialogFragment {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         this.setRetainInstance(true);
-
+        handler=new Handler();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         progressBarFragment=ProgressBarFragment.getInstance();
         progressBarFragment.show(fragmentManager,"");
@@ -263,12 +270,74 @@ public class FtpDetailsDialog extends DialogFragment {
                         }
                         else
                         {
-                            ProgressBarFragment pbf=ProgressBarFragment.getInstance();
-                            pbf.show(fragmentManager,"");
+                            progressBarFragment=ProgressBarFragment.getInstance();
+                            progressBarFragment.show(fragmentManager,"");
 
-                     //to open detailfragment
+                            FtpPOJO ftpPOJO=ftpPOJOList.get(pos);
 
-                            pbf.dismissAllowingStateLoss();
+                            //MainActivity.FTP_CLIENT.setConnectTimeout(10*1000);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        MainActivity.FTP_CLIENT=new FTPClient();
+                                        MainActivity.CURRENT_FTP_CLIENT=new FTPClient();
+                                        boolean status;
+                                        try {
+                                            MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
+                                            MainActivity.CURRENT_FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
+                                            if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
+                                            {
+                                                status=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
+                                                MainActivity.CURRENT_FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
+                                                if(status)
+                                                {
+                                                    MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
+                                                    MainActivity.CURRENT_FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
+                                                    if(ftpPOJO.mode.equals("passive"))
+                                                    {
+                                                        MainActivity.FTP_CLIENT.enterLocalPassiveMode();
+                                                        MainActivity.CURRENT_FTP_CLIENT.enterLocalPassiveMode();
+                                                    }
+                                                    String path=MainActivity.FTP_CLIENT.printWorkingDirectory();
+                                                    /*
+                                                    Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+                                                    while(iterator.hasNext())
+                                                    {
+                                                        if(iterator.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+                                                        {
+                                                            iterator.remove();
+                                                        }
+                                                    }
+                                                    Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,path));
+
+                                                     */
+
+                                                    handler.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                    //        ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                                            ((MainActivity)context).createFragmentTransaction(path,FileObjectType.FTP_TYPE);
+
+                                                        }
+                                                    });
+
+                                                    dismissAllowingStateLoss();
+                                                }
+
+                                            }
+                                            progressBarFragment.dismissAllowingStateLoss();
+                                        } catch (IOException e) {
+                                                handler.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        print(getString(R.string.server_could_not_be_connected));
+                                                    }
+                                                });
+                                                progressBarFragment.dismissAllowingStateLoss();
+                                        }
+
+                                    }
+                                }).start();
                         }
                     }
 
@@ -429,7 +498,22 @@ public class FtpDetailsDialog extends DialogFragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
-
+                int s=mselecteditems.size();
+                if(s==1)
+                {
+                    FtpPOJO ftpPOJO=ftpPOJO_selected_array.get(0);
+                    int idx=ftpPOJOList.indexOf(ftpPOJO);
+                    FtpDisplayRenameDialog ftpDisplayRenameDialog=FtpDisplayRenameDialog.getInstance(ftpPOJO.server,ftpPOJO.display);
+                    ftpDisplayRenameDialog.setFtpRenameListener(new FtpDisplayRenameDialog.FtpRenameListener() {
+                        @Override
+                        public void onRenameFtp(String new_name) {
+                                ftpPOJO.display=new_name;
+                                ftpListAdapter.notifyItemChanged(idx);
+                        }
+                    });
+                    ftpDisplayRenameDialog.show(fragmentManager,"");
+                }
+                clear_selection();
             }
             else if(id==R.id.toolbar_btn_4)
             {
@@ -438,10 +522,12 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     FtpPOJO tobe_replaced_ftp=ftpPOJO_selected_array.get(0);
                     String ftp_server=tobe_replaced_ftp.server;
+                    int idx=ftpPOJOList.indexOf(tobe_replaced_ftp);
                     FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(ftp_server);
                     ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
                         @Override
                         public void onInsert(FtpPOJO ftpPOJO) {
+
                             Iterator<FtpPOJO> iterator=ftpPOJOList.iterator();
                             while(iterator.hasNext())
                             {
@@ -457,11 +543,13 @@ public class FtpDetailsDialog extends DialogFragment {
                             {
                                 if(iterator.next().server.equals(ftpPOJO.server))
                                 {
+
                                     iterator.remove();
                                     break;
                                 }
                             }
-                            ftpPOJOList.add(ftpPOJO);
+                            int max_idx=ftpPOJOList.size();
+                            ftpPOJOList.add(Math.min(idx, max_idx),ftpPOJO);
                             ftpListAdapter.notifyDataSetChanged();
                         }
 
@@ -519,7 +607,12 @@ public class FtpDetailsDialog extends DialogFragment {
 
     public static class FtpPOJO
     {
-        final String server,mode,user_name,password,encoding,display;
+        final String server;
+        final String mode;
+        final String user_name;
+        final String password;
+        final String encoding;
+        String display;
         final int port;
         final boolean anonymous;
 

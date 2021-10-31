@@ -59,11 +59,11 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long insert(String original_server, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    public long insert(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        sqLiteDatabase.delete(TABLE,"server=? OR server=?",new String[]{original_server,server});
+        sqLiteDatabase.delete(TABLE,"server=?",new String[]{server});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -76,9 +76,34 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insert(TABLE,null,contentValues);
     }
 
+    public long update(String original_server, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    {
+        SQLiteDatabase sqLiteDatabase=getWritableDatabase();
+        onCreate(sqLiteDatabase);
+        sqLiteDatabase.delete(TABLE,"server=?",new String[]{server});
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("server",server);
+        contentValues.put("port",port);
+        contentValues.put("mode",mode);
+        contentValues.put("user_name",user_name);
+        contentValues.put("password",password);
+        contentValues.put("anonymous",anonymous ? 1 : 0);
+        contentValues.put("encoding",encoding);
+        contentValues.put("display",display);
+        return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{original_server});
+    }
+
     public int delete(String server)
     {
         return getWritableDatabase().delete(TABLE,"server=?",new String[]{server});
+    }
+
+    public int change_display(String server, String new_name)
+    {
+        SQLiteDatabase sqLiteDatabase=getReadableDatabase();
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("display",new_name);
+        return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{server});
     }
 
     public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string)

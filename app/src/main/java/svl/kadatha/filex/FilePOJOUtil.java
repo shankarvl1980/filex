@@ -386,12 +386,8 @@ public class FilePOJOUtil {
          */
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
-            try {
-                FTPFile f=MainActivity.FTP_CLIENT.mlistFile(file_path);
-                filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
-            } catch (IOException e) {
-                return null;
-            }
+            FTPFile f=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
+            if(f!=null)filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
         }
 
         return filePOJO;

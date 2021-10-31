@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
 
 	
-	private StorageRecyclerAdapter storageRecyclerAdapter;
+	public StorageRecyclerAdapter storageRecyclerAdapter;
 	private WorkingDirRecyclerAdapter workingDirRecyclerAdapter;
 
 	private ArrayList<String> working_dir_arraylist=new ArrayList<>();
@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT;
+	public static FTPClient FTP_CLIENT,CURRENT_FTP_CLIENT;
 
 
 
@@ -583,7 +583,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						actionmode_finish(df,df.fileclickselected);
 
 						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
-						ftpDetailsDialog.show(fm,"ftp_dialog_fragment");
+						ftpDetailsDialog.show(fm,"");
 						pbf.dismissAllowingStateLoss();
 
 					}
@@ -1744,7 +1744,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
-	private class StorageRecyclerAdapter extends RecyclerView.Adapter<StorageRecyclerAdapter.ViewHolder>
+	public class StorageRecyclerAdapter extends RecyclerView.Adapter<StorageRecyclerAdapter.ViewHolder>
 	{
 		final List<FilePOJO> storage_dir_arraylist;
 		StorageRecyclerAdapter(List<FilePOJO> storage_dir_arraylist)
