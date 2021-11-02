@@ -305,7 +305,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public boolean isChildDocument(String parentDocumentId, String documentId) {
-        return (documentId+File.separator).startsWith(parentDocumentId+File.separator);
+        return Global.IS_CHILD_FILE(documentId,parentDocumentId);
     }
 
     @Override

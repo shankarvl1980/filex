@@ -95,7 +95,8 @@ public class ArchiveDeletePasteServiceUtil {
         if(df!=null && df.fileObjectType==fileObjectType)
         {
             String tag=df.getTag();
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
@@ -105,7 +106,8 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==fileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
@@ -115,7 +117,8 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==fileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
@@ -157,13 +160,15 @@ public class ArchiveDeletePasteServiceUtil {
                 }
 
             }
-            else if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && df.fileObjectType==destFileObjectType)
+            //else if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && df.fileObjectType==destFileObjectType)
+            else if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && df.fileObjectType==destFileObjectType)
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
 
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator) && df.fileObjectType==sourceFileObjectType)
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && df.fileObjectType==sourceFileObjectType)
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && df.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
@@ -173,12 +178,14 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null )
         {
             String tag=fileSelectorDialog.getTag();
-            if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && fileSelectorDialog.fileObjectType==destFileObjectType)
+            //if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && fileSelectorDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
@@ -188,12 +195,14 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null)
         {
             String tag=storageAnalyserDialog.getTag();
-            if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+            //if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if((tag+File.separator).startsWith(parent_source_folder+File.separator) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
+            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
@@ -234,7 +243,8 @@ public class ArchiveDeletePasteServiceUtil {
             {
 
                 String tag=df.getTag();
-                if((tag+File.separator).startsWith(parent_dest_folder+File.separator)  && df.fileObjectType==destFileObjectType)
+                //if((tag+File.separator).startsWith(parent_dest_folder+File.separator)  && df.fileObjectType==destFileObjectType)
+                if(Global.IS_CHILD_FILE(tag,parent_dest_folder)  && df.fileObjectType==destFileObjectType)
                 {
                     Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                     df.clearSelectionAndNotifyDataSetChanged();
@@ -255,7 +265,8 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==destFileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
-            if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+            //if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+            if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
@@ -265,7 +276,8 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==destFileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
-            if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+            //if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+            if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
@@ -373,7 +385,8 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 else
                 {
-                    if ((dest_folder+File.separator).startsWith(tree_uri_path+File.separator))
+                    //if ((dest_folder+File.separator).startsWith(tree_uri_path+File.separator))
+                    if (Global.IS_CHILD_FILE(dest_folder,tree_uri_path))
                     {
                         FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
                     }
@@ -591,6 +604,7 @@ public class ArchiveDeletePasteServiceUtil {
         long total_size_of_files;
         String size_of_files_to_be_archived_copied;
         final int service_number;
+        String source_folder;
         ArchiveDeletePasteFileService1 service1;
         ArchiveDeletePasteFileService2 service2;
         ArchiveDeletePasteFileService3 service3;
@@ -622,6 +636,7 @@ public class ArchiveDeletePasteServiceUtil {
                 case 3:
                     service3=(ArchiveDeletePasteFileService3)context;
             }
+            source_folder=new File(files_selected_array.get(0)).getParent();
         }
 
         @Override
@@ -653,7 +668,6 @@ public class ArchiveDeletePasteServiceUtil {
             else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
             {
                 FTPFile[] f_array=new FTPFile[size];
-                String source_folder=new File(files_selected_array.get(0)).getParent();
                 for(int i=0;i<size;++i)
                 {
 
@@ -669,6 +683,7 @@ public class ArchiveDeletePasteServiceUtil {
 
             return null;
         }
+
         private void populate(File[] source_list_files,boolean include_folder)
         {
             int size=source_list_files.length;
@@ -788,6 +803,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 int no_of_files=0;
                 long size_of_files=0L;
+                if(f==null)continue;
                 if(f.isDirectory())
                 {
                     try {

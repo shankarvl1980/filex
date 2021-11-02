@@ -386,8 +386,16 @@ public class FilePOJOUtil {
          */
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
-            FTPFile f=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-            if(f!=null)filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+            if(file_path.equals(File.separator))
+            {
+                filePOJO=new FilePOJO(fileObjectType,File.separator,File.separator,null,File.separator,true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null);
+            }
+            else
+            {
+                FTPFile f=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
+                filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+            }
+
         }
 
         return filePOJO;
@@ -723,7 +731,8 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            if((entry.getKey()+File.separator).startsWith(fileObjectType+file_path+File.separator))
+            //if((entry.getKey()+File.separator).startsWith(fileObjectType+file_path+File.separator))
+            if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
@@ -734,7 +743,8 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            if((entry.getKey() +File.separator).startsWith(fileObjectType+file_path+File.separator))
+            //if((entry.getKey() +File.separator).startsWith(fileObjectType+file_path+File.separator))
+            if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
@@ -753,7 +763,8 @@ public class FilePOJOUtil {
             while(iterator.hasNext())
             {
                 Map.Entry<String, List<FilePOJO>> entry=iterator.next();
-                if((fileObjectType+file_path+File.separator).startsWith(entry.getKey()+File.separator))
+                //if((fileObjectType+file_path+File.separator).startsWith(entry.getKey()+File.separator))
+                if(Global.IS_CHILD_FILE(fileObjectType+file_path,entry.getKey()))
                 {
                     List<FilePOJO> filePOJOS=entry.getValue();
                     if(filePOJOS!=null)

@@ -217,7 +217,7 @@ public class Global
 		while(iterator.hasNext())
 		{
 			UriPOJO uriPOJO=iterator.next();
-			if(uriPOJO.get_authority().equals(uri_authority) && (uriPOJO.get_path()+File.separator).startsWith(uri_path+File.separator) && uriPOJO.get_path().length()>uri_path.length())
+			if(uriPOJO.get_authority().equals(uri_authority) && Global.IS_CHILD_FILE(uriPOJO.get_path(),uri_path) && uriPOJO.get_path().length()>uri_path.length())
 			{
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 				context.getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
@@ -241,7 +241,8 @@ public class Global
 				if(uriPOJO.get_authority().equals(uri_authority))
 				{
 					//uri_authority_exists_in_list=true;
-					if((uri_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+					//if((uri_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+					if(Global.IS_CHILD_FILE(uri_path,uriPOJO.get_path()))
 					{
 						parent_uri_exists=true;
 						break;
@@ -267,7 +268,8 @@ public class Global
 			if(fileObjectType==FileObjectType.USB_TYPE && uriPOJO.get_authority().equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
 			{
 
-				if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+				//if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
 				}
@@ -275,7 +277,8 @@ public class Global
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
-				if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+				//if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
+				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
 				}
@@ -658,7 +661,8 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
+					//if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
+					if(Global.IS_CHILD_FILE(dest_folder,iterator.next()))
 					{
 						iterator.remove();
 					}
@@ -672,7 +676,8 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
+					//if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
+					if(Global.IS_CHILD_FILE(dest_folder,iterator.next()))
 					{
 						iterator.remove();
 					}
@@ -802,6 +807,18 @@ public class Global
 		else
 		{
 			return file_path;
+		}
+	}
+
+	public static boolean IS_CHILD_FILE(String child_path,String parent_path)
+	{
+		if(parent_path.equals(File.separator))
+		{
+			return child_path.startsWith(parent_path);
+		}
+		else
+		{
+			return (child_path+File.separator).startsWith(parent_path+File.separator);
 		}
 	}
 

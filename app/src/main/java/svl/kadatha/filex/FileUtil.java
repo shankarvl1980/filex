@@ -775,15 +775,14 @@ import java.util.List;
 			int size= ftpFiles_array.length;
 			for(int i=0;i<size;++i)
 			{
-				FTPFile  ftpFile_copy=ftpFiles_array[i];
-				if(ftpFile_copy.getName().equals(name))
+				ftpFile=ftpFiles_array[i];
+				if(ftpFile.getName().equals(name))
 				{
-					ftpFile=ftpFile_copy;
 					break;
 				}
 			}
 		} catch (IOException e) {
-			return ftpFile;
+			return null;
 		}
 
 		return ftpFile;
@@ -1377,7 +1376,8 @@ import java.util.List;
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
 		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH)
 		{
-			if ((file_path+File.separator).startsWith(internal_storage_path+File.separator)) {
+			//if ((file_path+File.separator).startsWith(internal_storage_path+File.separator)) {
+			if (Global.IS_CHILD_FILE(file_path,internal_storage_path)) {
 				is_from_internal = true;
 				break;
 			}
@@ -1473,7 +1473,8 @@ import java.util.List;
 			{
 				for (String extSdPath : extSdPaths) 
 				{
-					if ((file.getCanonicalPath()+File.separator).startsWith(extSdPath+File.separator))
+					//if ((file.getCanonicalPath()+File.separator).startsWith(extSdPath+File.separator))
+					if (Global.IS_CHILD_FILE(file.getCanonicalPath(),extSdPath))
 					{
 						return extSdPath;
 					}

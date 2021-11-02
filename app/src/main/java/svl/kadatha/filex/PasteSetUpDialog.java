@@ -11,8 +11,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.github.mjdev.libaums.fs.UsbFile;
+
+import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class PasteSetUpDialog extends DialogFragment
 	private FileObjectType sourceFileObjectType,destFileObjectType;
 	private int size;
 	private boolean saf_permission_requested;
+
 	
 	private PasteSetUpDialog(){}
 
@@ -178,6 +182,8 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
+			return true;
+			/*
 			if(Global.CHECK_FTP_SERVER_CONNECTED())
 			{
 				return true;
@@ -187,6 +193,8 @@ public class PasteSetUpDialog extends DialogFragment
 				print(getString(R.string.ftp_server_is_not_connected));
 				return false;
 			}
+
+			 */
 		}
 		return true; //this needs to be true, after success checking of permission of in searchlibrarytype to return true
 
@@ -212,7 +220,18 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			return true;
 		}
-		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
+		else /*
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				return true;
+			}
+			else
+			{
+				print(getString(R.string.ftp_server_is_not_connected));
+				return false;
+			}
+
+			 */ if(fileObjectType ==FileObjectType.ROOT_TYPE)
 		{
 			if(!RootUtils.CAN_RUN_ROOT_COMMANDS())
 			{
@@ -226,19 +245,7 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 
 		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			if(Global.CHECK_FTP_SERVER_CONNECTED())
-			{
-				return true;
-			}
-			else
-			{
-				print(getString(R.string.ftp_server_is_not_connected));
-				return false;
-			}
-		}
-		return false;
+		else return fileObjectType == FileObjectType.FTP_TYPE;
 	}
 
 	private boolean check_SAF_permission_destination(String parent_file_path, FileObjectType fileObjectType)
@@ -355,6 +362,27 @@ public class PasteSetUpDialog extends DialogFragment
 			return usbFile != null;
 
 		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			final boolean[] result_came = new boolean[1];
+			final FTPFile[] ftpFile = new FTPFile[1];
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					ftpFile[0] =FileUtil.getFTPFile(new_file_path);
+					result_came[0] =true;
+				}
+			}).start();
+			while(!result_came[0])
+			{
+				if(ftpFile[0]!=null)
+				{
+					//result_came[0]=true;
+					return true;
+				}
+
+			}
+		}
 		else
 		{
 			if(check_SAF_permission_destination(new_file_path,fileObjectType))
@@ -366,6 +394,7 @@ public class PasteSetUpDialog extends DialogFragment
 				return false;
 			}
 		}
+		return false;
 
 	}
 

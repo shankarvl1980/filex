@@ -56,6 +56,7 @@ public class PropertiesDialog extends DialogFragment
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) fileObjectType=FileObjectType.FILE_TYPE;
 		AsyncTaskFileCountSize=new FileCountSize(files_selected_array,fileObjectType);
 		AsyncTaskFileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 		if(files_selected_array.size()==1)
 		{
 			if(fileObjectType==FileObjectType.FILE_TYPE)
@@ -85,11 +86,11 @@ public class PropertiesDialog extends DialogFragment
 			}
 			else if(fileObjectType==FileObjectType.FTP_TYPE)
 			{
-				FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
-				filename_str=ftpFile.getName();
+				//FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
+				filename_str=new File(files_selected_array.get(0)).getName();
 				file_path_str=files_selected_array.get(0);
 				//file_date_str=sdf.format(ftpFile.)
-				file_type_str=ftpFile.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+				file_type_str="";//ftpFile.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
 
 				//getPermissions(file);
 				readable_str=getString(R.string.yes);
@@ -168,7 +169,6 @@ public class PropertiesDialog extends DialogFragment
 			properties_details_table_layout.addView(row_item);
 		}
 
-
 		TableLayout properties_rwh_table_layout = v.findViewById(R.id.fragment_properties_rwh_tablelayout);
 		properties_rwh_table_layout.setVisibility((files_selected_array.size()==1 || fileObjectType==FileObjectType.USB_TYPE) ? View.VISIBLE : View.GONE);
 
@@ -239,7 +239,7 @@ public class PropertiesDialog extends DialogFragment
 		});
 		return v;
 	}
-	
+
 	public static PropertiesDialog getInstance(ArrayList<String>files_selected_array, FileObjectType fileObjectType)
 	{
 		PropertiesDialog propertiesDialog=new PropertiesDialog();

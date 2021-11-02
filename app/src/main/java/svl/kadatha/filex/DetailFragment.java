@@ -128,18 +128,18 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileclickselected=getTag();
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
-			//Log.d("shankar","fileclickselected - "+fileclickselected+"    fileobjecttype -"+fileObjectType);
-			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && (fileclickselected+File.separator).startsWith(Global.EXTERNAL_STORAGE_PATH+File.separator)))
+			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && Global.IS_CHILD_FILE (fileclickselected,Global.EXTERNAL_STORAGE_PATH)))
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;
 			}
-			//Log.d("shankar","fileclickselected - "+fileclickselected+"    fileobjecttype -"+fileObjectType);
+
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
 			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
+				//if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
+				if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
 				{
 					fileObjectType=FileObjectType.ROOT_TYPE;
 					break;
@@ -149,7 +149,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		file_click_selected_name=new File(fileclickselected).getName();
 		if(MainActivity.ARCHIVE_EXTRACT_DIR==null) MainActivity.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && (fileclickselected+File.separator).startsWith(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()+File.separator) && mainActivity.archive_view;
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
@@ -445,11 +445,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
-		else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
+		//else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
+		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
 		{
 			cache_cleared=true;
 		}
-		else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
+		//else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
+		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+new File(file_path).getParent()))
 		{
 			cache_cleared=true;
 		}

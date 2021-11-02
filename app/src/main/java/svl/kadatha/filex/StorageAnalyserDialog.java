@@ -98,7 +98,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && (fileclickselected+File.separator).startsWith(Global.EXTERNAL_STORAGE_PATH+File.separator)))
+            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && Global.IS_CHILD_FILE(fileclickselected,Global.EXTERNAL_STORAGE_PATH)))
             {
                 fileObjectType=FileObjectType.FILE_TYPE;
             }
@@ -107,7 +107,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             for(String path:Global.INTERNAL_STORAGE_PATH)
             {
-                if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
+                //if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
+                if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
                 {
                     fileObjectType=FileObjectType.ROOT_TYPE;
                     break;
@@ -320,7 +321,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     String key=fileObjectType+fileclickselected;
                     for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
                     {
-                        if((key+File.separator).startsWith(entry.getKey()+File.separator))
+                        //if((key+File.separator).startsWith(entry.getKey()+File.separator))
+                        if(Global.IS_CHILD_FILE(key,entry.getKey()))
                         {
                             storage_space=entry.getValue().getTotalSpace();
                             break;
@@ -424,11 +426,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             cache_cleared=true;
         }
-        else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
+        //else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
+        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
         {
             cache_cleared=true;
         }
-        else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
+        //else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
+        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+new File(file_path).getParent()))
         {
             cache_cleared=true;
         }
