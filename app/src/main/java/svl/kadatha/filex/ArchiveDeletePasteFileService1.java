@@ -1224,7 +1224,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 				counter_size_files+=folder.getSize();
 				size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				publishProgress(folder.getName());
-				success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				if(folder.isDirectory())
+				{
+					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
+				}
+				else {
+					success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				}
+
 			} catch (IOException e) {
 				return false;
 			}

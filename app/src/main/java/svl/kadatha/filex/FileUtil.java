@@ -900,6 +900,7 @@ import java.util.List;
 			}
 		}
 
+
 		private static boolean deleteFTPFile(String file_path)
 		{
 			try {
@@ -1016,7 +1017,14 @@ import java.util.List;
 
 				}
 
-				success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				if(folder.isDirectory())
+				{
+					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
+				}
+				else {
+					success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				}
+
 			} catch (IOException e) {
 				return false;
 			}
