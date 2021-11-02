@@ -215,6 +215,11 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("clear_cache",clear_cache);
@@ -322,21 +327,10 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     tag = storageAnalyserDialog.getTag();
                 }
 
-                /*
-                if((entry_count-frag)<1)
-                {
-
-                }
-
-                 */
 
             }
             else
             {
-                /*
-
-
-                 */
 
                 if(onBackPressed)
                 {

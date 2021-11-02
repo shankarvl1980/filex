@@ -173,6 +173,7 @@
                 android:textColor="@color/light_recycler_text_color"
                 android:text="@string/show_file_path_for_library_files"
                 android:textSize="16sp"
+                android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/preferences_remove_select_defaults_btn" />
         </androidx.constraintlayout.widget.ConstraintLayout>

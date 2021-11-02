@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -252,7 +253,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{
-			final int scroll_distance=0;
+			int scroll_distance=0;
 			final int threshold=5;
 		
 			public void onScrolled(RecyclerView rv, int dx, int dy)
@@ -315,6 +316,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onResume() {
 		super.onResume();
+		Log.d("shankar","resumed and modfication observed-"+modification_observed);
 		if(local_activity_delete)
 		{
 			cache_cleared=false;
@@ -322,7 +324,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			after_filledFilePojos_procedure();
 		}
-		else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
 			cache_cleared=false;
@@ -346,7 +348,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}).start();
 			}
-			FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+				}
+			}).start();
+
 			after_filledFilePojos_procedure();
 		}
 	}

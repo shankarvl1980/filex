@@ -770,8 +770,9 @@ public class Global
 		}
 		else
 		{
-			try {
-				MainActivity.FTP_CLIENT.disconnect();
+
+			//try {
+				//MainActivity.FTP_CLIENT.disconnect();
 				Iterator<FilePOJO> iterator=STORAGE_DIR.iterator();
 				while(iterator.hasNext())
 				{
@@ -785,9 +786,9 @@ public class Global
 				}
 
 				return false;
-			} catch (IOException e) {
-				return false;
-			}
+			//} catch (IOException e) {
+			//	return false;
+			//}
 		}
 	}
 

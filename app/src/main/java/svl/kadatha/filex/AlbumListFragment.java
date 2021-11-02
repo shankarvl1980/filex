@@ -799,7 +799,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			int x=Global.TEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 			View v=albumimageview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			int d=(itemHeight-imageview_dimension)/2;
+			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 			x+=v.getMeasuredWidth()+Global.TEN_DP;
 
 			v=album_select_indicator;

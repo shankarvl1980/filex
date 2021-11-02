@@ -13,6 +13,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.util.*;
 import java.io.*;
 import java.text.*;
@@ -30,6 +32,8 @@ public class PropertiesDialog extends DialogFragment
 	//private final ArrayList<File> files_selected_for_properties=new ArrayList<>();
 	private FileCountSize AsyncTaskFileCountSize;
 	private FileObjectType fileObjectType;
+	private String source_folder;
+
 
 	private PropertiesDialog(){}
 
@@ -47,6 +51,7 @@ public class PropertiesDialog extends DialogFragment
 		setRetainInstance(true);
 		Bundle bundle=getArguments();
 		files_selected_array=bundle.getStringArrayList("files_selected_array");
+		source_folder=new File(files_selected_array.get(0)).getParent();
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) fileObjectType=FileObjectType.FILE_TYPE;
 		AsyncTaskFileCountSize=new FileCountSize(files_selected_array,fileObjectType);
@@ -73,6 +78,19 @@ public class PropertiesDialog extends DialogFragment
 				file_path_str=file.getAbsolutePath();
 				file_date_str=sdf.format(file.lastModified());
 				file_type_str=file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+				//getPermissions(file);
+				readable_str=getString(R.string.yes);
+				writable_str=getString(R.string.yes);
+				hidden_str=getString(R.string.yes);
+			}
+			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			{
+				FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
+				filename_str=ftpFile.getName();
+				file_path_str=files_selected_array.get(0);
+				//file_date_str=sdf.format(ftpFile.)
+				file_type_str=ftpFile.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+
 				//getPermissions(file);
 				readable_str=getString(R.string.yes);
 				writable_str=getString(R.string.yes);
@@ -350,6 +368,19 @@ public class PropertiesDialog extends DialogFragment
 				}
 				populate(f_array, include_folder);
 			}
+			else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+			{
+				FTPFile[] f_array=new FTPFile[size];
+				for(int i=0;i<size;++i)
+				{
+
+					FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+					f_array[i]=f;
+
+				}
+				populate(f_array,include_folder,source_folder);
+
+			}
 
 			return null;
 		}
@@ -408,6 +439,44 @@ public class PropertiesDialog extends DialogFragment
 				total_no_of_files += no_of_files;
 				total_size_of_files += size_of_files;
 				size_of_files_format = FileUtil.humanReadableByteCount(total_size_of_files, Global.BYTE_COUNT_BLOCK_1000);
+				publishProgress();
+			}
+		}
+
+		private void populate(FTPFile[] source_list_files, boolean include_folder, String path)
+		{
+			int size=source_list_files.length;
+			for(int i=0;i<size;++i)
+			{
+				FTPFile f=source_list_files[i];
+				if(isCancelled())
+				{
+					return;
+				}
+				int no_of_files=0;
+				long size_of_files=0L;
+				if(f.isDirectory())
+				{
+					try {
+						String name=f.getName();
+						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+						populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
+					} catch (IOException e) {
+
+					}
+					if(include_folder)
+					{
+						no_of_files++;
+					}
+				}
+				else
+				{
+					no_of_files++;
+					size_of_files+=f.getSize();
+				}
+				total_no_of_files+=no_of_files;
+				total_size_of_files+=size_of_files;
+				size_of_files_format=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
 				publishProgress();
 			}
 		}

@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,9 +178,11 @@ public class CreateFileDialog extends DialogFragment
 
 	private class FileCreateAsyncTask extends AsyncTask<Void,Void,Boolean>
 	{
-		File file;
-		boolean isWritable,file_created;
-		String new_file_path,new_name;
+		final File file;
+		final boolean isWritable;
+		boolean file_created;
+		final String new_file_path;
+		final String new_name;
 		FilePOJO filePOJO;
 		FileCreateAsyncTask(File file,boolean isWritable)
 		{

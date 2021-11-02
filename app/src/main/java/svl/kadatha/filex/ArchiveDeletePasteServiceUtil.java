@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileOutputStream;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,6 +51,7 @@ public class ArchiveDeletePasteServiceUtil {
             if(appCompatActivity instanceof MainActivity)
             {
                 ((MainActivity)context).clear_cache=false;
+
             }
             else if(appCompatActivity instanceof StorageAnalyserActivity)
             {
@@ -274,14 +277,14 @@ public class ArchiveDeletePasteServiceUtil {
                                                       List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled,boolean storage_analyser_delete)
     {
         String notification_content;
+        if(cancelled)
+        {
+            CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);
+            return null;
+        }
         if(counter_no_files>0)
         {
-            if(cancelled)
-            {
-                CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);
-                return null;
-            }
-
+            /*
             if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
             {
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,deleted_files_path_list,FileObjectType.FILE_TYPE);
@@ -290,6 +293,8 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_names,sourceFileObjectType);
             }
+
+             */
 
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder,sourceFileObjectType);
             notification_content=context.getString(R.string.deleted_selected_files)+" "+source_folder;
@@ -306,21 +311,21 @@ public class ArchiveDeletePasteServiceUtil {
 
 
 
-    public static String ON_CUT_COPY_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String source_folder,String dest_folder,
-                                                        FileObjectType sourceFileObjectType, FileObjectType destFileObjectType,List<String> copied_files_name,
-                                                        List<String>overwritten_copied_file_name_list,List<String>copied_source_file_path_list,
+    public static String ON_CUT_COPY_ASYNCTASK_COMPLETE(Context context, int counter_no_files, String source_folder, String dest_folder,
+                                                        FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, FilePOJO filePOJO,
                                                         boolean cut, boolean cancelled)
     {
         String notification_content;
-        List<String> overwritten_copied_file_path_list=new ArrayList<>();
+
+        if(cancelled)
+        {
+            CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);  //for dest_folder
+            if (cut) CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);  // for source_folder
+            return null;
+        }
         if(counter_no_files>0)
         {
-            if(cancelled)
-            {
-                CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);  //for dest_folder
-                if (cut) CLEAR_CACHE_AND_REFRESH(source_folder,sourceFileObjectType);  // for source_folder
-                return null;
-            }
+            /*
             overwritten_copied_file_name_list.retainAll(copied_files_name);
             for(String name:overwritten_copied_file_name_list)
             {
@@ -341,6 +346,8 @@ public class ArchiveDeletePasteServiceUtil {
                 }
 
             }
+
+             */
 
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder,source_folder,destFileObjectType,sourceFileObjectType,filePOJO);
             notification_content=(cut ? context.getString(R.string.moved_selected_files)+" "+dest_folder : context.getString(R.string.copied_selected_files)+" "+dest_folder);
@@ -417,13 +424,14 @@ public class ArchiveDeletePasteServiceUtil {
                                                          List<String> written_file_path_list, String zip_file_path, boolean cancelled)
     {
         String notification_content;
+        if(cancelled)
+        {
+            CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);
+            return null;
+        }
         if (counter_no_files>0)
         {
-            if(cancelled)
-            {
-                CLEAR_CACHE_AND_REFRESH(dest_folder,destFileObjectType);
-                return null;
-            }
+
             FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,written_file_name_list,destFileObjectType,written_file_path_list);
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder,destFileObjectType,filePOJO);
             notification_content=context.getString(R.string.unzipped)+" '"+new File(zip_file_path).getName()+"' "+context.getString(R.string.at)+" "+dest_folder;
@@ -642,6 +650,18 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 populate(f_array,include_folder);
             }
+            else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+            {
+                FTPFile[] f_array=new FTPFile[size];
+                String source_folder=new File(files_selected_array.get(0)).getParent();
+                for(int i=0;i<size;++i)
+                {
+
+                    FTPFile f = FileUtil.getFTPFile(files_selected_array.get(i));//MainActivity.FTP_CLIENT.mlistFile(files_selected_array.get(i));
+                    f_array[i]=f;
+                }
+                populate(f_array,include_folder,source_folder);
+            }
             else
             {
                 populate(files_selected_array,include_folder);
@@ -730,6 +750,62 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     no_of_files++;
                     size_of_files+=f.getLength();
+                }
+                total_no_of_files+=no_of_files;
+                total_size_of_files+=size_of_files;
+                size_of_files_to_be_archived_copied=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+                switch (service_number)
+                {
+                    case 1:
+                        service1.total_no_of_files=total_no_of_files;
+                        service1.total_size_of_files=total_size_of_files;
+                        service1.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
+                        break;
+                    case 2:
+                        service2.total_no_of_files=total_no_of_files;
+                        service2.total_size_of_files=total_size_of_files;
+                        service2.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
+                        break;
+                    case 3:
+                        service3.total_no_of_files=total_no_of_files;
+                        service3.total_size_of_files=total_size_of_files;
+                        service3.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
+                        break;
+                }
+                publishProgress();
+            }
+        }
+
+        private void populate(FTPFile[] source_list_files, boolean include_folder,String path)
+        {
+            int size=source_list_files.length;
+            for(int i=0;i<size;++i)
+            {
+                FTPFile f=source_list_files[i];
+                if(isCancelled())
+                {
+                    return;
+                }
+                int no_of_files=0;
+                long size_of_files=0L;
+                if(f.isDirectory())
+                {
+                    try {
+                        String name=f.getName();
+                        path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+                        populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
+                    } catch (IOException e) {
+
+                    }
+                    if(include_folder)
+                    {
+                        no_of_files++;
+                    }
+                }
+                else
+                {
+                    no_of_files++;
+                    size_of_files+=f.getSize();
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;

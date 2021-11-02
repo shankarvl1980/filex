@@ -114,6 +114,12 @@
         <item name="colorSwitchThumbNormal">@android:color/darker_gray</item>
     </style>
 
+    <style name="MyLightSwitchCompat" parent="Theme.AppCompat.DayNight">
+        <item name="colorControlActivated">@color/light_icon_color</item>
+        <item name="colorSwitchThumbNormal">@android:color/darker_gray</item>
+
+    </style>
+
     <style name="my_scrollbar">
         <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>

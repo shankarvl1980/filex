@@ -272,7 +272,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             local_activity_delete=false;
             after_filledFilePojos_procedure();
         }
-        else if(modification_observed && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+        else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
         {
             storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
             cache_cleared=false;
@@ -296,7 +296,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
                 }
             }).start();
-            FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+                }
+            }).start();
+
             after_filledFilePojos_procedure();
         }
     }

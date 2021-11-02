@@ -10,6 +10,7 @@ import android.widget.TableRow.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -22,12 +23,14 @@ public class ViewDialog extends DialogFragment
     private RadioButton list_rb, grid_rb;
     private Context context;
     private FragmentManager fragmentManager;
+	private MainActivity mainActivity;
 
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		mainActivity=((MainActivity)context);
 		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		tinyDB=new TinyDB(context);
 	}
@@ -96,6 +99,32 @@ public class ViewDialog extends DialogFragment
 		size_desc_btn.setOnClickListener(sortButtonClickListener);
 
 
+		SwitchCompat show_hidden_switch = v.findViewById(R.id.view_switch_show_hidden);
+		show_hidden_switch.setChecked(MainActivity.SHOW_HIDDEN_FILE);
+		show_hidden_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				new Handler().postDelayed(new Runnable()
+				{
+					public void run()
+					{
+						MainActivity.SHOW_HIDDEN_FILE=isChecked;
+						tinyDB.putBoolean("show_hidden_file",MainActivity.SHOW_HIDDEN_FILE);
+						DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+						mainActivity.actionmode_finish(df,df.fileclickselected);
+						if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
+						{
+							fragmentManager.beginTransaction().detach(df).commit();
+							fragmentManager.beginTransaction().attach(df).commit();
+						}
+
+					}
+				},250);
+
+			}
+		});
+
+
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_view_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button close_button = buttons_layout.findViewById(R.id.first_button);
@@ -113,7 +142,7 @@ public class ViewDialog extends DialogFragment
 		seekbar_fontsize.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 		{
 			
-			final int progress=0;
+			int progress=0;
 				public void onStartTrackingTouch(SeekBar p1)
 				{
 

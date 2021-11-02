@@ -66,13 +66,18 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 			{
 				public void onClick(View v)
 				{
-					if(archiveDeletePasteFileService!=null)
-					{
-						archiveDeletePasteFileService.cancelService();
-					}
-					print(getString(R.string.process_cancelled));
-					PROGRESS_ACTIVITY_SHOWN=false;
-					finish();
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							if(archiveDeletePasteFileService!=null)
+							{
+								archiveDeletePasteFileService.cancelService();
+							}
+							print(getString(R.string.process_cancelled));
+							PROGRESS_ACTIVITY_SHOWN=false;
+							finish();
+						}
+					},750);
 
 				}
 			});

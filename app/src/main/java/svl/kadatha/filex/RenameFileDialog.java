@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import com.github.mjdev.libaums.fs.UsbFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 public class RenameFileDialog extends DialogFragment
 {
@@ -160,7 +160,8 @@ public class RenameFileDialog extends DialogFragment
 								@Override
 								public void rename_file() {
 
-									rename_process(new_file_path,new_name);
+									//rename_process(new_file_path,new_name);
+									new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 								}
 							});
 							renameReplaceConfirmationDialog.show(fragmentManager,"");
@@ -174,7 +175,8 @@ public class RenameFileDialog extends DialogFragment
 							}
 							else
 							{
-								rename_process(new_file_path,new_name);
+								//rename_process(new_file_path,new_name);
+								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						}
 					}
@@ -189,7 +191,8 @@ public class RenameFileDialog extends DialogFragment
 							@Override
 							public void rename_file() {
 
-								rename_process(new_file_path,new_name);
+								//rename_process(new_file_path,new_name);
+								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						});
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
@@ -201,7 +204,8 @@ public class RenameFileDialog extends DialogFragment
 							@Override
 							public void rename_file() {
 
-								rename_process(new_file_path,new_name);
+								//rename_process(new_file_path,new_name);
+								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						});
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
@@ -210,7 +214,8 @@ public class RenameFileDialog extends DialogFragment
 				}
 				else
 				{
-					rename_process(new_file_path,new_name);
+					//rename_process(new_file_path,new_name);
+					new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 
 			}
@@ -244,17 +249,149 @@ public class RenameFileDialog extends DialogFragment
 		return renameFileDialog;
 	}
 
+	private class RenameFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
+	{
+		boolean fileNameChanged = false;
+		final String parent_file_path;
+		final String existing_name;
+		final String new_file_path;
+		final String new_name;
+		final File existing_file;
+		final File new_file;
+		FilePOJO filePOJO = null;
+
+		RenameFileAsyncTask(String parent_file_path, String existing_name,String new_file_path, String new_name)
+		{
+			this.parent_file_path=parent_file_path;
+			this.existing_name=existing_name;
+			this.new_file_path=new_file_path;
+			this.new_name=new_name;
+			existing_file=new File(parent_file_path,existing_name);
+			new_file=new File(new_file_path);
+		}
+
+		@Override
+		protected Void doInBackground(Void... voids) {
+			if(fileObjectType==FileObjectType.FILE_TYPE)
+			{
+				if(isWritable)
+				{
+					fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
+
+				}
+				else
+				{
+					if(check_SAF_permission(parent_file_path,fileObjectType))
+					{
+						if(whether_file_already_exists(new_file_path,fileObjectType)) //to overwrite file name
+						{
+							boolean isDir=new File(new_file_path).isDirectory();
+							if(!isDir && !isDirectory)
+							{
+								//new RenameAsyncTask(context,parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+								if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
+								{
+									fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+								}
+							}
+
+						}
+						else
+						{
+							fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+
+						}
+					}
+
+				}
+			}
+			else if(fileObjectType== FileObjectType.USB_TYPE)
+			{
+				UsbFile existingUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,existing_file.getAbsolutePath());
+				fileNameChanged=FileUtil.renameUsbFile(existingUsbFile,new_name);
+
+			}
+			else if (fileObjectType==FileObjectType.ROOT_TYPE)
+			{
+				if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+				{
+					//fileNameChanged=RootUtils.EXECUTE(Arrays.asList("mv",existing_file.getAbsolutePath(),new_file_path));
+					if(Global.SET_OTHER_FILE_PERMISSION("rwx",existing_file_path))
+					{
+						fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
+					}
+
+
+				}
+				else
+				{
+					//print(getString(R.string.root_access_not_avaialable));
+					fileNameChanged=false;
+				}
+
+			}
+			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			{
+				if(Global.CHECK_FTP_SERVER_CONNECTED())
+				{
+					try {
+						fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
+					} catch (IOException e) {
+					}
+				}
+				else
+				{
+					//print(getString(R.string.ftp_server_is_not_connected));
+				}
+
+
+			}
+
+			if(fileNameChanged)
+			{
+				//use filePOJOHashmapKeyPath to remove from Search Library also
+				if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+					if(overwriting)
+					{
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path),fileObjectType);
+					}
+					filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(filePOJOHashmapKeyPath,Collections.singletonList(new_file_path),fileObjectType, Collections.singletonList(existing_file_path));
+				}
+				else
+				{
+					if(overwriting)
+					{
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType);
+					}
+
+					filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
+				}
+				Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void unused) {
+			super.onPostExecute(unused);
+			onRenameResult(fileNameChanged,new_name,filePOJO);
+		}
+	}
+
 	public void rename_process(String new_file_path, String new_name)
 	{
 		boolean fileNameChanged = false;
 		File existing_file=new File(parent_file_path,existing_name);
 		File new_file=new File(new_file_path);
+		FilePOJO filePOJO = null;
 		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
 			if(isWritable)
 			{
 				fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-				onRenameResult(fileNameChanged,new_name);
+				//onRenameResult(fileNameChanged,new_name);
 			}
 			else
 			{
@@ -269,13 +406,13 @@ public class RenameFileDialog extends DialogFragment
 						}
 						else
 						{
-							onRenameResult(false,new_name);
+							//onRenameResult(false,new_name);
 						}
 					}
 					else
 					{
 						fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-						onRenameResult(fileNameChanged,new_name);
+						//onRenameResult(fileNameChanged,new_name);
 					}
 				}
 
@@ -286,13 +423,13 @@ public class RenameFileDialog extends DialogFragment
 			if(whether_file_already_exists(new_file_path,fileObjectType))
 			{
 				print(getString(R.string.a_file_with_given_name_already_exists));
-				onRenameResult(false,new_name);
+				//onRenameResult(false,new_name);
 			}
 			else
 			{
 				UsbFile existingUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,existing_file.getAbsolutePath());
 				fileNameChanged=FileUtil.renameUsbFile(existingUsbFile,new_name);
-				onRenameResult(fileNameChanged,new_name);
+				//onRenameResult(fileNameChanged,new_name);
 			}
 		}
 		else if (fileObjectType==FileObjectType.ROOT_TYPE)
@@ -312,7 +449,7 @@ public class RenameFileDialog extends DialogFragment
 				print(getString(R.string.root_access_not_avaialable));
 				fileNameChanged=false;
 			}
-			onRenameResult(fileNameChanged,new_name);
+			//onRenameResult(fileNameChanged,new_name);
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
@@ -328,18 +465,11 @@ public class RenameFileDialog extends DialogFragment
 				print(getString(R.string.ftp_server_is_not_connected));
 			}
 
-			onRenameResult(fileNameChanged,new_name);
+
 		}
-
-	}
-
-	private void onRenameResult(boolean fileNameChanged, final String new_name)
-	{
 		if(fileNameChanged)
 		{
 			//use filePOJOHashmapKeyPath to remove from Search Library also
-			final FilePOJO filePOJO;
-
 			if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				if(overwriting)
@@ -358,24 +488,38 @@ public class RenameFileDialog extends DialogFragment
 				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
 			}
 			Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+
+		}
+		onRenameResult(fileNameChanged,new_name,filePOJO);
+
+	}
+
+	private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO)
+	{
+		if(fileNameChanged)
+		{
+			df.clearSelectionAndNotifyDataSetChanged();
+			int idx=df.filePOJO_list.indexOf(filePOJO);
+			if(df.llm!=null)
+			{
+				df.llm.scrollToPositionWithOffset(idx,0);
+			}
+			else if(df.glm!=null)
+			{
+				df.glm.scrollToPositionWithOffset(idx,0);
+			}
+
+/*
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 
-					df.clearSelectionAndNotifyDataSetChanged();
-					int idx=df.filePOJO_list.indexOf(filePOJO);
-					if(df.llm!=null)
-					{
-						df.llm.scrollToPositionWithOffset(idx,0);
-					}
-					else if(df.glm!=null)
-					{
-						df.glm.scrollToPositionWithOffset(idx,0);
-					}
 
 
 				}
 			},500);
+
+ */
 			print(getString(R.string.renamed)+" '"+existing_name+"' "+getString(R.string.at)+" '"+new_name+"'");
 		}
 		else
@@ -499,6 +643,7 @@ public class RenameFileDialog extends DialogFragment
         final String new_name;
 		ProgressBarFragment pbf;
 		boolean fileNameChanged;
+		final FilePOJO filePOJO=null;
 		RenameAsyncTask(Context context,String parent_file_path,String existing_name,String new_file_path,String new_name)
 		{
 			this.context=context;
@@ -542,7 +687,7 @@ public class RenameFileDialog extends DialogFragment
 			// TODO: Implement this method
 			super.onPostExecute(result);
 			pbf.dismissAllowingStateLoss();
-			onRenameResult(result,new_name);
+			onRenameResult(result,new_name,filePOJO);
 		}
 	}
 
@@ -564,6 +709,24 @@ public class RenameFileDialog extends DialogFragment
 		{
 			return RootUtils.WHETHER_FILE_EXISTS(new_file_path);
 		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
+			if(filePOJOs!=null)
+			{
+				for(FilePOJO filePOJO:filePOJOs)
+				{
+					if(filePOJO.getPath().equals(new_file_path))
+					{
+						return true;
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
 		else
 		{
 			if(check_SAF_permission(new_file_path,fileObjectType))
@@ -575,7 +738,7 @@ public class RenameFileDialog extends DialogFragment
 				return false;
 			}
 		}
-
+		return false;
 	}
 
 

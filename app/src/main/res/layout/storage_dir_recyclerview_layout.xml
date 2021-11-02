@@ -14,8 +14,9 @@
 		android:scaleType="centerCrop"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
-		android:layout_marginTop="3dp"
+
 		/>
 
 	<ImageView
@@ -28,8 +29,9 @@
 		android:visibility="invisible"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
-		android:layout_marginTop="3dp"
+
 		/>
 
 
@@ -46,6 +48,7 @@
 		android:includeFontPadding="false"
 		app:layout_constraintStart_toEndOf="@id/image_storage_dir"
 		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		/>
 

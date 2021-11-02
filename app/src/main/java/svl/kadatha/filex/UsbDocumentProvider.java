@@ -217,12 +217,8 @@ public class UsbDocumentProvider extends DocumentsProvider {
             String volumeLabel = fileSystem.getVolumeLabel();
 
             String title;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                UsbDevice usbDevice = usbPartition.device;
-                title = usbDevice.getManufacturerName() + " " + usbDevice.getProductName();
-            } else {
-                title = "USB-Storage";
-            }
+            UsbDevice usbDevice = usbPartition.device;
+            title = usbDevice.getManufacturerName() + " " + usbDevice.getProductName();
 
             String documentId = getDocIdForFile(rootDirectory);
 

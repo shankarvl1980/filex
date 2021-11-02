@@ -428,11 +428,8 @@ public class DeleteFileAlertDialog extends DialogFragment
 				for(int i=0;i<size;++i)
 				{
 
-					try {
-						FTPFile f = MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
-						f_array[i]=f;
-					} catch (IOException e) {
-					}
+					FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+					f_array[i]=f;
 
 				}
 				populate(f_array,include_folder,source_folder);
@@ -529,7 +526,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 					try {
 						String name=f.getName();
 						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
-						populate(MainActivity.FTP_CLIENT.listFiles(),include_folder,path);
+						populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
 					} catch (IOException e) {
 
 					}

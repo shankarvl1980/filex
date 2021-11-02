@@ -62,7 +62,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         if(bundle!=null)
         {
             original_server=bundle.getString("server");
-            server=original_server;
+            server=bundle.getString("server");
             if(original_server!=null && !original_server.equals(""))
             {
                 update=true;

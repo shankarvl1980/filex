@@ -183,7 +183,6 @@
 				android:id="@+id/sort_table_layout"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:padding="@dimen/layout_margin"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/sort_label"
@@ -306,6 +305,20 @@
 
 			</TableLayout>
 
+			<androidx.appcompat.widget.SwitchCompat
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/view_switch_show_hidden"
+				android:text="@string/show_hidden_files"
+				android:textColor="@color/light_recycler_text_color"
+				android:textSize="16sp"
+				android:theme="@style/MyLightSwitchCompat"
+				app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
+				android:background="?attr/dialog_background"
+				android:padding="@dimen/layout_margin"
+				android:minHeight="44dp"
+
+				/>
 			<FrameLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -313,7 +326,7 @@
 				android:layout_marginTop="@dimen/layout_margin"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
+				app:layout_constraintTop_toBottomOf="@id/view_switch_show_hidden"
 
 				/>
 

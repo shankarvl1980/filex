@@ -183,8 +183,8 @@ public class RecyclerViewLayout extends ViewGroup
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
-
-		int iconheight,maxHeight=0;
+		int iconheight;
+		 int maxHeight=0;
 		int usedWidth;
 
 		if(Global.FILE_GRID_LAYOUT)
@@ -285,11 +285,12 @@ public class RecyclerViewLayout extends ViewGroup
 			int margin_offset_icon, max_height_second_line;
 			View v=fileimageview;
 			y=Global.RECYCLERVIEW_ITEM_SPACING;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			int d=(itemHeight-imageview_dimension)/2;
+			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 
 
 			v=overlay_fileimageview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 			x+=v.getMeasuredWidth()+Global.TEN_DP;
 			margin_offset_icon=x;
 

@@ -67,7 +67,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 	private DeleteFileAsyncTask delete_file_async_task;
 
-	//private final ArrayList<Integer> files_selected_index_array=new ArrayList<>();
 	boolean isFromInternal;
 	String current_file_name;
 
@@ -878,7 +877,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			// TODO: Implement this method
 			super.onCancelled(result);
 			int s=deleted_file_names.size();
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
+			ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
 
@@ -905,6 +904,17 @@ public class ArchiveDeletePasteFileService1 extends Service
 					isFromInternal=FileUtil.isFromInternal(sourceFileObjectType,files_selected_array.get(0));
 				}
 				success=deleteFromFolder(isFromInternal);
+			}
+			if(deleted_file_names.size()>0)
+			{
+				if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+					FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,deleted_files_path_list,FileObjectType.FILE_TYPE);
+				}
+				else
+				{
+					FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_names,sourceFileObjectType);
+				}
 			}
 			return success;
 		}
@@ -1262,6 +1272,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	{
 		String duplicate_file_name;
 		List<String> overwritten_copied_file_name_list=new ArrayList<>();
+		FilePOJO filePOJO;
 
 		@Override
 		protected void onCancelled(Boolean result)
@@ -1270,7 +1281,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			super.onCancelled(result);
 			if(permanent_cancel)
 			{
-				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,copied_files_name,overwritten_copied_file_name_list,copied_source_file_path_list,cut,true);
+				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,filePOJO, cut,true);
 				stopForeground(true);
 				stopSelf();
 				if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
@@ -1692,6 +1703,31 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 					}
 				}
+			}
+			if(counter_no_files>0)
+			{
+				List<String> overwritten_copied_file_path_list=new ArrayList<>();
+				overwritten_copied_file_name_list.retainAll(copied_files_name);
+				for(String name:overwritten_copied_file_name_list)
+				{
+					overwritten_copied_file_path_list.add(dest_folder.equals(File.separator) ? dest_folder+name : dest_folder+File.separator+name);
+				}
+
+				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
+				if(cut)
+				{
+
+					if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+					{
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,copied_source_file_path_list,FileObjectType.FILE_TYPE);
+					}
+					else
+					{
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,copied_files_name,sourceFileObjectType);
+					}
+
+				}
+
 			}
 			return copy_result;
 		}
@@ -2357,7 +2393,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onPostExecute(result);
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,copied_files_name,overwritten_copied_file_name_list,copied_source_file_path_list,cut,!result);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,filePOJO, cut,!result);
 			stopForeground(true);
 			stopSelf();
 			

@@ -139,8 +139,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT,CURRENT_FTP_CLIENT;
-
+	public static FTPClient FTP_CLIENT;
 
 
 	@Override
@@ -151,7 +150,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		PermissionsUtil permissionUtil=new PermissionsUtil(context,MainActivity.this);
 		permissionUtil.check_storage_permission();
 		tinyDB=new TinyDB(context);
-
 
 		setContentView(R.layout.main);
 		fm=getSupportFragmentManager();
@@ -167,14 +165,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		intentFilter.addDataScheme("file");
 		context.registerReceiver(mediaMountReceiver, intentFilter);
 
-
 		otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
 		IntentFilter localBroadcastIntentFilter=new IntentFilter();
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
-
 
 		usbReceiver=new USBReceiver();
 		IntentFilter usbIntentFilter=new IntentFilter();
@@ -204,7 +200,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				set_visibility_searchbar(false);
 				SearchDialog searchDialog=new SearchDialog();
 				searchDialog.show(fm,"search_dialog");
-
 			}
 		});
 
@@ -487,7 +482,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		libraryRecyclerView=findViewById(R.id.library_recyclerview);
 		libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES));
+		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon};
+		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES,icon_image_array));
 
 
         SwitchCompat switchHideFile = findViewById(R.id.switch_hide_file);
@@ -1831,9 +1827,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private class LibraryRecyclerAdapter extends RecyclerView.Adapter<LibraryRecyclerAdapter.ViewHolder>
 	{
 		final List<String> storage_dir_arraylist;
-		LibraryRecyclerAdapter(List<String> storage_dir_arraylist)
+		final int[] icon_image_list;
+
+		LibraryRecyclerAdapter(List<String> storage_dir_arraylist,int[] icon_image_list)
 		{
 			this.storage_dir_arraylist=storage_dir_arraylist;
+			this.icon_image_list=icon_image_list;
 		}
 
 		class ViewHolder extends RecyclerView.ViewHolder
@@ -1850,7 +1849,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				imageview=v.findViewById(R.id.image_storage_dir);
 				overlay_imageview=v.findViewById(R.id.overlay_image_storage_dir);
 				textView_recent_dir=v.findViewById(R.id.text_storage_dir_name);
-				imageview.setVisibility(View.GONE);
 				overlay_imageview.setVisibility(View.GONE);
 				v.setOnClickListener(new View.OnClickListener()
 					{
@@ -1878,6 +1876,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			// TODO: Implement this method
 			p1.textView_recent_dir.setText(storage_dir_arraylist.get(p2));
+			p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,icon_image_list[p2]));
 		}
 
 		@Override

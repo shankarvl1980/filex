@@ -155,7 +155,8 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		int x=Global.TEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 		View v=audioimageview;
-		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+		int d=(itemHeight-imageview_dimension)/2;
+		v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 		x+=v.getMeasuredWidth()+Global.TEN_DP;
 
 		v=audio_select_indicator;

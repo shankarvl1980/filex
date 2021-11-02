@@ -31,7 +31,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -280,23 +279,18 @@ public class FtpDetailsDialog extends DialogFragment {
                                     @Override
                                     public void run() {
                                         MainActivity.FTP_CLIENT=new FTPClient();
-                                        MainActivity.CURRENT_FTP_CLIENT=new FTPClient();
                                         boolean status;
                                         try {
                                             MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
-                                            MainActivity.CURRENT_FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
                                             if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
                                             {
                                                 status=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
-                                                MainActivity.CURRENT_FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
                                                 if(status)
                                                 {
                                                     MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
-                                                    MainActivity.CURRENT_FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
                                                     if(ftpPOJO.mode.equals("passive"))
                                                     {
                                                         MainActivity.FTP_CLIENT.enterLocalPassiveMode();
-                                                        MainActivity.CURRENT_FTP_CLIENT.enterLocalPassiveMode();
                                                     }
                                                     String path=MainActivity.FTP_CLIENT.printWorkingDirectory();
                                                     /*
@@ -323,6 +317,19 @@ public class FtpDetailsDialog extends DialogFragment {
 
                                                     dismissAllowingStateLoss();
                                                 }
+                                                /*
+                                                else
+                                                {
+                                                    handler.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            print(getString(R.string.server_could_not_be_connected));
+                                                        }
+                                                    });
+                                                    progressBarFragment.dismissAllowingStateLoss();
+                                                }
+
+                                                 */
 
                                             }
                                             progressBarFragment.dismissAllowingStateLoss();

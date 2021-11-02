@@ -305,9 +305,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
 		{
-			final boolean visible=true;
+			boolean visible=true;
 			final int threshold=5;
-			final int scroll_distance=0;
+			int scroll_distance=0;
 			int dy=0;
 			public void onScrollChange(ObservableScrollView v, int old_scrollX, int old_scrollY, int scrollX, int scrollY)
 			{
@@ -881,19 +881,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				redo_button.setEnabled(true);
 			}
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			{ // API 21
-				filetext_container_edittext.setShowSoftInputOnFocus(true);
-			}
-			else
-			{ // API 11-20
-				filetext_container_edittext.setTextIsSelectable(false);
-				filetext_container_edittext.setFocusable(true);
-				filetext_container_edittext.setFocusableInTouchMode(true);
-				filetext_container_edittext.setClickable(true);
-				filetext_container_edittext.setLongClickable(true);
-				filetext_container_edittext.setMovementMethod(ArrowKeyMovementMethod.getInstance());
-			}
+			// API 21
+			filetext_container_edittext.setShowSoftInputOnFocus(true);
 			filetext_container_edittext.requestFocus();
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 
@@ -906,15 +895,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			undo_button.setEnabled(false);
 			redo_button.setEnabled(false);
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			{ // API 21
-				filetext_container_edittext.setShowSoftInputOnFocus(false);
-
-			}
-			else
-			{ // API 11-20
-				filetext_container_edittext.setTextIsSelectable(true);
-			}
+			// API 21
+			filetext_container_edittext.setShowSoftInputOnFocus(false);
 
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 

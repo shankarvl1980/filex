@@ -90,7 +90,18 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("anonymous",anonymous ? 1 : 0);
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
-        return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{original_server});
+        Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?",new String[]{original_server},null,null,null);
+        if(cursor!=null && cursor.getCount()>0)
+        {
+            cursor.close();
+            return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{original_server});
+
+        }
+        else
+        {
+            return sqLiteDatabase.insert(TABLE,null,contentValues);
+        }
+
     }
 
     public int delete(String server)
