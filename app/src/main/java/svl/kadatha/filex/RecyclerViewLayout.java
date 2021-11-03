@@ -24,7 +24,7 @@ public class RecyclerViewLayout extends ViewGroup
     private int imageview_dimension;
 	private int itemWidth, itemHeight;
 	private final boolean show_file_path;
-	private int select_indicator_offset=Global.THIRTY_FOUR_DP;
+	private int select_indicator_offset=Global.THIRTY_SIX_DP;
 
 	RecyclerViewLayout(Context context,boolean show_file_path)
 	{
@@ -176,7 +176,7 @@ public class RecyclerViewLayout extends ViewGroup
 
 		}
 
-		if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_FOUR_DP*2;
+		if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_SIX_DP*2;
 
 	}
 	

@@ -87,7 +87,7 @@ public class Global
 	static int BUTTON_HEIGHT;
 	static int ONE_DP;
 	static int TWO_DP;
-	static int THIRTY_FOUR_DP;
+	static int THIRTY_SIX_DP;
 	//static int SIXTY_DP;
 	static int ONE_SP;
 	static int FOUR_DP;
@@ -337,7 +337,7 @@ public class Global
 			ONE_DP=FOUR_DP/4;
 			TWO_DP=FOUR_DP/2;
 
-			THIRTY_FOUR_DP=ONE_DP*34;
+			THIRTY_SIX_DP=FOUR_DP*9;
 
 			RECYCLERVIEW_ITEM_SPACING=list_g;
 

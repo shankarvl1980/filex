@@ -678,7 +678,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		private TextView albumtextview, no_of_songs_textview,artisttextview;
 		private int itemWidth,itemHeight;
 		int imageview_dimension;
-		private int select_indicator_offset=Global.THIRTY_FOUR_DP;
+		private int select_indicator_offset=Global.THIRTY_SIX_DP;
 
 		AlbumListRecyclerViewItem(Context context)
 		{
@@ -747,7 +747,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			albumimageview.getLayoutParams().width= imageview_dimension;
 			albumimageview.getLayoutParams().height= imageview_dimension;
 
-			if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_FOUR_DP*2;
+			if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_SIX_DP*2;
 
 		}
 

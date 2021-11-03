@@ -32,6 +32,7 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private int scroll_distance;
     private Button delete_btn,rename_btn,edit_btn;
     private Handler handler;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -274,7 +276,6 @@ public class FtpDetailsDialog extends DialogFragment {
 
                             FtpPOJO ftpPOJO=ftpPOJOList.get(pos);
 
-                            //MainActivity.FTP_CLIENT.setConnectTimeout(10*1000);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -288,12 +289,12 @@ public class FtpDetailsDialog extends DialogFragment {
                                                 if(status)
                                                 {
                                                     MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
-                                                    if(ftpPOJO.mode.equals("passive"))
+                                                    //if(ftpPOJO.mode.equals("passive"))
                                                     {
                                                         MainActivity.FTP_CLIENT.enterLocalPassiveMode();
                                                     }
                                                     String path=MainActivity.FTP_CLIENT.printWorkingDirectory();
-                                                    /*
+
                                                     Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
                                                     while(iterator.hasNext())
                                                     {
@@ -304,20 +305,30 @@ public class FtpDetailsDialog extends DialogFragment {
                                                     }
                                                     Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,path));
 
-                                                     */
+                                                    Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
+                                                    while (iterator1.hasNext())
+                                                    {
+                                                        if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+                                                        {
+                                                            iterator1.remove();
+                                                        }
+                                                    }
+
+                                                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
+
 
                                                     handler.post(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                    //        ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                                            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
                                                             ((MainActivity)context).createFragmentTransaction(path,FileObjectType.FTP_TYPE);
-
                                                         }
                                                     });
 
+
                                                     dismissAllowingStateLoss();
                                                 }
-                                                /*
+
                                                 else
                                                 {
                                                     handler.post(new Runnable() {
@@ -328,8 +339,6 @@ public class FtpDetailsDialog extends DialogFragment {
                                                     });
                                                     progressBarFragment.dismissAllowingStateLoss();
                                                 }
-
-                                                 */
 
                                             }
                                             progressBarFragment.dismissAllowingStateLoss();

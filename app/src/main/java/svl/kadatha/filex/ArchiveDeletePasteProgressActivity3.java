@@ -66,6 +66,8 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 			{
 				public void onClick(View v)
 				{
+					ProgressBarFragment progressBarFragment=ProgressBarFragment.getInstance();
+					progressBarFragment.show(getSupportFragmentManager(),"");
 					new Handler().postDelayed(new Runnable() {
 						@Override
 						public void run() {
@@ -75,9 +77,11 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 							}
 							print(getString(R.string.process_cancelled));
 							PROGRESS_ACTIVITY_SHOWN=false;
+							progressBarFragment.dismissAllowingStateLoss();
 							finish();
 						}
 					},750);
+
 
 				}
 			});

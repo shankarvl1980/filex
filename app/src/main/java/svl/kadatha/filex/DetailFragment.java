@@ -65,6 +65,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public UsbFile currentUsbFile;
 	public static final String USB_FILE_PREFIX="usb:";
+	public static final String FTP_FILE_PREFIX="ftp:";
 
 	public static boolean CUT_SELECTED;
 	public static boolean COPY_SELECTED;
@@ -138,7 +139,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				//if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
 				if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
 				{
 					fileObjectType=FileObjectType.ROOT_TYPE;
@@ -147,7 +147,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		}
 
-		file_click_selected_name=new File(fileclickselected).getName();
+		file_click_selected_name=(fileclickselected.equals(File.separator)) ? fileclickselected : new File(fileclickselected).getName();
 		if(MainActivity.ARCHIVE_EXTRACT_DIR==null) MainActivity.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 
@@ -316,7 +316,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d("shankar","resumed and modfication observed-"+modification_observed);
 		if(local_activity_delete)
 		{
 			cache_cleared=false;
@@ -1086,6 +1085,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 							}
 
 						}
+
 					}
 				});
 			}

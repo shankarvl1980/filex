@@ -232,6 +232,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
 						final String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
 
+						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+						{
+							print(getString(R.string.not_able_to_process));
+							return;
+						}
+
+
 						if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
 							print(getString(R.string.directory_not_exist_not_valid));
 							return;
@@ -241,6 +248,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 						{
 							return;
 						}
+
+
 
 						final Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
@@ -349,6 +358,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 							zip_output_folder=null;
 						}
 
+						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+						{
+							print(getString(R.string.not_able_to_process));
+							return;
+						}
 
 						if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
 							print(getString(R.string.directory_not_exist_not_valid));
@@ -475,6 +489,10 @@ public class ArchiveSetUpDialog extends DialogFragment
 			{
 				return check_SAF_permission(file_path,fileObjectType);
 			}
+		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			return false;
 		}
 		else return fileObjectType == FileObjectType.USB_TYPE;
 

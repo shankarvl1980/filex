@@ -413,20 +413,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 tag = fileSelectorDialog.getTag();
             }
-            /*
-            if((entry_count-frag)<1)
-            {
 
-            }
-
-             */
         }
         else
         {
-            /*
-
-
-             */
             if(onBackPressed)
             {
                 finish();
@@ -440,7 +430,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for(FilePOJO filePOJO:Global.STORAGE_DIR)
         {
-            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE)
+            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
             {
                 filePOJOS.add(filePOJO);
             }
