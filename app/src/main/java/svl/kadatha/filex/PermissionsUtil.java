@@ -3,6 +3,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 
@@ -68,7 +70,13 @@ public class PermissionsUtil
 		}
 		return true;
 	}
-	
+
+	 public boolean isNetworkConnected()
+	 {
+		 ConnectivityManager connectivityManager=(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		 NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
+		 return networkInfo != null && networkInfo.isConnectedOrConnecting();
+	 }
 
 	public boolean check_read_phone_state() {
 		if (Build.VERSION.SDK_INT >= 23) {

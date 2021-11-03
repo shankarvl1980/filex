@@ -1085,6 +1085,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 							}
 
 						}
+						else if(fileObjectType==FileObjectType.FTP_TYPE)
+                        {
+                            String fp=file_path.toString();
+                            mainActivity.createFragmentTransaction(fp,fileObjectType);
+                        }
 
 					}
 				});

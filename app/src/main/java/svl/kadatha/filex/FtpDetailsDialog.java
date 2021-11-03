@@ -54,6 +54,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private int scroll_distance;
     private Button delete_btn,rename_btn,edit_btn;
     private Handler handler;
+    private PermissionsUtil permissionsUtil;
 
 
     @Override
@@ -62,6 +63,7 @@ public class FtpDetailsDialog extends DialogFragment {
         this.context = context;
         fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
         ftpDatabaseHelper=new FtpDatabaseHelper(context);
+        permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context );
     }
 
     @Override
@@ -271,6 +273,11 @@ public class FtpDetailsDialog extends DialogFragment {
                         }
                         else
                         {
+                            if(permissionsUtil.isNetworkConnected())
+                            {
+                                print(getString(R.string.not_connected_to_network));
+                                return;
+                            }
                             progressBarFragment=ProgressBarFragment.getInstance();
                             progressBarFragment.show(fragmentManager,"");
 
@@ -424,6 +431,7 @@ public class FtpDetailsDialog extends DialogFragment {
         }
 
     }
+
 
     private void enable_disable_buttons(boolean enable, int selection_size)
     {

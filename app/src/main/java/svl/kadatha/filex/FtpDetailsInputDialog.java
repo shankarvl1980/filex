@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class FtpDetailsInputDialog extends DialogFragment {
@@ -29,6 +30,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private RadioButton mode_active_radio_btn,mode_passive_radio_btn,anonymous_radio_btn;
     private FtpDatabaseModificationListener ftpDatabaseModificationListener;
     private boolean update;
+    private PermissionsUtil permissionsUtil;
 
     private FtpDetailsInputDialog(){}
 
@@ -46,6 +48,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         super.onAttach(context);
         this.context=context;
         ftpDatabaseHelper=new FtpDatabaseHelper(context);
+        permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context);
     }
 
     @Override
@@ -123,6 +126,10 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
                 {
                     print(getString(R.string.server_port_username_fields_can_not_be_empty));
+                }
+                else if(!permissionsUtil.isNetworkConnected())
+                {
+                    print(getString(R.string.not_connected_to_network));
                 }
                 else
                 {
