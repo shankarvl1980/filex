@@ -877,7 +877,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			// TODO: Implement this method
 			super.onCancelled(result);
 			int s=deleted_file_names.size();
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
+			ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
 
@@ -1224,7 +1224,14 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_size_files+=folder.getSize();
 				size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				publishProgress(folder.getName());
-				success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				if(folder.isDirectory())
+				{
+					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
+				}
+				else {
+					success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				}
+
 			} catch (IOException e) {
 				return false;
 			}

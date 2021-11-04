@@ -147,7 +147,26 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		}
 
-		file_click_selected_name=(fileclickselected.equals(File.separator)) ? fileclickselected : new File(fileclickselected).getName();
+		if(fileclickselected.equals(File.separator))
+		{
+			if(fileObjectType==FileObjectType.USB_TYPE)
+			{
+				file_click_selected_name=USB_FILE_PREFIX+fileclickselected;
+			}
+			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			{
+				file_click_selected_name=FTP_FILE_PREFIX+fileclickselected;
+			}
+			else
+			{
+				file_click_selected_name=fileclickselected;
+			}
+		}
+		else
+		{
+			file_click_selected_name=new File(fileclickselected).getName();
+		}
+
 		if(MainActivity.ARCHIVE_EXTRACT_DIR==null) MainActivity.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 

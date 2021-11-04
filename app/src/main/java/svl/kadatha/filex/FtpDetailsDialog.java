@@ -273,7 +273,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         }
                         else
                         {
-                            if(permissionsUtil.isNetworkConnected())
+                            if(!permissionsUtil.isNetworkConnected())
                             {
                                 print(getString(R.string.not_connected_to_network));
                                 return;
