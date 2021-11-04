@@ -519,7 +519,7 @@
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/storage_analyser_label_background"
-
+					android:visibility="gone"
 					/>
 
 				<TextView
@@ -536,7 +536,7 @@
 					app:layout_constraintEnd_toStartOf="@id/ftp_image_view"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="@+id/ftp_label_background"
-
+					android:visibility="gone"
 					/>
 
 				<ImageView
@@ -551,7 +551,7 @@
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/ftp_label"
 					app:layout_constraintTop_toTopOf="@+id/ftp_label"
-
+					android:visibility="gone"
 					/>
 
 				<Space
