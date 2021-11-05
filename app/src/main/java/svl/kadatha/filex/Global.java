@@ -88,7 +88,7 @@ public class Global
 	static int ONE_DP;
 	static int TWO_DP;
 	static int THIRTY_SIX_DP;
-	//static int SIXTY_DP;
+	static int SELECTOR_ICON_DIMENSION;
 	static int ONE_SP;
 	static int FOUR_DP;
 	static int SIX_DP;
@@ -338,7 +338,7 @@ public class Global
 			TWO_DP=FOUR_DP/2;
 
 			THIRTY_SIX_DP=FOUR_DP*9;
-
+			SELECTOR_ICON_DIMENSION=TEN_DP+TEN_DP+SIX_DP;
 			RECYCLERVIEW_ITEM_SPACING=list_g;
 
 			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;

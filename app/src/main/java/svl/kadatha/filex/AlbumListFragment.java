@@ -678,7 +678,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		private TextView albumtextview, no_of_songs_textview,artisttextview;
 		private int itemWidth,itemHeight;
 		int imageview_dimension;
-		private int select_indicator_offset=Global.THIRTY_SIX_DP;
+		private int select_indicator_offset=Global.TEN_DP*4;
 
 		AlbumListRecyclerViewItem(Context context)
 		{

@@ -81,7 +81,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 							progressBarFragment.dismissAllowingStateLoss();
 							finish();
 						}
-					},750);
+					},800);
 
 				}
 			});

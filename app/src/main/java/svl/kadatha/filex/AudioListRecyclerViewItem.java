@@ -18,7 +18,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	public TextView titletextview, albumtextview, durationtextview,artisttextview;
 	private int itemWidth,itemHeight, imageview_dimension;
 	private final boolean whetherDialog;
-	private int select_indicator_offset=Global.THIRTY_SIX_DP;
+	private int select_indicator_offset=Global.TEN_DP*4;
 
     AudioListRecyclerViewItem(Context context, boolean whetherDialog)
 	{
