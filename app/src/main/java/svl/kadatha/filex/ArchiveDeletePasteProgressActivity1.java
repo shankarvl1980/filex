@@ -330,46 +330,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		PROGRESS_ACTIVITY_SHOWN=false;
 	}
 
-	private class CancleAsyncTask extends AsyncTask<Void,Void,Void>
-	{
-		ProgressBarFragment progressBarFragment;
-		Context context;
-
-		CancleAsyncTask(Context context)
-		{
-			this.context=context;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			progressBarFragment=ProgressBarFragment.getInstance();
-			progressBarFragment.show(getSupportFragmentManager(),"");
-			if(archiveDeletePasteFileService!=null)
-			{
-				archiveDeletePasteFileService.cancelService();
-			}
-			print(getString(R.string.process_cancelled));
-			PROGRESS_ACTIVITY_SHOWN=false;
-		}
-
-		@Override
-		protected Void doInBackground(Void... voids) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void unused) {
-			super.onPostExecute(unused);
-			progressBarFragment.dismissAllowingStateLoss();
-			((AppCompatActivity)context).finish();
-		}
-	}
 
 	private void print(String msg)
 	{
