@@ -6,6 +6,8 @@ import android.widget.*;
 import android.view.*;
 import android.widget.AbsListView.*;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.*;
 
 public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
@@ -23,7 +25,8 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 	static boolean PROGRESS_ACTIVITY_SHOWN;
 	private String intent_action;
 	private FileObjectType sourceFileObjectType;
-	
+	private ProgressBar cancelProgressBar;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +47,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		copied_textview.setKeyListener(null);
 		no_files=findViewById(R.id.fragment_cut_copy_delete_archive_no_files);
 		size_files=findViewById(R.id.fragment_cut_copy_delete_archive_size_files);
+		cancelProgressBar=findViewById(R.id.fragment_cut_copy_delete_progress_cancel_progress);
 		ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
 		Button hide_button = buttons_layout.findViewById(R.id.first_button);
@@ -65,21 +69,20 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		{
 			public void onClick(View v)
 			{
-				ProgressBarFragment progressBarFragment=ProgressBarFragment.getInstance();
-				progressBarFragment.show(getSupportFragmentManager(),"");
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						if(archiveDeletePasteFileService!=null)
-						{
-							archiveDeletePasteFileService.cancelService();
-						}
-						print(getString(R.string.process_cancelled));
-						PROGRESS_ACTIVITY_SHOWN=false;
-                        progressBarFragment.dismissAllowingStateLoss();
-						finish();
-					}
-				},800);
+
+				cancelProgressBar.setVisibility(View.VISIBLE);
+				if(archiveDeletePasteFileService!=null)
+				{
+					archiveDeletePasteFileService.cancelService();
+				}
+				print(getString(R.string.process_cancelled));
+				PROGRESS_ACTIVITY_SHOWN=false;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ignored) {
+
+				}
+				finish();
 
 			}
 		});
@@ -184,7 +187,12 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		}
 		
 	}
-	
+
+	private void cancel_function() throws IllegalStateException
+	{
+
+	}
+
 	@Override
 	protected void onNewIntent(Intent intent)
 	{
@@ -320,6 +328,47 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		super.onPause();
 		unbindService(serviceConnection);
 		PROGRESS_ACTIVITY_SHOWN=false;
+	}
+
+	private class CancleAsyncTask extends AsyncTask<Void,Void,Void>
+	{
+		ProgressBarFragment progressBarFragment;
+		Context context;
+
+		CancleAsyncTask(Context context)
+		{
+			this.context=context;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressBarFragment=ProgressBarFragment.getInstance();
+			progressBarFragment.show(getSupportFragmentManager(),"");
+			if(archiveDeletePasteFileService!=null)
+			{
+				archiveDeletePasteFileService.cancelService();
+			}
+			print(getString(R.string.process_cancelled));
+			PROGRESS_ACTIVITY_SHOWN=false;
+		}
+
+		@Override
+		protected Void doInBackground(Void... voids) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void unused) {
+			super.onPostExecute(unused);
+			progressBarFragment.dismissAllowingStateLoss();
+			((AppCompatActivity)context).finish();
+		}
 	}
 
 	private void print(String msg)

@@ -13,12 +13,10 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     static final String DATABASE="FtpDetails.db";
     static final String TABLE="FtpList";
-    private final Context context;
 
     FtpDatabaseHelper(Context context)
     {
         super(context,DATABASE,null,1);
-        this.context=context;
     }
 
     @Override

@@ -24,7 +24,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     private Context context;
     private String server, display;
     private EditText new_ftp_name_edittext;
-    private Button okbutton;
     private InputMethodManager imm;
     private FtpRenameListener ftpRenameListener;
     private FtpDatabaseHelper ftpDatabaseHelper;
@@ -77,7 +76,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         files_size_textview.setVisibility(View.GONE);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_rename_delete_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-        okbutton = buttons_layout.findViewById(R.id.first_button);
+        Button okbutton = buttons_layout.findViewById(R.id.first_button);
         okbutton.setText(R.string.ok);
         Button cancelbutton = v.findViewById(R.id.second_button);
         cancelbutton.setText(R.string.cancel);

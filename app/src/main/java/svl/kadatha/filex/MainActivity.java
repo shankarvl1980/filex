@@ -1651,12 +1651,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						//process to have only files with unique file names
 						Set<String> file_name_set=new HashSet<>();
-						Iterator<String> iterator=DetailFragment.FILE_SELECTED_FOR_CUT_COPY.iterator();
-						while(iterator.hasNext())
-						{
-							String file_path=iterator.next();
-							boolean inserted=file_name_set.add(new File(file_path).getName());
-							if(inserted) files_selected_array.add(file_path);
+						for (String file_path : DetailFragment.FILE_SELECTED_FOR_CUT_COPY) {
+							boolean inserted = file_name_set.add(new File(file_path).getName());
+							if (inserted) files_selected_array.add(file_path);
 						}
 
 					}

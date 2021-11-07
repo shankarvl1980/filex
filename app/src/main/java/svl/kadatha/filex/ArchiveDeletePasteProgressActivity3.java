@@ -23,7 +23,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	static boolean PROGRESS_ACTIVITY_SHOWN;
 	private String intent_action;
 	private FileObjectType sourceFileObjectType;
-
+	private ProgressBar cancelProgressBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +45,8 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		copied_textview.setKeyListener(null);
 		no_files=findViewById(R.id.fragment_cut_copy_delete_archive_no_files);
 		size_files=findViewById(R.id.fragment_cut_copy_delete_archive_size_files);
-        ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
+		cancelProgressBar=findViewById(R.id.fragment_cut_copy_delete_progress_cancel_progress);
+		ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button hide_button = buttons_layout.findViewById(R.id.first_button);
 		hide_button.setText(R.string.hide);
@@ -66,21 +67,19 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 			{
 				public void onClick(View v)
 				{
-					ProgressBarFragment progressBarFragment=ProgressBarFragment.getInstance();
-					progressBarFragment.show(getSupportFragmentManager(),"");
-					new Handler().postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							if(archiveDeletePasteFileService!=null)
-							{
-								archiveDeletePasteFileService.cancelService();
-							}
-							print(getString(R.string.process_cancelled));
-							PROGRESS_ACTIVITY_SHOWN=false;
-							progressBarFragment.dismissAllowingStateLoss();
-							finish();
-						}
-					},800);
+					cancelProgressBar.setVisibility(View.VISIBLE);
+					if(archiveDeletePasteFileService!=null)
+					{
+						archiveDeletePasteFileService.cancelService();
+					}
+					print(getString(R.string.process_cancelled));
+					PROGRESS_ACTIVITY_SHOWN=false;
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignored) {
+
+					}
+					finish();
 
 
 				}

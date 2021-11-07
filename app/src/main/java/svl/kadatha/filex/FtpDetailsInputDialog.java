@@ -27,7 +27,8 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private int port;
     private int anonymous;
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
-    private RadioButton mode_active_radio_btn,mode_passive_radio_btn,anonymous_radio_btn;
+    private RadioButton mode_active_radio_btn;
+    private RadioButton anonymous_radio_btn;
     private FtpDatabaseModificationListener ftpDatabaseModificationListener;
     private boolean update;
     private PermissionsUtil permissionsUtil;
@@ -92,7 +93,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         server_tv=v.findViewById(R.id.ftp_details_server);
         port_tv=v.findViewById(R.id.ftp_details_port);
         mode_active_radio_btn=v.findViewById(R.id.ftp_details_active_radio_btn);
-        mode_passive_radio_btn=v.findViewById(R.id.ftp_details_passive_radio_btn);
+        RadioButton mode_passive_radio_btn = v.findViewById(R.id.ftp_details_passive_radio_btn);
         user_name_tv=v.findViewById(R.id.ftp_details_user_name);
         password_tv=v.findViewById(R.id.ftp_details_pword);
         anonymous_radio_btn=v.findViewById(R.id.ftp_details_anonymous_radio_btn);

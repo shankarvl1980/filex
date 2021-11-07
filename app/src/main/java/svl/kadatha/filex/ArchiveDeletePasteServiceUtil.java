@@ -28,6 +28,7 @@ public class ArchiveDeletePasteServiceUtil {
     static Class getEmptyService(Context context)
     {
         Class emptyService=null;
+
         if(ArchiveDeletePasteFileService1.SERVICE_COMPLETED)
         {
             emptyService=ArchiveDeletePasteProgressActivity1.class;

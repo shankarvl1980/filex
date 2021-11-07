@@ -758,19 +758,12 @@ public class FilePOJOUtil {
         String parent_file_path=new File(file_path).getParent();
         if(parent_file_path!=null)
         {
-            Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
 
-            while(iterator.hasNext())
-            {
-                Map.Entry<String, List<FilePOJO>> entry=iterator.next();
-                //if((fileObjectType+file_path+File.separator).startsWith(entry.getKey()+File.separator))
-                if(Global.IS_CHILD_FILE(fileObjectType+file_path,entry.getKey()))
-                {
-                    List<FilePOJO> filePOJOS=entry.getValue();
-                    if(filePOJOS!=null)
-                    {
-                        for(FilePOJO filePOJO:filePOJOS)
-                        {
+            for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
+                if (Global.IS_CHILD_FILE(fileObjectType + file_path, entry.getKey())) {
+                    List<FilePOJO> filePOJOS = entry.getValue();
+                    if (filePOJOS != null) {
+                        for (FilePOJO filePOJO : filePOJOS) {
                             filePOJO.setTotalFiles(0);
                             filePOJO.setTotalSizeLong(0L);
                             filePOJO.setTotalSize(null);
@@ -787,18 +780,12 @@ public class FilePOJOUtil {
 
     public static void SET_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
     {
-        Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
 
-        while(iterator.hasNext())
-        {
-            Map.Entry<String, List<FilePOJO>> entry=iterator.next();
-            if((fileObjectType+file_path).equals(entry.getKey()))
-            {
-                List<FilePOJO> filePOJOS=entry.getValue();
-                if(filePOJOS!=null)
-                {
-                    for(FilePOJO filePOJO:filePOJOS)
-                    {
+        for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
+            if ((fileObjectType + file_path).equals(entry.getKey())) {
+                List<FilePOJO> filePOJOS = entry.getValue();
+                if (filePOJOS != null) {
+                    for (FilePOJO filePOJO : filePOJOS) {
                         filePOJO.setTotalFiles(0);
                         filePOJO.setTotalSizeLong(0L);
                         filePOJO.setTotalSize(null);

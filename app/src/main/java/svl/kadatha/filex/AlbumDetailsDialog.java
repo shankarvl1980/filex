@@ -81,8 +81,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 
-		//hide keyboard when coming from search list of albumlist dialog
-		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
+
 	}
 
 	@Override
@@ -297,8 +296,9 @@ public class AlbumDetailsDialog extends DialogFragment
 		{
 			new AlbumListDetailsExtractor().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
-	
 
+		//hide keyboard when coming from search list of albumlist dialog
+		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 		return v;
 		
 	}

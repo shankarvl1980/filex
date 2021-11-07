@@ -713,38 +713,22 @@ import java.util.List;
 		public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
 		{
 			boolean success;
-			FileInputStream fileInStream = null;
 			//OutputStream outStream=null;
 
-			try
-			{
-				fileInStream = new FileInputStream(source);
-				String file_path=target_file_path.equals(File.separator) ? target_file_path+name : target_file_path+File.separator+name;
-				success=MainActivity.FTP_CLIENT.storeFile(file_path,fileInStream);
+			try (FileInputStream fileInStream = new FileInputStream(source)) {
+				String file_path = target_file_path.equals(File.separator) ? target_file_path + name : target_file_path + File.separator + name;
+				success = MainActivity.FTP_CLIENT.storeFile(file_path, fileInStream);
 
-				if(success&&cut)
-				{
+				if (success && cut) {
 					deleteNativeFile(source);
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				//Log.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
-			finally
-			{
-				try
-				{
-					fileInStream.close();
-				}
-				catch (Exception e)
-				{
-					// ignore exception
-				}
+			// ignore exception
 
-			}
 			return success;
 		}
 
