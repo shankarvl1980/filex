@@ -1,10 +1,8 @@
-
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	>
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical">
 
 
 	<androidx.recyclerview.widget.RecyclerView
@@ -22,8 +20,19 @@
 		android:scrollbars="vertical"
 		android:paddingBottom="100dp"
 		android:clipToPadding="false"
-		style="@style/my_scrollbar"/>
+		style="@style/my_scrollbar"
 
+		/>
+
+	<!--
+	app:fastScrollEnabled="true"
+		app:fastScrollHorizontalThumbDrawable="@drawable/scroll_thumb_icon"
+		app:fastScrollHorizontalTrackDrawable="@drawable/scrollbar"
+		app:fastScrollVerticalThumbDrawable="@drawable/scroll_thumb_icon"
+		app:fastScrollVerticalTrackDrawable="@drawable/scrollbar"
+
+
+	-->
 	<TextView
 		android:id="@+id/empty_folder"
 		android:layout_width="match_parent"

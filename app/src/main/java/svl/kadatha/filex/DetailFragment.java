@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mjdev.libaums.fs.UsbFile;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
 	static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
-	public RecyclerView filepath_recyclerview, recyclerView;
+	public RecyclerView filepath_recyclerview;
+	public RecyclerView recyclerView;
 	LinearLayoutManager llm;
 	GridLayoutManager glm;
 	TextView folder_empty;

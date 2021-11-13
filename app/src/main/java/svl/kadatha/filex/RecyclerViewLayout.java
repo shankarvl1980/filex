@@ -22,7 +22,7 @@ public class RecyclerViewLayout extends ViewGroup
     private ImageView fileimageview,overlay_fileimageview,file_select_indicator;
 	private TextView filenametextview, filesubfilecounttextview, filepermissionstextView,filemoddatetextview,filepathtextview;
     private int imageview_dimension;
-	private int itemWidth, itemHeight;
+	public int itemWidth, itemHeight;
 	private final boolean show_file_path;
 	private int select_indicator_offset_linear;
 
@@ -176,7 +176,6 @@ public class RecyclerViewLayout extends ViewGroup
 
 		}
 
-		//if(Global.IS_TABLET) select_indicator_offset=Global.THIRTY_SIX_DP*2;
 		select_indicator_offset_linear=Global.TEN_DP*4; //around 40 dp which is about 1 & half of select indicator icon;
 	}
 	

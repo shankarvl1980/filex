@@ -127,6 +127,12 @@
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar</item>
     </style>
 
+    <style name="custom_thumb_scrollbar">
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scroll_thumb_icon</item>
+    </style>
 
 
 

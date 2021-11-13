@@ -303,19 +303,6 @@ public class CreateFileDialog extends DialogFragment
 				{
 					df.glm.scrollToPositionWithOffset(idx,0);
 				}
-				/*
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-
-
-
-
-
-					}
-				},500);
-
-				 */
 
 				print("'"+new_name+ "' "+getString(R.string.created));
 			}

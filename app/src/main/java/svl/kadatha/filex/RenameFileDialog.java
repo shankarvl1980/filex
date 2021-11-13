@@ -380,6 +380,7 @@ public class RenameFileDialog extends DialogFragment
 		}
 	}
 
+	/*
 	public void rename_process(String new_file_path, String new_name)
 	{
 		boolean fileNameChanged = false;
@@ -494,6 +495,8 @@ public class RenameFileDialog extends DialogFragment
 
 	}
 
+	 */
+
 	private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO)
 	{
 		if(fileNameChanged)
@@ -509,17 +512,7 @@ public class RenameFileDialog extends DialogFragment
 				df.glm.scrollToPositionWithOffset(idx,0);
 			}
 
-/*
-			new Handler().postDelayed(new Runnable() {
-				@Override
-				public void run() {
 
-
-
-				}
-			},500);
-
- */
 			print(getString(R.string.renamed)+" '"+existing_name+"' "+getString(R.string.at)+" '"+new_name+"'");
 		}
 		else
