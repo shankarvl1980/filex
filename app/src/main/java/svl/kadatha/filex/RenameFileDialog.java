@@ -160,7 +160,6 @@ public class RenameFileDialog extends DialogFragment
 								@Override
 								public void rename_file() {
 
-									//rename_process(new_file_path,new_name);
 									new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 								}
 							});
@@ -175,7 +174,6 @@ public class RenameFileDialog extends DialogFragment
 							}
 							else
 							{
-								//rename_process(new_file_path,new_name);
 								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						}
@@ -191,7 +189,6 @@ public class RenameFileDialog extends DialogFragment
 							@Override
 							public void rename_file() {
 
-								//rename_process(new_file_path,new_name);
 								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						});
@@ -204,7 +201,6 @@ public class RenameFileDialog extends DialogFragment
 							@Override
 							public void rename_file() {
 
-								//rename_process(new_file_path,new_name);
 								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 							}
 						});
@@ -214,7 +210,6 @@ public class RenameFileDialog extends DialogFragment
 				}
 				else
 				{
-					//rename_process(new_file_path,new_name);
 					new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 
@@ -288,7 +283,6 @@ public class RenameFileDialog extends DialogFragment
 							boolean isDir=new File(new_file_path).isDirectory();
 							if(!isDir && !isDirectory)
 							{
-								//new RenameAsyncTask(context,parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 								if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
 								{
 									fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);

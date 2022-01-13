@@ -49,6 +49,7 @@ public class CreateFileDialog extends DialogFragment
 	private FileObjectType fileObjectType;
 	private String other_file_permission;
 	private final List<String> dest_file_names=new ArrayList<>();
+	private List<FilePOJO> destFilePOJOs;
 
 	private CreateFileDialog(){}
 
@@ -74,7 +75,9 @@ public class CreateFileDialog extends DialogFragment
 		}
 
 
-		List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
+		destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
+
+/*
 		if(destFilePOJOs==null) //first start of app after installation, hashmap size is zero
 		{
 			if(fileObjectType==FileObjectType.FILE_TYPE)
@@ -95,9 +98,12 @@ public class CreateFileDialog extends DialogFragment
 			}
 		}
 
+ */
+
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);
 
 	}
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -331,11 +337,47 @@ public class CreateFileDialog extends DialogFragment
 	private boolean check_name_availability(String new_file_path, boolean isWritable, FileObjectType fileObjectType)
 	{
 		File new_file=new File(new_file_path);
+		String new_file_name=new_file.getName();
+		if(destFilePOJOs==null) //first start of app after installation, hashmap size is zero
+		{
+			if(fileObjectType==FileObjectType.FILE_TYPE)
+			{
+				String [] file_names_array;
+				if((file_names_array=new File(parent_folder).list())!=null)
+				{
+					for(String name:file_names_array)
+					{
+						if(name.equals(new_file_name))
+						{
+							print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+							return false;
+						}
+					}
+				}
+
+			}
+		}
+		else
+		{
+			for(FilePOJO filePOJO:destFilePOJOs)
+			{
+				if(filePOJO.getName().equals(new_file_name))
+				{
+					print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+					return false;
+				}
+
+			}
+		}
+
+		/*
 		if(dest_file_names.contains(new_file.getName()))
 		{
 			print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
 			return false;
 		}
+
+		 */
 		if(fileObjectType== FileObjectType.FILE_TYPE)
 		{
 			if(isWritable)
