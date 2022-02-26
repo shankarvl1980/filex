@@ -661,7 +661,6 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					//if((dest_folder+File.separator).startsWith(iterator.next()+File.separator))
 					if(Global.IS_CHILD_FILE(dest_folder,iterator.next()))
 					{
 						iterator.remove();

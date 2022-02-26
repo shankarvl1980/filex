@@ -5,6 +5,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -120,6 +121,7 @@ class FileIntentDispatch
 										((StorageAnalyserActivity)context).clear_cache=false;
 									}
 								}
+								//intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 								intent.setPackage(package_name);
 								context.startActivity(intent);
 
@@ -128,18 +130,6 @@ class FileIntentDispatch
 
 						});
 
-						AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-						/*
-						if(appCompatActivity instanceof MainActivity)
-						{
-							appInstallAlertDialogFragment.show(MainActivity.FM,"");
-						}
-						else if(appCompatActivity instanceof StorageAnalyserActivity)
-						{
-							appInstallAlertDialogFragment.show(StorageAnalyserActivity.FM,"");
-						}
-
-						 */
 						appInstallAlertDialogFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 					}
 					else
@@ -178,18 +168,6 @@ class FileIntentDispatch
 	private static void launch_app_selector_dialog(Context context,Uri uri,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView, FileObjectType fileObjectType)
 	{
 		AppSelectorDialog appSelectorDialog=AppSelectorDialog.getInstance(uri,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
-		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-		/*
-		if(appCompatActivity instanceof MainActivity)
-		{
-			appSelectorDialog.show(MainActivity.FM,"");
-		}
-		else if(appCompatActivity instanceof StorageAnalyserActivity)
-		{
-			appSelectorDialog.show(StorageAnalyserActivity.FM,"");
-		}
-
-		 */
 		appSelectorDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 	}
 	private static void send_file(Context context, ArrayList<File> file_list)
@@ -423,7 +401,15 @@ class FileIntentDispatch
 			}
 		}
 		intent.setAction(Intent.ACTION_VIEW);
-		intent.setDataAndType(uri,mime_type);
+		//if(mime_type.equals("application/vnd.android.package-archive"))
+		{
+		//	intent.setData(uri);
+		}
+		//else
+		{
+			intent.setDataAndType(uri,mime_type);
+		}
+
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
 		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType);
 		intent.putExtra(EXTRA_FILE_PATH,file_path);

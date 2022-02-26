@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -103,6 +105,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
+	private static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -465,12 +468,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
-		//else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+file_path+File.separator))
 		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
 		{
 			cache_cleared=true;
 		}
-		//else if((this.fileObjectType+fileclickselected+File.separator).startsWith(fileObjectType+new File(file_path).getParent()+File.separator))
 		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+new File(file_path).getParent()))
 		{
 			cache_cleared=true;
@@ -516,6 +517,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			treeUri = resultData.getData();
 			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 		}
+		else if (requestCode == UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
+		{
+			print(getString(R.string.permission_granted));
+		}
 		else
 		{
 			print(getString(R.string.permission_not_granted));
@@ -559,6 +564,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else
 		{
+			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+			{
+				if(!mainActivity.getPackageManager().canRequestPackageInstalls())
+				{
+					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
+					startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+					return;
+				}
+			}
+
 			if(fileObjectType==FileObjectType.USB_TYPE)
 			{
 				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
