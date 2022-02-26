@@ -1,8 +1,11 @@
 package svl.kadatha.filex;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageInstaller;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -39,7 +42,10 @@ import com.github.mjdev.libaums.fs.UsbFile;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,6 +112,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
+
+	public static final String ACTION_INSTALL_COMPLETE = "svl.kadatha.filex.INSTALL_COMPLETE";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -519,7 +527,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if (requestCode == UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
 		{
-			print(getString(R.string.permission_granted));
+			//installAPK();
 		}
 		else
 		{
@@ -545,7 +553,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					public void onSelectType(String mime_type)
 					{
-
 						if(fileObjectType==FileObjectType.USB_TYPE)
 						{
 							if(check_availability_USB_SAF_permission(file_path,fileObjectType))
@@ -562,8 +569,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				});
 			fileTypeSelectFragment.show(mainActivity.fm,"");
 		}
-		else
+		else if(file_ext.matches("(?i)apk"))
 		{
+
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 			{
 				if(!mainActivity.getPackageManager().canRequestPackageInstalls())
@@ -571,22 +579,45 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
 					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
 					startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
-					return;
 				}
-			}
-
-			if(fileObjectType==FileObjectType.USB_TYPE)
-			{
-				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+				else
 				{
-					FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path);
+					try {
+						installPackage(context,file_path);
+					} catch (IOException e) {
+						print(getString(R.string.installation_failed));
+					}
 				}
 			}
-			else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+			else
 			{
-				FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType);
+				if(fileObjectType==FileObjectType.USB_TYPE)
+				{
+					if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+					{
+						FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path);
+					}
+				}
+				else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+				{
+					FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType);
+				}
 			}
 		}
+		else
+		 {
+			 if(fileObjectType==FileObjectType.USB_TYPE)
+			 {
+				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+				 {
+					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path);
+				 }
+			 }
+			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+			 {
+				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType);
+			 }
+		 }
 	}
 
 	public void set_adapter()
@@ -736,6 +767,42 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			return true;
 		}
+	}
+
+	public static void installPackage(Context context, String file_path)
+			throws IOException {
+		InputStream inputStream;
+		inputStream = new FileInputStream(file_path);
+
+		PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+		int sessionId = packageInstaller.createSession(new PackageInstaller
+				.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL));
+		PackageInstaller.Session session = packageInstaller.openSession(sessionId);
+
+		long sizeBytes = -1;
+
+		OutputStream out = null;
+		out = session.openWrite("my_app_session", 0, sizeBytes);
+
+		int total = 0;
+		byte[] buffer = new byte[65536];
+		int c;
+		while ((c = inputStream.read(buffer)) != -1) {
+			total += c;
+			out.write(buffer, 0, c);
+		}
+		session.fsync(out);
+		inputStream.close();
+		out.close();
+
+		// fake intent
+		IntentSender statusReceiver = null;
+		Intent intent = new Intent(context, MainActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context,
+				1337111117, intent, 0);
+
+		session.commit(pendingIntent.getIntentSender());
+		session.close();
 	}
 
 	private class AsyncTaskLibrarySearch extends svl.kadatha.filex.AsyncTask<Void, Integer,Void>
