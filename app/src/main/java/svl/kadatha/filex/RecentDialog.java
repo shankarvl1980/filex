@@ -44,6 +44,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
 	private RecyclerView recent_recyclerview;
 	private TextView recent_label;
+	private static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -129,6 +130,10 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			Uri treeUri;
 			treeUri = resultData.getData();
 			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
+		}
+		else if (requestCode == UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
+		{
+			//installAPK();
 		}
 		else
 		{

@@ -378,7 +378,15 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 			this.list=l;
-			title.setText(currently_shown_file.getName());
+			if(currently_shown_file==null)
+			{
+				getActivity().finish();
+			}
+			else
+			{
+				title.setText(currently_shown_file.getName());
+			}
+
 		}
 
 		@Override

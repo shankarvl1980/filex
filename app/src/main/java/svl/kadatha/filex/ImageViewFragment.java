@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -776,6 +777,10 @@ public class ImageViewFragment extends Fragment
 			}
 			else
 			{
+				if(Global.SORT==null)
+				{
+					Global.GET_PREFERENCES(new TinyDB(getContext()));
+				}
 				Collections.sort(filePOJOS,FileComparator.FilePOJOComparate(Global.SORT,false));
 				int size=filePOJOS.size();
 				int count=0;

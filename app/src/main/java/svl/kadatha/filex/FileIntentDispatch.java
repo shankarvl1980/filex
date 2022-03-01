@@ -121,12 +121,10 @@ class FileIntentDispatch
 										((StorageAnalyserActivity)context).clear_cache=false;
 									}
 								}
-								//intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
+
 								intent.setPackage(package_name);
 								context.startActivity(intent);
-
 							}
-
 
 						});
 
@@ -401,14 +399,7 @@ class FileIntentDispatch
 			}
 		}
 		intent.setAction(Intent.ACTION_VIEW);
-		//if(mime_type.equals("application/vnd.android.package-archive"))
-		{
-		//	intent.setData(uri);
-		}
-		//else
-		{
-			intent.setDataAndType(uri,mime_type);
-		}
+		intent.setDataAndType(uri,mime_type);
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
 		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType);

@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -769,7 +770,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		}
 	}
+/*
+	public void start_activity_afresh()
+	{
+		Global.STORAGE_DIR.clear();
+		clearCache();
+		Intent in=getIntent();
+		finish();
+		startActivity(in);
+	}
 
+ */
 	private void showDialogOK(String message, DialogInterface.OnClickListener okListener)
 	{
         new AlertDialog.Builder(context)
@@ -1029,7 +1040,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
 					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
-
 		}
 
 	}

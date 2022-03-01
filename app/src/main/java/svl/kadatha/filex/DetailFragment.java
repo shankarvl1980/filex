@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -105,7 +106,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private final int request_code=487;
 	private Uri tree_uri;
 	private String tree_uri_path="";
-	ProgressBarFragment pbf_polling;
+	private static ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
@@ -121,6 +122,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
+
 	}
 
 	@Override
@@ -205,14 +207,34 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-                pbf_polling=ProgressBarFragment.getInstance();
-                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
+				if(mainActivity.fm==null)
+				{
+					context=getContext();
+					mainActivity=(MainActivity)context;
+					mainActivity.fm=mainActivity.getSupportFragmentManager();
+				}
+				else
+				{
+
+					if(!archive_view)
+					{
+						if(pbf_polling==null || pbf_polling.getDialog()==null)
+						{
+							pbf_polling=ProgressBarFragment.getInstance();
+							pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
+						}
+
+					}
+
+				}
+
 			    new Thread(new Runnable() {
 
 					@Override
 					public void run() {
 						filled_filePOJOs=false;
 						filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
+
 					}
 				}).start();
 			}
@@ -244,7 +266,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			else
 			{
                 pbf_polling=ProgressBarFragment.getInstance();
-                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
+                if(!archive_view)
+				{
+					pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
+				}
+
 			    new Thread(new Runnable() {
 
 					@Override
@@ -344,6 +370,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return v;
 	}
 
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
 
 	@Override
 	public void onResume() {
@@ -355,7 +385,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			after_filledFilePojos_procedure();
 		}
-		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+		else if(modification_observed)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
 			cache_cleared=false;
@@ -569,7 +599,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				});
 			fileTypeSelectFragment.show(mainActivity.fm,"");
 		}
-		else if(file_ext.matches("(?i)apk"))
+/*
+		 else if(file_ext.matches("(?i)apk"))
 		{
 
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
@@ -604,6 +635,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 			}
 		}
+
+ */
 		else
 		 {
 			 if(fileObjectType==FileObjectType.USB_TYPE)
@@ -769,40 +802,48 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	public static void installPackage(Context context, String file_path)
+	public void installPackage(Context context, String file_path)
 			throws IOException {
 		InputStream inputStream;
-		inputStream = new FileInputStream(file_path);
-
+		Uri uri;
+		File file=new File(file_path);
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
+		{
+			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
+		}
+		else
+		{
+			uri=Uri.fromFile(file);
+		}
+		inputStream=context.getContentResolver().openInputStream(uri);
 		PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
-		int sessionId = packageInstaller.createSession(new PackageInstaller
-				.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL));
+		PackageInstaller.SessionParams sessionParams=new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+		int sessionId = packageInstaller.createSession(sessionParams);
 		PackageInstaller.Session session = packageInstaller.openSession(sessionId);
 
 		long sizeBytes = -1;
 
-		OutputStream out = null;
-		out = session.openWrite("my_app_session", 0, sizeBytes);
+		OutputStream outputStream = session.openWrite("my_app_session", 0, sizeBytes);
 
 		int total = 0;
 		byte[] buffer = new byte[65536];
 		int c;
 		while ((c = inputStream.read(buffer)) != -1) {
 			total += c;
-			out.write(buffer, 0, c);
+			outputStream.write(buffer, 0, c);
 		}
-		session.fsync(out);
+		//session.fsync(outputStream);
 		inputStream.close();
-		out.close();
+		outputStream.close();
 
 		// fake intent
-		IntentSender statusReceiver = null;
 		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context,
-				1337111117, intent, 0);
+				0, intent, 0);
+		IntentSender statusReceiver = pendingIntent.getIntentSender();
 
-		session.commit(pendingIntent.getIntentSender());
-		session.close();
+		session.commit(statusReceiver);
+		//session.close();
 	}
 
 	private class AsyncTaskLibrarySearch extends svl.kadatha.filex.AsyncTask<Void, Integer,Void>

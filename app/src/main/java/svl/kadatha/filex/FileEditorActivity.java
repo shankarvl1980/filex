@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ArrowKeyMovementMethod;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,6 +46,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -814,7 +816,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		to_be_closed_after_save=savedInstanceState.getBoolean("to_be_closed_after_save");
 		eol=savedInstanceState.getInt("eol");
 		altered_eol=savedInstanceState.getInt("altered_eol");
-		page_pointer_hashmap=(LinkedHashMap<Integer,Long>)savedInstanceState.getSerializable("page_pointer_hashmap");
+		Serializable serializable = savedInstanceState.getSerializable("page_pointer_hashmap");
+		try {
+			page_pointer_hashmap=(LinkedHashMap<Integer,Long>)serializable;
+		} catch (ClassCastException e) {
+			finish();
+		}
+
 		current_page=savedInstanceState.getInt("current_page");
 		current_page_end_point=savedInstanceState.getLong("current_page_end_point");
 		file_start=savedInstanceState.getBoolean("file_start");
@@ -837,6 +845,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 
 	}
+
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);

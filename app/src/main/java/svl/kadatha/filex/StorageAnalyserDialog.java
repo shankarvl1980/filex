@@ -141,6 +141,15 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onBackPressed();
                 }
             });
+            /*
+            if(storageAnalyserActivity.fm==null)
+            {
+                context=getContext();
+                storageAnalyserActivity=(StorageAnalyserActivity) context;
+                storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
+            }
+
+             */
             cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
             new Thread(new Runnable() {
 
