@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Process;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

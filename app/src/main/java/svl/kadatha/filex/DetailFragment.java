@@ -15,8 +15,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -40,10 +38,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mjdev.libaums.fs.UsbFile;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -122,7 +118,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
-
+		if(pbf_polling!=null)
+		{
+			pbf_polling.dismissAllowingStateLoss();
+		}
 	}
 
 	@Override
@@ -198,6 +197,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		}
 
+		if(pbf_polling!=null)
+		{
+			pbf_polling.dismissAllowingStateLoss();
+		}
+
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -215,7 +219,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 				else
 				{
-
 					if(!archive_view)
 					{
 						if(pbf_polling==null || pbf_polling.getDialog()==null)

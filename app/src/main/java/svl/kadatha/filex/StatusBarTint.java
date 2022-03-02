@@ -1,5 +1,4 @@
 package svl.kadatha.filex;
-import android.os.*;
 import android.graphics.*;
 
 import androidx.appcompat.app.AppCompatActivity;

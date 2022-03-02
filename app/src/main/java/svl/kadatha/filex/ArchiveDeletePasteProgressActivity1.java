@@ -6,8 +6,6 @@ import android.widget.*;
 import android.view.*;
 import android.widget.AbsListView.*;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.*;
 
 public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
