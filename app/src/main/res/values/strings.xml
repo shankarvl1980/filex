@@ -318,6 +318,7 @@
     <string name="not_connected_to_network">not connected to network</string>
     <string name="permission_granted">permission granted</string>
     <string name="installation_failed">installation failed</string>
+    <string name="permission_required_to_regulate_audio_play_when_phone_rings">Permission is required to regulate the audio play when phone rings</string>
 
 
     <string-array name="library_categories">

@@ -27,6 +27,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
@@ -286,7 +290,8 @@ public class ImageViewFragment extends Fragment
 							float aspect_ratio=image_view_adapter.getAspectRatio();
 							File tempFile=new File(((ImageViewActivity)getContext()).CacheDir,currently_shown_file.getName());
 							Intent intent=InstaCropperActivity.getIntent(context,uri,Uri.fromFile(tempFile),currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
-							startActivityForResult(intent,crop_request_code);
+							//startActivityForResult(intent,crop_request_code);
+							activityResultLauncher_crop_request.launch(intent);
 							break;
 						default:
 							break;
@@ -433,10 +438,79 @@ public class ImageViewFragment extends Fragment
 	 public void seekSAFPermission()
 	 {
 	 	Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-	 	startActivityForResult(intent, saf_request_code);
+	 	//startActivityForResult(intent, saf_request_code);
+		 activityResultLauncher_SAF_permission.launch(intent);
 	 }
 
+	 private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		 @Override
+		 public void onActivityResult(ActivityResult result) {
+			 if (result.getResultCode()== Activity.RESULT_OK)
+			 {
+				 Uri treeUri;
+				 treeUri = result.getData().getData();
+				 Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
+				 boolean permission_requested = false;
+				 delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+				 delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+			 }
+			 else
+			 {
+				 print(getString(R.string.permission_not_granted));
+			 }
+		 }
+	 });
+
+	private final ActivityResultLauncher<Intent>activityResultLauncher_crop_request=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@RequiresApi(api = Build.VERSION_CODES.N)
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if(result.getResultCode()== Activity.RESULT_OK)
+			{
+				ProgressBarFragment pbf = ProgressBarFragment.getInstance();
+				pbf.show(((ImageViewActivity)context).fm,"");
+				Uri uri=result.getData().getData();
+				String file_name=result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
+				File f=new File(((ImageViewActivity)context).CacheDir,file_name);
+				WallpaperManager wm= WallpaperManager.getInstance(context);
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					if(wm.isWallpaperSupported() && wm.isSetWallpaperAllowed())
+						try
+						{
+							wm.setStream(context.getContentResolver().openInputStream(uri));
+							print(getString(R.string.set_as_wallpaper));
+						}
+						catch(IOException e){}
+						finally
+						{
+							if(f.exists())
+							{
+								f.delete();
+							}
+						}
+					else
+					{
+
+						if(f.exists())
+						{
+							f.delete();
+						}
+
+					}
+				}
+				pbf.dismissAllowingStateLoss();
+			}
+			else
+			{
+				print(getString(R.string.could_not_be_set_as_wallpaper));
+			}
+		}
+	});
+
+	/*
 	 @RequiresApi(api = Build.VERSION_CODES.N)
 	 @Override
 	 public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
@@ -507,6 +581,8 @@ public class ImageViewFragment extends Fragment
 
 		}
 	 }
+
+	 */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{

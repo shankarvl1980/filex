@@ -21,6 +21,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -56,6 +60,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private String first_file_name,parent_file_name,parent_file_path;
 	public final static String ARCHIVE_ACTION_ZIP="archive-zip";
 	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
+
 
 	private ArchiveSetUpDialog(){}
 
@@ -189,7 +194,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 					((MainActivity)context).clear_cache=false;
 					Intent intent=new Intent(context,FileSelectorActivity.class);
 					intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.FOLDER_SELECT_REQUEST_CODE);
-					startActivityForResult(intent,folder_select_request_code);
+					//startActivityForResult(intent,folder_select_request_code);
+					activityResultLauncher_file_select.launch(intent);
 				}
 			}
 		});
@@ -586,10 +592,44 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		((MainActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, saf_permission_request_code);
+		//startActivityForResult(intent, saf_permission_request_code);
+		activityResultLauncher_SAF_permission.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode() == Activity.RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
 
+				saf_permission_requested = false;
+				okbutton.callOnClick();
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+
+		}
+	});
+
+	private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode() == Activity.RESULT_OK)
+			{
+				Intent intent=result.getData();
+				folderclickselected = intent.getStringExtra("folderclickselected");
+				custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
+				customdir_edittext.setText(folderclickselected);
+			}
+		}
+	});
+
+	/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -623,6 +663,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 
 	}
+
+	 */
 
 
 	private void print(String msg)

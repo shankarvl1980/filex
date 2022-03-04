@@ -15,6 +15,7 @@ public class NotifManager
 	private final NotificationCompat.Builder notification_builder;
     private final NotificationManager nm;
 	private final Context context;
+	int pending_intent_flag;
     //int paste_notification_id,delete_notification_id,archive_notification_id;
 	//NotificationCompat.InboxStyle inbox_style=new NotificationCompat.InboxStyle();
 	
@@ -37,6 +38,8 @@ public class NotifManager
 		notification_builder
 			.setSmallIcon(R.drawable.app_icon)
 			.setAutoCancel(true);
+
+		pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
 		
 	}
 	
@@ -52,7 +55,7 @@ public class NotifManager
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
 		intent.setAction(action);
-		PendingIntent pi=PendingIntent.getActivity(context,notification_id,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi=PendingIntent.getActivity(context,notification_id,intent,pending_intent_flag);
 		notification_builder.setContentIntent(pi);
 		notification_builder.setContentText(notification_content_line);
 		return notification_builder.build();
@@ -62,7 +65,7 @@ public class NotifManager
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity2.class);
 		intent.setAction(action);
-		PendingIntent pi=PendingIntent.getActivity(context,notification_id,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getActivity(context,notification_id,intent,pending_intent_flag);
 		notification_builder.setContentIntent(pi);
 		notification_builder.setContentText(notification_content_line);
 		return notification_builder.build();
@@ -72,7 +75,7 @@ public class NotifManager
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity3.class);
 		intent.setAction(action);
-		PendingIntent pi=PendingIntent.getActivity(context,notification_id,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getActivity(context,notification_id,intent,pending_intent_flag);
 		notification_builder.setContentIntent(pi);
 		notification_builder.setContentText(notification_content_line);
 		return notification_builder.build();

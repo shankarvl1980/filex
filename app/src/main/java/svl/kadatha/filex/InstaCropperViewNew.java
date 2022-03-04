@@ -862,7 +862,7 @@ public class InstaCropperViewNew extends View {
             mEssentialBias.set(essentialInNegativeX, essentialInNegativeY, essentialInPositiveX, essentialInPositiveY);
             mOptionalBias.set(optionalInNegativeX, optionalInNegativeY, optionalInPositiveX, optionalInPositiveY);
 
-            Log.d("AAA", "fitness set. " + toString());
+            Log.d("AAA", "fitness set. " + this);
         }
 
         protected void getFittingFix(Fix fix) {
@@ -913,7 +913,7 @@ public class InstaCropperViewNew extends View {
 
         @Override
         public String toString() {
-            return "Essential bias: " + mEssentialBias.toString() + " Optional bias: " + mOptionalBias.toString();
+            return "Essential bias: " + mEssentialBias + " Optional bias: " + mOptionalBias;
         }
 
     }

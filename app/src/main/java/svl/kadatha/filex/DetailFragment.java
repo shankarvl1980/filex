@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -26,7 +27,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.os.EnvironmentCompat;
@@ -545,10 +551,51 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		mainActivity.clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher_SAF_permission.launch(intent);
 	}
 
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public void seekInstallUnknownPackagePermission()
+	{
+		Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+		unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
+		//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+		activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+	@Override
+	public void onActivityResult(ActivityResult result) {
+		if (result.getResultCode()== Activity.RESULT_OK)
+		{
+			Uri treeUri;
+			treeUri = result.getData().getData();
+			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
+		}
+		else
+		{
+			print(getString(R.string.permission_not_granted));
+		}
+	}
+});
+
+	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+	@Override
+	public void onActivityResult(ActivityResult result) {
+		if (result.getResultCode()== Activity.RESULT_OK)
+		{
+			//installAPK();
+		}
+		else
+		{
+			print(getString(R.string.permission_not_granted));
+		}
+	}
+});
+
+
+/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
 	{
@@ -566,8 +613,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			print(getString(R.string.permission_not_granted));
 		}
-
 	}
+
+ */
 
 
 	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)

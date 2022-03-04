@@ -20,6 +20,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -313,11 +317,31 @@ public class VideoViewContainerFragment extends Fragment
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent>activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode()== Activity.RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
-	// @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+				boolean permission_requested = false;
+				delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+				delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+
+		}
+	});
+	/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -339,6 +363,8 @@ public class VideoViewContainerFragment extends Fragment
 		}
 
 	}
+
+	 */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{

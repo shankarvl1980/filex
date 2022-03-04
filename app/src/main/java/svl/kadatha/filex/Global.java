@@ -736,8 +736,6 @@ public class Global
 	Bitmap bitmap = null;
 	BitmapFactory.Options bfOptions=new BitmapFactory.Options();
 	bfOptions.inDither=false;                     //Disable Dithering mode
-	bfOptions.inPurgeable=true;                   //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-	bfOptions.inInputShareable=true;              //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
 	bfOptions.inTempStorage=new byte[32 * 1024];
 
 	File file=new File(path);

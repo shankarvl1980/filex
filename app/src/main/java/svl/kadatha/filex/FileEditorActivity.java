@@ -26,6 +26,10 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -847,10 +851,29 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode()== RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
+				start_file_save_service();
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+		}
+	});
+
+/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
 	{
@@ -868,6 +891,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			print(getString(R.string.permission_not_granted));
 		}
 	}
+
+ */
 
 	private void onClick_edit_button()
 	{

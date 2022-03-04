@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -6,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,10 +20,13 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
 import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyManager;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import java.io.File;
@@ -37,6 +42,7 @@ public class AudioPlayerService extends Service
 	public boolean prepared,playmode,stopped,completed;
 	public int total_duration;
 
+	private boolean isReadPermissionGranted;
 
 	private boolean ongoingcall=false;
 	static List<AudioPOJO> AUDIO_QUEUED_ARRAY=new ArrayList<>();
@@ -91,7 +97,7 @@ public class AudioPlayerService extends Service
 	{
 		// TODO: Implement this method
 		Uri data=intent.getData();
-
+		isReadPermissionGranted=isReadPhonePermissionGranted();
 		if(!audioPlayerServiceHandlerThread.request_focus())
 		{
 			stopSelf();
@@ -140,6 +146,10 @@ public class AudioPlayerService extends Service
 		return START_NOT_STICKY;
 	}
 
+	private boolean isReadPhonePermissionGranted()
+	{
+		return ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)== PackageManager.PERMISSION_GRANTED;
+	}
 
 	private class AudioPlayerServiceHandlerThread extends HandlerThread implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,MediaPlayer.OnSeekCompleteListener,
 			MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,AudioManager.OnAudioFocusChangeListener
@@ -155,33 +165,72 @@ public class AudioPlayerService extends Service
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1)
 			{
-				telephonyManager.listen(new PhoneStateListener()
-				{
-					public void onCallStateChanged(int state, String phonenumber)
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+					if(isReadPermissionGranted)
 					{
-						switch(state)
-						{
-							case TelephonyManager.CALL_STATE_OFFHOOK:
-							case TelephonyManager.CALL_STATE_RINGING:
-								if(mp!=null)
-								{
-									handler.obtainMessage(PAUSE).sendToTarget();
-									ongoingcall=true;
-								}
-								break;
-
-							case TelephonyManager.CALL_STATE_IDLE:
-								if(ongoingcall)
-								{
-									ongoingcall=false;
-									handler.obtainMessage(START).sendToTarget();
-
-								}
-						}
+						telephonyManager.registerTelephonyCallback(getMainExecutor(),new CustomCallback());
 					}
-				},PhoneStateListener.LISTEN_CALL_STATE);
+
+				}
+				else
+				{
+					telephonyManager.listen(new PhoneStateListener()
+					{
+						public void onCallStateChanged(int state, String phonenumber)
+						{
+							switch(state)
+							{
+								case TelephonyManager.CALL_STATE_OFFHOOK:
+								case TelephonyManager.CALL_STATE_RINGING:
+									if(mp!=null)
+									{
+										handler.obtainMessage(PAUSE).sendToTarget();
+										ongoingcall=true;
+									}
+									break;
+
+								case TelephonyManager.CALL_STATE_IDLE:
+									if(ongoingcall)
+									{
+										ongoingcall=false;
+										handler.obtainMessage(START).sendToTarget();
+
+									}
+							}
+						}
+					},PhoneStateListener.LISTEN_CALL_STATE);
+				}
+
 			}
 
+		}
+
+		@RequiresApi(api = Build.VERSION_CODES.S)
+		private class CustomCallback extends TelephonyCallback implements TelephonyCallback.CallStateListener
+		{
+
+			@Override
+			public void onCallStateChanged(int i) {
+				switch(i)
+				{
+					case TelephonyManager.CALL_STATE_OFFHOOK:
+					case TelephonyManager.CALL_STATE_RINGING:
+						if(mp!=null)
+						{
+							handler.obtainMessage(PAUSE).sendToTarget();
+							ongoingcall=true;
+						}
+						break;
+
+					case TelephonyManager.CALL_STATE_IDLE:
+						if(ongoingcall)
+						{
+							ongoingcall=false;
+							handler.obtainMessage(START).sendToTarget();
+
+						}
+				}
+			}
 		}
 
 		public void onLooperPreparation()
@@ -777,33 +826,35 @@ public class AudioPlayerService extends Service
 
 		public void setListeners(RemoteViews view)
 		{
+			int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
+
 			//listener 1
 			Intent previous = new Intent(parent,AudioPlayerService.class);
 			previous.putExtra("DO", GOTO_PREVIOUS);
-			PendingIntent prev = PendingIntent.getService(parent, 0, previous, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent prev = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
 			view.setOnClickPendingIntent(R.id.audio_notification_previous, prev);
 
 			//listener 2
 			Intent pause = new Intent(parent, AudioPlayerService.class);
 			pause.putExtra("DO", PAUSE);
-			PendingIntent start = PendingIntent.getService(parent, 1, pause, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent start = PendingIntent.getService(parent, 1, pause, pending_intent_flag);
 			view.setOnClickPendingIntent(R.id.audio_notification_play_pause, start);
 
 			//listener 3
 			Intent next = new Intent(parent, AudioPlayerService.class);
 			next.putExtra("DO", GOTO_NEXT);
-			PendingIntent nxt = PendingIntent.getService(parent, 2, next, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent nxt = PendingIntent.getService(parent, 2, next, pending_intent_flag);
 			view.setOnClickPendingIntent(R.id.audio_notification_next, nxt);
 
 			//listener 4
 			Intent cancel = new Intent(parent, AudioPlayerService.class);
 			cancel.putExtra("DO", STOP);
-			PendingIntent close = PendingIntent.getService(parent, 3, cancel, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent close = PendingIntent.getService(parent, 3, cancel, pending_intent_flag);
 			view.setOnClickPendingIntent(R.id.audio_notification_close, close);
 
 			Intent back=new Intent(parent, AudioPlayerActivity.class);
 			back.putExtra("Do",BACK);
-			PendingIntent bck=PendingIntent.getActivity(parent,4,back,PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent bck=PendingIntent.getActivity(parent,4,back,pending_intent_flag);
 			view.setOnClickPendingIntent(R.id.audio_notification_back,bck);
 		}
 		public void notificationCancel()

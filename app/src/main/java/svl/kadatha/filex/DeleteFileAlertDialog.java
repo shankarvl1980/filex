@@ -20,6 +20,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -292,10 +296,32 @@ public class DeleteFileAlertDialog extends DialogFragment
 
 
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+	@Override
+	public void onActivityResult(ActivityResult result) {
+		if (result.getResultCode()== Activity.RESULT_OK)
+		{
+			Uri treeUri;
+			treeUri = result.getData().getData();
+			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
+			//saf_permission_requested=false;
+			okbutton.callOnClick();
+
+		}
+		else
+		{
+			print(getString(R.string.permission_not_granted));
+		}
+
+	}
+});
+
+/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -315,6 +341,8 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 
 	}
+
+ */
 
 	
 	@Override

@@ -10,7 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -30,9 +29,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -413,11 +415,31 @@ public class PdfViewFragment_single_view extends Fragment
     public void seekSAFPermission()
     {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        startActivityForResult(intent, saf_request_code);
+        //startActivityForResult(intent, saf_request_code);
+        activityResultLauncher.launch(intent);
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    private final ActivityResultLauncher<Intent>activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                Uri treeUri;
+                treeUri = result.getData().getData();
+                Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
+
+                boolean permission_requested = false;
+                delete_file_async_task = new DeleteFileAsyncTask();
+                delete_file_async_task.executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR);
+
+            } else {
+                //cancel_button.callOnClick();
+                print(getString(R.string.permission_not_granted));
+            }
+        }
+    });
+
+    /*
     @Override
     public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
     {
@@ -439,6 +461,8 @@ public class PdfViewFragment_single_view extends Fragment
             }
         }
     }
+
+     */
 
     private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
     {

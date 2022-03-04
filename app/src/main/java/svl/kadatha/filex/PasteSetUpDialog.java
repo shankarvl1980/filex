@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -117,9 +121,37 @@ public class PasteSetUpDialog extends DialogFragment
 		((MainActivity)context).clear_cache=false;
 		saf_permission_requested=true;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			saf_permission_requested=false;
+			if (result.getResultCode()== Activity.RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
+
+
+				if(check_permission_for_destination(dest_folder,destFileObjectType) && check_permission_for_source(source_folder,sourceFileObjectType))
+				{
+					initiate_startActivity();
+				}
+
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+				dismissAllowingStateLoss();
+			}
+
+		}
+	});
+
+/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -144,6 +176,8 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 
 	}
+
+ */
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
 	{

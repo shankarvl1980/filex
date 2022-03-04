@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -459,9 +463,28 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		fileSelectorActivity.clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode()== Activity.RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+
+		}
+	});
+
+	/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
 	{
@@ -477,6 +500,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 
 	}
+
+	 */
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{

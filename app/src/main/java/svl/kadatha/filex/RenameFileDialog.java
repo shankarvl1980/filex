@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -50,6 +54,7 @@ public class RenameFileDialog extends DialogFragment
 	private boolean isWritable;
 	private String other_file_permission,existing_file_path,new_file_path;
 	private FragmentManager fragmentManager;
+
 
 
 
@@ -373,123 +378,6 @@ public class RenameFileDialog extends DialogFragment
 		}
 	}
 
-	/*
-	public void rename_process(String new_file_path, String new_name)
-	{
-		boolean fileNameChanged = false;
-		File existing_file=new File(parent_file_path,existing_name);
-		File new_file=new File(new_file_path);
-		FilePOJO filePOJO = null;
-		if(fileObjectType==FileObjectType.FILE_TYPE)
-		{
-			if(isWritable)
-			{
-				fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-				//onRenameResult(fileNameChanged,new_name);
-			}
-			else
-			{
-				if(check_SAF_permission(parent_file_path,fileObjectType))
-				{
-					if(whether_file_already_exists(new_file_path,fileObjectType)) //to overwrite file name
-					{
-						boolean isDir=new File(new_file_path).isDirectory();
-						if(!isDir && !isDirectory)
-						{
-							new RenameAsyncTask(context,parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-						}
-						else
-						{
-							//onRenameResult(false,new_name);
-						}
-					}
-					else
-					{
-						fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-						//onRenameResult(fileNameChanged,new_name);
-					}
-				}
-
-			}
-		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
-		{
-			if(whether_file_already_exists(new_file_path,fileObjectType))
-			{
-				print(getString(R.string.a_file_with_given_name_already_exists));
-				//onRenameResult(false,new_name);
-			}
-			else
-			{
-				UsbFile existingUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,existing_file.getAbsolutePath());
-				fileNameChanged=FileUtil.renameUsbFile(existingUsbFile,new_name);
-				//onRenameResult(fileNameChanged,new_name);
-			}
-		}
-		else if (fileObjectType==FileObjectType.ROOT_TYPE)
-		{
-			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-			{
-				//fileNameChanged=RootUtils.EXECUTE(Arrays.asList("mv",existing_file.getAbsolutePath(),new_file_path));
-				if(Global.SET_OTHER_FILE_PERMISSION("rwx",existing_file_path))
-				{
-					fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-				}
-
-
-			}
-			else
-			{
-				print(getString(R.string.root_access_not_avaialable));
-				fileNameChanged=false;
-			}
-			//onRenameResult(fileNameChanged,new_name);
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			if(Global.CHECK_FTP_SERVER_CONNECTED())
-			{
-				try {
-					fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
-				} catch (IOException e) {
-				}
-			}
-			else
-			{
-				print(getString(R.string.ftp_server_is_not_connected));
-			}
-
-
-		}
-		if(fileNameChanged)
-		{
-			//use filePOJOHashmapKeyPath to remove from Search Library also
-			if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				if(overwriting)
-				{
-					FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path),fileObjectType);
-				}
-				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(filePOJOHashmapKeyPath,Collections.singletonList(new_file_path),fileObjectType, Collections.singletonList(existing_file_path));
-			}
-			else
-			{
-				if(overwriting)
-				{
-					FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType);
-				}
-
-				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
-			}
-			Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-
-		}
-		onRenameResult(fileNameChanged,new_name,filePOJO);
-
-	}
-
-	 */
-
 	private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO)
 	{
 		if(fileNameChanged)
@@ -572,10 +460,30 @@ public class RenameFileDialog extends DialogFragment
 	{
 		((MainActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
-	// @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+	@Override
+	public void onActivityResult(ActivityResult result) {
+		if (result.getResultCode()== Activity.RESULT_OK)
+		{
+			Uri treeUri;
+			treeUri = result.getData().getData();
+			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
+
+			saf_permission_requested=false;
+			okbutton.callOnClick();
+		}
+		else
+		{
+			print(getString(R.string.permission_not_granted));
+		}
+	}
+	});
+
+	/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -594,6 +502,8 @@ public class RenameFileDialog extends DialogFragment
 			print(getString(R.string.permission_not_granted));
 		}
 	}
+
+	 */
 
 	@Override
 	public void onDestroyView() {

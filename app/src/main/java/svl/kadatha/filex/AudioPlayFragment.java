@@ -32,6 +32,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -582,11 +586,48 @@ public class AudioPlayFragment extends Fragment
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, request_code);
+		//startActivityForResult(intent, request_code);
+		activityResultLauncher.launch(intent);
 	}
 
+	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if (result.getResultCode()== Activity.RESULT_OK)
+			{
+				Uri treeUri;
+				treeUri = result.getData().getData();
+				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
-	// @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
+				boolean permission_requested = false;
+				delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
+				delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+
+		}
+	});
+
+	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+		@Override
+		public void onActivityResult(ActivityResult result) {
+			if(result.getResultCode()==Activity.RESULT_OK)
+			{
+				set_ring_tone();
+			}
+			else
+			{
+				print(getString(R.string.permission_not_granted));
+			}
+		}
+	});
+
+	/*
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
 	{
@@ -604,12 +645,19 @@ public class AudioPlayFragment extends Fragment
 			delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 		}
+		else if(requestCode==AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE && resultCode==Activity.RESULT_OK)
+		{
+			set_ring_tone();
+		}
 		else
 		{
 			print(getString(R.string.permission_not_granted));
 		}
 
 	}
+
+	 */
+
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
@@ -725,73 +773,14 @@ public class AudioPlayFragment extends Fragment
 						permission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
 					}
 					if (permission) {
-						if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
-						{
-							print(getString(R.string.not_able_to_process));
-							break;
-						}
-						ContentValues contentValues=new ContentValues();
-						contentValues.put(MediaStore.MediaColumns.DATA,AudioPlayerActivity.AUDIO_FILE.getData());
-						contentValues.put(MediaStore.MediaColumns.TITLE, AudioPlayerActivity.AUDIO_FILE.getTitle());
-						contentValues.put(MediaStore.MediaColumns.SIZE, AudioPlayerActivity.AUDIO_FILE.getDuration());
-						contentValues.put(MediaStore.MediaColumns.MIME_TYPE,"audio/*");
-						contentValues.put(MediaStore.Audio.Media.ARTIST, "artist");
-						contentValues.put(MediaStore.Audio.Media.DURATION, 500);
-						contentValues.put(MediaStore.Audio.Media.IS_ALARM, false);
-						contentValues.put(MediaStore.Audio.Media.IS_MUSIC, false);
-						contentValues.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);
-						contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-						ContentResolver cr=context.getContentResolver();
-						if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q)
-						{
-							Uri addedUri=cr.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,contentValues);
-							try
-							{
-								OutputStream outputStream=cr.openOutputStream(addedUri);
-								byte [] byte_array=new byte[500];
-								BufferedInputStream bufferedInputStream = null;
-								if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.FILE_TYPE)
-								{
-									bufferedInputStream=new BufferedInputStream(new FileInputStream(AudioPlayerActivity.AUDIO_FILE.getData()));
-								}
-								else if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.USB_TYPE)
-								{
-									UsbFile usbFile = null;
-									if(MainActivity.usbFileRoot!=null)
-									{
-										usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
-									}
-									
-									bufferedInputStream= UsbFileStreamFactory.createBufferedInputStream(usbFile,MainActivity.usbCurrentFs);
-								}
-								
-								int size=bufferedInputStream.read(byte_array, 0, byte_array.length);
-								outputStream.write(byte_array,0,size);
-								bufferedInputStream.close();
-								outputStream.flush();
-								outputStream.close();
-
-							}
-							catch (IOException e)
-							{
-
-							}
-							RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE,addedUri);
-						}
-						else
-						{
-							Uri url= MediaStore.Audio.Media.getContentUriForPath(AudioPlayerActivity.AUDIO_FILE.getData());
-							Uri addedUri=cr.insert(url,contentValues);
-							RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE,addedUri);
-						}
-
-						print(getString(R.string.ringtone_set));
+						set_ring_tone();
 						break;
 					}  else {
 						if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 							Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
 							intent.setData(Uri.parse("package:" + context.getPackageName()));
-							((AudioPlayerActivity)context).startActivityForResult(intent, AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE);
+							//((AudioPlayerActivity)context).startActivityForResult(intent, AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE);
+							activityResultLauncher_write_settings.launch(intent);
 						} else {
 							ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_SETTINGS}, AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE);
 						}
@@ -806,6 +795,70 @@ public class AudioPlayFragment extends Fragment
 
 	}
 
+	private void set_ring_tone()
+	{
+		if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+		{
+			print(getString(R.string.not_able_to_process));
+			return;
+		}
+		ContentValues contentValues=new ContentValues();
+		contentValues.put(MediaStore.MediaColumns.DATA,AudioPlayerActivity.AUDIO_FILE.getData());
+		contentValues.put(MediaStore.MediaColumns.TITLE, AudioPlayerActivity.AUDIO_FILE.getTitle());
+		contentValues.put(MediaStore.MediaColumns.SIZE, AudioPlayerActivity.AUDIO_FILE.getDuration());
+		contentValues.put(MediaStore.MediaColumns.MIME_TYPE,"audio/*");
+		contentValues.put(MediaStore.Audio.Media.ARTIST, "artist");
+		contentValues.put(MediaStore.Audio.Media.DURATION, 500);
+		contentValues.put(MediaStore.Audio.Media.IS_ALARM, false);
+		contentValues.put(MediaStore.Audio.Media.IS_MUSIC, false);
+		contentValues.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);
+		contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true);
+		ContentResolver cr=context.getContentResolver();
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q)
+		{
+			Uri addedUri=cr.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,contentValues);
+			try
+			{
+				OutputStream outputStream=cr.openOutputStream(addedUri);
+				byte [] byte_array=new byte[500];
+				BufferedInputStream bufferedInputStream = null;
+				if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.FILE_TYPE)
+				{
+					bufferedInputStream=new BufferedInputStream(new FileInputStream(AudioPlayerActivity.AUDIO_FILE.getData()));
+				}
+				else if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==FileObjectType.USB_TYPE)
+				{
+					UsbFile usbFile = null;
+					if(MainActivity.usbFileRoot!=null)
+					{
+						usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
+					}
+
+					bufferedInputStream= UsbFileStreamFactory.createBufferedInputStream(usbFile,MainActivity.usbCurrentFs);
+				}
+
+				int size=bufferedInputStream.read(byte_array, 0, byte_array.length);
+				outputStream.write(byte_array,0,size);
+				bufferedInputStream.close();
+				outputStream.flush();
+				outputStream.close();
+
+			}
+			catch (IOException e)
+			{
+
+			}
+			RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE,addedUri);
+		}
+		else
+		{
+			Uri url= MediaStore.Audio.Media.getContentUriForPath(AudioPlayerActivity.AUDIO_FILE.getData());
+			Uri addedUri=cr.insert(url,contentValues);
+			RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE,addedUri);
+		}
+
+		print(getString(R.string.ringtone_set));
+	}
 
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
 	{
