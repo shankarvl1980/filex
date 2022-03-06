@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -136,7 +137,7 @@ public class PreferencesDialog extends DialogFragment
                     THEME="system";
                     Global.THEME=PreferencesDialog.THEME;
                     tinyDB.putString("theme",Global.THEME);
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                     system_rb_checked=true;
                     dark_rb_checked=false;
                     light_rb_checked=false;

@@ -415,6 +415,14 @@ public class AudioPlayFragment extends Fragment
 	}
 	public void enable_disable_previous_next_btn()
 	{
+		/*
+		if(previous_btn==null || next_btn==null)
+		{
+			context=getContext();
+			((AudioPlayerActivity)context).finish();
+		}
+
+		 */
 		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
 		{
 			previous_btn.setEnabled(false);

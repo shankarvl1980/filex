@@ -181,7 +181,14 @@ public class AllAudioListFragment extends Fragment
 
 	private void enable_disable_buttons(boolean enable)
 	{
+		/*
+		if(play_btn==null)
+		{
+			context=getContext();
+			((AudioPlayerActivity)context).finish();
+		}
 
+		 */
 		if(enable)
 		{
 			play_btn.setAlpha(Global.ENABLE_ALFA);
@@ -467,12 +474,12 @@ public class AllAudioListFragment extends Fragment
 		audio_selected_array=new ArrayList<>();
 		mselecteditems=new SparseBooleanArray();
 		if (audioListRecyclerViewAdapter!=null) audioListRecyclerViewAdapter.notifyDataSetChanged();
+		enable_disable_buttons(false);
 		if(num_all_audio<=0)
 		{
 			recyclerview.setVisibility(View.GONE);
 			empty_tv.setVisibility(View.VISIBLE);
 		}
-		enable_disable_buttons(false);
 		file_number_view.setText(mselecteditems.size()+"/"+num_all_audio);
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 

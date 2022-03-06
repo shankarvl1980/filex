@@ -148,7 +148,14 @@ public class AudioSavedListFragment extends Fragment
 
 	private void enable_disable_buttons(boolean enable)
 	{
+		/*
+		if(play_btn==null)
+		{
+			context=getContext();
+			((AudioPlayerActivity)context).finish();
+		}
 
+		 */
 		if(enable)
 		{
 			play_btn.setAlpha(Global.ENABLE_ALFA);

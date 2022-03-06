@@ -107,7 +107,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			for(String path:Global.INTERNAL_STORAGE_PATH)
 			{
-				//if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
 				if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
 				{
 					fileObjectType=FileObjectType.ROOT_TYPE;
