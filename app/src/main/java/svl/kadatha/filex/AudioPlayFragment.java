@@ -145,7 +145,6 @@ public class AudioPlayFragment extends Fragment
 		}
 
 		onserviceconnection_handler=new Handler();
-		handler_for_art=new Handler();
 	
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -416,7 +415,6 @@ public class AudioPlayFragment extends Fragment
 	}
 	public void enable_disable_previous_next_btn()
 	{
-
 		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
 		{
 			previous_btn.setEnabled(false);
@@ -546,6 +544,7 @@ public class AudioPlayFragment extends Fragment
 		}
 		else
 		{
+			handler_for_art=new Handler();
 			handler_for_art.post(new Runnable()
 			{
 				public void run()

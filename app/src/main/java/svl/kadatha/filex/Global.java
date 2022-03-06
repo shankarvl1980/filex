@@ -46,6 +46,11 @@ public class Global
 	static String EXTERNAL_STORAGE_PATH="";
 	static String USB_STORAGE_PATH;
 
+	static File ARCHIVE_EXTRACT_DIR;
+	static File APK_ICON_DIR;
+	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
+	static int ARCHIVE_CACHE_DIR_LENGTH;
+
 	static final HashMap<String, List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
 	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
 
@@ -234,14 +239,11 @@ public class Global
 		}
 		else
 		{
-			//boolean uri_authority_exists_in_list;
 			boolean parent_uri_exists = false;
 			for(UriPOJO uriPOJO:URI_PERMISSION_LIST)
 			{
 				if(uriPOJO.get_authority().equals(uri_authority))
 				{
-					//uri_authority_exists_in_list=true;
-					//if((uri_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 					if(Global.IS_CHILD_FILE(uri_path,uriPOJO.get_path()))
 					{
 						parent_uri_exists=true;
@@ -267,8 +269,6 @@ public class Global
 		{
 			if(fileObjectType==FileObjectType.USB_TYPE && uriPOJO.get_authority().equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
 			{
-
-				//if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
@@ -277,7 +277,6 @@ public class Global
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
-				//if((file_path+File.separator).startsWith(uriPOJO.get_path()+File.separator))
 				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
@@ -357,6 +356,14 @@ public class Global
 		GRID_COUNT_MEDIUM=WIDTH/(IMAGEVIEW_DIMENSION_MEDIUM_GRID+FOUR_DP);
 		GRID_COUNT_LARGE=WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+FOUR_DP);
 
+
+		//apk cache directory setting
+		ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
+		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
+		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
+		ARCHIVE_CACHE_DIR_LENGTH=Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
+
+
 	}
 
 	static void GET_PREFERENCES(TinyDB tinyDB)
@@ -432,6 +439,7 @@ public class Global
 				GRID_COUNT=Global.GRID_COUNT_MEDIUM;
 				break;
 		}
+
 
 
 	}

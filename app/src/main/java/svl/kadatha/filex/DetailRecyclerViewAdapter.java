@@ -46,7 +46,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			File parent_file=f.getParentFile();
 			if(parent_file!=null)
 			{
-				if(!(archiveview && f.equals(MainActivity.ARCHIVE_EXTRACT_DIR)))
+				if(!(archiveview && f.equals(Global.ARCHIVE_EXTRACT_DIR)))
 				{
 					mainActivity.parent_dir_imagebutton.setEnabled(true);
 					mainActivity.parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);

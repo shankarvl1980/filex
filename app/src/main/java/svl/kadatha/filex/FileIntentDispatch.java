@@ -401,7 +401,7 @@ class FileIntentDispatch
 		intent.setDataAndType(uri,mime_type);
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
-		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType);
+		if(!file_extn.matches("(?i)apk"))   {intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType);}
 		intent.putExtra(EXTRA_FILE_PATH,file_path);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

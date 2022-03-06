@@ -1,21 +1,23 @@
 package svl.kadatha.filex;
 import android.content.*;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-public class FragmentViewPager extends FragmentStatePagerAdapter
+public class FragmentViewPager extends FragmentStateAdapter
 {
 	final Context context;
-	FragmentViewPager(FragmentManager fm, Context context)
+	FragmentViewPager(Context context)
 	{
-		super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+		super((AppCompatActivity)context);
 		this.context=context;
 	}
 
 	@Override
-	public Fragment getItem(int p1)
+	public Fragment createFragment(int p1)
 	{
 		// TODO: Implement this method
 		//if(p1==0)
@@ -33,7 +35,7 @@ public class FragmentViewPager extends FragmentStatePagerAdapter
 	}
 
 	@Override
-	public int getCount()
+	public int getItemCount()
 	{
 		// TODO: Implement this method
 		return 10;

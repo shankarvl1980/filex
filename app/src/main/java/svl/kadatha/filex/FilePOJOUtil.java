@@ -60,7 +60,7 @@ public class FilePOJOUtil {
             if(archive_view) {
                 try {
                     ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE);
-                    ZipEntry zipEntry = zipFile.getEntry(path.substring(MainActivity.ARCHIVE_CACHE_DIR_LENGTH + 1));
+                    ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                     sizeLong = zipEntry.getSize();
 
                 } catch (IOException e) {
@@ -412,18 +412,18 @@ public class FilePOJOUtil {
             PI.applicationInfo.publicSourceDir = file_path;
             String package_name=PI.packageName;
             String file_with_package_name=package_name+".png";
-            if(!MainActivity.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
+            if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
             {
                 Drawable APKicon = PI.applicationInfo.loadIcon(MainActivity.PM);
                 if(APKicon instanceof BitmapDrawable)
                 {
                     Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
-                    File f=new File(MainActivity.APK_ICON_DIR,file_with_package_name);
+                    File f=new File(Global.APK_ICON_DIR,file_with_package_name);
                     try {
                         FileOutputStream fileOutputStream=new FileOutputStream(f);
                         bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
                         fileOutputStream.close();
-                        MainActivity.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                        Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
                     } catch (IOException e) {
 
                     }

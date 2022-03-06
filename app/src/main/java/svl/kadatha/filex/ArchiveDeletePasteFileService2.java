@@ -663,7 +663,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					{
 						return false;
 					}
-					ZipEntry zipEntry=zipfile.getEntry(s.substring(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length()+1));
+					ZipEntry zipEntry=zipfile.getEntry(s.substring(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length()+1));
 					success=read_zipentry(zipEntry,zip_dest_path,isWritable,tree_uri,tree_uri_path);
 				}
 			}

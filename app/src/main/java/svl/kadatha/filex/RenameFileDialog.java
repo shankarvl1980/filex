@@ -42,7 +42,7 @@ public class RenameFileDialog extends DialogFragment
 	private InputMethodManager imm;
 	private Context context;
 	private final int request_code=76;
-	private boolean saf_permission_requested;
+	//private boolean saf_permission_requested;
 	private String tree_uri_path="";
 	private Uri tree_uri;
     private String parent_file_path,existing_name;
@@ -178,7 +178,11 @@ public class RenameFileDialog extends DialogFragment
 							}
 							else
 							{
-								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+								if(check_SAF_permission(parent_file_path,fileObjectType))
+								{
+									new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+								}
+
 							}
 						}
 					}
@@ -212,9 +216,14 @@ public class RenameFileDialog extends DialogFragment
 
 					}
 				}
-				else
+				else if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable)
 				{
-					new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					if (check_SAF_permission(parent_file_path, fileObjectType)) {
+						new RenameFileAsyncTask(parent_file_path, existing_name, new_file_path, new_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					}
+				} else
+				{
+					new RenameFileAsyncTask(parent_file_path, existing_name, new_file_path, new_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 
 			}
@@ -280,27 +289,22 @@ public class RenameFileDialog extends DialogFragment
 				}
 				else
 				{
-					if(check_SAF_permission(parent_file_path,fileObjectType))
+					if(whether_file_already_exists(new_file_path,fileObjectType)) //to overwrite file name
 					{
-						if(whether_file_already_exists(new_file_path,fileObjectType)) //to overwrite file name
+						boolean isDir=new File(new_file_path).isDirectory();
+						if(!isDir && !isDirectory)
 						{
-							boolean isDir=new File(new_file_path).isDirectory();
-							if(!isDir && !isDirectory)
+							if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
 							{
-								if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
-								{
-									fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-								}
+								fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
 							}
-
 						}
-						else
-						{
-							fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
 
-						}
 					}
-
+					else
+					{
+						fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+					}
 				}
 			}
 			else if(fileObjectType== FileObjectType.USB_TYPE)
@@ -403,6 +407,7 @@ public class RenameFileDialog extends DialogFragment
 		Global.SET_OTHER_FILE_PERMISSION(other_file_permission,new_file_path);
 		imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 		dismissAllowingStateLoss();
+
 	}
 
 	private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType)
@@ -431,7 +436,7 @@ public class RenameFileDialog extends DialogFragment
 				}
 			});
 			safpermissionhelper.show(fragmentManager,"saf_permission_dialog");
-			saf_permission_requested=true;
+			//saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			return false;
 		}
@@ -473,7 +478,7 @@ public class RenameFileDialog extends DialogFragment
 			treeUri = result.getData().getData();
 			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
-			saf_permission_requested=false;
+			//saf_permission_requested=false;
 			okbutton.callOnClick();
 		}
 		else

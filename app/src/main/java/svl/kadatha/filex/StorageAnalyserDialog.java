@@ -3,8 +3,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -48,7 +50,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public String fileclickselected;
     public FileObjectType fileObjectType;
     public UsbFile currentUsbFile;
-    private CancelableProgressBarDialog cancelableProgressBarDialog;
+    private static CancelableProgressBarDialog cancelableProgressBarDialog;
     public TextView folder_selected_textview;
     private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
     private FileModifyObserver fileModifyObserver;
@@ -62,8 +64,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     public boolean is_toolbar_visible=true, filled_file_size;
     private FillSizeAsyncTask fillSizeAsyncTask;
+    private FilePOJO clicked_filepojo;
 
-    private StorageAnalyserDialog(){}
+
 
 
     @Override
@@ -72,6 +75,11 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         this.context=context;
         storageAnalyserActivity=(StorageAnalyserActivity)context;
         storageAnalyserActivity.addFragmentCommunicationListener(this);
+        if(cancelableProgressBarDialog!=null)
+        {
+            cancelableProgressBarDialog.dismissAllowingStateLoss();
+        }
+
     }
 
     @Override
@@ -111,7 +119,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             for(String path:Global.INTERNAL_STORAGE_PATH)
             {
-                //if((new File(path).getParent()+File.separator).startsWith(fileclickselected+File.separator))
                 if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
                 {
                     fileObjectType=FileObjectType.ROOT_TYPE;
@@ -145,7 +152,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onBackPressed();
                 }
             });
-            /*
+
             if(storageAnalyserActivity.fm==null)
             {
                 context=getContext();
@@ -153,7 +160,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
             }
 
-             */
             cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
             new Thread(new Runnable() {
 
@@ -533,6 +539,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 {
                     int pos=getBindingAdapterPosition();
                     FilePOJO filePOJO=filePOJO_list.get(pos);
+                    clicked_filepojo=filePOJO;
                     fileObjectType=filePOJO.getFileObjectType();
                     if(filePOJO.getIsDirectory())
                     {
@@ -676,6 +683,21 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
     });
 
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode()== Activity.RESULT_OK)
+            {
+                if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+                clicked_filepojo=null;
+            }
+            else
+            {
+                print(getString(R.string.permission_not_granted));
+            }
+        }
+    });
+
     /*
     @Override
     public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
@@ -686,6 +708,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             treeUri = resultData.getData();
             Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
         }
+        else if (requestCode == DetailFragment.UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
+		{
+			//installAPK();
+		}
         else
         {
             print(getString(R.string.permission_not_granted));
@@ -728,9 +754,63 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             });
             fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
+        /*
+		 else if(file_ext.matches("(?i)apk"))
+		{
+
+			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+			{
+				if(!storageAnalyserActivity.getPackageManager().canRequestPackageInstalls())
+				{
+					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
+					//startActivityForResult(unknown_package_install_intent,DetailFragment.UNKNOWN_PACKAGE_REQUEST_CODE);
+                    activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+				}
+				else
+				{
+					try {
+						installPackage(context,file_path);
+					} catch (IOException e) {
+						print(getString(R.string.installation_failed));
+					}
+				}
+			}
+			else
+			{
+				if(fileObjectType==FileObjectType.USB_TYPE)
+				{
+					if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+					{
+						FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path);
+					}
+				}
+				else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+				{
+					FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType);
+				}
+			}
+		}
+
+         */
+
         else
         {
-            if(fileObjectType==FileObjectType.USB_TYPE)
+            if(file_ext.matches("(?i)apk"))
+            {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (!storageAnalyserActivity.getPackageManager().canRequestPackageInstalls()) {
+                        Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                        unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
+                        //startActivityForResult(unknown_package_install_intent,DetailFragment.UNKNOWN_PACKAGE_REQUEST_CODE);
+                        activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+                        return;
+                    }
+                }
+            }
+
+                if(fileObjectType==FileObjectType.USB_TYPE)
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {

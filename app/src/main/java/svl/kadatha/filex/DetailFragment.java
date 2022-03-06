@@ -114,7 +114,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
-	private static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
+	public static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
+	private FilePOJO clicked_filepojo;
 
 	public static final String ACTION_INSTALL_COMPLETE = "svl.kadatha.filex.INSTALL_COMPLETE";
 
@@ -187,8 +188,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			file_click_selected_name=new File(fileclickselected).getName();
 		}
 
-		if(MainActivity.ARCHIVE_EXTRACT_DIR==null) MainActivity.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
+		if(Global.ARCHIVE_EXTRACT_DIR==null) Global.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
@@ -555,14 +556,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		activityResultLauncher_SAF_permission.launch(intent);
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	public void seekInstallUnknownPackagePermission()
-	{
-		Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-		unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
-		//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
-		activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
-	}
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 	@Override
@@ -585,7 +578,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onActivityResult(ActivityResult result) {
 		if (result.getResultCode()== Activity.RESULT_OK)
 		{
-			//installAPK();
+			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+			clicked_filepojo=null;
 		}
 		else
 		{
@@ -660,7 +654,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
 					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
-					startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+					//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+					activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
 				}
 				else
 				{
@@ -690,7 +685,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
  */
 		else
 		 {
-			 if(fileObjectType==FileObjectType.USB_TYPE)
+		 	if(file_ext.matches("(?i)apk"))
+		 	{
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					if (!mainActivity.getPackageManager().canRequestPackageInstalls()) {
+						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+						unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
+						//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+						activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+						return;
+					}
+				}
+			}
+		 	if(fileObjectType==FileObjectType.USB_TYPE)
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
@@ -724,6 +732,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				public void onClick(FilePOJO filePOJO)
 				{
+					clicked_filepojo=filePOJO;
 					if(filePOJO.getIsDirectory())
 					{
 						mainActivity.createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
@@ -749,13 +758,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								zipfile=new ZipFile(MainActivity.ZIP_FILE);
 							}
 							catch(IOException e){}
-							ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(MainActivity.ARCHIVE_CACHE_DIR_LENGTH+1));
+							ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
 							if(zip_entry==null)
 							{
 								print(getString(R.string.can_not_open_file));
 								return;
 							}
-							if(!ExtractZipFile.read_zipentry(context,zipfile,zip_entry,MainActivity.ARCHIVE_EXTRACT_DIR))
+							if(!ExtractZipFile.read_zipentry(context,zipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR))
 							{
 								return;
 							}
@@ -1205,9 +1214,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			display_path=p;
 			if(archive_view)
 			{
-				display_path=display_path.substring(MainActivity.ARCHIVE_CACHE_DIR_LENGTH);
+				display_path=display_path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH);
 				display_path="Archive"+display_path;
-				truncated_path=truncated_path.substring(0,MainActivity.ARCHIVE_CACHE_DIR_LENGTH-"Archive/".length());//number added to archive_cache_dir_length is length of "Archive/"
+				truncated_path=truncated_path.substring(0,Global.ARCHIVE_CACHE_DIR_LENGTH-"Archive/".length());//number added to archive_cache_dir_length is length of "Archive/"
 			}
 
 			if(p.equals(File.separator))

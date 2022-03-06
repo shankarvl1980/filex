@@ -2,9 +2,10 @@ package svl.kadatha.filex;
 
 import android.util.Log;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public abstract class ExecuteAsRootBase
@@ -19,15 +20,16 @@ public abstract class ExecuteAsRootBase
             suProcess = Runtime.getRuntime().exec("su");
 
             DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
-            DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
+            //DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
 
-            if (null != os && null != osRes)
+            if (null != os && null != bufferedReader)
             {
                 // Getting the id of the current user to check if this is root
                 os.writeBytes("id\n");
                 os.flush();
 
-                String currUid = osRes.readLine();
+                String currUid = bufferedReader.readLine();
                 boolean exitSu = false;
                 if (null == currUid)
                 {

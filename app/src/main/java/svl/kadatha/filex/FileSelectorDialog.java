@@ -46,7 +46,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public String fileclickselected;
 	public FileObjectType fileObjectType;
 	public UsbFile currentUsbFile;
-	private ProgressBarFragment pbf_polling;
+	private static ProgressBarFragment pbf_polling;
 	public TextView folder_selected_textview;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
@@ -57,7 +57,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private final int request_code=5678;
 	public int file_list_size;
 
-	private FileSelectorDialog(){}
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -65,6 +64,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		this.context=context;
 		fileSelectorActivity=(FileSelectorActivity)context;
 		fileSelectorActivity.addFragmentCommunicationListener(this);
+		if(pbf_polling!=null)
+		{
+			pbf_polling.dismissAllowingStateLoss();
+		}
+
 	}
 
 	@Override
@@ -129,6 +133,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
 			pbf_polling=ProgressBarFragment.getInstance();
+			if(fileSelectorActivity.fm==null)
+			{
+				context=getContext();
+				fileSelectorActivity=(FileSelectorActivity) context;
+				fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
+			}
 			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 

@@ -111,8 +111,6 @@ public class ImageViewFragment extends Fragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		//context=getContext();
-		//localBroadcastManager=LocalBroadcastManager.getInstance(context);
 		FilenameFilter file_name_filter = new FilenameFilter() {
 			public boolean accept(File fi, String na) {
 				if (MainActivity.SHOW_HIDDEN_FILE) {
@@ -174,7 +172,6 @@ public class ImageViewFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//context=getContext();
 		View v=inflater.inflate(R.layout.fragment_image_view,container,false);
 		toolbar_visible=true;
 		handler=new Handler();
@@ -365,7 +362,7 @@ public class ImageViewFragment extends Fragment
 			}
 		};
 		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
-		pbf.show(getFragmentManager(),"");
+		pbf.show(getActivity().getSupportFragmentManager(),"");
 		polling_handler.post(new Runnable() {
 			@Override
 			public void run() {

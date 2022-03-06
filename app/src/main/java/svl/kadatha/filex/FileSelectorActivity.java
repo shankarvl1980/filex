@@ -226,6 +226,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 {
                     permission_not_granted_list.add(permissions[i]);
                 }
+                else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                {
+                    Global.STORAGE_DIR.clear();
+                    clearCache();
+                    Intent in=getIntent();
+                    finish();
+                    startActivity(in);
+                    return;
+                }
             }
 
         }
@@ -265,7 +274,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                 finish();
                             }
                         }
-
+                        break;
                 }
 
             }

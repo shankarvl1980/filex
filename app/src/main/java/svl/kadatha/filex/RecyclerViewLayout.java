@@ -56,7 +56,7 @@ public class RecyclerViewLayout extends ViewGroup
 		overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
 		if(filePOJO.getType()==-1)
 		{
-			GlideApp.with(context).load(MainActivity.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
+			GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
 		}
 		else if(filePOJO.getType()==0)
@@ -362,7 +362,7 @@ public class RecyclerViewLayout extends ViewGroup
 		file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
 		if(filePOJO.getType()==-1)
 		{
-			GlideApp.with(context).load(MainActivity.APK_ICON_DIR.getAbsolutePath()+File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
+			GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
 		}
 		else if(filePOJO.getType()==0)

@@ -100,7 +100,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private int countBackPressed=0;
 	ViewPager viewPager;
 	public TinyDB tinyDB;
-	static File ARCHIVE_EXTRACT_DIR,ZIP_FILE;
+
+
+
+	static File ZIP_FILE;
 	static List<String> LIBRARY_CATEGORIES=new ArrayList<>();
 
 	private Group working_dir_button_layout;
@@ -118,11 +121,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     ActionModeListener actionModeListener;
 	private PopupWindow listPopWindow;
 	final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos=new ArrayList<>();
-	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
-	static File APK_ICON_DIR;
+
+
 	public static PackageManager PM;
 	public PackageManager pm;
-	public static int ARCHIVE_CACHE_DIR_LENGTH;
+
 	public FragmentManager fm;
 	public static FragmentManager FM;
 	private String toolbar_shown_prior_archive="";
@@ -200,13 +203,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
-		ARCHIVE_EXTRACT_DIR=new File(getFilesDir(),"Archive");
-		APK_ICON_DIR=getExternalFilesDir(".apk_icons");
-		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 
 		//StatusBarTint.darkenStatusBar(this, R.color.light_toolbar_background);
-
-		ARCHIVE_CACHE_DIR_LENGTH=MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
 		
 		drawerLayout=findViewById(R.id.drawer_layout);
 		drawer=findViewById(R.id.drawer_navigation_layout);
@@ -723,6 +721,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					permission_not_granted_list.add(permissions[i]);
 				}
+				else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+				{
+					Global.STORAGE_DIR.clear();
+					clearCache();
+					Intent in=getIntent();
+					finish();
+					startActivity(in);
+					return;
+				}
 			}
 
 		}
@@ -763,9 +770,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								break;
 							}
 						}
-
-
 						break;
+
 					case Manifest.permission.READ_PHONE_STATE:
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 							if(shouldShowRequestPermissionRationale(permission))
@@ -787,28 +793,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 								});
 							}
-							else
-							{
-								print(getString(R.string.permission_not_granted));
-							}
+
 						}
 				}
 
 			}
 
 		}
-		/*
-		else
-		{
-			Global.STORAGE_DIR.clear();
-			clearCache();
-			Intent in=getIntent();
-			finish();
-			startActivity(in);
 
-		}
-
-		 */
 	}
 /*
 	@Override
@@ -1306,7 +1298,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
-			if(df.getTag().equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
+			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
 			{
 				archive_exit();
 			}
@@ -1342,7 +1334,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df_tag = df.getTag();
 				}
 
-				if(df_tag.equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
+				if(df_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
 				{
 					parent_dir_imagebutton.setEnabled(false);
 					parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
@@ -1377,9 +1369,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						{
 							new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
-						if(ARCHIVE_EXTRACT_DIR.exists())
+						if(Global.ARCHIVE_EXTRACT_DIR.exists())
 						{
-							new AsyncTaskDeleteDirectory(ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
 						finish();
 					}
@@ -1412,14 +1404,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		listPopWindow.dismiss();
 		//if((detailfrag_tag+File.separator).startsWith(ARCHIVE_EXTRACT_DIR.getAbsolutePath()+File.separator) &&  archive_view)
-		if(Global.IS_CHILD_FILE(detailfrag_tag,ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  archive_view)
+		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  archive_view)
 		{
 			extract_toolbar.setVisibility(View.VISIBLE);
 			extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			paste_toolbar.setVisibility(View.GONE);
 			bottom_toolbar.setVisibility(View.GONE);
 			toolbar_shown="extract";
-			if(detailfrag_tag.equals(ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
+			if(detailfrag_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 			{
 				parent_dir_imagebutton.setEnabled(false);
 				parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
@@ -1471,10 +1463,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void archive_exit()
 	{
-		if(ARCHIVE_EXTRACT_DIR.exists())
+		if(Global.ARCHIVE_EXTRACT_DIR.exists())
 		{
-			new AsyncTaskDeleteDirectory(ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(MainActivity.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
+			new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
 		}
 
@@ -1681,8 +1673,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if (getCacheDir().exists()) {
 					new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
-				if (ARCHIVE_EXTRACT_DIR.exists()) {
-					new AsyncTaskDeleteDirectory(ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				if (Global.ARCHIVE_EXTRACT_DIR.exists()) {
+					new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				finish();
 			}
@@ -1955,8 +1947,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if (getCacheDir().exists()) {
 					new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
-				if (ARCHIVE_EXTRACT_DIR.exists()) {
-					new AsyncTaskDeleteDirectory(ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				if (Global.ARCHIVE_EXTRACT_DIR.exists()) {
+					new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
@@ -2145,16 +2137,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		@Override
 		protected Boolean doInBackground(Void... voids) {
-			if(ARCHIVE_EXTRACT_DIR.exists())
+			if(Global.ARCHIVE_EXTRACT_DIR.exists())
 			{
-				FileUtil.deleteNativeDirectory(ARCHIVE_EXTRACT_DIR);
+				FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 			}
 			try {
 				inStream=getContentResolver().openInputStream(data);
 				zipInputStream=new ZipInputStream(inStream);
 				ZipEntry zipEntry=zipInputStream.getNextEntry();
 				while (zipEntry!=null){
-					File f=new File(ARCHIVE_EXTRACT_DIR,zipEntry.getName());
+					File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipEntry.getName());
 					if(zipEntry.isDirectory() && !f.exists())
 					{
 						success=f.mkdirs();
@@ -2199,14 +2191,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if(result)
 			{
 				toolbar_shown_prior_archive=toolbar_shown;
-				createFragmentTransaction(ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
+				createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
 			}
 
 			else
 			{
-				if(ARCHIVE_EXTRACT_DIR.exists())
+				if(Global.ARCHIVE_EXTRACT_DIR.exists())
 				{
-					FileUtil.deleteNativeDirectory(ARCHIVE_EXTRACT_DIR);
+					FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				}
 
 			}
@@ -2233,16 +2225,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		protected Boolean doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-			if(ARCHIVE_EXTRACT_DIR.exists())
+			if(Global.ARCHIVE_EXTRACT_DIR.exists())
 			{
-				FileUtil.deleteNativeDirectory(ARCHIVE_EXTRACT_DIR);
+				FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 			}
 
 			Enumeration<? extends ZipEntry> zip_entries=zipfile.entries();
 			while(zip_entries.hasMoreElements())
 			{
 				ZipEntry zipentry=zip_entries.nextElement();
-				File f=new File(ARCHIVE_EXTRACT_DIR,zipentry.getName());
+				File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipentry.getName());
 				if(zipentry.isDirectory() && !f.exists())
 				{
 					success=f.mkdirs();
@@ -2276,13 +2268,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if(result)
 			{
 				toolbar_shown_prior_archive=toolbar_shown;
-				createFragmentTransaction(ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
+				createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
 			}
 			else
 			{
-				if(ARCHIVE_EXTRACT_DIR.exists())
+				if(Global.ARCHIVE_EXTRACT_DIR.exists())
 				{
-					FileUtil.deleteNativeDirectory(ARCHIVE_EXTRACT_DIR);
+					FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				}
 			}
 		}

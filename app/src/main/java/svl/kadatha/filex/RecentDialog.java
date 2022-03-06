@@ -10,7 +10,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +50,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
 	private RecyclerView recent_recyclerview;
 	private TextView recent_label;
-	private static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
+	private FilePOJO clicked_filepojo;
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -142,20 +145,21 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		}
 	});
 
-	private final ActivityResultLauncher<Intent>activityResultLauncher_unknown_package_install=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
 		public void onActivityResult(ActivityResult result) {
 			if (result.getResultCode()== Activity.RESULT_OK)
 			{
-				//installAPK();
+				if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+				clicked_filepojo=null;
 			}
 			else
 			{
 				print(getString(R.string.permission_not_granted));
 			}
-
 		}
 	});
+
 
 
 	/*
@@ -285,8 +289,61 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				});
 			fileTypeSelectFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 		}
+		/*
+		 else if(file_ext.matches("(?i)apk"))
+		{
+
+			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+			{
+				if(!getActivity().getPackageManager().canRequestPackageInstalls())
+				{
+					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
+					//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+					activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+				}
+				else
+				{
+					try {
+						installPackage(context,file_path);
+					} catch (IOException e) {
+						print(getString(R.string.installation_failed));
+					}
+				}
+			}
+			else
+			{
+				if(fileObjectType==FileObjectType.USB_TYPE)
+				{
+					if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+					{
+						FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path);
+					}
+				}
+				else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+				{
+					FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType);
+				}
+			}
+		}
+
+		 */
 		else
 		{
+			if(file_ext.matches("(?i)apk"))
+			{
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
+						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+						unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
+						//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
+						activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+						return;
+					}
+				}
+			}
+
 			if(fileObjectType== FileObjectType.USB_TYPE)
 			{
 				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
@@ -348,6 +405,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 						{
 							pos=getBindingAdapterPosition();
 							final FilePOJO filePOJO=dir_linkedlist.get(pos);
+							clicked_filepojo=filePOJO;
 							if(filePOJO.getIsDirectory())
 							{
 								((MainActivity)context).createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
