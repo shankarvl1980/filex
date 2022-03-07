@@ -37,7 +37,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private MediaMountReceiver mediaMountReceiver;
     public static FragmentManager FM;
     public FragmentManager fm;
-    //public static PackageManager PM;
     public PackageManager pm;
     public TextView current_dir, file_number;
     private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();

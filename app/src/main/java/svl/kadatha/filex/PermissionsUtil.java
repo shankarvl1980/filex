@@ -45,10 +45,13 @@ public class PermissionsUtil {
 				}
 			}
 
+			/*
 			j = activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE);
 			if (j != PackageManager.PERMISSION_GRANTED) {
 				permissions_not_granted_list.add(Manifest.permission.READ_PHONE_STATE);
 			}
+
+			 */
 			if (!permissions_not_granted_list.isEmpty()) {
 
 				activity.requestPermissions(permissions_not_granted_list.toArray(new String[permissions_not_granted_list.size()]), PERMISSIONS_REQUEST_CODE);

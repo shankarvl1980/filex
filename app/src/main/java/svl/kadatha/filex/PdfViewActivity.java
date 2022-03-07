@@ -34,7 +34,7 @@ public class PdfViewActivity extends BaseActivity {
     {
         data=intent.getData();
         boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-        FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+        FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
         String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
         if(file_path ==null) file_path =PathUtil.getPath(context,data);
         fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_view_pager.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();

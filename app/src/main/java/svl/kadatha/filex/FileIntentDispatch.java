@@ -5,6 +5,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -401,7 +402,7 @@ class FileIntentDispatch
 		intent.setDataAndType(uri,mime_type);
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
-		if(!file_extn.matches("(?i)apk"))   {intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType);}
+		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType.toString());
 		intent.putExtra(EXTRA_FILE_PATH,file_path);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

@@ -3,8 +3,6 @@ import android.content.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class FragmentViewPager extends FragmentStateAdapter

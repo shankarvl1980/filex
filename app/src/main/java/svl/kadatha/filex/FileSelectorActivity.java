@@ -81,12 +81,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                     intent.addCategory("android.intent.category.DEFAULT");
                     intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-                    //startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
                     activityResultLauncher_all_files_access_permission.launch(intent);
                 } catch (Exception e) {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                    //startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
                     activityResultLauncher_all_files_access_permission.launch(intent);
                 }
             }
@@ -116,20 +114,16 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         Toolbar toolbar=findViewById(R.id.activity_file_selector_toolbar);
         file_number=findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
         Intent intent=getIntent();
-        if(intent!=null)
+        if(savedInstanceState==null)
         {
-            action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,PICK_FILE_REQUEST_CODE);
-            bundle=intent.getBundleExtra("bundle");
-            if(savedInstanceState==null)
-            {
-                createFileSelectorFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
-            }
+            on_intent(intent);
         }
+
 
         TextView heading = findViewById(R.id.file_selector_heading);
         if(action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) heading.setText(getString(R.string.choose_folder));
         else heading.setText(getString(R.string.application_name));
-        //ImageButton directory_btn = findViewById(R.id.file_selector_directory_btn);
+
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,6 +204,22 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
+    }
+
+    private void on_intent(Intent intent)
+    {
+        if(intent!=null)
+        {
+            action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,PICK_FILE_REQUEST_CODE);
+            bundle=intent.getBundleExtra("bundle");
+            createFileSelectorFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        on_intent(intent);
     }
 
     @Override

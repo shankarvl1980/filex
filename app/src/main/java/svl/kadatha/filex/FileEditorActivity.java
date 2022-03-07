@@ -373,7 +373,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		data=intent.getData();
         fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-        fileObjectType = (FileObjectType) intent.getSerializableExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 		if(file_path==null) file_path=PathUtil.getPath(context,data);
 

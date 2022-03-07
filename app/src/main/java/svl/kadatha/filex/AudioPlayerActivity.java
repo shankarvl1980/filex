@@ -23,16 +23,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -298,7 +294,7 @@ public class AudioPlayerActivity extends BaseActivity
 	{
 		data=intent.getData();
 		fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-		fileObjectType = (FileObjectType) intent.getSerializableExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 
 

@@ -201,7 +201,6 @@ public class ImageViewFragment extends Fragment
 			{
 				public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
 				{
-
 					final Bundle bundle=new Bundle();
 					final ArrayList<String> files_selected_array=new ArrayList<>();
 

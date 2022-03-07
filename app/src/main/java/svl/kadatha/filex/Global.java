@@ -827,19 +827,24 @@ public class Global
 		}
 	}
 
+	public static FileObjectType GET_FILE_OBJECT_TYPE(String file_object_type)
+	{
+		switch (file_object_type)
+		{
+			case "ROOT_TYPE":
+				return FileObjectType.ROOT_TYPE;
+			case "FILE_TYPE":
+				return FileObjectType.FILE_TYPE;
+			case "SEARCH_LIBRARY_TYPE":
+				return FileObjectType.SEARCH_LIBRARY_TYPE;
+			case "USB_TYPE":
+				return FileObjectType.USB_TYPE;
+			case "FTP_TYPE":
+				return FileObjectType.FTP_TYPE;
+			default:
+				return null;
+		}
+	}
+
 }
 
-
-
-
-/*
-public static FragmentManager GET_FRAGMENT_MANAGER(Context context)
-{
-	FragmentManager fragmentManager = null;
-	AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-	fragmentManager=appCompatActivity.getSupportFragmentManager();
-
-	return fragmentManager;
-}
-
- */
