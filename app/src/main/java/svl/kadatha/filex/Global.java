@@ -829,6 +829,7 @@ public class Global
 
 	public static FileObjectType GET_FILE_OBJECT_TYPE(String file_object_type)
 	{
+		if(file_object_type==null) return null;
 		switch (file_object_type)
 		{
 			case "ROOT_TYPE":

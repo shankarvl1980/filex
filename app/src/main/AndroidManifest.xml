@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="svl.kadatha.filex"
-    android:versionCode="10401"
-    android:versionName="1.4.1"
+    android:versionCode="10402"
+    android:versionName="1.4.2"
     >
 
 
@@ -144,14 +144,14 @@
         <activity
             android:name=".FileSelectorActivity"
             android:label="@string/filex_file_selector"
-            android:exported="false"
+            android:exported="true"
             >
             <intent-filter>
-                <action android:name="android.intent.action.PICK"/>
+                <action android:name="android.intent.action.GET_CONTENT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.OPENABLE"/>
                 <data android:mimeType="*/*"/>
-                <data android:scheme="file"/>
+
             </intent-filter>
 
         </activity>

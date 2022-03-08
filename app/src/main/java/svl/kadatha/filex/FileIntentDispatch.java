@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -403,6 +404,7 @@ class FileIntentDispatch
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
 		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType!=null ? fileObjectType.toString():null);
+		Log.d("shankar",fileObjectType!=null?fileObjectType.toString():"");
 		intent.putExtra(EXTRA_FILE_PATH,file_path);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

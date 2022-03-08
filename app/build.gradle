@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 1
 def versionMinor = 4
-def versionPatch = 1
+def versionPatch = 2
 
 android {
     signingConfigs {
@@ -27,8 +27,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
 
-        versionCode 10401
-        versionName "1.4.1"
+        versionCode 10402
+        versionName "1.4.2"
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -75,7 +75,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    implementation 'me.jahnen:libaums:0.8.0'
+    implementation 'me.jahnen:libaums:0.9.1'
     implementation 'org.apache.commons:commons-io:1.3.2'
     implementation 'commons-net:commons-net:3.7'
 

@@ -190,6 +190,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
                         finish();
                         break;
+                    default:
+                        setResult(Activity.RESULT_CANCELED);
+                        finish();
+                        break;
                 }
 
             }
