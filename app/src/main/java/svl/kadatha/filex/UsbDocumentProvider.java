@@ -19,12 +19,12 @@ import android.webkit.MimeTypeMap;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.github.mjdev.libaums.UsbMassStorageDevice;
-import com.github.mjdev.libaums.fs.FileSystem;
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.fs.UsbFileInputStream;
-import com.github.mjdev.libaums.fs.UsbFileOutputStream;
-import com.github.mjdev.libaums.partition.Partition;
+import me.jahnen.libaums.core.UsbMassStorageDevice;
+import me.jahnen.libaums.core.fs.FileSystem;
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileInputStream;
+import me.jahnen.libaums.core.fs.UsbFileOutputStream;
+import me.jahnen.libaums.core.partition.Partition;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

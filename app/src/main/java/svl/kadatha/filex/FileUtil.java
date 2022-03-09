@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.fs.UsbFileStreamFactory;
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 import org.apache.commons.net.ftp.FTPFile;
 

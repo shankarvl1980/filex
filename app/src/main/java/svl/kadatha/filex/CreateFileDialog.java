@@ -27,7 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

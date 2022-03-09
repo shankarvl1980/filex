@@ -25,7 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mjdev.libaums.UsbMassStorageDevice;
+import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 import java.io.File;
 import java.util.LinkedList;

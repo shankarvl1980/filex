@@ -54,9 +54,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.github.mjdev.libaums.UsbMassStorageDevice;
-import com.github.mjdev.libaums.fs.FileSystem;
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.UsbMassStorageDevice;
+import me.jahnen.libaums.core.fs.FileSystem;
+import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.net.ftp.FTPClient;

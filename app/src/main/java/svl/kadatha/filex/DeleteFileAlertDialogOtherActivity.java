@@ -25,7 +25,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.DialogFragment;
 
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import java.io.File;
 import java.io.IOException;

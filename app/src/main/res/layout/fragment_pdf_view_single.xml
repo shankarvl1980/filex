@@ -80,7 +80,28 @@
         app:layout_constraintStart_toStartOf="parent"
         >
 
+        <ImageButton
+            android:id="@+id/fragment_pdf_single_view_previous_btn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
 
+            android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/backward_icon"
+
+            />
+        <ImageButton
+            android:id="@+id/fragment_pdf_single_view_next_btn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+
+            android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/forward_icon"
+
+            />
     </androidx.appcompat.widget.Toolbar>
 
 

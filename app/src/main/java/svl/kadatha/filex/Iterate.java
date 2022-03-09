@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import java.util.*;
 import java.io.*;

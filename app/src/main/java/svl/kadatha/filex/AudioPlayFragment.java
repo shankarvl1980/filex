@@ -45,8 +45,8 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.fs.UsbFileStreamFactory;
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;

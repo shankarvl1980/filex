@@ -27,7 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import java.io.File;
 import java.io.IOException;

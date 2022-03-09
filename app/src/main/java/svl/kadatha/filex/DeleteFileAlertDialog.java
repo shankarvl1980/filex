@@ -28,7 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import org.apache.commons.net.ftp.FTPFile;
 

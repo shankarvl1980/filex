@@ -8,9 +8,10 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.fs.UsbFileInputStream;
-import com.github.mjdev.libaums.fs.UsbFileOutputStream;
+
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileInputStream;
+import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 
 import org.apache.commons.net.ftp.FTPFile;
 

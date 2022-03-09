@@ -44,7 +44,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;

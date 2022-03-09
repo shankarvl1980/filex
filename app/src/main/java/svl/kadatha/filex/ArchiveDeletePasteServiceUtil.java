@@ -7,8 +7,8 @@ import android.provider.DocumentsContract;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.fs.UsbFileOutputStream;
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 
 import org.apache.commons.net.ftp.FTPFile;
 

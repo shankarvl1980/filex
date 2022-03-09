@@ -1,5 +1,5 @@
 package svl.kadatha.filex;
-import com.github.mjdev.libaums.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 import java.io.*;
 import java.util.*;
