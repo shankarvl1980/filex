@@ -1404,7 +1404,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)
 	{
 		listPopWindow.dismiss();
-		//if((detailfrag_tag+File.separator).startsWith(ARCHIVE_EXTRACT_DIR.getAbsolutePath()+File.separator) &&  archive_view)
 		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  archive_view)
 		{
 			extract_toolbar.setVisibility(View.VISIBLE);
