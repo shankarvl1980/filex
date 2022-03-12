@@ -734,7 +734,7 @@ public class PdfViewFragment_view_pager extends Fragment
                 {
                     pdfRenderer = new PdfRenderer(context.getContentResolver().openFileDescriptor(data,"r"));
                 }
-                else if(fileObjectType==FileObjectType.FILE_TYPE)
+                else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
                 {
                     pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                 }
