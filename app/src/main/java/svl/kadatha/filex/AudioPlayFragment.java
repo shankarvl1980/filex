@@ -883,7 +883,7 @@ public class AudioPlayFragment extends Fragment
 		protected void onPreExecute()
 		{
 			// TODO: Implement this method
-			pbf.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"progressbar_dialog");
+			pbf.show(((AudioPlayerActivity)context).fm,"progressbar_dialog");
 			source_folder=new File(src_file_list.get(0).getData()).getParent();
 		}
 

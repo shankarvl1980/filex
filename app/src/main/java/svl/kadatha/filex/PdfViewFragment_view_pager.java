@@ -165,7 +165,6 @@ public class PdfViewFragment_view_pager extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-
         h=new Handler();
         handler=new Handler();
         polling_handler=new Handler();
@@ -605,15 +604,6 @@ public class PdfViewFragment_view_pager extends Fragment
             container.removeView((View)object);
         }
 
-
-        public float getAspectRatio()
-        {
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inJustDecodeBounds=true;
-            int width=options.outWidth;
-            int height=options.outHeight;
-            return (float) (width/height);
-        }
     }
 
 

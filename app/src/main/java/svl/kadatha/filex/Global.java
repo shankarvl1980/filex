@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -867,6 +868,24 @@ public class Global
 		returnCursor.close();
 
 		return size;
+	}
+
+	public static float GET_BITMAP_ASPECT_RATIO(InputStream inputStream)
+	{
+		BitmapFactory.Options options=new BitmapFactory.Options();
+		options.inJustDecodeBounds=true;
+		BitmapFactory.decodeStream(inputStream,null,options);
+		int width=options.outWidth;
+		int height=options.outHeight;
+		if(width==0 || height==0)
+		{
+			return 0;
+		}
+		else
+		{
+			return (float) (width/height);
+		}
+
 	}
 }
 

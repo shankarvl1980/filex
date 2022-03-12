@@ -152,7 +152,6 @@ public class PdfViewFragment_single_view extends Fragment
             currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
         }
 
-        //pdf_file=new File(file_path);
         asyncTaskPdfPages = new AsyncTaskPdfPages();
         asyncTaskPdfPages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -187,7 +186,7 @@ public class PdfViewFragment_single_view extends Fragment
             public void onClick(View v)
             {
                 is_menu_opened=true;
-                listPopWindow.showAsDropDown(v,0,(Global.ONE_DP*4));
+                listPopWindow.showAsDropDown(v,0,(Global.SIX_DP));
             }
         });
 
@@ -517,12 +516,10 @@ public class PdfViewFragment_single_view extends Fragment
 
     private class PdfViewPagerAdapter extends PagerAdapter
     {
-
         TouchImageView image_view;
         Bitmap bitmap;
         PdfViewPagerAdapter()
         {
-            //bitmapList=bitmap_list;
             title.setText(currently_shown_file.getName());
         }
 
@@ -552,7 +549,6 @@ public class PdfViewFragment_single_view extends Fragment
             {
                 public void onClick(View v)
                 {
-                    //if(toolbar.getGlobalVisibleRect(new Rect()))
                     if(toolbar_visible)
                     {
                         //disappear
@@ -585,6 +581,8 @@ public class PdfViewFragment_single_view extends Fragment
                 }
             });
 
+            pbf=ProgressBarFragment.getInstance();
+            pbf.show(((PdfViewActivity)context).fm,"");
             if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-10))
             {
                 try {
@@ -596,6 +594,7 @@ public class PdfViewFragment_single_view extends Fragment
                 }
                 catch (OutOfMemoryError error)
                 {
+                    pbf.dismissAllowingStateLoss();
                     print(getString(R.string.outofmemory_exception_thrown));
                     ((PdfViewActivity)context).finish();
                     return v;
@@ -609,6 +608,7 @@ public class PdfViewFragment_single_view extends Fragment
             }
 
             GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+            pbf.dismissAllowingStateLoss();
             container.addView(v);
             return v;
         }
@@ -630,15 +630,6 @@ public class PdfViewFragment_single_view extends Fragment
             container.removeView((View)object);
         }
 
-
-        public float getAspectRatio()
-        {
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inJustDecodeBounds=true;
-            int width=options.outWidth;
-            int height=options.outHeight;
-            return (float) (width/height);
-        }
     }
 
     private Bitmap getBitmap(PdfRenderer pdfRenderer, int i)
@@ -667,7 +658,7 @@ public class PdfViewFragment_single_view extends Fragment
         public PictureSelectorAdapter.VH onCreateViewHolder(ViewGroup parent, int p2)
         {
             // TODO: Implement this method
-            View v=LayoutInflater.from(context).inflate(R.layout.image_selector_recyclerview_layout,parent,false);
+            View v=LayoutInflater.from(context).inflate(R.layout.pdf_page_selector_recyclerview_layout,parent,false);
             return new PictureSelectorAdapter.VH(v);
         }
 
@@ -675,8 +666,9 @@ public class PdfViewFragment_single_view extends Fragment
         public void onBindViewHolder(PictureSelectorAdapter.VH p1, int p2)
         {
             // TODO: Implement this method
-            Bitmap bitmap=picture_list.get(p2);
-            GlideApp.with(context).load(bitmap).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+            //Bitmap bitmap=picture_list.get(p2);
+            //GlideApp.with(context).load(bitmap).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+            p1.textView.setText(p2+1+"");
             p1.v.setSelected(selected_item_sparseboolean.get(p2,false));
 
         }
@@ -691,12 +683,12 @@ public class PdfViewFragment_single_view extends Fragment
         private class VH extends RecyclerView.ViewHolder implements View.OnClickListener
         {
             final View v;
-            final ImageView imageview;
+            final TextView textView;
             VH(View view)
             {
                 super(view);
                 v=view;
-                imageview=v.findViewById(R.id.picture_viewpager_layout_imageview);
+                textView=v.findViewById(R.id.pdf_page_selector_textview);
                 v.setOnClickListener(this);
             }
 
@@ -824,7 +816,6 @@ public class PdfViewFragment_single_view extends Fragment
         String current_file_name;
         boolean isFromInternal;
         String size_of_files_format;
-        final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
         final FileObjectType fileObjectType;
         DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
         {
@@ -836,6 +827,7 @@ public class PdfViewFragment_single_view extends Fragment
         protected void onPreExecute()
         {
             // TODO: Implement this method
+            pbf=ProgressBarFragment.getInstance();
             pbf.show(((PdfViewActivity)context).fm,"progressbar_dialog");
         }
 

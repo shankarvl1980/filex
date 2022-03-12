@@ -289,7 +289,7 @@ public class ImageViewFragment extends Fragment
 							}
 							float aspect_ratio;
 							try {
-								aspect_ratio=image_view_adapter.getAspectRatio(context.getContentResolver().openInputStream(uri));
+								aspect_ratio=Global.GET_BITMAP_ASPECT_RATIO(context.getContentResolver().openInputStream(uri));
 							} catch (FileNotFoundException e) {
 								//aspect_ratio=0;
 							}
@@ -373,7 +373,7 @@ public class ImageViewFragment extends Fragment
 		{
 			context=getContext();
 		}
-		pbf.show(((ImageViewActivity)context).getSupportFragmentManager(),"");
+		pbf.show(((ImageViewActivity)context).fm,"");
 		polling_handler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -735,23 +735,7 @@ public class ImageViewFragment extends Fragment
 			return albumList.get(position).getName();
 		}
 
-		public float getAspectRatio(InputStream inputStream)
-		{
-			BitmapFactory.Options options=new BitmapFactory.Options();
-			options.inJustDecodeBounds=true;
-			BitmapFactory.decodeStream(inputStream,null,options);
-			int width=options.outWidth;
-			int height=options.outHeight;
-			if(width==0 || height==0)
-			{
-				return 0;
-			}
-			else
-			{
-				return (float) (width/height);
-			}
 
-		}
 	}
 
 
