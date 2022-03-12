@@ -404,7 +404,7 @@ class FileIntentDispatch
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
 		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType!=null ? fileObjectType.toString():null);
-		Log.d("shankar",fileObjectType!=null?fileObjectType.toString():"");
+		//Log.d("shankar",fileObjectType!=null?fileObjectType.toString():"");
 		intent.putExtra(EXTRA_FILE_PATH,file_path);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

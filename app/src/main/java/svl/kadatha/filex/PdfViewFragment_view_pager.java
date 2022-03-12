@@ -33,6 +33,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.appcompat.widget.Toolbar;
@@ -98,12 +99,20 @@ public class PdfViewFragment_view_pager extends Fragment
     private AsyncTaskPdfPages asyncTaskPdfPages;
     private LinearLayout image_view_selector_butt;
     private String source_folder;
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+        localBroadcastManager=LocalBroadcastManager.getInstance(context);
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        context=getContext();
-        localBroadcastManager=LocalBroadcastManager.getInstance(context);
         data=((PdfViewActivity)getContext()).data;
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         Bundle bundle=getArguments();
@@ -156,8 +165,7 @@ public class PdfViewFragment_view_pager extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        context=getContext();
-        localBroadcastManager=LocalBroadcastManager.getInstance(context);
+
         h=new Handler();
         handler=new Handler();
         polling_handler=new Handler();
@@ -320,7 +328,11 @@ public class PdfViewFragment_view_pager extends Fragment
                 lm.scrollToPositionWithOffset(i,-preview_image_offset);
                 selected_item_sparseboolean=new SparseBooleanArray();
                 selected_item_sparseboolean.put(i,true);
-                picture_selector_adapter.notifyDataSetChanged();
+                if(picture_selector_adapter!=null)
+                {
+                    picture_selector_adapter.notifyDataSetChanged();
+                }
+
 
             }
 
@@ -451,30 +463,6 @@ public class PdfViewFragment_view_pager extends Fragment
         }
     });
 
-    /*
-    @Override
-    public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-    {
-        super.onActivityResult(requestCode,resultCode,resultData);
-        if (requestCode == saf_request_code) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri treeUri;
-                // Get Uri from Storage Access Framework.
-                treeUri = resultData.getData();
-                Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
-
-                boolean permission_requested = false;
-                delete_file_async_task = new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-                delete_file_async_task.executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR);
-
-            } else {
-                print(getString(R.string.permission_not_granted));
-            }
-        }
-    }
-
-     */
-
 
     private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
     {
@@ -532,9 +520,7 @@ public class PdfViewFragment_view_pager extends Fragment
         public int getCount()
         {
             // TODO: Implement this method
-
             return total_pages;//list_pdf_pages.size();
-
         }
 
         @Override
@@ -624,7 +610,7 @@ public class PdfViewFragment_view_pager extends Fragment
         {
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inJustDecodeBounds=true;
-                        int width=options.outWidth;
+            int width=options.outWidth;
             int height=options.outHeight;
             return (float) (width/height);
         }
@@ -718,8 +704,6 @@ public class PdfViewFragment_view_pager extends Fragment
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-
-
                 PdfRenderer pdfRenderer = null;
                 if(fromThirdPartyApp)
                 {
@@ -758,12 +742,25 @@ public class PdfViewFragment_view_pager extends Fragment
                     page.close();
                 }
             }
+            catch (OutOfMemoryError error)
+            {
+                print(getString(R.string.outofmemory_exception_thrown));
+                ((PdfViewActivity)context).finish();
+                return null;
+
+            }
             catch (SecurityException e)
             {
                 security_exception_thrown=true;
                 return null;
             }
             catch (IOException | IllegalArgumentException e) {
+                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        print(getString(R.string.file_not_in_PDF_format_or_corrupted));
+                    }
+                });
                 return null;
             }
             return null;
@@ -837,7 +834,6 @@ public class PdfViewFragment_view_pager extends Fragment
                 FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                 Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                 ((PdfViewActivity)context).finish();
-
             }
 
             pbf.dismissAllowingStateLoss();

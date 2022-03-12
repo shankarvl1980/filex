@@ -13,7 +13,7 @@
 
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/fragment_pdf_single_toolbar"
+        android:id="@+id/fragment_pdf_single_top_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_background"
@@ -67,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/pdf_single_view_selector_bottom_toolbar"
+        android:id="@+id/fragment_pdf_single_bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_background"

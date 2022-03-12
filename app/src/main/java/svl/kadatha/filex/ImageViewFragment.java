@@ -48,8 +48,10 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -164,9 +166,7 @@ public class ImageViewFragment extends Fragment
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
 		recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
-
 	}
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -283,10 +283,18 @@ public class ImageViewFragment extends Fragment
 								print(getString(R.string.not_able_to_process));
 								break;
 							}
-							float aspect_ratio=image_view_adapter.getAspectRatio();
-							File tempFile=new File(((ImageViewActivity)getContext()).CacheDir,currently_shown_file.getName());
+							if(context==null)
+							{
+								context=getContext();
+							}
+							float aspect_ratio;
+							try {
+								aspect_ratio=image_view_adapter.getAspectRatio(context.getContentResolver().openInputStream(uri));
+							} catch (FileNotFoundException e) {
+								//aspect_ratio=0;
+							}
+							File tempFile=new File(((ImageViewActivity)context).CacheDir,currently_shown_file.getName());
 							Intent intent=InstaCropperActivity.getIntent(context,uri,Uri.fromFile(tempFile),currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
-							//startActivityForResult(intent,crop_request_code);
 							activityResultLauncher_crop_request.launch(intent);
 							break;
 						default:
@@ -361,7 +369,11 @@ public class ImageViewFragment extends Fragment
 			}
 		};
 		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
-		pbf.show(getActivity().getSupportFragmentManager(),"");
+		if(context==null)
+		{
+			context=getContext();
+		}
+		pbf.show(((ImageViewActivity)context).getSupportFragmentManager(),"");
 		polling_handler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -723,13 +735,22 @@ public class ImageViewFragment extends Fragment
 			return albumList.get(position).getName();
 		}
 
-		public float getAspectRatio()
+		public float getAspectRatio(InputStream inputStream)
 		{
 			BitmapFactory.Options options=new BitmapFactory.Options();
 			options.inJustDecodeBounds=true;
+			BitmapFactory.decodeStream(inputStream,null,options);
 			int width=options.outWidth;
 			int height=options.outHeight;
-			return (float) (width/height);
+			if(width==0 || height==0)
+			{
+				return 0;
+			}
+			else
+			{
+				return (float) (width/height);
+			}
+
 		}
 	}
 

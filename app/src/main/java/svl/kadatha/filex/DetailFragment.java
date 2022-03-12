@@ -588,29 +588,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 });
 
 
-/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	{
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-		}
-		else if (requestCode == UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
-		{
-			//installAPK();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-	}
-
- */
-
-
 	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
 	{
 		int idx=file_name.lastIndexOf(".");

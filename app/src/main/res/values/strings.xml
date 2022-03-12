@@ -319,6 +319,9 @@
     <string name="permission_granted">permission granted</string>
     <string name="installation_failed">installation failed</string>
     <string name="permission_required_to_regulate_audio_play_when_phone_rings">Permission is required to regulate the audio play when phone rings</string>
+    <string name="outofmemory_exception_thrown">OutOfMemory exception is thrown</string>
+    <string name="exception_thrown">Exception thrown</string>
+    <string name="file_not_in_PDF_format_or_corrupted">file not in PDF format or corrupted</string>
 
 
     <string-array name="library_categories">

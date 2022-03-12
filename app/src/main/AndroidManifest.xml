@@ -89,16 +89,17 @@
             </intent-filter>
         </activity>
 
-        <!--activity
+        <activity
             android:name=".PdfViewActivity"
-            android:label="@string/filex_pdf_viewer">
+            android:label="@string/filex_pdf_viewer"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/pdf" />
             </intent-filter>
-        </activity-->
+        </activity>
 
 
         <activity

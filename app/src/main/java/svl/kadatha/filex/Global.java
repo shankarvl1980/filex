@@ -6,11 +6,14 @@ import android.content.UriPermission;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Debug;
 import android.provider.DocumentsContract;
+import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -132,8 +135,8 @@ public class Global
 			new MimePOJO("Text","text/*",TEXT_REGEX),
 			new MimePOJO("Image","image/*",IMAGE_REGEX),
 			new MimePOJO("Audio","audio/*",AUDIO_REGEX),
-			new MimePOJO("Video","video/*",VIDEO_REGEX)/*,
-			new MimePOJO("PDF","application/pdf",PDF_REGEX)*/));
+			new MimePOJO("Video","video/*",VIDEO_REGEX),
+			new MimePOJO("PDF","application/pdf",PDF_REGEX)));
 
 	static final List<MimePOJO> MIME_POJOS=new ArrayList<>(Arrays.asList(
 			new MimePOJO("MS Word","application/msword",DOC_REGEX),
@@ -847,5 +850,23 @@ public class Global
 		}
 	}
 
+	public static double AVAILABLE_MEMORY_MB(){
+		double max = Runtime.getRuntime().maxMemory()/1024;
+		Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
+		Debug.getMemoryInfo(memoryInfo);
+		return (max - memoryInfo.getTotalPss())/1024;
+	}
+
+	public static long GET_URI_FILE_SIZE(Uri fileUri,Context context) {
+		Cursor returnCursor = context.getContentResolver().
+				query(fileUri, null, null, null, null);
+		int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+		returnCursor.moveToFirst();
+
+		long size = returnCursor.getLong(sizeIndex);
+		returnCursor.close();
+
+		return size;
+	}
 }
 
