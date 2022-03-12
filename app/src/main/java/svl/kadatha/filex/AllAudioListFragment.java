@@ -321,6 +321,12 @@ public class AllAudioListFragment extends Fragment
 		((AudioPlayerActivity)context).removeSearchFilterListener(searchFilterListener);
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
+
 	interface AudioSelectListener
 	{
 		void onAudioSelect(Uri data, AudioPOJO audio);

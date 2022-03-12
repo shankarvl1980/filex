@@ -376,7 +376,7 @@ public class PdfViewFragment_view_pager extends Fragment
             public void run() {
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED && list_pdf_pages.size()<1)
                 {
-                    h.postDelayed(this,25);
+                    h.postDelayed(this,100);
                 }
                 else
                 {
@@ -394,6 +394,42 @@ public class PdfViewFragment_view_pager extends Fragment
             }
         });
         current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(toolbar_visible)
+                {
+                    //disappear
+                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+                    image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+
+
+                    //toolbar.setVisibility(View.GONE);
+                    //recyclerview.setVisibility(View.GONE);
+                    //floating_back_button.setVisibility(View.GONE);
+                    is_menu_opened=false;
+                    toolbar_visible=false;
+                    handler.removeCallbacks(runnable);
+
+                }
+                else
+                {
+                    //appear
+                    toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+                    floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+                    image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+
+                    //toolbar.setVisibility(View.VISIBLE);
+                    //recyclerview.setVisibility(View.VISIBLE);
+                    //floating_back_button.setVisibility(View.VISIBLE);
+                    toolbar_visible=true;
+                    handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+                }
+
+
+            }
+        });
         return v;
     }
 
@@ -665,7 +701,6 @@ public class PdfViewFragment_view_pager extends Fragment
     private class AsyncTaskPdfPages extends svl.kadatha.filex.AsyncTask<Void,Bitmap,Void>
     {
         // CancelableProgressBarDialog cancelableProgressBarDialog;
-        boolean security_exception_thrown;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -734,14 +769,25 @@ public class PdfViewFragment_view_pager extends Fragment
             }
             catch (OutOfMemoryError error)
             {
-                print(getString(R.string.outofmemory_exception_thrown));
+                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        print(getString(R.string.outofmemory_exception_thrown));
+                    }
+                });
+
                 ((PdfViewActivity)context).finish();
                 return null;
 
             }
             catch (SecurityException e)
             {
-                security_exception_thrown=true;
+                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        print(getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
+                    }
+                });
                 return null;
             }
             catch (IOException | IllegalArgumentException e) {
@@ -766,7 +812,6 @@ public class PdfViewFragment_view_pager extends Fragment
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(security_exception_thrown) print(getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
             asyncTaskStatus=AsyncTaskStatus.COMPLETED;
             //cancelableProgressBarDialog.dismissAllowingStateLoss();
         }

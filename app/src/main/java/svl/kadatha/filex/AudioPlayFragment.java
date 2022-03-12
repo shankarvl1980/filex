@@ -520,6 +520,11 @@ public class AudioPlayFragment extends Fragment
 
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
 
 	@Override
 	public void onDestroy()

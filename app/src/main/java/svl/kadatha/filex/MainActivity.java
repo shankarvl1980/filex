@@ -1398,6 +1398,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		localBroadcastManager.unregisterReceiver(usbReceiver);
 		localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
 		context.unregisterReceiver(mediaMountReceiver);
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)

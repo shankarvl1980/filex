@@ -525,7 +525,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 	}
 
-	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
+
+	private boolean check_SAF_permission(String file_path, FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
 		if(uriPOJO!=null)

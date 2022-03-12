@@ -39,6 +39,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -332,6 +333,7 @@ public class ImageViewFragment extends Fragment
 		current_image_tv=v.findViewById(R.id.image_view_current_view);
 
         final RecyclerView recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
+        new LinearSnapHelper().attachToRecyclerView(recyclerview);
 		recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 			{
 				public void onScrolled(RecyclerView rv, int dx,int dy)
@@ -430,8 +432,13 @@ public class ImageViewFragment extends Fragment
 
 		return v;
 	}
-	
-	
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
+
 	public static ImageViewFragment getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
 	{
 		ImageViewFragment frag=new ImageViewFragment();

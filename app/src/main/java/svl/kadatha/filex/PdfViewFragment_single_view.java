@@ -44,6 +44,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -164,7 +165,6 @@ public class PdfViewFragment_single_view extends Fragment
         recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
 
     }
-
 
 
     @Override
@@ -300,6 +300,7 @@ public class PdfViewFragment_single_view extends Fragment
         current_page_tv=v.findViewById(R.id.image_view_current_view);
         image_view_selector_butt=v.findViewById(R.id.image_view_selector_recyclerview_group);
         recyclerview=v.findViewById(R.id.activity_picture_view_recyclerview);
+        new LinearSnapHelper().attachToRecyclerView(recyclerview);
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
             public void onScrolled(RecyclerView rv, int dx,int dy)
@@ -377,16 +378,15 @@ public class PdfViewFragment_single_view extends Fragment
         h.post(new Runnable() {
             @Override
             public void run() {
-                //if(asyncTaskStatus==AsyncTaskStatus.STARTED && list_pdf_pages.size()<1)
                 if(asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
                 {
-                    h.postDelayed(this,25);
+                    h.postDelayed(this,100);
                 }
                 else
                 {
                     pdf_view_adapter=new PdfViewPagerAdapter();
                     view_pager.setAdapter(pdf_view_adapter);
-                    //view_pager.setCurrentItem(image_selected_idx);
+                    view_pager.setCurrentItem(image_selected_idx);
                     selected_item_sparseboolean.put(image_selected_idx,true);
                     picture_selector_adapter=new PictureSelectorAdapter(list_pdf_pages);
 
@@ -399,7 +399,43 @@ public class PdfViewFragment_single_view extends Fragment
                 }
             }
         });
-        //current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(toolbar_visible)
+                {
+                    //disappear
+                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+                    image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+
+
+                    //toolbar.setVisibility(View.GONE);
+                    //recyclerview.setVisibility(View.GONE);
+                    //floating_back_button.setVisibility(View.GONE);
+                    is_menu_opened=false;
+                    toolbar_visible=false;
+                    handler.removeCallbacks(runnable);
+
+                }
+                else
+                {
+                    //appear
+                    toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+                    floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+                    image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+
+                    //toolbar.setVisibility(View.VISIBLE);
+                    //recyclerview.setVisibility(View.VISIBLE);
+                    //floating_back_button.setVisibility(View.VISIBLE);
+                    toolbar_visible=true;
+                    handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+                }
+
+            }
+        });
+
         return v;
     }
 
@@ -483,7 +519,6 @@ public class PdfViewFragment_single_view extends Fragment
             tree_uri=uriPOJO.get_uri();
         }
 
-
         if(tree_uri_path.equals("")) {
             SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
             safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
@@ -504,6 +539,11 @@ public class PdfViewFragment_single_view extends Fragment
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        listPopWindow.dismiss(); // to avoid memory leak on orientation change
+    }
 
     @Override
     public void onDestroy() {
@@ -560,6 +600,8 @@ public class PdfViewFragment_single_view extends Fragment
                         //toolbar.setVisibility(View.GONE);
                         //recyclerview.setVisibility(View.GONE);
                         //floating_back_button.setVisibility(View.GONE);
+
+                        is_menu_opened=false;
                         toolbar_visible=false;
                         handler.removeCallbacks(runnable);
 
@@ -774,11 +816,21 @@ public class PdfViewFragment_single_view extends Fragment
                         return null;
                     }
 
-                    //list_pdf_pages.add(getBitmap(pdfRenderer,i));
                     list_pdf_pages.add(null);
 
                 }
-            } catch (IOException e) {
+            }
+            catch (SecurityException e)
+            {
+                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        print(getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
+                    }
+                });
+                return null;
+            }
+            catch (IOException e) {
                 ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

@@ -313,7 +313,13 @@ public class VideoViewContainerFragment extends Fragment
 		frag.setArguments(bundle);
 		return frag;
 	}
-	
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
+
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -341,30 +347,7 @@ public class VideoViewContainerFragment extends Fragment
 
 		}
 	});
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		super.onActivityResult(requestCode,resultCode,resultData);
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			// Get Uri from Storage Access Framework.
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
-			boolean permission_requested = false;
-			delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-			delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
-	 */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
@@ -439,6 +422,7 @@ public class VideoViewContainerFragment extends Fragment
 							toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
 							floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
 							//frag.toolbar.animate().translationY(frag.toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
+							is_menu_opened=false;
 							toolbar_visible=false;
 							handler.removeCallbacks(runnable);
 						}
