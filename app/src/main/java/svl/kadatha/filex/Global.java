@@ -699,7 +699,7 @@ public class Global
 	}
 
 
-	public static Bitmap GET_RESIZED_BITMAP(String path){
+	public static Bitmap GET_RESIZED_BITMAP(String path,int image_view_dimension){
 		if(path==null) return null;
 		File f=new File(path);
 		Bitmap b = null;
@@ -718,8 +718,8 @@ public class Global
 
 
 		int scale = 1;
-		if (o.outHeight > IMAGEVIEW_DIMENSION_LARGE_LIST || o.outWidth > IMAGEVIEW_DIMENSION_LARGE_LIST) {
-			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGEVIEW_DIMENSION_LARGE_LIST /
+		if (o.outHeight > image_view_dimension || o.outWidth > image_view_dimension) {
+			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_dimension /
 					(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
 		}
 

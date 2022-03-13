@@ -156,7 +156,7 @@ public class AudioDatabaseHelper
 
 
 					AudioPOJO audio=new AudioPOJO(id, data, title,title.toLowerCase(), album, artist, duration, null,FileObjectType.FILE_TYPE);
-					audio.setAlbumArt(AudioPlayerActivity.getAlbumArt(context,data));
+					audio.setAlbumArt(AudioPlayerActivity.getAlbumArt(context,data,Global.IMAGEVIEW_DIMENSION_LARGE_LIST));
 					audio_list.add(audio);
 					c.moveToNext();
 

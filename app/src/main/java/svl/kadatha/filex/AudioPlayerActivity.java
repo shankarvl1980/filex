@@ -31,6 +31,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -379,7 +381,7 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
-	public static Bitmap getAlbumArt(Context context,String data)
+	public static Bitmap getAlbumArt(Context context,String data,int image_view_size)
 	{
 
 		Bitmap albumart=null;
@@ -393,7 +395,20 @@ public class AudioPlayerActivity extends BaseActivity
 				byte [] art_array=mmr.getEmbeddedPicture();
 				if(art_array!=null)
 				{
-					albumart=BitmapFactory.decodeByteArray(art_array,0,art_array.length);
+					int album_art_length=art_array.length;
+					BitmapFactory.Options options=new BitmapFactory.Options();
+					options.inJustDecodeBounds=true;
+					BitmapFactory.decodeByteArray(art_array,0, album_art_length,options);
+					int scale = 1;
+					if (options.outHeight > image_view_size || options.outWidth > image_view_size) {
+						scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_size /
+								(double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
+					}
+
+					//Decode with inSampleSize
+					BitmapFactory.Options o2 = new BitmapFactory.Options();
+					o2.inSampleSize = scale;
+					albumart = BitmapFactory.decodeByteArray(art_array,0, album_art_length,o2);
 				}
 
 			}
