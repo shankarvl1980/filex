@@ -246,7 +246,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						if(fromThirdPartyApp)
 						{
 							src_uri=data;
-
 						}
 						else if(fileObjectType==FileObjectType.FILE_TYPE)
 						{
@@ -601,7 +600,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				current_page_end_point=page_pointer_hashmap.get(current_page);
 				openFile(current_page_end_point);
 			}
-
 
 		}
 	}

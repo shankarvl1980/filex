@@ -630,37 +630,6 @@ public class AudioPlayFragment extends Fragment
 		}
 	});
 
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		super.onActivityResult(requestCode,resultCode,resultData);
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			// Get Uri from Storage Access Framework.
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-
-			boolean permission_requested = false;
-			delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-			delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-		}
-		else if(requestCode==AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE && resultCode==Activity.RESULT_OK)
-		{
-			set_ring_tone();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
-	 */
-
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
