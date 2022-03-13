@@ -561,7 +561,7 @@ public class AudioPlayFragment extends Fragment
 					}
 					else
 					{
-						handler_for_art.postDelayed(this,1000);
+						handler_for_art.postDelayed(this,500);
 					}
 				}
 			});
@@ -571,26 +571,24 @@ public class AudioPlayFragment extends Fragment
 	
 	private void set_title_art(String audiofilepath)
 	{
-
 		audio_name_tv.setText(audio_file_name);
 		if(album_art==null)
 		{
 			album_art= AudioPlayerActivity.getAlbumArt(context,audiofilepath);
 			if(album_art==null)
 			{
-				album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.audio_file_icon);
+				album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.woofer_icon);
 
 			}
 		}
 
-		GlideApp.with(context).load(album_art).placeholder(R.drawable.audio_file_icon).error(R.drawable.audio_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
+		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
 
 	}
 	
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 

@@ -104,6 +104,7 @@
 		android:lines="1"
 		android:padding="@dimen/layout_margin"
 		android:textColor="?attr/recycler_text_color"
+		android:textStyle="bold|italic"
 		app:layout_constraintBottom_toTopOf="@+id/audio_player_current_progress"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent" />

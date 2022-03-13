@@ -699,7 +699,7 @@ public class Global
 	}
 
 
-	public static Bitmap GET_BITMAP(String path){
+	public static Bitmap GET_RESIZED_BITMAP(String path){
 		if(path==null) return null;
 		File f=new File(path);
 		Bitmap b = null;
