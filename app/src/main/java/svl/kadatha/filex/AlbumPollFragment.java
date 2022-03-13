@@ -63,6 +63,10 @@ public class AlbumPollFragment extends Fragment
                     }
                 }
             }
+            else if(fileObjectType==FileObjectType.ROOT_TYPE)
+            {
+                currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(selected_file_path),false,false,FileObjectType.FILE_TYPE);
+            }
             else
             {
                 currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(selected_file_path),false,false,FileObjectType.FILE_TYPE);

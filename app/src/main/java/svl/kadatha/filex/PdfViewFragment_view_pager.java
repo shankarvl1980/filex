@@ -368,8 +368,8 @@ public class PdfViewFragment_view_pager extends Fragment
                 }
             }
         };
-        handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
+        handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
         h.post(new Runnable() {
             @Override
@@ -393,41 +393,12 @@ public class PdfViewFragment_view_pager extends Fragment
                 }
             }
         });
+
         current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(toolbar_visible)
-                {
-                    //disappear
-                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-                    image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
-
-
-                    //toolbar.setVisibility(View.GONE);
-                    //recyclerview.setVisibility(View.GONE);
-                    //floating_back_button.setVisibility(View.GONE);
-                    is_menu_opened=false;
-                    toolbar_visible=false;
-                    handler.removeCallbacks(runnable);
-
-                }
-                else
-                {
-                    //appear
-                    toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-                    floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-                    image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-
-                    //toolbar.setVisibility(View.VISIBLE);
-                    //recyclerview.setVisibility(View.VISIBLE);
-                    //floating_back_button.setVisibility(View.VISIBLE);
-                    toolbar_visible=true;
-                    handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-                }
-
-
+                image_view_on_click_procedure();
             }
         });
         return v;
@@ -540,6 +511,41 @@ public class PdfViewFragment_view_pager extends Fragment
         super.onDestroy();
     }
 
+    private void image_view_on_click_procedure()
+    {
+        if(toolbar_visible)
+        {
+            //disappear
+            toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+            floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+            image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+
+
+            //toolbar.setVisibility(View.GONE);
+            //recyclerview.setVisibility(View.GONE);
+            //floating_back_button.setVisibility(View.GONE);
+
+            is_menu_opened=false;
+            toolbar_visible=false;
+            handler.removeCallbacks(runnable);
+
+        }
+        else
+        {
+            //appear
+            toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+
+            //toolbar.setVisibility(View.VISIBLE);
+            //recyclerview.setVisibility(View.VISIBLE);
+            //floating_back_button.setVisibility(View.VISIBLE);
+            toolbar_visible=true;
+            handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+        }
+
+    }
+
     private class PdfViewPagerAdapter extends PagerAdapter
     {
 
@@ -577,36 +583,7 @@ public class PdfViewFragment_view_pager extends Fragment
             {
                 public void onClick(View v)
                 {
-                    if(toolbar_visible)
-                    {
-                        //disappear
-                        toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-                        floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-                        image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
-
-
-                        //toolbar.setVisibility(View.GONE);
-                        //recyclerview.setVisibility(View.GONE);
-                        //floating_back_button.setVisibility(View.GONE);
-                        is_menu_opened=false;
-                        toolbar_visible=false;
-                        handler.removeCallbacks(runnable);
-
-                    }
-                    else
-                    {
-                        //appear
-                        toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-                        floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-                        image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-
-                        //toolbar.setVisibility(View.VISIBLE);
-                        //recyclerview.setVisibility(View.VISIBLE);
-                        //floating_back_button.setVisibility(View.VISIBLE);
-                        toolbar_visible=true;
-                        handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-                    }
-
+                    image_view_on_click_procedure();
                 }
             });
 
@@ -734,13 +711,17 @@ public class PdfViewFragment_view_pager extends Fragment
                 {
                     pdfRenderer = new PdfRenderer(context.getContentResolver().openFileDescriptor(data,"r"));
                 }
-                else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+                else if(fileObjectType==FileObjectType.FILE_TYPE)
                 {
                     pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                 }
                 else if(fileObjectType==FileObjectType.USB_TYPE)
                 {
                     pdfRenderer = new PdfRenderer(context.getContentResolver().openFileDescriptor(data,"r"));
+                }
+                else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                 }
                
                 total_pages = pdfRenderer.getPageCount();

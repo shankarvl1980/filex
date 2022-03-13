@@ -254,7 +254,6 @@ public class ImageViewFragment extends Fragment
 							ArrayList<Uri> uri_list=new ArrayList<>();
 							uri_list.add(src_uri);
 							FileIntentDispatch.sendUri(context,uri_list);
-
 							break;
 							
 						case 2:
@@ -303,9 +302,7 @@ public class ImageViewFragment extends Fragment
 
 					}
 					listPopWindow.dismiss();
-
 				}
-
 
 			});
 		listPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener()
@@ -352,6 +349,38 @@ public class ImageViewFragment extends Fragment
 			recyclerview.setPadding(Global.SCREEN_WIDTH/2- recyclerview_image_width /2,0,Global.SCREEN_WIDTH/2- recyclerview_image_width /2,0);
 		}
 
+		preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
+		selected_item_sparseboolean=new SparseBooleanArray();
+		lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
+		lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
+		view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+		{
+			public void onPageSelected(int i)
+			{
+				lm.scrollToPositionWithOffset(i,-preview_image_offset);
+				selected_item_sparseboolean=new SparseBooleanArray();
+				selected_item_sparseboolean.put(i,true);
+				if(picture_selector_adapter!=null)
+				{
+					picture_selector_adapter.notifyDataSetChanged();
+				}
+
+			}
+
+			public void onPageScrollStateChanged(int i)
+			{
+
+			}
+
+			public void onPageScrolled(int i,float p2, int p3)
+			{
+				file_selected_idx=i;
+				current_image_tv.setText(file_selected_idx+1+"/"+total_images);
+				currently_shown_file=album_file_pojo_list.get(i);
+				title.setText(currently_shown_file.getName());
+			}
+		});
+
 		runnable=new Runnable()
 		{
 			public void run()
@@ -385,41 +414,17 @@ public class ImageViewFragment extends Fragment
 				}
 				else
 				{
-					preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
-					selected_item_sparseboolean=new SparseBooleanArray();
+
 					image_view_adapter=new ImageViewPagerAdapter(album_file_pojo_list);
 					view_pager.setAdapter(image_view_adapter);
 					view_pager.setCurrentItem(file_selected_idx);
 					current_image_tv.setText(file_selected_idx+1+"/"+total_images);
 					selected_item_sparseboolean.put(file_selected_idx,true);
 					picture_selector_adapter=new PictureSelectorAdapter(album_file_pojo_list);
-					lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 					recyclerview.setLayoutManager(lm);
 					recyclerview.setAdapter(picture_selector_adapter);
-					lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
-					view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-					{
-						public void onPageSelected(int i)
-						{
-							lm.scrollToPositionWithOffset(i,-preview_image_offset);
-							selected_item_sparseboolean=new SparseBooleanArray();
-							selected_item_sparseboolean.put(i,true);
-							picture_selector_adapter.notifyDataSetChanged();
-						}
 
-						public void onPageScrollStateChanged(int i)
-						{
 
-						}
-
-						public void onPageScrolled(int i,float p2, int p3)
-						{
-							file_selected_idx=i;
-							current_image_tv.setText(file_selected_idx+1+"/"+total_images);
-							currently_shown_file=album_file_pojo_list.get(i);
-							title.setText(currently_shown_file.getName());
-						}
-					});
 					pbf.dismissAllowingStateLoss();
 					handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 					polling_handler.removeCallbacks(this);
@@ -428,6 +433,12 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
+		v.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				image_view_on_click_procedure();
+			}
+		});
 
 
 		return v;
@@ -453,7 +464,6 @@ public class ImageViewFragment extends Fragment
 	 public void seekSAFPermission()
 	 {
 	 	Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-	 	//startActivityForResult(intent, saf_request_code);
 		 activityResultLauncher_SAF_permission.launch(intent);
 	 }
 
@@ -525,79 +535,6 @@ public class ImageViewFragment extends Fragment
 		}
 	});
 
-	/*
-	 @RequiresApi(api = Build.VERSION_CODES.N)
-	 @Override
-	 public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	 {
-	 	super.onActivityResult(requestCode,resultCode,resultData);
-		switch(requestCode)
-		{
-			
-			case saf_request_code:
-				 if (resultCode== Activity.RESULT_OK)
-				 {
-					 Uri treeUri;
-					 treeUri = resultData.getData();
-					 Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-					 boolean permission_requested = false;
-					 delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-					 delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-				 }
-				 else
-				 {
-					 print(getString(R.string.permission_not_granted));
-				 }
-				break;
-			case crop_request_code:
-				 if(resultCode== Activity.RESULT_OK)
-				 {
-                     ProgressBarFragment pbf = ProgressBarFragment.getInstance();
-					 pbf.show(((ImageViewActivity)context).fm,"");
-					 Uri uri=resultData.getData();
-					 String file_name=resultData.getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
-					 File f=new File(((ImageViewActivity)context).CacheDir,file_name);
-					 WallpaperManager wm= WallpaperManager.getInstance(context);
-
-					 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-						 if(wm.isWallpaperSupported() && wm.isSetWallpaperAllowed())
-							 try
-							 {
-								 wm.setStream(context.getContentResolver().openInputStream(uri));
-								 print(getString(R.string.set_as_wallpaper));
-							 }
-							 catch(IOException e){}
-							 finally
-							 {
-								 if(f.exists())
-								 {
-									 f.delete();
-								 }
-							 }
-						 else
-						 {
-
-							 if(f.exists())
-							 {
-								 f.delete();
-							 }
-
-						 }
-					 }
-					 pbf.dismissAllowingStateLoss();
-				 }
-				 else
-				 {
-					 print(getString(R.string.could_not_be_set_as_wallpaper));
-				 }
-				break;
-
-		}
-	 }
-
-	 */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
@@ -629,6 +566,39 @@ public class ImageViewFragment extends Fragment
 		}
 	}
 
+	private void image_view_on_click_procedure()
+	{
+		if(toolbar_visible)
+		{
+			//disappear
+			toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+			floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+			image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+
+
+			//toolbar.setVisibility(View.GONE);
+			//recyclerview.setVisibility(View.GONE);
+			//floating_back_button.setVisibility(View.GONE);
+			is_menu_opened=false;
+			toolbar_visible=false;
+			handler.removeCallbacks(runnable);
+
+		}
+		else
+		{
+			//appear
+			toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+			floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+			image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+
+			//toolbar.setVisibility(View.VISIBLE);
+			//recyclerview.setVisibility(View.VISIBLE);
+			//floating_back_button.setVisibility(View.VISIBLE);
+			toolbar_visible=true;
+			handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+		}
+	}
+
 
 	private class ImageViewPagerAdapter extends PagerAdapter
 	{
@@ -646,7 +616,6 @@ public class ImageViewFragment extends Fragment
 		{
 			// TODO: Implement this method
 			return albumList.size();
-
 		}
 
 		@Override
@@ -660,8 +629,6 @@ public class ImageViewFragment extends Fragment
 		public Object instantiateItem(ViewGroup container, int position)
 		{
 			// TODO: Implement this method
-
-
 			View v=LayoutInflater.from(context).inflate(R.layout.image_viewpager_layout,container,false);
 			image_view=v.findViewById(R.id.picture_viewpager_layout_imageview);
 			image_view.setMaxZoom(6);
@@ -669,37 +636,7 @@ public class ImageViewFragment extends Fragment
 				{
 					public void onClick(View v)
 					{
-						//if(toolbar.getGlobalVisibleRect(new Rect()))
-						if(toolbar_visible)
-						{
-							//disappear
-							toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-							floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-							image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
-
-
-							//toolbar.setVisibility(View.GONE);
-							//recyclerview.setVisibility(View.GONE);
-							//floating_back_button.setVisibility(View.GONE);
-							is_menu_opened=false;
-							toolbar_visible=false;
-							handler.removeCallbacks(runnable);
-
-						}
-						else
-						{
-							//appear
-							toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-							floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-							image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-
-							//toolbar.setVisibility(View.VISIBLE);
-							//recyclerview.setVisibility(View.VISIBLE);
-							//floating_back_button.setVisibility(View.VISIBLE);
-							toolbar_visible=true;
-							handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-						}
-
+						image_view_on_click_procedure();
 					}
 				});
 
@@ -715,6 +652,10 @@ public class ImageViewFragment extends Fragment
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
 				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+			}
+			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
+			{
+				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
 			}
 
 			container.addView(v);
@@ -778,6 +719,10 @@ public class ImageViewFragment extends Fragment
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
 				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+			}
+			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
+			{
+				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
 			}
 
 			p1.v.setSelected(selected_item_sparseboolean.get(p2,false));
