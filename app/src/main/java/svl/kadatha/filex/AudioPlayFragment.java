@@ -89,7 +89,7 @@ public class AudioPlayFragment extends Fragment
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
-	private int album_art_image_view_dimension;
+	//private int album_art_image_view_dimension;
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -281,7 +281,7 @@ public class AudioPlayFragment extends Fragment
 		
 		
 		album_art_imageview=v.findViewById(R.id.fragment_current_play_albumart);
-		album_art_image_view_dimension=album_art_imageview.getWidth();
+		//album_art_image_view_dimension=album_art_imageview.getWidth();
 		
 		total_time_tv=v.findViewById(R.id.audio_player_total_time);
 		current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
@@ -495,7 +495,7 @@ public class AudioPlayFragment extends Fragment
 					if(AudioPlayerActivity.AUDIO_FILE!=null)
 					{
 						String path=AudioPlayerActivity.AUDIO_FILE.getData();
-						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getTitle(),path, AudioPlayerActivity.getAlbumArt(context,path,album_art_image_view_dimension)); // dont try audio_player_service.current_audio, it may not have been instantiated.
+						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getTitle(),path, AudioPlayerActivity.getAlbumArt(path,Global.SCREEN_WIDTH-Global.FOUR_DP)); // dont try audio_player_service.current_audio, it may not have been instantiated.
 
 					}
 					total_duration=audio_player_service.get_duration();
@@ -575,7 +575,7 @@ public class AudioPlayFragment extends Fragment
 		audio_name_tv.setText(audio_file_name);
 		if(album_art==null)
 		{
-			album_art= AudioPlayerActivity.getAlbumArt(context,audiofilepath,album_art_image_view_dimension);
+			album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
 			if(album_art==null)
 			{
 				album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.woofer_icon);

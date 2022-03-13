@@ -381,7 +381,7 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
-	public static Bitmap getAlbumArt(Context context,String data,int image_view_size)
+	public static Bitmap getAlbumArt(String data, int image_view_size)
 	{
 
 		Bitmap albumart=null;
