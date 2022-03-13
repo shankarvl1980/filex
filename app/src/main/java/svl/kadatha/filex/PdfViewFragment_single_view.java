@@ -107,6 +107,7 @@ public class PdfViewFragment_single_view extends Fragment
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp;
     private double size_per_page_MB;
+    private static final int SAFE_MEMORY_BUFFER=5;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -625,7 +626,7 @@ public class PdfViewFragment_single_view extends Fragment
 
             pbf=ProgressBarFragment.getInstance();
             pbf.show(((PdfViewActivity)context).fm,"");
-            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-10))
+            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER))
             {
                 try {
                     bitmap=getBitmap(pdfRenderer,position);
@@ -646,13 +647,21 @@ public class PdfViewFragment_single_view extends Fragment
                 {
                     print(getString(R.string.exception_thrown));
                 }
+                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+                pbf.dismissAllowingStateLoss();
+                container.addView(v);
+                return v;
 
             }
+            else
+            {
+                pbf.dismissAllowingStateLoss();
+                print(getString(R.string.insuffient_memory_to_load_file));
+                ((PdfViewActivity)context).finish();
+                return v;
+            }
 
-            GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
-            pbf.dismissAllowingStateLoss();
-            container.addView(v);
-            return v;
+
         }
 
 
