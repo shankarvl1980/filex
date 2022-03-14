@@ -167,6 +167,16 @@
 
         </activity>
 
+        <activity
+            android:name=".AppManagerActivity"
+            android:label="@string/app_manager"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
+
         <service
             android:name=".AudioPlayerService"
             android:exported="false" />

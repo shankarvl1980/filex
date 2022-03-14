@@ -352,7 +352,7 @@ public class ImageViewFragment extends Fragment
 		preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
 		selected_item_sparseboolean=new SparseBooleanArray();
 		lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-		lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
+
 		view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
 		{
 			public void onPageSelected(int i)
@@ -423,6 +423,7 @@ public class ImageViewFragment extends Fragment
 					picture_selector_adapter=new PictureSelectorAdapter(album_file_pojo_list);
 					recyclerview.setLayoutManager(lm);
 					recyclerview.setAdapter(picture_selector_adapter);
+					lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
 
 
 					pbf.dismissAllowingStateLoss();

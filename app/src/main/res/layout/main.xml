@@ -509,6 +509,51 @@
 					app:layout_constraintTop_toTopOf="@+id/storage_analyser_label" />
 
 				<View
+					android:id="@+id/app_manager_label_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@+id/app_manager_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/storage_analyser_label_background"
+
+					/>
+
+				<TextView
+					android:id="@+id/app_manager_label"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/app_manager"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:padding="@dimen/layout_margin"
+
+					app:layout_constraintEnd_toStartOf="@id/app_manager_image_view"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@+id/app_manager_label_background"
+					/>
+
+				<ImageView
+					android:id="@+id/app_manager_image_view"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/android_os_icon"
+					app:layout_constraintBottom_toBottomOf="@id/app_manager_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/app_manager_label"
+					app:layout_constraintTop_toTopOf="@+id/app_manager_label"
+
+					/>
+
+				<View
 					android:id="@+id/ftp_label_background"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
@@ -518,7 +563,7 @@
 					app:layout_constraintBottom_toBottomOf="@+id/ftp_label"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/storage_analyser_label_background"
+					app:layout_constraintTop_toBottomOf="@+id/app_manager_label_background"
 					android:visibility="gone"
 					/>
 
@@ -553,6 +598,7 @@
 					app:layout_constraintTop_toTopOf="@+id/ftp_label"
 					android:visibility="gone"
 					/>
+
 
 				<Space
 					android:layout_width="match_parent"

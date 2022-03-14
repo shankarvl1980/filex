@@ -323,6 +323,8 @@
     <string name="exception_thrown">Exception thrown</string>
     <string name="file_not_in_PDF_format_or_corrupted">file not in PDF format or corrupted</string>
     <string name="insuffient_memory_to_load_file">Insufficient memory to load the file</string>
+    <string name="app_manager">App Manager</string>
+
 
 
     <string-array name="library_categories">

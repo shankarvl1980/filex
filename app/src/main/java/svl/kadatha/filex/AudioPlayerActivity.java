@@ -85,12 +85,6 @@ public class AudioPlayerActivity extends BaseActivity
 
 		IntentFilter intent_filter=new IntentFilter();
 		intent_filter.addAction(AUDIO_NOTIFICATION_INTENT_ACTION);
-		Intent intent=getIntent();
-		if(savedInstanceState==null)
-		{
-			on_intent(intent);
-
-		}
 
 
 		audioDatabaseHelper=new AudioDatabaseHelper(context);
@@ -173,6 +167,14 @@ public class AudioPlayerActivity extends BaseActivity
 		});
 
 		tab_layout.setupWithViewPager(view_pager);
+
+		Intent intent=getIntent();
+		if(savedInstanceState==null)
+		{
+			if(intent!=null)on_intent(intent);
+		}
+
+
 		//apf=(AudioPlayFragment) adapter.createFragment(0);
 		//aalf=(AllAudioListFragment) adapter.createFragment(1);
 		//albumlf=(AlbumListFragment) adapter.createFragment(2);
@@ -185,7 +187,6 @@ public class AudioPlayerActivity extends BaseActivity
 		albumlf=(AlbumListFragment) adapter.instantiateItem(view_pager,2);
 		aslf=(AudioSavedListFragment) adapter.instantiateItem(view_pager,3);
 		adapter.finishUpdate(view_pager);
-
 
 		albumlf.setAudioSelectListener(new AlbumListFragment.AudioSelectListener()
 		{
@@ -268,15 +269,6 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 		});
 
-		if(savedInstanceState==null)
-		{
-			if(AUDIO_FILE==null)
-			{
-				view_pager.setCurrentItem(1);
-				apf.setTitleArt("",null,null);
-
-			}
-		}
 
 		/*
 		new TabLayoutMediator(tab_layout, view_pager, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -305,6 +297,12 @@ public class AudioPlayerActivity extends BaseActivity
 			if(file_path==null) file_path=PathUtil.getPath(context,data);
 			String name=new File(file_path).getName();
 			AUDIO_FILE=new AudioPOJO(0,file_path,name,name.toLowerCase(),null,null,"0",null,(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+			if(AUDIO_FILE==null)
+			{
+				view_pager.setCurrentItem(1);
+				apf.setTitleArt("",null,null);
+
+			}
 
 		}
 	}
@@ -483,7 +481,6 @@ public class AudioPlayerActivity extends BaseActivity
 	public void onBackPressed()
 	{
 		// TODO: Implement this method
-		//super.onBackPressed();
 		if(keyBoardUtil.getKeyBoardVisibility())
 		{
 			((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);

@@ -324,7 +324,7 @@ public class PdfViewFragment_single_view extends Fragment
         preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
         selected_item_sparseboolean=new SparseBooleanArray();
         lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-        lm.scrollToPositionWithOffset(image_selected_idx,-preview_image_offset);
+
 
         view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
@@ -393,6 +393,7 @@ public class PdfViewFragment_single_view extends Fragment
 
                     recyclerview.setLayoutManager(lm);
                     recyclerview.setAdapter(picture_selector_adapter);
+                    lm.scrollToPositionWithOffset(image_selected_idx,-preview_image_offset);
                     current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
                     //s=list_pdf_pages.size();
                     //start_polling();
