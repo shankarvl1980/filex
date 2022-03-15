@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,63 +71,33 @@ public class AppListFragment extends Fragment {
                 asyncTaskStatus=AsyncTaskStatus.STARTED;
                 appPOJOList=new ArrayList<>();
                 final PackageManager packageManager = context.getPackageManager();
-                /*
-                List<ApplicationInfo> installedApplications =
-                        packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
-
-                for (ApplicationInfo appInfo : installedApplications)
-                {
-                    if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
-                    {
-                        if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
-                        {
-                            // IS A SYSTEM APP
-                            String name=appInfo.name;
-                            String package_name=appInfo.packageName;
-
-                            String size;
-                            File file = new File(applicationInfo.publicSourceDir);
-                            int size = file.length();
-                            appPOJOList.add(new AppPOJO(name,package_name,size));
-
-                        }
-                    }
-                    else
-                    {
-                        if ((appInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0)
-                        {
-                            // APP WAS INSTALL AS AN UPDATE TO A BUILD-IN SYSTEM APP
-                        }
-                    }
-
-                }
-
-                 */
                 List<PackageInfo> packageInfos=packageManager.getInstalledPackages(0);
                 for (PackageInfo packageInfo : packageInfos)
                 {
                     if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
                     {
-                        //if ((packageInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
                         {
-                            // IS A SYSTEM APP
-                            String name=packageInfo.versionName;
+                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
-                            long size=0;
+                            File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            long size=file.length();
                             String size_formatted=FileUtil.humanReadableByteCount(size,false);
+                            extract_icon(package_name,packageManager,packageInfo);
                             appPOJOList.add(new AppPOJO(name,package_name,size_formatted));
 
                         }
                     }
                     else
                     {
-                        //if ((appInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0)
+                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_INSTALLED) != 0)
                         {
-                            // APP WAS INSTALL AS AN UPDATE TO A BUILD-IN SYSTEM APP
-                            String name=packageInfo.versionName;
+                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
-                            long size=0;
+                            File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            long size=file.length();
                             String size_formatted=FileUtil.humanReadableByteCount(size,false);
+                            extract_icon(package_name,packageManager,packageInfo);
                             appPOJOList.add(new AppPOJO(name,package_name,size_formatted));
 
                         }
@@ -198,14 +174,38 @@ public class AppListFragment extends Fragment {
         return v;
     }
 
+    private void extract_icon(String file_with_package_name,PackageManager packageManager,PackageInfo packageInfo)
+    {
+        if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
+        {
+            Drawable APKicon = packageInfo.applicationInfo.loadIcon(packageManager);
+            if(APKicon instanceof BitmapDrawable)
+            {
+                Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
+                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
+                try {
+                    FileOutputStream fileOutputStream=new FileOutputStream(f);
+                    bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                    fileOutputStream.close();
+                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                } catch (IOException e) {
+
+                }
+
+            }
+
+        }
+
+    }
+
 
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH>
     {
 
-        List<AppPOJO> appPOJOList;
+        List<AppPOJO> appPOJOs;
         AppListAdapter(List<AppPOJO> list)
         {
-            appPOJOList=list;
+            appPOJOs=list;
         }
 
         @NonNull
@@ -216,17 +216,33 @@ public class AppListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            AppPOJO appPOJO=appPOJOList.get(position);
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+appPOJO.app_package+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(holder.app_image);
-            holder.app_name.setText(appPOJO.app_name);
-            holder.app_package.setText(appPOJO.app_package);
-            holder.app_size.setText(appPOJO.app_size);
+
+
+
+            AppPOJO appPOJO=appPOJOs.get(position);
+            /*
+            if(appPOJO==null)
+            {
+                Log.d("shankar","apppojo is null");
+            }
+            else
+            {
+                Log.d("shankar","apppojo is not null "+appPOJO.getApp_name());
+                Log.d("shankar","apppojo is not null "+appPOJO.app_package);
+            }
+            Log.d("shankar","size is "+appPOJOList.size());
+
+             */
+            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+appPOJO.getApp_package()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(holder.app_image);
+            holder.app_name.setText(appPOJO.getApp_name());
+            holder.app_package.setText(appPOJO.getApp_package());
+            holder.app_size.setText(appPOJO.getApp_size());
 
         }
 
         @Override
         public int getItemCount() {
-            return appPOJOList.size();
+            return appPOJOs.size();
         }
 
         private class VH extends RecyclerView.ViewHolder
@@ -234,30 +250,77 @@ public class AppListFragment extends Fragment {
             View v;
             ImageView app_image;
             TextView app_name,app_package,app_size;
+
+            int imageview_dimension,first_line_font_size,second_line_font_size;
+
             public VH(@NonNull View itemView) {
                 super(itemView);
                 v=itemView;
+                app_image=v.findViewById(R.id.app_manager_app_image);
+                app_name=v.findViewById(R.id.app_manager_app_name);
+                app_package=v.findViewById(R.id.app_manager_app_package);
+                app_size=v.findViewById(R.id.app_manager_size);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
                     }
                 });
+
+                if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
+                {
+                    first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
+                    second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
+                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
+
+                }
+                else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+                {
+                    first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
+                    second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
+                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
+                }
+                else
+                {
+                    first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
+                    second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
+                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
+                }
+
+                app_name.setTextSize(first_line_font_size);
+                app_package.setTextSize(second_line_font_size);
+                app_size.setTextSize(second_line_font_size);
+
             }
         }
     }
 
     private class AppPOJO
     {
-        String app_name;
-        String app_package;
-        String app_size;
+        private final String app_name;
+        private final String app_package;
+        private final String app_size;
 
         AppPOJO(String app_name,String app_package,String app_size)
         {
             this.app_name=app_name;
             this.app_package=app_package;
             this.app_size=app_size;
+        }
+
+        public String getApp_name()
+        {
+            return this.app_name;
+        }
+
+        public String getApp_package()
+        {
+            return this.app_package;
+        }
+
+        public String getApp_size()
+        {
+            return this.app_size;
         }
 
     }
