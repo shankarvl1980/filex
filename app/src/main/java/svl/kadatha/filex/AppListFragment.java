@@ -69,14 +69,18 @@ public class AppListFragment extends Fragment {
             @Override
             public void run() {
                 asyncTaskStatus=AsyncTaskStatus.STARTED;
+                int flags = PackageManager.GET_META_DATA |
+                        PackageManager.GET_SHARED_LIBRARY_FILES |
+                        PackageManager.GET_UNINSTALLED_PACKAGES;
+
                 appPOJOList=new ArrayList<>();
                 final PackageManager packageManager = context.getPackageManager();
-                List<PackageInfo> packageInfos=packageManager.getInstalledPackages(0);
+                List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
                 for (PackageInfo packageInfo : packageInfos)
                 {
                     if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
                     {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
@@ -90,7 +94,7 @@ public class AppListFragment extends Fragment {
                     }
                     else
                     {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_INSTALLED) != 0)
+                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
@@ -165,6 +169,7 @@ public class AppListFragment extends Fragment {
                     adapter=new AppListAdapter(appPOJOList);
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(View.GONE);
+                    app_count_textview.setText(""+appPOJOList.size());
                     handler.removeCallbacks(this);
                 }
             }
