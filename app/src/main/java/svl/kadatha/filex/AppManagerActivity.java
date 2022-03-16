@@ -26,16 +26,17 @@ public class AppManagerActivity extends BaseActivity{
     private AppManagementFragmentAdapter adapter;
     public static final String USER_INSTALLED_APPS="user_installed_apps";
     public static final String SYSTEM_APPS="system_apps";
+    public boolean search_toolbar_visible;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_audio_player);
+        setContentView(R.layout.activity_app_manager);
         context=this;
         fm=getSupportFragmentManager();
-        tabLayout=findViewById(R.id.activity_audio_player_tab_layout);
-        viewPager=findViewById(R.id.activity_audio_player_viewpager);
+        tabLayout=findViewById(R.id.activity_app_manager_tab_layout);
+        viewPager=findViewById(R.id.activity_app_manager_viewpager);
         adapter=new AppManagementFragmentAdapter(fm);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -57,7 +58,7 @@ public class AppManagerActivity extends BaseActivity{
 
         tabLayout.setupWithViewPager(viewPager);
 
-        floatingActionButton=findViewById(R.id.floating_action_audio_player);
+        floatingActionButton=findViewById(R.id.floating_action_app_manager);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

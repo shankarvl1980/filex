@@ -19,7 +19,7 @@ import java.io.File;
 public class AppsInstalledRecyclerViewLayout extends ViewGroup
 {
     private final Context context;
-    private ImageView appimageview,appselect_indicator;
+    public ImageView appimageview,appselect_indicator;
     private TextView appnametextview, apppackagenametextview,appsizetextview;
     private int imageview_dimension;
     public int itemWidth, itemHeight;
@@ -168,15 +168,17 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             usedWidth+=imageview_dimension;
             iconheight=imageview_dimension;
 
-            measureChildWithMargins(appselect_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
+            measureChildWithMargins(appselect_indicator,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
+            usedWidth+=select_indicator_offset_linear;
 
             measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
 
-            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
-            usedWidth+=apppackagenametextview.getMeasuredWidth()+Global.TEN_DP;
 
-            measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.TEN_DP,heightMeasureSpec,0);
+            measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            usedWidth+=appsizetextview.getMeasuredWidth()+Global.TEN_DP*2;
+
+            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
             maxHeight+=appsizetextview.getMeasuredHeight();
 
@@ -246,7 +248,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             max_height_second_line=v.getMeasuredHeight();
 
             v=appsizetextview;
-            x=itemWidth-v.getMeasuredWidth();
+            x=a-v.getMeasuredWidth()-Global.TEN_DP;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
         }
@@ -288,16 +290,19 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
     public void setData(AppManagerListFragment.AppPOJO appPOJO, boolean item_selected)
     {
-        appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
+        //appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
         apppackagenametextview.setText(appPOJO.getPackage());
         appsizetextview.setText(appPOJO.getSize());
     }
 
+    /*
     public void set_selected(boolean item_selected)
     {
         appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
     }
+
+     */
 
 }

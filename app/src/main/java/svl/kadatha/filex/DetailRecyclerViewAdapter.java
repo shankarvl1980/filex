@@ -222,7 +222,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		boolean selected=df.mselecteditems.get(p2,false);
 		p1.view.setData(file,selected);
 		p1.view.setSelected(selected);
-			
 	}
 
 	@Override

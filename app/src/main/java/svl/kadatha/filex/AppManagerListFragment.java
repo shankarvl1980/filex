@@ -7,15 +7,20 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -25,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,6 +58,9 @@ public class AppManagerListFragment extends Fragment {
     private Handler handler;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppPOJO> app_selected_array=new ArrayList<>();
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -125,7 +134,18 @@ public class AppManagerListFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_app_manager,container,false);
         app_count_textview=v.findViewById(R.id.fragment_app_list_number);
         recyclerView=v.findViewById(R.id.fragment_app_list_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        if(Global.FILE_GRID_LAYOUT)
+        {
+            glm=new GridLayoutManager(context,Global.GRID_COUNT);
+            SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
+            recyclerView.addItemDecoration(spacesItemDecoration);
+            recyclerView.setLayoutManager(glm);
+        }
+        else
+        {
+            llm=new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(llm);
+        }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             final int threshold=5;
             public void onScrolled(RecyclerView rv, int dx, int dy)
@@ -158,6 +178,19 @@ public class AppManagerListFragment extends Fragment {
         progressBar=v.findViewById(R.id.fragment_app_list_progressbar);
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.sort_icon};
+        String [] titles={getString(R.string.search),getString(R.string.sort)};
+        tb_layout.setResourceImageDrawables(bottom_drawables,titles);
+        bottom_toolbar.addView(tb_layout);
+
+        Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+        Button sort_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+
+        ToolBarClickListener toolBarClickListener = new ToolBarClickListener();
+
+        search_btn.setOnClickListener(toolBarClickListener);
+        sort_btn.setOnClickListener(toolBarClickListener);
 
         handler=new Handler();
         handler.post(new Runnable() {
@@ -234,7 +267,7 @@ public class AppManagerListFragment extends Fragment {
             AppPOJO appPOJO=appPOJOs.get(position);
             boolean selected=mselecteditems.get(position,false);
             holder.v.setData(appPOJO,selected);
-            holder.v.set_selected(selected);
+            holder.v.setSelected(selected);
 
         }
 
@@ -253,6 +286,13 @@ public class AppManagerListFragment extends Fragment {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        clear_selection();
+                    }
+                });
+
+                v.appselect_indicator.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         pos=getBindingAdapterPosition();
                         if(mselecteditems.size()>0)
                         {
@@ -260,20 +300,50 @@ public class AppManagerListFragment extends Fragment {
                                 clear_selection();
                                 mselecteditems.put(pos,true);
                                 app_selected_array.add(appPOJOs.get(pos));
-                                v.set_selected(true);
+                                v.setSelected(true);
+                            }
+                            else
+                            {
+                                clear_selection();
                             }
                         }
                         else
                         {
                             mselecteditems.put(pos,true);
                             app_selected_array.add(appPOJOs.get(pos));
-                            v.set_selected(true);
+                            v.setSelected(true);
+
                         }
                     }
                 });
 
             }
         }
+    }
+
+
+    private class ToolBarClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View p1) {
+            // TODO: Implement this method
+
+            int id = p1.getId();
+            clear_selection();
+            if (id == R.id.toolbar_btn_1) {
+                //((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                if (!((AppManagerActivity) context).search_toolbar_visible) {
+                    //((AppManagerActivity) context).set_visibility_searchbar(true);
+                }
+
+            } else if (id == R.id.toolbar_btn_2) {
+                //((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity) context).search_edittext.getWindowToken(), 0);
+                if (app_selected_array.size() < 1) {
+                    return;
+                }
+            }
+        }
+
     }
 
 
