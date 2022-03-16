@@ -48,7 +48,6 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	{
 
 		setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_recyclerview));
-
         View view = LayoutInflater.from(context).inflate(R.layout.audiolist_recyclerview_layout, this, true);
 		audioimageview= view.findViewById(R.id.audio_image);
 		audio_select_indicator=view.findViewById(R.id.audio_select_indicator);
@@ -65,23 +64,19 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		{
 			first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 			second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-			
 			imageview_dimension =Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-
 
 		}
 		else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
 		{
 			first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
 			second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
-			
 			imageview_dimension =Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
 		}
 		else
 		{
 			first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
 			second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-			
 			imageview_dimension =Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 		}
 
@@ -167,7 +162,6 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		v=titletextview;
 		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 		y+=v.getMeasuredHeight();
-
 
 		v=albumtextview;
 		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());

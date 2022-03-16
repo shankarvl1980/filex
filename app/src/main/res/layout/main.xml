@@ -533,13 +533,13 @@
 					android:textSize="16sp"
 					android:padding="@dimen/layout_margin"
 
-					app:layout_constraintEnd_toStartOf="@id/app_manager_image_view"
+					app:layout_constraintEnd_toStartOf="@id/app_manager_drawer_image_view"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="@+id/app_manager_label_background"
 					/>
 
 				<ImageView
-					android:id="@+id/app_manager_image_view"
+					android:id="@+id/app_manager_drawer_image_view"
 					android:layout_width="30dp"
 					android:layout_height="30dp"
 					android:layout_gravity="center_vertical"

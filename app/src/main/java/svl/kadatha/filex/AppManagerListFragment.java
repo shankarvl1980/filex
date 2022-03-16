@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppListFragment extends Fragment {
+public class AppManagerListFragment extends Fragment {
 
     private Context context;
     private String app_type="";
@@ -49,6 +50,8 @@ public class AppListFragment extends Fragment {
     private List<AppPOJO> appPOJOList;
     private AppListAdapter adapter;
     private Handler handler;
+    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
+    public List<AppPOJO> app_selected_array=new ArrayList<>();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -203,7 +206,78 @@ public class AppListFragment extends Fragment {
 
     }
 
+    public void clear_selection()
+    {
+        app_selected_array=new ArrayList<>();
+        mselecteditems=new SparseBooleanArray();
+        if (adapter!=null) adapter.notifyDataSetChanged();
+    }
 
+
+    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH>
+    {
+
+        List<AppPOJO> appPOJOs;
+        AppListAdapter(List<AppPOJO> list)
+        {
+            appPOJOs=list;
+        }
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new VH(new AppsInstalledRecyclerViewLayout(context));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull VH holder, int position) {
+            AppPOJO appPOJO=appPOJOs.get(position);
+            boolean selected=mselecteditems.get(position,false);
+            holder.v.setData(appPOJO,selected);
+            holder.v.set_selected(selected);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return appPOJOs.size();
+        }
+
+        private class VH extends RecyclerView.ViewHolder
+        {
+            AppsInstalledRecyclerViewLayout v;
+            int pos;
+            public VH(@NonNull AppsInstalledRecyclerViewLayout itemView) {
+                super(itemView);
+                v=itemView;
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pos=getBindingAdapterPosition();
+                        if(mselecteditems.size()>0)
+                        {
+                            if (!mselecteditems.get(pos, false)) {
+                                clear_selection();
+                                mselecteditems.put(pos,true);
+                                app_selected_array.add(appPOJOs.get(pos));
+                                v.set_selected(true);
+                            }
+                        }
+                        else
+                        {
+                            mselecteditems.put(pos,true);
+                            app_selected_array.add(appPOJOs.get(pos));
+                            v.set_selected(true);
+                        }
+                    }
+                });
+
+            }
+        }
+    }
+
+
+/*
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH>
     {
 
@@ -221,27 +295,11 @@ public class AppListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-
-
-
             AppPOJO appPOJO=appPOJOs.get(position);
-            /*
-            if(appPOJO==null)
-            {
-                Log.d("shankar","apppojo is null");
-            }
-            else
-            {
-                Log.d("shankar","apppojo is not null "+appPOJO.getApp_name());
-                Log.d("shankar","apppojo is not null "+appPOJO.app_package);
-            }
-            Log.d("shankar","size is "+appPOJOList.size());
-
-             */
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+appPOJO.getApp_package()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(holder.app_image);
-            holder.app_name.setText(appPOJO.getApp_name());
-            holder.app_package.setText(appPOJO.getApp_package());
-            holder.app_size.setText(appPOJO.getApp_size());
+            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+appPOJO.getPackage()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(holder.app_image);
+            holder.app_name.setText(appPOJO.getName());
+            holder.app_package.setText(appPOJO.getPackage());
+            holder.app_size.setText(appPOJO.getSize());
 
         }
 
@@ -300,7 +358,9 @@ public class AppListFragment extends Fragment {
         }
     }
 
-    private class AppPOJO
+ */
+
+    public class AppPOJO
     {
         private final String app_name;
         private final String app_package;
@@ -313,17 +373,17 @@ public class AppListFragment extends Fragment {
             this.app_size=app_size;
         }
 
-        public String getApp_name()
+        public String getName()
         {
             return this.app_name;
         }
 
-        public String getApp_package()
+        public String getPackage()
         {
             return this.app_package;
         }
 
-        public String getApp_size()
+        public String getSize()
         {
             return this.app_size;
         }

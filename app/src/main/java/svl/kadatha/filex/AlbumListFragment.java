@@ -727,23 +727,19 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-
 				imageview_dimension =Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-
 
 			}
 			else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
 			{
 				first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
-
 				imageview_dimension =Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
 			}
 			else
 			{
 				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-
 				imageview_dimension =Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 			}
 	
@@ -754,7 +750,14 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			albumimageview.getLayoutParams().width= imageview_dimension;
 			albumimageview.getLayoutParams().height= imageview_dimension;
 
-
+			if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
+			{
+				itemWidth =Global.SCREEN_HEIGHT;
+			}
+			else
+			{
+				itemWidth =Global.SCREEN_WIDTH;
+			}
 
 		}
 
@@ -766,15 +769,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			int iconheight,maxHeight=0;
 			int usedWidth=Global.TEN_DP;
 
-
-			if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-			{
-				itemWidth =Global.SCREEN_HEIGHT;
-			}
-			else
-			{
-				itemWidth =Global.SCREEN_WIDTH;
-			}
 
 			measureChildWithMargins(album_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(albumimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);

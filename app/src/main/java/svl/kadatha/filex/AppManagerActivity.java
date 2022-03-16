@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,7 @@ public class AppManagerActivity extends BaseActivity{
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton floatingActionButton;
-    private AppListFragment userAppListFragment,systemAppListFragment;
+    private AppManagerListFragment userAppListFragment,systemAppListFragment;
     private AppManagementFragmentAdapter adapter;
     public static final String USER_INSTALLED_APPS="user_installed_apps";
     public static final String SYSTEM_APPS="system_apps";
@@ -68,8 +67,8 @@ public class AppManagerActivity extends BaseActivity{
 
 
         adapter.startUpdate(viewPager);
-        userAppListFragment= (AppListFragment) adapter.instantiateItem(viewPager,0);
-        systemAppListFragment= (AppListFragment) adapter.instantiateItem(viewPager,1);
+        userAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,0);
+        systemAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,1);
         adapter.finishUpdate(viewPager);
 
         Intent intent=getIntent();
@@ -101,11 +100,11 @@ public class AppManagerActivity extends BaseActivity{
                 case 1:
                     Bundle bundle=new Bundle();
                     bundle.putString(SYSTEM_APPS,SYSTEM_APPS);
-                    systemAppListFragment=new AppListFragment();
+                    systemAppListFragment=new AppManagerListFragment();
                     systemAppListFragment.setArguments(bundle);
                     return systemAppListFragment;
                 default:
-                    return new AppListFragment();
+                    return new AppManagerListFragment();
             }
         }
 

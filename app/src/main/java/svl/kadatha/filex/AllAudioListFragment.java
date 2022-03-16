@@ -181,14 +181,6 @@ public class AllAudioListFragment extends Fragment
 
 	private void enable_disable_buttons(boolean enable)
 	{
-		/*
-		if(play_btn==null)
-		{
-			context=getContext();
-			((AudioPlayerActivity)context).finish();
-		}
-
-		 */
 		if(enable)
 		{
 			play_btn.setAlpha(Global.ENABLE_ALFA);
@@ -343,7 +335,6 @@ public class AllAudioListFragment extends Fragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-
 			final Bundle bundle=new Bundle();
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 
