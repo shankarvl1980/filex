@@ -88,7 +88,7 @@ public class ListFiles
 					alfa=100;
 				}
 				int t=FilePOJOUtil.GET_FILE_TYPE(f.isDirectory(),file_ext);
-				list.add(new FilePOJO(null, line_name,line_long.toLowerCase(),package_name,p,isDirectory,0L,si,sizeLong,si,t,file_ext,alfa,overlay_visible,0,0L,null,0,null));
+				list.add(new FilePOJO(null, line_name,package_name,p,isDirectory,0L,si,sizeLong,si,t,file_ext,alfa,overlay_visible,0,0L,null,0,null));
 				
 			}
 			

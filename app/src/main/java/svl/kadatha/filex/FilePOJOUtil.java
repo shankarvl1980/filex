@@ -25,14 +25,14 @@ import java.util.zip.ZipFile;
 
 public class FilePOJOUtil {
 
-    static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
+    //static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
     static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, boolean archive_view,FileObjectType fileObjectType)
     {
         String name=f.getName();
         String path=f.getAbsolutePath();
         boolean isDirectory=f.isDirectory();
         long dateLong=f.lastModified();
-        String date=SDF.format(dateLong);
+        String date=Global.SDF.format(dateLong);
         long sizeLong=0L;
         String si;
 
@@ -91,7 +91,7 @@ public class FilePOJOUtil {
         }
 
         int type=GET_FILE_TYPE(isDirectory,file_ext);
-        return new FilePOJO(fileObjectType,name,name.toLowerCase(),package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
     static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extracticon)
@@ -143,7 +143,7 @@ public class FilePOJOUtil {
         }
 
         int type=GET_FILE_TYPE(isDirectory,file_ext);
-        return new FilePOJO(FileObjectType.USB_TYPE,name,name.toLowerCase(),package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
     static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, boolean archive_view, FileObjectType fileObjectType,String file_path)
@@ -207,7 +207,7 @@ public class FilePOJOUtil {
 
         }
         int type=GET_FILE_TYPE(isDirectory,file_ext);
-        return new FilePOJO(fileObjectType,name,name.toLowerCase(),package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
 
@@ -306,7 +306,7 @@ public class FilePOJOUtil {
         }
 
         path=(parent_file_path.endsWith(File.separator) ? parent_file_path+name : parent_file_path+File.separator+name);
-        
+
         String si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
 
         String file_ext="";
@@ -351,7 +351,7 @@ public class FilePOJOUtil {
         }
 
         int type=GET_FILE_TYPE(isDirectory,file_ext);
-        return new FilePOJO(FileObjectType.ROOT_TYPE,name,name.toLowerCase(),null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
 
@@ -388,7 +388,7 @@ public class FilePOJOUtil {
         {
             if(file_path.equals(File.separator))
             {
-                filePOJO=new FilePOJO(fileObjectType,File.separator,File.separator,null,File.separator,true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null);
+                filePOJO=new FilePOJO(fileObjectType,File.separator,null,File.separator,true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null);
             }
             else
             {

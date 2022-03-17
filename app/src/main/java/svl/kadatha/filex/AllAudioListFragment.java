@@ -90,7 +90,6 @@ public class AllAudioListFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
 
-		
 	}
 
 	@Override
@@ -149,7 +148,6 @@ public class AllAudioListFragment extends Fragment
 					}
 					else if(scroll_distance<-threshold && !toolbar_visible)
 					{
-
 						bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 						toolbar_visible=true;
 						scroll_distance=0;
@@ -251,7 +249,7 @@ public class AllAudioListFragment extends Fragment
 
 							if(new File(data).exists())
 							{
-								audio_list.add(new AudioPOJO(id,data,title,title.toLowerCase(),album,artist,duration,albumart,FileObjectType.FILE_TYPE));
+								audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,albumart,FileObjectType.FILE_TYPE));
 								AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
 							}
 						}

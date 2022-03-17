@@ -13,12 +13,12 @@ public class AudioPOJO
 	private Bitmap albumart;
 	private final FileObjectType fileObjectType;
 
-	public AudioPOJO(int id,  String data, String title, String lower_title,String album, String artist, String duration,Bitmap albumart,FileObjectType fileObjectType)
+	public AudioPOJO(int id,  String data, String title,String album, String artist, String duration,Bitmap albumart,FileObjectType fileObjectType)
 	{
 		this.id=id;
 		this.data = data;
 		this.title = title;
-		this.lower_title=lower_title;
+		this.lower_title=title.toLowerCase();
 		this.album = album;
 		this.artist = artist;
 		this.duration=duration;

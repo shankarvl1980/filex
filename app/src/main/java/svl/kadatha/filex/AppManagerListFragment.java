@@ -39,7 +39,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AppManagerListFragment extends Fragment {
@@ -52,7 +54,7 @@ public class AppManagerListFragment extends Fragment {
     private Toolbar bottom_toolbar;
     private boolean toolbar_visible=true;
     private int scroll_distance;
-    private AsyncTaskStatus asyncTaskStatus;
+    public AsyncTaskStatus asyncTaskStatus;
     private List<AppPOJO> appPOJOList;
     private AppListAdapter adapter;
     private Handler handler;
@@ -98,9 +100,9 @@ public class AppManagerListFragment extends Fragment {
                             String package_name=packageInfo.packageName;
                             File file = new File(packageInfo.applicationInfo.publicSourceDir);
                             long size=file.length();
-                            String size_formatted=FileUtil.humanReadableByteCount(size,false);
+                            long date=file.lastModified();
                             extract_icon(package_name,packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,size_formatted));
+                            appPOJOList.add(new AppPOJO(name,package_name,size,date));
 
                         }
                     }
@@ -112,9 +114,9 @@ public class AppManagerListFragment extends Fragment {
                             String package_name=packageInfo.packageName;
                             File file = new File(packageInfo.applicationInfo.publicSourceDir);
                             long size=file.length();
-                            String size_formatted=FileUtil.humanReadableByteCount(size,false);
+                            long date=file.lastModified();
                             extract_icon(package_name,packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,size_formatted));
+                            appPOJOList.add(new AppPOJO(name,package_name,size,date));
 
                         }
                     }
@@ -202,6 +204,7 @@ public class AppManagerListFragment extends Fragment {
                 }
                 else
                 {
+                    Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
                     adapter=new AppListAdapter(appPOJOList);
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(View.GONE);
@@ -338,9 +341,8 @@ public class AppManagerListFragment extends Fragment {
 
             } else if (id == R.id.toolbar_btn_2) {
                 //((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity) context).search_edittext.getWindowToken(), 0);
-                if (app_selected_array.size() < 1) {
-                    return;
-                }
+                AppManagerSortDialog appManagerSortDialog=new AppManagerSortDialog();
+                appManagerSortDialog.show(((AppManagerActivity)context).fm,"");
             }
         }
 
@@ -432,31 +434,39 @@ public class AppManagerListFragment extends Fragment {
 
     public class AppPOJO
     {
-        private final String app_name;
-        private final String app_package;
-        private final String app_size;
+        private final String name;
+        private final String lower_name;
+        private final String package_name;
+        private final long sizeLong;
+        private final String size;
+        private final long dateLong;
+        private final String date;
 
-        AppPOJO(String app_name,String app_package,String app_size)
+
+        AppPOJO(String app_name,String app_package,long app_size_long,long app_date_long)
         {
-            this.app_name=app_name;
-            this.app_package=app_package;
-            this.app_size=app_size;
+            this.name=app_name;
+            this.lower_name=app_name.toLowerCase();
+            this.package_name=app_package;
+            this.sizeLong=app_size_long;
+            this.size=FileUtil.humanReadableByteCount(app_size_long,Global.BYTE_COUNT_BLOCK_1000);
+            this.dateLong=app_date_long;
+            this.date=Global.SDF.format(dateLong);
         }
 
-        public String getName()
-        {
-            return this.app_name;
-        }
+        public String getName(){return this.name;}
 
-        public String getPackage()
-        {
-            return this.app_package;
-        }
+        public String getLowerName(){ return this.lower_name;}
 
-        public String getSize()
-        {
-            return this.app_size;
-        }
+        public String getPackage_name(){ return this.package_name;}
+
+        public long getSizeLong(){return this.sizeLong;}
+
+        public String getSize(){return this.size;}
+
+        public long getDateLong(){ return this.dateLong;}
+
+        public String getDate(){return this.date;}
 
     }
 }

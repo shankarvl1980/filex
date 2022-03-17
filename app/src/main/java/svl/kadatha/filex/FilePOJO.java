@@ -23,12 +23,12 @@ public class FilePOJO
 	private String totalSizePercentage;
 	
 	
-	FilePOJO(FileObjectType fileObjectType,String n,String l_n,String p_n,String p,boolean dir,long dl,String d,long sl,String s,int t,
+	FilePOJO(FileObjectType fileObjectType,String n,String p_n,String p,boolean dir,long dl,String d,long sl,String s,int t,
 			 String ext,float a,int o,int tf,long tsl,String ts,double tspd,String tsp)
 	{
 		this.fileObjectType=fileObjectType;
 		this.name=n;
-		this.lower_name=l_n;
+		this.lower_name=n.toLowerCase();
 		this.package_name=p_n;
 		this.path=p;
 		this.isDirectory=dir;

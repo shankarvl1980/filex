@@ -20,7 +20,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 {
     private final Context context;
     public ImageView appimageview,appselect_indicator;
-    private TextView appnametextview, apppackagenametextview,appsizetextview;
+    private TextView appnametextview, apppackagenametextview,appsizetextview,appdatetextview;
     private int imageview_dimension;
     public int itemWidth, itemHeight;
     private int select_indicator_offset_linear;
@@ -55,6 +55,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         appnametextview= view.findViewById(R.id.app_manager_app_name);
         apppackagenametextview= view.findViewById(R.id.app_manager_app_package);
         appsizetextview=view.findViewById(R.id.app_manager_app_size);
+        appdatetextview=view.findViewById(R.id.app_manager_app_date);
 
         int second_line_font_size;
         int first_line_font_size;
@@ -115,7 +116,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
                 second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
                 imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
             }
-
         }
 
 
@@ -125,6 +125,8 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         appnametextview.setTextSize(first_line_font_size);
         apppackagenametextview.setTextSize(second_line_font_size);
         appsizetextview.setTextSize(second_line_font_size);
+        appdatetextview.setTextSize(second_line_font_size);
+
 
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
@@ -174,13 +176,14 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
 
+            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            maxHeight+=apppackagenametextview.getMeasuredHeight();
 
             measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             usedWidth+=appsizetextview.getMeasuredWidth()+Global.TEN_DP*2;
-
-            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
-
             maxHeight+=appsizetextview.getMeasuredHeight();
+
+            measureChildWithMargins(appdatetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
 
             maxHeight=Math.max(iconheight,maxHeight);
 
@@ -244,15 +247,16 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             v=apppackagenametextview;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            x+=v.getMeasuredWidth();
-            max_height_second_line=v.getMeasuredHeight();
+            y+=v.getMeasuredHeight();
 
             v=appsizetextview;
-            x=a-v.getMeasuredWidth()-Global.TEN_DP;
+            v.layout(x,y,x+v.getMeasuredWidth()+Global.TEN_DP,y+v.getMeasuredHeight());
+
+            v=appdatetextview;
+            x=itemWidth-select_indicator_offset_linear-v.getMeasuredWidth()-Global.TEN_DP;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
         }
-
 
     }
 
@@ -291,10 +295,11 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     public void setData(AppManagerListFragment.AppPOJO appPOJO, boolean item_selected)
     {
         //appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-        GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
+        GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
-        apppackagenametextview.setText(appPOJO.getPackage());
+        apppackagenametextview.setText(appPOJO.getPackage_name());
         appsizetextview.setText(appPOJO.getSize());
+        appdatetextview.setText(appPOJO.getDate());
     }
 
     /*

@@ -1049,7 +1049,7 @@ public class AudioPlayFragment extends Fragment
 						if(file_ext.matches(Global.AUDIO_REGEX))
 						{
 
-							AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),filePOJO.getLowerName(),null,null,"0",null,fileObjectType);
+							AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,"0",null,fileObjectType);
 							AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
 
 							if(AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))AudioPlayerService.CURRENT_PLAY_NUMBER=count;

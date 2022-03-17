@@ -235,7 +235,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
 					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 					Bitmap albumart=null;//Global.GET_RESIZED_BITMAP(album_path,Global.IMAGEVIEW_DIMENSION_LARGE_LIST);
-					album_list.add(new AlbumPOJO(id,album_name,album_name.toLowerCase(),artist,no_of_songs,albumart));
+					album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,albumart));
 				}
 				total_album_list=album_list;
 			}
@@ -406,7 +406,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 						if(new File(data).exists())
 						{
-							extracted_audio_list.add(new AudioPOJO(id,data,title,title.toLowerCase(),album,artist,duration, null,FileObjectType.FILE_TYPE));
+							extracted_audio_list.add(new AudioPOJO(id,data,title,album,artist,duration, null,FileObjectType.FILE_TYPE));
 						}
 					}
 				}

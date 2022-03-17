@@ -20,7 +20,7 @@ public class AppManagerActivity extends BaseActivity{
     private Context context;
     public FragmentManager fm;
     private TabLayout tabLayout;
-    private ViewPager viewPager;
+    public ViewPager viewPager;
     private FloatingActionButton floatingActionButton;
     private AppManagerListFragment userAppListFragment,systemAppListFragment;
     private AppManagementFragmentAdapter adapter;
@@ -112,6 +112,11 @@ public class AppManagerActivity extends BaseActivity{
         @Override
         public int getCount() {
             return 2;
+        }
+
+        @Override
+        public int getItemPosition(@NonNull Object object) {
+            return POSITION_NONE;
         }
 
         @Nullable

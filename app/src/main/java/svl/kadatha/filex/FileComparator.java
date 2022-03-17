@@ -119,6 +119,43 @@ public class FileComparator
 	}
 
 
+	public static Comparator<AppManagerListFragment.AppPOJO> AppPOJOComparate(String SORT)
+	{
+		switch(SORT)
+		{
+			case "d_name_desc":
+			case "f_name_desc":
+				return new SORT_APPPOJO_NAME_DESC();
+
+			case "d_name_asc:":
+			case "f_name_asc":
+				return new SORT_APPPOJO_NAME_ASC();
+
+			case "d_date_asc":
+			case "f_date_asc":
+				return new SORT_APPPOJO_TIME_ASC();
+
+			case "d_date_desc":
+			case "f_date_desc":
+				return new SORT_APPPOJO_TIME_DESC();
+
+			case "d_size_desc":
+			case "f_size_desc":
+				return new SORT_APPPOJO_SIZE_DESC();
+
+			case "d_size_asc":
+			case "f_size_asc":
+				return new SORT_APPPOJO_SIZE_ASC();
+
+			default:
+				return new SORT_APPPOJO_NAME_ASC();
+
+		}
+	}
+
+
+
+
 
 	private static class SORT_D_FILEPOJO_NAME_ASC implements Comparator<FilePOJO>
 	{
@@ -341,12 +378,6 @@ public class FileComparator
 	}
 
 
-
-
-
-
-
-
 	private static class SORT_D_FILEPOJO_TOTAL_SIZE_ASC implements Comparator<FilePOJO>
 	{
 		@Override
@@ -429,12 +460,6 @@ public class FileComparator
 			}
 		}
 	}
-
-
-
-
-
-
 
 
 
@@ -582,6 +607,9 @@ public class FileComparator
 
 
 
+
+
+
 	private static class SORT_USB_FOLDERFILE_NAME_ASC implements Comparator<UsbFile>
 	{
 		@Override
@@ -720,6 +748,75 @@ public class FileComparator
 			}
 		}
 	}
+
+
+
+
+
+	//
+
+	private static class SORT_APPPOJO_NAME_ASC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+			return f1.getLowerName().compareTo(f2.getLowerName());
+		}
+	}
+
+
+	private static class SORT_APPPOJO_NAME_DESC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+				int i=f1.getLowerName().compareTo(f2.getLowerName());
+				return -(i);
+		}
+	}
+
+	private static class SORT_APPPOJO_TIME_ASC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+				return Long.compare(f1.getDateLong(), f2.getDateLong());
+		}
+	}
+
+
+	private static class SORT_APPPOJO_TIME_DESC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+			int i= Long.compare(f1.getDateLong(), f2.getDateLong());
+			return -(i);
+		}
+	}
+
+
+	private static class SORT_APPPOJO_SIZE_ASC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+			return Long.compare(f1.getSizeLong(),f2.getSizeLong());
+		}
+	}
+
+	private static class SORT_APPPOJO_SIZE_DESC implements Comparator<AppManagerListFragment.AppPOJO>
+	{
+		@Override
+		public int compare(AppManagerListFragment.AppPOJO f1, AppManagerListFragment.AppPOJO f2)
+		{
+			int i=Long.compare(f1.getSizeLong(),f2.getSizeLong());
+			return -(i);
+		}
+	}
+
+
 
 }
 	

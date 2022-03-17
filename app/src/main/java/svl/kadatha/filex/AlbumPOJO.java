@@ -12,11 +12,11 @@ public class AlbumPOJO implements Serializable
 	private String no_of_songs;
 	private Bitmap albumart;
 
-	public AlbumPOJO(String id, String album_name, String lower_album_name,String artist, String no_of_songs, Bitmap art)
+	public AlbumPOJO(String id, String album_name,String artist, String no_of_songs, Bitmap art)
 	{
 		this.id=id;
 		this.album_name = album_name;
-		this.lower_album_name=lower_album_name;
+		this.lower_album_name=album_name.toLowerCase();
 		this.artist = artist;
 		this.no_of_songs=no_of_songs;
 		this.albumart=art;

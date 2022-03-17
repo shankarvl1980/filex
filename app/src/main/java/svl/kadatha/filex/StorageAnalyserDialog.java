@@ -39,7 +39,6 @@ import java.util.Map;
 
 public class StorageAnalyserDialog extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
-    static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
     private RecyclerView recycler_view;
     private TextView folder_empty_textview;
     private Context context;

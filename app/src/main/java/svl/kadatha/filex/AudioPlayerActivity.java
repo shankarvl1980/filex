@@ -296,7 +296,7 @@ public class AudioPlayerActivity extends BaseActivity
 		{
 			if(file_path==null) file_path=PathUtil.getPath(context,data);
 			String name=new File(file_path).getName();
-			AUDIO_FILE=new AudioPOJO(0,file_path,name,name.toLowerCase(),null,null,"0",null,(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+			AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",null,(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
 			if(AUDIO_FILE==null)
 			{
 				view_pager.setCurrentItem(1);

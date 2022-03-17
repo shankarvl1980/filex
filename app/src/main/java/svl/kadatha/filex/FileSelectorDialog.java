@@ -35,7 +35,7 @@ import java.util.List;
 
 public class FileSelectorDialog extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
-	static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
+	//static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 	private RecyclerView recycler_view;
     private TextView folder_empty_textview;
     private Context context;

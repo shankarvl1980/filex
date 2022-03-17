@@ -39,7 +39,7 @@ public class StorageUtil
 		//if(new File("/").list()!=null && new File("/").canRead())
 		{
 			STORAGE_DIR.add(new File("/"));
-			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/","/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null));
+			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null));
 			//result.add(FilePOJOUtil.MAKE_FilePOJO(new File("/"),false,false));
 		}
 		
@@ -226,7 +226,7 @@ public class StorageUtil
 		String path=f.getAbsolutePath();
 		boolean isDirectory=f.isDirectory();
 		long dateLong=f.lastModified();
-		String date=new SimpleDateFormat("dd-MM-yyyy").format(dateLong);
+		String date=Global.SDF.format(dateLong);
 		long sizeLong=f.length();
 		String si;
 
@@ -267,7 +267,7 @@ public class StorageUtil
 		}
 
 		int type=0;
-		return new FilePOJO(FileObjectType.ROOT_TYPE,name,name.toLowerCase(),null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+		return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
 	}
 
 

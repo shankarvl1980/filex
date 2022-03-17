@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +46,8 @@ import java.util.Set;
 
 public class Global
 {
+	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
+
 	static ArrayList<FilePOJO> STORAGE_DIR=new ArrayList<>();
 	static final List<String> INTERNAL_STORAGE_PATH=new ArrayList<>();
 	static String EXTERNAL_STORAGE_PATH="";
@@ -65,6 +68,7 @@ public class Global
 	static float SCREEN_RATIO;
 	static String SORT;
 	static String STORAGE_ANALYSER_SORT;
+	static String APP_MANAGER_SORT;
 	static String THEME;
 	static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
 
@@ -392,6 +396,18 @@ public class Global
 				STORAGE_ANALYSER_SORT="d_size_desc";
 			}
 		}
+
+//
+
+		if(APP_MANAGER_SORT==null)
+		{
+			APP_MANAGER_SORT=tinyDB.getString("app_manager_sort");
+			if(APP_MANAGER_SORT.trim().isEmpty() || !SORT_CODE_SET.contains(APP_MANAGER_SORT))
+			{
+				APP_MANAGER_SORT="d_name_asc";
+			}
+		}
+
 
 
 		//

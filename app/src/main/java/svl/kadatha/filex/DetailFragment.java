@@ -64,7 +64,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
-	static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
+	//static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 	public RecyclerView filepath_recyclerview;
 	public RecyclerView recyclerView;
 	LinearLayoutManager llm;

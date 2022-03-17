@@ -22,7 +22,7 @@ import java.text.*;
 public class PropertiesDialog extends DialogFragment
 {
 	private Context context;
-	private final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy hh:mm");
+	//private final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy hh:mm");
 	private TextView no_files_textview;
 	private TextView size_files_textview;
 	private String filename_str,file_path_str,file_type_str,file_no_str,file_size_str,file_date_str,file_permissions_str,symbolic_link_str,readable_str,writable_str,hidden_str;
@@ -64,7 +64,7 @@ public class PropertiesDialog extends DialogFragment
 				File file=new File(files_selected_array.get(0));
 				filename_str=file.getName();
 				file_path_str=file.getAbsolutePath();
-				file_date_str=sdf.format(file.lastModified());
+				file_date_str=Global.SDF.format(file.lastModified());
 				file_type_str=file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
 				getPermissions(file);
 
@@ -77,7 +77,7 @@ public class PropertiesDialog extends DialogFragment
 				UsbFile file=FileUtil.getUsbFile(MainActivity.usbFileRoot,files_selected_array.get(0));
 				filename_str=file.getName();
 				file_path_str=file.getAbsolutePath();
-				file_date_str=sdf.format(file.lastModified());
+				file_date_str=Global.SDF.format(file.lastModified());
 				file_type_str=file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
 				//getPermissions(file);
 				readable_str=getString(R.string.yes);

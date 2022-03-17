@@ -450,7 +450,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else
 				{
-					DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.FILE_TYPE,f.getName(),f.getName().toLowerCase(),null,f.getAbsolutePath(),true,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
+					DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.FILE_TYPE,f.getName(),null,f.getAbsolutePath(),true,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
 				}
 
 			}
@@ -2110,7 +2110,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						public void onClick(View p)
 						{
 							String name=storage_dir_arraylist.get(getBindingAdapterPosition());
-							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,name.toLowerCase(),null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
+							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
 							drawerLayout.closeDrawer(drawer);
 						}
 					});

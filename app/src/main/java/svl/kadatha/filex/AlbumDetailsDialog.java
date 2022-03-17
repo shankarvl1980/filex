@@ -399,7 +399,7 @@ public class AlbumDetailsDialog extends DialogFragment
 
 					if(new File(data).exists())
 					{
-						audio_list.add(new AudioPOJO(id,data,title,title.toLowerCase(),album,artist,duration,albumart,FileObjectType.FILE_TYPE));
+						audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,albumart,FileObjectType.FILE_TYPE));
 					}
 
 				}
