@@ -39,7 +39,7 @@
         android:background="@null"
         android:gravity="center"
         android:visibility="gone"
-        android:text="@string/no_file_found"
+        android:text="@string/no_app_found"
         android:paddingBottom="?attr/actionBarSize"
         />
 

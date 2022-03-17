@@ -76,7 +76,6 @@ public class RecyclerViewLayout extends ViewGroup
 	{
 
         View view = LayoutInflater.from(context).inflate(R.layout.filedetail_recyclerview_layout, this, true);
-
 		fileimageview= view.findViewById(R.id.image_file);
 		overlay_fileimageview= view.findViewById(R.id.overlay_image_file);
 		file_select_indicator=view.findViewById(R.id.file_select_indicator);

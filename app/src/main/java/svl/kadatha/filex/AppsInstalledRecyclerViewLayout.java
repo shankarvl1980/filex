@@ -48,7 +48,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
     private void init()
     {
-
         View view = LayoutInflater.from(context).inflate(R.layout.app_manager_recycler_layout, this, true);
         appimageview= view.findViewById(R.id.app_manager_app_image);
         appselect_indicator=view.findViewById(R.id.app_manager_select_indicator);
@@ -91,6 +90,12 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             appnametextview.setMaxLines(2);
             appnametextview.setGravity(Gravity.CENTER);
+
+            params= (MarginLayoutParams) appsizetextview.getLayoutParams();
+            params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
+
+            appsizetextview.setGravity(Gravity.CENTER);
+
 
         }
         else
@@ -160,6 +165,10 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             measureChildWithMargins(appnametextview,widthMeasureSpec,0,heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
 
+            measureChildWithMargins(appsizetextview,widthMeasureSpec,0,heightMeasureSpec,0);
+            maxHeight+=appsizetextview.getMeasuredHeight();
+
+
             maxHeight+=Global.FOUR_DP*2;
         }
         else
@@ -221,6 +230,13 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             x=Global.FOUR_DP;
             v=appnametextview;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+            y+=v.getMeasuredHeight();
+
+
+
+            v=appsizetextview;
+            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+
 
         }
         else

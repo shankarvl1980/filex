@@ -21,6 +21,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -55,14 +57,16 @@ public class AppManagerListFragment extends Fragment {
     private boolean toolbar_visible=true;
     private int scroll_distance;
     public AsyncTaskStatus asyncTaskStatus;
-    private List<AppPOJO> appPOJOList;
+    private List<AppPOJO> appPOJOList,total_appPOJO_list;
     private AppListAdapter adapter;
     private Handler handler;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppPOJO> app_selected_array=new ArrayList<>();
     private LinearLayoutManager llm;
     private GridLayoutManager glm;
-
+    private AppManagerActivity.SearchFilterListener searchFilterListener;
+    private int num_all_app;
+    private TextView empty_tv;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -88,6 +92,7 @@ public class AppManagerListFragment extends Fragment {
                         PackageManager.GET_UNINSTALLED_PACKAGES;
 
                 appPOJOList=new ArrayList<>();
+                total_appPOJO_list=new ArrayList<>();
                 final PackageManager packageManager = context.getPackageManager();
                 List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
                 for (PackageInfo packageInfo : packageInfos)
@@ -122,8 +127,7 @@ public class AppManagerListFragment extends Fragment {
                     }
 
                 }
-
-
+                total_appPOJO_list=appPOJOList;
                 asyncTaskStatus=AsyncTaskStatus.COMPLETED;
             }
         }).start();
@@ -177,6 +181,7 @@ public class AppManagerListFragment extends Fragment {
 
         });
 
+        empty_tv=v.findViewById(R.id.fragment_app_list_empty);
         progressBar=v.findViewById(R.id.fragment_app_list_progressbar);
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
@@ -205,10 +210,17 @@ public class AppManagerListFragment extends Fragment {
                 else
                 {
                     Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
-                    adapter=new AppListAdapter(appPOJOList);
+                    adapter=new AppListAdapter();
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(View.GONE);
-                    app_count_textview.setText(""+appPOJOList.size());
+                    num_all_app=total_appPOJO_list.size();
+                    app_count_textview.setText(""+num_all_app);
+                    if(num_all_app<=0)
+                    {
+                        recyclerView.setVisibility(View.GONE);
+                        empty_tv.setVisibility(View.VISIBLE);
+                        //enable_disable_buttons(false);
+                    }
                     handler.removeCallbacks(this);
                 }
             }
@@ -217,6 +229,31 @@ public class AppManagerListFragment extends Fragment {
 
         return v;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        searchFilterListener=new AppManagerActivity.SearchFilterListener() {
+            @Override
+            public void onSearchFilter(String constraint) {
+                adapter.getFilter().filter(constraint);
+            }
+        };
+        ((AppManagerActivity)context).addSearchFilterListener(searchFilterListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(((AppManagerActivity)context).search_toolbar_visible)
+        {
+            ((AppManagerActivity)context).set_visibility_searchbar(false);
+        }
+
+        ((AppManagerActivity)context).removeSearchFilterListener(searchFilterListener);
+    }
+
+
 
     private void extract_icon(String file_with_package_name,PackageManager packageManager,PackageInfo packageInfo)
     {
@@ -242,23 +279,43 @@ public class AppManagerListFragment extends Fragment {
 
     }
 
+
+    public void remove_audio(ArrayList<AppPOJO> list)
+    {
+        for(AppPOJO appPOJO: list)
+        {
+            String package_name=appPOJO.getPackage_name();
+            for(AppPOJO a:appPOJOList)
+            {
+                if(a.getPackage_name().equals(package_name))
+                {
+                    appPOJOList.remove(a);
+                    total_appPOJO_list.remove(a);
+                    break;
+                }
+            }
+        }
+        num_all_app=total_appPOJO_list.size();
+        clear_selection();
+    }
+
+
     public void clear_selection()
     {
         app_selected_array=new ArrayList<>();
         mselecteditems=new SparseBooleanArray();
         if (adapter!=null) adapter.notifyDataSetChanged();
+        if(num_all_app<=0)
+        {
+            recyclerView.setVisibility(View.GONE);
+            empty_tv.setVisibility(View.VISIBLE);
+        }
+        app_count_textview.setText(""+num_all_app);
     }
 
 
-    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH>
+    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH> implements Filterable
     {
-
-        List<AppPOJO> appPOJOs;
-        AppListAdapter(List<AppPOJO> list)
-        {
-            appPOJOs=list;
-        }
-
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -267,7 +324,7 @@ public class AppManagerListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            AppPOJO appPOJO=appPOJOs.get(position);
+            AppPOJO appPOJO=appPOJOList.get(position);
             boolean selected=mselecteditems.get(position,false);
             holder.v.setData(appPOJO,selected);
             holder.v.setSelected(selected);
@@ -276,7 +333,50 @@ public class AppManagerListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return appPOJOs.size();
+            return appPOJOList.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+
+                    appPOJOList=new ArrayList<>();
+                    if(constraint==null || constraint.length()==0)
+                    {
+                        appPOJOList=total_appPOJO_list;
+                    }
+                    else
+                    {
+                        String pattern=constraint.toString().toLowerCase().trim();
+                        for(int i=0;i<num_all_app;++i)
+                        {
+                            AppPOJO appPOJO=total_appPOJO_list.get(i);
+                            if(appPOJO.getLowerName().contains(pattern))
+                            {
+                                appPOJOList.add(appPOJO);
+                            }
+                        }
+                    }
+                    return new FilterResults();
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                    int t=appPOJOList.size();
+                    if(mselecteditems.size()>0)
+                    {
+                        clear_selection();
+                    }
+                    else
+                    {
+                        notifyDataSetChanged();
+                    }
+                    app_count_textview.setText(""+t);
+                }
+            };
         }
 
         private class VH extends RecyclerView.ViewHolder
@@ -302,7 +402,7 @@ public class AppManagerListFragment extends Fragment {
                             if (!mselecteditems.get(pos, false)) {
                                 clear_selection();
                                 mselecteditems.put(pos,true);
-                                app_selected_array.add(appPOJOs.get(pos));
+                                app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
                             }
                             else
@@ -313,9 +413,8 @@ public class AppManagerListFragment extends Fragment {
                         else
                         {
                             mselecteditems.put(pos,true);
-                            app_selected_array.add(appPOJOs.get(pos));
+                            app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
-
                         }
                     }
                 });
@@ -334,13 +433,14 @@ public class AppManagerListFragment extends Fragment {
             int id = p1.getId();
             clear_selection();
             if (id == R.id.toolbar_btn_1) {
-                //((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                if (!((AppManagerActivity) context).search_toolbar_visible) {
-                    //((AppManagerActivity) context).set_visibility_searchbar(true);
+                ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                if(!((AppManagerActivity)context).search_toolbar_visible)
+                {
+                    ((AppManagerActivity) context).set_visibility_searchbar(true);
                 }
 
             } else if (id == R.id.toolbar_btn_2) {
-                //((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity) context).search_edittext.getWindowToken(), 0);
+                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity) context).search_edittext.getWindowToken(), 0);
                 AppManagerSortDialog appManagerSortDialog=new AppManagerSortDialog();
                 appManagerSortDialog.show(((AppManagerActivity)context).fm,"");
             }
