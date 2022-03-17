@@ -20,17 +20,21 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -67,6 +71,8 @@ public class AppManagerListFragment extends Fragment {
     private AppManagerActivity.SearchFilterListener searchFilterListener;
     private int num_all_app;
     private TextView empty_tv;
+    private PopupWindow listPopWindow;
+    private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -104,10 +110,11 @@ public class AppManagerListFragment extends Fragment {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
                             File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name,packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,size,date));
+                            appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
 
                         }
                     }
@@ -118,10 +125,11 @@ public class AppManagerListFragment extends Fragment {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
                             File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name,packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,size,date));
+                            appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
 
                         }
                     }
@@ -131,6 +139,12 @@ public class AppManagerListFragment extends Fragment {
                 asyncTaskStatus=AsyncTaskStatus.COMPLETED;
             }
         }).start();
+
+        list_popupwindowpojos=new ArrayList<>();
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
+
     }
 
     @Nullable
@@ -226,7 +240,16 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
-
+        listPopWindow=new PopupWindow(context);
+        ListView listView=new ListView(context);
+        listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
+        listPopWindow.setContentView(listView);
+        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
+        listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        listPopWindow.setFocusable(true);
+        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
+        int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
+        listView.setOnItemClickListener(new ListPopupWindowClickListener());
         return v;
     }
 
@@ -253,9 +276,13 @@ public class AppManagerListFragment extends Fragment {
         ((AppManagerActivity)context).removeSearchFilterListener(searchFilterListener);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        listPopWindow.dismiss();
+    }
 
-
-    private void extract_icon(String file_with_package_name,PackageManager packageManager,PackageInfo packageInfo)
+    private void extract_icon(String file_with_package_name, PackageManager packageManager, PackageInfo packageInfo)
     {
         if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
         {
@@ -404,6 +431,7 @@ public class AppManagerListFragment extends Fragment {
                                 mselecteditems.put(pos,true);
                                 app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
+                                listPopWindow.showAsDropDown(v);
                             }
                             else
                             {
@@ -415,12 +443,97 @@ public class AppManagerListFragment extends Fragment {
                             mselecteditems.put(pos,true);
                             app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
+                            listPopWindow.showAsDropDown(v);
                         }
                     }
                 });
 
             }
         }
+    }
+
+    private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
+    {
+        @Override
+        public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
+        {
+            // TODO: Implement this method
+            final Bundle bundle=new Bundle();
+            final ArrayList<String> files_selected_array=new ArrayList<>();
+            if (app_selected_array.size() < 1) {
+                return;
+            }
+
+            switch(p3)
+            {
+                case 0:
+                    int size=app_selected_array.size();
+                    for(int i=0;i<size;++i)
+                    {
+                        AppPOJO appPOJO=app_selected_array.get(i);
+                        files_selected_array.add(appPOJO.getPath());
+
+                    }
+                    /*
+                    final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);
+                    deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener() {
+                        public void onSelectOK() {
+
+                            final DeleteAudioDialog deleteAudioDialog = DeleteAudioDialog.getInstance(files_selected_array,false,deleteFileAlertDialogOtherActivity.tree_uri,deleteFileAlertDialogOtherActivity.tree_uri_path);
+                            deleteAudioDialog.setDeleteAudioCompleteListener(new DeleteAudioDialog.DeleteAudioCompleteListener() {
+                                public void onDeleteComplete() {
+                                    //deleted_audios = new ArrayList<>();
+                                    //int size=audios_selected_for_delete.size();
+                                    for(int i=0;i<size;++i)
+                                    {
+                                        //AudioPOJO audio=audios_selected_for_delete.get(i);
+                                        if (!new File(audio.getData()).exists()) {
+                                            //deleted_audios.add(audio);
+                                        }
+
+                                    }
+
+                                    ((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_audios);
+                                    ((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+                                }
+
+                            });
+                            deleteAudioDialog.show(((AudioPlayerActivity) context).fm, "");
+                            clear_selection();
+
+                        }
+                    });
+                    deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
+
+                     */
+                    break;
+                case 1:
+                    ArrayList<File> file_list=new ArrayList<>();
+                    for(AppPOJO app:app_selected_array)
+                    {
+                        file_list.add(new File(app.getPath()));
+                    }
+                    FileIntentDispatch.sendFile(context,file_list);
+                    clear_selection();
+                    break;
+
+                case 2:
+                    for(AppPOJO app:app_selected_array)
+                    {
+                        files_selected_array.add(app.getPath());
+                    }
+
+                    PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
+                    propertiesDialog.show(((AppManagerActivity)context).getSupportFragmentManager(),"properties_dialog");
+                    break;
+                default:
+                    break;
+
+            }
+
+            listPopWindow.dismiss();
+        }
+
     }
 
 
@@ -537,17 +650,19 @@ public class AppManagerListFragment extends Fragment {
         private final String name;
         private final String lower_name;
         private final String package_name;
+        private final String path;
         private final long sizeLong;
         private final String size;
         private final long dateLong;
         private final String date;
 
 
-        AppPOJO(String app_name,String app_package,long app_size_long,long app_date_long)
+        AppPOJO(String app_name,String app_package,String app_path,long app_size_long,long app_date_long)
         {
             this.name=app_name;
             this.lower_name=app_name.toLowerCase();
             this.package_name=app_package;
+            this.path=app_path;
             this.sizeLong=app_size_long;
             this.size=FileUtil.humanReadableByteCount(app_size_long,Global.BYTE_COUNT_BLOCK_1000);
             this.dateLong=app_date_long;
@@ -559,6 +674,8 @@ public class AppManagerListFragment extends Fragment {
         public String getLowerName(){ return this.lower_name;}
 
         public String getPackage_name(){ return this.package_name;}
+
+        public String getPath() {return this.path;}
 
         public long getSizeLong(){return this.sizeLong;}
 
