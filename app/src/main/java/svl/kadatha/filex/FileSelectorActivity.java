@@ -121,8 +121,14 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
         TextView heading = findViewById(R.id.file_selector_heading);
-        if(action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) heading.setText(getString(R.string.choose_folder));
-        else heading.setText(getString(R.string.application_name));
+        if((action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) || action_sought_request_code==MOVE_COPY_REQUEST_CODE)
+        {
+            heading.setText(getString(R.string.choose_folder));
+        }
+        else
+        {
+            heading.setText(getString(R.string.pick_file));
+        }
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override

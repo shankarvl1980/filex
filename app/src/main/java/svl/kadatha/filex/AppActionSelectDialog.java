@@ -24,7 +24,7 @@ public class AppActionSelectDialog extends DialogFragment
     private AppManagerListFragment.AppPOJO appPOJO;
     private TextView app_name_tv,package_name_tv,app_size_tv;
     private String app_name,package_name,app_size;
-    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.PROPERTIES,AppManagerListFragment.PLAY_STORE,AppManagerListFragment.SHARE));
+    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE,AppManagerListFragment.SHARE));
 
 
     @Override

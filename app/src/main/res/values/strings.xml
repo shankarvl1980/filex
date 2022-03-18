@@ -327,6 +327,9 @@
     <string name="no_app_found">No app found</string>
     <string name="app_action">App action</string>
     <string name="could_not_perform_action">could not perform the action</string>
+	<string name="pick_file">Pick File</string>
+    <string name="could_not_be_uninstalled">could not be uninstalled</string>
+    <string name="uninstalled">Uninstalled</string>
 
 
     <string-array name="library_categories">

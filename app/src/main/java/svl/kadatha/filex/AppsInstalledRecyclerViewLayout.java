@@ -19,7 +19,7 @@ import java.io.File;
 public class AppsInstalledRecyclerViewLayout extends ViewGroup
 {
     private final Context context;
-    public ImageView appimageview,appselect_indicator;
+    private ImageView appimageview,appselect_indicator;
     private TextView appnametextview, apppackagenametextview,appsizetextview,appdatetextview;
     private int imageview_dimension;
     public int itemWidth, itemHeight;
@@ -50,7 +50,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     {
         View view = LayoutInflater.from(context).inflate(R.layout.app_manager_recycler_layout, this, true);
         appimageview= view.findViewById(R.id.app_manager_app_image);
-        appselect_indicator=view.findViewById(R.id.app_manager_select_indicator);
+        //appselect_indicator=view.findViewById(R.id.app_manager_select_indicator);
         appnametextview= view.findViewById(R.id.app_manager_app_name);
         apppackagenametextview= view.findViewById(R.id.app_manager_app_package);
         appsizetextview=view.findViewById(R.id.app_manager_app_size);
@@ -144,7 +144,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
         }
 
-        select_indicator_offset_linear=Global.TEN_DP*4; //around 40 dp which is about 1 & half of select indicator icon;
+        //select_indicator_offset_linear=Global.TEN_DP*4; //around 40 dp which is about 1 & half of select indicator icon;
     }
 
     @Override
@@ -157,7 +157,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         if(Global.FILE_GRID_LAYOUT)
         {
 
-            measureChildWithMargins(appselect_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
+            //measureChildWithMargins(appselect_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
             measureChildWithMargins(appimageview,widthMeasureSpec,0,heightMeasureSpec,0);
 
             maxHeight+=imageview_dimension;
@@ -179,8 +179,11 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             usedWidth+=imageview_dimension;
             iconheight=imageview_dimension;
 
+            /*
             measureChildWithMargins(appselect_indicator,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
             usedWidth+=select_indicator_offset_linear;
+
+             */
 
             measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
@@ -217,10 +220,15 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             int grid_width=itemWidth/grid_count;
             x+=(grid_width-imageview_dimension)/2;
 
-            View v=appselect_indicator;
+            View v;
+
+        /*
+            v=appselect_indicator;
 
             int a=grid_width-((grid_width-imageview_dimension)/2)-Global.SELECTOR_ICON_DIMENSION;
             v.layout(a,y,a+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+
+         */
 
             v=appimageview;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
@@ -250,11 +258,14 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             x+=v.getMeasuredWidth()+Global.TEN_DP;
             margin_offset_icon=x;
 
+            /*
             v=appselect_indicator;
             int a=itemWidth-select_indicator_offset_linear;
             int file_select_indicator_height=v.getMeasuredHeight();
             int c=(itemHeight-file_select_indicator_height)/2;
             v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
+
+             */
 
             v=appnametextview;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());

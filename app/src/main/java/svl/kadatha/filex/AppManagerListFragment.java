@@ -1,7 +1,9 @@
 package svl.kadatha.filex;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
@@ -31,7 +34,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -48,6 +56,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,9 +85,10 @@ public class AppManagerListFragment extends Fragment {
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     public static final String BACKUP="Back up";
     public static final String UNINSTALL="Uninstall";
-    public static final String PROPERTIES="Properties";
+    public static final String CONTROL_PANEL="Control Panel";
     public static final String PLAY_STORE="Play store";
     public static final String SHARE="Share";
+    private String package_clicked_for_delete="";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -313,19 +323,15 @@ public class AppManagerListFragment extends Fragment {
     }
 
 
-    public void remove_audio(ArrayList<AppPOJO> list)
+    public void remove_app(String package_name)
     {
-        for(AppPOJO appPOJO: list)
+        for(AppPOJO a:appPOJOList)
         {
-            String package_name=appPOJO.getPackage_name();
-            for(AppPOJO a:appPOJOList)
+            if(a.getPackage_name().equals(package_name))
             {
-                if(a.getPackage_name().equals(package_name))
-                {
-                    appPOJOList.remove(a);
-                    total_appPOJO_list.remove(a);
-                    break;
-                }
+                appPOJOList.remove(a);
+                total_appPOJO_list.remove(a);
+                break;
             }
         }
         num_all_app=total_appPOJO_list.size();
@@ -422,13 +428,6 @@ public class AppManagerListFragment extends Fragment {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        clear_selection();
-                    }
-                });
-
-                v.appselect_indicator.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
                         pos=getBindingAdapterPosition();
                         if(mselecteditems.size()>0)
                         {
@@ -470,16 +469,33 @@ public class AppManagerListFragment extends Fragment {
 
                         break;
                     case UNINSTALL:
-
+                        String app_pkg_name = appPOJO.getPackage_name();
+                        if(package_clicked_for_delete.equals(""))
+                        {
+                            package_clicked_for_delete=app_pkg_name;
+                        }
+                        Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+                        uninstall_intent.setData(Uri.parse("package:" + app_pkg_name));
+                        unInstallActivityResultLauncher.launch(uninstall_intent);
                         break;
-                    case PROPERTIES:
-
+                    case CONTROL_PANEL:
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", appPOJO.getPackage_name(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
                         break;
                     case PLAY_STORE:
-
+                        final String appPackageName = appPOJO.getPackage_name(); // getPackageName() from Context or Activity object
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        }
                         break;
                     case SHARE:
-
+                        File app_file=new File(appPOJO.getPath());
+                        FileIntentDispatch.sendFile(context,new ArrayList<>(Collections.singletonList(app_file)));
                         break;
                     default:
                         break;
@@ -488,6 +504,34 @@ public class AppManagerListFragment extends Fragment {
             }
         });
         appActionSelectDialog.show(((AppManagerActivity)context).fm,"");
+    }
+
+
+    private final ActivityResultLauncher<Intent> unInstallActivityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if(isPackageExisted(package_clicked_for_delete))
+            {
+                print(getString(R.string.could_not_be_uninstalled));
+            }
+            else
+            {
+                remove_app(package_clicked_for_delete);
+                print(getString(R.string.uninstalled));
+            }
+
+            package_clicked_for_delete="";
+        }
+    });
+
+    public boolean isPackageExisted(String targetPackage){
+        PackageManager pm=context.getPackageManager();
+        try {
+            PackageInfo info=pm.getPackageInfo(targetPackage,PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+        return true;
     }
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
@@ -505,54 +549,9 @@ public class AppManagerListFragment extends Fragment {
             switch(p3)
             {
                 case 0:
-                    int size=app_selected_array.size();
-                    for(int i=0;i<size;++i)
-                    {
-                        AppPOJO appPOJO=app_selected_array.get(i);
-                        files_selected_array.add(appPOJO.getPath());
 
-                    }
-                    /*
-                    final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);
-                    deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener() {
-                        public void onSelectOK() {
-
-                            final DeleteAudioDialog deleteAudioDialog = DeleteAudioDialog.getInstance(files_selected_array,false,deleteFileAlertDialogOtherActivity.tree_uri,deleteFileAlertDialogOtherActivity.tree_uri_path);
-                            deleteAudioDialog.setDeleteAudioCompleteListener(new DeleteAudioDialog.DeleteAudioCompleteListener() {
-                                public void onDeleteComplete() {
-                                    //deleted_audios = new ArrayList<>();
-                                    //int size=audios_selected_for_delete.size();
-                                    for(int i=0;i<size;++i)
-                                    {
-                                        //AudioPOJO audio=audios_selected_for_delete.get(i);
-                                        if (!new File(audio.getData()).exists()) {
-                                            //deleted_audios.add(audio);
-                                        }
-
-                                    }
-
-                                    ((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_audios);
-                                    ((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-                                }
-
-                            });
-                            deleteAudioDialog.show(((AudioPlayerActivity) context).fm, "");
-                            clear_selection();
-
-                        }
-                    });
-                    deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
-
-                     */
                     break;
                 case 1:
-                    ArrayList<File> file_list=new ArrayList<>();
-                    for(AppPOJO app:app_selected_array)
-                    {
-                        file_list.add(new File(app.getPath()));
-                    }
-                    FileIntentDispatch.sendFile(context,file_list);
-                    clear_selection();
                     break;
 
                 case 2:
@@ -723,5 +722,10 @@ public class AppManagerListFragment extends Fragment {
 
         public String getDate(){return this.date;}
 
+    }
+
+    private void print(String msg)
+    {
+        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 }
