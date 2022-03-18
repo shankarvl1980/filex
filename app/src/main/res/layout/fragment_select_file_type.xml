@@ -54,12 +54,13 @@
 </androidx.constraintlayout.widget.ConstraintLayout-->
 
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
 
-        >
+    >
 
 
         <TextView
@@ -73,19 +74,22 @@
             android:layout_gravity="top"
 
         />
-        <FrameLayout
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null">
 
-            <FrameLayout
+            <!--FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/dialog_background"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="52dp"
 
-            >
+            -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
@@ -93,19 +97,24 @@
             android:id="@+id/fragment_file_type_RecyclerView"
             android:choiceMode="singleChoice"
             android:background="?attr/dialog_background"
+            android:layout_marginTop="@dimen/layout_margin"
             android:padding="@dimen/layout_margin"
             android:scrollbars="vertical"
             android:scrollbarThumbVertical="@drawable/scrollbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
 
         />
-            </FrameLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
             android:id="@+id/fragment_file_type_button_layout"
-            android:layout_gravity="bottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_file_type_RecyclerView"
             />
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
     </LinearLayout>

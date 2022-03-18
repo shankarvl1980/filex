@@ -264,6 +264,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 						Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
+						if(files_selected_array.size()==0)
+						{
+							print(getString(R.string.could_not_perform_action));
+							return;
+						}
 						final Bundle bundle=new Bundle();
 						bundle.putStringArrayList("files_selected_array",files_selected_array);
 						bundle.putString("dest_folder",archivedestfolder);

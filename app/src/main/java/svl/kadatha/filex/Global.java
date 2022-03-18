@@ -680,7 +680,7 @@ public class Global
 		return resolveInfoList.size() != 0;
 	}
 
-	public static void REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType)
+	public static List<String> REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType)
 	{
 		if(sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE))
 		{
@@ -711,6 +711,7 @@ public class Global
 				}
 			}
 		}
+		return files_selected_array;
 
 	}
 

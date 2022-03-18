@@ -826,113 +826,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
-/*
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-	{
-		// TODO: Implement this method
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		if(requestCode==PermissionsUtil.READ_PHONE_STATE_PERMISSION_REQUEST_CODE)
-		{
 
-		}
-
-
-		final List<String> permission_not_granted_list=new ArrayList<>();
-		if(requestCode==PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE && grantResults.length>0)
-		{
-			for(int i=0;i<permissions.length;++i)
-			{
-				if(grantResults[i]!=PackageManager.PERMISSION_GRANTED)
-				{
-					permission_not_granted_list.add(permissions[i]);
-				}
-			}
-
-		}
-
-		if(grantResults.length==0 || !permission_not_granted_list.isEmpty())
-		{
-			for(String permission:permission_not_granted_list)
-			{
-				boolean show_rationale= false;
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
-					{
-						try {
-							Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-							intent.addCategory("android.intent.category.DEFAULT");
-							intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-							//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-							activityResultLauncher_all_file_access_permission.launch(intent);
-						} catch (Exception e) {
-							Intent intent = new Intent();
-							intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-							//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-							activityResultLauncher_all_file_access_permission.launch(intent);
-						}
-						break;
-					}
-					else
-					{
-						show_rationale = shouldShowRequestPermissionRationale(permission);
-					}
-
-				}
-
-				if(!show_rationale)
-				{
-					print(getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
-					finish();
-				}
-				else if(permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-				{
-					showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which)
-						{
-							switch (which)
-							{
-								case DialogInterface.BUTTON_POSITIVE:
-									new PermissionsUtil(context,MainActivity.this).check_storage_permission();
-									break;
-								case DialogInterface.BUTTON_NEGATIVE:
-									print(getString(R.string.permission_not_granted));
-									finish();
-									break;
-							}
-						}
-					});
-				}
-			}
-
-		}
-		else
-		{
-			Global.STORAGE_DIR.clear();
-			clearCache();
-			Intent in=getIntent();
-			finish();
-			startActivity(in);
-
-		}
-	}
-
- */
-
-
-/*
-	public void start_activity_afresh()
-	{
-		Global.STORAGE_DIR.clear();
-		clearCache();
-		Intent in=getIntent();
-		finish();
-		startActivity(in);
-	}
-
- */
 	private void showDialogOK(String message, DialogInterface.OnClickListener okListener)
 	{
         new AlertDialog.Builder(context)
@@ -1042,12 +936,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 										Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
 										intent.addCategory("android.intent.category.DEFAULT");
 										intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-										//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
 										activityResultLauncher_all_file_access_permission.launch(intent);
 									} catch (Exception e) {
 										Intent intent = new Intent();
 										intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-										//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
 										activityResultLauncher_all_file_access_permission.launch(intent);
 									}
 									break;
@@ -1104,97 +996,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	});
 
-	/*
-	 @Override
-	 public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	 {
-	 	super.onActivityResult(requestCode,resultCode,resultData);
-	 	switch (requestCode)
-		{
-			case folder_select_request_code:
-				if (resultCode == Activity.RESULT_OK)
-		 			{
-			 			Bundle bundle = resultData.getBundleExtra("bundle");
-						ArrayList<String> files_selected_array=new ArrayList<>(bundle.getStringArrayList("files_selected_array"));
-			 			boolean cut=bundle.getBoolean("cut");
-						String source_folder=bundle.getString("source_folder");
-						String dest_folder=bundle.getString("dest_folder");
-						FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
-						FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
-						if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
-							print(!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
-						}
-						else
-							{
-							if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-							{
-								//process to have only files with unique file names
-								Set<String> file_name_set=new HashSet<>();
-								Iterator<String> iterator=files_selected_array.iterator();
-								while(iterator.hasNext())
-								{
-									String file_path=iterator.next();
-									boolean inserted=file_name_set.add(new File(file_path).getName());
-									if(!inserted) iterator.remove();
-								}
-
-							}
-
-							PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-									destFileObjectType, dest_folder, cut);
-							pasteSetUpDialog.show(fm, "paste_dialog");
-
-						}
-		 			}
-				break;
-			case PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE:
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-					if (Environment.isExternalStorageManager())
-					{
-						Global.STORAGE_DIR.clear();
-						clearCache();
-						Intent in=getIntent();
-						finish();
-						startActivity(in);
-					}
-					else
-					{
-						showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
-						{
-							@Override
-							public void onClick(DialogInterface dialog, int which)
-							{
-								switch (which)
-								{
-									case DialogInterface.BUTTON_POSITIVE:
-										try {
-											Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-											intent.addCategory("android.intent.category.DEFAULT");
-											intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-											//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-											activityResultLauncher_all_file_access_permission.launch(intent);
-										} catch (Exception e) {
-											Intent intent = new Intent();
-											intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-											//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-											activityResultLauncher_all_file_access_permission.launch(intent);
-										}
-										break;
-									case DialogInterface.BUTTON_NEGATIVE:
-										print(getString(R.string.permission_not_granted));
-										finish();
-										break;
-								}
-							}
-						});
-					}
-				}
-
-		}
-
-	 }
-
-	 */
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
@@ -1862,7 +1663,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Intent intent=new Intent(context,FileSelectorActivity.class);
 		intent.putExtra("bundle",bundle);
 		intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
-		//startActivityForResult(intent,folder_select_request_code);
 		activityResultLauncher_file_select.launch(intent);
 
 	}

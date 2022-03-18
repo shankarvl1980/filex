@@ -121,7 +121,6 @@ public class PasteSetUpDialog extends DialogFragment
 		((MainActivity)context).clear_cache=false;
 		saf_permission_requested=true;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 
@@ -150,34 +149,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 		}
 	});
-
-/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		saf_permission_requested=false;
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-
-			if(check_permission_for_destination(dest_folder,destFileObjectType) && check_permission_for_source(source_folder,sourceFileObjectType))
-			{
-				initiate_startActivity();
-			}
-
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-			dismissAllowingStateLoss();
-		}
-
-	}
-
- */
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
 	{
@@ -355,6 +326,12 @@ public class PasteSetUpDialog extends DialogFragment
 
 	private void initiate_startActivity()
 	{
+		if(files_selected_array.size()==0)
+		{
+			print(getString(R.string.could_not_perform_action));
+			dismissAllowingStateLoss();
+			return;
+		}
 		if(!whether_file_already_exists(dest_folder,destFileObjectType))
 		{
 			print(getString(R.string.directory_not_exist_not_valid));

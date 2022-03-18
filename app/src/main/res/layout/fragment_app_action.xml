@@ -1,0 +1,86 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+
+    >
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="@string/app_action"
+        android:padding="@dimen/layout_margin"
+        android:background="?attr/dialog_title"
+        android:textSize="18sp"
+        android:layout_gravity="top"
+
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/fragment_app_action_app_name"
+                android:gravity="start"
+                android:textSize="16sp"
+                android:padding="@dimen/layout_margin"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
+                android:id="@+id/fragment_app_action_package_name"
+                android:gravity="start"
+                android:textSize="16sp"
+                android:padding="@dimen/layout_margin"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
+                android:id="@+id/fragment_app_action_app_size"
+                android:gravity="start"
+                android:textSize="16sp"
+                android:padding="@dimen/layout_margin"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_app_action_recyclerView"
+                android:choiceMode="singleChoice"
+                android:background="?attr/dialog_background"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:padding="@dimen/layout_margin"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@drawable/scrollbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
+
+                />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:id="@+id/fragment_app_action_button_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_recyclerView"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</LinearLayout>

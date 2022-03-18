@@ -325,6 +325,8 @@
     <string name="insuffient_memory_to_load_file">Insufficient memory to load the file</string>
     <string name="app_manager">App Manager</string>
     <string name="no_app_found">No app found</string>
+    <string name="app_action">App action</string>
+    <string name="could_not_perform_action">could not perform the action</string>
 
 
     <string-array name="library_categories">
