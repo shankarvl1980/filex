@@ -157,7 +157,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			for(String path:Global.INTERNAL_STORAGE_PATH)
+			for(String path:Global.INTERNAL_STORAGE_PATH_LIST)
 			{
 				if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
 				{

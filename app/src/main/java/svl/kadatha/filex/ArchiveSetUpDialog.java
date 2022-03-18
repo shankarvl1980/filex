@@ -62,7 +62,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
 
 
-	private ArchiveSetUpDialog(){}
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -91,7 +91,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			first_file_name = new File(first_file_path).getName();
 			if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				parent_file_path=Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR();
+				parent_file_path=Global.INTERNAL_PRIMARY_STORAGE_PATH;
 				current_dir_fileObjectType=FileObjectType.FILE_TYPE;
 			}
 			else
@@ -104,7 +104,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			parent_file_name =s.equals("0") ? first_file_name : s;
 		}
 
-		folderclickselected=Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR();
+		folderclickselected=Global.INTERNAL_PRIMARY_STORAGE_PATH;
 		custom_dir_fileObjectType=FileObjectType.FILE_TYPE;
 
 	}

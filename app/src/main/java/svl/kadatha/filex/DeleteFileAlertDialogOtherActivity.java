@@ -51,7 +51,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	private int size;
 	private Button okbutton;
 
-	private DeleteFileAlertDialogOtherActivity(){}
+
 
     @Override
 	public void onCreate(Bundle savedInstanceState)

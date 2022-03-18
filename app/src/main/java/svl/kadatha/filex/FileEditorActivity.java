@@ -437,7 +437,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 						//if(filePOJO.getPath().endsWith("/0"))
 						{
-							internal_available_space=new File(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()).getUsableSpace();
+							internal_available_space=new File(Global.INTERNAL_PRIMARY_STORAGE_PATH).getUsableSpace();
 							if(file_size*2.5>internal_available_space)
 							{
 								isFileBig=true;

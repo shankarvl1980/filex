@@ -35,8 +35,6 @@ public class PropertiesDialog extends DialogFragment
 	private String source_folder;
 
 
-	private PropertiesDialog(){}
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);

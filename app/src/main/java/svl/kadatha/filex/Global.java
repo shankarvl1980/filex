@@ -49,7 +49,8 @@ public class Global
 	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 
 	static ArrayList<FilePOJO> STORAGE_DIR=new ArrayList<>();
-	static final List<String> INTERNAL_STORAGE_PATH=new ArrayList<>();
+	static final List<String> INTERNAL_STORAGE_PATH_LIST=new ArrayList<>();
+	static String INTERNAL_PRIMARY_STORAGE_PATH="";
 	static String EXTERNAL_STORAGE_PATH="";
 	static String USB_STORAGE_PATH;
 
@@ -534,17 +535,12 @@ public class Global
 		}
 	}
 
-
-	static String GET_INTERNAL_STORAGE_PATH_STORAGE_DIR()
-	{
-		return GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath();
-	}
-
 	static void GET_STORAGE_DIR(Context context)
 	{
 		if(STORAGE_DIR.size()==0)
 		{
 			STORAGE_DIR=new ArrayList<>(StorageUtil.getSdCardPaths(context,true));
+			INTERNAL_PRIMARY_STORAGE_PATH=GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath();
 			WORKOUT_AVAILABLE_SPACE();
 		}
 	}

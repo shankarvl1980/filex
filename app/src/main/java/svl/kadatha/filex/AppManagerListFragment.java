@@ -1,5 +1,6 @@
 package svl.kadatha.filex;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -73,6 +74,11 @@ public class AppManagerListFragment extends Fragment {
     private TextView empty_tv;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
+    public static final String BACKUP="Back up";
+    public static final String UNINSTALL="Uninstall";
+    public static final String PROPERTIES="Properties";
+    public static final String PLAY_STORE="Play store";
+    public static final String SHARE="Share";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -431,7 +437,7 @@ public class AppManagerListFragment extends Fragment {
                                 mselecteditems.put(pos,true);
                                 app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
-                                listPopWindow.showAsDropDown(v);
+                                show_app_action_select_dialog(appPOJOList.get(pos));
                             }
                             else
                             {
@@ -443,13 +449,45 @@ public class AppManagerListFragment extends Fragment {
                             mselecteditems.put(pos,true);
                             app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
-                            listPopWindow.showAsDropDown(v);
+                            show_app_action_select_dialog(appPOJOList.get(pos));
                         }
                     }
                 });
 
             }
         }
+    }
+
+    private void show_app_action_select_dialog(AppPOJO appPOJO)
+    {
+        AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize());
+        appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
+            @Override
+            public void onSelectType(String app_action) {
+                switch (app_action)
+                {
+                    case BACKUP:
+
+                        break;
+                    case UNINSTALL:
+
+                        break;
+                    case PROPERTIES:
+
+                        break;
+                    case PLAY_STORE:
+
+                        break;
+                    case SHARE:
+
+                        break;
+                    default:
+                        break;
+                }
+                clear_selection();
+            }
+        });
+        appActionSelectDialog.show(((AppManagerActivity)context).fm,"");
     }
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener

@@ -12,6 +12,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class AppActionSelectDialog extends DialogFragment
 {
@@ -20,8 +24,8 @@ public class AppActionSelectDialog extends DialogFragment
     private AppManagerListFragment.AppPOJO appPOJO;
     private TextView app_name_tv,package_name_tv,app_size_tv;
     private String app_name,package_name,app_size;
+    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.PROPERTIES,AppManagerListFragment.PLAY_STORE,AppManagerListFragment.SHARE));
 
-    private AppActionSelectDialog(){}
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -62,14 +66,15 @@ public class AppActionSelectDialog extends DialogFragment
         package_name_tv=v.findViewById(R.id.fragment_app_action_package_name);
         app_size_tv=v.findViewById(R.id.fragment_app_action_app_size);
 
+
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_size_tv.setText(app_size);
 
-        RecyclerView file_type_recyclerview = v.findViewById(R.id.fragment_file_type_RecyclerView);
-        file_type_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        file_type_recyclerview.setLayoutManager(new LinearLayoutManager(context));
-        file_type_recyclerview.setAdapter(new AppActionRecyclerViewAdapter());
+        RecyclerView app_action_recyclerview = v.findViewById(R.id.fragment_app_action_recyclerView);
+        app_action_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        app_action_recyclerview.setLayoutManager(new LinearLayoutManager(context));
+        app_action_recyclerview.setAdapter(new AppActionRecyclerViewAdapter());
 
         ViewGroup button_layout = v.findViewById(R.id.fragment_app_action_button_layout);
         button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -81,7 +86,7 @@ public class AppActionSelectDialog extends DialogFragment
             {
                 if(appActionSelectListener!=null)
                 {
-                    appActionSelectListener.onSelectType();
+                    appActionSelectListener.onSelectType("cancel");
                 }
                 dismissAllowingStateLoss();
             }
@@ -136,14 +141,14 @@ public class AppActionSelectDialog extends DialogFragment
         public void onBindViewHolder(AppActionRecyclerViewAdapter.VH p1, int p2)
         {
             // TODO: Implement this method
-            p1.file_type_tv.setText(Global.SUPPORTED_MIME_POJOS.get(p2).getFile_type());
+            p1.file_type_tv.setText(action_list.get(p2));
         }
 
         @Override
         public int getItemCount()
         {
             // TODO: Implement this method
-            return Global.SUPPORTED_MIME_POJOS.size();
+            return action_list.size();
         }
 
 
@@ -165,8 +170,7 @@ public class AppActionSelectDialog extends DialogFragment
                         pos=getBindingAdapterPosition();
                         if(appActionSelectListener!=null)
                         {
-                            //MimePOJO mimePOJO=Global.SUPPORTED_MIME_POJOS.get(pos);
-                            appActionSelectListener.onSelectType(mimePOJO.getMime_type());
+                            appActionSelectListener.onSelectType(action_list.get(pos));
                         }
                         dismissAllowingStateLoss();
                     }

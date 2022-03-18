@@ -672,7 +672,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		if(savedInstanceState==null)
 		{
-			createFragmentTransaction(Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR(),FileObjectType.FILE_TYPE);
+			createFragmentTransaction(Global.INTERNAL_PRIMARY_STORAGE_PATH,FileObjectType.FILE_TYPE);
 			Intent intent=getIntent();
 			if(intent!=null)
 			{
@@ -1559,7 +1559,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
 				deleteFileAlertDialog.show(fm, "delete_dialog");
-
+				actionmode_finish(df,df.fileclickselected);
 			} else if (id == R.id.toolbar_btn_5) {
 				listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -1572,12 +1572,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									file_list_excluding_dir = iterate_to_attach_file(df.mselecteditemsFilePath);
 									if (file_list_excluding_dir.size() == 0) {
 										print(getString(R.string.directories_can_not_be_sent_select_one_file));
-										actionmode_finish(df,df.fileclickselected);
+										//actionmode_finish(df,df.fileclickselected);
 										break;
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
-                                actionmode_finish(df,df.fileclickselected);
+                                //actionmode_finish(df,df.fileclickselected);
 								break;
 							case 1:
 								size = df.mselecteditemsFilePath.size();
@@ -1595,12 +1595,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								ArchiveSetUpDialog archiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
 								archiveSetUpDialog.show(fm, "zip_dialog");
-								actionmode_finish(df,df.fileclickselected);
+								//actionmode_finish(df,df.fileclickselected);
 								break;
 							case 3:
 								if (df.mselecteditemsFilePath.size() != 1) {
 									print(getString(R.string.select_only_a_zip_file));
-									actionmode_finish(df,df.fileclickselected);
+									//actionmode_finish(df,df.fileclickselected);
 									break;
 								}
 								String path = df.mselecteditemsFilePath.valueAt(0);
@@ -1617,24 +1617,25 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									ArchiveSetUpDialog unarchiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
 									unarchiveSetUpDialog.show(fm, "zip_dialog");
-									actionmode_finish(df,df.fileclickselected);
+									//actionmode_finish(df,df.fileclickselected);
 								} else {
 									print(getString(R.string.select_only_a_zip_file));
-									actionmode_finish(df,df.fileclickselected);
+									//actionmode_finish(df,df.fileclickselected);
 								}
 								break;
 							case 4:
 								MoveToCopyToProcedure(df,true);
-								actionmode_finish(df,df.fileclickselected);
+								//actionmode_finish(df,df.fileclickselected);
 								break;
 							case 5:
 								MoveToCopyToProcedure(df,false);
-								actionmode_finish(df,df.fileclickselected);
+								//actionmode_finish(df,df.fileclickselected);
 								break;
 							default:
 								break;
 
 						}
+						actionmode_finish(df,df.fileclickselected);
 						listPopWindow.dismiss();
 					}
 				});

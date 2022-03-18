@@ -146,7 +146,7 @@ public class StorageUtil
 		while (dummy_file.exists());
 		if(isWritable(dummy_file))
 		{
-			Global.INTERNAL_STORAGE_PATH.add(f.getAbsolutePath());
+			Global.INTERNAL_STORAGE_PATH_LIST.add(f.getAbsolutePath());
 		}
 		if(Environment.isExternalStorageRemovable(f)) Global.EXTERNAL_STORAGE_PATH = f.getAbsolutePath();
 

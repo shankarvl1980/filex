@@ -25,12 +25,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null">
-
+            <View
+                android:id="@+id/fragment_app_action_dialog_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_recyclerView"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="?attr/dialog_background"
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
                 android:id="@+id/fragment_app_action_app_name"
                 android:gravity="start"
                 android:textSize="16sp"
@@ -45,7 +54,8 @@
                 android:id="@+id/fragment_app_action_package_name"
                 android:gravity="start"
                 android:textSize="14sp"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/layout_margin"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 />
@@ -60,19 +70,26 @@
                 android:padding="@dimen/layout_margin"
                 android:maxLines="1"
                 />
-
+            <View
+                android:id="@+id/fragment_app_action_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@android:color/black"
+                android:alpha="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
+                />
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_app_action_recyclerView"
                 android:choiceMode="singleChoice"
-                android:background="?attr/dialog_background"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:padding="@dimen/layout_margin"
                 android:scrollbars="vertical"
                 android:scrollbarThumbVertical="@drawable/scrollbar"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_divider"
 
                 />
 

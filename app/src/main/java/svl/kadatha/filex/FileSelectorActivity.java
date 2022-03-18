@@ -630,7 +630,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             FileObjectType fileObjectType=filePOJO.getFileObjectType();
             if(fileObjectType==FileObjectType.FILE_TYPE)
             {
-                if(Global.INTERNAL_STORAGE_PATH.contains(filePOJO.getPath()))
+                if(Global.INTERNAL_STORAGE_PATH_LIST.contains(filePOJO.getPath()))
                 {
                     vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
                 }

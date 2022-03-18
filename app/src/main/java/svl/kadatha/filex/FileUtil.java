@@ -1358,7 +1358,7 @@ import java.util.List;
 	{
 		boolean is_from_internal = false;
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
-		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH)
+		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH_LIST)
 		{
 			//if ((file_path+File.separator).startsWith(internal_storage_path+File.separator)) {
 			if (Global.IS_CHILD_FILE(file_path,internal_storage_path)) {

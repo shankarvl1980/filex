@@ -61,8 +61,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private String other_file_permission;
 	private String source_folder;
 
-    private DeleteFileAlertDialog(){}
-
 
 	@Override
 	public void onAttach(@NonNull Context context) {

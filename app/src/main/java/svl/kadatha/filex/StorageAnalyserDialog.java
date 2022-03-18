@@ -99,7 +99,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         fileclickselected=getTag();
         if(fileclickselected==null)
         {
-            fileclickselected=Global.GET_INTERNAL_STORAGE_PATH_STORAGE_DIR();
+            fileclickselected=Global.INTERNAL_PRIMARY_STORAGE_PATH;
         }
         Bundle bundle=getArguments();
         if(bundle!=null)
@@ -116,7 +116,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
         else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
-            for(String path:Global.INTERNAL_STORAGE_PATH)
+            for(String path:Global.INTERNAL_STORAGE_PATH_LIST)
             {
                 if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
                 {
