@@ -35,6 +35,7 @@
                 android:gravity="start"
                 android:textSize="16sp"
                 android:padding="@dimen/layout_margin"
+                android:maxLines="1"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -43,8 +44,10 @@
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
                 android:id="@+id/fragment_app_action_package_name"
                 android:gravity="start"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:padding="@dimen/layout_margin"
+                android:singleLine="true"
+                android:ellipsize="marquee"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -53,8 +56,9 @@
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
                 android:id="@+id/fragment_app_action_app_size"
                 android:gravity="start"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:padding="@dimen/layout_margin"
+                android:maxLines="1"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
