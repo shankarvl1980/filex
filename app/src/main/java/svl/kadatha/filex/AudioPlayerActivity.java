@@ -25,6 +25,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -69,6 +70,8 @@ public class AudioPlayerActivity extends BaseActivity
 	String file_path;
 	public static final String ACTIVITY_NAME="AUDIO_PLAYER_ACTIVITY";
 	private final int[] tab_title=new int[]{R.string.current_play,R.string.all_songs,R.string.album,R.string.audio_list};
+	public boolean clear_cache;
+	private LocalBroadcastManager localBroadcastManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -78,7 +81,7 @@ public class AudioPlayerActivity extends BaseActivity
 		setContentView(R.layout.activity_audio_player);
 		context=this;
 		tinyDB=new TinyDB(context);
-
+		localBroadcastManager= LocalBroadcastManager.getInstance(context);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		
 		AUDIO_NOTIFICATION_INTENT_ACTION=getPackageName()+".AUDIO_NOTIFICATION";
@@ -316,6 +319,46 @@ public class AudioPlayerActivity extends BaseActivity
 		on_intent(intent);
 	}
 
+
+	@Override
+	protected void onStart()
+	{
+		// TODO: Implement this method
+		super.onStart();
+		clear_cache=true;
+		Global.WORKOUT_AVAILABLE_SPACE();
+	}
+
+	@Override
+	protected void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("clear_cache",clear_cache);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		clear_cache=savedInstanceState.getBoolean("clear_cache");
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+		{
+			clearCache();
+		}
+	}
+
+	public void clearCache()
+	{
+		Global.HASHMAP_FILE_POJO.clear();
+		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+	}
+
+
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -510,6 +553,7 @@ public class AudioPlayerActivity extends BaseActivity
 						albumlf.clear_selection();
 						aslf.clear_selection();
 
+						clear_cache=false;
 						finish();
 					}
 					break;
@@ -527,6 +571,8 @@ public class AudioPlayerActivity extends BaseActivity
 						aalf.clear_selection();
 						albumlf.clear_selection();
 						aslf.clear_selection();
+
+						clear_cache=false;
 						finish();
 					}
 					break;
@@ -544,6 +590,7 @@ public class AudioPlayerActivity extends BaseActivity
 						albumlf.clear_selection();
 						aslf.clear_selection();
 
+						clear_cache=false;
 						finish();
 					}
 
@@ -553,6 +600,8 @@ public class AudioPlayerActivity extends BaseActivity
 					aalf.clear_selection();
 					albumlf.clear_selection();
 					aslf.clear_selection();
+
+					clear_cache=false;
 					finish();
 					break;
 			}

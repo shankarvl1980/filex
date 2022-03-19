@@ -1,6 +1,8 @@
 package svl.kadatha.filex;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,8 @@ public class PdfViewActivity extends BaseActivity {
     public FragmentManager fm;
     public Uri data;
     public static final String ACTIVITY_NAME="PDF_VIEW_ACTIVITY";
+    public boolean clear_cache;
+    private LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,7 @@ public class PdfViewActivity extends BaseActivity {
         setContentView(R.layout.activity_blank_view);
         fm=getSupportFragmentManager();
         TinyDB tinyDB = new TinyDB(context);
+        localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
         Intent intent=getIntent();
         if(savedInstanceState==null)
@@ -55,6 +60,48 @@ public class PdfViewActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onStart()
+    {
+        // TODO: Implement this method
+        super.onStart();
+        clear_cache=true;
+        Global.WORKOUT_AVAILABLE_SPACE();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("clear_cache",clear_cache);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        clear_cache=savedInstanceState.getBoolean("clear_cache");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+        {
+            clearCache();
+        }
+    }
+
+    public void clearCache()
+    {
+        Global.HASHMAP_FILE_POJO.clear();
+        Global.HASHMAP_FILE_POJO_FILTERED.clear();
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+    }
+
+    @Override
+    public void onBackPressed() {
+        clear_cache=false;
+        super.onBackPressed();
+    }
 
     private void print(String msg)
     {

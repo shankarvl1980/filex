@@ -273,8 +273,6 @@ public class FilePOJOUtil {
                 if(sizeLong==4096) isDirectory=true;
                 date=split_line[4];
             }
-
-
         }
         else
         {

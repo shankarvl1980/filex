@@ -30,6 +30,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -117,6 +118,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private LocalBroadcastManager localBroadcastManager;
 	private InputMethodManager imm;
 	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
+	public boolean clear_cache;
 
 
     @Override
@@ -161,7 +163,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			public void onClick(View v)
 			{
-				file_close_procedure();
+				onBackPressed();
 			}
 		});
 		
@@ -417,6 +419,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				if(!openFile(current_page_end_point))
 				{
+					clear_cache=false;
 					finish();
 				}
 
@@ -510,6 +513,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			fileServiceBound=true;
 		}
 
+		clear_cache=true;
+		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 
 	@Override
@@ -522,7 +527,22 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			unbindService(serviceConnection);
 			fileServiceBound=false;
 		}
+
+		if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+		{
+			clearCache();
+		}
 	}
+
+
+	public void clearCache()
+	{
+		Global.HASHMAP_FILE_POJO.clear();
+		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+	}
+
+
 
 	@Override
 	protected void onDestroy() {
@@ -773,6 +793,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 						else
 						{
+							clear_cache=false;
 							finish();
 						}
 					}
@@ -782,6 +803,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		else
 		{
 			textViewUndoRedo.disconnect();
+			clear_cache=false;
 			finish();
 		}
 	}
@@ -808,6 +830,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		outState.putSerializable("temporary_file_for_save",temporary_file_for_save);
 		textViewUndoRedo.storePersistentState(outState,preference_name);
 
+		outState.putBoolean("clear_cache",clear_cache);
+
 	}
 
 	@Override
@@ -826,6 +850,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		try {
 			page_pointer_hashmap=(LinkedHashMap<Integer,Long>)serializable;
 		} catch (ClassCastException e) {
+			clear_cache=false;
 			finish();
 		}
 
@@ -849,6 +874,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			down_button.setEnabled(false);
 			down_button.setAlpha(Global.DISABLE_ALFA);
 		}
+
+		clear_cache=savedInstanceState.getBoolean("clear_cache");
 
 	}
 
@@ -1065,6 +1092,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 									if(to_be_closed_after_save)
 									{
+										clear_cache=false;
 										finish();
 									}
 									else if(action_after_save.equals("go_previous"))
@@ -1114,6 +1142,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 									if(to_be_closed_after_save)
 									{
+										clear_cache=false;
 										finish();
 									}
 									else if(action_after_save.equals("go_previous"))
@@ -1181,6 +1210,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			// TODO: Implement this method
 			super.onCancelled(result);
 			cpbf.dismissAllowingStateLoss();
+			clear_cache=false;
 			finish();
 		}
 
@@ -1465,6 +1495,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
+				clear_cache=false;
 				finish();
 
 			}
@@ -1499,6 +1530,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
+				clear_cache=false;
 				finish();
 
 			}

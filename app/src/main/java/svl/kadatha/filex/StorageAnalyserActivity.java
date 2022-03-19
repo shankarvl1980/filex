@@ -201,7 +201,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         });
 
-
         storage_filePOJO_list=getFilePOJO_list();
     }
 
