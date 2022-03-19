@@ -53,6 +53,8 @@ class FileIntentDispatch
 		}
 
 		File file=new File(file_path);
+		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
+		/*
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 		{
 			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
@@ -61,6 +63,8 @@ class FileIntentDispatch
 		{
 			uri=Uri.fromFile(file);
 		}
+
+		 */
 
 		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType);
 
@@ -171,7 +175,11 @@ class FileIntentDispatch
 	private static void send_file(Context context, ArrayList<File> file_list)
 	{
 		ArrayList<Uri> uri_list=new ArrayList<>();
-
+		for(File f:file_list)
+		{
+			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
+		}
+		/*
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 		{
 			for(File f:file_list)
@@ -186,6 +194,8 @@ class FileIntentDispatch
 				uri_list.add(Uri.fromFile(f));
 			}
 		}
+
+		 */
 
 		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
 		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
@@ -413,7 +423,6 @@ class FileIntentDispatch
 
 		intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchiveView);
 		intent.putExtra(EXTRA_FILE_OBJECT_TYPE,fileObjectType!=null ? fileObjectType.toString():null);
-		//Log.d("shankar",fileObjectType!=null?fileObjectType.toString():"");
 		intent.putExtra(EXTRA_FILE_PATH,file_path);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

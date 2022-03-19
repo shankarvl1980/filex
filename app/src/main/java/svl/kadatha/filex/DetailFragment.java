@@ -804,6 +804,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		InputStream inputStream;
 		Uri uri;
 		File file=new File(file_path);
+		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
+		/*
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 		{
 			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
@@ -812,6 +814,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			uri=Uri.fromFile(file);
 		}
+
+		 */
 		inputStream=context.getContentResolver().openInputStream(uri);
 		PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
 		PackageInstaller.SessionParams sessionParams=new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);

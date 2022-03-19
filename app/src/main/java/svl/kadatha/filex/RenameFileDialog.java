@@ -484,27 +484,6 @@ public class RenameFileDialog extends DialogFragment
 	}
 	});
 
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			// Get Uri from Storage Access Framework.
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			saf_permission_requested=false;
-			okbutton.callOnClick();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-	}
-
-	 */
 
 	@Override
 	public void onDestroyView() {

@@ -194,7 +194,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 					((MainActivity)context).clear_cache=false;
 					Intent intent=new Intent(context,FileSelectorActivity.class);
 					intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.FOLDER_SELECT_REQUEST_CODE);
-					//startActivityForResult(intent,folder_select_request_code);
 					activityResultLauncher_file_select.launch(intent);
 				}
 			}

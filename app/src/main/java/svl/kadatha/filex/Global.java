@@ -662,6 +662,8 @@ public class Global
 		String mime_type = "";
 		Uri uri;
 		File f=new File("/dummy");
+		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",f);
+		/*
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 		{
 			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",f);
@@ -670,6 +672,8 @@ public class Global
 		{
 			uri=Uri.fromFile(f);
 		}
+
+		 */
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,false,uri);
 		List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
