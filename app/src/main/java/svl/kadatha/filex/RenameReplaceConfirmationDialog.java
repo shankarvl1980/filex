@@ -15,8 +15,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
     private String rename_file_name;
 	private RenameReplaceDialogListener renameDialogListener;
 
-	private RenameReplaceConfirmationDialog(){}
-
 
    public static RenameReplaceConfirmationDialog getInstance(String new_name)
    {

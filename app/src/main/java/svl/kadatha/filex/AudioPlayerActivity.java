@@ -169,7 +169,11 @@ public class AudioPlayerActivity extends BaseActivity
 		tab_layout.setupWithViewPager(view_pager);
 
 
-
+		Intent intent=getIntent();
+		if(savedInstanceState==null)
+		{
+			if(intent!=null)on_intent(intent);
+		}
 
 		//apf=(AudioPlayFragment) adapter.createFragment(0);
 		//aalf=(AllAudioListFragment) adapter.createFragment(1);
@@ -276,14 +280,16 @@ public class AudioPlayerActivity extends BaseActivity
 
 		 */
 
-
-		Intent intent=getIntent();
 		if(savedInstanceState==null)
 		{
-			if(intent!=null)on_intent(intent);
+			if(AUDIO_FILE==null)
+			{
+				view_pager.setCurrentItem(1);
+				apf.setTitleArt("",null,null);
+			}
 		}
-		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
 
+		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
 	}
 
 	private void on_intent(Intent intent)
@@ -301,12 +307,7 @@ public class AudioPlayerActivity extends BaseActivity
 			AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",null,(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
 		}
 
-		if(AUDIO_FILE==null)
-		{
-			view_pager.setCurrentItem(1);
-			apf.setTitleArt("",null,null);
 
-		}
 	}
 
 	@Override

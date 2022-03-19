@@ -5,8 +5,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -106,8 +104,8 @@ class FileIntentDispatch
 				{
 					if(mime_type.equals("application/vnd.android.package-archive"))
 					{
-						AppInstallAlertDialogFragment appInstallAlertDialogFragment=AppInstallAlertDialogFragment.getInstance(file_path);
-						appInstallAlertDialogFragment.setAppInstallDialogListener(new AppInstallAlertDialogFragment.AppInstallDialogListener() {
+						AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(file_path);
+						appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
 							@Override
 							public void on_ok_click() {
 								if(Global.FILEX_PACKAGE.equals(package_name))
@@ -129,7 +127,7 @@ class FileIntentDispatch
 
 						});
 
-						appInstallAlertDialogFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
+						appInstallAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 					}
 					else
 					{

@@ -23,7 +23,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     private int ftp_selected_size;
     private DeleteFtpAlertDialogListener deleteFtpAlertDialogListener;
 
-    private DeleteFtpAlertDialog(){}
 
     @Override
     public void onAttach(@NonNull Context context) {

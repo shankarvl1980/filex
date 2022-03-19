@@ -32,7 +32,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 
-public class AppInstallAlertDialogFragment extends DialogFragment
+public class AppInstallAlertDialog extends DialogFragment
 {
     private Context context;
     private ImageView app_icon_image_view;
@@ -137,13 +137,13 @@ public class AppInstallAlertDialogFragment extends DialogFragment
         return v;
     }
 
-    public static AppInstallAlertDialogFragment getInstance(String file_path)
+    public static AppInstallAlertDialog getInstance(String file_path)
     {
-        AppInstallAlertDialogFragment appInstallAlertDialogFragment=new AppInstallAlertDialogFragment();
+        AppInstallAlertDialog appInstallAlertDialog =new AppInstallAlertDialog();
         Bundle bundle=new Bundle();
         bundle.putString("file_path",file_path);
-        appInstallAlertDialogFragment.setArguments(bundle);
-        return appInstallAlertDialogFragment;
+        appInstallAlertDialog.setArguments(bundle);
+        return appInstallAlertDialog;
 
     }
 

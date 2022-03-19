@@ -248,8 +248,8 @@ public class AppSelectorDialog extends DialogFragment
                         final String app_package_name=appPOJO.app_package_name;
                         if(file_type.equals("APK"))
                         {
-                            AppInstallAlertDialogFragment appInstallAlertDialogFragment=AppInstallAlertDialogFragment.getInstance(file_path);
-                            appInstallAlertDialogFragment.setAppInstallDialogListener(new AppInstallAlertDialogFragment.AppInstallDialogListener() {
+                            AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(file_path);
+                            appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
                                 @Override
                                 public void on_ok_click() {
                                     if(Global.FILEX_PACKAGE.equals(app_package_name))
@@ -278,7 +278,7 @@ public class AppSelectorDialog extends DialogFragment
                             });
 
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                            appInstallAlertDialogFragment.show(appCompatActivity.getSupportFragmentManager(),"");
+                            appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
                             /*
                             if(appCompatActivity instanceof MainActivity)
                             {

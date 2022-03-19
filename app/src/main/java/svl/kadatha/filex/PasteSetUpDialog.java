@@ -36,8 +36,6 @@ public class PasteSetUpDialog extends DialogFragment
 	private int size;
 	private boolean saf_permission_requested;
 
-	
-	private PasteSetUpDialog(){}
 
 	@Override
 	public void onAttach(@NonNull Context context) {

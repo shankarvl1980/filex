@@ -28,7 +28,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     private FtpRenameListener ftpRenameListener;
     private FtpDatabaseHelper ftpDatabaseHelper;
 
-    private FtpDisplayRenameDialog(){}
 
     @Override
     public void onAttach(@NonNull Context context) {

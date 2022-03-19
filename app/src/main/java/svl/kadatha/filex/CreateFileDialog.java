@@ -55,7 +55,6 @@ public class CreateFileDialog extends DialogFragment
 	private List<FilePOJO> destFilePOJOs;
 
 
-	private CreateFileDialog(){}
 
 	@Override
 	public void onAttach(@NonNull Context context) {

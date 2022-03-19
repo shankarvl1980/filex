@@ -33,7 +33,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private boolean update;
     private PermissionsUtil permissionsUtil;
 
-    private FtpDetailsInputDialog(){}
 
     public static FtpDetailsInputDialog getInstance(String server)
     {
