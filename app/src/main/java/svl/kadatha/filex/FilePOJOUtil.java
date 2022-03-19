@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -406,7 +407,6 @@ public class FilePOJOUtil {
         if(MainActivity.PM==null) return null;
         if(file_ext.matches(Global.APK_REGEX))
         {
-
             PackageInfo PI = MainActivity.PM.getPackageArchiveInfo(file_path, 0);
             if(PI==null) return null;
             PI.applicationInfo.publicSourceDir = file_path;
@@ -415,19 +415,35 @@ public class FilePOJOUtil {
             if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
             {
                 Drawable APKicon = PI.applicationInfo.loadIcon(MainActivity.PM);
+                Bitmap bitmap;
                 if(APKicon instanceof BitmapDrawable)
                 {
-                    Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
-                    File f=new File(Global.APK_ICON_DIR,file_with_package_name);
-                    try {
-                        FileOutputStream fileOutputStream=new FileOutputStream(f);
-                        bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                        fileOutputStream.close();
-                        Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                    } catch (IOException e) {
+                    bitmap=((BitmapDrawable)APKicon).getBitmap();
+                }
+                else
+                {
+                    bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                    APKicon.draw(canvas);
+                }
 
+                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
+                FileOutputStream fileOutputStream=null;
+                try {
+                    fileOutputStream=new FileOutputStream(f);
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                    fileOutputStream.close();
+                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                } catch (IOException e) {
+                    if(fileOutputStream!=null)
+                    {
+                        try {
+                            fileOutputStream.close();
+                        } catch (IOException ioException) {
+
+                        }
                     }
-
                 }
 
             }

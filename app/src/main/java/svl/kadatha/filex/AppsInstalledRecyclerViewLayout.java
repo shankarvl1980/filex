@@ -322,7 +322,8 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     public void setData(AppManagerListFragment.AppPOJO appPOJO, boolean item_selected)
     {
         //appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-        GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
+        String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage_name()+".png";
+        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
         apppackagenametextview.setText(appPOJO.getPackage_name());
         appsizetextview.setText(appPOJO.getSize());

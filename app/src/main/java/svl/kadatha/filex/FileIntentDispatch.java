@@ -169,13 +169,24 @@ class FileIntentDispatch
 		AppSelectorDialog appSelectorDialog=AppSelectorDialog.getInstance(uri,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
 		appSelectorDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 	}
+
 	private static void send_file(Context context, ArrayList<File> file_list)
 	{
-
 		ArrayList<Uri> uri_list=new ArrayList<>();
-		for(File f:file_list)
+
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 		{
-			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
+			for(File f:file_list)
+			{
+				uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
+			}
+		}
+		else
+		{
+			for(File f:file_list)
+			{
+				uri_list.add(Uri.fromFile(f));
+			}
 		}
 
 		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);

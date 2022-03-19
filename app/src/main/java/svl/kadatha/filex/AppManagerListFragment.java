@@ -8,9 +8,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -44,6 +48,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -58,7 +63,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class AppManagerListFragment extends Fragment {
 
@@ -129,7 +137,7 @@ public class AppManagerListFragment extends Fragment {
                             String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
-                            extract_icon(package_name,packageManager,packageInfo);
+                            extract_icon(package_name+".png",packageManager,packageInfo);
                             appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
 
                         }
@@ -144,7 +152,7 @@ public class AppManagerListFragment extends Fragment {
                             String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
-                            extract_icon(package_name,packageManager,packageInfo);
+                            extract_icon(package_name+".png",packageManager,packageInfo);
                             appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
 
                         }
@@ -303,19 +311,35 @@ public class AppManagerListFragment extends Fragment {
         if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
         {
             Drawable APKicon = packageInfo.applicationInfo.loadIcon(packageManager);
+            Bitmap bitmap;
             if(APKicon instanceof BitmapDrawable)
             {
-                Bitmap bm=((BitmapDrawable)APKicon).getBitmap();
-                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
-                try {
-                    FileOutputStream fileOutputStream=new FileOutputStream(f);
-                    bm.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                    fileOutputStream.close();
-                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                } catch (IOException e) {
+                bitmap=((BitmapDrawable)APKicon).getBitmap();
+            }
+            else
+            {
+                bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                APKicon.draw(canvas);
+            }
 
+            File f=new File(Global.APK_ICON_DIR,file_with_package_name);
+            FileOutputStream fileOutputStream = null;
+            try {
+                fileOutputStream=new FileOutputStream(f);
+                bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                fileOutputStream.close();
+                Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+            } catch (IOException e) {
+                if(fileOutputStream!=null)
+                {
+                    try {
+                        fileOutputStream.close();
+                    } catch (IOException ioException) {
+
+                    }
                 }
-
             }
 
         }
@@ -466,7 +490,7 @@ public class AppManagerListFragment extends Fragment {
                 switch (app_action)
                 {
                     case BACKUP:
-
+                        MoveToCopyToProcedure(appPOJO.getPath());
                         break;
                     case UNINSTALL:
                         String app_pkg_name = appPOJO.getPackage_name();
@@ -486,7 +510,7 @@ public class AppManagerListFragment extends Fragment {
                         startActivity(intent);
                         break;
                     case PLAY_STORE:
-                        final String appPackageName = appPOJO.getPackage_name(); // getPackageName() from Context or Activity object
+                        final String appPackageName = appPOJO.getPackage_name();
                         try {
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                         } catch (android.content.ActivityNotFoundException anfe) {
@@ -494,8 +518,17 @@ public class AppManagerListFragment extends Fragment {
                         }
                         break;
                     case SHARE:
-                        File app_file=new File(appPOJO.getPath());
-                        FileIntentDispatch.sendFile(context,new ArrayList<>(Collections.singletonList(app_file)));
+                        //Uri uri_to_send = Uri.fromParts("package", appPOJO.getPackage_name(), null);
+                        /*
+                        Uri uri_to_send = Uri.parse("package:" + appPOJO.getPackage_name());
+                        send_uri(uri_to_send,appPOJO.getName());
+
+                         */
+                        /*
+                        File f=new File(appPOJO.getPath());
+                        FileIntentDispatch.sendFile(context,new ArrayList<>(Arrays.asList(f)));
+
+                         */
                         break;
                     default:
                         break;
@@ -524,6 +557,35 @@ public class AppManagerListFragment extends Fragment {
         }
     });
 
+    private final ActivityResultLauncher<Intent>activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK)
+            {
+                Bundle bundle = result.getData().getBundleExtra("bundle");
+                ArrayList<String> files_selected_array=new ArrayList<>(bundle.getStringArrayList("files_selected_array"));
+                boolean cut=bundle.getBoolean("cut");
+                String source_folder=bundle.getString("source_folder");
+                String dest_folder=bundle.getString("dest_folder");
+                FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
+                FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
+                if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
+                    print(!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+                }
+
+                else
+                {
+                    PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
+                            destFileObjectType, dest_folder, cut);
+                    pasteSetUpDialog.show(((AppManagerActivity)context).fm, "paste_dialog");
+
+                }
+            }
+        }
+    });
+
+
+
     public boolean isPackageExisted(String targetPackage){
         PackageManager pm=context.getPackageManager();
         try {
@@ -533,6 +595,41 @@ public class AppManagerListFragment extends Fragment {
         }
         return true;
     }
+
+    private void MoveToCopyToProcedure(String file_path)
+    {
+        Bundle bundle=new Bundle();
+        ArrayList<String>files_selected_array=new ArrayList<>();
+        files_selected_array.add(file_path);
+        bundle.putString("source_folder", new File(file_path).getParent());
+        bundle.putStringArrayList("files_selected_array", files_selected_array);
+        bundle.putSerializable("sourceFileObjectType", FileObjectType.FILE_TYPE);
+        bundle.putBoolean("cut", false);
+
+        Intent intent=new Intent(context,FileSelectorActivity.class);
+        intent.putExtra("bundle",bundle);
+        intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
+        activityResultLauncher_file_select.launch(intent);
+
+    }
+
+
+    private void send_uri(Uri uri,String subject)
+    {
+        Intent intent=new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM,uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT,subject);
+        intent.setType("*/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent chooser=Intent.createChooser(intent,"Select app");
+        if(intent.resolveActivity(context.getPackageManager())!=null)
+        {
+            context.startActivity(chooser);
+        }
+    }
+
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
     {
