@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 1
 def versionMinor = 6
-def versionPatch = 1
+def versionPatch = 2
 
 android {
     signingConfigs {
@@ -27,8 +27,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
 
-        versionCode 10601
-        versionName "1.6.1"
+        versionCode 10602
+        versionName "1.6.2"
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
