@@ -1,27 +1,21 @@
 package svl.kadatha.filex;
 
 import android.app.Activity;
-import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +27,8 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,25 +40,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class AppManagerListFragment extends Fragment {
 
@@ -84,18 +68,16 @@ public class AppManagerListFragment extends Fragment {
     private Handler handler;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppPOJO> app_selected_array=new ArrayList<>();
-    private LinearLayoutManager llm;
-    private GridLayoutManager glm;
     private AppManagerActivity.SearchFilterListener searchFilterListener;
     private int num_all_app;
     private TextView empty_tv;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-    public static final String BACKUP="Back up";
-    public static final String UNINSTALL="Uninstall";
-    public static final String CONTROL_PANEL="Control Panel";
-    public static final String PLAY_STORE="Play store";
-    public static final String SHARE="Share";
+    public static String BACKUP;
+    public static String UNINSTALL;
+    public static String CONTROL_PANEL;
+    public static String PLAY_STORE;
+    public static String SHARE;
     private String package_clicked_for_delete="";
 
     @Override
@@ -113,6 +95,12 @@ public class AppManagerListFragment extends Fragment {
         {
             app_type=bundle.getString(AppManagerActivity.SYSTEM_APPS);
         }
+        BACKUP=getString(R.string.backup);
+        UNINSTALL=getString(R.string.uninstall);
+        CONTROL_PANEL=getString(R.string.control_panel);
+        PLAY_STORE=getString(R.string.play_store);
+        SHARE=getString(R.string.share);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -133,12 +121,17 @@ public class AppManagerListFragment extends Fragment {
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
-                            File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                            if(publicsourcedir==null)
+                            {
+                                continue;
+                            }
+                            File file = new File(publicsourcedir);
                             String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
+                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date));
 
                         }
                     }
@@ -148,12 +141,17 @@ public class AppManagerListFragment extends Fragment {
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
-                            File file = new File(packageInfo.applicationInfo.publicSourceDir);
+                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                            if(publicsourcedir==null)
+                            {
+                                continue;
+                            }
+                            File file = new File(publicsourcedir);
                             String path=file.getAbsolutePath();
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name,package_name,path,size,date));
+                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date));
 
                         }
                     }
@@ -180,14 +178,14 @@ public class AppManagerListFragment extends Fragment {
         recyclerView=v.findViewById(R.id.fragment_app_list_recyclerview);
         if(Global.FILE_GRID_LAYOUT)
         {
-            glm=new GridLayoutManager(context,Global.GRID_COUNT);
+            GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
             SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
             recyclerView.addItemDecoration(spacesItemDecoration);
             recyclerView.setLayoutManager(glm);
         }
         else
         {
-            llm=new LinearLayoutManager(context);
+            LinearLayoutManager llm = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
         }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -444,7 +442,7 @@ public class AppManagerListFragment extends Fragment {
 
         private class VH extends RecyclerView.ViewHolder
         {
-            AppsInstalledRecyclerViewLayout v;
+            final AppsInstalledRecyclerViewLayout v;
             int pos;
             public VH(@NonNull AppsInstalledRecyclerViewLayout itemView) {
                 super(itemView);
@@ -487,38 +485,30 @@ public class AppManagerListFragment extends Fragment {
         appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
             @Override
             public void onSelectType(String app_action) {
-                switch (app_action)
-                {
-                    case BACKUP:
-                        MoveToCopyToProcedure(appPOJO.getPath());
-                        break;
-                    case UNINSTALL:
-                        String app_pkg_name = appPOJO.getPackage_name();
-                        if(package_clicked_for_delete.equals(""))
-                        {
-                            package_clicked_for_delete=app_pkg_name;
-                        }
-                        Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-                        uninstall_intent.setData(Uri.parse("package:" + app_pkg_name));
-                        unInstallActivityResultLauncher.launch(uninstall_intent);
-                        break;
-                    case CONTROL_PANEL:
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", appPOJO.getPackage_name(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        break;
-                    case PLAY_STORE:
-                        final String appPackageName = appPOJO.getPackage_name();
-                        try {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                        } catch (android.content.ActivityNotFoundException anfe) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                        }
-                        break;
-                    case SHARE:
-                        //Uri uri_to_send = Uri.fromParts("package", appPOJO.getPackage_name(), null);
+                if (BACKUP.equals(app_action)) {
+                    MoveToCopyToProcedure(appPOJO.getPath());
+                } else if (UNINSTALL.equals(app_action)) {
+                    String app_pkg_name = appPOJO.getPackage_name();
+                    if (package_clicked_for_delete.equals("")) {
+                        package_clicked_for_delete = app_pkg_name;
+                    }
+                    Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+                    uninstall_intent.setData(Uri.parse("package:" + app_pkg_name));
+                    unInstallActivityResultLauncher.launch(uninstall_intent);
+                } else if (CONTROL_PANEL.equals(app_action)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", appPOJO.getPackage_name(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else if (PLAY_STORE.equals(app_action)) {
+                    final String appPackageName = appPOJO.getPackage_name();
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                } else if (SHARE.equals(app_action)) {//Uri uri_to_send = Uri.fromParts("package", appPOJO.getPackage_name(), null);
                         /*
                         Uri uri_to_send = Uri.parse("package:" + appPOJO.getPackage_name());
                         send_uri(uri_to_send,appPOJO.getName());
@@ -529,9 +519,6 @@ public class AppManagerListFragment extends Fragment {
                         FileIntentDispatch.sendFile(context,new ArrayList<>(Arrays.asList(f)));
 
                          */
-                        break;
-                    default:
-                        break;
                 }
                 clear_selection();
             }
@@ -779,7 +766,7 @@ public class AppManagerListFragment extends Fragment {
 
  */
 
-    public class AppPOJO
+    public static class AppPOJO
     {
         private final String name;
         private final String lower_name;

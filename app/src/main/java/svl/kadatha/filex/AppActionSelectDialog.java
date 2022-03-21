@@ -22,7 +22,6 @@ public class AppActionSelectDialog extends DialogFragment
     private Context context;
     private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
-    private TextView app_name_tv,package_name_tv,app_size_tv;
     private String app_name,package_name,app_size;
     private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
 
@@ -62,9 +61,9 @@ public class AppActionSelectDialog extends DialogFragment
     {
         // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_app_action,container,false);
-        app_name_tv=v.findViewById(R.id.fragment_app_action_app_name);
-        package_name_tv=v.findViewById(R.id.fragment_app_action_package_name);
-        app_size_tv=v.findViewById(R.id.fragment_app_action_app_size);
+        TextView app_name_tv = v.findViewById(R.id.fragment_app_action_app_name);
+        TextView package_name_tv = v.findViewById(R.id.fragment_app_action_package_name);
+        TextView app_size_tv = v.findViewById(R.id.fragment_app_action_app_size);
 
 
         app_name_tv.setText(app_name);

@@ -15,7 +15,7 @@ public class NotifManager
 	private final NotificationCompat.Builder notification_builder;
     private final NotificationManager nm;
 	private final Context context;
-	int pending_intent_flag;
+	final int pending_intent_flag;
     //int paste_notification_id,delete_notification_id,archive_notification_id;
 	//NotificationCompat.InboxStyle inbox_style=new NotificationCompat.InboxStyle();
 	

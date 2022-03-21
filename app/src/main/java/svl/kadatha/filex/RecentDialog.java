@@ -124,7 +124,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	{
 		((MainActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher_SAF_permission.launch(intent);
 	}
 
@@ -160,31 +159,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		}
 	});
 
-
-
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	{
-
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-		}
-		else if (requestCode == UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
-		{
-			//installAPK();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
-	 */
 
 	private boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType)
 	{
@@ -337,7 +311,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 					if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
 						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
 						unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
-						//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
 						activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
 						return;
 					}

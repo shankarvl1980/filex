@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;

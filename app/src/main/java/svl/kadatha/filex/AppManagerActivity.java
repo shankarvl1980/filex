@@ -30,11 +30,8 @@ public class AppManagerActivity extends BaseActivity{
 
     private Context context;
     public FragmentManager fm;
-    private TabLayout tabLayout;
     public ViewPager viewPager;
-    private FloatingActionButton floatingActionButton;
     private AppManagerListFragment userAppListFragment,systemAppListFragment;
-    private AppManagementFragmentAdapter adapter;
     public static final String USER_INSTALLED_APPS="user_installed_apps";
     public static final String SYSTEM_APPS="system_apps";
     public boolean search_toolbar_visible;
@@ -94,11 +91,9 @@ public class AppManagerActivity extends BaseActivity{
         });
 
 
-
-
-        tabLayout=findViewById(R.id.activity_app_manager_tab_layout);
+        TabLayout tabLayout = findViewById(R.id.activity_app_manager_tab_layout);
         viewPager=findViewById(R.id.activity_app_manager_viewpager);
-        adapter=new AppManagementFragmentAdapter(fm);
+        AppManagementFragmentAdapter adapter = new AppManagementFragmentAdapter(fm);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -119,7 +114,7 @@ public class AppManagerActivity extends BaseActivity{
 
         tabLayout.setupWithViewPager(viewPager);
 
-        floatingActionButton=findViewById(R.id.floating_action_app_manager);
+        FloatingActionButton floatingActionButton = findViewById(R.id.floating_action_app_manager);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

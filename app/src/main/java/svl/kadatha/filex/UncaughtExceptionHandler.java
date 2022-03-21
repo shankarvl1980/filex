@@ -11,7 +11,7 @@ import java.io.StringWriter;
 
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler{
 
-    Context context;
+    final Context context;
 
     UncaughtExceptionHandler(Context context)
     {

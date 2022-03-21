@@ -17,7 +17,6 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import java.util.*;
 import java.io.*;
-import java.text.*;
 
 public class PropertiesDialog extends DialogFragment
 {

@@ -281,8 +281,6 @@ public class SearchDialog extends DialogFragment
 		public void onBindViewHolder(SearchDialog.SearchRecyclerViewAdapter.VH p1, int p2)
 		{
 			// TODO: Implement this method
-			
-			//if(storage_list.get(p2).getPath().equals(Global.INTERNAL_STORAGE_PATH))
 			if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(storage_list.get(p2).getPath()))
 			{
 				p1.iv.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));

@@ -51,11 +51,8 @@ public class CancelableProgressBarDialog extends DialogFragment
 		{
 			public void onClick(View p)
 			{
-				
-		
 				if(progresBarFragmentCancelListener!=null)
 				{
-					
 					progresBarFragmentCancelListener.on_cancel_progress();
 					
 				}
