@@ -18,28 +18,33 @@ class FileIntentDispatch
 	static final  String EXTRA_FROM_ARCHIVE="fromArchiveView";
 	static final String EXTRA_FILE_OBJECT_TYPE="fileObjectType";
 	static final String EXTRA_FILE_PATH="file_path";
+
 	public static void openFile(Context context,String file_path, String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
 	{
-		OpenFileIntentDispatchAsyncTask openFileIntentDispatchAsyncTask=new OpenFileIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
-		openFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		open_file(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
+		//OpenFileIntentDispatchAsyncTask openFileIntentDispatchAsyncTask=new OpenFileIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
+		//openFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
 	{
-		OpenUriIntentDispatchAsyncTask openUriIntentDispatchAsyncTask=new OpenUriIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
-		openUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		open_uri(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
+		//OpenUriIntentDispatchAsyncTask openUriIntentDispatchAsyncTask=new OpenUriIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
+		//openUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
 	public static void sendFile(Context context, ArrayList<File> file_list)
 	{
-		SendFileIntentDispatchAsyncTask sendFileIntentDispatchAsyncTask=new SendFileIntentDispatchAsyncTask(context,file_list);
-		sendFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		send_file(context,file_list);
+		//SendFileIntentDispatchAsyncTask sendFileIntentDispatchAsyncTask=new SendFileIntentDispatchAsyncTask(context,file_list);
+		//sendFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	public static void sendUri(Context context, ArrayList<Uri> uri_list)
 	{
-		SendUriIntentDispatchAsyncTask sendUriIntentDispatchAsyncTask=new SendUriIntentDispatchAsyncTask(context,uri_list);
-		sendUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		send_uri(context,uri_list);
+		//SendUriIntentDispatchAsyncTask sendUriIntentDispatchAsyncTask=new SendUriIntentDispatchAsyncTask(context,uri_list);
+		//sendUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
     private static void open_file(Context context, String file_path,String mime_type,boolean clear_top,  boolean fromArchiveView,FileObjectType fileObjectType)
@@ -52,19 +57,7 @@ class FileIntentDispatch
 		}
 
 		File file=new File(file_path);
-		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-		/*
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
-		{
-			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-		}
-		else
-		{
-			uri=Uri.fromFile(file);
-		}
-
-		 */
-
+		uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
 		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType);
 
 	}
@@ -178,23 +171,6 @@ class FileIntentDispatch
 		{
 			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
 		}
-		/*
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
-		{
-			for(File f:file_list)
-			{
-				uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
-			}
-		}
-		else
-		{
-			for(File f:file_list)
-			{
-				uri_list.add(Uri.fromFile(f));
-			}
-		}
-
-		 */
 
 		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
 		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
@@ -227,7 +203,7 @@ class FileIntentDispatch
 		}
 	}
 	
-	
+	/*
 	private static class OpenFileIntentDispatchAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		final Context context;
@@ -405,6 +381,8 @@ class FileIntentDispatch
 		}
 
 	}
+
+	 */
 
 	public static String SET_INTENT_FOR_VIEW(Intent intent,String mime_type,String file_path ,String file_extn,FileObjectType fileObjectType, boolean fromArchiveView,
 	boolean clear_top, Uri uri)

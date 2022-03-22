@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -360,7 +361,7 @@ public class AudioSavedListFragment extends Fragment
 				File f=new File(audio.getData());
 				if(f.exists())
 				{
-					data=Uri.fromFile(f);
+					data= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
 				}
 
                 audioSelectListener.onAudioSelect(data,audio);

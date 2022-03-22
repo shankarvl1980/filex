@@ -371,7 +371,6 @@ public class Global
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		ARCHIVE_CACHE_DIR_LENGTH=Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
 
-
 	}
 
 	static void GET_PREFERENCES(TinyDB tinyDB)
@@ -460,12 +459,7 @@ public class Global
 				break;
 		}
 
-
-
 	}
-
-
-
 
 
 	static void GET_ACTION_BAR_HEIGHT(Context context)
@@ -662,17 +656,6 @@ public class Global
 		Uri uri;
 		File f=new File("/dummy");
 		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",f);
-		/*
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
-		{
-			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",f);
-		}
-		else
-		{
-			uri=Uri.fromFile(f);
-		}
-
-		 */
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,false,uri);
 		List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);

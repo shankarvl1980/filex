@@ -33,7 +33,6 @@ import java.util.List;
 
 public class FileSelectorDialog extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
-	//static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 	private RecyclerView recycler_view;
     private TextView folder_empty_textview;
     private Context context;
@@ -429,17 +428,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 								{
 									File file=new File(filePOJO.getPath());
 									uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-									/*
-									if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
-									{
-										uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-									}
-									else
-									{
-										uri=Uri.fromFile(file);
-									}
-
-									 */
 								}
 
 								if(uri!=null)
@@ -474,7 +462,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		fileSelectorActivity.clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 
@@ -495,24 +482,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	});
 
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	{
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
-	 */
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
@@ -583,8 +552,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			return true;
 		}
 	}
-
-
 
 	private void print(String msg)
 	{

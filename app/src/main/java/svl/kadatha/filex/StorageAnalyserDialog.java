@@ -694,28 +694,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
     });
 
-    /*
-    @Override
-    public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-    {
-        if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-        {
-            Uri treeUri;
-            treeUri = resultData.getData();
-            Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-        }
-        else if (requestCode == DetailFragment.UNKNOWN_PACKAGE_REQUEST_CODE && resultCode== Activity.RESULT_OK)
-		{
-			//installAPK();
-		}
-        else
-        {
-            print(getString(R.string.permission_not_granted));
-        }
-
-    }
-
-     */
 
     private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
     {
@@ -799,14 +777,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     if (!storageAnalyserActivity.getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
                         unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
-                        //startActivityForResult(unknown_package_install_intent,DetailFragment.UNKNOWN_PACKAGE_REQUEST_CODE);
                         activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
                         return;
                     }
                 }
             }
 
-                if(fileObjectType==FileObjectType.USB_TYPE)
+            if(fileObjectType==FileObjectType.USB_TYPE)
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
@@ -958,8 +935,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                         no_of_files++;
                     }
                 }
-
-
 
             }
             else

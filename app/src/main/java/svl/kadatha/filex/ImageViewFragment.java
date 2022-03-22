@@ -274,7 +274,7 @@ public class ImageViewFragment extends Fragment
 							}
 							else if(fileObjectType==FileObjectType.FILE_TYPE)
 							{
-								uri=Uri.fromFile(new File(currently_shown_file.getPath()));
+								uri=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
 							}
 							if(uri==null)
 							{
@@ -292,7 +292,7 @@ public class ImageViewFragment extends Fragment
 								//aspect_ratio=0;
 							}
 							File tempFile=new File(((ImageViewActivity)context).CacheDir,currently_shown_file.getName());
-							Intent intent=InstaCropperActivity.getIntent(context,uri,Uri.fromFile(tempFile),currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
+							Intent intent=InstaCropperActivity.getIntent(context,uri,FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",tempFile),currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
 							activityResultLauncher_crop_request.launch(intent);
 							break;
 						default:

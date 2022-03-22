@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class AudioPlayerService extends Service
 	private Binder binder=new AudioBinder();
 	public boolean prepared,playmode,stopped,completed;
 	public int total_duration;
+	private Context context;
 
 	private boolean isReadPermissionGranted;
 
@@ -80,6 +82,7 @@ public class AudioPlayerService extends Service
 	{
 		// TODO: Implement this method
 		super.onCreate();
+		context=this;
 		audioPlayerServiceHandlerThread=new AudioPlayerServiceHandlerThread(this);
 		audioPlayerServiceHandlerThread.start();
 		audioPlayerServiceHandlerThread.onLooperPreparation();
@@ -430,7 +433,7 @@ public class AudioPlayerService extends Service
 			File f=new File(current_audio.getData());
 			if(f.exists())
 			{
-				data=Uri.fromFile(f);
+				data= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
 			}
 
 			initMediaPlayer(data,audioPlayerService);
@@ -465,7 +468,7 @@ public class AudioPlayerService extends Service
 			File f=new File(current_audio.getData());
 			if(f.exists())
 			{
-				data=Uri.fromFile(f);
+				data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
 			}
 
 			initMediaPlayer(data,audioPlayerService);

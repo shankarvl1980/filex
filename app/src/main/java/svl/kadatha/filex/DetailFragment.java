@@ -700,13 +700,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								print(getString(R.string.can_not_open_file));
 								return;
 							}
+
+
+							if(zip_entry.getSize()>5000000)
+							{
+								print(getString(R.string.file_is_big_please_extract_to_view));
+								return;
+							}
+
 							if(!ExtractZipFile.read_zipentry(context,zipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR))
 							{
 								return;
 							}
 
 						}
-
 						file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
 					}
 					if(!archive_view)RecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
@@ -804,17 +811,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		Uri uri;
 		File file=new File(file_path);
 		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-		/*
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
-		{
-			uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
-		}
-		else
-		{
-			uri=Uri.fromFile(file);
-		}
-
-		 */
 		inputStream=context.getContentResolver().openInputStream(uri);
 		PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
 		PackageInstaller.SessionParams sessionParams=new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);

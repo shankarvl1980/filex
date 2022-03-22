@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -601,7 +602,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					Uri data = null;
 					File f = new File(audio.getData());
 					if (f.exists()) {
-						data = Uri.fromFile(f);
+						data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
 					}
 
 
@@ -708,7 +709,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					File f=new File(audio.getData());
 					if(f.exists())
 					{
-						data=Uri.fromFile(f);
+						data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
 					}
 					else
 					{

@@ -336,6 +336,7 @@
 	<string name="control_panel">Control Panel</string>
 	<string name="play_store">Play Store</string>
 	<string name="share">Share</string>
+    <string name="file_is_big_please_extract_to_view">File is big. Please extract to view</string>
 
 
     <string-array name="library_categories">
