@@ -464,15 +464,11 @@ public class Global
 
 	static void GET_ACTION_BAR_HEIGHT(Context context)
 	{
-		if(ACTION_BAR_HEIGHT==0)
+		TypedValue tv = new TypedValue();
+		if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
 		{
-			TypedValue tv = new TypedValue();
-			if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-			{
-				ACTION_BAR_HEIGHT = TypedValue.complexToDimensionPixelSize(tv.data,context.getResources().getDisplayMetrics());
-			}
+			ACTION_BAR_HEIGHT = TypedValue.complexToDimensionPixelSize(tv.data,context.getResources().getDisplayMetrics());
 		}
-
 	}
 
 	static int GET_HEIGHT_LIST_VIEW(ListView listView) {
