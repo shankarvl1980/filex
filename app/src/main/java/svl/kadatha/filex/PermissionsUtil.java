@@ -54,7 +54,7 @@ public class PermissionsUtil {
 			 */
 			if (!permissions_not_granted_list.isEmpty()) {
 
-				activity.requestPermissions(permissions_not_granted_list.toArray(new String[permissions_not_granted_list.size()]), PERMISSIONS_REQUEST_CODE);
+				activity.requestPermissions(permissions_not_granted_list.toArray(new String[0]), PERMISSIONS_REQUEST_CODE);
 
 			}
 		}

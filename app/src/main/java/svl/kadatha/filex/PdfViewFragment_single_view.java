@@ -171,7 +171,6 @@ public class PdfViewFragment_single_view extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        //localBroadcastManager=LocalBroadcastManager.getInstance(context);
         h=new Handler();
         handler=new Handler();
         Handler hand = new Handler();
@@ -350,8 +349,6 @@ public class PdfViewFragment_single_view extends Fragment
                 image_selected_idx=i;
                 current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
 
-                //currently_shown_file=album_list.get(i);
-                //title.setText(currently_shown_file.getName());
             }
         });
 
@@ -394,8 +391,6 @@ public class PdfViewFragment_single_view extends Fragment
                     recyclerview.setAdapter(picture_selector_adapter);
                     lm.scrollToPositionWithOffset(image_selected_idx,-preview_image_offset);
                     current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
-                    //s=list_pdf_pages.size();
-                    //start_polling();
                     handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
                     h.removeCallbacks(this);
                 }

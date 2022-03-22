@@ -96,7 +96,6 @@ public class ArchiveDeletePasteServiceUtil {
         if(df!=null && df.fileObjectType==fileObjectType)
         {
             String tag=df.getTag();
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
             if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 df.clearSelectionAndNotifyDataSetChanged();
@@ -107,7 +106,6 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==fileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
             if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
@@ -118,7 +116,6 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==fileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator))
             if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
@@ -161,14 +158,13 @@ public class ArchiveDeletePasteServiceUtil {
                 }
 
             }
-            //else if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && df.fileObjectType==destFileObjectType)
             else if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && df.fileObjectType==destFileObjectType)
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
 
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && df.fileObjectType==sourceFileObjectType)
+
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && df.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -179,13 +175,13 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null )
         {
             String tag=fileSelectorDialog.getTag();
-            //if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && fileSelectorDialog.fileObjectType==destFileObjectType)
+
             if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
+
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -196,13 +192,13 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null)
         {
             String tag=storageAnalyserDialog.getTag();
-            //if ((tag+File.separator).startsWith(parent_dest_folder+File.separator) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+
             if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            //if((tag+File.separator).startsWith(parent_source_folder+File.separator) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
+
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
@@ -244,7 +240,7 @@ public class ArchiveDeletePasteServiceUtil {
             {
 
                 String tag=df.getTag();
-                //if((tag+File.separator).startsWith(parent_dest_folder+File.separator)  && df.fileObjectType==destFileObjectType)
+
                 if(Global.IS_CHILD_FILE(tag,parent_dest_folder)  && df.fileObjectType==destFileObjectType)
                 {
                     Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -266,7 +262,7 @@ public class ArchiveDeletePasteServiceUtil {
         if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==destFileObjectType)
         {
             String tag=fileSelectorDialog.getTag();
-            //if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -277,7 +273,7 @@ public class ArchiveDeletePasteServiceUtil {
         if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==destFileObjectType)
         {
             String tag=storageAnalyserDialog.getTag();
-            //if((tag+File.separator).startsWith(parent_dest_folder+File.separator))
+
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
@@ -297,6 +293,7 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if(counter_no_files>0)
         {
+            //below is commented may not refresh the required df on delete
             /*
             if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
             {

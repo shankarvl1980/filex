@@ -3,7 +3,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;

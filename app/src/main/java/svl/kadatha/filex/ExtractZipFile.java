@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,29 +17,11 @@ public class ExtractZipFile
 {
 	static boolean read_zipentry(Context context,ZipFile zipfile,ZipEntry zipEntry,File ZipDestFolder)
 	{
-
 		ProgressBarFragment pbf=ProgressBarFragment.getInstance();
 		pbf.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
-		final boolean[] success = new boolean[1];
-		Thread thread=new Thread(new Runnable() {
-			@Override
-			public void run() {
-				success[0] =read_entry(context,zipfile,zipEntry,ZipDestFolder);
-			}
-		});
-
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			return success[0];
-		}
-		finally {
-			{
-				pbf.dismissAllowingStateLoss();
-			}
-		}
-		return success[0];
+		boolean success=read_entry(context,zipfile,zipEntry,ZipDestFolder);
+		pbf.dismissAllowingStateLoss();
+		return success;
 	}
 
 
