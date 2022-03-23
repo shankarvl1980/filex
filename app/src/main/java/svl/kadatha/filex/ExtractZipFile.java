@@ -19,9 +19,21 @@ public class ExtractZipFile
 	{
 		ProgressBarFragment pbf=ProgressBarFragment.getInstance();
 		pbf.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
-		boolean success=read_entry(context,zipfile,zipEntry,ZipDestFolder);
+		final boolean[] success = new boolean[1];
+		Thread thread=new Thread(new Runnable() {
+			@Override
+			public void run() {
+				success[0] =read_entry(context,zipfile,zipEntry,ZipDestFolder);
+			}
+		});
+		thread.start();
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+
+		}
 		pbf.dismissAllowingStateLoss();
-		return success;
+		return success[0];
 	}
 
 

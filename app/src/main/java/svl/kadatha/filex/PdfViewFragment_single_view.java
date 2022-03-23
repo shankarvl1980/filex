@@ -528,6 +528,7 @@ public class PdfViewFragment_single_view extends Fragment
     {
         TouchImageView image_view;
         Bitmap bitmap;
+        AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         PdfViewPagerAdapter()
         {
             title.setText(currently_shown_file.getName());
@@ -562,45 +563,67 @@ public class PdfViewFragment_single_view extends Fragment
                     image_view_on_click_procedure();
                 }
             });
-
-            pbf=ProgressBarFragment.getInstance();
-            pbf.show(((PdfViewActivity)context).fm,"");
             if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER))
             {
-                try {
-                    bitmap=getBitmap(pdfRenderer,position);
-                }
-                catch (SecurityException e)
-                {
-                    print(getString(R.string.security_exception_thrown));
-                }
-                catch (OutOfMemoryError error)
-                {
-                    pbf.dismissAllowingStateLoss();
-                    print(getString(R.string.outofmemory_exception_thrown));
-                    ((PdfViewActivity)context).finish();
-                    return v;
+                pbf=ProgressBarFragment.getInstance();
+                pbf.show(((PdfViewActivity)context).fm,"");
+                Thread t=new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            bitmap=getBitmap(pdfRenderer,position);
+                        }
+                        catch (SecurityException e)
+                        {
+                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    print(getString(R.string.security_exception_thrown));
+                                }
+                            });
+                        }
+                        catch (OutOfMemoryError error)
+                        {
+                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    print(getString(R.string.outofmemory_exception_thrown));
+                                }
+                            });
+                            pbf.dismissAllowingStateLoss();
+                            ((PdfViewActivity)context).finish();
+                        }
+                        catch (Exception e)
+                        {
+                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    print(getString(R.string.exception_thrown));
+                                }
+                            });
 
+                        }
+                    }
+                });
+                t.start();
+                try {
+                    t.join();
+                    GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+                    container.addView(v);
+                    pbf.dismissAllowingStateLoss();
+                    return v;
+                } catch (InterruptedException e) {
+                    pbf.dismissAllowingStateLoss();
                 }
-                catch (Exception e)
-                {
-                    print(getString(R.string.exception_thrown));
-                }
-                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
-                pbf.dismissAllowingStateLoss();
-                container.addView(v);
-                return v;
 
             }
             else
             {
-                pbf.dismissAllowingStateLoss();
                 print(getString(R.string.insuffient_memory_to_load_file));
                 ((PdfViewActivity)context).finish();
                 return v;
             }
-
-
+            return v;
         }
 
 
@@ -610,7 +633,6 @@ public class PdfViewFragment_single_view extends Fragment
             // TODO: Implement this method
             return POSITION_UNCHANGED;
         }
-
 
 
         @Override
@@ -750,16 +772,16 @@ public class PdfViewFragment_single_view extends Fragment
                 }
 
                 total_pages = pdfRenderer.getPageCount();
-                Log.d("shankar","file size "+file_size);
+                //Log.d("shankar","file size "+file_size);
                 if(file_size!=0)
                 {
                     size_per_page_MB=(double)file_size/total_pages/1024/1024;
-                    Log.d("shankar","pages "+total_pages);
-                    Log.d("shankar","size per page in MB "+size_per_page_MB);
-                    Log.d("shankar","size per page in MB *3 "+size_per_page_MB*3);
+                  //  Log.d("shankar","pages "+total_pages);
+                   // Log.d("shankar","size per page in MB "+size_per_page_MB);
+                    //Log.d("shankar","size per page in MB *3 "+size_per_page_MB*3);
                 }
                 double availablememory=Global.AVAILABLE_MEMORY_MB();
-                Log.d("shankar","available memory "+availablememory);
+                //Log.d("shankar","available memory "+availablememory);
 
                 int display_dpi=context.getResources().getDisplayMetrics().densityDpi;
                 float width=(float) Global.SCREEN_WIDTH;

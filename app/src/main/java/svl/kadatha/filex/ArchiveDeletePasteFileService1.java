@@ -945,7 +945,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 				if(success)
 				{
-					//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file_path);
 					deleted_file_names.add(current_file_name);
 					deleted_files_path_list.add(file_path);
 				}
@@ -978,7 +977,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 						success=deleteNativeDirectory(f);
 						if(success)
 						{
-							//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),f.getAbsolutePath());
 							deleted_file_names.add(current_file_name);
 							deleted_files_path_list.add(file_path);
 						}
@@ -999,7 +997,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 						success=deleteSAFDirectory(file);
 						if(success)
 						{
-							//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file.getAbsolutePath());
 							deleted_file_names.add(current_file_name);
 							deleted_files_path_list.add(file_path);
 						}
@@ -1021,7 +1018,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 					success=deleteUsbDirectory(f);
 					if(success)
 					{
-						//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),f.getAbsolutePath());
 						deleted_file_names.add(current_file_name);
 						deleted_files_path_list.add(file_path);
 
@@ -1097,8 +1093,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 					}
 				}
-
-
 			}
 
 			counter_no_files++;

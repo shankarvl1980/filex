@@ -28,12 +28,14 @@ public class ArchiveDeletePasteServiceUtil {
     static Class getEmptyService(Context context)
     {
         Class emptyService=null;
-
+/*
         if(ArchiveDeletePasteFileService1.SERVICE_COMPLETED)
         {
             emptyService=ArchiveDeletePasteProgressActivity1.class;
         }
         else
+
+ */
 
 
         if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
@@ -162,9 +164,8 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
+
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-
-
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && df.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -180,8 +181,8 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
-            // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
 
+            // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
@@ -197,8 +198,8 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
-            // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
 
+            // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
             {
                 Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
@@ -293,7 +294,7 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if(counter_no_files>0)
         {
-            //below is commented may not refresh the required df on delete
+            //below is commented because already it is done in the service class
             /*
             if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
             {
@@ -383,7 +384,6 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 else
                 {
-                    //if ((dest_folder+File.separator).startsWith(tree_uri_path+File.separator))
                     if (Global.IS_CHILD_FILE(dest_folder,tree_uri_path))
                     {
                         FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
