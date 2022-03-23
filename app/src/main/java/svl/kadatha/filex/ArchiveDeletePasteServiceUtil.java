@@ -294,19 +294,6 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if(counter_no_files>0)
         {
-            //below is commented because already it is done in the service class
-            /*
-            if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-            {
-                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,deleted_files_path_list,FileObjectType.FILE_TYPE);
-            }
-            else
-            {
-                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_names,sourceFileObjectType);
-            }
-
-             */
-
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder,sourceFileObjectType);
             notification_content=context.getString(R.string.deleted_selected_files)+" "+source_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
@@ -336,30 +323,6 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if(counter_no_files>0)
         {
-            /*
-            overwritten_copied_file_name_list.retainAll(copied_files_name);
-            for(String name:overwritten_copied_file_name_list)
-            {
-                overwritten_copied_file_path_list.add(dest_folder.equals(File.separator) ? dest_folder+name : dest_folder+File.separator+name);
-            }
-
-            FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
-            if(cut)
-            {
-
-                if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,copied_source_file_path_list,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,copied_files_name,sourceFileObjectType);
-                }
-
-            }
-
-             */
-
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder,source_folder,destFileObjectType,sourceFileObjectType,filePOJO);
             notification_content=(cut ? context.getString(R.string.moved_selected_files)+" "+dest_folder : context.getString(R.string.copied_selected_files)+" "+dest_folder);
             Global.WORKOUT_AVAILABLE_SPACE();
