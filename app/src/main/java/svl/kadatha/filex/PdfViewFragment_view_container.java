@@ -46,6 +46,8 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -69,6 +71,7 @@ public class PdfViewFragment_view_container extends Fragment
     private Handler handler;
     private int image_selected_idx=0,previously_selected_image_idx=0;
     private PdfViewPagerAdapter pdf_view_adapter;
+    private PdfViewFragmentPagerAdapter pdf_fragment_pager_adapter;
     private PictureSelectorAdapter picture_selector_adapter;
     //private PdfPageViewRecyclerViewAdapter pdfPageViewRecyclerViewAdapter;
     private final int s=0;
@@ -92,7 +95,7 @@ public class PdfViewFragment_view_container extends Fragment
     private Toolbar toolbar;
     private FloatingActionButton floating_back_button;
     private Runnable runnable;
-    private ViewPager view_pager;
+    private ViewPager2 view_pager;
     private LinearLayoutManager lm;
     private SparseBooleanArray selected_item_sparseboolean;
     private int preview_image_offset;
@@ -107,12 +110,17 @@ public class PdfViewFragment_view_container extends Fragment
     private boolean fromThirdPartyApp;
     private double size_per_page_MB;
     private static final int SAFE_MEMORY_BUFFER=5;
+    private PdfViewFragment_view_container pdfViewFragment_view_container;
+    private PdfPageLoadListener pdfPageLoadListener;
+    PdfViewFragment pdfViewFragment;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
         localBroadcastManager=LocalBroadcastManager.getInstance(context);
+        pdfViewFragment_view_container=this;
     }
 
     @Override
@@ -323,7 +331,8 @@ public class PdfViewFragment_view_container extends Fragment
         lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 
 
-        view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        /*
+        view_pager.new ViewPager.OnPageChangeListener()
         {
             public void onPageSelected(int i)
             {
@@ -350,6 +359,39 @@ public class PdfViewFragment_view_container extends Fragment
 
             }
         });
+
+         */
+
+        view_pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                previously_selected_image_idx=image_selected_idx;
+                image_selected_idx=position;
+                current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                lm.scrollToPositionWithOffset(position,-preview_image_offset);
+                selected_item_sparseboolean=new SparseBooleanArray();
+                selected_item_sparseboolean.put(position,true);
+                if(picture_selector_adapter!=null)
+                {
+                    picture_selector_adapter.notifyDataSetChanged();
+                }
+
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+            }
+        });
+
 
         runnable=new Runnable()
         {
@@ -380,8 +422,9 @@ public class PdfViewFragment_view_container extends Fragment
                 }
                 else
                 {
-                    pdf_view_adapter=new PdfViewPagerAdapter();
-                    view_pager.setAdapter(pdf_view_adapter);
+                    //pdf_view_adapter=new PdfViewPagerAdapter();
+                    pdf_fragment_pager_adapter=new PdfViewFragmentPagerAdapter(pdfViewFragment_view_container);
+                    view_pager.setAdapter(pdf_fragment_pager_adapter);
                     view_pager.setCurrentItem(image_selected_idx);
                     selected_item_sparseboolean.put(image_selected_idx,true);
                     picture_selector_adapter=new PictureSelectorAdapter(list_pdf_pages);
@@ -523,11 +566,119 @@ public class PdfViewFragment_view_container extends Fragment
 
     }
 
+    private class PdfViewFragmentPagerAdapter extends FragmentStateAdapter
+    {
+
+        TouchImageView image_view;
+        Bitmap bitmap;
+        AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+
+
+        public PdfViewFragmentPagerAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        title.setText(currently_shown_file.getName());
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            pdfViewFragment=new PdfViewFragment();
+            pdfPageLoadListener=pdfViewFragment;
+
+            new BitmapFetchAsyncTask(pdfViewFragment,position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            return pdfViewFragment;
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return total_pages;
+        }
+    }
+
+
+
+    private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
+    {
+
+        PdfViewFragment pdfViewFragment;
+        int position;
+        Bitmap bitmap;
+
+        BitmapFetchAsyncTask(PdfViewFragment pvf, int p) {
+            pdfViewFragment=pvf;
+            position=p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pbf=ProgressBarFragment.getInstance();
+            pbf.show(((PdfViewActivity)context).fm,"");
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER)) {
+
+                try {
+                    bitmap=getBitmap(pdfRenderer,position);
+                    pbf.dismissAllowingStateLoss();
+                }
+                catch (SecurityException e)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.security_exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                }
+                catch (OutOfMemoryError error)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.outofmemory_exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                    ((PdfViewActivity)context).finish();
+                }
+                catch (Exception e)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                }
+
+            }
+                return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            pbf.dismissAllowingStateLoss();
+            if(pdfPageLoadListener!=null)
+            {
+                pdfPageLoadListener.onRetrievePdfPage(bitmap);
+            }
+
+        }
+    }
+
+
     private class PdfViewPagerAdapter extends PagerAdapter
     {
         TouchImageView image_view;
         Bitmap bitmap;
-        AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         PdfViewPagerAdapter()
         {
             title.setText(currently_shown_file.getName());
@@ -562,6 +713,7 @@ public class PdfViewFragment_view_container extends Fragment
                     image_view_on_click_procedure();
                 }
             });
+
             if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER))
             {
                 pbf=ProgressBarFragment.getInstance();
@@ -993,6 +1145,15 @@ public class PdfViewFragment_view_container extends Fragment
 
     }
 
+    interface PdfPageLoadListener
+    {
+        void onRetrievePdfPage(Bitmap bitmap);
+    }
+
+    public void setPdfPageLoadListener(PdfPageLoadListener listener)
+    {
+        pdfPageLoadListener=listener;
+    }
     private void print(String msg)
     {
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();

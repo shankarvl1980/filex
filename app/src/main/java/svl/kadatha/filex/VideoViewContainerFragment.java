@@ -323,7 +323,6 @@ public class VideoViewContainerFragment extends Fragment
 	public void seekSAFPermission()
 	{
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 

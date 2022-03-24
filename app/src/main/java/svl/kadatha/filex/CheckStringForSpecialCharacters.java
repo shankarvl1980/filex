@@ -7,7 +7,7 @@ public class CheckStringForSpecialCharacters
 		char[] c_array=string.toCharArray();
 		for(char c: c_array)
 		{
-			if(c == '/'|| c=='*' || c==':' || c=='?' || c=='\\')
+			if(c == '/'|| c=='*' || c==':' || c=='?' || c=='\\' || c=='\n')
 			{
 				return true;
 			}
