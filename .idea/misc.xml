@@ -32,12 +32,14 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cut_copy_delete_archive_progress.xml" value="0.23278985507246377" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.1" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_container.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_single.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_recent.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_search_parameters.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_view.xml" value="0.24365942028985507" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/ftp_list_recyclerview_layout.xml" value="0.2128623188405797" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/main.xml" value="0.253125" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/pdf_viewpager_layout.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/search_bar_layout.xml" value="0.11302083333333333" />
       </map>
     </option>
