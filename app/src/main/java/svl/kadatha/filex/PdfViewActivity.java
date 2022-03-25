@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class PdfViewActivity extends BaseActivity {
+public class PdfViewActivity extends BaseActivity implements PdfViewFragment.PdfFragmentShownListener {
 
     private Context context;
     public FragmentManager fm;
@@ -42,8 +42,8 @@ public class PdfViewActivity extends BaseActivity {
         FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
         String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
         if(file_path ==null) file_path =PathUtil.getPath(context,data);
-        //fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_view_container.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
-        fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
+        fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_view_container.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
+        //fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
     }
 
     @Override
@@ -108,4 +108,9 @@ public class PdfViewActivity extends BaseActivity {
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onFragmentShown(PdfViewFragment pvf) {
+        PdfViewFragment_view_container pdfViewFragment_view_container= (PdfViewFragment_view_container) getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);
+        pdfViewFragment_view_container.onFragmentShown(pvf);
+    }
 }

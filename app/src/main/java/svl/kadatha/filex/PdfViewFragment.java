@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +19,7 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
 
     private Context context;
     public TouchImageView touchImageView;
-    private OnCreateViewListener onCreateViewListener;
+    private OnClickListener onClickListener;
 
 
     @Override
@@ -40,11 +41,15 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
         touchImageView=v.findViewById(R.id.pdf_viewpager_layout_imageview);
         touchImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         touchImageView.setMaxZoom(6);
-        if(onCreateViewListener!=null)
-        {
-            onCreateViewListener.onCreateView();
-        }
-
+        touchImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(onClickListener!=null)
+                {
+                    onClickListener.onClickView();
+                }
+            }
+        });
         return v;
         
     }
@@ -56,17 +61,40 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        View v = getView();
+        if (v!=null && v.getViewTreeObserver().isAlive()) {
+            v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    // Let our parent know we are laid out
+                    if ( getActivity() instanceof PdfFragmentShownListener ) {
+                        ((PdfFragmentShownListener) getActivity()).onFragmentShown(PdfViewFragment.this);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void onRetrievePdfPage(Bitmap bitmap) {
         GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(touchImageView);
     }
 
-    interface OnCreateViewListener
+    interface OnClickListener
     {
-        void onCreateView();
+        void onClickView();
     }
 
-    public void setOnCreateViewListener(OnCreateViewListener listener)
+    public void setOnClickListener(OnClickListener listener)
     {
-        onCreateViewListener=listener;
+        onClickListener=listener;
+    }
+
+    interface PdfFragmentShownListener
+    {
+        void onFragmentShown(PdfViewFragment pvf);
     }
 }
