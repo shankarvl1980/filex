@@ -349,8 +349,6 @@ public class PdfViewFragment_view_container extends Fragment
                 {
                     picture_selector_adapter.notifyDataSetChanged();
                 }
-                //PdfViewFragment pdfViewFragment=(PdfViewFragment) getChildFragmentManager().findFragmentByTag("f"+view_pager.getCurrentItem());
-
 
             }
 
@@ -405,15 +403,13 @@ public class PdfViewFragment_view_container extends Fragment
                 }
             }
         });
-/*
+
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 image_view_on_click_procedure();
             }
         });
-
- */
 
         return v;
     }
