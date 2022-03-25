@@ -708,13 +708,41 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								return;
 							}
 
-							if(!ExtractZipFile.read_zipentry(context,zipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR))
+
+							ZipFile finalZipfile = zipfile;
+							new svl.kadatha.filex.AsyncTask<Void,Void,Boolean>()
 							{
-								return;
-							}
+								ProgressBarFragment pbf;
+								@Override
+								protected void onPreExecute() {
+									super.onPreExecute();
+									pbf=ProgressBarFragment.getInstance();
+									pbf.show(mainActivity.fm,null);
+								}
+
+								@Override
+								protected Boolean doInBackground(Void... voids) {
+									return ExtractZipFile.read_zipentry(context, finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
+								}
+
+								@Override
+								protected void onPostExecute(Boolean aBoolean) {
+									super.onPostExecute(aBoolean);
+									pbf.dismissAllowingStateLoss();
+									if(aBoolean)
+									{
+										file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+									}
+
+								}
+							}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 
 						}
-						file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+						else
+						{
+							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+						}
+
 					}
 					if(!archive_view)RecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
 				}
@@ -742,6 +770,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			});
 	}
 	
+
+
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
