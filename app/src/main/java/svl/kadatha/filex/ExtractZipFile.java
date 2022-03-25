@@ -17,28 +17,6 @@ public class ExtractZipFile
 {
 	static boolean read_zipentry(Context context,ZipFile zipfile,ZipEntry zipEntry,File ZipDestFolder)
 	{
-		ProgressBarFragment pbf=ProgressBarFragment.getInstance();
-		pbf.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
-		final boolean[] success = new boolean[1];
-		Thread thread=new Thread(new Runnable() {
-			@Override
-			public void run() {
-				success[0] =read_entry(context,zipfile,zipEntry,ZipDestFolder);
-			}
-		});
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-
-		}
-		pbf.dismissAllowingStateLoss();
-		return success[0];
-	}
-
-
-	static boolean read_entry(Context context,ZipFile zipfile,ZipEntry zipEntry,File ZipDestFolder)
-	{
 		InputStream inStream=null;
 
 		try
@@ -116,5 +94,6 @@ public class ExtractZipFile
 
 		return false;
 	}
+
 }
 
