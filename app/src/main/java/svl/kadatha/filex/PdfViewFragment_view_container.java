@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -40,19 +39,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -110,9 +103,10 @@ public class PdfViewFragment_view_container extends Fragment
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp;
     private double size_per_page_MB;
-    private static final int SAFE_MEMORY_BUFFER=5;
+    private static final int SAFE_MEMORY_BUFFER=3;
     private PdfViewFragment_view_container pdfViewFragment_view_container;
     private PdfPageLoadListener pdfPageLoadListener;
+    private boolean pdf_file_opened;
 
 
     @Override
@@ -329,6 +323,8 @@ public class PdfViewFragment_view_container extends Fragment
         selected_item_sparseboolean=new SparseBooleanArray();
         lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 
+
+
         view_pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -363,7 +359,7 @@ public class PdfViewFragment_view_container extends Fragment
         {
             public void run()
             {
-                if(!is_menu_opened)
+                if(!is_menu_opened && pdf_file_opened)
                 {
                     toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
                     floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
@@ -404,12 +400,14 @@ public class PdfViewFragment_view_container extends Fragment
             }
         });
 
+
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 image_view_on_click_procedure();
             }
         });
+
 
         return v;
     }
@@ -536,6 +534,10 @@ public class PdfViewFragment_view_container extends Fragment
         if(pdfViewFragment!=null)
         {
             pdfPageLoadListener=pdfViewFragment;
+            if(pdfViewFragment.page_set)
+            {
+                return;
+            }
             pdfViewFragment.setOnClickListener(new PdfViewFragment.OnClickListener() {
                 @Override
                 public void onClickView() {
@@ -578,8 +580,8 @@ public class PdfViewFragment_view_container extends Fragment
 
     private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
     {
-        PdfViewFragment pdfViewFragment;
-        int position;
+        final PdfViewFragment pdfViewFragment;
+        final int position;
         Bitmap bitmap;
 
         BitmapFetchAsyncTask(PdfViewFragment pvf, int p) {
@@ -590,6 +592,11 @@ public class PdfViewFragment_view_container extends Fragment
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(pbf!=null)
+            {
+                pbf.dismissAllowingStateLoss();
+            }
+
             pbf=ProgressBarFragment.getInstance();
             pbf.show(((PdfViewActivity)context).fm,"");
 
@@ -768,6 +775,7 @@ public class PdfViewFragment_view_container extends Fragment
                 }
 
                 total_pages = pdfRenderer.getPageCount();
+                pdf_file_opened=true;
                 //Log.d("shankar","file size "+file_size);
                 if(file_size!=0)
                 {
@@ -787,7 +795,6 @@ public class PdfViewFragment_view_container extends Fragment
                     }
 
                     list_pdf_pages.add(null);
-
                 }
             }
             catch (SecurityException e)

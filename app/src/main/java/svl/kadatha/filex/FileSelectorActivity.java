@@ -387,7 +387,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                         Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                                         intent.addCategory("android.intent.category.DEFAULT");
                                         intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-                                        //startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
                                         activityResultLauncher_all_files_access_permission.launch(intent);
                                     } catch (Exception e) {
                                         Intent intent = new Intent();
@@ -409,58 +408,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     });
 
-    /*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode)
-        {
-            case PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    if (Environment.isExternalStorageManager())
-                    {
-                        Global.STORAGE_DIR.clear();
-                        clearCache();
-                        Intent in=getIntent();
-                        finish();
-                        startActivity(in);
-                    }
-                    else
-                    {
-                        showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                switch (which)
-                                {
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        try {
-                                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                                            intent.addCategory("android.intent.category.DEFAULT");
-                                            intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-                                            startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-                                        } catch (Exception e) {
-                                            Intent intent = new Intent();
-                                            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                                            startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
-                                        }
-                                        break;
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        print(getString(R.string.permission_not_granted));
-                                        finish();
-                                        break;
-                                }
-                            }
-                        });
-                    }
-                }
 
-        }
-
-    }
-
-     */
 
     @Override
     protected void onDestroy() {

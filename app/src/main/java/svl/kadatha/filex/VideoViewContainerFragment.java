@@ -251,7 +251,6 @@ public class VideoViewContainerFragment extends Fragment
 		viewpager.setAdapter(adapter);
 		viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
 			{
-
 				public void onPageSelected(int p)
 				{
 					if(onPageSelectListener!=null)

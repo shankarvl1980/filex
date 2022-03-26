@@ -633,43 +633,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 	});
 
-	/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		switch (requestCode)
-		{
-			case saf_permission_request_code:
-				if (resultCode == Activity.RESULT_OK)
-				{
-					Uri treeUri;
-					treeUri = resultData.getData();
-					Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
-
-					saf_permission_requested = false;
-					okbutton.callOnClick();
-				}
-				else
-				{
-					print(getString(R.string.permission_not_granted));
-				}
-
-				break;
-			case folder_select_request_code:
-				if (resultCode == Activity.RESULT_OK)
-				{
-					folderclickselected = resultData.getStringExtra("folderclickselected");
-					custom_dir_fileObjectType = (FileObjectType) resultData.getSerializableExtra("destFileObjectType");
-					customdir_edittext.setText(folderclickselected);
-				}
-
-				break;
-		}
-
-	}
-
-	 */
-
 
 	private void print(String msg)
 	{

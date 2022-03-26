@@ -20,7 +20,7 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
     private Context context;
     public TouchImageView touchImageView;
     private OnClickListener onClickListener;
-
+    public boolean page_set;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -61,6 +61,12 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        page_set=false;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         View v = getView();
@@ -80,7 +86,8 @@ public class PdfViewFragment extends Fragment implements PdfViewFragment_view_co
 
     @Override
     public void onRetrievePdfPage(Bitmap bitmap) {
-        GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(touchImageView);
+        GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(touchImageView);
+        page_set=true;
     }
 
     interface OnClickListener

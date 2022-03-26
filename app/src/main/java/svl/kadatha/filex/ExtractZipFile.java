@@ -1,8 +1,6 @@
 package svl.kadatha.filex;
 import android.content.Context;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

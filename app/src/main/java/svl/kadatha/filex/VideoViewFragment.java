@@ -106,8 +106,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		{
 			public void onClick(View vi)
 			{
-
-
 				if(playmode)
 				{
 					if(bottom_butt_visible)
@@ -115,7 +113,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 						bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
 						bottom_butt_visible=false;
 						handler.removeCallbacks(runnable);
-
 					}
 					else
 					{
@@ -162,7 +159,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				{
 					pause();
 				}
-
 			}
 		});
 
@@ -194,7 +190,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		layoutParams.height=Global.ACTION_BAR_HEIGHT;
 		toolbar_height=Global.ACTION_BAR_HEIGHT+(Global.ONE_DP*4);
 		seekbar=v.findViewById(R.id.video_player_seekbar);
-
 
 		seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
 		{
@@ -272,9 +267,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				Uri data=((VideoViewActivity)context).data;
 				if(fromThirdPartyApp)
 				{
-
 					mp.setDataSource(context,data);
-
 				}
 				else if(fileObjectType==FileObjectType.FILE_TYPE)
 				{
@@ -594,9 +587,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 		int result;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
 			result=audio_manager.requestAudioFocus(audioFocusRequest);
-
 		}
 		else
 		{

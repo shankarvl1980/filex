@@ -903,26 +903,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 	});
 
-/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	{
-		super.onActivityResult(requestCode,resultCode,resultData);
-		if (requestCode == this.request_code && resultCode== RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			start_file_save_service();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-	}
-
- */
 
 	private void onClick_edit_button()
 	{

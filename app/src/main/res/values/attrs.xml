@@ -34,4 +34,6 @@
     <attr name="select_indicator_border_color" format="reference"/>
     <attr name="select_indicator_fill_color" format="reference"/>
 
+    <attr name="water_color" format="reference"/>
+
 </resources>
