@@ -64,11 +64,35 @@
 		android:scaleType="fitCenter"
 		android:paddingTop="@dimen/layout_margin"
 
-		app:layout_constraintBottom_toTopOf="@+id/current_play_album"
+		app:layout_constraintBottom_toTopOf="@+id/current_play_volume_text"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
 
+	<TextView
+		android:id="@+id/current_play_volume_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingStart="@dimen/layout_margin"
+		android:paddingEnd="@dimen/layout_margin"
+		android:textColor="?attr/recycler_text_color"
+		android:text="Volume:"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintBottom_toTopOf="@+id/current_play_volume_seekbar"
+		/>
+	<SeekBar
+		android:id="@+id/current_play_volume_seekbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintBottom_toTopOf="@id/current_play_album"
+		android:layout_marginBottom="@dimen/layout_margin"
+		android:elevation="6dp"
+		android:padding="@dimen/layout_margin"
+		android:progressDrawable="@drawable/seek_bar"
+		android:thumb="@drawable/seek_thumb"
+		
+		/>
 	<TextView
 		android:id="@+id/current_play_album"
 		android:layout_width="0dp"

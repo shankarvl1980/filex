@@ -734,6 +734,14 @@ public class PdfViewFragment_view_container extends Fragment
         protected void onPreExecute() {
             super.onPreExecute();
             asyncTaskStatus=AsyncTaskStatus.STARTED;
+            if(context==null)
+            {
+                context=getContext();
+            }
+            if(data==null)
+            {
+                data=((PdfViewActivity)context).data;
+            }
 
         }
 

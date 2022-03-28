@@ -90,7 +90,6 @@ public class AudioPlayerService extends Service
 		handler_broadcast=new Handler();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(audioPlayerServiceHandlerThread).build();
-
 		}
 
 	}

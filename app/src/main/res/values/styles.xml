@@ -39,6 +39,7 @@
         <item name="select_indicator_border_color">@color/light_select_indicator_border_color</item>
         <item name="select_indicator_fill_color">@color/light_select_indicator_fill_color</item>
 
+        <item name="water_color">@color/light_water_color</item>
 
     </style>
 
@@ -87,7 +88,7 @@
         <item name="seek_bar_progress">@color/light_seek_bar_progress</item>
         <item name="seek_bar_thumb">@color/light_seek_bar_thumb</item>
 
-        <item name="water_color">@color/light_water_color</item>
+
 
 
     </style>

@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -89,12 +90,15 @@ public class AudioPlayFragment extends Fragment
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
-	//private int album_art_image_view_dimension;
+	private SeekBar volumeControlSeekbar;
+	private AudioManager audioManager;
+
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
 		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 	}
 
 	@Override
@@ -224,6 +228,27 @@ public class AudioPlayFragment extends Fragment
 			}
 		};
 		Toolbar top_toolbar = v.findViewById(R.id.current_play_toolbar);
+
+		volumeControlSeekbar=v.findViewById(R.id.current_play_volume_seekbar);
+		volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+		volumeControlSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+		volumeControlSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+				audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,i,0);
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+
+			}
+		});
+
 		audio_name_tv=v.findViewById(R.id.current_play_audio_name);
 		audio_album_tv=v.findViewById(R.id.current_play_album);
 		audio_artists_tv=v.findViewById(R.id.current_play_artists);
