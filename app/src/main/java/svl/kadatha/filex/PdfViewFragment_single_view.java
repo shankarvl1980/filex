@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -105,7 +106,7 @@ public class PdfViewFragment_single_view extends Fragment
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp;
     private double size_per_page_MB;
-    private static final int SAFE_MEMORY_BUFFER=5;
+    private static final int SAFE_MEMORY_BUFFER=3;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -528,6 +529,7 @@ public class PdfViewFragment_single_view extends Fragment
         TouchImageView image_view;
         Bitmap bitmap;
         AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+
         PdfViewPagerAdapter()
         {
             title.setText(currently_shown_file.getName());
@@ -562,66 +564,9 @@ public class PdfViewFragment_single_view extends Fragment
                     image_view_on_click_procedure();
                 }
             });
-            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER))
-            {
-                pbf=ProgressBarFragment.getInstance();
-                pbf.show(((PdfViewActivity)context).fm,"");
-                Thread t=new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            bitmap=getBitmap(pdfRenderer,position);
-                        }
-                        catch (SecurityException e)
-                        {
-                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    print(getString(R.string.security_exception_thrown));
-                                }
-                            });
-                        }
-                        catch (OutOfMemoryError error)
-                        {
-                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    print(getString(R.string.outofmemory_exception_thrown));
-                                }
-                            });
-                            pbf.dismissAllowingStateLoss();
-                            ((PdfViewActivity)context).finish();
-                        }
-                        catch (Exception e)
-                        {
-                            ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    print(getString(R.string.exception_thrown));
-                                }
-                            });
-
-                        }
-                    }
-                });
-                t.start();
-                try {
-                    t.join();
-                    GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
-                    container.addView(v);
-                    pbf.dismissAllowingStateLoss();
-                    return v;
-                } catch (InterruptedException e) {
-                    pbf.dismissAllowingStateLoss();
-                }
-
-            }
-            else
-            {
-                print(getString(R.string.insuffient_memory_to_load_file));
-                ((PdfViewActivity)context).finish();
-                return v;
-            }
+            v.setTag(position);
+            container.addView(v);
+            new BitmapFetchAsyncTask(position).execute();
             return v;
         }
 
@@ -642,6 +587,91 @@ public class PdfViewFragment_single_view extends Fragment
         }
 
     }
+
+    private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
+    {
+        final int position;
+        Bitmap bitmap;
+
+        BitmapFetchAsyncTask(int p) {
+            position=p;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if(pbf!=null)
+            {
+                pbf.dismissAllowingStateLoss();
+            }
+
+            pbf=ProgressBarFragment.getInstance();
+            pbf.show(((PdfViewActivity)context).fm,"");
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER)) {
+
+                try {
+                    bitmap=getBitmap(pdfRenderer,position);
+                    pbf.dismissAllowingStateLoss();
+                }
+                catch (SecurityException e)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.security_exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                }
+                catch (OutOfMemoryError error)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.outofmemory_exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                    ((PdfViewActivity)context).finish();
+                }
+                catch (Exception e)
+                {
+                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            print(getString(R.string.exception_thrown));
+                        }
+                    });
+                    pbf.dismissAllowingStateLoss();
+                }
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            pbf.dismissAllowingStateLoss();
+            View view=view_pager.findViewWithTag(position);
+            if(view !=null)
+            {
+                FrameLayout frameLayout=(FrameLayout) view;
+                ImageView imageView= (TouchImageView) frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
+                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
+                view.setTag("loaded");
+            }
+
+        }
+    }
+
+
+
 
     private Bitmap getBitmap(PdfRenderer pdfRenderer, int i)
     {
@@ -715,22 +745,19 @@ public class PdfViewFragment_single_view extends Fragment
 
     private class AsyncTaskPdfPages extends svl.kadatha.filex.AsyncTask<Void,Bitmap,Void>
     {
-        // CancelableProgressBarDialog cancelableProgressBarDialog;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             asyncTaskStatus=AsyncTaskStatus.STARTED;
-         /*
-            cancelableProgressBarDialog=new CancelableProgressBarDialog();
-            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                @Override
-                public void on_cancel_progress() {
-                    cancel(true);
-                }
-            });
-            cancelableProgressBarDialog.show(((PdfViewActivity)context).fm,"");
+            if(context==null)
+            {
+                context=getContext();
+            }
+            if(data==null)
+            {
+                data=((PdfViewActivity)context).data;
+            }
 
-          */
         }
 
         @Override

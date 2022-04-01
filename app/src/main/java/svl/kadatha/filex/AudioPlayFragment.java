@@ -90,7 +90,6 @@ public class AudioPlayFragment extends Fragment
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
-	private SeekBar volumeControlSeekbar;
 	private AudioManager audioManager;
 
 	@Override
@@ -229,7 +228,7 @@ public class AudioPlayFragment extends Fragment
 		};
 		Toolbar top_toolbar = v.findViewById(R.id.current_play_toolbar);
 
-		volumeControlSeekbar=v.findViewById(R.id.current_play_volume_seekbar);
+		SeekBar volumeControlSeekbar = v.findViewById(R.id.current_play_volume_seekbar);
 		volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 		volumeControlSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
 		volumeControlSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

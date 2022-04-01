@@ -32,6 +32,6 @@
 	<color name="light_select_indicator_fill_color">#ffffffff</color>
 	<color name="light_drawer_icon_color">@color/light_heading_text_color</color>
 
-	<color name="light_water_color">#E3DFDF</color>
+	<color name="light_water_color">#DFDEDE</color>
 
 </resources>
