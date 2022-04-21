@@ -35,34 +35,46 @@
                 android:layout_marginTop="@dimen/layout_margin"
                 android:background="?attr/dialog_background"
                 />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/fragment_app_action_app_image"
+                android:layout_height="60dp"
+                android:layout_width="60dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
+                app:layout_constraintEnd_toStartOf="@id/fragment_app_action_app_name"
+                android:padding="@dimen/layout_margin"
+
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
                 android:id="@+id/fragment_app_action_app_name"
                 android:gravity="start"
                 android:textSize="16sp"
                 android:padding="@dimen/layout_margin"
-                android:maxLines="1"
+                android:maxLines="2"
                 />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
                 android:id="@+id/fragment_app_action_package_name"
                 android:gravity="start"
                 android:textSize="14sp"
                 android:paddingStart="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"
-                android:singleLine="true"
-                android:ellipsize="marquee"
+                android:maxLines="2"
+
                 />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
                 android:id="@+id/fragment_app_action_app_size"
                 android:gravity="start"

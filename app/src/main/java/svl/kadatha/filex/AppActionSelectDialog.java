@@ -12,6 +12,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +26,7 @@ public class AppActionSelectDialog extends DialogFragment
     private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
     private String app_name,package_name,app_size;
-    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
+    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.SHARE,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
 
 
     @Override
@@ -61,11 +64,13 @@ public class AppActionSelectDialog extends DialogFragment
     {
         // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_app_action,container,false);
+        ImageView app_image_view=v.findViewById(R.id.fragment_app_action_app_image);
         TextView app_name_tv = v.findViewById(R.id.fragment_app_action_app_name);
         TextView package_name_tv = v.findViewById(R.id.fragment_app_action_package_name);
         TextView app_size_tv = v.findViewById(R.id.fragment_app_action_app_size);
 
-
+        String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+package_name+".png";
+        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_image_view);
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_size_tv.setText(app_size);

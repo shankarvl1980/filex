@@ -40,6 +40,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -508,17 +510,19 @@ public class AppManagerListFragment extends Fragment {
                     } catch (ActivityNotFoundException anfe) {
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
                     }
-                } else if (SHARE.equals(app_action)) {//Uri uri_to_send = Uri.fromParts("package", appPOJO.getPackage_name(), null);
-                        /*
-                        Uri uri_to_send = Uri.parse("package:" + appPOJO.getPackage_name());
-                        send_uri(uri_to_send,appPOJO.getName());
+                } else if (SHARE.equals(app_action)) {
 
-                         */
-                        /*
-                        File f=new File(appPOJO.getPath());
-                        FileIntentDispatch.sendFile(context,new ArrayList<>(Arrays.asList(f)));
+                    try {
+                        PackageManager pm = context.getPackageManager();
+                        ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), 0);
+                        File srcFile = new File(ai.publicSourceDir);
+                        Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(srcFile.getPath()));
+                        FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
 
-                         */
+                    } catch (Exception e) {
+                        print(getString(R.string.could_not_perform_action));
+                    }
+
                 }
                 clear_selection();
             }
