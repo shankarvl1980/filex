@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,10 +49,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private TextView recent_label;
 
 
-    FileSelectorRecentDialog(String activity_catering)
-    {
-        this.activity_catering=activity_catering;
-    }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -71,16 +70,20 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        if (activity_catering.equals(STORAGE_ANALYSER)) {
-
-            root_dir_linkedlist.addAll(((StorageAnalyserActivity)getContext()).storage_filePOJO_list); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
-        }
-        else
+        AppCompatActivity activity= (AppCompatActivity)context;
+        if(activity instanceof StorageAnalyserActivity)
         {
-            root_dir_linkedlist.addAll(((FileSelectorActivity)getContext()).storage_filePOJO_list); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+            activity_catering=STORAGE_ANALYSER;
+            root_dir_linkedlist.addAll(((StorageAnalyserActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
-
+        else if(activity instanceof FileSelectorActivity)
+        {
+            activity_catering=FILE_SELECTOR;
+            root_dir_linkedlist.addAll(((FileSelectorActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+        }
+        //Log.d("shankar","recent from - "+activity_catering+" "+root_dir_linkedlist.size());
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

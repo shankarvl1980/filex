@@ -29,6 +29,19 @@
             android:clickable="false"
             android:focusable="false"
             />
+        <ImageButton
+            android:id="@+id/file_selector_sort_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:background="?attr/toolbar_background"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/sort_icon"
+            android:clickable="false"
+            android:focusable="false"
+            />
+
 
         <ImageButton
             android:id="@+id/file_selector_directory_btn"

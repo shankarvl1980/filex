@@ -384,7 +384,16 @@ public class Global
 				SORT="d_name_asc";
 			}
 		}
+//
 
+		if(FileSelectorActivity.SORT==null)
+		{
+			FileSelectorActivity.SORT=tinyDB.getString("file_selector_sort");
+			if(FileSelectorActivity.SORT.trim().isEmpty() || !SORT_CODE_SET.contains(FileSelectorActivity.SORT))
+			{
+				FileSelectorActivity.SORT="d_name_asc";
+			}
+		}
 		//
 
 		if(STORAGE_ANALYSER_SORT==null)
@@ -426,6 +435,8 @@ public class Global
 		FILE_GRID_LAYOUT=tinyDB.getBoolean("file_grid_layout");
 
 		//
+		FileSelectorActivity.FILE_GRID_LAYOUT=tinyDB.getBoolean("file_selector_file_grid_layout");
+		//
 
 		DETAILED_SEARCH_LIBRARY=tinyDB.getBoolean("detailed_search_library");
 		//
@@ -434,12 +445,17 @@ public class Global
 
 		//
 		RECYCLER_VIEW_FONT_SIZE_FACTOR=tinyDB.getInt("recycler_view_font_size_factor");
+		FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=tinyDB.getInt("file_selector_recycler_view_font_size_factor");
 		if(!tinyDB.getBoolean("not_first_run"))
 		{
 			Global.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
+			FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
 			tinyDB.putBoolean("not_first_run",true);
 			tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+			tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
 		}
+		//
+
 
 		if(RECYCLER_VIEW_FONT_SIZE_FACTOR!=0 && RECYCLER_VIEW_FONT_SIZE_FACTOR!=1 && RECYCLER_VIEW_FONT_SIZE_FACTOR!=2)
 		{
@@ -458,7 +474,25 @@ public class Global
 				GRID_COUNT=Global.GRID_COUNT_MEDIUM;
 				break;
 		}
+//
 
+		if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR!=0 && FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR!=1 && FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR!=2)
+		{
+			RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
+		}
+
+		switch(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR)
+		{
+			case 0:
+				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_SMALL;
+				break;
+			case 2:
+				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_LARGE;
+				break;
+			default:
+				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_MEDIUM;
+				break;
+		}
 	}
 
 

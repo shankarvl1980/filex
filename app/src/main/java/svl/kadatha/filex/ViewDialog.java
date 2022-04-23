@@ -23,15 +23,15 @@ public class ViewDialog extends DialogFragment
     private RadioButton list_rb, grid_rb;
     private Context context;
     private FragmentManager fragmentManager;
-	private MainActivity mainActivity;
+	private AppCompatActivity appCompatActivity;
 
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		mainActivity=((MainActivity)context);
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+		appCompatActivity=(AppCompatActivity)context;
+		fragmentManager=appCompatActivity.getSupportFragmentManager();
 		tinyDB=new TinyDB(context);
 	}
 
@@ -55,32 +55,68 @@ public class ViewDialog extends DialogFragment
 
 		list_rb=v.findViewById(R.id.dialog_view_rb_list);
 		grid_rb=v.findViewById(R.id.dialog_view_rb_grid);
-		if(Global.FILE_GRID_LAYOUT)
+		if(appCompatActivity instanceof MainActivity)
 		{
-			grid_rb.setChecked(true);
-		}
-		else
-		{
-			list_rb.setChecked(true);
-		}
-		rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				if(list_rb.isChecked())
-				{
-					Global.FILE_GRID_LAYOUT=false;
-				}
-				else if(grid_rb.isChecked())
-				{
-					Global.FILE_GRID_LAYOUT=true;
-				}
-
-				DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-				fragmentManager.beginTransaction().detach(df).commit();
-				fragmentManager.beginTransaction().attach(df).commit();
-				tinyDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
+			if(Global.FILE_GRID_LAYOUT)
+			{
+				grid_rb.setChecked(true);
 			}
-		});
+			else
+			{
+				list_rb.setChecked(true);
+			}
+			rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+					if(list_rb.isChecked())
+					{
+						Global.FILE_GRID_LAYOUT=false;
+					}
+					else if(grid_rb.isChecked())
+					{
+						Global.FILE_GRID_LAYOUT=true;
+					}
+
+					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+					fragmentManager.beginTransaction().detach(df).commit();
+					fragmentManager.beginTransaction().attach(df).commit();
+					tinyDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
+				}
+			});
+
+		}
+		else if(appCompatActivity instanceof FileSelectorActivity)
+		{
+			if(FileSelectorActivity.FILE_GRID_LAYOUT)
+			{
+				grid_rb.setChecked(true);
+			}
+			else
+			{
+				list_rb.setChecked(true);
+			}
+			rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+					if(list_rb.isChecked())
+					{
+						FileSelectorActivity.FILE_GRID_LAYOUT=false;
+					}
+					else if(grid_rb.isChecked())
+					{
+						FileSelectorActivity.FILE_GRID_LAYOUT=true;
+					}
+					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
+					fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
+					fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+					tinyDB.putBoolean("file_selector_file_grid_layout",FileSelectorActivity.FILE_GRID_LAYOUT);
+				}
+			});
+
+		}
+
 
         SeekBar seekbar_fontsize = v.findViewById(R.id.seekbar_fontsize);
 		name_asc_btn=v.findViewById(R.id.name_asc);
@@ -100,29 +136,59 @@ public class ViewDialog extends DialogFragment
 
 
 		SwitchCompat show_hidden_switch = v.findViewById(R.id.view_switch_show_hidden);
-		show_hidden_switch.setChecked(MainActivity.SHOW_HIDDEN_FILE);
-		show_hidden_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				new Handler().postDelayed(new Runnable()
-				{
-					public void run()
+		if(appCompatActivity instanceof MainActivity)
+		{
+			show_hidden_switch.setChecked(MainActivity.SHOW_HIDDEN_FILE);
+			show_hidden_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					new Handler().postDelayed(new Runnable()
 					{
-						MainActivity.SHOW_HIDDEN_FILE=isChecked;
-						tinyDB.putBoolean("show_hidden_file",MainActivity.SHOW_HIDDEN_FILE);
-						DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-						mainActivity.actionmode_finish(df,df.fileclickselected);
-						if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
+						public void run()
 						{
-							fragmentManager.beginTransaction().detach(df).commit();
-							fragmentManager.beginTransaction().attach(df).commit();
+							MainActivity.SHOW_HIDDEN_FILE=isChecked;
+							tinyDB.putBoolean("show_hidden_file",MainActivity.SHOW_HIDDEN_FILE);
+							DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+							((MainActivity)appCompatActivity).actionmode_finish(df,df.fileclickselected);
+							if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
+							{
+								fragmentManager.beginTransaction().detach(df).commit();
+								fragmentManager.beginTransaction().attach(df).commit();
+							}
+
 						}
+					},250);
 
-					}
-				},250);
+				}
+			});
+		}
+		else if(appCompatActivity instanceof FileSelectorActivity)
+		{
+			show_hidden_switch.setChecked(FileSelectorActivity.SHOW_HIDDEN_FILE);
+			show_hidden_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					new Handler().postDelayed(new Runnable()
+					{
+						public void run()
+						{
+							FileSelectorActivity.SHOW_HIDDEN_FILE=isChecked;
+							tinyDB.putBoolean("file_selector_show_hidden_file",FileSelectorActivity.SHOW_HIDDEN_FILE);
+							FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
+							fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+							if(fileSelectorDialog.fileObjectType==FileObjectType.FILE_TYPE || fileSelectorDialog.fileObjectType==FileObjectType.ROOT_TYPE)
+							{
+								fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
+								fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+							}
 
-			}
-		});
+						}
+					},250);
+
+				}
+			});
+		}
+
 
 
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_view_button_layout);
@@ -137,12 +203,13 @@ public class ViewDialog extends DialogFragment
 			}
 		});
 		
-		seekbar_fontsize.setProgress(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-		
-		seekbar_fontsize.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
+		if(appCompatActivity instanceof MainActivity)
 		{
-			
-			int progress=0;
+			seekbar_fontsize.setProgress(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+			seekbar_fontsize.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
+			{
+
+				int progress=0;
 				public void onStartTrackingTouch(SeekBar p1)
 				{
 
@@ -153,7 +220,6 @@ public class ViewDialog extends DialogFragment
 					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 					fragmentManager.beginTransaction().detach(df).commit();
 					fragmentManager.beginTransaction().attach(df).commit();
-				
 
 				}
 				public void onProgressChanged(SeekBar p1, int progress_value,boolean fromUser)
@@ -173,10 +239,50 @@ public class ViewDialog extends DialogFragment
 							break;
 					}
 				}
-				
-		});
-		
-		
+
+			});
+		}
+		else if(appCompatActivity instanceof FileSelectorActivity)
+		{
+			seekbar_fontsize.setProgress(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+			seekbar_fontsize.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
+			{
+
+				int progress=0;
+				public void onStartTrackingTouch(SeekBar p1)
+				{
+
+				}
+				public void onStopTrackingTouch(SeekBar p1)
+				{
+					tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
+					fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
+					fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+
+				}
+				public void onProgressChanged(SeekBar p1, int progress_value,boolean fromUser)
+				{
+					progress=progress_value;
+					FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=progress_value;
+					switch(progress_value)
+					{
+						case 0:
+							FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_SMALL;
+							break;
+						case 2:
+							FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_LARGE;
+							break;
+						default:
+							FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_MEDIUM;
+							break;
+					}
+				}
+
+			});
+
+		}
+
 		set_selection();
 		
 		return v;
@@ -184,7 +290,16 @@ public class ViewDialog extends DialogFragment
 	
 	private void set_selection()
 	{
-		switch(Global.SORT)
+		String sort = null;
+		if(appCompatActivity instanceof MainActivity)
+		{
+			sort=Global.SORT;
+		}
+		else if(appCompatActivity instanceof FileSelectorActivity)
+		{
+			sort=FileSelectorActivity.SORT;
+		}
+		switch(sort)
 		{
 
 			case "d_name_desc":
@@ -301,29 +416,51 @@ public class ViewDialog extends DialogFragment
 				selected_sort = "d_name_asc";
 			}
 			
-			if(!selected_sort.equals(Global.SORT))
+			if(appCompatActivity instanceof MainActivity)
 			{
-
-				DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-				if(df!=null && df.filled_filePOJOs)
+				if(!selected_sort.equals(Global.SORT))
 				{
-					Global.SORT=selected_sort;
-					set_selection();
-					fragmentManager.beginTransaction().detach(df).commit();
-					fragmentManager.beginTransaction().attach(df).commit();
-					tinyDB.putString("sort",Global.SORT);
-				}
-				else
-				{
-					print(getString(R.string.wait_ellipse));
-				}
 
+					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+					if(df!=null && df.filled_filePOJOs)
+					{
+						Global.SORT=selected_sort;
+						set_selection();
+						fragmentManager.beginTransaction().detach(df).commit();
+						fragmentManager.beginTransaction().attach(df).commit();
+						tinyDB.putString("sort",Global.SORT);
+					}
+					else
+					{
+						print(getString(R.string.wait_ellipse));
+					}
+
+				}
 			}
+			else if(appCompatActivity instanceof FileSelectorActivity)
+			{
+				if(!selected_sort.equals(FileSelectorActivity.SORT))
+				{
+
+					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
+					if(fileSelectorDialog!=null && fileSelectorDialog.filled_filePOJOs)
+					{
+						FileSelectorActivity.SORT=selected_sort;
+						set_selection();
+						fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
+						fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+						tinyDB.putString("file_selector_sort",FileSelectorActivity.SORT);
+					}
+					else
+					{
+						print(getString(R.string.wait_ellipse));
+					}
+
+				}
+			}
+
 		}
 
-		
-		
-		
 	}
 
 	private void print(String msg)

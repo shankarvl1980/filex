@@ -35,7 +35,7 @@ public class ArchiveDeletePasteServiceUtil {
         }
         else
 
- */
+
 
 
         if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
@@ -43,6 +43,8 @@ public class ArchiveDeletePasteServiceUtil {
             emptyService=ArchiveDeletePasteProgressActivity2.class;
         }
         else
+
+ */
         if(ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 
         {

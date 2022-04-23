@@ -98,7 +98,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         current_dir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.STORAGE_ANALYSER);
+                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
                 fileSelectorRecentDialog.show(fm, "storage_analyser_recent_file_dialog");
 
 
@@ -343,7 +343,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     }
 
 
-    private List<FilePOJO> getFilePOJO_list()
+    public List<FilePOJO> getFilePOJO_list()
     {
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for(FilePOJO filePOJO:Global.STORAGE_DIR)

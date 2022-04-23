@@ -48,7 +48,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
-	private boolean filled_filePOJOs;
+	public boolean filled_filePOJOs;
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	private final int request_code=5678;
@@ -186,9 +186,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		recycler_view=v.findViewById(R.id.file_selectorRecyclerView);
 		folder_empty_textview=v.findViewById(R.id.file_selector_folder_empty);
 
-		if(Global.FILE_GRID_LAYOUT)
+		if(FileSelectorActivity.FILE_GRID_LAYOUT)
 		{
-			GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
+			GridLayoutManager glm = new GridLayoutManager(context, FileSelectorActivity.GRID_COUNT);
 			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
 			recycler_view.addItemDecoration(spacesItemDecoration);
 			recycler_view.setLayoutManager(glm);
@@ -262,7 +262,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			public void run() {
 				if(filled_filePOJOs)
 				{
-					if(MainActivity.SHOW_HIDDEN_FILE)
+					if(FileSelectorActivity.SHOW_HIDDEN_FILE)
 					{
 						filePOJO_list=filePOJOS;
 						totalFilePOJO_list=filePOJOS;
@@ -276,7 +276,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 					file_list_size=filePOJO_list.size();
 					fileSelectorActivity.file_number.setText(""+file_list_size);
 
-					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 					adapter=new FileSelectorAdapter();
 					set_adapter();
 					if(pbf_polling!=null && pbf_polling.getDialog()!=null)

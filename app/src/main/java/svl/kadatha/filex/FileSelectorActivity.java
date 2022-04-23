@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -68,6 +69,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public RecentDialogListener recentDialogListener;
     public FloatingActionButton floatingActionButton;
     public static final String ACTIVITY_NAME="FILE_SELECTOR_ACTIVITY";
+    public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
+    public static int RECYCLER_VIEW_FONT_SIZE_FACTOR,GRID_COUNT;
+    public static String SORT;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +118,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         setContentView(R.layout.activity_file_selector);
         Toolbar toolbar=findViewById(R.id.activity_file_selector_toolbar);
         file_number=findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
+
+        ImageButton sort_btn=findViewById(R.id.file_selector_sort_btn);
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ViewDialog viewDialog = new ViewDialog();
+                viewDialog.show(fm, "view_dialog");
+            }
+        });
         Intent intent=getIntent();
         if(savedInstanceState==null)
         {
@@ -133,7 +147,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog(FileSelectorRecentDialog.FILE_SELECTOR);
+                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
                 fileSelectorRecentDialog.show(fm, "file_selector_recent_file_dialog");
             }
         });
@@ -149,6 +163,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         listPopWindow.setFocusable(true);
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
 
+        SHOW_HIDDEN_FILE=tinyDB.getBoolean("file_selector_show_hidden_file");
 
         floatingActionButton = findViewById(R.id.file_selector_floating_action_button_back);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -391,7 +406,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                     } catch (Exception e) {
                                         Intent intent = new Intent();
                                         intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                                        //startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
                                         activityResultLauncher_all_files_access_permission.launch(intent);
 
                                     }
@@ -452,7 +466,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-    private List<FilePOJO> getFilePOJO_list()
+    public List<FilePOJO> getFilePOJO_list()
     {
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for(FilePOJO filePOJO:Global.STORAGE_DIR)
