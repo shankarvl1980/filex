@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -38,7 +39,7 @@ public class AppInstallAlertDialog extends DialogFragment
     private ImageView app_icon_image_view;
     private TextView app_name_tv,package_name_tv, version_tv,installed_version_tv, message_tv;
     private String file_path;
-    private Bitmap app_icon;
+    //private Bitmap app_icon;
     private String package_name, app_name, version, installed_version;
     private AppInstallDialogListener appInstallDialogListener;
     private AsyncTaskStatus asyncTaskStatus;
@@ -86,7 +87,8 @@ public class AppInstallAlertDialog extends DialogFragment
             public void run() {
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    GlideApp.with(context).load(app_icon).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon_image_view);
+                    String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+package_name+".png";
+                    GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon_image_view);
                     app_name_tv.setText(app_name);
                     package_name_tv.setText(package_name);
                     version_tv.setText(version);
@@ -190,11 +192,6 @@ public class AppInstallAlertDialog extends DialogFragment
             if(packageInfo!=null)
             {
                 packageInfo.applicationInfo.publicSourceDir=file_path;
-                Drawable app_icon_drawable=packageInfo.applicationInfo.loadIcon(packageManager);
-                if(app_icon_drawable instanceof BitmapDrawable)
-                {
-                    app_icon=((BitmapDrawable) app_icon_drawable).getBitmap();
-                }
                 package_name=packageInfo.applicationInfo.packageName;
                 app_name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                 version=packageInfo.versionName;

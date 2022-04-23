@@ -37,13 +37,13 @@
                 />
             <ImageView
                 android:id="@+id/fragment_app_action_app_image"
-                android:layout_height="60dp"
-                android:layout_width="60dp"
-                android:scaleType="centerCrop"
+                android:layout_width="@dimen/image_preview_dimen"
+                android:layout_height="@dimen/image_preview_dimen"
                 app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
-                app:layout_constraintEnd_toStartOf="@id/fragment_app_action_app_name"
-                android:padding="@dimen/layout_margin"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="@dimen/layout_margin"
 
                 />
 
@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_name"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:padding="@dimen/layout_margin"
                 android:maxLines="2"
                 />
