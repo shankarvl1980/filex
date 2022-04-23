@@ -671,10 +671,14 @@ public class AppManagerListFragment extends Fragment {
             int id = p1.getId();
             clear_selection();
             if (id == R.id.toolbar_btn_1) {
-                ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+
                 if(!((AppManagerActivity)context).search_toolbar_visible)
                 {
                     ((AppManagerActivity) context).set_visibility_searchbar(true);
+                }
+                else
+                {
+                    ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                 }
 
             } else if (id == R.id.toolbar_btn_2) {
@@ -686,89 +690,6 @@ public class AppManagerListFragment extends Fragment {
 
     }
 
-
-/*
-    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH>
-    {
-
-        List<AppPOJO> appPOJOs;
-        AppListAdapter(List<AppPOJO> list)
-        {
-            appPOJOs=list;
-        }
-
-        @NonNull
-        @Override
-        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new VH(LayoutInflater.from(context).inflate(R.layout.app_manager_recycler_layout,parent,false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull VH holder, int position) {
-            AppPOJO appPOJO=appPOJOs.get(position);
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+appPOJO.getPackage()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(holder.app_image);
-            holder.app_name.setText(appPOJO.getName());
-            holder.app_package.setText(appPOJO.getPackage());
-            holder.app_size.setText(appPOJO.getSize());
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return appPOJOs.size();
-        }
-
-        private class VH extends RecyclerView.ViewHolder
-        {
-            View v;
-            ImageView app_image;
-            TextView app_name,app_package,app_size;
-
-            int imageview_dimension,first_line_font_size,second_line_font_size;
-
-            public VH(@NonNull View itemView) {
-                super(itemView);
-                v=itemView;
-                app_image=v.findViewById(R.id.app_manager_app_image);
-                app_name=v.findViewById(R.id.app_manager_app_name);
-                app_package=v.findViewById(R.id.app_manager_app_package);
-                app_size=v.findViewById(R.id.app_manager_size);
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
-
-                if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
-                {
-                    first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-                    second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-
-                }
-                else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
-                {
-                    first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
-                    second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
-                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
-                }
-                else
-                {
-                    first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
-                    second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-                    imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
-                }
-
-                app_name.setTextSize(first_line_font_size);
-                app_package.setTextSize(second_line_font_size);
-                app_size.setTextSize(second_line_font_size);
-
-            }
-        }
-    }
-
- */
 
     public static class AppPOJO
     {

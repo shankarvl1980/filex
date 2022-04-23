@@ -13,11 +13,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -72,6 +77,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
     public static int RECYCLER_VIEW_FONT_SIZE_FACTOR,GRID_COUNT;
     public static String SORT;
+    public boolean search_toolbar_visible;
+    public KeyBoardUtil keyBoardUtil;
+    private Group search_toolbar;
+    public EditText search_edittext;
 
 
     @Override
@@ -127,6 +136,49 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 viewDialog.show(fm, "view_dialog");
             }
         });
+
+        View containerLayout = findViewById(R.id.file_selector_container_layout);
+        keyBoardUtil=new KeyBoardUtil(containerLayout);
+        search_toolbar=findViewById(R.id.file_selector_search_toolbar);
+        search_edittext=findViewById(R.id.file_selector_search_view_edit_text);
+        search_edittext.setMaxWidth(Integer.MAX_VALUE);
+        search_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if(!search_toolbar_visible)
+                {
+                    return;
+                }
+                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
+                if(fileSelectorDialog!=null && fileSelectorDialog.adapter!=null)
+                {
+                    fileSelectorDialog.adapter.getFilter().filter(s.toString());
+                }
+
+
+            }
+        });
+
+        ImageButton search_cancel_btn = findViewById(R.id.file_selector_search_view_cancel_button);
+        search_cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                set_visibility_searchbar(false);
+            }
+        });
+
+
         Intent intent=getIntent();
         if(savedInstanceState==null)
         {
@@ -174,10 +226,25 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
         ViewGroup buttons_layout = findViewById(R.id.file_selector_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
-        Button okbutton = buttons_layout.findViewById(R.id.first_button);
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
+        Button searchbutton=buttons_layout.findViewById(R.id.first_button);
+        searchbutton.setText(getString(R.string.search));
+        searchbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!search_toolbar_visible)
+                {
+                    set_visibility_searchbar(true);
+                }
+                else
+                {
+                    ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                }
+            }
+        });
+        Button okbutton = buttons_layout.findViewById(R.id.second_button);
         okbutton.setText(R.string.ok);
-        Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
+        Button cancelbutton = buttons_layout.findViewById(R.id.third_button);
         cancelbutton.setText(R.string.cancel);
         okbutton.setOnClickListener(new View.OnClickListener()
         {
@@ -358,6 +425,37 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
+    public void set_visibility_searchbar(boolean visible)
+    {
+        FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
+        if(!fileSelectorDialog.filled_filePOJOs)
+        {
+            print(getString(R.string.please_wait));
+            return;
+        }
+        search_toolbar_visible=visible;
+        if(search_toolbar_visible)
+        {
+            ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            search_toolbar.setVisibility(View.VISIBLE);
+            search_edittext.requestFocus();
+            fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+        }
+        else
+        {
+            ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+            search_toolbar.setVisibility(View.GONE);
+            search_edittext.setText("");
+            search_edittext.clearFocus();
+            fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+            fileSelectorDialog.adapter.getFilter().filter(null);
+        }
+
+    }
+
+
+
+
     public void clearCache()
     {
         Global.HASHMAP_FILE_POJO.clear();
@@ -439,30 +537,43 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private void onbackpressed(boolean onBackPressed)
     {
 
-        if(fm.getBackStackEntryCount()>1)
+        if(keyBoardUtil.getKeyBoardVisibility())
         {
-            fm.popBackStack();
-            int frag=2, entry_count=fm.getBackStackEntryCount();
-            FileSelectorDialog fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-            String tag=fileSelectorDialog.getTag();
-
-            while(tag !=null && !new File(tag).exists() && fileSelectorDialog.currentUsbFile == null)
-            {
-                fm.popBackStack();
-                ++frag;
-                if(frag>entry_count) break;
-                fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                tag = fileSelectorDialog.getTag();
-            }
-
+            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+        }
+        else if(search_toolbar_visible)
+        {
+            set_visibility_searchbar(false);
         }
         else
         {
-            if(onBackPressed)
+            if(fm.getBackStackEntryCount()>1)
             {
-                finish();
+                fm.popBackStack();
+                int frag=2, entry_count=fm.getBackStackEntryCount();
+                FileSelectorDialog fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                String tag=fileSelectorDialog.getTag();
+
+                while(tag !=null && !new File(tag).exists() && fileSelectorDialog.currentUsbFile == null)
+                {
+                    fm.popBackStack();
+                    ++frag;
+                    if(frag>entry_count) break;
+                    fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    tag = fileSelectorDialog.getTag();
+                }
+
             }
+            else
+            {
+                if(onBackPressed)
+                {
+                    finish();
+                }
+            }
+
         }
+
 
     }
 
@@ -662,6 +773,26 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         void onMediaAttachedAndRemoved();
     }
+
+
+    /*
+    interface SearchFilterListener
+    {
+        void onSearchFilter(String constraint);
+    }
+
+    public void setSearchFilterListener(SearchFilterListener listener)
+    {
+        searchFilterListener=listener;
+    }
+
+    public void removeSearchFilterListener(SearchFilterListener listener)
+    {
+        searchFilterListener=listener;
+    }
+
+     */
+
 
 
     private void print(String msg)

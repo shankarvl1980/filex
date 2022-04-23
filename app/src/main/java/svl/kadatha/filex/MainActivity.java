@@ -161,12 +161,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
 					intent.addCategory("android.intent.category.DEFAULT");
 					intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-					//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
 					activityResultLauncher_all_file_access_permission.launch(intent);
 				} catch (Exception e) {
 					Intent intent = new Intent();
 					intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-					//startActivityForResult(intent, PermissionsUtil.STORAGE_PERMISSIONS_REQUEST_CODE);
 					activityResultLauncher_all_file_access_permission.launch(intent);
 				}
 			}
@@ -203,8 +201,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
-
-		//StatusBarTint.darkenStatusBar(this, R.color.light_toolbar_background);
 		
 		drawerLayout=findViewById(R.id.drawer_layout);
 		drawer=findViewById(R.id.drawer_navigation_layout);

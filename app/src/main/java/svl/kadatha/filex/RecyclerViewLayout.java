@@ -26,7 +26,7 @@ public class RecyclerViewLayout extends ViewGroup
 	private final boolean show_file_path,whether_file_selector_activity;
 	private int select_indicator_offset_linear;
 	private boolean file_grid_layout;
-	private int recycler_view_font_size_factor;
+	private int grid_count;
 
 	RecyclerViewLayout(Context context,boolean show_file_path,boolean whether_file_selector_activity)
 	{
@@ -96,7 +96,7 @@ public class RecyclerViewLayout extends ViewGroup
         if(whether_file_selector_activity)
 		{
 			file_grid_layout=FileSelectorActivity.FILE_GRID_LAYOUT;
-			recycler_view_font_size_factor=FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR;
+			grid_count=FileSelectorActivity.GRID_COUNT;
 			if(file_grid_layout)
 			{
 				setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_grid_recyclerview));
@@ -164,7 +164,7 @@ public class RecyclerViewLayout extends ViewGroup
         else
 		{
 			file_grid_layout=Global.FILE_GRID_LAYOUT;
-			recycler_view_font_size_factor=Global.RECYCLER_VIEW_FONT_SIZE_FACTOR;
+			grid_count=Global.GRID_COUNT;
 			if(file_grid_layout)
 			{
 				setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_grid_recyclerview));
@@ -265,7 +265,7 @@ public class RecyclerViewLayout extends ViewGroup
 		 int maxHeight=0;
 		int usedWidth;
 
-		if(Global.FILE_GRID_LAYOUT)
+		if(file_grid_layout)
 		{
 
 			measureChildWithMargins(file_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
@@ -327,9 +327,9 @@ public class RecyclerViewLayout extends ViewGroup
 		// TODO: Implement this method
 		int x=0,y=Global.FOUR_DP;
 
-		if(Global.FILE_GRID_LAYOUT)
+		if(file_grid_layout)
 		{
-			int grid_count=Global.GRID_COUNT;
+			//int grid_count=;
 			int grid_width=itemWidth/grid_count;
 			x+=(grid_width-imageview_dimension)/2;
 

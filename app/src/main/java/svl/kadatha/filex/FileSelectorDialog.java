@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -204,7 +206,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		after_filledFilePojos_procedure();
 
 		return v;
-		
 	}
 
 
@@ -367,13 +368,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
-	public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder>
+	public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable
 	{
 		@Override
 		public FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
 			// TODO: Implement this method
-			return new FileSelectorAdapter.ViewHolder(new RecyclerViewLayout(context,false));
+			return new FileSelectorAdapter.ViewHolder(new RecyclerViewLayout(context,false,true));
 		}
 
 		@Override
@@ -389,6 +390,55 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			// TODO: Implement this method
 			return filePOJO_list.size();
+		}
+
+		@Override
+		public Filter getFilter() {
+			return new Filter() {
+				@Override
+				protected FilterResults performFiltering(CharSequence constraint) {
+
+					filePOJO_list = new ArrayList<>();
+					if (constraint == null || constraint.length() == 0) {
+						filePOJO_list = totalFilePOJO_list;
+					} else {
+						String pattern = constraint.toString().toLowerCase().trim();
+						for (int i = 0; i < totalFilePOJO_list_Size; ++i) {
+							FilePOJO filePOJO = totalFilePOJO_list.get(i);
+							if (filePOJO.getLowerName().contains(pattern)) {
+								filePOJO_list.add(filePOJO);
+							}
+						}
+					}
+					return new FilterResults();
+				}
+
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
+
+					int t=filePOJO_list.size();
+					/*
+					if(mselecteditems.size()>0)
+					{
+						deselectAll();
+					}
+					else
+					{
+						notifyDataSetChanged();
+					}
+
+					 */
+					clearSelectionAndNotifyDataSetChanged();
+					if(t>0)
+					{
+						recycler_view.setVisibility(View.VISIBLE);
+						folder_empty_textview.setVisibility(View.GONE);
+					}
+
+					fileSelectorActivity.file_number.setText(""+t);
+
+				}
+			};
 		}
 
 		class ViewHolder extends RecyclerView.ViewHolder
