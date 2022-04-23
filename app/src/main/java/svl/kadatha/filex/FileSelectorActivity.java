@@ -262,7 +262,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             setResult(Activity.RESULT_OK, intent);
 
                         }
-                        finish();
                         break;
                     case MOVE_COPY_REQUEST_CODE:
                         if (fileSelectorDialog.fileclickselected == null) {
@@ -275,14 +274,13 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             setResult(Activity.RESULT_OK, intent);
                         }
 
-                        finish();
                         break;
                     default:
                         setResult(Activity.RESULT_CANCELED);
-                        finish();
                         break;
                 }
-
+                set_visibility_searchbar(false);
+                finish();
             }
         });
 
@@ -594,11 +592,13 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         String fragment_tag;
         String existingFilePOJOkey="";
+
         FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
         if(fileSelectorDialog!=null)
         {
             fragment_tag=fileSelectorDialog.getTag();
             existingFilePOJOkey=fileSelectorDialog.fileObjectType+fragment_tag;
+            set_visibility_searchbar(false);
         }
         FileObjectType fileObjectType=filePOJO.getFileObjectType();
         String file_path=filePOJO.getPath();
