@@ -905,6 +905,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				}
 				success=deleteFromFolder(isFromInternal);
 			}
+
 			if(deleted_file_names.size()>0)
 			{
 				if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)

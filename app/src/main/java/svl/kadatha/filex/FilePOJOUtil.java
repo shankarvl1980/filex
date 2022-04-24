@@ -744,7 +744,6 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            //if((entry.getKey()+File.separator).startsWith(fileObjectType+file_path+File.separator))
             if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();
@@ -756,7 +755,6 @@ public class FilePOJOUtil {
         while(iterator.hasNext())
         {
             Map.Entry entry=(Map.Entry)iterator.next();
-            //if((entry.getKey() +File.separator).startsWith(fileObjectType+file_path+File.separator))
             if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
             {
                 ((List<FilePOJO>)entry.getValue()).clear();

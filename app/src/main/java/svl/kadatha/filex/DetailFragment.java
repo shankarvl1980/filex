@@ -51,6 +51,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -63,7 +64,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
-	//static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
 	public RecyclerView filepath_recyclerview;
 	public RecyclerView recyclerView;
 	LinearLayoutManager llm;
@@ -114,8 +114,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	public static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
 	private FilePOJO clicked_filepojo;
-
-	public static final String ACTION_INSTALL_COMPLETE = "svl.kadatha.filex.INSTALL_COMPLETE";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -628,7 +626,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					if (!mainActivity.getPackageManager().canRequestPackageInstalls()) {
 						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
 						unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
-						//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
 						activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
 						return;
 					}
@@ -902,7 +899,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			filled_filePOJOs=false;
 			asynctask_status=AsyncTaskStatus.STARTED;
 			cancelableProgressBarDialog.show(mainActivity.fm,"");
-			filePOJOS.clear(); filePOJOS_filtered.clear();
+
 		}
 
 		@Override
@@ -919,6 +916,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
+			if(totalFilePOJO_list!=null)
+			{
+				Iterator<FilePOJO> iterator=filePOJOS.iterator();
+				while(iterator.hasNext())
+				{
+					if(!new File(iterator.next().getPath()).exists())
+					{
+						iterator.remove();
+					}
+				}
+				return null;
+			}
+
+			filePOJOS.clear(); filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
 			{
 				for(FilePOJO f : SEARCH_IN_DIR)
