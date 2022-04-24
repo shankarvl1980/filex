@@ -39,7 +39,6 @@ public class AppInstallAlertDialog extends DialogFragment
     private ImageView app_icon_image_view;
     private TextView app_name_tv,package_name_tv, version_tv,installed_version_tv, message_tv;
     private String file_path;
-    //private Bitmap app_icon;
     private String package_name, app_name, version, installed_version;
     private AppInstallDialogListener appInstallDialogListener;
     private AsyncTaskStatus asyncTaskStatus;
