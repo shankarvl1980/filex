@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -81,7 +82,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public KeyBoardUtil keyBoardUtil;
     private Group search_toolbar;
     public EditText search_edittext;
-
+    private int countBackPressed=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -560,14 +561,28 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     fileSelectorDialog= (FileSelectorDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                     tag = fileSelectorDialog.getTag();
                 }
+                countBackPressed=0;
 
             }
             else
             {
                 if(onBackPressed)
                 {
-                    finish();
+                    countBackPressed++;
+                    if(countBackPressed==1)
+                    {
+                        print(getString(R.string.press_again_to_close_activity));
+                    }
+                    else
+                    {
+                        finish();
+                    }
                 }
+                else
+                {
+                    print(getString(R.string.click_OK_cancel_button_to_exit));
+                }
+
             }
 
         }

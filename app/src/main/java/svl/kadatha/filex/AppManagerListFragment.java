@@ -190,6 +190,7 @@ public class AppManagerListFragment extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
         }
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             final int threshold=5;
             public void onScrolled(RecyclerView rv, int dx, int dy)

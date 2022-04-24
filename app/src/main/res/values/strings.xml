@@ -256,7 +256,6 @@
 	<string name="do_you_want_update_the_app">Do you want to update the app?</string>
 	<string name="read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions">Read and write permissions are must for the app to work. Please grant the permissions</string>
 	<string name="could_not_open_zipe_file">Could not open the zip file</string>
-	<string name="press_again_to_close_app">Press again to close the app</string>
 	<string name="directories_can_not_be_sent_select_one_file">Directories can not be sent. Select at least one file.</string>
 	<string name="select_only_a_zip_file">Select only a zip file</string>
 	<string name="selected_files_have_been_copied">Selected files have been copied.</string>
@@ -337,9 +336,12 @@
 	<string name="play_store">Play Store</string>
 	<string name="share">Share</string>
     <string name="file_is_big_please_extract_to_view">File is big. Please extract to view</string>
+    <string name="click_exit_button_to_exit">click Exit button to exit</string>
+	<string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
+	<string name="press_again_to_close_activity">press again to close the activity</string>
 
 
-    <string-array name="library_categories">
+	<string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

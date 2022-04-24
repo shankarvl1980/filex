@@ -47,7 +47,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private String activity_catering=FILE_SELECTOR;
     private RecyclerView recent_recyclerview;
     private TextView recent_label;
-
+    private AppCompatActivity activity;
 
 
 
@@ -55,12 +55,19 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        if (activity_catering.equals(STORAGE_ANALYSER)) {
+        activity= (AppCompatActivity)context;
+
+        if(activity instanceof StorageAnalyserActivity)
+        {
+            activity_catering=STORAGE_ANALYSER;
             ((StorageAnalyserActivity)context).recentDialogListener=this;
         }
-        else {
+        else if(activity instanceof FileSelectorActivity)
+        {
+            activity_catering=FILE_SELECTOR;
             ((FileSelectorActivity)context).recentDialogListener=this;
         }
+
     }
 
 
@@ -70,17 +77,13 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        AppCompatActivity activity= (AppCompatActivity)context;
-        if(activity instanceof StorageAnalyserActivity)
-        {
-            activity_catering=STORAGE_ANALYSER;
+        if (activity_catering.equals(STORAGE_ANALYSER)) {
             root_dir_linkedlist.addAll(((StorageAnalyserActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
-        else if(activity instanceof FileSelectorActivity)
-        {
-            activity_catering=FILE_SELECTOR;
+        else if (activity_catering.equals(FILE_SELECTOR)){
             root_dir_linkedlist.addAll(((FileSelectorActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
+
         //Log.d("shankar","recent from - "+activity_catering+" "+root_dir_linkedlist.size());
     }
 
@@ -402,7 +405,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 }
             }
         }
-
 
     }
 

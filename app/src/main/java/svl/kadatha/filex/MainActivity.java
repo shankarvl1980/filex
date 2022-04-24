@@ -1182,7 +1182,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					countBackPressed++;
 					if(countBackPressed==1)
 					{
-						print(getString(R.string.press_again_to_close_app));
+						print(getString(R.string.press_again_to_close_activity));
 					}
 					else
 					{
@@ -1196,6 +1196,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 						finish();
 					}
+				}
+				else
+				{
+					print(getString(R.string.click_exit_button_to_exit));
 				}
 
 			}

@@ -50,7 +50,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private ImageButton all_select;
     public FloatingActionButton floatingActionButton;
     public static final String ACTIVITY_NAME="STORAGE_ANALYSER_ACTIVITY";
-
+    private int countBackPressed=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -324,22 +324,29 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                     tag = storageAnalyserDialog.getTag();
                 }
-
+                countBackPressed=0;
 
             }
             else
             {
-
                 if(onBackPressed)
                 {
-                    finish();
+                    countBackPressed++;
+                    if(countBackPressed==1)
+                    {
+                        print(getString(R.string.press_again_to_close_activity));
+                    }
+                    else
+                    {
+                        finish();
+                    }
                 }
-
+                else
+                {
+                    print(getString(R.string.click_exit_button_to_exit));
+                }
             }
-
         }
-
-
     }
 
 
