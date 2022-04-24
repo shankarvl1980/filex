@@ -2308,6 +2308,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 					break;
+				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY:
+					int s = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+					for(int i=0;i<s;++i)
+					{
+						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
+						if(listener!=null)
+						{
+							listener.onDeleteByMainActivity();
+						}
+					}
+					break;
 			}
 		}
 	}
@@ -2317,6 +2328,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
 		void setUsbFileRootNull();
+		void onDeleteByMainActivity();
 	}
 
 	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)

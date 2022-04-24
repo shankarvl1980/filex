@@ -108,7 +108,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private String tree_uri_path="";
 	private static ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
-	public boolean local_activity_delete,modification_observed,cache_cleared;
+	public boolean local_activity_delete,modification_observed,cache_cleared,delete_by_main_activity;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
@@ -264,6 +264,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
+			delete_by_main_activity=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -288,6 +289,22 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 
 		}
+		/*
+		else if(delete_by_main_activity)
+		{
+			cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
+			delete_by_main_activity=false;
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
+			after_filledFilePojos_procedure();
+		}
+
+		 */
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
@@ -384,19 +401,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(local_activity_delete)
-		{
-			cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			after_filledFilePojos_procedure();
-		}
-		else if(modification_observed)
+		if(modification_observed)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
+			delete_by_main_activity=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -421,7 +432,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
 				}
 			}).start();
-
+			after_filledFilePojos_procedure();
+		}
+		else if(local_activity_delete)
+		{
+			cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
+			delete_by_main_activity=false;
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
 			after_filledFilePojos_procedure();
 		}
 	}
@@ -528,6 +551,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		currentUsbFile=null;
 	}
 
+	@Override
+	public void onDeleteByMainActivity() {
+		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			delete_by_main_activity=true;
+		}
+	}
 
 	@Override
 	public void onFileModified() {
@@ -916,6 +946,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
+			/*
 			if(totalFilePOJO_list!=null)
 			{
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
@@ -928,6 +959,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 				return null;
 			}
+
+			 */
 
 			filePOJOS.clear(); filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))

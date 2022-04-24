@@ -222,14 +222,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(local_activity_delete)
-		{
-			cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			after_filledFilePojos_procedure();
-		}
-		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+		if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
 			cache_cleared=false;
 			modification_observed=false;
@@ -251,6 +244,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				}
 			}).start();
 
+			after_filledFilePojos_procedure();
+		}
+		else if(local_activity_delete)
+		{
+			cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
 			after_filledFilePojos_procedure();
 		}
 	}
