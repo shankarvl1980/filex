@@ -289,7 +289,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 
 		}
-		/*
 		else if(delete_by_main_activity)
 		{
 			cache_cleared=false;
@@ -303,8 +302,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			after_filledFilePojos_procedure();
 		}
-
-		 */
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
@@ -946,7 +943,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-			/*
 			if(totalFilePOJO_list!=null)
 			{
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
@@ -959,8 +955,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 				return null;
 			}
-
-			 */
 
 			filePOJOS.clear(); filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
