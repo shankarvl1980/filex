@@ -300,7 +300,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
 				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			}
-			after_filledFilePojos_procedure();
 		}
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
