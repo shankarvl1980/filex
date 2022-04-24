@@ -178,7 +178,6 @@ public class AppManagerActivity extends BaseActivity{
     }
 
 
-
     private class AppManagementFragmentAdapter extends FragmentPagerAdapter
     {
 

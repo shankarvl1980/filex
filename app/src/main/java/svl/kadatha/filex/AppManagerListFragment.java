@@ -484,6 +484,10 @@ public class AppManagerListFragment extends Fragment {
 
     private void show_app_action_select_dialog(AppPOJO appPOJO)
     {
+        if(((AppManagerActivity)context).search_toolbar_visible)
+        {
+            ((AppManagerActivity)context).set_visibility_searchbar(false);
+        }
         AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize());
         appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
             @Override

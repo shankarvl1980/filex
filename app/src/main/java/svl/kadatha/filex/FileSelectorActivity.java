@@ -790,25 +790,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
 
-    /*
-    interface SearchFilterListener
-    {
-        void onSearchFilter(String constraint);
-    }
-
-    public void setSearchFilterListener(SearchFilterListener listener)
-    {
-        searchFilterListener=listener;
-    }
-
-    public void removeSearchFilterListener(SearchFilterListener listener)
-    {
-        searchFilterListener=listener;
-    }
-
-     */
-
-
 
     private void print(String msg)
     {
