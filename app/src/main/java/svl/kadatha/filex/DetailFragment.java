@@ -958,6 +958,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
 				while(iterator.hasNext())
 				{
+					if(isCancelled())
+					{
+						filePOJOS_filtered=filePOJOS;
+						return null;
+					}
 					FilePOJO filePOJO=iterator.next();
 					if(!new File(filePOJO.getPath()).exists())
 					{
@@ -965,15 +970,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}
 
-				Iterator<FilePOJO> iterator_filtered=filePOJOS_filtered.iterator();
-				while(iterator_filtered.hasNext())
-				{
-					FilePOJO filePOJO=iterator_filtered.next();
-					if(!new File(filePOJO.getPath()).exists())
-					{
-						iterator_filtered.remove();
-					}
-				}
+				filePOJOS_filtered=filePOJOS;
 				return null;
 			}
 
@@ -1130,8 +1127,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					File f=new File(data);
 					if(f.exists())
 					{
-						f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
-						f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
+						FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+						f_pojos.add(filePOJO);
+						f_pojos_filtered.add(filePOJO);
 						count++;
 						publishProgress(count);
 					}
@@ -1155,8 +1153,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 
 					File file=file_list[i];
-					f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE));
-					f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE));
+					FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
+					f_pojos.add(filePOJO);
+					f_pojos_filtered.add(filePOJO);
 				}
 			}
 
@@ -1180,8 +1179,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("d")|| file_type.equals("fd")))
 						{
-							f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
-							f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
+							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+							f_pojos.add(filePOJO);
+							f_pojos_filtered.add(filePOJO);
 							count++;
 						}
 						search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
@@ -1190,8 +1190,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("f")||file_type.equals("fd")))
 						{
-							f_pojos.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
-							f_pojos_filtered.add(FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE));
+							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
+							f_pojos.add(filePOJO);
+							f_pojos_filtered.add(filePOJO);
 							count++;
 						}
 					}
