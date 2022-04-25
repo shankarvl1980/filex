@@ -262,6 +262,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		if(cache_cleared)
 		{
+			//Log.d("shankar","in createview, cache_cleared is true");
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
@@ -289,19 +290,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}).start();
 			}
 
-		}
-		else if(delete_by_main_activity)
-		{
-			Log.d("shankar","delete_by_main_activity is true");
-			cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			delete_by_main_activity=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
 		}
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
@@ -445,6 +433,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			after_filledFilePojos_procedure();
 		}
+		else if(delete_by_main_activity) //to refresh search_library type filepojos on deletion by mainactivity, storageanalyser activity
+		{
+			cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
+			delete_by_main_activity=false;
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
+			after_filledFilePojos_procedure();
+		}
+
 	}
 
 
@@ -529,6 +531,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	@Override
 	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+		//Log.d("shankar","fragment cache clear in "+this.fileObjectType);
 		if(file_path==null || fileObjectType==null)
 		{
 			cache_cleared=true;
@@ -541,8 +544,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
-		else if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		else if(this.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
+			//Log.d("shankar","fragment cache cleared in "+this.fileObjectType);
 			cache_cleared=true;
 		}
 
@@ -557,6 +561,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onDeleteByMainActivity() {
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
+			//Log.d("shankar","delete by mainactivity communicated "+this.fileObjectType);
 			delete_by_main_activity=true;
 		}
 	}
@@ -947,29 +952,25 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-
+			//Log.d("shankar","library refreshed in asynctask");
 			if(totalFilePOJO_list!=null)
 			{
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
-				Log.d("shankar","file pojos size is "+filePOJOS.size());
 				while(iterator.hasNext())
 				{
 					FilePOJO filePOJO=iterator.next();
 					if(!new File(filePOJO.getPath()).exists())
 					{
-						Log.d("shankar","deleted "+filePOJO.getPath());
 						iterator.remove();
 					}
 				}
 
 				Iterator<FilePOJO> iterator_filtered=filePOJOS_filtered.iterator();
-				Log.d("shankar","file pojos size is "+filePOJOS.size());
 				while(iterator_filtered.hasNext())
 				{
 					FilePOJO filePOJO=iterator_filtered.next();
 					if(!new File(filePOJO.getPath()).exists())
 					{
-						Log.d("shankar","deleted "+filePOJO.getPath());
 						iterator_filtered.remove();
 					}
 				}

@@ -394,6 +394,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        clear_cache=true;
+    }
+
+    @Override
     protected void onStart()
     {
         // TODO: Implement this method

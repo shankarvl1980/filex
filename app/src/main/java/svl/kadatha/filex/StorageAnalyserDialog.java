@@ -659,7 +659,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     {
         storageAnalyserActivity.clear_cache=false;
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        //startActivityForResult(intent, request_code);
         activityResultLauncher.launch(intent);
     }
 

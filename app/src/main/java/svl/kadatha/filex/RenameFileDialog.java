@@ -461,7 +461,6 @@ public class RenameFileDialog extends DialogFragment
 	{
 		((MainActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 

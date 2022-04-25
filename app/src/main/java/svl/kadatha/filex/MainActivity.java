@@ -866,6 +866,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		clear_cache=true;
+	}
 
 	@Override
 	protected void onStart()
@@ -884,6 +889,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			set_visibility_searchbar(false);
 		}
+
 		if(!isChangingConfigurations() && clear_cache)
 		{
 			clearCache();
@@ -2312,7 +2318,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					break;
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY:
 					int s = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-					Log.d("shankar","delete by main activity broadcast and listened by "+s+" detail fragments");
 					for(int i=0;i<s;++i)
 					{
 						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
