@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -2311,6 +2312,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					break;
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY:
 					int s = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+					Log.d("shankar","delete by main activity broadcast and listened by "+s+" detail fragments");
 					for(int i=0;i<s;++i)
 					{
 						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);

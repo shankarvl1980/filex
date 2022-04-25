@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -291,6 +292,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if(delete_by_main_activity)
 		{
+			Log.d("shankar","delete_by_main_activity is true");
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
@@ -539,6 +541,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
+		else if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			cache_cleared=true;
+		}
 
 	}
 
@@ -574,7 +580,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		mainActivity.clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher_SAF_permission.launch(intent);
 	}
 
@@ -942,21 +947,35 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-			/*
+
 			if(totalFilePOJO_list!=null)
 			{
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
+				Log.d("shankar","file pojos size is "+filePOJOS.size());
 				while(iterator.hasNext())
 				{
-					if(!new File(iterator.next().getPath()).exists())
+					FilePOJO filePOJO=iterator.next();
+					if(!new File(filePOJO.getPath()).exists())
 					{
+						Log.d("shankar","deleted "+filePOJO.getPath());
 						iterator.remove();
+					}
+				}
+
+				Iterator<FilePOJO> iterator_filtered=filePOJOS_filtered.iterator();
+				Log.d("shankar","file pojos size is "+filePOJOS.size());
+				while(iterator_filtered.hasNext())
+				{
+					FilePOJO filePOJO=iterator_filtered.next();
+					if(!new File(filePOJO.getPath()).exists())
+					{
+						Log.d("shankar","deleted "+filePOJO.getPath());
+						iterator_filtered.remove();
 					}
 				}
 				return null;
 			}
 
-			 */
 
 			filePOJOS.clear(); filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
