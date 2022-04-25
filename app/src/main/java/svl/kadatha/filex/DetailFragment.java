@@ -952,7 +952,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		protected Void doInBackground(Void[] p1)
 		{
 			// TODO: Implement this method
-			//Log.d("shankar","library refreshed in asynctask");
+
 			if(totalFilePOJO_list!=null)
 			{
 				Iterator<FilePOJO> iterator=filePOJOS.iterator();
