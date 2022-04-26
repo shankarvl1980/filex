@@ -204,13 +204,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         storage_filePOJO_list=getFilePOJO_list();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        clear_cache=true;
-    }
-
-    @Override
+     @Override
     protected void onStart()
     {
         // TODO: Implement this method

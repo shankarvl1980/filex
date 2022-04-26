@@ -448,7 +448,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             cache_cleared=true;
         }
-        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+new File(file_path).getParent()))
+        else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
         {
             cache_cleared=true;
         }

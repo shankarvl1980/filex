@@ -109,7 +109,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private String tree_uri_path="";
 	private static ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
-	public boolean local_activity_delete,modification_observed,cache_cleared,delete_by_main_activity;
+	public boolean local_activity_delete,modification_observed,cache_cleared;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
@@ -266,7 +266,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
-			delete_by_main_activity=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -393,7 +392,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			delete_by_main_activity=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -425,20 +423,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			delete_by_main_activity=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-			after_filledFilePojos_procedure();
-		}
-		else if(delete_by_main_activity) //to refresh search_library type filepojos on deletion by mainactivity, storageanalyser activity
-		{
-			cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			delete_by_main_activity=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
@@ -531,7 +515,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	@Override
 	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-		//Log.d("shankar","fragment cache clear in "+this.fileObjectType);
+
 		if(file_path==null || fileObjectType==null)
 		{
 			cache_cleared=true;
@@ -540,13 +524,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			cache_cleared=true;
 		}
-		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+new File(file_path).getParent()))
+		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
 		{
+			//Log.d("shankar","fragment cache cleared in "+this.fileObjectType.toString());
 			cache_cleared=true;
 		}
 		else if(this.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
-			//Log.d("shankar","fragment cache cleared in "+this.fileObjectType);
 			cache_cleared=true;
 		}
 
@@ -557,14 +541,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		currentUsbFile=null;
 	}
 
+	/*
 	@Override
 	public void onDeleteByMainActivity() {
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
-			//Log.d("shankar","delete by mainactivity communicated "+this.fileObjectType);
+			//Log.d("shankar","delete by mainactivity communicated "+this.fileObjectType.toString());
 			delete_by_main_activity=true;
 		}
 	}
+
+	 */
 
 	@Override
 	public void onFileModified() {

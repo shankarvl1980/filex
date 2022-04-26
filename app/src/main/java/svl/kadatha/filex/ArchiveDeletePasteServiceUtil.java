@@ -298,7 +298,7 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if(counter_no_files>0)
         {
-            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
+            //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder,sourceFileObjectType);
             notification_content=context.getString(R.string.deleted_selected_files)+" "+source_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
@@ -330,7 +330,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(cut)
             {
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
+                //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY, LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
             }
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder,source_folder,destFileObjectType,sourceFileObjectType,filePOJO);
             notification_content=(cut ? context.getString(R.string.moved_selected_files)+" "+dest_folder : context.getString(R.string.copied_selected_files)+" "+dest_folder);

@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
-		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY);
+		//localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 		usbReceiver=new USBReceiver();
@@ -866,11 +866,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		clear_cache=true;
-	}
 
 	@Override
 	protected void onStart()
@@ -910,7 +905,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
 	{
-		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
+		//Log.d("shankar","broadcast_file_pojo_cache_removal triggered");
+	    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
 	}
 
 
@@ -2307,6 +2303,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					break;
 				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
 					int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+					//Log.d("shankar","clear cache communicated to "+size+" detail fragments");
 					for(int i=0;i<size;++i)
 					{
 						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
@@ -2316,8 +2313,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 					break;
+				/*
 				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY:
 					int s = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+					//Log.d("shankar","delete by main activity communicated to "+s+" detail fragments");
 					for(int i=0;i<s;++i)
 					{
 						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
@@ -2327,6 +2326,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 					break;
+
+				 */
 			}
 		}
 	}
@@ -2336,7 +2337,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
 		void setUsbFileRootNull();
-		void onDeleteByMainActivity();
+
 	}
 
 	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
