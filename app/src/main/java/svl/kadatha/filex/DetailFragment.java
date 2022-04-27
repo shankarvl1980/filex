@@ -541,17 +541,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		currentUsbFile=null;
 	}
 
-	/*
-	@Override
-	public void onDeleteByMainActivity() {
-		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			//Log.d("shankar","delete by mainactivity communicated "+this.fileObjectType.toString());
-			delete_by_main_activity=true;
-		}
-	}
-
-	 */
 
 	@Override
 	public void onFileModified() {

@@ -349,6 +349,52 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         }
     }
 
+    public void onClickCancel()
+    {
+        StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserDialog.mselecteditems.size()>0)
+        {
+            DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+        }
+        else
+        {
+            switch (toolbar_shown)
+            {
+
+                case "bottom":
+                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    bottom_toolbar.setVisibility(View.VISIBLE);
+                    break;
+                case "actionmode":
+                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    actionmode_toolbar.setVisibility(View.VISIBLE);
+                    break;
+            }
+
+
+            if(fm.getBackStackEntryCount()>1)
+            {
+                fm.popBackStack();
+                int frag=2, entry_count=fm.getBackStackEntryCount();
+                storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                String tag=storageAnalyserDialog.getTag();
+
+                while(tag !=null && !new File(tag).exists() && storageAnalyserDialog.currentUsbFile == null)
+                {
+                    fm.popBackStack();
+                    ++frag;
+                    if(frag>entry_count) break;
+                    storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    tag = storageAnalyserDialog.getTag();
+                }
+
+            }
+            else
+            {
+                finish();
+            }
+        }
+    }
 
     public List<FilePOJO> getFilePOJO_list()
     {
