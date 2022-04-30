@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1680,7 +1679,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			// TODO: Implement this method
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			Bundle bundle=new Bundle();
 			ArrayList<String> files_selected_array=new ArrayList<>();
 			ArrayList<Integer> files_selected_index_array=new ArrayList<>();
 			int size;
@@ -1705,7 +1703,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				FileObjectType sourceFileObjectType = DetailFragment.CUT_COPY_FILE_OBJECT_TYPE;
 				String source_folder = DetailFragment.CUT_COPY_FILECLICKSELECTED;
-				if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
+				if(sourceFileObjectType==null)
+				{
+					print(getString(R.string.could_not_perform_action));
+				}
+				else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
 					print(DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 				} else  {
 					if(DetailFragment.CUT_COPY_FILE_OBJECT_TYPE==FileObjectType.SEARCH_LIBRARY_TYPE)

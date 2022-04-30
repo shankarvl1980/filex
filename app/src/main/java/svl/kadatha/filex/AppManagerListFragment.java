@@ -122,6 +122,7 @@ public class AppManagerListFragment extends Fragment {
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
+                            String version=packageInfo.versionName;
                             String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
                             if(publicsourcedir==null)
                             {
@@ -132,7 +133,7 @@ public class AppManagerListFragment extends Fragment {
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date));
+                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date,version));
 
                         }
                     }
@@ -142,6 +143,7 @@ public class AppManagerListFragment extends Fragment {
                         {
                             String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
                             String package_name=packageInfo.packageName;
+                            String version=packageInfo.versionName;
                             String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
                             if(publicsourcedir==null)
                             {
@@ -152,7 +154,7 @@ public class AppManagerListFragment extends Fragment {
                             long size=file.length();
                             long date=file.lastModified();
                             extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date));
+                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date,version));
 
                         }
                     }
@@ -487,7 +489,7 @@ public class AppManagerListFragment extends Fragment {
         {
             ((AppManagerActivity)context).set_visibility_searchbar(false);
         }
-        AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize());
+        AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize(),appPOJO.getVersion());
         appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
             @Override
             public void onSelectType(String app_action) {
@@ -695,7 +697,7 @@ public class AppManagerListFragment extends Fragment {
     }
 
 
-    public static class AppPOJO
+    public class AppPOJO
     {
         private final String name;
         private final String lower_name;
@@ -705,9 +707,10 @@ public class AppManagerListFragment extends Fragment {
         private final String size;
         private final long dateLong;
         private final String date;
+        private final String version;
 
 
-        AppPOJO(String app_name,String app_package,String app_path,long app_size_long,long app_date_long)
+        AppPOJO(String app_name,String app_package,String app_path,long app_size_long,long app_date_long, String version)
         {
             this.name=app_name;
             this.lower_name=app_name.toLowerCase();
@@ -717,6 +720,7 @@ public class AppManagerListFragment extends Fragment {
             this.size=FileUtil.humanReadableByteCount(app_size_long,Global.BYTE_COUNT_BLOCK_1000);
             this.dateLong=app_date_long;
             this.date=Global.SDF.format(dateLong);
+            this.version=getString(R.string.version)+" "+version;
         }
 
         public String getName(){return this.name;}
@@ -734,6 +738,8 @@ public class AppManagerListFragment extends Fragment {
         public long getDateLong(){ return this.dateLong;}
 
         public String getDate(){return this.date;}
+
+        public String getVersion(){return this.version;}
 
     }
 

@@ -79,7 +79,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_size"
                 android:textSize="14sp"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/layout_margin"
+                android:maxLines="1"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/fragment_app_action_app_version"
+                android:textSize="14sp"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:maxLines="1"
                 />
             <View
@@ -89,7 +103,7 @@
                 android:background="@android:color/black"
                 android:alpha="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version"
                 />
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"

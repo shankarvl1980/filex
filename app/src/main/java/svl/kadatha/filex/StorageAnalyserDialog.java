@@ -192,7 +192,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 @Override
                 public void on_cancel_progress() {
                     if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onBackPressed();
+                    storageAnalyserActivity.onClickCancel();
                 }
             });
             cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
@@ -296,7 +296,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 @Override
                 public void on_cancel_progress() {
                     if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onBackPressed();
+                    storageAnalyserActivity.onClickCancel();
                 }
             });
             cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
@@ -356,7 +356,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                             @Override
                             public void on_cancel_progress() {
                                 if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                                storageAnalyserActivity.onBackPressed();
+                                storageAnalyserActivity.onClickCancel();
                             }
                         });
                         cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");

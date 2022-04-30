@@ -339,6 +339,7 @@
     <string name="click_exit_button_to_exit">click Exit button to exit</string>
 	<string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
 	<string name="press_again_to_close_activity">press again to close the activity</string>
+	<string name="volume_colon">Volume:</string>
 
 
 	<string-array name="library_categories">

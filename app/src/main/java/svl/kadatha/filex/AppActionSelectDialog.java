@@ -25,8 +25,8 @@ public class AppActionSelectDialog extends DialogFragment
     private Context context;
     private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
-    private String app_name,package_name,app_size;
-    private final List<String> action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.SHARE,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
+    private String app_name,package_name,app_size,version;
+    private List<String> action_list;
 
 
     @Override
@@ -45,16 +45,18 @@ public class AppActionSelectDialog extends DialogFragment
         app_name=bundle.getString("app_name");
         package_name=bundle.getString("package_name");
         app_size=bundle.getString("app_size");
-
+        version=bundle.getString("version");
+        action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.SHARE,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
     }
 
-    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size)
+    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version)
     {
         AppActionSelectDialog appActionSelectDialog=new AppActionSelectDialog();
         Bundle bundle=new Bundle();
         bundle.putString("app_name",app_name);
         bundle.putString("package_name",package_name);
         bundle.putString("app_size",app_size);
+        bundle.putString("version",version);
         appActionSelectDialog.setArguments(bundle);
         return appActionSelectDialog;
     }
@@ -68,12 +70,14 @@ public class AppActionSelectDialog extends DialogFragment
         TextView app_name_tv = v.findViewById(R.id.fragment_app_action_app_name);
         TextView package_name_tv = v.findViewById(R.id.fragment_app_action_package_name);
         TextView app_size_tv = v.findViewById(R.id.fragment_app_action_app_size);
+        TextView app_version_tv=v.findViewById(R.id.fragment_app_action_app_version);
 
         String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+package_name+".png";
         GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_image_view);
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_size_tv.setText(app_size);
+        app_version_tv.setText(version);
 
         RecyclerView app_action_recyclerview = v.findViewById(R.id.fragment_app_action_recyclerView);
         app_action_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);

@@ -76,7 +76,7 @@
 		android:paddingStart="@dimen/layout_margin"
 		android:paddingEnd="@dimen/layout_margin"
 		android:textColor="?attr/recycler_text_color"
-		android:text="Volume:"
+		android:text="@string/volume_colon"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintBottom_toTopOf="@+id/current_play_volume_seekbar"
 		/>
