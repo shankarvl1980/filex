@@ -339,7 +339,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private void remove_and_save(String list_name,List<AudioPOJO> audio_list_to_be_removed, SparseBooleanArray index)
 	{
 		
-		ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		pbf.show(((AudioPlayerActivity)context).fm,"");
 		if(!whether_saved_play_list)
 		{
@@ -432,7 +432,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			// TODO: Implement this method
 			super.onPreExecute();
 			asyncTaskStatus=AsyncTaskStatus.STARTED;
-			pbf=ProgressBarFragment.getInstance();
+			pbf=ProgressBarFragment.newInstance();
 			pbf.show(((AudioPlayerActivity)context).fm,"");
 		}
 

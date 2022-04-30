@@ -363,7 +363,7 @@ public class AlbumDetailsDialog extends DialogFragment
 	
 	private class AlbumListDetailsExtractor extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		final String where=MediaStore.Audio.Media.ALBUM_ID +" = " +albumID;
 		@Override

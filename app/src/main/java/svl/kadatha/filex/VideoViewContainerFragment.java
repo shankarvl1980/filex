@@ -514,7 +514,7 @@ public class VideoViewContainerFragment extends Fragment
 		String current_file_name;
 		boolean isFromInternal;
 		String size_of_files_format;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final FileObjectType fileObjectType;
 		DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
 		{

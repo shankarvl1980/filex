@@ -295,7 +295,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	{
 
 		final int size=deleted_files_list.size();
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		pbf.show(mainActivity.fm, "");
 		handler_remove.post(new Runnable() {
 			@Override
@@ -366,7 +366,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		final List<Integer> reveresedKeySet=new ArrayList<>(index_array.keySet());
 		Collections.sort(reveresedKeySet,Collections.<Integer>reverseOrder());
 		final int s=reveresedKeySet.size();
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		pbf.show(MainActivity.FM,"");
 		handler_remove.post(new Runnable() {
 			@Override

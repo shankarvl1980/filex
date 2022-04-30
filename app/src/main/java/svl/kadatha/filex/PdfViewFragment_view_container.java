@@ -597,7 +597,7 @@ public class PdfViewFragment_view_container extends Fragment
                 pbf.dismissAllowingStateLoss();
             }
 
-            pbf=ProgressBarFragment.getInstance();
+            pbf=ProgressBarFragment.newInstance();
             pbf.show(((PdfViewActivity)context).fm,"");
 
         }
@@ -861,7 +861,7 @@ public class PdfViewFragment_view_container extends Fragment
         protected void onPreExecute()
         {
             // TODO: Implement this method
-            pbf=ProgressBarFragment.getInstance();
+            pbf=ProgressBarFragment.newInstance();
             pbf.show(((PdfViewActivity)context).fm,"progressbar_dialog");
         }
 

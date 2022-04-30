@@ -397,7 +397,7 @@ public class ImageViewFragment extends Fragment
 
 			}
 		};
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		if(context==null)
 		{
 			context=getContext();
@@ -493,7 +493,7 @@ public class ImageViewFragment extends Fragment
 		public void onActivityResult(ActivityResult result) {
 			if(result.getResultCode()== Activity.RESULT_OK)
 			{
-				ProgressBarFragment pbf = ProgressBarFragment.getInstance();
+				ProgressBarFragment pbf = ProgressBarFragment.newInstance();
 				pbf.show(((ImageViewActivity)context).fm,"");
 				Uri uri=result.getData().getData();
 				String file_name=result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
@@ -870,7 +870,7 @@ public class ImageViewFragment extends Fragment
 		String current_file_name;
 		boolean isFromInternal;
 		String size_of_files_format;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final FileObjectType fileObjectType;
 		DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
 		{

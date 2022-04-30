@@ -66,7 +66,7 @@ public class VideoViewActivity extends BaseActivity
 		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
         String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 		if(file_path ==null) file_path =PathUtil.getPath(context,data);
-		pbf = ProgressBarFragment.getInstance();
+		pbf = ProgressBarFragment.newInstance();
 		pbf.show(fm,"");
 		albumPollFragment=AlbumPollFragment.getInstance(file_path,fileObjectType,Global.VIDEO_REGEX,fromArchiveView);
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, albumPollFragment,"").commit();

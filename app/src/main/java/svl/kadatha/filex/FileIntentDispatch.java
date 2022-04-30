@@ -208,7 +208,7 @@ class FileIntentDispatch
 		final Context context;
 		final String file_path;
 		final String mime_type;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final boolean clear_top;
         final boolean fromArchiveView;
         final FileObjectType fileObjectType;
@@ -257,7 +257,7 @@ class FileIntentDispatch
 		final Uri tree_uri;
 		final String tree_uri_path;
         final String mime_type;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final boolean clear_top;
         final boolean fromArchiveView;
         final FileObjectType fileObjectType;
@@ -306,7 +306,7 @@ class FileIntentDispatch
 	{
 		final Context context;
 		final ArrayList<File> file_list;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 
 		SendFileIntentDispatchAsyncTask(Context context, ArrayList<File> file_list)
 		{
@@ -346,7 +346,7 @@ class FileIntentDispatch
 		final Context context;
 		File file;
 		final ArrayList<Uri> uri_list;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 
 		SendUriIntentDispatchAsyncTask(Context context, ArrayList<Uri> uri_list)
 		{

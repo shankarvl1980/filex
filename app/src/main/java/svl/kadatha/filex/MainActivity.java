@@ -537,7 +537,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onClick(View view) {
 				clear_cache=false;
-				final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
 
@@ -562,7 +562,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onClick(View view) {
 				clear_cache=false;
-				final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
 
@@ -587,7 +587,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onClick(View view) {
 				clear_cache=false;
-				final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
 
@@ -609,7 +609,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
 
@@ -1783,7 +1783,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
-				final ProgressBarFragment pbf = ProgressBarFragment.getInstance();
+				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
 				pbf.show(fm, "");
 				drawerLayout.closeDrawer(drawer);
 
@@ -1954,7 +1954,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		boolean success;
 		InputStream inStream;
 		ZipInputStream zipInputStream;
-		final ProgressBarFragment progressbarFragment=ProgressBarFragment.getInstance();
+		final ProgressBarFragment progressbarFragment=ProgressBarFragment.newInstance();
 		ArchiveViewAsyncTask1(Uri data)
 		{
 			this.data=data;
@@ -2039,7 +2039,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		final ZipFile zipfile;
 		boolean success;
-		final ProgressBarFragment progressbarFragment=ProgressBarFragment.getInstance();
+		final ProgressBarFragment progressbarFragment=ProgressBarFragment.newInstance();
 		ArchiveViewAsyncTask(ZipFile zip_file)
 		{
 			this.zipfile=zip_file;
@@ -2116,7 +2116,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public class AsyncTaskDeleteDirectory extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final File dir;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		AsyncTaskDeleteDirectory(File f)
 		{
 			dir=f;

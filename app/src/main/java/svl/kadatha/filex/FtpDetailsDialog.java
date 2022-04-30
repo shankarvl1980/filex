@@ -79,7 +79,7 @@ public class FtpDetailsDialog extends DialogFragment {
         this.setRetainInstance(true);
         handler=new Handler();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
-        progressBarFragment=ProgressBarFragment.getInstance();
+        progressBarFragment=ProgressBarFragment.newInstance();
         progressBarFragment.show(fragmentManager,"");
         new Thread(new Runnable() {
             @Override
@@ -278,7 +278,7 @@ public class FtpDetailsDialog extends DialogFragment {
                                 print(getString(R.string.not_connected_to_network));
                                 return;
                             }
-                            progressBarFragment=ProgressBarFragment.getInstance();
+                            progressBarFragment=ProgressBarFragment.newInstance();
                             progressBarFragment.show(fragmentManager,"");
 
                             FtpPOJO ftpPOJO=ftpPOJOList.get(pos);
@@ -599,7 +599,7 @@ public class FtpDetailsDialog extends DialogFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressBarFragment=ProgressBarFragment.getInstance();
+            progressBarFragment=ProgressBarFragment.newInstance();
             progressBarFragment.show(fragmentManager,"");
         }
 

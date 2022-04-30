@@ -532,7 +532,7 @@ public class RenameFileDialog extends DialogFragment
 		{
 			// TODO: Implement this method
 			super.onPreExecute();
-			pbf=ProgressBarFragment.getInstance();
+			pbf=ProgressBarFragment.newInstance();
 			pbf.show(fragmentManager,"progressbar_dialog");
 
 		}

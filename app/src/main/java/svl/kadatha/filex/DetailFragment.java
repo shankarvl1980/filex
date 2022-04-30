@@ -230,7 +230,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						if(pbf_polling==null || pbf_polling.getDialog()==null)
 						{
-							pbf_polling=ProgressBarFragment.getInstance();
+							pbf_polling=ProgressBarFragment.newInstance();
 							pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
 						}
 
@@ -276,7 +276,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-                pbf_polling=ProgressBarFragment.getInstance();
+                pbf_polling=ProgressBarFragment.newInstance();
                 if(!archive_view)
 				{
 					pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
@@ -402,7 +402,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-                pbf_polling=ProgressBarFragment.getInstance();
+                pbf_polling=ProgressBarFragment.newInstance();
                 if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
 			    new Thread(new Runnable() {
 
@@ -731,7 +731,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								@Override
 								protected void onPreExecute() {
 									super.onPreExecute();
-									pbf=ProgressBarFragment.getInstance();
+									pbf=ProgressBarFragment.newInstance();
 									pbf.show(mainActivity.fm,null);
 								}
 

@@ -177,7 +177,7 @@ public class AppInstallAlertDialog extends DialogFragment
             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
             fragmentManager=appCompatActivity.getSupportFragmentManager();
             packageManager=appCompatActivity.getPackageManager();
-            progressBarFragment=ProgressBarFragment.getInstance();
+            progressBarFragment=ProgressBarFragment.newInstance();
             progressBarFragment.show(fragmentManager,"");
 
         }

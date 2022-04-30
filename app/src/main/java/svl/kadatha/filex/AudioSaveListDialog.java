@@ -143,7 +143,7 @@ public class AudioSaveListDialog extends DialogFragment
 						{
 							pos=getBindingAdapterPosition();
 
-							ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+							ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 							pbf.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
 							if(saveAudioListListener!=null)
 							{
@@ -231,7 +231,7 @@ public class AudioSaveListDialog extends DialogFragment
 						public void onClick(View p)
 						{
 							pos=getBindingAdapterPosition();
-							ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+							ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 							pbf.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
 							if(saveAudioListListener!=null)
 							{

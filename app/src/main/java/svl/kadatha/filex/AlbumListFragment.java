@@ -358,7 +358,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		final String list_name;
 		final List<AudioPOJO> extracted_audio_list=new ArrayList<>();
 		final List<AlbumPOJO> albumList;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		boolean list_created;
 		
 		AlbumListDetailsExtractor(List<AlbumPOJO> list,char action, String list_name)

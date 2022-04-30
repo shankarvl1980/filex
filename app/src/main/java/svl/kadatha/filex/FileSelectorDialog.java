@@ -133,7 +133,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-			pbf_polling=ProgressBarFragment.getInstance();
+			pbf_polling=ProgressBarFragment.newInstance();
 			if(fileSelectorActivity.fm==null)
 			{
 				context=getContext();
@@ -168,7 +168,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
-			pbf_polling=ProgressBarFragment.getInstance();
+			pbf_polling=ProgressBarFragment.newInstance();
 			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 
@@ -230,7 +230,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			pbf_polling=ProgressBarFragment.getInstance();
+			pbf_polling=ProgressBarFragment.newInstance();
 			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
 

@@ -1001,7 +1001,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		bundle.putString("tree_uri_path",tree_uri_path);
 		bundle.putParcelable("tree_uri",tree_uri);
-		pbf=ProgressBarFragment.getInstance();
+		pbf=ProgressBarFragment.newInstance();
 		pbf.show(fm,"");
 		emptyService=getEmptyService();
 		if(emptyService==null)
@@ -1443,7 +1443,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		String current_file_name;
 		boolean isFromInternal;
 		String size_of_files_format;
-		final ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		final FileObjectType fileObjectType;
 		DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
 		{

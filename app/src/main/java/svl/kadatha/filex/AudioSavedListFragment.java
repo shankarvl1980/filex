@@ -316,7 +316,7 @@ public class AudioSavedListFragment extends Fragment
 		ExtractAudioFromSavedListAsyncTask(List<String> audio_selected_list)
 		{
 			this.audio_selected_list=audio_selected_list;
-			pbf=ProgressBarFragment.getInstance();
+			pbf=ProgressBarFragment.newInstance();
 		}
 		
 		@Override
@@ -407,7 +407,7 @@ public class AudioSavedListFragment extends Fragment
 							}
 							else
 							{
-								ProgressBarFragment pbf=ProgressBarFragment.getInstance();
+								ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 								pbf.show(((AudioPlayerActivity)context).fm,"");
 
 								Bundle bundle=new Bundle();

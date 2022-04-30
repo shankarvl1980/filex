@@ -430,6 +430,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     {
         super.onDestroyView();
         fileModifyObserver.stopWatching();
+
     }
 
     @Override
