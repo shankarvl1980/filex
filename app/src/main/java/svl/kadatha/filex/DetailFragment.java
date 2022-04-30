@@ -121,10 +121,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
-		if(pbf_polling!=null)
+		/*
+		if(pbf_polling!=null && filled_filePOJOs)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
+		 */
 	}
 
 	@Override
@@ -204,6 +207,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
 
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
@@ -494,10 +498,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onStop() {
 		super.onStop();
 		fileModifyObserver.startWatching();
+		/*
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
+		 */
 	}
 
 	@Override
@@ -909,6 +916,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			super.onPreExecute();
 			filled_filePOJOs=false;
 			asynctask_status=AsyncTaskStatus.STARTED;
+			if(mainActivity.fm==null)
+			{
+				context=getContext();
+				mainActivity=(MainActivity)context;
+				mainActivity.fm=mainActivity.getSupportFragmentManager();
+			}
 			cancelableProgressBarDialog.show(mainActivity.fm,"");
 
 		}

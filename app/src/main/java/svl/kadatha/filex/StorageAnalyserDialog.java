@@ -73,10 +73,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         this.context=context;
         storageAnalyserActivity=(StorageAnalyserActivity)context;
         storageAnalyserActivity.addFragmentCommunicationListener(this);
+        /*
         if(cancelableProgressBarDialog!=null)
         {
             cancelableProgressBarDialog.dismissAllowingStateLoss();
         }
+
+         */
 
     }
 
@@ -412,11 +415,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public void onStop() {
         super.onStop();
         fileModifyObserver.startWatching();
-
+/*
         if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
         {
             cancelableProgressBarDialog.dismissAllowingStateLoss();
         }
+
+ */
     }
 
 

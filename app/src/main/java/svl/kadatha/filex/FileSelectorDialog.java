@@ -63,10 +63,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		this.context=context;
 		fileSelectorActivity=(FileSelectorActivity)context;
 		fileSelectorActivity.addFragmentCommunicationListener(this);
+		/*
 		if(pbf_polling!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
+		 */
 
 	}
 
@@ -302,10 +305,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public void onStop() {
 		super.onStop();
 		fileModifyObserver.startWatching();
+		/*
 		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
+		 */
 	}
 
 	@Override

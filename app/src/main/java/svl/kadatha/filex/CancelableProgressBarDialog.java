@@ -17,7 +17,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 	private String title_string="";
 	private ProgresBarFragmentCancelListener progresBarFragmentCancelListener;
 
-    CancelableProgressBarDialog() { }
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
