@@ -6,7 +6,6 @@ import android.graphics.*;
 import android.view.WindowManager.LayoutParams;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentFactory;
 
 public class ProgressBarFragment extends DialogFragment
 {
