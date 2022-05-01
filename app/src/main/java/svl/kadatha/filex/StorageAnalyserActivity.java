@@ -188,6 +188,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserDialog.mselecteditemsFilePath.size()==0)
+                {
+                    print(getString(R.string.could_not_perform_action));
+                    DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+                    return;
+                }
                 final ArrayList<String> files_selected_array=new ArrayList<>();
                 int size = storageAnalyserDialog.mselecteditemsFilePath.size();
                 for (int i = 0; i < size; ++i) {

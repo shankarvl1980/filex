@@ -41,7 +41,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_cancelable_progressbar,container,false);
 		title=v.findViewById(R.id.fragment_cancelable_pbf_title);
-        ProgressBar pb = v.findViewById(R.id.fragment_cancelable_progressbar_pb);
+        //ProgressBar pb = v.findViewById(R.id.fragment_cancelable_progressbar_pb);
 
         ViewGroup button_layout = v.findViewById(R.id.fragment_cancelable_pbf_button_layout);
 		button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));

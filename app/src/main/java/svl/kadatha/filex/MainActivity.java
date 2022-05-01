@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1525,7 +1526,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			final Bundle bundle=new Bundle();
+			if(df.mselecteditemsFilePath.size()==0)
+			{
+				print(getString(R.string.could_not_perform_action));
+				actionmode_finish(df,df.fileclickselected);
+				return;
+			}
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			final ArrayList<Integer> files_selected_index_array=new ArrayList<>();
 			int size;
