@@ -874,10 +874,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					mainActivity=(MainActivity)context;
 					mainActivity.fm=mainActivity.getSupportFragmentManager();
 				}
-				if(!archive_view)
-				{
-					pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
-				}
+				pbf_polling.show(mainActivity.fm,"");
 			}
 
 

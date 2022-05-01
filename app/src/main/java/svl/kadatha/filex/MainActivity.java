@@ -333,22 +333,30 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Bundle bundle=new Bundle();
 				ArrayList<String> files_selected_array=new ArrayList<>();
 				ArrayList<String> zipentry_selected_array=new ArrayList<>();
-				files_selected_array.add(ZIP_FILE.getAbsolutePath());
-				int size=df.mselecteditemsFilePath.size();
-				if(df.mselecteditemsFilePath.size()!=0)
+				if(ZIP_FILE!=null)
 				{
-					List<File> file_list=new ArrayList<>();
-
-					for(int i=0;i<size;++i)
+					files_selected_array.add(ZIP_FILE.getAbsolutePath());
+					int size=df.mselecteditemsFilePath.size();
+					if(df.mselecteditemsFilePath.size()!=0)
 					{
-						file_list.add(new File(df.mselecteditemsFilePath.valueAt(i)));
-					}
-					recursivefilepath(zipentry_selected_array,file_list);
-				}
+						List<File> file_list=new ArrayList<>();
 
-				ArchiveSetUpDialog unziparchiveDialog=ArchiveSetUpDialog.getInstance(files_selected_array,zipentry_selected_array,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
-				unziparchiveDialog.show(fm,null);
-				df.clearSelectionAndNotifyDataSetChanged();
+						for(int i=0;i<size;++i)
+						{
+							file_list.add(new File(df.mselecteditemsFilePath.valueAt(i)));
+						}
+						recursivefilepath(zipentry_selected_array,file_list);
+					}
+
+					ArchiveSetUpDialog unziparchiveDialog=ArchiveSetUpDialog.getInstance(files_selected_array,zipentry_selected_array,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+					unziparchiveDialog.show(fm,null);
+					df.clearSelectionAndNotifyDataSetChanged();
+				}
+				else
+				{
+					print(getString(R.string.could_not_perform_action));
+					onbackpressed(false);
+				}
 
 			}
 		});
