@@ -55,7 +55,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private String tree_uri_path="";
 	private final int request_code=5678;
 	public int file_list_size;
-
+	private AsyncTaskStatus asynctask_status;
+	private AsyncTaskFilePopulate asyncTaskFilePopulate;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -63,13 +64,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		this.context=context;
 		fileSelectorActivity=(FileSelectorActivity)context;
 		fileSelectorActivity.addFragmentCommunicationListener(this);
-		/*
-		if(pbf_polling!=null)
-		{
-			pbf_polling.dismissAllowingStateLoss();
-		}
-
-		 */
 
 	}
 
@@ -86,7 +80,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
-		AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
+		asynctask_status = AsyncTaskStatus.NOT_YET_STARTED;
 		fileclickselected=getTag();
 		if(fileclickselected==null)
 		{
@@ -124,15 +118,21 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			{
 				try {
 					currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-
 				} catch (IOException e) {
 
 				}
 			}
 		}
 
+		if(pbf_polling!=null)
+		{
+			pbf_polling.dismissAllowingStateLoss();
+		}
+
+
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
+			/*
 			pbf_polling=ProgressBarFragment.newInstance();
 			if(fileSelectorActivity.fm==null)
 			{
@@ -149,6 +149,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
 				}
 			}).start();
+
+			 */
+			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 		}
 		else
 		{
@@ -168,6 +173,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
+			/*
 			pbf_polling=ProgressBarFragment.newInstance();
 			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
@@ -179,6 +185,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				}
 			}).start();
 
+			 */
+			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
 
@@ -230,6 +239,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
+			/*
 			pbf_polling=ProgressBarFragment.newInstance();
 			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
 			new Thread(new Runnable() {
@@ -240,6 +250,10 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
 				}
 			}).start();
+
+			 */
+			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -305,13 +319,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public void onStop() {
 		super.onStop();
 		fileModifyObserver.startWatching();
-		/*
-		if(pbf_polling!=null && pbf_polling.getDialog()!=null)
-		{
-			pbf_polling.dismissAllowingStateLoss();
-		}
 
-		 */
 	}
 
 	@Override
@@ -371,6 +379,51 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			folder_empty_textview.setVisibility(View.GONE);
 		}
 	}
+
+	private class AsyncTaskFilePopulate extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
+	{
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			if(asynctask_status==AsyncTaskStatus.STARTED)
+			{
+				cancel(true);
+			}
+			else
+			{
+				asynctask_status=AsyncTaskStatus.STARTED;
+				pbf_polling=ProgressBarFragment.newInstance();
+				if(fileSelectorActivity.fm==null)
+				{
+					context=getContext();
+					fileSelectorActivity=(FileSelectorActivity) context;
+					fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
+				}
+
+				pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
+
+			}
+
+
+		}
+
+
+		@Override
+		protected Void doInBackground(Void... voids) {
+			filled_filePOJOs=false;
+			filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void unused) {
+			super.onPostExecute(unused);
+			asynctask_status=AsyncTaskStatus.COMPLETED;
+			pbf_polling.dismissAllowingStateLoss();
+		}
+	}
+
+
 
 	public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable
 	{

@@ -13,7 +13,6 @@ public class ProgressBarFragment extends DialogFragment
 
 	private static ProgressBarFragment progressBarFragment;
 
-	private ProgressBarFragment(){}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -34,20 +33,6 @@ public class ProgressBarFragment extends DialogFragment
 		return fragment;
 	}
 
-	/*
-	public static ProgressBarFragment getInstance()
-	{
-		if(progressBarFragment==null)
-		{
-			return new ProgressBarFragment();
-		}
-		else
-		{
-			return progressBarFragment;
-		}
-	}
-
-	 */
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
