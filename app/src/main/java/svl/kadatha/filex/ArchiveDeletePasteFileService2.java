@@ -268,40 +268,49 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 	public void cancelService()
 	{
-
-		switch(intent_action)
+		if(intent_action==null)
 		{
-			case "archive-zip":
-				if(fileCountSize!=null && archiveAsyncTask!=null)
-				{
-					fileCountSize.cancel(true);
-					archiveAsyncTask.cancel(true);
-				}
-				break;
-			case "archive-unzip":
-				if(unarchiveAsyncTask!=null)
-				{
-					unarchiveAsyncTask.cancel(true);
-				}
-				break;
-			case "delete":
-				if(delete_file_async_task!=null)
-				{
-					delete_file_async_task.cancel(true);
-				}
-				break;
-			case "paste-cut":
-			case "paste-copy":
-				if(cutCopyAsyncTask!=null)
-				{
-					permanent_cancel=true;
-					cutCopyAsyncTask.cancel(true);
-				}
-				break;
-			default:
-				stopSelf();
-				break;
+			stopForeground(true);
+			stopSelf();
 		}
+		else
+		{
+			switch(intent_action)
+			{
+				case "archive-zip":
+					if(fileCountSize!=null && archiveAsyncTask!=null)
+					{
+						fileCountSize.cancel(true);
+						archiveAsyncTask.cancel(true);
+					}
+					break;
+				case "archive-unzip":
+					if(unarchiveAsyncTask!=null)
+					{
+						unarchiveAsyncTask.cancel(true);
+					}
+					break;
+				case "delete":
+					if(delete_file_async_task!=null)
+					{
+						delete_file_async_task.cancel(true);
+					}
+					break;
+				case "paste-cut":
+				case "paste-copy":
+					if(cutCopyAsyncTask!=null)
+					{
+						permanent_cancel=true;
+						cutCopyAsyncTask.cancel(true);
+					}
+					break;
+				default:
+					stopForeground(true);
+					stopSelf();
+					break;
+			}
+		}
+		SERVICE_COMPLETED=true;
 		Global.SET_OTHER_FILE_PERMISSION(dest_other_file_permission,dest_folder);
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
