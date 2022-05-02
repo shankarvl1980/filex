@@ -9,8 +9,10 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,6 +37,9 @@ public class InstaCropperActivity extends AppCompatActivity {
     public static final String EXTRA_OUTPUT_QUALITY = "output_quality";
 
     public static final String EXTRA_FILE_NAME="file_name";
+
+    private boolean clear_cache;
+    private LocalBroadcastManager localBroadcastManager;
 
     public static Intent getIntent(Context context, Uri src, Uri dst, String file_name, int maxWidth, int outputQuality) {
         return getIntent(
@@ -92,6 +97,7 @@ public class InstaCropperActivity extends AppCompatActivity {
 
     private Uri mOutputUri;
     private String file_name;
+    public static final String ACTIVITY_NAME="INSTA_CROPPER_ACTIVITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +113,7 @@ public class InstaCropperActivity extends AppCompatActivity {
         });
 
         mInstaCropper = findViewById(R.id.instacropper);
-
+        localBroadcastManager= LocalBroadcastManager.getInstance(this);
         Intent intent = getIntent();
 
         Uri uri = intent.getData();
@@ -204,5 +210,43 @@ public class InstaCropperActivity extends AppCompatActivity {
         }
 
     };
+
+
+    @Override
+    protected void onStart()
+    {
+        // TODO: Implement this method
+        super.onStart();
+        clear_cache=true;
+        Global.WORKOUT_AVAILABLE_SPACE();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("clear_cache",clear_cache);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        clear_cache=savedInstanceState.getBoolean("clear_cache");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+        {
+            clearCache();
+        }
+    }
+
+    public void clearCache()
+    {
+        Global.HASHMAP_FILE_POJO.clear();
+        Global.HASHMAP_FILE_POJO_FILTERED.clear();
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+    }
 
 }

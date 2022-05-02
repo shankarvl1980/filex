@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,7 +40,9 @@ public class AppManagerActivity extends BaseActivity{
     private Group search_toolbar;
     public EditText search_edittext;
     private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
-
+    private boolean clear_cache;
+    private LocalBroadcastManager localBroadcastManager;
+    public static final String ACTIVITY_NAME="APP_MANAGER_ACTIVITY";
 
 
     @Override
@@ -49,7 +52,7 @@ public class AppManagerActivity extends BaseActivity{
         context=this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         fm=getSupportFragmentManager();
-
+        localBroadcastManager= LocalBroadcastManager.getInstance(context);
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);
         keyBoardUtil=new KeyBoardUtil(containerLayout);
         search_toolbar=findViewById(R.id.app_manager_search_toolbar);
@@ -223,6 +226,46 @@ public class AppManagerActivity extends BaseActivity{
             }
         }
     }
+
+    @Override
+    protected void onStart()
+    {
+        // TODO: Implement this method
+        super.onStart();
+        clear_cache=true;
+        Global.WORKOUT_AVAILABLE_SPACE();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("clear_cache",clear_cache);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        clear_cache=savedInstanceState.getBoolean("clear_cache");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+        {
+            clearCache();
+        }
+    }
+
+    public void clearCache()
+    {
+        Global.HASHMAP_FILE_POJO.clear();
+        Global.HASHMAP_FILE_POJO_FILTERED.clear();
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+    }
+
+
+
 
     @Override
     public void onBackPressed() {

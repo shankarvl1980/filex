@@ -6,6 +6,9 @@ import android.widget.*;
 import android.view.*;
 import android.widget.AbsListView.*;
 
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.io.*;
 
 public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
@@ -24,6 +27,9 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	private String intent_action;
 	private FileObjectType sourceFileObjectType;
 	private ProgressBar cancelProgressBar;
+	private boolean clear_cache;
+	private LocalBroadcastManager localBroadcastManager;
+	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_3";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -33,6 +39,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
 		setFinishOnTouchOutside(false);
+		localBroadcastManager= LocalBroadcastManager.getInstance(this);
         TextView dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
         TableRow to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
         TextView from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);
@@ -315,6 +322,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		super.onSaveInstanceState(outState);
 		outState.putString("intent_action",intent_action);
 		outState.putSerializable("sourceFileObjectType",sourceFileObjectType);
+		outState.putBoolean("clear_cache",clear_cache);
 	}
 
 	@Override
@@ -325,6 +333,38 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		unbindService(serviceConnection);
 		PROGRESS_ACTIVITY_SHOWN=false;
 	}
+
+	@Override
+	protected void onStart()
+	{
+		// TODO: Implement this method
+		super.onStart();
+		clear_cache=true;
+		Global.WORKOUT_AVAILABLE_SPACE();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		clear_cache=savedInstanceState.getBoolean("clear_cache");
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if(!isFinishing() && !isChangingConfigurations() && clear_cache)
+		{
+			clearCache();
+		}
+	}
+
+	public void clearCache()
+	{
+		Global.HASHMAP_FILE_POJO.clear();
+		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
+	}
+
 
 	private void print(String msg)
 	{
