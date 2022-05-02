@@ -15,11 +15,14 @@ public class SAFPermissionHelperDialog extends DialogFragment
     private SafPermissionHelperListener safPermissionHelperListener;
     private boolean forUSB;
 
-    SAFPermissionHelperDialog(){}
-    SAFPermissionHelperDialog(boolean forUSB)
+    //SAFPermissionHelperDialog(){}
+    /*
+	SAFPermissionHelperDialog(boolean forUSB)
 	{
 		this.forUSB=forUSB;
 	}
+
+     */
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)

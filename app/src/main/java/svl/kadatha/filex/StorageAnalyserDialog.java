@@ -864,7 +864,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(tree_uri_path.equals(""))
         {
-            SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog(true);
+            SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
             safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
             {
                 public void onOKBtnClicked()

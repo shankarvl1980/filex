@@ -826,7 +826,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog(true);
+			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()

@@ -185,6 +185,14 @@ public class InstaCropperView extends View {
 
         new svl.kadatha.filex.AsyncTask<Void, Void, Bitmap>() {
 
+            ProgressBarFragment pbf;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pbf=ProgressBarFragment.newInstance();
+                pbf.show(((InstaCropperActivity)getContext()).getSupportFragmentManager(),"");
+            }
+
             @Override
             protected Bitmap doInBackground(Void... params) {
                 int actualWidth = actualRight - actualLeft;
@@ -287,12 +295,16 @@ public class InstaCropperView extends View {
                         break;
                 }
 
-                return cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
+                //return cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
+                Bitmap bitmap=cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
+                callback.onBitmapReady(bitmap);
+                return bitmap;
             }
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                callback.onBitmapReady(bitmap);
+                //callback.onBitmapReady(bitmap);
+                pbf.dismissAllowingStateLoss();
             }
 
         }.execute();

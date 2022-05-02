@@ -493,39 +493,68 @@ public class ImageViewFragment extends Fragment
 		public void onActivityResult(ActivityResult result) {
 			if(result.getResultCode()== Activity.RESULT_OK)
 			{
-				ProgressBarFragment pbf = ProgressBarFragment.newInstance();
-				pbf.show(((ImageViewActivity)context).fm,"");
-				Uri uri=result.getData().getData();
-				String file_name=result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
-				File f=new File(((ImageViewActivity)context).CacheDir,file_name);
-				WallpaperManager wm= WallpaperManager.getInstance(context);
-
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					if(wm.isWallpaperSupported() && wm.isSetWallpaperAllowed())
-						try
+				new svl.kadatha.filex.AsyncTask<Void,Void,Void>()
+				{
+					ProgressBarFragment pbf;
+					@Override
+					protected void onPreExecute() {
+						super.onPreExecute();
+						pbf=ProgressBarFragment.newInstance();
+						if(context==null)
 						{
-							wm.setStream(context.getContentResolver().openInputStream(uri));
-							print(getString(R.string.set_as_wallpaper));
+							context=getContext();
 						}
-						catch(IOException e){}
-						finally
-						{
-							if(f.exists())
+						pbf.show(((ImageViewActivity)context).fm,"");
+					}
+
+					@Override
+					protected Void doInBackground(Void... voids) {
+						Uri uri=result.getData().getData();
+						String file_name=result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
+						File f=new File(((ImageViewActivity)context).CacheDir,file_name);
+						WallpaperManager wm= WallpaperManager.getInstance(context);
+
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+							if(wm.isWallpaperSupported() && wm.isSetWallpaperAllowed())
+								try
+								{
+									wm.setStream(context.getContentResolver().openInputStream(uri));
+									((ImageViewActivity) context).runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+											print(getString(R.string.set_as_wallpaper));
+										}
+									});
+
+								}
+								catch(IOException e){}
+								finally
+								{
+									if(f.exists())
+									{
+										f.delete();
+									}
+								}
+							else
 							{
-								f.delete();
+
+								if(f.exists())
+								{
+									f.delete();
+								}
+
 							}
 						}
-					else
-					{
-
-						if(f.exists())
-						{
-							f.delete();
-						}
-
+						return null;
 					}
-				}
-				pbf.dismissAllowingStateLoss();
+
+					@Override
+					protected void onPostExecute(Void unused) {
+						super.onPostExecute(unused);
+						pbf.dismissAllowingStateLoss();
+					}
+				}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+
 			}
 			else
 			{

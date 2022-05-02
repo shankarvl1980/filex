@@ -138,7 +138,34 @@ public class InstaCropperActivity extends AppCompatActivity {
                 return;
             }
 
+            try {
+                OutputStream os = getContentResolver().openOutputStream(mOutputUri);
+
+                bitmap.compress(Bitmap.CompressFormat.JPEG, mOutputQuality, os);
+
+                os.flush();
+                os.close();
+
+                Intent data = new Intent();
+                data.setData(mOutputUri);
+                data.putExtra(EXTRA_FILE_NAME,file_name);
+                setResult(RESULT_OK, data);
+            } catch (IOException e)
+            {
+                setResult(RESULT_CANCELED);
+            }
+            finish();
+            return;
+
+/*
             new svl.kadatha.filex.AsyncTask<Void, Void, Boolean>() {
+                ProgressBarFragment pbf;
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    pbf=ProgressBarFragment.newInstance();
+                    pbf.show(getSupportFragmentManager(),"");
+                }
 
                 @Override
                 protected Boolean doInBackground(Void... params) {
@@ -167,11 +194,13 @@ public class InstaCropperActivity extends AppCompatActivity {
                     else {
                         setResult(RESULT_CANCELED);
                     }
-
+                    pbf.dismissAllowingStateLoss();
                     finish();
                 }
 
             }.execute();
+
+ */
         }
 
     };
