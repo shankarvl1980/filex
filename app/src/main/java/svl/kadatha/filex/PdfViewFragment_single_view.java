@@ -421,6 +421,7 @@ public class PdfViewFragment_single_view extends Fragment
 
     public void seekSAFPermission()
     {
+        ((PdfViewActivity)context).clear_cache=false;
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         activityResultLauncher.launch(intent);
     }
@@ -662,7 +663,7 @@ public class PdfViewFragment_single_view extends Fragment
             if(view !=null)
             {
                 FrameLayout frameLayout=(FrameLayout) view;
-                ImageView imageView= (TouchImageView) frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
+                ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
                 GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
                 view.setTag("loaded");
             }

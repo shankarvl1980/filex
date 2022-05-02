@@ -426,6 +426,7 @@ public class PdfViewFragment_view_container extends Fragment
 
     public void seekSAFPermission()
     {
+        ((PdfViewActivity)context).clear_cache=false;
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         activityResultLauncher.launch(intent);
     }

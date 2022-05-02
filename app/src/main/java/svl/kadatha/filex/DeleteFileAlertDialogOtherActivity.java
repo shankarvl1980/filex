@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -208,8 +209,29 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 	public void seekSAFPermission()
 	{
+		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+		if(appCompatActivity instanceof VideoViewActivity)
+		{
+			((VideoViewActivity)appCompatActivity).clear_cache=false;
+		}
+		else if(appCompatActivity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)appCompatActivity).clear_cache=false;
+		}
+		else if(appCompatActivity instanceof FileEditorActivity)
+		{
+			((FileEditorActivity)appCompatActivity).clear_cache=false;
+		}
+		else if(appCompatActivity instanceof ImageViewActivity)
+		{
+			((ImageViewActivity)appCompatActivity).clear_cache=false;
+		}
+		else if(appCompatActivity instanceof PdfViewActivity)
+		{
+			((PdfViewActivity)appCompatActivity).clear_cache=false;
+		}
+
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, request_code);
 		activityResultLauncher.launch(intent);
 	}
 
@@ -231,28 +253,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 		}
 	}
 });
-
-/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData)
-	{
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			//saf_permission_requested=false;
-			okbutton.callOnClick();
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
- */
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{

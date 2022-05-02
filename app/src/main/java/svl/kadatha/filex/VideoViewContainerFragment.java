@@ -321,6 +321,7 @@ public class VideoViewContainerFragment extends Fragment
 
 	public void seekSAFPermission()
 	{
+		((VideoViewActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		activityResultLauncher.launch(intent);
 	}

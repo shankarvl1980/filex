@@ -291,6 +291,7 @@ public class ImageViewFragment extends Fragment
 							} catch (FileNotFoundException e) {
 								//aspect_ratio=0;
 							}
+							((ImageViewActivity)context).clear_cache=false;
 							File tempFile=new File(((ImageViewActivity)context).CacheDir,currently_shown_file.getName());
 							Intent intent=InstaCropperActivity.getIntent(context,uri,FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",tempFile),currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
 							activityResultLauncher_crop_request.launch(intent);
@@ -462,6 +463,7 @@ public class ImageViewFragment extends Fragment
 
 	 public void seekSAFPermission()
 	 {
+		 ((ImageViewActivity)context).clear_cache=false;
 	 	Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		 activityResultLauncher_SAF_permission.launch(intent);
 	 }
