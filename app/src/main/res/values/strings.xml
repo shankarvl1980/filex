@@ -340,9 +340,10 @@
 	<string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
 	<string name="press_again_to_close_activity">press again to close the activity</string>
 	<string name="volume_colon">Volume:</string>
+    <string name="cannot_open_here">cannot open here</string>
 
 
-	<string-array name="library_categories">
+    <string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

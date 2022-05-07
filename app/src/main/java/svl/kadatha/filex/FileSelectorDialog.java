@@ -132,25 +132,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-			/*
-			pbf_polling=ProgressBarFragment.newInstance();
-			if(fileSelectorActivity.fm==null)
-			{
-				context=getContext();
-				fileSelectorActivity=(FileSelectorActivity) context;
-				fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
-			}
-			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
-			new Thread(new Runnable() {
 
-				@Override
-				public void run() {
-					filled_filePOJOs=false;
-					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-				}
-			}).start();
-
-			 */
 			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -173,19 +155,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
-			/*
-			pbf_polling=ProgressBarFragment.newInstance();
-			pbf_polling.show(fileSelectorActivity.fm, ""); // don't show when archive view to avoid double pbf
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					filled_filePOJOs=false;
-					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-				}
-			}).start();
-
-			 */
 			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
@@ -239,19 +208,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			/*
-			pbf_polling=ProgressBarFragment.newInstance();
-			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					filled_filePOJOs=false;
-					filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-				}
-			}).start();
-
-			 */
 			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			new Thread(new Runnable() {

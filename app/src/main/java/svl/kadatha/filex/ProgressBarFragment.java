@@ -26,7 +26,6 @@ public class ProgressBarFragment extends DialogFragment
 	public static ProgressBarFragment newInstance() {
 
 		Bundle args = new Bundle();
-
 		ProgressBarFragment fragment = new ProgressBarFragment();
 		fragment.setArguments(args);
 		return fragment;

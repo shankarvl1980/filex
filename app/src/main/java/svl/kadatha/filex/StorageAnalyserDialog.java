@@ -143,36 +143,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
 
         if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-
-            /*
-            cancelableProgressBarDialog=new CancelableProgressBarDialog();
-            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                @Override
-                public void on_cancel_progress() {
-                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onClickCancel();
-                }
-            });
-
-            if(storageAnalyserActivity.fm==null)
-            {
-                context=getContext();
-                storageAnalyserActivity=(StorageAnalyserActivity) context;
-                storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
-            }
-
-            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    filled_filePOJOs=false;
-                    filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-                }
-            }).start();
-
-             */
             asyncTaskFilePopulate=new AsyncTaskFilePopulate();
             asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -198,27 +168,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             {
                 cancelableProgressBarDialog.dismissAllowingStateLoss();
             }
-            /*
-            cancelableProgressBarDialog=new CancelableProgressBarDialog();
-            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                @Override
-                public void on_cancel_progress() {
-                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onClickCancel();
-                }
-            });
-            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    filled_filePOJOs=false;
-                    filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-                }
-            }).start();
-
-             */
             asyncTaskFilePopulate=new AsyncTaskFilePopulate();
             asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -304,27 +253,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
-            /*
-            cancelableProgressBarDialog=new CancelableProgressBarDialog();
-            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                @Override
-                public void on_cancel_progress() {
-                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onClickCancel();
-                }
-            });
-            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-            new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    filled_filePOJOs=false;
-                    filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-                }
-            }).start();
-
-             */
             asyncTaskFilePopulate=new AsyncTaskFilePopulate();
             asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             new Thread(new Runnable() {
@@ -759,6 +688,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             file_ext=file_name.substring(idx+1);
         }
+
+        if(file_ext.matches("(?i)zip"))
+        {
+            print(getString(R.string.cannot_open_here));
+            return;
+        }
+
 
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {

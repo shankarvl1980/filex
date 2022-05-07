@@ -1738,7 +1738,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 					}
 
 				}
-
+				copied_files_name.clear();
+				copied_source_file_path_list.clear();
 			}
 			return copy_result;
 		}

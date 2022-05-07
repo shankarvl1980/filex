@@ -207,38 +207,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-				/*
-			    if(mainActivity.fm==null)
-				{
-					context=getContext();
-					mainActivity=(MainActivity)context;
-					mainActivity.fm=mainActivity.getSupportFragmentManager();
-				}
-				else
-				{
-					if(!archive_view)
-					{
-						if(pbf_polling==null || pbf_polling.getDialog()==null)
-						{
-							pbf_polling=ProgressBarFragment.newInstance();
-							pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
-						}
 
-					}
-
-				}
-
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						filled_filePOJOs=false;
-						filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-
-					}
-				}).start();
-
-			     */
                 asyncTaskFilePopulate=new AsyncTaskFilePopulate();
                 asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 			}
@@ -270,23 +239,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-                /*
-			    pbf_polling=ProgressBarFragment.newInstance();
-                if(!archive_view)
-				{
-					pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
-				}
-
-			    new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						filled_filePOJOs=false;
-						filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-					}
-				}).start();
-
-                 */
                 asyncTaskFilePopulate=new AsyncTaskFilePopulate();
                 asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 			}
@@ -401,19 +353,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-                /*
-			    pbf_polling=ProgressBarFragment.newInstance();
-                if(!archive_view)pbf_polling.show(mainActivity.fm,""); // don't show when archive view to avoid double pbf
-			    new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						filled_filePOJOs=false;
-						filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-					}
-				}).start();
-
-                 */
                 asyncTaskFilePopulate=new AsyncTaskFilePopulate();
                 asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 			}
