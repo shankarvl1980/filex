@@ -1,34 +1,25 @@
 package svl.kadatha.filex;
 import android.content.Context;
 import android.os.*;
-import android.util.Log;
 import android.view.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 import android.view.WindowManager.LayoutParams;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 
 public class ProgressBarFragment extends DialogFragment
 {
 
 	public static String TAG="progress_bar_fragment";
-	private static ProgressBarFragment progressBarFragment;
-	private Context context;
-	private AppCompatActivity appCompatActivity;
-
 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		this.context=getContext();
-		appCompatActivity=((AppCompatActivity) context);
+		//Context context = getContext();
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setCancelable(false);

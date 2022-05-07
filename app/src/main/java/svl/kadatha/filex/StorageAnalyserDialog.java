@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -982,7 +981,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 }
 
                 cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-                Log.d("shankar", "cancelable progress bar shown again");
+                //Log.d("shankar", "cancelable progress bar shown again");
             }
         }
 
