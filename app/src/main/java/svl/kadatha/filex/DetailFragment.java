@@ -196,20 +196,23 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			pbf_polling.dismissAllowingStateLoss();
 		}
 
-
-
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-			else
-			{
+				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
 
-                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-                asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+				else
+				{
+
+					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+				}
 			}
+
 		}
 		else
 		{
@@ -231,15 +234,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-			else
-			{
-                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-                asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+				else
+				{
+
+					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+				}
 			}
 
 		}
@@ -345,15 +353,21 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-			else
-			{
-                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-                asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+				else
+				{
+
+					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+
 			}
 			new Thread(new Runnable() {
 				@Override
@@ -368,7 +382,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
 				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -793,25 +807,24 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
     	@Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(asynctask_status==AsyncTaskStatus.STARTED)
+			asynctask_status=AsyncTaskStatus.STARTED;
+			pbf_polling=ProgressBarFragment.newInstance();
+			if(mainActivity.fm==null)
 			{
-				cancel(true);
+				context=getContext();
+				mainActivity=(MainActivity)context;
+				mainActivity.fm=mainActivity.getSupportFragmentManager();
 			}
-            else
-			{
-				asynctask_status=AsyncTaskStatus.STARTED;
-				pbf_polling=ProgressBarFragment.newInstance();
-				if(mainActivity.fm==null)
-				{
-					context=getContext();
-					mainActivity=(MainActivity)context;
-					mainActivity.fm=mainActivity.getSupportFragmentManager();
-				}
-				pbf_polling.show(mainActivity.fm,"");
-			}
+			pbf_polling.show(mainActivity.fm,"");
         }
 
-
+		@Override
+		protected void onCancelled(Void unused) {
+			super.onCancelled(unused);
+			asynctask_status=AsyncTaskStatus.COMPLETED;
+			pbf_polling.dismissAllowingStateLoss();
+			filled_filePOJOs=true;
+		}
 
 		@Override
         protected Void doInBackground(Void... voids) {
@@ -856,23 +869,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			// TODO: Implement this method
 			super.onPreExecute();
-			if(asynctask_status==AsyncTaskStatus.STARTED)
+			filled_filePOJOs=false;
+			asynctask_status=AsyncTaskStatus.STARTED;
+			if(mainActivity.fm==null)
 			{
-				cancel(true);
+				context=getContext();
+				mainActivity=(MainActivity)context;
+				mainActivity.fm=mainActivity.getSupportFragmentManager();
 			}
-			else
-			{
-				filled_filePOJOs=false;
-				asynctask_status=AsyncTaskStatus.STARTED;
-				if(mainActivity.fm==null)
-				{
-					context=getContext();
-					mainActivity=(MainActivity)context;
-					mainActivity.fm=mainActivity.getSupportFragmentManager();
-				}
-				cancelableProgressBarDialog.show(mainActivity.fm,"");
-
-			}
+			cancelableProgressBarDialog.show(mainActivity.fm,"");
 
 		}
 

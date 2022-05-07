@@ -386,7 +386,7 @@ public class PdfViewFragment_single_view extends Fragment
                     view_pager.setCurrentItem(image_selected_idx);
                     selected_item_sparseboolean.put(image_selected_idx,true);
                     picture_selector_adapter=new PictureSelectorAdapter(list_pdf_pages);
-
+                    lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
                     recyclerview.setLayoutManager(lm);
                     recyclerview.setAdapter(picture_selector_adapter);
                     lm.scrollToPositionWithOffset(image_selected_idx,-preview_image_offset);

@@ -145,8 +145,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
 
         if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-            asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-            asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(asynctask_status!=AsyncTaskStatus.STARTED)
+            {
+                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+                asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
         }
         else
         {
@@ -166,8 +170,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             local_activity_delete=false;
             modification_observed=false;
-            asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-            asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(asynctask_status!=AsyncTaskStatus.STARTED)
+            {
+                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+                asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
         }
         View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
         fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
@@ -252,8 +260,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             modification_observed=false;
             local_activity_delete=false;
 
-            asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-            asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(asynctask_status!=AsyncTaskStatus.STARTED)
+            {
+                asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+                asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -420,34 +432,28 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(asynctask_status==AsyncTaskStatus.STARTED)
-            {
-                cancel(true);
-            }
-            else
-            {
-                asynctask_status=AsyncTaskStatus.STARTED;
-                cancelableProgressBarDialog=new CancelableProgressBarDialog();
-                cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-                cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                    @Override
-                    public void on_cancel_progress() {
-                        if(asyncTaskFilePopulate!=null) asyncTaskFilePopulate.cancel(true);
-                        if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                        storageAnalyserActivity.onClickCancel();
-                    }
-                });
-
-                if(storageAnalyserActivity.fm==null)
-                {
-                    context=getContext();
-                    storageAnalyserActivity=(StorageAnalyserActivity) context;
-                    storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
+            asynctask_status=AsyncTaskStatus.STARTED;
+            cancelableProgressBarDialog=new CancelableProgressBarDialog();
+            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
+                @Override
+                public void on_cancel_progress() {
+                    if(asyncTaskFilePopulate!=null) asyncTaskFilePopulate.cancel(true);
+                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                    storageAnalyserActivity.onClickCancel();
                 }
+            });
 
-                cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
+            if(storageAnalyserActivity.fm==null)
+            {
+                context=getContext();
+                storageAnalyserActivity=(StorageAnalyserActivity) context;
+                storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
             }
+
+            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
         }
+
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -476,8 +482,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 File[] file_array;
                 if((file_array=file.listFiles())!=null)
                 {
-
-
                     int size=file_array.length;
                     for(int i=0;i<size;++i)
                     {
@@ -999,6 +1003,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         @Override
         protected Void doInBackground(Void... voids) {
+            filled_file_size=false;
             filled_file_size=fill_file_size(filePOJOS, final_storage_space);
             return null;
         }

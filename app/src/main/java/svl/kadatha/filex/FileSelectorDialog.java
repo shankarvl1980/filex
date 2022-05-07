@@ -132,9 +132,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-
-			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+				asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
 
 		}
 		else
@@ -155,8 +157,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			local_activity_delete=false;
 			modification_observed=false;
-			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+				asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
+
 		}
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
 
@@ -208,8 +214,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-			asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+				asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			}
+
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -341,26 +351,26 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			if(asynctask_status==AsyncTaskStatus.STARTED)
+			asynctask_status=AsyncTaskStatus.STARTED;
+			pbf_polling=ProgressBarFragment.newInstance();
+			if(fileSelectorActivity.fm==null)
 			{
-				cancel(true);
+				context=getContext();
+				fileSelectorActivity=(FileSelectorActivity) context;
+				fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
 			}
-			else
-			{
-				asynctask_status=AsyncTaskStatus.STARTED;
-				pbf_polling=ProgressBarFragment.newInstance();
-				if(fileSelectorActivity.fm==null)
-				{
-					context=getContext();
-					fileSelectorActivity=(FileSelectorActivity) context;
-					fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
-				}
 
-				pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
+			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
 
-			}
 		}
 
+		@Override
+		protected void onCancelled(Void unused) {
+			super.onCancelled(unused);
+			asynctask_status=AsyncTaskStatus.COMPLETED;
+			pbf_polling.dismissAllowingStateLoss();
+			filled_filePOJOs=true;
+		}
 
 		@Override
 		protected Void doInBackground(Void... voids) {

@@ -420,6 +420,7 @@ public class ImageViewFragment extends Fragment
 					current_image_tv.setText(file_selected_idx+1+"/"+total_images);
 					selected_item_sparseboolean.put(file_selected_idx,true);
 					picture_selector_adapter=new PictureSelectorAdapter(album_file_pojo_list);
+					lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 					recyclerview.setLayoutManager(lm);
 					recyclerview.setAdapter(picture_selector_adapter);
 					lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
