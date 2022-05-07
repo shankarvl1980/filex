@@ -45,7 +45,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public String fileclickselected;
 	public FileObjectType fileObjectType;
 	public UsbFile currentUsbFile;
-	private static ProgressBarFragment pbf_polling;
+	private ProgressBarFragment pbf_polling;
 	public TextView folder_selected_textview;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
@@ -359,8 +359,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
 
 			}
-
-
 		}
 
 

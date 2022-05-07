@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.apache.commons.net.ftp.FTPFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -164,10 +167,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             local_activity_delete=false;
             modification_observed=false;
-            if(cancelableProgressBarDialog!=null)
-            {
-                cancelableProgressBarDialog.dismissAllowingStateLoss();
-            }
             asyncTaskFilePopulate=new AsyncTaskFilePopulate();
             asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -319,8 +318,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     filePOJO_list=filePOJOS;
                     totalFilePOJO_list_Size=totalFilePOJO_list.size();
                     file_list_size=filePOJO_list.size();
-                    storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
-                    storageAnalyserActivity.file_number.setText(mselecteditems.size()+"/"+file_list_size);
+                    if(storageAnalyserActivity!=null)
+                    {
+                        storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
+                        storageAnalyserActivity.file_number.setText(mselecteditems.size()+"/"+file_list_size);
+                    }
+
                     Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                     adapter=new StorageAnalyserAdapter();
                     set_adapter();
@@ -444,16 +447,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 }
 
                 cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-
             }
-
         }
-
 
         @Override
         protected Void doInBackground(Void... voids) {
             filled_filePOJOs=false;
-            filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
+            filled_filePOJOs=FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
             return null;
         }
 
@@ -461,16 +461,128 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            asynctask_status=AsyncTaskStatus.COMPLETED;
             filled_filePOJOs=true;
         }
+
+        private boolean FILL_FILEPOJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
+                                            String fileclickselected,UsbFile usbFile ,boolean archive_view)
+        {
+
+            filePOJOS.clear(); filePOJOS_filtered.clear();
+            String other_permission_string = null;
+            File file=new File(fileclickselected);
+
+            if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+            {
+                File[] file_array;
+                if((file_array=file.listFiles())!=null)
+                {
+
+
+                    int size=file_array.length;
+                    for(int i=0;i<size;++i)
+                    {
+                        if(isCancelled())
+                        {
+                            return true;
+                        }
+                        File f=file_array[i];
+                        FilePOJO filePOJO =FilePOJOUtil.MAKE_FilePOJO(f,true,archive_view,fileObjectType);
+                        if(!filePOJO.getName().startsWith("."))
+                        {
+
+                            filePOJOS_filtered.add(filePOJO);
+                        }
+
+                        filePOJOS.add(filePOJO);
+
+                    }
+
+                }
+            }
+            else if(fileObjectType==FileObjectType.USB_TYPE)
+            {
+                if(MainActivity.usbFileRoot==null)
+                {
+                    return true;
+                }
+                else
+                {
+                    UsbFile[] file_array;
+                    try {
+                        if(usbFile==null)
+                        {
+                            usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
+                        }
+                        file_array=usbFile.listFiles();
+                        int size=file_array.length;
+                        for(int i=0;i<size;++i)
+                        {
+                            if(isCancelled())
+                            {
+                                return true;
+                            }
+                            UsbFile f=file_array[i];
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+
+                        }
+
+                    } catch (IOException e) {
+                        MainActivity.usbFileRoot=null;
+                        return true;
+                    }
+                }
+            }
+            else if(fileObjectType==FileObjectType.FTP_TYPE)
+            {
+                if(!Global.CHECK_FTP_SERVER_CONNECTED())
+                {
+                    return true;
+                }
+                else
+                {
+                    FTPFile[] file_array;
+                    try {
+
+                        file_array=MainActivity.FTP_CLIENT.listFiles(fileclickselected);
+                        int size=file_array.length;
+                        for(int i=0;i<size;++i)
+                        {
+                            if(isCancelled())
+                            {
+                                return true;
+                            }
+                            FTPFile f=file_array[i];
+                            String name=f.getName();
+                            String path=(fileclickselected.endsWith(File.separator) ? fileclickselected+name : fileclickselected+File.separator+name);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,fileObjectType,path);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+
+                        }
+
+                    } catch (IOException e) {
+                        return true;
+                    }
+                }
+            }
+
+            Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
+            return true;
+        }
+
+
+
 
     }
 
 
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder>
     {
-        final StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
+
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
@@ -569,6 +681,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                     if(size==0)
                     {
+                        final StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
                         storageAnalyserActivity.DeselectAllAndAdjustToolbars(sad,sad.fileclickselected);
                     }
                 }
@@ -847,6 +960,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             if(cancelableProgressBarDialog==null)
             {
                 cancelableProgressBarDialog=new CancelableProgressBarDialog();
@@ -868,7 +982,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 }
 
                 cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-
+                Log.d("shankar", "cancelable progress bar shown again");
             }
         }
 
@@ -877,6 +991,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             super.onCancelled(aVoid);
             filled_file_size=true;
             FilePOJOUtil.SET_HASHMAP_FILE_POJO_SIZE_NULL(fileclickselected,fileObjectType);
+            asynctask_status=AsyncTaskStatus.COMPLETED;
             if(cancelableProgressBarDialog!=null)
             {
                 cancelableProgressBarDialog.dismissAllowingStateLoss();
@@ -892,6 +1007,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            asynctask_status=AsyncTaskStatus.COMPLETED;
             if(cancelableProgressBarDialog!=null)
             {
                 cancelableProgressBarDialog.dismissAllowingStateLoss();

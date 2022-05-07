@@ -33,12 +33,19 @@ public class CancelableProgressBarDialog extends DialogFragment
 		setCancelable(false);
 		setRetainInstance(true);
 
+
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
+		if(context==null)
+		{
+			dismissAllowingStateLoss();
+			return null;
+
+		}
 		View v=inflater.inflate(R.layout.fragment_cancelable_progressbar,container,false);
 		title=v.findViewById(R.id.fragment_cancelable_pbf_title);
         //ProgressBar pb = v.findViewById(R.id.fragment_cancelable_progressbar_pb);

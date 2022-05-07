@@ -101,7 +101,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private final int request_code=487;
 	private Uri tree_uri;
 	private String tree_uri_path="";
-	private static ProgressBarFragment pbf_polling;
+	private ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
@@ -810,11 +810,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 				pbf_polling.show(mainActivity.fm,"");
 			}
-
-
         }
 
-        @Override
+
+
+		@Override
         protected Void doInBackground(Void... voids) {
             filled_filePOJOs=false;
             filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
