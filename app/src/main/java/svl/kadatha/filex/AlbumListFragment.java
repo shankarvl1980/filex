@@ -54,7 +54,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 	public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 	public List<AlbumPOJO> album_selected_array=new ArrayList<>();
-	public static Bitmap SELECTED_ALBUM_ART;
+	//public static Bitmap SELECTED_ALBUM_ART;
 	private List<AlbumPOJO> album_selected_pojo_copy;
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
@@ -226,8 +226,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
 					String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
 					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					Bitmap albumart=null;//Global.GET_RESIZED_BITMAP(album_path,Global.IMAGEVIEW_DIMENSION_LARGE_LIST);
-					album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,albumart));
+					album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
 				}
 				total_album_list=album_list;
 			}
@@ -398,7 +397,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 						if(new File(data).exists())
 						{
-							extracted_audio_list.add(new AudioPOJO(id,data,title,album,artist,duration, null,FileObjectType.FILE_TYPE));
+							extracted_audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
 						}
 					}
 				}
@@ -498,8 +497,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				else 
 				{
 					AlbumPOJO album=album_list.get(pos);
-					SELECTED_ALBUM_ART=null;
-					SELECTED_ALBUM_ART=album.getAlbumArt();
 					Bundle bundle=new Bundle();
 					bundle.putString("albumID",album.getId());
 					bundle.putString("album_name",album.getAlbumName());
@@ -596,9 +593,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			String album_name=album.getAlbumName();
 			String no_of_songs=getString(R.string.tracks_colon)+" "+album.getNoOfSongs();
 			String artist=getString(R.string.artists_colon)+" "+album.getArtist();
-			Bitmap album_art=album.getAlbumArt();
 			boolean item_selected=mselecteditems.get(p2,false);
-			p1.view.setData(album_art,album_name,no_of_songs,artist,item_selected);
+			p1.view.setData(album_name,no_of_songs,artist,item_selected);
 			p1.view.setSelected(item_selected);
 
 		}
@@ -850,17 +846,9 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		}
 
 
-		public void setData(Bitmap art,String album,String duration,String artist, boolean item_selected)
+		public void setData(String album,String duration,String artist, boolean item_selected)
 		{
-			if(art==null)
-			{
-				albumimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
-			}
-			else
-			{
-				albumimageview.setImageBitmap(art);
-			}
-			
+			albumimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
 			albumtextview.setText(album);
 			album_select_indicator.setVisibility(item_selected  ? VISIBLE : INVISIBLE);
 			no_of_songs_textview.setText(duration);

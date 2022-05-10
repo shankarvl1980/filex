@@ -221,7 +221,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	}
 
 
-	public void setData(String title,String album,String duration,String artist,Bitmap art,boolean item_selected)
+	public void setData(String title,String album,String duration,String artist,boolean item_selected)
 	{
 
 		titletextview.setText(title);
@@ -229,15 +229,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		albumtextview.setText(album);
 		durationtextview.setText(duration);
 		artisttextview.setText(artist);
-		if(art==null)
-		{
-			audioimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
-		}
-		else
-		{
-			audioimageview.setImageBitmap(art);
-		}
-		
+		audioimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
 	}
 	
 	

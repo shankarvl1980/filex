@@ -3,23 +3,24 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
-public class AlbumPOJO implements Serializable 
+public class
+AlbumPOJO implements Serializable
 {
 	private String id;
 	private String album_name;
 	private final String lower_album_name;
 	private String artist;
 	private String no_of_songs;
-	private Bitmap albumart;
+	private String album_path;
 
-	public AlbumPOJO(String id, String album_name,String artist, String no_of_songs, Bitmap art)
+	public AlbumPOJO(String id, String album_name,String artist, String no_of_songs,String album_path)
 	{
 		this.id=id;
 		this.album_name = album_name;
 		this.lower_album_name=album_name.toLowerCase();
 		this.artist = artist;
 		this.no_of_songs=no_of_songs;
-		this.albumart=art;
+		this.album_path=album_path;
 	}
 	
 	public String getId()
@@ -67,15 +68,9 @@ public class AlbumPOJO implements Serializable
 	{
 		this.no_of_songs = no_of_songs;
 	}
-	
 
-	public Bitmap getAlbumArt() 
-	{
-		return albumart;
-	}
+	public String getAlbum_path(){ return album_path;}
 
-	public void setAlbumArt(Bitmap art) 
-	{
-		this.albumart = art;
-	}
+	public void setAlbum_path(String album_path) { this.album_path=album_path;}
+
 }

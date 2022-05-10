@@ -613,6 +613,31 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
+		View search_heading_layout=findViewById(R.id.search_label_background);
+		search_heading_layout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+				pbf.show(fm,"");
+				drawerLayout.closeDrawer(drawer);
+
+				Handler h=new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						actionmode_finish(df,df.fileclickselected);
+
+						SearchDialog searchDialog=new SearchDialog();
+						searchDialog.show(fm,"search_dialog");
+						pbf.dismissAllowingStateLoss();
+
+					}
+				},500);
+
+			}
+		});
+
 		View ftp_details_heading_layout=findViewById(R.id.ftp_label_background);
 		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
 			@Override

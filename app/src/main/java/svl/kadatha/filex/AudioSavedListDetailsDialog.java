@@ -807,7 +807,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			if(duration_string!=null) duration=Long.parseLong(duration_string);
 			String duration_str=getString(R.string.duration_colon)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
-			Bitmap art=audio.getAlbumArt();
 			boolean item_selected=mselecteditems.get(p2,false);
 
 			if(!whether_saved_play_list && p2==AudioPlayerService.CURRENT_PLAY_NUMBER)
@@ -825,7 +824,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				p1.view.artisttextview.setTextColor(rest_audio_text_color);
 			}
 
-			p1.view.setData(title,album,duration_str,artist,art,item_selected);
+			p1.view.setData(title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 
 		}

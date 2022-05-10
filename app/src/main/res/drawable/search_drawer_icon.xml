@@ -1,0 +1,5 @@
+<vector android:height="30dp" android:viewportHeight="96"
+    android:viewportWidth="96" android:width="30dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M36,8C20.582,8 8,20.582 8,36C8,51.418 20.582,64 36,64C42.9922,64 49.3789,61.3906 54.2969,57.125L56,58.8281L56,64L80,88L88,80L64,56L58.8281,56L57.125,54.2969C61.3906,49.3789 64,42.9922 64,36C64,20.582 51.418,8 36,8ZM36,16C47.0938,16 56,24.9063 56,36C56,47.0938 47.0938,56 36,56C24.9063,56 16,47.0938 16,36C16,24.9063 24.9063,16 36,16ZM36,16" android:strokeColor="#00000000"/>
+</vector>

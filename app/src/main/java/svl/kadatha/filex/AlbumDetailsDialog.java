@@ -395,11 +395,11 @@ public class AlbumDetailsDialog extends DialogFragment
 					String album=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
 					String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
 					String duration=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-					Bitmap albumart=AlbumListFragment.SELECTED_ALBUM_ART;
+
 
 					if(new File(data).exists())
 					{
-						audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,albumart,FileObjectType.FILE_TYPE));
+						audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
 					}
 
 				}
@@ -647,9 +647,8 @@ public class AlbumDetailsDialog extends DialogFragment
 			if(duration_string!=null) duration=Long.parseLong(duration_string);
 			String duration_str=getString(R.string.duration_colon)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
-			Bitmap art=audio.getAlbumArt();
 			boolean item_selected=mselecteditems.get(p2,false);
-			p1.view.setData(title,album,duration_str,artist,art,item_selected);
+			p1.view.setData(title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 		}
 

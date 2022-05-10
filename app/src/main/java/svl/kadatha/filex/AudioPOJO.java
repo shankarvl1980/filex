@@ -10,10 +10,9 @@ public class AudioPOJO
 	private String album;
 	private String artist;
 	private String duration;
-	private Bitmap albumart;
 	private final FileObjectType fileObjectType;
 
-	public AudioPOJO(int id,  String data, String title,String album, String artist, String duration,Bitmap albumart,FileObjectType fileObjectType)
+	public AudioPOJO(int id,  String data, String title,String album, String artist, String duration,FileObjectType fileObjectType)
 	{
 		this.id=id;
 		this.data = data;
@@ -22,7 +21,6 @@ public class AudioPOJO
 		this.album = album;
 		this.artist = artist;
 		this.duration=duration;
-		this.albumart=albumart;
 		this.fileObjectType=fileObjectType;
 	}
 	public int getId()
@@ -90,17 +88,7 @@ public class AudioPOJO
 	{
 		this.duration = duration;
 	}
-	
 
-	public Bitmap getAlbumArt() 
-	{
-		return albumart;
-	}
-
-	public void setAlbumArt(Bitmap art) 
-	{
-		this.albumart = art;
-	}
 
 	public FileObjectType getFileObjectType()
 	{

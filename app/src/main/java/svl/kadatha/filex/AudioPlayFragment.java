@@ -189,7 +189,7 @@ public class AudioPlayFragment extends Fragment
 							case AudioPlayerService.GOTO_NEXT:
 								if(audio_player_service.current_audio!=null)
 								{
-									setTitleArt(audio_player_service.current_audio.getTitle(),audio_player_service.current_audio.getData(),audio_player_service.current_audio.getAlbumArt());
+									setTitleArt(audio_player_service.current_audio.getTitle(),audio_player_service.current_audio.getData());
 								}
 								((AudioPlayerActivity)context).on_completion_audio();
 								break;
@@ -205,7 +205,7 @@ public class AudioPlayFragment extends Fragment
 								}
 								break;
 							case AudioPlayerService.STOP:
-								setTitleArt("",null,null);
+								setTitleArt("",null);
 								total_time_tv.setText("00.00");
 								AudioPlayerActivity.AUDIO_FILE=null;
 								break;
@@ -519,7 +519,7 @@ public class AudioPlayFragment extends Fragment
 					if(AudioPlayerActivity.AUDIO_FILE!=null)
 					{
 						String path=AudioPlayerActivity.AUDIO_FILE.getData();
-						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getTitle(),path, AudioPlayerActivity.getAlbumArt(path,Global.SCREEN_WIDTH-Global.FOUR_DP)); // dont try audio_player_service.current_audio, it may not have been instantiated.
+						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getTitle(),path); // dont try audio_player_service.current_audio, it may not have been instantiated.
 
 					}
 					total_duration=audio_player_service.get_duration();
@@ -564,10 +564,9 @@ public class AudioPlayFragment extends Fragment
 		super.onDestroy();
 	}
 	
-	public void setTitleArt(String audiofilename,final String audiofilepath,Bitmap art)
+	public void setTitleArt(String audiofilename,final String audiofilepath)
 	{
 		audio_file_name=audiofilename;
-		album_art=art;
 		if(audio_name_tv!=null && album_art_imageview!=null)
 		{
 			set_title_art(audiofilepath);
@@ -1074,7 +1073,7 @@ public class AudioPlayFragment extends Fragment
 						if(file_ext.matches(Global.AUDIO_REGEX))
 						{
 
-							AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,"0",null,fileObjectType);
+							AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,"0",fileObjectType);
 							AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
 
 							if(AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))AudioPlayerService.CURRENT_PLAY_NUMBER=count;
