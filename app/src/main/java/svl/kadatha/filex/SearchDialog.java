@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -132,7 +131,7 @@ public class SearchDialog extends DialogFragment
 				//String f_n,f_t;
 				if(search_file_name.getText().toString().trim().equals(""))
 				{
-					print(getString(R.string.enter_name));
+					Global.print(context,getString(R.string.enter_name));
 					return;
 				}
 				else
@@ -141,7 +140,7 @@ public class SearchDialog extends DialogFragment
 				}
 				if(selected_search_dir_list.size()==0)
 				{
-					print(getString(R.string.select_directories_to_search_in));
+					Global.print(context,getString(R.string.select_directories_to_search_in));
 					return;
 				}
 				else
@@ -209,12 +208,6 @@ public class SearchDialog extends DialogFragment
 		}
 
 		super.onDestroyView();
-	}
-
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 	
 	public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH>

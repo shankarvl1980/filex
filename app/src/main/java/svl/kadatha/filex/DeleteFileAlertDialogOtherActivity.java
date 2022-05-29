@@ -17,7 +17,6 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -195,18 +194,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 	}
 
-	/*
-	@Override
-	public void onSaveInstanceState(Bundle outState)
-	{
-		// TODO: Implement this method
-		super.onSaveInstanceState(outState);
-		outState.putInt("total_no_of_files",total_no_of_files);
-		outState.putString("size_of_files_format",size_of_files_to_be_deleted);
-	}
-
-	 */
-
 	public void seekSAFPermission()
 	{
 		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
@@ -243,13 +230,11 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			Uri treeUri;
 			treeUri = result.getData().getData();
 			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			//saf_permission_requested=false;
 			okbutton.callOnClick();
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 });
@@ -276,7 +261,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 				}
 			});
 			safpermissionhelper.show(getActivity().getSupportFragmentManager(), "saf_permission_dialog");
-			//saf_permission_requested=true;
 			return false;
 		}
 		else
@@ -293,13 +277,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	interface DeleteFileAlertDialogListener
 	{
 		void onSelectOK();
-	}
-
-
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 
 	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void>

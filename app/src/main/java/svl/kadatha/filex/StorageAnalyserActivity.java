@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -190,7 +189,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserDialog.mselecteditemsFilePath.size()==0)
                 {
-                    print(getString(R.string.could_not_perform_action));
+                    Global.print(context,getString(R.string.could_not_perform_action));
                     DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
                     return;
                 }
@@ -340,7 +339,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     countBackPressed++;
                     if(countBackPressed==1)
                     {
-                        print(getString(R.string.press_again_to_close_activity));
+                        Global.print(context,getString(R.string.press_again_to_close_activity));
                     }
                     else
                     {
@@ -349,7 +348,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 }
                 else
                 {
-                    print(getString(R.string.click_exit_button_to_exit));
+                    Global.print(context,getString(R.string.click_exit_button_to_exit));
                 }
             }
         }
@@ -543,9 +542,4 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         void onMediaAttachedAndRemoved();
     }
 
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

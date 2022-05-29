@@ -24,8 +24,7 @@ public class TextViewUndoRedoBatch
     private final TextView mTextView;
 	
 	private EditTextRedoUndoListener editTextRedoUndoListener;
-	
-	private final Context context;
+
     // =================================================================== //
 
     public TextViewUndoRedoBatch(TextView textView, Context context) {
@@ -33,8 +32,7 @@ public class TextViewUndoRedoBatch
         mEditHistory = new EditHistory();
         mChangeListener = new EditTextChangeListener();
         mTextView.addTextChangedListener(mChangeListener);
-		this.context=context;
-		
+
     }
 
     // =================================================================== //
@@ -159,13 +157,7 @@ public class TextViewUndoRedoBatch
         }
 		//editor.commit();
     }
-	
 
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(context,msg,android.widget.Toast.LENGTH_SHORT).show();
-	}
-	
     public boolean restorePersistentState(Bundle sp, String prefix)
 	throws IllegalStateException 
 	{

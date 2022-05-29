@@ -2,7 +2,6 @@
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -725,7 +723,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			if (id == R.id.toolbar_btn_1) {
 
 				if (!AllAudioListFragment.FULLY_POPULATED) {
-					print(getString(R.string.wait_till_all_audios_populated));
+					Global.print(context,getString(R.string.wait_till_all_audios_populated));
 					return;
 				}
 
@@ -809,7 +807,7 @@ public class AlbumDetailsDialog extends DialogFragment
 									((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
 
 
-									print("'" + list_name + getString(R.string.audio_list_created));
+									Global.print(context,"'" + list_name + getString(R.string.audio_list_created));
 
 								}
 
@@ -818,14 +816,14 @@ public class AlbumDetailsDialog extends DialogFragment
 
 						} else if (list_name.equals("")) {
 							AudioPlayerService.AUDIO_QUEUED_ARRAY = audio_selected_list_copy;
-							print(getString(R.string.added_audios_current_play_list));
+							Global.print(context,getString(R.string.added_audios_current_play_list));
 							((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 						} else {
 
 							if (AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name)) {
 
 								((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
-								print(getString(R.string.added_audios_to) + list_name + "'");
+								Global.print(context,getString(R.string.added_audios_to) + list_name + "'");
 							}
 
 						}
@@ -856,9 +854,5 @@ public class AlbumDetailsDialog extends DialogFragment
 	}
 	
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
+
 }

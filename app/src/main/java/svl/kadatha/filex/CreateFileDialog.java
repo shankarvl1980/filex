@@ -17,7 +17,6 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -148,12 +147,12 @@ public class CreateFileDialog extends DialogFragment
 				String new_name=new_file_name_edittext.getText().toString().trim();
 				if(new_name.equals(""))
 				{
-					print(getString(R.string.enter_file_name));
+					Global.print(context,getString(R.string.enter_file_name));
 					return;
 				}
 				if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
 				{
-					print(getString(R.string.avoid_name_involving_special_characters));
+					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;
 				}
 
@@ -314,11 +313,11 @@ public class CreateFileDialog extends DialogFragment
 					df.glm.scrollToPositionWithOffset(idx,0);
 				}
 
-				print("'"+new_name+ "' "+getString(R.string.created));
+				Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
 			}
 			else
 			{
-				print(getString(R.string.could_not_create));
+				Global.print(context,getString(R.string.could_not_create));
 			}
 			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
@@ -353,7 +352,7 @@ public class CreateFileDialog extends DialogFragment
 					{
 						if(name.equals(new_file_name))
 						{
-							print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+							Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
 							return false;
 						}
 					}
@@ -367,7 +366,7 @@ public class CreateFileDialog extends DialogFragment
 			{
 				if(filePOJO.getName().equals(new_file_name))
 				{
-					print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
 					return false;
 				}
 
@@ -400,8 +399,7 @@ public class CreateFileDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
-
-			print(getString(R.string.root_access_not_avaialable));
+			Global.print(context,getString(R.string.root_access_not_avaialable));
 			return false;
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
@@ -413,7 +411,7 @@ public class CreateFileDialog extends DialogFragment
 			return check_SAF_permission(new_file_path,fileObjectType);
 
 		}
-		print(getString(R.string.could_not_create));
+		Global.print(context,getString(R.string.could_not_create));
 		return false;
 	}
 
@@ -485,7 +483,7 @@ public class CreateFileDialog extends DialogFragment
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 });
@@ -520,10 +518,4 @@ public class CreateFileDialog extends DialogFragment
 	}
 
 
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
 }

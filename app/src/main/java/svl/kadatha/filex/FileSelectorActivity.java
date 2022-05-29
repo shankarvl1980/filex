@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -360,7 +359,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                                 new PermissionsUtil(context,FileSelectorActivity.this).check_permission();
                                                 break;
                                             case DialogInterface.BUTTON_NEGATIVE:
-                                                print(getString(R.string.permission_not_granted));
+                                                Global.print(context,getString(R.string.permission_not_granted));
                                                 finish();
                                                 break;
                                         }
@@ -369,7 +368,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             }
                             else
                             {
-                                print(getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
+                                Global.print(context,getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
                                 finish();
                             }
                         }
@@ -428,7 +427,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
         if(!fileSelectorDialog.filled_filePOJOs)
         {
-            print(getString(R.string.please_wait));
+            Global.print(context,getString(R.string.please_wait));
             return;
         }
         search_toolbar_visible=visible;
@@ -507,7 +506,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                     }
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
-                                    print(getString(R.string.permission_not_granted));
+                                    Global.print(context,getString(R.string.permission_not_granted));
                                     finish();
                                     break;
                             }
@@ -570,7 +569,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     countBackPressed++;
                     if(countBackPressed==1)
                     {
-                        print(getString(R.string.press_again_to_close_activity));
+                        Global.print(context,getString(R.string.press_again_to_close_activity));
                     }
                     else
                     {
@@ -579,7 +578,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 }
                 else
                 {
-                    print(getString(R.string.click_OK_cancel_button_to_exit));
+                    Global.print(context,getString(R.string.click_OK_cancel_button_to_exit));
                 }
 
             }
@@ -788,10 +787,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         void onMediaAttachedAndRemoved();
     }
 
-
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

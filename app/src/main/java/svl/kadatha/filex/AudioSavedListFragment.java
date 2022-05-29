@@ -13,7 +13,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
@@ -559,10 +558,5 @@ public class AudioSavedListFragment extends Fragment
 		audioSelectListener=listener;
 	}
 
-	
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
 
 }

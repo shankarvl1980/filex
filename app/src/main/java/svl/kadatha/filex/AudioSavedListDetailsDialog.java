@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -584,7 +582,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				remove_and_save(audio_list_clicked_name, audio_selected_array, mselecteditems);
-				print(getString(R.string.removed_the_selected_audios));
+				Global.print(context,getString(R.string.removed_the_selected_audios));
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_2) {
 				AudioPlayerService.AUDIO_QUEUED_ARRAY = new ArrayList<>();
@@ -615,7 +613,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				if (number_button == 4) {
 
 					AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_array);
-					print(getString(R.string.added_audios_current_play_list));
+					Global.print(context,getString(R.string.added_audios_current_play_list));
 					clear_selection();
 				} else {
 					//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
@@ -893,8 +891,5 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	 	audioSelectListener=listener;
 	 }
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
+
 }

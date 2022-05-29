@@ -31,7 +31,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -634,7 +633,7 @@ public class AudioPlayFragment extends Fragment
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 
 		}
@@ -649,7 +648,7 @@ public class AudioPlayFragment extends Fragment
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 		}
 	});
@@ -701,12 +700,12 @@ public class AudioPlayFragment extends Fragment
 				case 0:
 					if(fromArchiveView || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 					{
-						print(getString(R.string.not_able_to_process));
+						Global.print(context,getString(R.string.not_able_to_process));
 						break;
 					}
 					if(!AllAudioListFragment.FULLY_POPULATED)
 					{
-						print(getString(R.string.wait_till_all_audios_populated_in_all_songs_tab));
+						Global.print(context,getString(R.string.wait_till_all_audios_populated_in_all_songs_tab));
 						break;
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
@@ -743,7 +742,7 @@ public class AudioPlayFragment extends Fragment
 
 					if(src_uri==null)
 					{
-						print(getString(R.string.not_able_to_process));
+						Global.print(context,getString(R.string.not_able_to_process));
 						break;
 					}
 					ArrayList<Uri> uri_list=new ArrayList<>();
@@ -754,7 +753,7 @@ public class AudioPlayFragment extends Fragment
 				case 2:
 					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 					{
-						print(getString(R.string.not_able_to_process));
+						Global.print(context,getString(R.string.not_able_to_process));
 						break;
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
@@ -795,7 +794,7 @@ public class AudioPlayFragment extends Fragment
 	{
 		if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 		{
-			print(getString(R.string.not_able_to_process));
+			Global.print(context,getString(R.string.not_able_to_process));
 			return;
 		}
 		ContentValues contentValues=new ContentValues();
@@ -853,7 +852,7 @@ public class AudioPlayFragment extends Fragment
 			RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE,addedUri);
 		}
 
-		print(getString(R.string.ringtone_set));
+		Global.print(context,getString(R.string.ringtone_set));
 	}
 
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
@@ -1103,9 +1102,4 @@ public class AudioPlayFragment extends Fragment
 		}
 	}
 
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
 }

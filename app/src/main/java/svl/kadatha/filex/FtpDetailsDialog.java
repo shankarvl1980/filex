@@ -14,7 +14,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -275,7 +274,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         {
                             if(!permissionsUtil.isNetworkConnected())
                             {
-                                print(getString(R.string.not_connected_to_network));
+                                Global.print(context,getString(R.string.not_connected_to_network));
                                 return;
                             }
                             progressBarFragment=ProgressBarFragment.newInstance();
@@ -341,7 +340,7 @@ public class FtpDetailsDialog extends DialogFragment {
                                                     handler.post(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            print(getString(R.string.server_could_not_be_connected));
+                                                            Global.print(context,getString(R.string.server_could_not_be_connected));
                                                         }
                                                     });
                                                     progressBarFragment.dismissAllowingStateLoss();
@@ -353,7 +352,7 @@ public class FtpDetailsDialog extends DialogFragment {
                                                 handler.post(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        print(getString(R.string.server_could_not_be_connected));
+                                                        Global.print(context,getString(R.string.server_could_not_be_connected));
                                                     }
                                                 });
                                                 progressBarFragment.dismissAllowingStateLoss();
@@ -653,8 +652,4 @@ public class FtpDetailsDialog extends DialogFragment {
         }
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

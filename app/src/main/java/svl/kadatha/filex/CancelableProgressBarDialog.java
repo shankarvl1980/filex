@@ -115,10 +115,5 @@ public class CancelableProgressBarDialog extends DialogFragment
 	{
 		void on_cancel_progress();
 	}
-	
-	
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
+
 }

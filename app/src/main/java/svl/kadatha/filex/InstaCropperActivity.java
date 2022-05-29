@@ -161,7 +161,6 @@ public class InstaCropperActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED);
             }
             finish();
-            return;
 
 /*
             new svl.kadatha.filex.AsyncTask<Void, Void, Boolean>() {

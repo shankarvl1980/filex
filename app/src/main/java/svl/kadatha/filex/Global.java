@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -915,6 +916,11 @@ public class Global
 			return (float) (width/height);
 		}
 
+	}
+
+	public static void print(Context context,String msg)
+	{
+		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 }
 

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -125,11 +124,11 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 user_name=user_name_tv.getText().toString().trim();
                 if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
                 {
-                    print(getString(R.string.server_port_username_fields_can_not_be_empty));
+                    Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
                 }
                 else if(!permissionsUtil.isNetworkConnected())
                 {
-                    print(getString(R.string.not_connected_to_network));
+                    Global.print(context,getString(R.string.not_connected_to_network));
                 }
                 else
                 {
@@ -205,8 +204,4 @@ public class FtpDetailsInputDialog extends DialogFragment {
         void onInsert(FtpDetailsDialog.FtpPOJO ftpPOJO);
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

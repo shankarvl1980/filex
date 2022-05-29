@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -164,7 +163,7 @@ public class ImageViewFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_as_wallpaper)));
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
-		recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
+		recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int) getResources().getDimension(R.dimen.layout_margin) *2);
 	}
 
 	@Override
@@ -209,7 +208,7 @@ public class ImageViewFragment extends Fragment
 
 							if(fromArchiveView || fromThirdPartyApp)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(currently_shown_file.getPath());
@@ -246,7 +245,7 @@ public class ImageViewFragment extends Fragment
 							}
 							if(src_uri==null)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							ArrayList<Uri> uri_list=new ArrayList<>();
@@ -257,7 +256,7 @@ public class ImageViewFragment extends Fragment
 						case 2:
 							if(fromThirdPartyApp)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(currently_shown_file.getPath());
@@ -278,7 +277,7 @@ public class ImageViewFragment extends Fragment
 							}
 							if(uri==null)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							if(context==null)
@@ -485,7 +484,7 @@ public class ImageViewFragment extends Fragment
 			 }
 			 else
 			 {
-				 print(getString(R.string.permission_not_granted));
+				 Global.print(context,getString(R.string.permission_not_granted));
 			 }
 		 }
 	 });
@@ -525,7 +524,7 @@ public class ImageViewFragment extends Fragment
 									((ImageViewActivity) context).runOnUiThread(new Runnable() {
 										@Override
 										public void run() {
-											print(getString(R.string.set_as_wallpaper));
+											Global.print(context,getString(R.string.set_as_wallpaper));
 										}
 									});
 
@@ -561,7 +560,7 @@ public class ImageViewFragment extends Fragment
 			}
 			else
 			{
-				print(getString(R.string.could_not_be_set_as_wallpaper));
+				Global.print(context,getString(R.string.could_not_be_set_as_wallpaper));
 			}
 		}
 	});
@@ -1060,12 +1059,6 @@ public class ImageViewFragment extends Fragment
 			return success;
 		}
 
-	}
-
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 
 }

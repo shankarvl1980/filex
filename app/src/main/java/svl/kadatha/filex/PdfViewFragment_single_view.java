@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -162,7 +161,7 @@ public class PdfViewFragment_single_view extends Fragment
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
         DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
         floating_button_height=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
-        recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int)+getResources().getDimension(R.dimen.layout_margin)*2);
+        recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int) getResources().getDimension(R.dimen.layout_margin) *2);
 
     }
 
@@ -210,7 +209,7 @@ public class PdfViewFragment_single_view extends Fragment
                     case 0:
                         if(fromThirdPartyApp)
                         {
-                            print(getString(R.string.not_able_to_process));
+                            Global.print(context,getString(R.string.not_able_to_process));
                             break;
                         }
                         files_selected_array.add(currently_shown_file.getPath());
@@ -247,7 +246,7 @@ public class PdfViewFragment_single_view extends Fragment
                         }
                         if(src_uri==null)
                         {
-                            print(getString(R.string.not_able_to_process));
+                            Global.print(context,getString(R.string.not_able_to_process));
                             break;
                         }
                         ArrayList<Uri> uri_list=new ArrayList<>();
@@ -259,7 +258,7 @@ public class PdfViewFragment_single_view extends Fragment
                     case 2:
                         if(fromThirdPartyApp)
                         {
-                            print(getString(R.string.not_able_to_process));
+                            Global.print(context,getString(R.string.not_able_to_process));
                             break;
                         }
                         files_selected_array.add(currently_shown_file.getPath());
@@ -439,8 +438,7 @@ public class PdfViewFragment_single_view extends Fragment
                 delete_file_async_task.executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR);
 
             } else {
-                //cancel_button.callOnClick();
-                print(getString(R.string.permission_not_granted));
+                Global.print(context,getString(R.string.permission_not_granted));
             }
         }
     });
@@ -624,7 +622,7 @@ public class PdfViewFragment_single_view extends Fragment
                     ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            print(getString(R.string.security_exception_thrown));
+                            Global.print(context,getString(R.string.security_exception_thrown));
                         }
                     });
                     pbf.dismissAllowingStateLoss();
@@ -634,7 +632,7 @@ public class PdfViewFragment_single_view extends Fragment
                     ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            print(getString(R.string.outofmemory_exception_thrown));
+                            Global.print(context,getString(R.string.outofmemory_exception_thrown));
                         }
                     });
                     pbf.dismissAllowingStateLoss();
@@ -645,7 +643,7 @@ public class PdfViewFragment_single_view extends Fragment
                     ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            print(getString(R.string.exception_thrown));
+                            Global.print(context,getString(R.string.exception_thrown));
                         }
                     });
                     pbf.dismissAllowingStateLoss();
@@ -828,7 +826,7 @@ public class PdfViewFragment_single_view extends Fragment
                 ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        print(getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
+                        Global.print(context,getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
                     }
                 });
                 return null;
@@ -837,7 +835,7 @@ public class PdfViewFragment_single_view extends Fragment
                 ((PdfViewActivity)context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        print(getString(R.string.file_not_in_PDF_format_or_corrupted));
+                        Global.print(context,getString(R.string.file_not_in_PDF_format_or_corrupted));
                     }
                 });
 
@@ -1019,11 +1017,6 @@ public class PdfViewFragment_single_view extends Fragment
             return success;
         }
 
-    }
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
 }

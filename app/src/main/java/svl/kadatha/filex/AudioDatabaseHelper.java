@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +72,6 @@ public class AudioDatabaseHelper
 	public int delete(String table,int id)
 	{
 		return db.delete(table,"id=?",new String [] {Integer.toString(id)});
-		
 	}
 	
 	public void delete(String table,List<AudioPOJO> audio_list)
@@ -84,11 +82,7 @@ public class AudioDatabaseHelper
 		{
 			AudioPOJO audio=audio_list.get(i);
 			db.delete(table,"id=?",new String [] {Integer.toString(audio.getId())});
-			
 		}
-		
-		
-
 	}
 	
 	
@@ -122,7 +116,7 @@ public class AudioDatabaseHelper
         }
 		catch(SQLiteException e)
 		{
-			print();
+			Global.print(context, "Exception thrown: could not extract entries");
 		}
 		return l;
 	}
@@ -166,15 +160,18 @@ public class AudioDatabaseHelper
         }
 		catch(SQLiteException e)
 		{
-			print();
+			Global.print(context, "Exception thrown: could not extract entries");
 		}
 		
 		 return audio_list;
 		
 	}
 
+	/*
 	private void print()
 	{
 		Toast.makeText(context, "Exception thrown: could not extract entries",Toast.LENGTH_SHORT).show();
 	}
+
+	 */
 }

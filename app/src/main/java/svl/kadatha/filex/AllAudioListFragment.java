@@ -22,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -380,7 +379,7 @@ public class AllAudioListFragment extends Fragment
 									((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
 									AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
 									((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-									print("'" + list_name + "' " + getString(R.string.audio_list_created));
+									Global.print(context,"'" + list_name + "' " + getString(R.string.audio_list_created));
 
 								}
 
@@ -741,9 +740,4 @@ public class AllAudioListFragment extends Fragment
 
 	}
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
 }

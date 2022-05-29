@@ -354,7 +354,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else
 				{
-					print(getString(R.string.could_not_perform_action));
+					Global.print(context,getString(R.string.could_not_perform_action));
 					onbackpressed(false);
 				}
 
@@ -451,7 +451,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				drawerLayout.closeDrawer(drawer);
 				if(!f.exists())
 				{
-					print(getString(R.string.directory_does_not_exist));
+					Global.print(context,getString(R.string.directory_does_not_exist));
 				}
 				else
 				{
@@ -718,7 +718,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		if(!df.filled_filePOJOs)
 		{
-			print(getString(R.string.please_wait));
+			Global.print(context,getString(R.string.please_wait));
 			return;
 		}
 		search_toolbar_visible=visible;
@@ -810,7 +810,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 												new PermissionsUtil(context,MainActivity.this).check_permission();
 												break;
 											case DialogInterface.BUTTON_NEGATIVE:
-												print(getString(R.string.permission_not_granted));
+												Global.print(context,getString(R.string.permission_not_granted));
 												finish();
 												break;
 										}
@@ -819,7 +819,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							}
 							else
 							{
-								print(getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
+								Global.print(context,getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
 								finish();
 								break;
 							}
@@ -841,7 +841,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 												new PermissionsUtil(context,MainActivity.this).check_permission();
 												break;
 											case DialogInterface.BUTTON_NEGATIVE:
-												print(getString(R.string.permission_not_granted));
+												Global.print(context,getString(R.string.permission_not_granted));
 												break;
 										}
 									}
@@ -889,7 +889,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 			catch(IOException e)
 			{
-				print(getString(R.string.could_not_open_zipe_file));
+				Global.print(context,getString(R.string.could_not_open_zipe_file));
 				return;
 			}
 
@@ -976,7 +976,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									break;
 								case DialogInterface.BUTTON_NEGATIVE:
-									print(getString(R.string.permission_not_granted));
+									Global.print(context,getString(R.string.permission_not_granted));
 									finish();
 									break;
 							}
@@ -1001,7 +1001,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 				FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
 				if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
-					print(!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+					Global.print(context,!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 				}
 				else
 				{
@@ -1218,7 +1218,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					countBackPressed++;
 					if(countBackPressed==1)
 					{
-						print(getString(R.string.press_again_to_close_activity));
+						Global.print(context,getString(R.string.press_again_to_close_activity));
 					}
 					else
 					{
@@ -1235,7 +1235,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else
 				{
-					print(getString(R.string.click_exit_button_to_exit));
+					Global.print(context,getString(R.string.click_exit_button_to_exit));
 				}
 
 			}
@@ -1358,7 +1358,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		if(working_dir_arraylist.size()>10)
 		{
-			print(getString(R.string.more_than_10_directories_cannot_be_added));
+			Global.print(context,getString(R.string.more_than_10_directories_cannot_be_added));
 			return;
 		}
 
@@ -1385,7 +1385,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		if(workingDirRecyclerAdapter.custom_dir_selected_array.size()<1)
 		{
-			print(getString(R.string.select_directories_by_long_pressing));
+			Global.print(context,getString(R.string.select_directories_by_long_pressing));
 		}
 		else
 		{
@@ -1499,7 +1499,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
-					print(getString(R.string.file_can_not_be_created_here));
+					Global.print(context,getString(R.string.file_can_not_be_created_here));
 					return;
 				}
 				CreateFileAlertDialog dialog = CreateFileAlertDialog.getInstance(df.fileclickselected,df.fileObjectType);
@@ -1552,7 +1552,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			if(df.mselecteditemsFilePath.size()==0)
 			{
-				print(getString(R.string.could_not_perform_action));
+				Global.print(context,getString(R.string.could_not_perform_action));
 				actionmode_finish(df,df.fileclickselected);
 				return;
 			}
@@ -1612,13 +1612,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									ArrayList<File> file_list_excluding_dir;
 									file_list_excluding_dir = iterate_to_attach_file(df.mselecteditemsFilePath);
 									if (file_list_excluding_dir.size() == 0) {
-										print(getString(R.string.directories_can_not_be_sent_select_one_file));
-										//actionmode_finish(df,df.fileclickselected);
+										Global.print(context,getString(R.string.directories_can_not_be_sent_select_one_file));
 										break;
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
-                                //actionmode_finish(df,df.fileclickselected);
 								break;
 							case 1:
 								size = df.mselecteditemsFilePath.size();
@@ -1636,12 +1634,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								ArchiveSetUpDialog archiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
 								archiveSetUpDialog.show(fm, "zip_dialog");
-								//actionmode_finish(df,df.fileclickselected);
 								break;
 							case 3:
 								if (df.mselecteditemsFilePath.size() != 1) {
-									print(getString(R.string.select_only_a_zip_file));
-									//actionmode_finish(df,df.fileclickselected);
+									Global.print(context,getString(R.string.select_only_a_zip_file));
 									break;
 								}
 								String path = df.mselecteditemsFilePath.valueAt(0);
@@ -1660,17 +1656,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									unarchiveSetUpDialog.show(fm, "zip_dialog");
 									//actionmode_finish(df,df.fileclickselected);
 								} else {
-									print(getString(R.string.select_only_a_zip_file));
-									//actionmode_finish(df,df.fileclickselected);
+									Global.print(context,getString(R.string.select_only_a_zip_file));
 								}
 								break;
 							case 4:
 								MoveToCopyToProcedure(df,true);
-								//actionmode_finish(df,df.fileclickselected);
 								break;
 							case 5:
 								MoveToCopyToProcedure(df,false);
-								//actionmode_finish(df,df.fileclickselected);
 								break;
 							default:
 								break;
@@ -1724,7 +1717,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if (id == R.id.toolbar_btn_1) {
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
-					print(getString(R.string.file_can_not_be_created_here));
+					Global.print(context,getString(R.string.file_can_not_be_created_here));
 					return;
 				}
 				CreateFileAlertDialog dialog = CreateFileAlertDialog.getInstance(df.fileclickselected,df.fileObjectType);
@@ -1735,7 +1728,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				actionmode_finish(df,df.fileclickselected);
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
-					print(getString(R.string.files_can_not_be_pasted_here));
+					Global.print(context,getString(R.string.files_can_not_be_pasted_here));
 					return;
 				}
 
@@ -1743,10 +1736,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				String source_folder = DetailFragment.CUT_COPY_FILECLICKSELECTED;
 				if(sourceFileObjectType==null)
 				{
-					print(getString(R.string.could_not_perform_action));
+					Global.print(context,getString(R.string.could_not_perform_action));
 				}
 				else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
-					print(DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+					Global.print(context,DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 				} else  {
 					if(DetailFragment.CUT_COPY_FILE_OBJECT_TYPE==FileObjectType.SEARCH_LIBRARY_TYPE)
 					{
@@ -1784,7 +1777,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
 					deleteFileAlertDialog.show(fm, "delete_dialog");
 				} else {
-					print(getString(R.string.select_files_to_delete));
+					Global.print(context,getString(R.string.select_files_to_delete));
 				}
 			} else if (id == R.id.toolbar_btn_5) {
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
@@ -2394,11 +2387,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	interface RecentDialogListener
 	{
 		void onMediaAttachedAndRemoved();
-	}
-
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(this,msg,android.widget.Toast.LENGTH_SHORT).show();
 	}
 
 }

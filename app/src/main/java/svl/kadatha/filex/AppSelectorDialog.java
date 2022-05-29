@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,7 +23,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +31,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +110,7 @@ public class AppSelectorDialog extends DialogFragment
         remember_app_check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                /* print("Default apps can be removed from 'Settings'"); */
+
             }
         });
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_app_selector_button_layout);
@@ -154,13 +161,11 @@ public class AppSelectorDialog extends DialogFragment
 
     private static class AppPOJO
     {
-        final Drawable app_icon;
         final String app_name;
         final String app_package_name;
 
-        AppPOJO(Drawable app_icon,String app_name,String app_package_name)
+        AppPOJO(String app_name,String app_package_name)
         {
-            this.app_icon=app_icon;
             this.app_name=app_name;
             this.app_package_name=app_package_name;
         }
@@ -193,8 +198,44 @@ public class AppSelectorDialog extends DialogFragment
                     ResolveInfo resolveInfo=resolveInfoList.get(i);
                     String app_package_name=resolveInfo.activityInfo.packageName;
                     String app_name=resolveInfo.loadLabel(packageManager).toString();
-                    Drawable app_icon=resolveInfo.loadIcon(packageManager);
-                    appPOJOList.add(new AppPOJO(app_icon, app_name, app_package_name));
+
+                    String file_with_package_name=app_package_name+".png";
+                    if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
+                    {
+                        Drawable APKicon = resolveInfo.loadIcon(packageManager);
+                        Bitmap bitmap;
+                        if(APKicon instanceof BitmapDrawable)
+                        {
+                            bitmap=((BitmapDrawable)APKicon).getBitmap();
+                        }
+                        else
+                        {
+                            bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(bitmap);
+                            APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                            APKicon.draw(canvas);
+                        }
+
+                        File f=new File(Global.APK_ICON_DIR,file_with_package_name);
+                        FileOutputStream fileOutputStream=null;
+                        try {
+                            fileOutputStream=new FileOutputStream(f);
+                            bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                            fileOutputStream.close();
+                            Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                        } catch (IOException e) {
+                            if(fileOutputStream!=null)
+                            {
+                                try {
+                                    fileOutputStream.close();
+                                } catch (IOException ioException) {
+
+                                }
+                            }
+                        }
+
+                    }
+                    appPOJOList.add(new AppPOJO(app_name, app_package_name));
 
                 }
 
@@ -279,18 +320,6 @@ public class AppSelectorDialog extends DialogFragment
 
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
                             appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
-                            /*
-                            if(appCompatActivity instanceof MainActivity)
-                            {
-                                appInstallAlertDialogFragment.show(MainActivity.FM,"");
-                            }
-                            else if(appCompatActivity instanceof StorageAnalyserActivity)
-                            {
-                                appInstallAlertDialogFragment.show(StorageAnalyserActivity.FM,"");
-                            }
-
-                             */
-
 
                         }
                         else
@@ -335,9 +364,9 @@ public class AppSelectorDialog extends DialogFragment
         public void onBindViewHolder(AppRecyclerAdapter.ViewHolder p1, int p2)
         {
             // TODO: Implement this method
-            AppPOJO filePOJO=appPOJOList.get(p2);
-            p1.app_icon_image_view.setImageDrawable(filePOJO.app_icon);
-            p1.app_name_text_view.setText(filePOJO.app_name);
+            AppPOJO appPOJO=appPOJOList.get(p2);
+            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.app_icon_image_view);
+            p1.app_name_text_view.setText(appPOJO.app_name);
 
         }
 
@@ -349,8 +378,4 @@ public class AppSelectorDialog extends DialogFragment
         }
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

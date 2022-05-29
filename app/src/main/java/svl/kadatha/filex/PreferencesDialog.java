@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -178,7 +177,7 @@ public class PreferencesDialog extends DialogFragment
             @Override
             public void onClick(View view) {
                 defaultAppDatabaseHelper.deleteTable();
-                print();
+                Global.print(context, getString(R.string.removed_default_apps_to_open_files));
             }
         });
 
@@ -250,14 +249,7 @@ public class PreferencesDialog extends DialogFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         defaultAppDatabaseHelper.close();
     }
-
-    private void print()
-    {
-        Toast.makeText(context, getString(R.string.removed_default_apps_to_open_files),Toast.LENGTH_SHORT).show();
-    }
-
 
 }

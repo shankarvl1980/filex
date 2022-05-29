@@ -16,7 +16,6 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -131,17 +130,17 @@ public class RenameFileDialog extends DialogFragment
 				{
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					dismissAllowingStateLoss();
-					print(getString(R.string.could_not_be_renamed));
+					Global.print(context,getString(R.string.could_not_be_renamed));
 					return;
 				}
 				if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
 				{
-					print(getString(R.string.avoid_name_involving_special_characters));
+					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;
 				}
 				if(new_name.equals(""))
 				{
-					print(getString(R.string.enter_file_name));
+					Global.print(context,getString(R.string.enter_file_name));
 					return;
 				}
 				new_file_path =(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
@@ -170,7 +169,7 @@ public class RenameFileDialog extends DialogFragment
 						{
 							if(isDirectory || new File(new_file_path).isDirectory())
 							{
-								print(getString(R.string.a_file_with_given_name_already_exists));
+								Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
 							}
 							else
 							{
@@ -184,7 +183,7 @@ public class RenameFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.USB_TYPE)
 					{
-						print(getString(R.string.a_file_with_given_name_already_exists));
+						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
 					}
 					else if(fileObjectType==FileObjectType.ROOT_TYPE)
 					{
@@ -394,11 +393,11 @@ public class RenameFileDialog extends DialogFragment
 			}
 
 
-			print(getString(R.string.renamed)+" '"+existing_name+"' "+getString(R.string.at)+" '"+new_name+"'");
+			Global.print(context,getString(R.string.renamed)+" '"+existing_name+"' "+getString(R.string.at)+" '"+new_name+"'");
 		}
 		else
 		{
-			print(getString(R.string.could_not_be_renamed));
+			Global.print(context,getString(R.string.could_not_be_renamed));
 		}
 		Global.SET_OTHER_FILE_PERMISSION(other_file_permission,new_file_path);
 		imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
@@ -478,7 +477,7 @@ public class RenameFileDialog extends DialogFragment
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 	});
@@ -616,9 +615,4 @@ public class RenameFileDialog extends DialogFragment
 		return false;
 	}
 
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
 }

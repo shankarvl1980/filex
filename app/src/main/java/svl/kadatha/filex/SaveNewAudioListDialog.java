@@ -67,18 +67,18 @@ public class SaveNewAudioListDialog extends DialogFragment
 					String new_name=new_file_name_edittext.getText().toString().trim();
 					if(new_name.equals("") || new_name.equals(null))
 					{
-						print("Name field cannot be empty");
+						Global.print(context,"Name field cannot be empty");
 						return;
 					}
 					if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
 					{
-						print("Avoid name involving characters '\\*:?/'");
+						Global.print(context,"Avoid name involving characters '\\*:?/'");
 						return;
 					}
 					
 					if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(new_name))
 					{
-						print("'"+new_name+"' can not be created. A file with the same name already exists");
+						Global.print(context,"'"+new_name+"' can not be created. A file with the same name already exists");
 						imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 						dismissAllowingStateLoss();
 						return;
@@ -170,10 +170,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 	public void setOnSaveAudioListener(OnSaveAudioListListener listener)
 	{
 		onSaveAudioListListener=listener;
-	}
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 
 }

@@ -30,7 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -526,7 +525,7 @@ public class AppManagerListFragment extends Fragment {
                         FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
 
                     } catch (Exception e) {
-                        print(getString(R.string.could_not_perform_action));
+                        Global.print(context,getString(R.string.could_not_perform_action));
                     }
 
                 }
@@ -542,12 +541,12 @@ public class AppManagerListFragment extends Fragment {
         public void onActivityResult(ActivityResult result) {
             if(isPackageExisted(package_clicked_for_delete))
             {
-                print(getString(R.string.could_not_be_uninstalled));
+                Global.print(context,getString(R.string.could_not_be_uninstalled));
             }
             else
             {
                 remove_app(package_clicked_for_delete);
-                print(getString(R.string.uninstalled));
+                Global.print(context,getString(R.string.uninstalled));
             }
 
             package_clicked_for_delete="";
@@ -567,7 +566,7 @@ public class AppManagerListFragment extends Fragment {
                 FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
                 FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
                 if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
-                    print(!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+                    Global.print(context,!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
                 }
 
                 else
@@ -743,8 +742,4 @@ public class AppManagerListFragment extends Fragment {
 
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

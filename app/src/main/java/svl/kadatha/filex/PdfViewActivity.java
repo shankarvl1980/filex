@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class PdfViewActivity extends BaseActivity implements PdfViewFragment.PdfFragmentShownListener {
 
@@ -100,11 +99,6 @@ public class PdfViewActivity extends BaseActivity implements PdfViewFragment.Pdf
     public void onBackPressed() {
         clear_cache=false;
         super.onBackPressed();
-    }
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override

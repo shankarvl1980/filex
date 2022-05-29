@@ -18,7 +18,6 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -51,7 +50,7 @@ public class DeleteFileAlertDialog extends DialogFragment
     private String tree_uri_path="";
 	private Uri tree_uri;
 	//private boolean saf_permission_requested;
-	private final int request_code=89;
+	//private final int request_code=89;
 	private int size=0;
 	private boolean whether_native_file_exists;
 	private Bundle bundle;
@@ -150,7 +149,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 						start_delete_progress_activity(emptyService);
@@ -175,7 +174,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 						start_delete_progress_activity(emptyService);
@@ -185,7 +184,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 						start_delete_progress_activity(emptyService);
@@ -197,14 +196,14 @@ public class DeleteFileAlertDialog extends DialogFragment
 							Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 							if(emptyService==null)
 							{
-								print(getString(R.string.maximum_3_services_processed));
+								Global.print(context,getString(R.string.maximum_3_services_processed));
 								return;
 							}
 							start_delete_progress_activity(emptyService);
 						}
 						else
 						{
-							print(getString(R.string.root_access_not_avaialable));
+							Global.print(context,getString(R.string.root_access_not_avaialable));
 							return;
 						}
 					}
@@ -213,7 +212,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 						start_delete_progress_activity(emptyService);
@@ -313,36 +312,13 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 
 	}
 });
 
-/*
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent resultData) 
-	{
-		if (requestCode == this.request_code && resultCode== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = resultData.getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
 
-			//saf_permission_requested=false;
-			okbutton.callOnClick();
-		
-		}
-		else
-		{
-			print(getString(R.string.permission_not_granted));
-		}
-
-	}
-
- */
-
-	
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -388,11 +364,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 	}
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
 	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		long total_size_of_files;

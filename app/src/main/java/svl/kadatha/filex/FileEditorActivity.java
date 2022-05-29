@@ -218,7 +218,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 						if(fromThirdPartyApp)
 						{
-							print(getString(R.string.not_able_to_process));
+							Global.print(context,getString(R.string.not_able_to_process));
 							break;
 						}
 						files_selected_array.add(currently_shown_file.getPath());
@@ -254,7 +254,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 						if(src_uri==null)
 						{
-							print(getString(R.string.not_able_to_process));
+							Global.print(context,getString(R.string.not_able_to_process));
 							break;
 						}
 						ArrayList<Uri> uri_list=new ArrayList<>();
@@ -266,7 +266,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					case 2:
 						if(fromThirdPartyApp)
 						{
-							print(getString(R.string.not_able_to_process));
+							Global.print(context,getString(R.string.not_able_to_process));
 							break;
 						}
 						files_selected_array.add(currently_shown_file.getPath());
@@ -635,12 +635,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		catch(FileNotFoundException e)
 		{
-			print(getString(R.string.file_not_found));
+			Global.print(context,getString(R.string.file_not_found));
 			return false;
 		}
 		catch (IllegalArgumentException e)
 		{
-			print(getString(R.string.file_could_not_be_opened));
+			Global.print(context,getString(R.string.file_could_not_be_opened));
 			return false;
 		}
 
@@ -679,12 +679,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				if (fromArchiveView || fromThirdPartyApp) {
-					print(getString(R.string.cant_edit_this_file));
+					Global.print(context,getString(R.string.cant_edit_this_file));
 					return;
 				}
 
 				if (isFileBig) {
-					print(getString(R.string.file_is_big) + ", " + getString(R.string.cant_edit_this_file));
+					Global.print(context,getString(R.string.file_is_big) + ", " + getString(R.string.cant_edit_this_file));
 					return;
 				}
 
@@ -898,7 +898,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 		}
 	});
@@ -1006,7 +1006,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		emptyService=getEmptyService();
 		if(emptyService==null)
 		{
-			print(getString(R.string.maximum_2_services_only_be_processed_at_a_time));
+			Global.print(context,getString(R.string.maximum_2_services_only_be_processed_at_a_time));
 			return;
 		}
 		serviceConnection=new FileSaveServiceConnection(emptyService);
@@ -1023,11 +1023,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			startService(file_save_service_intent);
 		}
 
-	}
-
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(this,msg,android.widget.Toast.LENGTH_LONG).show();
 	}
 
 	private class FileSaveServiceConnection implements ServiceConnection
@@ -1066,7 +1061,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 									}
 									else
 									{
-										print(getString(R.string.file_could_not_be_saved));
+										Global.print(context,getString(R.string.file_could_not_be_saved));
 									}
 
 									if(to_be_closed_after_save)
@@ -1116,7 +1111,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 									}
 									else
 									{
-										print(getString(R.string.file_could_not_be_saved));
+										Global.print(context,getString(R.string.file_could_not_be_saved));
 									}
 
 									if(to_be_closed_after_save)
@@ -1312,7 +1307,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			if(!result)
 			{
 				file_start=file_end=true;
-				print(getString(R.string.file_could_not_be_opened));
+				Global.print(context,getString(R.string.file_could_not_be_opened));
 			}
 			file_format_supported=result;
 			textViewUndoRedo.stopListening();
@@ -1461,7 +1456,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			catch (Exception e)
 			{
 				cancel(true);
-				print(getString(R.string.could_not_delete_file));
+				Global.print(context,getString(R.string.could_not_delete_file));
 			}
 		}
 

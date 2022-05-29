@@ -3,7 +3,6 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -459,7 +457,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			{
 				if(list_created)
 				{
-					print("'"+list_name+ "' "+getString(R.string.audio_list_created));
+					Global.print(context,"'"+list_name+ "' "+getString(R.string.audio_list_created));
 				}
 				
 				((AudioPlayerActivity)context).trigger_audio_list_saved_listener();
@@ -661,10 +659,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	}
 	
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
+
 		
 	private static class AlbumListRecyclerViewItem extends ViewGroup
 	{

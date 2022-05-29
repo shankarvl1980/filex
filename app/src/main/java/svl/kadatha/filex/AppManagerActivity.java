@@ -10,7 +10,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -149,7 +148,7 @@ public class AppManagerActivity extends BaseActivity{
     {
         if(userAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED || systemAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
         {
-            print(getString(R.string.please_wait));
+            Global.print(context,getString(R.string.please_wait));
             return;
         }
         search_toolbar_visible=visible;
@@ -302,8 +301,4 @@ public class AppManagerActivity extends BaseActivity{
         searchFilterListeners.remove(listener);
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -547,7 +546,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 
 		}
@@ -622,11 +621,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			return true;
 		}
-	}
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 	}
 
 }

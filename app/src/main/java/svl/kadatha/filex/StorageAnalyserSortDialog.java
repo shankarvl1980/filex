@@ -210,20 +210,12 @@ public class StorageAnalyserSortDialog extends DialogFragment
                 }
                 else
                 {
-                    print(getString(R.string.wait_ellipse));
+                    Global.print(context,getString(R.string.wait_ellipse));
                 }
 
             }
         }
-
-
-
-
     }
 
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }
 

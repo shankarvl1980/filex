@@ -141,7 +141,7 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 				dismissAllowingStateLoss();
 			}
 
@@ -237,9 +237,8 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			if(!RootUtils.CAN_RUN_ROOT_COMMANDS())
 			{
-				print(getString(R.string.root_access_not_avaialable));
+				Global.print(context,getString(R.string.root_access_not_avaialable));
 				return false;
-				//dismissAllowingStateLoss();
 			}
 			else
 			{
@@ -326,20 +325,20 @@ public class PasteSetUpDialog extends DialogFragment
 	{
 		if(files_selected_array.size()==0)
 		{
-			print(getString(R.string.could_not_perform_action));
+			Global.print(context,getString(R.string.could_not_perform_action));
 			dismissAllowingStateLoss();
 			return;
 		}
 		if(!whether_file_already_exists(dest_folder,destFileObjectType))
 		{
-			print(getString(R.string.directory_not_exist_not_valid));
+			Global.print(context,getString(R.string.directory_not_exist_not_valid));
 			dismissAllowingStateLoss();
 			return;
 		}
 		Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 		if(emptyService==null)
 		{
-			print(getString(R.string.maximum_3_services_processed));
+			Global.print(context,getString(R.string.maximum_3_services_processed));
 			dismissAllowingStateLoss();
 			return;
 		}
@@ -406,11 +405,4 @@ public class PasteSetUpDialog extends DialogFragment
 
 	}
 
-
-
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(context,msg,android.widget.Toast.LENGTH_SHORT).show();
-	}
-	
 }

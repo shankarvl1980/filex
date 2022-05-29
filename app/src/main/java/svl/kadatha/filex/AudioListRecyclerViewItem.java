@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

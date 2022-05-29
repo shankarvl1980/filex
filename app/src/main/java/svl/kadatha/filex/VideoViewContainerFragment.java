@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -163,7 +162,7 @@ public class VideoViewContainerFragment extends Fragment
 						case 0:
 							if(fromArchiveView || fromThirdPartyApp)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(currently_shown_file.getPath());
@@ -199,7 +198,7 @@ public class VideoViewContainerFragment extends Fragment
 							}
 							if(src_uri==null)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							ArrayList<Uri> uri_list=new ArrayList<>();
@@ -210,7 +209,7 @@ public class VideoViewContainerFragment extends Fragment
 						case 2:
 							if(fromThirdPartyApp)
 							{
-								print(getString(R.string.not_able_to_process));
+								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(currently_shown_file.getPath());
@@ -341,7 +340,7 @@ public class VideoViewContainerFragment extends Fragment
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 
 		}
@@ -701,9 +700,4 @@ public class VideoViewContainerFragment extends Fragment
 
 	}
 
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
 }

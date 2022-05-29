@@ -15,7 +15,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 {
 
 	private final Handler h=new Handler();
-
+	private Context context;
     private TextView from_textview;
     private TextView to_textview;
     private TextView copied_textview;
@@ -37,6 +37,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		// TODO: Implement this method
 
 		super.onCreate(savedInstanceState);
+		context=this;
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
 		setFinishOnTouchOutside(false);
 		localBroadcastManager= LocalBroadcastManager.getInstance(this);
@@ -79,7 +80,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 					{
 						archiveDeletePasteFileService.cancelService();
 					}
-					print(getString(R.string.process_cancelled));
+					Global.print(context,getString(R.string.process_cancelled));
 					PROGRESS_ACTIVITY_SHOWN=false;
 					try {
 						Thread.sleep(1000);
@@ -103,23 +104,23 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 							switch(service_action)
 							{
 								case "archive-zip":
-									print(result ? getString(R.string.created)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_create)+" '"+target_file+"'");
+									Global.print(context,result ? getString(R.string.created)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_create)+" '"+target_file+"'");
 									break;
 
 								case "archive-unzip":
-									print(result ? getString(R.string.unzipped)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_extract)+" '"+target_file+"'");
+									Global.print(context,result ? getString(R.string.unzipped)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_extract)+" '"+target_file+"'");
 									break;
 
 								case "delete":
-									print(result ? getString(R.string.deleted_selected_files)+" "+dest_folder : getString(R.string.could_not_delete_selected_files)+" "+dest_folder);
+									Global.print(context,result ? getString(R.string.deleted_selected_files)+" "+dest_folder : getString(R.string.could_not_delete_selected_files)+" "+dest_folder);
 									break;
 
 								case "paste-cut":
-									print(result ? getString(R.string.moved_selected_files)+" "+dest_folder : getString(R.string.could_not_move_selected_files)+" "+dest_folder);
+									Global.print(context,result ? getString(R.string.moved_selected_files)+" "+dest_folder : getString(R.string.could_not_move_selected_files)+" "+dest_folder);
 									break;
 
 								case "paste-copy":
-									print(result ? getString(R.string.copied_selected_files)+" "+dest_folder : getString(R.string.could_not_copy_selected_files)+" "+dest_folder);
+									Global.print(context,result ? getString(R.string.copied_selected_files)+" "+dest_folder : getString(R.string.could_not_copy_selected_files)+" "+dest_folder);
 									break;
 							}
 
@@ -367,9 +368,5 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
-	private void print(String msg)
-	{
-		Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
-	}
 
 }

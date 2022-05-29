@@ -1,5 +1,4 @@
 package svl.kadatha.filex;
-import android.graphics.Bitmap;
 
 public class AudioPOJO
 {

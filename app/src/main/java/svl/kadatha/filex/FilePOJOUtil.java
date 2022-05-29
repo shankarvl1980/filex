@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -49,7 +50,7 @@ public class FilePOJOUtil {
                 file_ext=name.substring(idx+1);
                 if(extracticon)
                 {
-                    package_name=EXTRACT_ICON(name,path,file_ext);
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
 
                 if(file_ext.matches(Global.VIDEO_REGEX))
@@ -118,7 +119,7 @@ public class FilePOJOUtil {
                 file_ext=name.substring(idx+1);
                 if(extracticon)
                 {
-                    package_name=EXTRACT_ICON(name,path,file_ext);
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
                 if(file_ext.matches(Global.VIDEO_REGEX))
                 {
@@ -175,7 +176,7 @@ public class FilePOJOUtil {
                 file_ext=name.substring(idx+1);
                 if(extracticon)
                 {
-                    package_name=EXTRACT_ICON(name,path,file_ext);
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
                 if(file_ext.matches(Global.VIDEO_REGEX))
                 {
@@ -399,19 +400,19 @@ public class FilePOJOUtil {
         return filePOJO;
     }
 
-    static String EXTRACT_ICON(String file_name,String file_path, String file_ext)
+    static String EXTRACT_ICON(PackageManager packageManager, String file_path, String file_ext)
     {
-        if(MainActivity.PM==null) return null;
+        if(packageManager==null) return null;
         if(file_ext.matches(Global.APK_REGEX))
         {
-            PackageInfo PI = MainActivity.PM.getPackageArchiveInfo(file_path, 0);
+            PackageInfo PI = packageManager.getPackageArchiveInfo(file_path, 0);
             if(PI==null) return null;
             PI.applicationInfo.publicSourceDir = file_path;
             String package_name=PI.packageName;
             String file_with_package_name=package_name+".png";
             if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
             {
-                Drawable APKicon = PI.applicationInfo.loadIcon(MainActivity.PM);
+                Drawable APKicon = PI.applicationInfo.loadIcon(packageManager);
                 Bitmap bitmap;
                 if(APKicon instanceof BitmapDrawable)
                 {

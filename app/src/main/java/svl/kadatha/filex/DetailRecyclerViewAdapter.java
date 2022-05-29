@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -455,10 +454,5 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	{
 		this.cardViewClickListener=listner;
 	}
-	
-	
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
+
 }

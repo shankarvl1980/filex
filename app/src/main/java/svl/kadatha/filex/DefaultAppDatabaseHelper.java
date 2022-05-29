@@ -6,8 +6,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,13 +55,48 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
                         String file_type=cursor.getString(1);
                         String app_name=cursor.getString(2);
                         String app_package_name=cursor.getString(3);
-                        Drawable app_icon=null;
                         try {
-                            app_icon=packageManager.getApplicationIcon(app_package_name);
+
+                            String file_with_package_name=app_package_name+".png";
+                            if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
+                            {
+                                Drawable APKicon =packageManager.getApplicationIcon(app_package_name);
+                                Bitmap bitmap;
+                                if(APKicon instanceof BitmapDrawable)
+                                {
+                                    bitmap=((BitmapDrawable)APKicon).getBitmap();
+                                }
+                                else
+                                {
+                                    bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                                    Canvas canvas = new Canvas(bitmap);
+                                    APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                                    APKicon.draw(canvas);
+                                }
+
+                                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
+                                FileOutputStream fileOutputStream=null;
+                                try {
+                                    fileOutputStream=new FileOutputStream(f);
+                                    bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                                    fileOutputStream.close();
+                                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+                                } catch (IOException e) {
+                                    if(fileOutputStream!=null)
+                                    {
+                                        try {
+                                            fileOutputStream.close();
+                                        } catch (IOException ioException) {
+
+                                        }
+                                    }
+                                }
+
+                            }
                         } catch (PackageManager.NameNotFoundException e) {
 
                         }
-                        defaultAppPOJOS.add(new DefaultAppsDialog.DefaultAppPOJO(mime_type,file_type,app_icon,app_name,app_package_name));
+                        defaultAppPOJOS.add(new DefaultAppsDialog.DefaultAppPOJO(mime_type,file_type,app_name,app_package_name));
                     }
                     cursor.close();
                 }

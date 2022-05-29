@@ -68,7 +68,7 @@ public class ListFiles
 					if(idx!=-1)
 					{
 						file_ext=line_name.substring(idx+1);
-						package_name=FilePOJOUtil.EXTRACT_ICON(line_name,p,file_ext);
+						package_name=FilePOJOUtil.EXTRACT_ICON(MainActivity.PM,p,file_ext);
 						if(file_ext.matches(Global.VIDEO_REGEX))
 						{
 							overlay_visible=View.VISIBLE;

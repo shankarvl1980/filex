@@ -224,12 +224,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 						String zip_folder_name=zip_file_edittext.getText().toString().trim();
 						if(zip_folder_name.equals(""))
 						{
-							print(getString(R.string.enter_zip_file_name));
+							Global.print(context,getString(R.string.enter_zip_file_name));
 							return;
 						}
 						if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
 						{
-							print(getString(R.string.avoid_name_involving_special_characters));
+							Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 							return;
 						}
 
@@ -239,13 +239,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
 						{
-							print(getString(R.string.not_able_to_process));
+							Global.print(context,getString(R.string.not_able_to_process));
 							return;
 						}
 
 
 						if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
-							print(getString(R.string.directory_not_exist_not_valid));
+							Global.print(context,getString(R.string.directory_not_exist_not_valid));
 							return;
 						}
 
@@ -259,13 +259,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 						final Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 						Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 						if(files_selected_array.size()==0)
 						{
-							print(getString(R.string.could_not_perform_action));
+							Global.print(context,getString(R.string.could_not_perform_action));
 							return;
 						}
 						final Bundle bundle=new Bundle();
@@ -306,7 +306,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 							}
 							else
 							{
-								print(getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
+								Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
 							}
 						}
 						else
@@ -352,12 +352,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						if (create_folder_checkbox.isChecked()) {
 							if (zip_output_folder == null || zip_output_folder.equals("")) {
-								print(getString(R.string.enter_output_folder_name));
+								Global.print(context,getString(R.string.enter_output_folder_name));
 								return;
 							}
 
 							if (CheckStringForSpecialCharacters.whetherStringContains(zip_output_folder)) {
-								print(getString(R.string.avoid_name_involving_special_characters));
+								Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 								return;
 							}
 							zip_folder_path=unarchivedestfolder.endsWith(File.separator) ? unarchivedestfolder+zip_output_folder : unarchivedestfolder+File.separator+zip_output_folder;
@@ -370,12 +370,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
 						{
-							print(getString(R.string.not_able_to_process));
+							Global.print(context,getString(R.string.not_able_to_process));
 							return;
 						}
 
 						if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
-							print(getString(R.string.directory_not_exist_not_valid));
+							Global.print(context,getString(R.string.directory_not_exist_not_valid));
 							return;
 						}
 
@@ -387,7 +387,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						final Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if (emptyService == null) {
-							print(getString(R.string.maximum_3_services_processed));
+							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
 						}
 
@@ -411,7 +411,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								archiveReplaceConfirmationDialog.setArguments(bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
 							} else {
-								print(getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
+								Global.print(context,getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
 
 							}
 						} else {
@@ -547,7 +547,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 			else
 			{
-				print(getString(R.string.root_access_not_avaialable));
+				Global.print(context,getString(R.string.root_access_not_avaialable));
 				return false;
 			}
 
@@ -614,7 +614,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 
 		}
@@ -633,9 +633,4 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 	});
 
-
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(context,msg,android.widget.Toast.LENGTH_SHORT).show();
-	}
 }

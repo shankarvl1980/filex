@@ -14,7 +14,6 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -121,7 +120,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                  */
                 if(new_name.equals(""))
                 {
-                    print(getString(R.string.enter_file_name));
+                    Global.print(context,getString(R.string.enter_file_name));
                     return;
                 }
                 int i=ftpDatabaseHelper.change_display(server,new_name);
@@ -206,11 +205,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     public void setFtpRenameListener(FtpRenameListener listener)
     {
         ftpRenameListener=listener;
-    }
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
 }

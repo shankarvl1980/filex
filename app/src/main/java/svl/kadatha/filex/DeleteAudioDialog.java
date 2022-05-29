@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -37,8 +36,8 @@ public class DeleteAudioDialog extends DialogFragment
 	private final ArrayList<String> files_selected_for_delete =new ArrayList<>();
 	public final List<Integer> deleted_files_idx=new ArrayList<>();
 	private List<String> files_selected_array =new ArrayList<>();
-	private final int request_code=8079;
-	private boolean permission_requested;
+	//private final int request_code=8079;
+	//private boolean permission_requested;
 	private String tree_uri_path="";
 	private Uri tree_uri;
     private DeleteAudioCompleteListener deleteAudioCompleteListener;
@@ -422,12 +421,12 @@ public class DeleteAudioDialog extends DialogFragment
 					deleteAudioCompleteListener.onDeleteComplete();
 				}
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
-				print(getString(R.string.selected_audios_deleted));
+				Global.print(context,getString(R.string.selected_audios_deleted));
 
 			}
 			else
 			{
-				print(getString(R.string.selected_audios_could_not_be_deleted));
+				Global.print(context,getString(R.string.selected_audios_could_not_be_deleted));
 
 			}
 
@@ -445,11 +444,4 @@ public class DeleteAudioDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
-	
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-
-
 }

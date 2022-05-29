@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -19,12 +18,14 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public class DefaultAppsDialog extends DialogFragment
                 final DefaultAppPOJO defaultAppPOJO=defaultAppPOJOS.get(i);
                 mime_type.setText(defaultAppPOJO.file_type);
                 app_name.setText(defaultAppPOJO.app_name);
-                app_icon.setImageDrawable(defaultAppPOJO.app_icon);
+                GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+defaultAppPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon);
                 checkBox.setVisibility(View.VISIBLE);
 
                 checkBox.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +138,7 @@ public class DefaultAppsDialog extends DialogFragment
                 int size=mSelectedMimeType.size();
                 if(size==0)
                 {
-                    print(getString(R.string.select_app));
+                    Global.print(context,getString(R.string.select_app));
                 }
                 else
                 {
@@ -203,62 +204,17 @@ public class DefaultAppsDialog extends DialogFragment
     {
         final String mime_type;
         final String file_type;
-        final Drawable app_icon;
         final String app_name;
         final String app_package_name;
 
-        DefaultAppPOJO(String mime_type,String file_type,Drawable app_icon,String app_name,String app_package_name)
+        DefaultAppPOJO(String mime_type,String file_type,String app_name,String app_package_name)
         {
             this.mime_type=mime_type;
             this.file_type=file_type;
-            this.app_icon=app_icon;
             this.app_name=app_name;
             this.app_package_name=app_package_name;
         }
 
     }
 
-    /*
-    private class DefaultAppsAdapater extends RecyclerView.Adapter<DefaultAppsAdapater.ViewHolder>
-    {
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.default_app_itemview_layout,parent,false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            DefaultAppPOJO defaultAppPOJO=defaultAppPOJOS.get(position);
-            holder.mime_type.setText(defaultAppPOJO.mime_type);
-            holder.app_icon.setImageDrawable(defaultAppPOJO.app_icon);
-            holder.app_name.setText(defaultAppPOJO.app_name);
-        }
-
-        @Override
-        public int getItemCount() {
-            return defaultAppPOJOS.size();
-        }
-
-        private class ViewHolder extends RecyclerView.ViewHolder
-        {
-            TextView mime_type,app_name;
-            ImageView app_icon;
-            CheckBox checkBox;
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                mime_type=itemView.findViewById(R.id.default_app_mime_type);
-                app_name=itemView.findViewById(R.id.default_app_name);
-                app_icon=itemView.findViewById(R.id.default_app_image_view);
-                checkBox=itemView.findViewById(R.id.default_app_checkbox);
-            }
-        }
-    }
-
-     */
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-    }
 }

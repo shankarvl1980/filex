@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
@@ -365,11 +364,11 @@ public class AudioPlayerActivity extends BaseActivity
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			if(requestCode==WRITE_SETTINGS_PERMISSION_REQUEST_CODE && Settings.System.canWrite(this))
 			{
-				print(getString(R.string.now_ringtone_can_be_set));
+				Global.print(context,getString(R.string.now_ringtone_can_be_set));
 			}
 			else
 			{
-				print(getString(R.string.permission_not_granted));
+				Global.print(context,getString(R.string.permission_not_granted));
 			}
 		}
 	}
@@ -379,11 +378,11 @@ public class AudioPlayerActivity extends BaseActivity
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		if(requestCode==WRITE_SETTINGS_PERMISSION_REQUEST_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED)
 		{
-			print(getString(R.string.now_ringtone_can_be_set));
+			Global.print(context,getString(R.string.now_ringtone_can_be_set));
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 
@@ -392,7 +391,7 @@ public class AudioPlayerActivity extends BaseActivity
 	{
 		if(!AllAudioListFragment.FULLY_POPULATED)
 		{
-			print(getString(R.string.please_wait));
+			Global.print(context,getString(R.string.please_wait));
 			return;
 		}
 		search_toolbar_visible=visible;
@@ -692,11 +691,5 @@ public class AudioPlayerActivity extends BaseActivity
 		}
 	}
 
-
-
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
 
 }

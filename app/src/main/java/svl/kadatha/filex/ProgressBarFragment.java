@@ -1,12 +1,10 @@
 package svl.kadatha.filex;
-import android.content.Context;
 import android.os.*;
 import android.view.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 import android.view.WindowManager.LayoutParams;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class ProgressBarFragment extends DialogFragment

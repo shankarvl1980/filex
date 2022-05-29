@@ -22,7 +22,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -533,7 +532,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 });
@@ -548,7 +547,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else
 		{
-			print(getString(R.string.permission_not_granted));
+			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
 });
@@ -649,7 +648,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								String file_ext=filePOJO.getName().substring(idx+1);
 								if(file_ext.matches("(?i)zip"))
 								{
-									print(getString(R.string.can_not_open_file));
+									Global.print(context,getString(R.string.can_not_open_file));
 									return;
 								}
 							}
@@ -663,14 +662,14 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 							ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
 							if(zip_entry==null)
 							{
-								print(getString(R.string.can_not_open_file));
+								Global.print(context,getString(R.string.can_not_open_file));
 								return;
 							}
 
 
 							if(zip_entry.getSize()>5000000)
 							{
-								print(getString(R.string.file_is_big_please_extract_to_view));
+								Global.print(context,getString(R.string.file_is_big_please_extract_to_view));
 								return;
 							}
 
@@ -1145,7 +1144,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					mainActivity.runOnUiThread(new Runnable() {
 						public void run() {
-							print(e.getMessage());
+							Global.print(context,e.getMessage());
 						}
 					});
 				}
@@ -1301,10 +1300,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	}
 
 
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
+
 }
 

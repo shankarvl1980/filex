@@ -92,7 +92,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 							break;
 
 					}
-					print(getString(R.string.cant_edit_this_file));
+					Global.print(context,getString(R.string.cant_edit_this_file));
 				}
 
 				
@@ -266,9 +266,5 @@ public class FileEditorSettingsDialog extends DialogFragment
 	{
 		void onEOLchanged(int eol);
 	}
-	
-	private void print(String msg)
-	{
-		android.widget.Toast.makeText(context,msg,android.widget.Toast.LENGTH_LONG).show();
-	}
+
 }

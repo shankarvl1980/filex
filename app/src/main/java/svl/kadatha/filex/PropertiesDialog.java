@@ -137,7 +137,7 @@ public class PropertiesDialog extends DialogFragment
 								ClipboardManager clipboardManager= (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 								ClipData clipData=ClipData.newPlainText("Path copied",property.getText());
 								clipboardManager.setPrimaryClip(clipData);
-								print(getString(R.string.path_copied));
+								Global.print(context,getString(R.string.path_copied));
 							}
 						});
 					}
@@ -503,11 +503,5 @@ public class PropertiesDialog extends DialogFragment
 			super.onCancelled(result);
 		}
 	}
-	
-	
-	private void print(String msg)
-	{
-		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-	}
-	
+
 }

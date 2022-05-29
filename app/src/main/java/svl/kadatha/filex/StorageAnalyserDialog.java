@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -774,7 +773,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             }
             else
             {
-                print(getString(R.string.permission_not_granted));
+                Global.print(context,getString(R.string.permission_not_granted));
             }
 
         }
@@ -790,7 +789,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             }
             else
             {
-                print(getString(R.string.permission_not_granted));
+                Global.print(context,getString(R.string.permission_not_granted));
             }
         }
     });
@@ -807,7 +806,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(file_ext.matches("(?i)zip"))
         {
-            print(getString(R.string.cannot_open_here));
+            Global.print(context,getString(R.string.cannot_open_here));
             return;
         }
 
@@ -936,13 +935,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             return true;
         }
-    }
-
-
-
-    private void print(String msg)
-    {
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     private class FillSizeAsyncTask extends AsyncTask<Void,Void,Void>
