@@ -96,7 +96,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public int file_list_size;
 	//ViewPager viewPager;
 	boolean is_toolbar_visible=true;
-	private final int request_code=487;
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	private ProgressBarFragment pbf_polling;
@@ -105,8 +104,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
-	public static final int UNKNOWN_PACKAGE_REQUEST_CODE=214;
 	private FilePOJO clicked_filepojo;
+	private long lower_limit_size,upper_limit_size;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -133,6 +132,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
+		lower_limit_size=bundle.getLong("lower_limit_size",0);
+		upper_limit_size=bundle.getLong("upper_limit_size",0);
 		fileclickselected=getTag();
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
@@ -201,7 +202,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -238,7 +239,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -357,7 +358,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -383,7 +384,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name);
+				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
 				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			}
 			after_filledFilePojos_procedure();
@@ -504,11 +505,23 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	}
 
 
+
 	public static DetailFragment getInstance(FileObjectType fileObjectType)
 	{
 		DetailFragment df=new DetailFragment();
 		Bundle bundle=new Bundle();
 		bundle.putSerializable("fileObjectType",fileObjectType);
+		df.setArguments(bundle);
+		return df;
+	}
+
+	public static DetailFragment getInstance(FileObjectType fileObjectType,long lower_limit_size,long upper_limit_size)
+	{
+		DetailFragment df=new DetailFragment();
+		Bundle bundle=new Bundle();
+		bundle.putSerializable("fileObjectType",fileObjectType);
+		bundle.putLong("lower_limit_size",lower_limit_size);
+		bundle.putLong("upper_limit_size",upper_limit_size);
 		df.setArguments(bundle);
 		return df;
 	}
@@ -849,11 +862,14 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		final List<FilePOJO> path=new ArrayList<>();
 		String file_type="f";
 		int count=0;
+		long lower_limit_size=0,upper_limit_size=0;
 		final CancelableProgressBarDialog cancelableProgressBarDialog=new CancelableProgressBarDialog();
 		
-		AsyncTaskLibrarySearch(String library_or_search)
+		AsyncTaskLibrarySearch(String library_or_search,long lower_limit_size,long upper_limit_size)
 		{
 			this.library_or_search=library_or_search;
+			this.lower_limit_size=lower_limit_size;
+			this.upper_limit_size=upper_limit_size;
 			cancelableProgressBarDialog.set_title(getString(R.string.searching));
 			cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
 				@Override
@@ -993,7 +1009,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					for(FilePOJO f : path)
 					{
-						search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+						if(upper_limit_size==0L && lower_limit_size==0L)
+						{
+							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+						}
+						else
+						{
+							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered,lower_limit_size,upper_limit_size);
+						}
+
 					}
 				}
 			}
@@ -1007,7 +1031,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					for(FilePOJO f : path)
 					{
-						search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+						if(upper_limit_size==0L && lower_limit_size==0L)
+						{
+							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+						}
+						else
+						{
+							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered,lower_limit_size,upper_limit_size);
+						}
+
 					}
 				}
 				else
@@ -1119,7 +1151,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					if(f.isDirectory())
 					{
-						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("d")|| file_type.equals("fd")))
+						if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
 						{
 							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
 							f_pojos.add(filePOJO);
@@ -1130,7 +1162,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 					else
 					{
-						if(Pattern.matches(search_name,f.getName()) && (file_type.equals("f")||file_type.equals("fd")))
+						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
 						{
 							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
 							f_pojos.add(filePOJO);
@@ -1151,6 +1183,57 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 			}
 		}
+
+		private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, long lower_limit_size, long upper_limit_size) throws PatternSyntaxException
+		{
+			File[] list=new File(search_dir).listFiles();
+			if(list==null) return;
+			int size=list.length;
+			for(int i=0;i<size;++i)
+			{
+				File f=list[i];
+				if(isCancelled())
+				{
+					return;
+				}
+				try
+				{
+					if(f.isDirectory())
+					{
+						if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
+						{
+							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+							f_pojos.add(filePOJO);
+							f_pojos_filtered.add(filePOJO);
+							count++;
+						}
+						search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered, lower_limit_size, upper_limit_size);
+					}
+					else
+					{
+						long length=f.length();
+						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && (length >= lower_limit_size && length <= upper_limit_size))
+						{
+							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
+							f_pojos.add(filePOJO);
+							f_pojos_filtered.add(filePOJO);
+							count++;
+						}
+					}
+					publishProgress(count);
+				}
+				catch(final PatternSyntaxException e)
+				{
+					mainActivity.runOnUiThread(new Runnable() {
+						public void run() {
+							Global.print(context,e.getMessage());
+						}
+					});
+				}
+
+			}
+		}
+
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {

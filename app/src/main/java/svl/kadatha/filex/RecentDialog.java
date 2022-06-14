@@ -262,45 +262,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				});
 			fileTypeSelectFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 		}
-		/*
-		 else if(file_ext.matches("(?i)apk"))
-		{
 
-			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
-			{
-				if(!getActivity().getPackageManager().canRequestPackageInstalls())
-				{
-					Intent unknown_package_install_intent=new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-					unknown_package_install_intent.setData(Uri.parse(String.format("package:%s",Global.FILEX_PACKAGE)));
-					//startActivityForResult(unknown_package_install_intent,UNKNOWN_PACKAGE_REQUEST_CODE);
-					activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
-				}
-				else
-				{
-					try {
-						installPackage(context,file_path);
-					} catch (IOException e) {
-						print(getString(R.string.installation_failed));
-					}
-				}
-			}
-			else
-			{
-				if(fileObjectType==FileObjectType.USB_TYPE)
-				{
-					if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-					{
-						FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path);
-					}
-				}
-				else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-				{
-					FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType);
-				}
-			}
-		}
-
-		 */
 		else
 		{
 			if(file_ext.matches("(?i)apk"))

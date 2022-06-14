@@ -43,6 +43,8 @@ public class SearchDialog extends DialogFragment
     private Context context;
 	private final List<FilePOJO> storage_list=new ArrayList<>();
 	private InputMethodManager imm;
+	private final long lower_limit_size=0;
+	private final long upper_limit_size=0;
 
 
 	@Override
@@ -128,7 +130,7 @@ public class SearchDialog extends DialogFragment
 			public void onClick(View v)
 			{
 
-				//String f_n,f_t;
+				//String file_name,file_type;
 				if(search_file_name.getText().toString().trim().equals(""))
 				{
 					Global.print(context,getString(R.string.enter_name));
@@ -152,24 +154,9 @@ public class SearchDialog extends DialogFragment
 				DetailFragment.SEARCH_WHOLE_WORD=wholeword_checkbox.isChecked();
 				DetailFragment.SEARCH_CASE_SENSITIVE=casesensitive_checkbox.isChecked();
 				DetailFragment.SEARCH_REGEX=regex_checkbox.isChecked();
-				/*
-				if(rg.getCheckedRadioButtonId()==R.id.dialog_search_rb_filetype)
-				{
-					DetailFragment.SEARCH_FILE_TYPE="f";
-					
-				}
-				else if(rg.getCheckedRadioButtonId()==R.id.dialog_search_rb_foldertype)
-				{
-					DetailFragment.SEARCH_FILE_TYPE="d";
-				}
-				else
-				{
-					DetailFragment.SEARCH_FILE_TYPE="fd";
-				}
-				*/
 
 				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(DetailFragment.SEARCH_RESULT),FileObjectType.SEARCH_LIBRARY_TYPE);
-				((MainActivity)context).createFragmentTransaction(DetailFragment.SEARCH_RESULT,FileObjectType.SEARCH_LIBRARY_TYPE);
+				((MainActivity)context).createFragmentTransaction(DetailFragment.SEARCH_RESULT,FileObjectType.SEARCH_LIBRARY_TYPE,lower_limit_size,upper_limit_size);
 				imm.hideSoftInputFromWindow(search_file_name.getWindowToken(),0);
 				dismissAllowingStateLoss();
 			}
