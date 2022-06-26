@@ -21,6 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.DialogFragment;
@@ -36,15 +37,32 @@ import java.util.Set;
 
 public class SearchDialog extends DialogFragment
 {
-	private EditText search_file_name;
+	private EditText search_file_name_edit_text, lower_bound_edit_text,upper_bound_edit_text;
 	private CheckBox wholeword_checkbox,casesensitive_checkbox,regex_checkbox;
     private final SparseBooleanArray dir_selected_booleanarray=new SparseBooleanArray();
 	private final Set<FilePOJO> selected_search_dir_list= new HashSet<>();
     private Context context;
 	private final List<FilePOJO> storage_list=new ArrayList<>();
 	private InputMethodManager imm;
-	private final long lower_limit_size=0;
-	private final long upper_limit_size=0;
+	private long search_lower_limit_size=0;
+	private long search_upper_limit_size=0;
+	private String search_file_name;
+	Set<FilePOJO>search_in_dir;
+	String search_file_type;
+	boolean search_whole_word,search_case_sensitive,search_regex;
+	private SearchDialogListener searchDialogListener;
+	private long size_multiplying_factor;
+	public static final String SEARCH_FILE_NAME="search_file_name";
+	public static final String SEARCH_IN_DIR="search_in_dir";
+	public static final String SEARCH_FILE_TYPE="search_file_type";
+	public static final String SEARCH_WHOLE_WORD="search_whole_word";
+	public static final String SEARCH_CASE_SENSITIVE="serach_case_sensitive";
+	public static final String SEARCH_REGEX="search_regex";
+	public static final String SEARCH_LOWER_LIMIT_SIZE="search_lower_limit_size";
+	public static final String SEARCH_UPPER_LIMIT_SIZE="search_upper_limit_size";
+
+	private Group size_group;
+	private String file_size_unit;
 
 
 	@Override
@@ -52,6 +70,7 @@ public class SearchDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		searchDialogListener=(SearchDialogListener)this.context;
 	}
 
 	@Override
@@ -74,39 +93,50 @@ public class SearchDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_search_parameters,container,false);
-		search_file_name=v.findViewById(R.id.dialog_fragment_search_file_edittext);
+		search_file_name_edit_text=v.findViewById(R.id.dialog_fragment_search_file_edittext);
 		wholeword_checkbox=v.findViewById(R.id.dialog_fragment_search_wholeword_checkbox);
 		casesensitive_checkbox=v.findViewById(R.id.dialog_fragment_search_casesensitive_checkbox);
 		regex_checkbox=v.findViewById(R.id.dialog_fragment_search_regex_checkbox);
-        RadioGroup rg = v.findViewById(R.id.dialog_fragment_search_rg);
+
+
+		size_group=v.findViewById(R.id.dialog_fragment_search_size_label_group);
+		RadioGroup rg = v.findViewById(R.id.dialog_fragment_search_rg);
 		rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
 		{
 			public void onCheckedChanged(RadioGroup p1, int p2)
 			{
 				if (p2 == R.id.dialog_search_rb_filetype) {
-					DetailFragment.SEARCH_FILE_TYPE = "f";
+					search_file_type = "f";
+					size_group.setVisibility(View.VISIBLE);
 				} else if (p2 == R.id.dialog_search_rb_foldertype) {
-					DetailFragment.SEARCH_FILE_TYPE = "d";
+					search_file_type = "d";
+					setSizeGroupVisibilityGone();
 				} else if (p2 == R.id.dialog_search_rb_filefoldertype) {
-					DetailFragment.SEARCH_FILE_TYPE = "fd";
+					search_file_type = "fd";
+					setSizeGroupVisibilityGone();
 				}
 			}
 		});
+
         RadioButton file_rb = v.findViewById(R.id.dialog_search_rb_filetype);
         RadioButton dir_rb = v.findViewById(R.id.dialog_search_rb_foldertype);
         RadioButton file_dir_rb = v.findViewById(R.id.dialog_search_rb_filefoldertype);
-		if(DetailFragment.SEARCH_FILE_TYPE!=null)
+
+		if(search_file_type!=null)
 		{
-			switch(DetailFragment.SEARCH_FILE_TYPE)
+			switch(search_file_type)
 			{
 				case "d":
 					dir_rb.setChecked(true);
+					setSizeGroupVisibilityGone();
 					break;
 				case "fd":
 					file_dir_rb.setChecked(true);
+					setSizeGroupVisibilityGone();
 					break;
 				default:
 					file_rb.setChecked(true);
+					size_group.setVisibility(View.VISIBLE);
 					break;
 
 			}
@@ -114,7 +144,53 @@ public class SearchDialog extends DialogFragment
 		else
 		{
 			file_rb.setChecked(true);
+			size_group.setVisibility(View.VISIBLE);
 		}
+
+		RadioGroup file_size_radio_group = v.findViewById(R.id.dialog_fragment_search_size_rg);
+		file_size_radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup radioGroup, int i) {
+				if(i==R.id.dialog_search_rb_size_kb)
+				{
+					size_multiplying_factor=1024;
+					file_size_unit="kb";
+				}
+				else if(i==R.id.dialog_search_rb_size_mb)
+				{
+					size_multiplying_factor=1024*1024;
+					file_size_unit="mb";
+				}
+			}
+		});
+
+		RadioButton kb_radio_button=v.findViewById(R.id.dialog_search_rb_size_kb);
+		RadioButton mb_radio_button=v.findViewById(R.id.dialog_search_rb_size_mb);
+
+		if(file_size_unit!=null)
+		{
+			switch (file_size_unit)
+			{
+				case "mb":
+					mb_radio_button.setChecked(true);
+					size_multiplying_factor=1024*1024;
+					break;
+				default:
+					kb_radio_button.setChecked(true);
+					size_multiplying_factor=1024;
+					break;
+			}
+		}
+		else
+		{
+			kb_radio_button.setChecked(true);
+			size_multiplying_factor=1024;
+		}
+
+
+
+		lower_bound_edit_text=v.findViewById(R.id.dialog_fragment_search_lower_bound);
+		upper_bound_edit_text=v.findViewById(R.id.dialog_fragment_search_upper_bound);
 
         RecyclerView search_recyclerview = v.findViewById(R.id.dialog_fragment_search_storage_dir_recyclerview);
 		search_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
@@ -129,16 +205,30 @@ public class SearchDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-
-				//String file_name,file_type;
-				if(search_file_name.getText().toString().trim().equals(""))
+				if(lower_bound_edit_text.getText().toString().trim().equals("") && upper_bound_edit_text.getText().toString().trim().equals("") && search_file_name_edit_text.getText().toString().trim().equals(""))
 				{
 					Global.print(context,getString(R.string.enter_name));
 					return;
 				}
 				else
 				{
-					DetailFragment.SEARCH_FILE_NAME=search_file_name.getText().toString().trim();
+					search_file_name=search_file_name_edit_text.getText().toString().trim();
+					try {
+						search_lower_limit_size=Long.parseLong(lower_bound_edit_text.getText().toString())*size_multiplying_factor;
+					}
+					catch (NumberFormatException e)
+					{
+						search_lower_limit_size=0L;
+					}
+
+					try {
+						search_upper_limit_size=Long.parseLong(upper_bound_edit_text.getText().toString())*size_multiplying_factor;
+					}
+					catch (NumberFormatException e)
+					{
+						search_upper_limit_size=0L;
+					}
+
 				}
 				if(selected_search_dir_list.size()==0)
 				{
@@ -147,17 +237,21 @@ public class SearchDialog extends DialogFragment
 				}
 				else
 				{
-					DetailFragment.SEARCH_IN_DIR=new HashSet<>();
-					DetailFragment.SEARCH_IN_DIR.addAll(selected_search_dir_list);
-					
+					search_in_dir=new HashSet<>();
+					search_in_dir.addAll(selected_search_dir_list);
 				}
-				DetailFragment.SEARCH_WHOLE_WORD=wholeword_checkbox.isChecked();
-				DetailFragment.SEARCH_CASE_SENSITIVE=casesensitive_checkbox.isChecked();
-				DetailFragment.SEARCH_REGEX=regex_checkbox.isChecked();
+				search_whole_word=wholeword_checkbox.isChecked();
+				search_case_sensitive=casesensitive_checkbox.isChecked();
+				search_regex=regex_checkbox.isChecked();
 
+				if(searchDialogListener!=null)
+				{
+					searchDialogListener.onCloseSearchDialog(search_file_name,search_in_dir,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+
+				}
 				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(DetailFragment.SEARCH_RESULT),FileObjectType.SEARCH_LIBRARY_TYPE);
-				((MainActivity)context).createFragmentTransaction(DetailFragment.SEARCH_RESULT,FileObjectType.SEARCH_LIBRARY_TYPE,lower_limit_size,upper_limit_size);
-				imm.hideSoftInputFromWindow(search_file_name.getWindowToken(),0);
+				((MainActivity)context).createFragmentTransaction(DetailFragment.SEARCH_RESULT,FileObjectType.SEARCH_LIBRARY_TYPE);
+				imm.hideSoftInputFromWindow(search_file_name_edit_text.getWindowToken(),0);
 				dismissAllowingStateLoss();
 			}
 		});
@@ -168,7 +262,7 @@ public class SearchDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-				imm.hideSoftInputFromWindow(search_file_name.getWindowToken(),0);
+				imm.hideSoftInputFromWindow(search_file_name_edit_text.getWindowToken(),0);
 				dismissAllowingStateLoss();
 			}
 		});
@@ -183,7 +277,6 @@ public class SearchDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		
 	}
 
 	@Override
@@ -196,7 +289,20 @@ public class SearchDialog extends DialogFragment
 
 		super.onDestroyView();
 	}
-	
+
+	private void setSizeGroupVisibilityGone()
+	{
+		size_group.setVisibility(View.GONE);
+		lower_bound_edit_text.setText("");
+		upper_bound_edit_text.setText("");
+	}
+
+	interface SearchDialogListener
+	{
+		void onCloseSearchDialog(String search_file_name, Set<FilePOJO> search_in_dir, String search_file_type, boolean search_whole_word, boolean search_case_sensitive, boolean search_regex, long lower_size_limit, long upper_size_limit);
+	}
+
+
 	public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH>
 	{
 

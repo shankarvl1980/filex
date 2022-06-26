@@ -341,9 +341,11 @@
 	<string name="press_again_to_close_activity">press again to close the activity</string>
 	<string name="volume_colon">Volume:</string>
     <string name="cannot_open_here">cannot open here</string>
+    <string name="lower_bound_colon">Lower bound:</string>
+	<string name="upper_bound_colon">Upper bound:</string>
 
 
-    <string-array name="library_categories">
+	<string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

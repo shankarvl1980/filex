@@ -77,10 +77,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public static String CUT_COPY_FILECLICKSELECTED="";
 	public static ArrayList<String> FILE_SELECTED_FOR_CUT_COPY=new ArrayList<>();
 
-	public static String SEARCH_FILE_NAME;
-	public static Set<FilePOJO> SEARCH_IN_DIR=new HashSet<>();
-	public static String SEARCH_FILE_TYPE;
-	public static boolean SEARCH_WHOLE_WORD,SEARCH_CASE_SENSITIVE,SEARCH_REGEX;
+	public  String search_file_name;
+	public  Set<FilePOJO> search_in_dir=new HashSet<>();
+	public  String search_file_type;
+	public  boolean search_whole_word,search_case_sensitive,search_regex;
+	private long search_lower_limit_size=0;
+	private long search_upper_limit_size=0;
 	
 	static final String SEARCH_RESULT="Search";
 	public SparseBooleanArray mselecteditems=new SparseBooleanArray();
@@ -105,7 +107,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
-	private long lower_limit_size,upper_limit_size;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -132,8 +133,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
-		lower_limit_size=bundle.getLong("lower_limit_size",0);
-		upper_limit_size=bundle.getLong("upper_limit_size",0);
 		fileclickselected=getTag();
 		if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
@@ -202,7 +201,21 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
+					if(mainActivity==null)
+					{
+						context=getContext();
+						mainActivity=(MainActivity)context;
+
+					}
+					search_file_name=mainActivity.search_file_name;
+					search_in_dir=mainActivity.search_in_dir;
+					search_file_type=mainActivity.search_file_type;
+					search_whole_word=mainActivity.search_whole_word;
+					search_case_sensitive=mainActivity.search_case_sensitive;
+					search_regex=mainActivity.search_regex;
+					search_lower_limit_size=mainActivity.search_lower_limit_size;
+					search_upper_limit_size=mainActivity.search_upper_limit_size;
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -239,7 +252,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -358,7 +371,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
+					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
 					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				else
@@ -384,7 +397,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,lower_limit_size,upper_limit_size);
+				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
 				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			}
 			after_filledFilePojos_procedure();
@@ -483,7 +496,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
 		{
-			//Log.d("shankar","fragment cache cleared in "+this.fileObjectType.toString());
 			cache_cleared=true;
 		}
 		else if(this.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -515,6 +527,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return df;
 	}
 
+	/*
 	public static DetailFragment getInstance(FileObjectType fileObjectType,long lower_limit_size,long upper_limit_size)
 	{
 		DetailFragment df=new DetailFragment();
@@ -525,6 +538,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		df.setArguments(bundle);
 		return df;
 	}
+
+	 */
 
 	public void seekSAFPermission()
 	{
@@ -749,8 +764,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	}
 	
 
-
-
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
 		mselecteditems=new SparseBooleanArray();
@@ -936,34 +949,34 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			filePOJOS.clear(); filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
 			{
-				for(FilePOJO f : SEARCH_IN_DIR)
+				for(FilePOJO f : search_in_dir)
 				{
 					if(f.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(f.getPath()))))
 					{
 						path.add(f);
 					}
 				}
-				if(SEARCH_REGEX)
+				if(search_regex)
 				{
-					what_to_find=SEARCH_FILE_NAME;
+					what_to_find=search_file_name;
 				}
-				else if(SEARCH_WHOLE_WORD)
+				else if(search_whole_word)
 				{
-					what_to_find="\\Q"+SEARCH_FILE_NAME+"\\E";
-					if(!SEARCH_CASE_SENSITIVE)
+					what_to_find="\\Q"+search_file_name+"\\E";
+					if(!search_case_sensitive)
 					{
-						what_to_find="(?i)\\Q"+SEARCH_FILE_NAME+"\\E";
+						what_to_find="(?i)\\Q"+search_file_name+"\\E";
 					}
 				}
 				else
 				{
-					what_to_find=".*(\\Q"+SEARCH_FILE_NAME+"\\E).*";
-					if(!SEARCH_CASE_SENSITIVE)
+					what_to_find=".*(\\Q"+search_file_name+"\\E).*";
+					if(!search_case_sensitive)
 					{
-						what_to_find=".*((?i)\\Q"+SEARCH_FILE_NAME+"\\E).*";
+						what_to_find=".*((?i)\\Q"+search_file_name+"\\E).*";
 					}
 				}
-				file_type=SEARCH_FILE_TYPE;
+				file_type=search_file_type;
 			}
 			else
 			{
@@ -1039,7 +1052,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						{
 							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered,lower_limit_size,upper_limit_size);
 						}
-
 					}
 				}
 				else
@@ -1212,7 +1224,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					else
 					{
 						long length=f.length();
-						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && (length >= lower_limit_size && length <= upper_limit_size))
+						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
 						{
 							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
 							f_pojos.add(filePOJO);

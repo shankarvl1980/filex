@@ -60,17 +60,14 @@ public class CreateFileAlertDialog extends DialogFragment
 			{
 				public void onItemClick(AdapterView<?> p1, View p2,int p3,long p4)
 				{
-					CreateFileDialog createFileDialig=CreateFileDialog.getInstance(p3,parent_folder,fileObjectType);
-					createFileDialig.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+					CreateFileDialog createFileDialog=CreateFileDialog.getInstance(p3,parent_folder,fileObjectType);
+					createFileDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 					dismissAllowingStateLoss();
 				}
-
-
 			});
 			
 		close_button.setOnClickListener(new View.OnClickListener()
 		{
-			
 			public void onClick(View v)
 			{
 				dismissAllowingStateLoss();

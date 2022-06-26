@@ -730,12 +730,8 @@ public class FilePOJOUtil {
         for(int i=0;i<size;++i)
         {
             String file_path=file_path_list.get(i);
-            //Log.d("shankar","child pojo to be removed "+file_path);
-            if(fileObjectType!=FileObjectType.SEARCH_LIBRARY_TYPE) //dont remove search library type filepojos
-            {
-                REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path,fileObjectType);
-            }
 
+            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path,fileObjectType);
 
             if(df!=null) df.mainActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
             if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);

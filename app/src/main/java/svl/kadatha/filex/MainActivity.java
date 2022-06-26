@@ -79,7 +79,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
-public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
+public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener, SearchDialog.SearchDialogListener
 {
 	public boolean archive_view;
 	private boolean working_dir_open,library_or_search_shown;
@@ -147,6 +147,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
 	public static FTPClient FTP_CLIENT;
+
+	public long search_lower_limit_size=0;
+	public long search_upper_limit_size=0;
+	public String search_file_name;
+	public Set<FilePOJO>search_in_dir;
+	public String search_file_type;
+	public boolean search_whole_word,search_case_sensitive,search_regex;
 
 
 	@Override
@@ -627,7 +634,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					public void run() {
 						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 						actionmode_finish(df,df.fileclickselected);
-
 						SearchDialog searchDialog=new SearchDialog();
 						searchDialog.show(fm,"search_dialog");
 						pbf.dismissAllowingStateLoss();
@@ -1122,6 +1128,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	}
 
+	/*
 	public void createFragmentTransaction(String file_path,FileObjectType fileObjectType,long lower_limit_size, long upper_limit_size)
 	{
 		String fragment_tag;
@@ -1147,6 +1154,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
+
+	 */
 
 	@Override
 	public void onBackPressed()
@@ -1446,6 +1455,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void deleteDialogOKButtonClick() {
 		final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		actionmode_finish(df,df.fileclickselected);
+	}
+
+	@Override
+	public void onCloseSearchDialog(String file_name, Set<FilePOJO> in_dir, String file_type, boolean whole_word, boolean case_sensitive, boolean regex, long lower_size_limit, long upper_size_limit) {
+		search_file_name=file_name;
+		search_in_dir=in_dir;
+		search_file_type=file_type;
+		search_whole_word=whole_word;
+		search_case_sensitive=case_sensitive;
+		search_regex=regex;
+		search_lower_limit_size=lower_size_limit;
+		search_upper_limit_size=upper_size_limit;
 	}
 
 
