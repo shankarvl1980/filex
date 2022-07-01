@@ -46,7 +46,7 @@ public class AppActionSelectDialog extends DialogFragment
         package_name=bundle.getString("package_name");
         app_size=bundle.getString("app_size");
         version=bundle.getString("version");
-        action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.SHARE,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
+        action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
     }
 
     public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version)

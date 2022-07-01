@@ -196,14 +196,24 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 					dest_file_names=new ArrayList<>();
 					List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
-					/*
 					if(destFilePOJOs==null)
 					{
-						FilePOJOUtil.MAKE_FilePOJO(destFileObjectType,dest_folder);
-						destFilePOJOs=MainActivity.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
-					}
+						UsbFile currentUsbFile=null;
+						if(destFileObjectType==FileObjectType.USB_TYPE)
+						{
+							if(MainActivity.usbFileRoot!=null)
+							{
+								try {
+									currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
 
-					 */
+								} catch (IOException e) {
+
+								}
+							}
+						}
+						FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),destFileObjectType,dest_folder,currentUsbFile,false);
+						destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+					}
 					for(FilePOJO filePOJO:destFilePOJOs)
 					{
 						dest_file_names.add(filePOJO.getName());

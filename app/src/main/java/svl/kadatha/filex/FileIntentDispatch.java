@@ -21,29 +21,21 @@ class FileIntentDispatch
 	public static void openFile(Context context,String file_path, String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
 	{
 		open_file(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
-		//OpenFileIntentDispatchAsyncTask openFileIntentDispatchAsyncTask=new OpenFileIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
-		//openFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
 	{
 		open_uri(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
-		//OpenUriIntentDispatchAsyncTask openUriIntentDispatchAsyncTask=new OpenUriIntentDispatchAsyncTask(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
-		//openUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
 	public static void sendFile(Context context, ArrayList<File> file_list)
 	{
 		send_file(context,file_list);
-		//SendFileIntentDispatchAsyncTask sendFileIntentDispatchAsyncTask=new SendFileIntentDispatchAsyncTask(context,file_list);
-		//sendFileIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	public static void sendUri(Context context, ArrayList<Uri> uri_list)
 	{
 		send_uri(context,uri_list);
-		//SendUriIntentDispatchAsyncTask sendUriIntentDispatchAsyncTask=new SendUriIntentDispatchAsyncTask(context,uri_list);
-		//sendUriIntentDispatchAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
     private static void open_file(Context context, String file_path,String mime_type,boolean clear_top,  boolean fromArchiveView,FileObjectType fileObjectType)

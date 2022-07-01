@@ -527,19 +527,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return df;
 	}
 
-	/*
-	public static DetailFragment getInstance(FileObjectType fileObjectType,long lower_limit_size,long upper_limit_size)
-	{
-		DetailFragment df=new DetailFragment();
-		Bundle bundle=new Bundle();
-		bundle.putSerializable("fileObjectType",fileObjectType);
-		bundle.putLong("lower_limit_size",lower_limit_size);
-		bundle.putLong("upper_limit_size",upper_limit_size);
-		df.setArguments(bundle);
-		return df;
-	}
-
-	 */
 
 	public void seekSAFPermission()
 	{

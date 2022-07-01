@@ -517,6 +517,9 @@ public class AppManagerListFragment extends Fragment {
                     }
                 } else if (SHARE.equals(app_action)) {
 
+                    Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(appPOJO.getPath()));
+                    FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
+                    /*
                     try {
                         PackageManager pm = context.getPackageManager();
                         ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), 0);
@@ -527,6 +530,8 @@ public class AppManagerListFragment extends Fragment {
                     } catch (Exception e) {
                         Global.print(context,getString(R.string.could_not_perform_action));
                     }
+
+                     */
 
                 }
                 clear_selection();
