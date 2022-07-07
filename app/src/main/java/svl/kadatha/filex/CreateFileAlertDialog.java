@@ -31,7 +31,7 @@ public class CreateFileAlertDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		type_file=new String[]{getString(R.string.file),getString(R.string.folder)};
 		Bundle bundle=getArguments();
 		if(bundle!=null)
@@ -98,7 +98,7 @@ public class CreateFileAlertDialog extends DialogFragment
 
 
 	
-	
+	/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -106,14 +106,7 @@ public class CreateFileAlertDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
-	
-	
-	
-	private void setAnimation(View v)
-	{
-		Animation animation=AnimationUtils.loadAnimation(context,android.R.anim.slide_out_right);
-		v.setAnimation(animation);
-	}
-	
+
+	 */
 	
 }

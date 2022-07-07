@@ -7,13 +7,19 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.content.*;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 public class RenameReplaceConfirmationDialog extends DialogFragment
 {
 
     private String rename_file_name;
-	private RenameReplaceDialogListener renameDialogListener;
+	//private RenameReplaceDialogListener renameDialogListener;
+	private FragmentManager fragmentManager;
+	private Context context;
+	private Bundle bundle;
 
 
    public static RenameReplaceConfirmationDialog getInstance(String new_name)
@@ -24,14 +30,22 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	   renameReplaceConfirmationDialog.setArguments(bundle);
 	   return renameReplaceConfirmationDialog;
    }
-    @Override
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+		this.context = context;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		setCancelable(false);
-		Bundle bundle=getArguments();
+		bundle=getArguments();
 		rename_file_name=bundle.getString("rename_file_name");
 	
 	}
@@ -41,7 +55,7 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		//return super.onCreateView(inflater, container, savedInstanceState);
-        Context context = getContext();
+
 		View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);
@@ -56,11 +70,15 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 			{
 				public void onClick(View v)
 				{
-					
+
+					fragmentManager.setFragmentResult(RenameFileDialog.REPLACEMENT_CONFIRMATION, bundle);
+					/*
 					if(renameDialogListener!=null)
 					{
 						renameDialogListener.rename_file();
 					}
+
+					 */
 					dismissAllowingStateLoss();
 
 
@@ -92,7 +110,7 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	}
 
 
-
+/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -101,6 +119,10 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 		super.onDestroyView();
 
 	}
+
+ */
+
+	/*
 	public void setRenameReplaceDialogListener(RenameReplaceDialogListener listener)
 	{
 		renameDialogListener=listener;
@@ -111,5 +133,7 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 
 		void rename_file();
 	}
-	
+
+
+	 */
 }

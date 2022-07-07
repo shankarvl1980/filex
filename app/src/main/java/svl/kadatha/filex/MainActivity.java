@@ -79,7 +79,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
-public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener, SearchDialog.SearchDialogListener
+public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
 {
 	public boolean archive_view;
 	private boolean working_dir_open,library_or_search_shown;
@@ -1125,44 +1125,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
 					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
 		}
-
 	}
-
-	/*
-	public void createFragmentTransaction(String file_path,FileObjectType fileObjectType,long lower_limit_size, long upper_limit_size)
-	{
-		String fragment_tag;
-		String existingFilePOJOkey="";
-		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-		if(df!=null)
-		{
-			fragment_tag=df.getTag();
-			existingFilePOJOkey=df.fileObjectType+fragment_tag;
-			actionmode_finish(df,file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
-		}
-
-		if(file_path.equals(DetailFragment.SEARCH_RESULT) || DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null)
-		{
-			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType,lower_limit_size,upper_limit_size),file_path)
-					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
-
-		}
-		else if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
-		{
-			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
-					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
-		}
-
-	}
-
-	 */
 
 	@Override
 	public void onBackPressed()
 	{
 		// TODO: Implement this method
 		onbackpressed(true);
-
 	}
 
 	private void onbackpressed(boolean onBackPressed)
@@ -1455,18 +1424,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void deleteDialogOKButtonClick() {
 		final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		actionmode_finish(df,df.fileclickselected);
-	}
-
-	@Override
-	public void onCloseSearchDialog(String file_name, Set<FilePOJO> in_dir, String file_type, boolean whole_word, boolean case_sensitive, boolean regex, long lower_size_limit, long upper_size_limit) {
-		search_file_name=file_name;
-		search_in_dir=in_dir;
-		search_file_type=file_type;
-		search_whole_word=whole_word;
-		search_case_sensitive=case_sensitive;
-		search_regex=regex;
-		search_lower_limit_size=lower_size_limit;
-		search_upper_limit_size=upper_size_limit;
 	}
 
 

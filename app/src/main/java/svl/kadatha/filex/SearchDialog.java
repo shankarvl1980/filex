@@ -50,7 +50,6 @@ public class SearchDialog extends DialogFragment
 	Set<FilePOJO>search_in_dir;
 	String search_file_type;
 	boolean search_whole_word,search_case_sensitive,search_regex;
-	private SearchDialogListener searchDialogListener;
 	private long size_multiplying_factor;
 	public static final String SEARCH_FILE_NAME="search_file_name";
 	public static final String SEARCH_IN_DIR="search_in_dir";
@@ -63,6 +62,7 @@ public class SearchDialog extends DialogFragment
 
 	private Group size_group;
 	private String file_size_unit;
+	private MainActivity mainActivity;
 
 
 	@Override
@@ -70,7 +70,7 @@ public class SearchDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		searchDialogListener=(SearchDialogListener)this.context;
+		mainActivity=(MainActivity) this.context;
 	}
 
 	@Override
@@ -244,11 +244,18 @@ public class SearchDialog extends DialogFragment
 				search_case_sensitive=casesensitive_checkbox.isChecked();
 				search_regex=regex_checkbox.isChecked();
 
-				if(searchDialogListener!=null)
-				{
-					searchDialogListener.onCloseSearchDialog(search_file_name,search_in_dir,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 
-				}
+
+				mainActivity.search_file_name=search_file_name;
+				mainActivity.search_in_dir=search_in_dir;
+				mainActivity.search_file_type=search_file_type;
+				mainActivity.search_whole_word=search_whole_word;
+				mainActivity.search_case_sensitive=search_case_sensitive;
+				mainActivity.search_regex=search_regex;
+				mainActivity.search_lower_limit_size=search_lower_limit_size;
+				mainActivity.search_upper_limit_size=search_upper_limit_size;
+
+
 				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(DetailFragment.SEARCH_RESULT),FileObjectType.SEARCH_LIBRARY_TYPE);
 				((MainActivity)context).createFragmentTransaction(DetailFragment.SEARCH_RESULT,FileObjectType.SEARCH_LIBRARY_TYPE);
 				imm.hideSoftInputFromWindow(search_file_name_edit_text.getWindowToken(),0);
@@ -297,10 +304,13 @@ public class SearchDialog extends DialogFragment
 		upper_bound_edit_text.setText("");
 	}
 
+	/*
 	interface SearchDialogListener
 	{
 		void onCloseSearchDialog(String search_file_name, Set<FilePOJO> search_in_dir, String search_file_type, boolean search_whole_word, boolean search_case_sensitive, boolean search_regex, long lower_size_limit, long upper_size_limit);
 	}
+
+	 */
 
 
 	public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH>
@@ -343,13 +353,10 @@ public class SearchDialog extends DialogFragment
 						{
 							dir_selected_booleanarray.delete(pos);
 							selected_search_dir_list.remove(storage_list.get(pos));
-
 						}
-
 					}
 
 				});
-				
 
 			}
 

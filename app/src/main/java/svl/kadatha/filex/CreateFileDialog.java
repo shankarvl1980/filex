@@ -25,6 +25,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -44,7 +48,6 @@ public class CreateFileDialog extends DialogFragment
 	private int file_type;
 	private Context context;
 	private InputMethodManager imm;
-	private final int request_code=56;
 	private String tree_uri_path="";
 	private Uri tree_uri;
 	private String parent_folder;
@@ -52,7 +55,6 @@ public class CreateFileDialog extends DialogFragment
 	private String other_file_permission;
 	private final List<String> dest_file_names=new ArrayList<>();
 	private List<FilePOJO> destFilePOJOs;
-
 
 
 	@Override
@@ -68,7 +70,7 @@ public class CreateFileDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -139,6 +141,41 @@ public class CreateFileDialog extends DialogFragment
 			dialog_heading_textview.setText(R.string.enter_folder_name);
 			file_label_textview.setText(R.string.folder_name_colon);
 		}
+
+		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
+		MutableLiveData<FilePOJO> createdFilePOJO=viewModel.createdFilePOJO;
+		createdFilePOJO.observe(CreateFileDialog.this, new Observer<FilePOJO>() {
+			final String new_name=new_file_name_edittext.getText().toString().trim();
+			@Override
+			public void onChanged(FilePOJO filePOJO) {
+				if(filePOJO!=null)
+				{
+					Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+					df.clearSelectionAndNotifyDataSetChanged();
+					int idx=df.filePOJO_list.indexOf(filePOJO);
+					if(df.llm!=null)
+					{
+						df.llm.scrollToPositionWithOffset(idx,0);
+					}
+					else if(df.glm!=null)
+					{
+						df.glm.scrollToPositionWithOffset(idx,0);
+					}
+
+					Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
+				}
+				else
+				{
+					Global.print(context,getString(R.string.could_not_create));
+				}
+				Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
+				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
+				dismissAllowingStateLoss();
+			}
+		});
+
+
+
 		okbutton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -165,8 +202,8 @@ public class CreateFileDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					return;
 				}
-				new FileCreateAsyncTask(file,isWritable).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+				//new FileCreateAsyncTask(file,isWritable).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
 			}	
 				
 
@@ -185,6 +222,7 @@ public class CreateFileDialog extends DialogFragment
 		return v;
 	}
 
+	/*
 	private class FileCreateAsyncTask extends AsyncTask<Void,Void,Boolean>
 	{
 		final File file;
@@ -325,6 +363,8 @@ public class CreateFileDialog extends DialogFragment
 
 		}
 	}
+
+	 */
 
 	public static CreateFileDialog getInstance(int file_type, String parent_folder, FileObjectType fileObjectType)
 	{
@@ -506,7 +546,7 @@ public class CreateFileDialog extends DialogFragment
 		super.onDismiss(dialog);
 	}
 	
-
+/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -516,6 +556,8 @@ public class CreateFileDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+ */
 
 
 }
