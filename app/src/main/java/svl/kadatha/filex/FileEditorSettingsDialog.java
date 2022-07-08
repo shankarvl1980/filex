@@ -7,6 +7,7 @@ import android.graphics.*;
 import android.widget.*;
 import android.content.*;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class FileEditorSettingsDialog extends DialogFragment
@@ -42,13 +43,19 @@ public class FileEditorSettingsDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		setCancelable(false);
+		//setRetainInstance(true);
 		selected_eol=fileEditorActivity.eol;
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
 		fromArchiveView=fileEditorActivity.fromArchiveView;
 		fromThirdPartyApp=fileEditorActivity.fromThirdPartyApp;
 		isFileBig=fileEditorActivity.isFileBig;
+		if(savedInstanceState!=null)
+		{
+			selected_text_size=savedInstanceState.getFloat("selected_text_size");
+			not_wrap=savedInstanceState.getBoolean("not_wrap");
+		}
 	}
 
 	
@@ -241,7 +248,13 @@ public class FileEditorSettingsDialog extends DialogFragment
 		}
 	}
 
-	
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putFloat("selected_text_size",selected_text_size);
+		outState.putBoolean("not_wrap",not_wrap);
+	}
+
 	@Override
 	public void onResume()
 	{
@@ -252,6 +265,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
+	/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -262,9 +276,12 @@ public class FileEditorSettingsDialog extends DialogFragment
 		super.onDestroyView();
 	}
 
+
+	 */
 	interface EOL_ChangeListener
 	{
 		void onEOLchanged(int eol);
 	}
+
 
 }

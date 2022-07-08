@@ -1152,6 +1152,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	}
 
+
 	private class FileOpenAsyncTask extends svl.kadatha.filex.AsyncTask<Void,StringBuilder,Boolean>
 	{
 

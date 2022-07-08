@@ -3,6 +3,7 @@ import android.content.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.widget.TableRow.*;
@@ -10,6 +11,7 @@ import android.widget.TableRow.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -35,6 +37,7 @@ public class PropertiesDialog extends DialogFragment
 	private FileObjectType fileObjectType;
 	private String source_folder;
 	private int size;
+	public static final String PROPERTIES_DIALOG_REQUEST_CODE="properties_dialog_request_code";
 
 
 	@Override
@@ -206,6 +209,7 @@ public class PropertiesDialog extends DialogFragment
 							}
 
 							PermissionsDialog permissionsDialog=PermissionsDialog.getInstance(file_path_str,file_permissions_str,symbolic_link_str);
+							/*
 							permissionsDialog.setPermissionChangeListener(new PermissionsDialog.PermissionChangeListener()
 							{
 								public void onPermissionChange(File file)
@@ -213,6 +217,8 @@ public class PropertiesDialog extends DialogFragment
 									getPermissions(file);
 								}
 							});
+
+							 */
 							permissionsDialog.show(((AppCompatActivity)context).getSupportFragmentManager().beginTransaction(),"permissions_dialog");
 						}
 					});
@@ -259,6 +265,14 @@ public class PropertiesDialog extends DialogFragment
 				dismissAllowingStateLoss();
 			}
 			
+		});
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(PROPERTIES_DIALOG_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				String file_path=result.getString("file_path");
+				getPermissions(new File(file_path));
+			}
 		});
 		return v;
 	}
