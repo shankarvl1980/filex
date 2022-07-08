@@ -10,6 +10,8 @@ import android.widget.TableRow.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -32,6 +34,7 @@ public class PropertiesDialog extends DialogFragment
 	private FileCountSize AsyncTaskFileCountSize;
 	private FileObjectType fileObjectType;
 	private String source_folder;
+	private int size;
 
 
 	@Override
@@ -45,14 +48,16 @@ public class PropertiesDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		setCancelable(false);
+//		setRetainInstance(true);
 		Bundle bundle=getArguments();
 		files_selected_array=bundle.getStringArrayList("files_selected_array");
+		size=files_selected_array.size();
 		source_folder=new File(files_selected_array.get(0)).getParent();
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) fileObjectType=FileObjectType.FILE_TYPE;
-		AsyncTaskFileCountSize=new FileCountSize(files_selected_array,fileObjectType);
-		AsyncTaskFileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+	//	AsyncTaskFileCountSize=new FileCountSize(files_selected_array,fileObjectType);
+	//	AsyncTaskFileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 		if(files_selected_array.size()==1)
 		{
@@ -222,7 +227,27 @@ public class PropertiesDialog extends DialogFragment
 			properties_rwh_table_layout.addView(row_item);
 		}
 
-        ViewGroup buttons_layout = v.findViewById(R.id.fragment_properties_button_layout);
+		ViewModelFileCount viewModel=new ViewModelProvider(this).get(ViewModelFileCount.class);
+		viewModel.count(source_folder,fileObjectType,files_selected_array,size,true);
+
+		viewModel.total_no_of_files.observe(this, new androidx.lifecycle.Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				no_files_textview.setText(getString(R.string.total_files_colon)+" "+integer);
+			}
+		});
+
+		viewModel.size_of_files_formatted.observe(this, new Observer<String>() {
+			@Override
+			public void onChanged(String s) {
+
+				size_files_textview.setText(getString(R.string.size_colon)+" "+s);
+			}
+		});
+
+
+
+		ViewGroup buttons_layout = v.findViewById(R.id.fragment_properties_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button OKBtn = buttons_layout.findViewById(R.id.first_button);
 		OKBtn.setText(R.string.close);
@@ -230,6 +255,7 @@ public class PropertiesDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
+				PropertiesDialog.this.getViewModelStore().clear();
 				dismissAllowingStateLoss();
 			}
 			
@@ -258,6 +284,7 @@ public class PropertiesDialog extends DialogFragment
 		
 	}
 
+/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -268,6 +295,9 @@ public class PropertiesDialog extends DialogFragment
 		super.onDestroyView();
 	}
 
+ */
+
+/*
 	@Override
 	public void onDismiss(DialogInterface dialog)
 	{
@@ -275,6 +305,8 @@ public class PropertiesDialog extends DialogFragment
 		super.onDismiss(dialog);
 		AsyncTaskFileCountSize.cancel(true);
 	}
+
+ */
 
 
 	public void getPermissions(File file)

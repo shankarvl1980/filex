@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +26,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -35,6 +41,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class DeleteFileAlertDialog extends DialogFragment
 {
@@ -43,7 +51,7 @@ public class DeleteFileAlertDialog extends DialogFragment
     private TextView size_files_textview;
 
     private final ArrayList<String>files_selected_array=new ArrayList<>();
-	private FileCountSize fileCountSize;
+	//private FileCountSize fileCountSize;
 	private int total_no_of_files;
 	private String size_of_files_to_be_deleted;
 	private Context context;
@@ -59,6 +67,7 @@ public class DeleteFileAlertDialog extends DialogFragment
     private OKButtonClickListener okButtonClickListener;
 	private String other_file_permission;
 	private String source_folder;
+	private Handler handler;
 
 
 	@Override
@@ -74,7 +83,8 @@ public class DeleteFileAlertDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		setCancelable(false);
+		//this.setRetainInstance(true);
 		bundle=getArguments();
 
 		if(bundle!=null)
@@ -84,10 +94,11 @@ public class DeleteFileAlertDialog extends DialogFragment
 			source_folder=bundle.getString("source_folder");
             boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 			size=files_selected_array.size();
-			fileCountSize=new FileCountSize(files_selected_array,sourceFileObjectType);
-			fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			//fileCountSize=new FileCountSize(files_selected_array,sourceFileObjectType);
+			//fileCountSize.count();
 		}
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(source_folder);
+		handler=new Handler(Looper.getMainLooper());
 	}
 
 	public static DeleteFileAlertDialog getInstance(ArrayList<String> files_selected_array, FileObjectType sourceFileObjectType, String source_folder,boolean storage_analyser_delete )
@@ -130,14 +141,37 @@ public class DeleteFileAlertDialog extends DialogFragment
 		dialog_heading_textview.setText(R.string.delete);
 		new_file_name_edittext.setVisibility(View.GONE);
 
+		ViewModelFileCount viewModel=new ViewModelProvider(this).get(ViewModelFileCount.class);
+		viewModel.count(source_folder,sourceFileObjectType,files_selected_array,size,true);
+
+		viewModel.total_no_of_files.observe(this, new Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				no_files_textview.setText(getString(R.string.total_files_colon)+" "+integer);
+			}
+		});
+
+		viewModel.size_of_files_formatted.observe(this, new Observer<String>() {
+			@Override
+			public void onChanged(String s) {
+
+				size_files_textview.setText(getString(R.string.size_colon)+" "+s);
+			}
+		});
+
+
 		okbutton.setOnClickListener(new View.OnClickListener()
 			{
 				public void onClick(View v)
 				{
+					/*
 					if(fileCountSize!=null)
 					{
 						fileCountSize.cancel(true);
 					}
+
+					 */
+					DeleteFileAlertDialog.this.getViewModelStore().clear();
 					if(sourceFileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);
@@ -241,19 +275,20 @@ public class DeleteFileAlertDialog extends DialogFragment
 			{
 				public void onClick(View v)
 				{
+					/*
 					if(fileCountSize!=null)
 					{
 						fileCountSize.cancel(true);
 					}
+
+					 */
+					DeleteFileAlertDialog.this.getViewModelStore().clear();
 					dismissAllowingStateLoss();
 				}
 			});
 			
-		if(savedInstanceState!=null)
-		{
-			no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
-			size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
-		}
+
+
 		return v;
 	}
 
@@ -318,7 +353,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 	}
 });
 
-
+/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -326,6 +361,8 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+ */
 
 	@Override
 	public void onDestroy() {
@@ -364,12 +401,14 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 	}
 
-	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
+	private class FileCountSize
 	{
 		long total_size_of_files;
 		final List<String> source_list_files;
 		final boolean include_folder;
 		final FileObjectType sourceFileObjectType;
+		Future<?> future;
+		boolean isCancelled;
 
 		FileCountSize(ArrayList<String> source_list_files, FileObjectType fileObjectType)
 		{
@@ -378,18 +417,101 @@ public class DeleteFileAlertDialog extends DialogFragment
 			this.sourceFileObjectType=fileObjectType;
 		}
 
+		public void count()
+		{
+			ExecutorService executorService=MyExecutorService.getExecutorService();
+			future= executorService.submit(new Runnable() {
+				@Override
+				public void run() {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
+						}
+					});
+
+					String file_path=source_list_files.get(0);
+					if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
+					{
+						File[] f_array=new File[size];
+						for(int i=0;i<size;++i)
+						{
+							File f=new File(source_list_files.get(i));
+							f_array[i]=f;
+						}
+						populate(f_array,include_folder);
+
+					}
+					else if(sourceFileObjectType== FileObjectType.USB_TYPE)
+					{
+						UsbFile[] f_array=new UsbFile[size];
+						for(int i=0;i<size;++i)
+						{
+							UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
+							f_array[i]=f;
+						}
+						populate(f_array,include_folder);
+					}
+					else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
+					{
+						File[] f_array=new File[size];
+						for(int i=0;i<size;++i)
+						{
+							File f=new File(source_list_files.get(i));
+							f_array[i]=f;
+						}
+						populate(f_array,include_folder);
+
+					}
+					else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+					{
+						FTPFile[] f_array=new FTPFile[size];
+						for(int i=0;i<size;++i)
+						{
+
+							FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+							f_array[i]=f;
+
+						}
+						populate(f_array,include_folder,source_folder);
+
+					}
+
+				}
+			});
+		}
+		/*
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
 		}
 
+		 */
+
+		private void cancel(boolean mayInterruptRunning){
+			if(future!=null)
+			{
+				future.cancel(mayInterruptRunning);
+				isCancelled=true;
+			}
+		}
+
+		private boolean isCancelled()
+		{
+			return isCancelled;
+		}
+
+/*
 		@Override
 		protected void onCancelled() {
 			super.onCancelled();
 			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,source_folder);
 		}
 
+ */
+
+		/*
 		@Override
 		protected Void doInBackground(Void[] p1)
 		{
@@ -443,6 +565,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 			}
 			return null;
 		}
+		*/
 
 		private void populate(File[] source_list_files,boolean include_folder)
 		{
@@ -603,6 +726,22 @@ public class DeleteFileAlertDialog extends DialogFragment
 				publishProgress();
 			}
 		}
+
+		public void publishProgress()
+		{
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if(no_files_textview!=null)
+					{
+						no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
+						size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
+					}
+				}
+			});
+		}
+
+		/*
 		@Override
 		protected void onProgressUpdate(Void[] values)
 		{
@@ -615,6 +754,9 @@ public class DeleteFileAlertDialog extends DialogFragment
 			}
 		}
 
+		 */
+
+		/*
 		@Override
 		protected void onPostExecute(Void result)
 		{
@@ -628,6 +770,8 @@ public class DeleteFileAlertDialog extends DialogFragment
 			// TODO: Implement this method
 			super.onCancelled(result);
 		}
+
+		 */
 	}
 
 	interface OKButtonClickListener

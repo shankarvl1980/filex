@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +41,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class CreateFileDialog extends DialogFragment
 {
@@ -55,6 +58,7 @@ public class CreateFileDialog extends DialogFragment
 	private String other_file_permission;
 	private final List<String> dest_file_names=new ArrayList<>();
 	private List<FilePOJO> destFilePOJOs;
+	private Handler handler;
 
 
 	@Override
@@ -106,6 +110,7 @@ public class CreateFileDialog extends DialogFragment
  */
 
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);
+		handler=new Handler(Looper.getMainLooper());
 
 	}
 
@@ -142,6 +147,7 @@ public class CreateFileDialog extends DialogFragment
 			file_label_textview.setText(R.string.folder_name_colon);
 		}
 
+		/*
 		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
 		MutableLiveData<FilePOJO> createdFilePOJO=viewModel.createdFilePOJO;
 		createdFilePOJO.observe(CreateFileDialog.this, new Observer<FilePOJO>() {
@@ -174,6 +180,8 @@ public class CreateFileDialog extends DialogFragment
 			}
 		});
 
+		 */
+
 
 
 		okbutton.setOnClickListener(new View.OnClickListener()
@@ -203,7 +211,8 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 				//new FileCreateAsyncTask(file,isWritable).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
+				//viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
+				new CreateFileTask(file,isWritable).createFile();
 			}	
 				
 
@@ -220,6 +229,157 @@ public class CreateFileDialog extends DialogFragment
 				
 		});
 		return v;
+	}
+
+
+	private class CreateFileTask
+	{
+		final File file;
+		final boolean isWritable;
+		boolean file_created;
+		final String new_file_path;
+		final String new_name;
+		FilePOJO filePOJO;
+
+		CreateFileTask(File file, boolean isWritable)
+		{
+			this.file=file;
+			this.isWritable=isWritable;
+			new_file_path=file.getAbsolutePath();
+			new_name=file.getName();
+			//this.handler=handler;
+		}
+
+		public void createFile()
+		{
+			ExecutorService executorService=MyExecutorService.getExecutorService();
+			executorService.execute(new Runnable() {
+				boolean file_created;
+				@Override
+				public void run() {
+
+					if(file_type==0)
+					{
+						if(isWritable)
+						{
+							file_created=FileUtil.createNativeNewFile(file);
+						}
+						else if(fileObjectType== FileObjectType.FILE_TYPE)
+						{
+							file_created=FileUtil.createSAFNewFile(context,parent_folder,new_name,tree_uri,tree_uri_path);
+						}
+						else if(fileObjectType== FileObjectType.USB_TYPE)
+						{
+							UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
+							file_created=FileUtil.createUsbFile(parentUsbFile,new_name);
+
+						}
+						else if(fileObjectType==FileObjectType.ROOT_TYPE)
+						{
+							//file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
+							if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+							{
+								file_created=FileUtil.createNativeNewFile(file);
+							}
+						}
+						else if(fileObjectType==FileObjectType.FTP_TYPE)
+						{
+							if(Global.CHECK_FTP_SERVER_CONNECTED())
+							{
+								InputStream bin = new ByteArrayInputStream(new byte[0]);
+								try {
+									file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
+								} catch (IOException e) {
+									file_created=false;
+								}
+							}
+							else
+							{
+								file_created=false;
+							}
+
+						}
+					}
+					else if(file_type==1)
+					{
+						if(isWritable)
+						{
+							file_created=FileUtil.mkdirNative(file);
+						}
+						else if(fileObjectType== FileObjectType.FILE_TYPE)
+						{
+							file_created=FileUtil.mkdirSAF(context,parent_folder,new_name,tree_uri,tree_uri_path);
+						}
+						else if(fileObjectType== FileObjectType.USB_TYPE)
+						{
+							UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
+							file_created=FileUtil.mkdirUsb(parentUsbFile,new_name);
+						}
+						else if(fileObjectType==FileObjectType.ROOT_TYPE)
+						{
+							//file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
+							if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+							{
+								file_created=FileUtil.mkdirNative(file);
+
+							}
+
+						}
+						else if(fileObjectType==FileObjectType.FTP_TYPE)
+						{
+							if(Global.CHECK_FTP_SERVER_CONNECTED())
+							{
+								try {
+									file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
+								} catch (IOException e) {
+								}
+							}
+							else
+							{
+								file_created=false;
+							}
+
+						}
+
+					}
+					if(file_created)
+					{
+						filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
+						Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+					}
+
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							if(file_created)
+							{
+								df.clearSelectionAndNotifyDataSetChanged();
+								int idx=df.filePOJO_list.indexOf(filePOJO);
+								if(df.llm!=null)
+								{
+									df.llm.scrollToPositionWithOffset(idx,0);
+								}
+								else if(df.glm!=null)
+								{
+									df.glm.scrollToPositionWithOffset(idx,0);
+								}
+
+								Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
+							}
+							else
+							{
+								Global.print(context,getString(R.string.could_not_create));
+							}
+							Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
+							imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
+							dismissAllowingStateLoss();
+
+						}
+					});
+
+				}
+			});
+		}
 	}
 
 	/*
