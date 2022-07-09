@@ -47,7 +47,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 		setCancelable(false);
 		bundle=getArguments();
 		rename_file_name=bundle.getString("rename_file_name");
-	
 	}
 
 	@Override

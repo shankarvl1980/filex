@@ -58,7 +58,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 
-public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener
+public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
 {
     File file;
 	private FilePOJO currently_shown_file;
@@ -670,6 +670,30 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		file_close_procedure();
 	}
 
+	@Override
+	public void next_action(boolean save) {
+		if (save) {
+			start_file_save_service();
+		} else {
+			updated = true;
+			go_previous();
+		}
+	}
+
+	@Override
+	public void on_being_closed(boolean to_close_after_save) {
+		if(to_close_after_save)
+		{
+			to_be_closed_after_save=to_close_after_save;
+			start_file_save_service();
+		}
+		else
+		{
+			clear_cache=false;
+			finish();
+		}
+	}
+
 	private class BottomToolbarListener implements View.OnClickListener
 	{
 		@Override
@@ -732,10 +756,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				if (!updated) {
 
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
+					/*
 					saveConfirmationAlertDialog.setSaveFileListener(new SaveFileConfirmationDialog.SaveFileListener() {
 						public void next_action(boolean save) {
 							if (save) {
-
 								start_file_save_service();
 							} else {
 								updated = true;
@@ -743,6 +767,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							}
 						}
 					});
+
+					 */
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 				} else {
 					go_previous();
@@ -751,6 +777,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				if (!updated) {
 
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
+					/*
 					saveConfirmationAlertDialog.setSaveFileListener(new SaveFileConfirmationDialog.SaveFileListener() {
 						public void next_action(boolean save) {
 							if (save) {
@@ -761,6 +788,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							}
 						}
 					});
+
+					 */
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 
 				} else {
@@ -781,6 +810,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 
 			saveConfirmationAlertDialog=SaveFileConfirmationDialog.getInstance(true);
+			/*
 			saveConfirmationAlertDialog.setSaveFileListener(new SaveFileConfirmationDialog.SaveFileListener()
 				{
 					public void next_action(boolean to_close_after_save)
@@ -797,6 +827,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 					}
 				});
+
+			 */
 			saveConfirmationAlertDialog.show(fm,"saveconfirmationalert_dialog");
 		}
 		else

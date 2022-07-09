@@ -55,6 +55,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		{
 			selected_text_size=savedInstanceState.getFloat("selected_text_size");
 			not_wrap=savedInstanceState.getBoolean("not_wrap");
+			selected_eol=savedInstanceState.getInt("selected_eol");
 		}
 	}
 
@@ -253,6 +254,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		super.onSaveInstanceState(outState);
 		outState.putFloat("selected_text_size",selected_text_size);
 		outState.putBoolean("not_wrap",not_wrap);
+		outState.putInt("selected_eol",selected_eol);
 	}
 
 	@Override

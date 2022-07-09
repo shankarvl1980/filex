@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,7 +67,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     private FilePOJO clicked_filepojo;
     private AsyncTaskStatus asynctask_status;
     private AsyncTaskFilePopulate asyncTaskFilePopulate;
-
+    private static final String FILE_TYPE_REQUEST_CODE="storage_analyser_file_type_request_code";
 
 
     @Override
@@ -233,6 +234,30 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         });
 
         after_filledFilePojos_procedure();
+/*
+        storageAnalyserActivity.fm.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FILE_TYPE_REQUEST_CODE))
+                {
+                    String mime_type=result.getString("mime_type");
+                    String file_path=result.getString("file_path");
+                    if(fileObjectType==FileObjectType.USB_TYPE)
+                    {
+                        if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+                        {
+                            FileIntentDispatch.openUri(context,file_path,mime_type,false,false,fileObjectType,tree_uri,tree_uri_path);
+                        }
+                    }
+                    else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+                    {
+                        FileIntentDispatch.openFile(context,file_path,mime_type,false,false,fileObjectType);
+                    }
+                }
+            }
+        });
+
+ */
         return v;
 
     }
@@ -813,7 +838,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
-            FileTypeSelectDialog fileTypeSelectFragment=new FileTypeSelectDialog();
+            FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path);
+            /*
             fileTypeSelectFragment.setFileTypeSelectListener(new FileTypeSelectDialog.FileTypeSelectListener()
             {
                 public void onSelectType(String mime_type)
@@ -833,6 +859,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                 }
             });
+
+             */
             fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
         else

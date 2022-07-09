@@ -74,7 +74,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setCancelable(false);
+        //setRetainInstance(true);
         if (activity_catering.equals(STORAGE_ANALYSER)) {
             root_dir_linkedlist.addAll(((StorageAnalyserActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
@@ -173,6 +174,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
@@ -180,6 +182,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         }
         super.onDestroyView();
     }
+
+     */
 
 
     @Override

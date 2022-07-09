@@ -7,6 +7,8 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.content.*;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class FileReplaceConfirmationDialog extends DialogFragment
@@ -15,13 +17,35 @@ public class FileReplaceConfirmationDialog extends DialogFragment
     private String duplicate_file_name;
 	private CheckBox apply_all_checkbox;
 	private FileReplaceListener fileReplaceListener;
+	private Context context;
 
-    @Override
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
+		if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity1)
+		{
+			fileReplaceListener=((ArchiveDeletePasteProgressActivity1)context);
+		}
+		else if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity2)
+		{
+			fileReplaceListener=((ArchiveDeletePasteProgressActivity2)context);
+		}
+		else if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity3)
+		{
+			fileReplaceListener=((ArchiveDeletePasteProgressActivity3)context);
+		}
+
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		setCancelable(false);
 		
 		Bundle bundle=getArguments();
@@ -34,7 +58,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		//return super.onCreateView(inflater, container, savedInstanceState);
-        Context context = getContext();
+
 		View v=inflater.inflate(R.layout.fragment_replace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
@@ -86,7 +110,8 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
-	
+
+	/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -97,17 +122,21 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		super.onDestroyView();
 
 	}
+
+	 */
 	
+	/*
 	public void setReplaceListener(FileReplaceListener fileReplaceListener)
 	{
 		this.fileReplaceListener=fileReplaceListener;
 	}
 
+	 */
+
 
 	interface FileReplaceListener
 	{
 		void onReplaceClick(boolean replace, boolean replaceall);
-
 	}
 	
 }

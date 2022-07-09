@@ -40,8 +40,8 @@ public class ViewDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
-		
+		//this.setRetainInstance(true);
+		setCancelable(false);
 		
 	}
 
@@ -50,9 +50,7 @@ public class ViewDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View v= inflater.inflate(R.layout.fragment_view,container,false);
-
         RadioGroup rg = v.findViewById(R.id.dialog_view_layout_rg);
-
 		list_rb=v.findViewById(R.id.dialog_view_rb_list);
 		grid_rb=v.findViewById(R.id.dialog_view_rb_grid);
 		if(appCompatActivity instanceof MainActivity)
@@ -188,8 +186,6 @@ public class ViewDialog extends DialogFragment
 				}
 			});
 		}
-
-
 
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_view_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -384,7 +380,7 @@ public class ViewDialog extends DialogFragment
 	}
 	
 
-
+/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -392,6 +388,8 @@ public class ViewDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+ */
 	
 	private class SortButtonClickListener implements View.OnClickListener
 	{

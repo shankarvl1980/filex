@@ -29,6 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,6 +52,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private RecyclerView recent_recyclerview;
 	private TextView recent_label;
 	private FilePOJO clicked_filepojo;
+	private static final String FILE_TYPE_REQUEST_CODE="recent_file_type_request_code";
+	private FragmentManager fragmentManager;
 
 
 	@Override
@@ -57,6 +61,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		super.onAttach(context);
 		this.context=context;
 		((MainActivity)context).recentDialogListener=this;
+		fragmentManager=((MainActivity)context).getSupportFragmentManager();
 
 	}
 
@@ -65,7 +70,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
+		setCancelable(false);
 		root_dir_linkedlist.addAll(Global.STORAGE_DIR); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
 	}
 
@@ -111,7 +117,34 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			}
 			
 		});
+/*
+		fragmentManager.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(FILE_TYPE_REQUEST_CODE))
+				{
+					String mime_type=result.getString("mime_type");
+					String file_path=result.getString("file_path");
+					FileObjectType fileObjectType= (FileObjectType) result.getSerializable("fileObjectType");
+					boolean archive_view=result.getBoolean("archive_view");
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+					if(fileObjectType==FileObjectType.USB_TYPE)
+					{
+						if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+						{
+							FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
+						}
+					}
+					else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+					{
+						FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
+					}
+				}
+			}
+		});
 
+ */
 
 		return v;
 		
@@ -220,7 +253,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		}
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
-	
+
+	/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -228,6 +262,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		}
 		super.onDestroyView();
 	}
+
+	 */
 	
 	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
 	{
@@ -240,7 +276,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectFragment=new FileTypeSelectDialog();
+			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path);
+			/*
 			fileTypeSelectFragment.setFileTypeSelectListener(new FileTypeSelectDialog.FileTypeSelectListener()
 				{
 					public void onSelectType(String mime_type)
@@ -260,7 +297,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 					}
 				});
-			fileTypeSelectFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
+
+			 */
+			fileTypeSelectFragment.show(fragmentManager,"");
 		}
 
 		else

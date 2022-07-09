@@ -46,7 +46,7 @@ public class AppSelectorDialog extends DialogFragment
     private CheckBox remember_app_check_box;
     private String file_path,mime_type,file_type;
 
-    private AsyncTaskStatus asyncTaskStatus;
+    private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
     private List<AppPOJO> appPOJOList;
     private Intent intent;
 
@@ -60,7 +60,7 @@ public class AppSelectorDialog extends DialogFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
@@ -82,7 +82,11 @@ public class AppSelectorDialog extends DialogFragment
             FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,file_path,"",fileObjectType,fromArchiveView,clear_top,data);
         }
 
-        asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+        if(savedInstanceState!=null)
+        {
+            asyncTaskStatus= (AsyncTaskStatus) savedInstanceState.get("asyncTaskStatus");
+        }
+
     }
 
     public static AppSelectorDialog getInstance(Uri data, String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
@@ -151,12 +155,21 @@ public class AppSelectorDialog extends DialogFragment
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("asyncTaskStatus",asyncTaskStatus);
+    }
+
+    /*
+    @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
             getDialog().setDismissMessage(null);
         }
         super.onDestroyView();
     }
+
+     */
 
 
     private static class AppPOJO
@@ -168,6 +181,15 @@ public class AppSelectorDialog extends DialogFragment
         {
             this.app_name=app_name;
             this.app_package_name=app_package_name;
+        }
+    }
+
+
+    private class AppListTask
+    {
+        public void execute()
+        {
+
         }
     }
 

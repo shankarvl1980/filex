@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -107,6 +108,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
+	private static final String FILE_TYPE_REQUEST_CODE="detail_fragment_file_type_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -349,6 +351,31 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		folder_empty=v.findViewById(R.id.empty_folder);
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
 		after_filledFilePojos_procedure();
+
+		/*
+		mainActivity.fm.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(FILE_TYPE_REQUEST_CODE))
+				{
+					String mime_type=result.getString("mime_type");
+					String file_path=result.getString("file_path");
+					if(fileObjectType==FileObjectType.USB_TYPE)
+					{
+						if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+						{
+							FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
+						}
+					}
+					else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+					{
+						FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
+					}
+				}
+			}
+		});
+
+		 */
 		return v;
 	}
 
@@ -579,7 +606,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		 if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectFragment=new FileTypeSelectDialog();
+			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path);
+			/*
 			fileTypeSelectFragment.setFileTypeSelectListener(new FileTypeSelectDialog.FileTypeSelectListener()
 				{
 					public void onSelectType(String mime_type)
@@ -598,6 +626,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 					}
 				});
+
+			 */
 			fileTypeSelectFragment.show(mainActivity.fm,"");
 		}
 		else

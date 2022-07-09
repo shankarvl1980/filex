@@ -46,7 +46,8 @@ public class PreferencesDialog extends DialogFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
+        setCancelable(false);
 
     }
 
@@ -238,6 +239,7 @@ public class PreferencesDialog extends DialogFragment
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if(getRetainInstance() && getDialog()!=null){
@@ -245,6 +247,8 @@ public class PreferencesDialog extends DialogFragment
         }
         super.onDestroyView();
     }
+
+     */
 
     @Override
     public void onDestroy() {

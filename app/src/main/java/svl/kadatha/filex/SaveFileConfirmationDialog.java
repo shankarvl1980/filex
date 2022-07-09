@@ -7,20 +7,31 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 import android.content.*;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class SaveFileConfirmationDialog extends DialogFragment
 {
     private SaveFileListener saveFileListener;
+	private Context context;
+	private boolean whether_closing;
 
-    @Override
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		this.context=context;
+		saveFileListener=((FileEditorActivity)context);
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		Bundle bundle=getArguments();
-        boolean whether_closing = bundle.getBoolean("whether_closing");
-		setRetainInstance(true);
+        whether_closing = bundle.getBoolean("whether_closing");
+		setCancelable(false);
+		//setRetainInstance(true);
 	}
 
 	
@@ -28,7 +39,6 @@ public class SaveFileConfirmationDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-        Context context = getContext();
         View v = inflater.inflate(R.layout.fragment_create_rename_delete, container, false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -56,7 +66,15 @@ public class SaveFileConfirmationDialog extends DialogFragment
 			{
 				if(saveFileListener!=null)
 				{
-					saveFileListener.next_action(true);
+					if(whether_closing)
+					{
+						saveFileListener.on_being_closed(true);
+					}
+					else
+					{
+						saveFileListener.next_action(true);
+					}
+
 				}
 				dismissAllowingStateLoss();
 			}
@@ -66,16 +84,18 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-				if(saveFileListener!=null)
+				if(whether_closing)
+				{
+					saveFileListener.on_being_closed(false);
+				}
+				else
 				{
 					saveFileListener.next_action(false);
 				}
 				dismissAllowingStateLoss();
 			}
 		});
-		
-		
-		
+
 		return v;
 	}
 	
@@ -100,7 +120,7 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		
 	}
 	
-
+/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -111,17 +131,24 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		super.onDestroyView();
 
 	}
+
+ */
 	
+	/*
 	public void setSaveFileListener(SaveFileListener listener)
 	{
 		saveFileListener=listener;
 	}
+
+	 */
 	
 	interface SaveFileListener
 	{
 		
 		void next_action(boolean save);
+		void on_being_closed(boolean to_close_after_save);
 	}
+
 	
 	
 	

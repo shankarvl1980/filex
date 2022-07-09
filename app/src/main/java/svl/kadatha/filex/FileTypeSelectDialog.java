@@ -1,5 +1,6 @@
 package svl.kadatha.filex;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.*;
 import android.view.*;
 import android.content.*;
@@ -8,7 +9,9 @@ import android.graphics.*;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,16 +19,22 @@ import androidx.recyclerview.widget.RecyclerView;
 public class FileTypeSelectDialog extends DialogFragment
 {
 	private Context context;
-    private FileTypeSelectListener fileTypeSelectListener;
+    //private FileTypeSelectListener fileTypeSelectListener;
 	//private final LinkedHashMap<String,String> file_type_set=new LinkedHashMap<>();
 	//private List<String> file_type_list;
 	//private List<String> file_mime_list;
-
+	private FragmentManager fragmentManager;
+	private Bundle bundle;
+	private String mime_type,file_path,tree_uri_path;
+	private Uri tree_uri;
+	private FileObjectType fileObjectType;
+	private boolean archive_view;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -33,8 +42,28 @@ public class FileTypeSelectDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		setCancelable(false);
+		//setRetainInstance(true);
+		bundle=getArguments();
+		mime_type=bundle.getString("mime_type");
+		file_path=bundle.getString("file_path");
+		fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
+		archive_view=bundle.getBoolean("archive_view");
+		tree_uri=bundle.getParcelable("tree_uri");
+		tree_uri_path=bundle.getString("tree_uri_path");
+	}
 
+	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+	{
+		FileTypeSelectDialog fileTypeSelectDialog=new FileTypeSelectDialog();
+		Bundle bundle=new Bundle();
+		bundle.putString("file_path",file_path);
+		bundle.putBoolean("archive_view",archive_view);
+		bundle.putSerializable("fileObjectType",fileObjectType);
+		bundle.putParcelable("tree_uri",tree_uri);
+		bundle.putString("tree_uri_path",tree_uri_path);
+		fileTypeSelectDialog.setArguments(bundle);
+		return fileTypeSelectDialog;
 	}
 
 	@Override
@@ -58,6 +87,7 @@ public class FileTypeSelectDialog extends DialogFragment
 				dismissAllowingStateLoss();
 			}
 		});
+
 		return v;
 	}
 	
@@ -85,14 +115,16 @@ public class FileTypeSelectDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
+	/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
 			getDialog().setDismissMessage(null);
 		}
 		super.onDestroyView();
-
 	}
+
+	 */
 	
 	private class FileTypeRecyclerViewAdapter extends RecyclerView.Adapter<FileTypeRecyclerViewAdapter.VH>
 	{
@@ -136,10 +168,19 @@ public class FileTypeSelectDialog extends DialogFragment
 					public void onClick(View p1)
 					{
 						pos=getBindingAdapterPosition();
-						if(fileTypeSelectListener!=null)
+						MimePOJO mimePOJO=Global.SUPPORTED_MIME_POJOS.get(pos);
+						mime_type=mimePOJO.getMime_type();
+
+						if(fileObjectType==FileObjectType.USB_TYPE)
 						{
-							MimePOJO mimePOJO=Global.SUPPORTED_MIME_POJOS.get(pos);
-							fileTypeSelectListener.onSelectType(mimePOJO.getMime_type());
+							//if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+							{
+								FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
+							}
+						}
+						else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+						{
+							FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
 						}
 						dismissAllowingStateLoss();
 					}
@@ -149,7 +190,7 @@ public class FileTypeSelectDialog extends DialogFragment
 		
 	}
 	
-	
+	/*
 	interface FileTypeSelectListener
 	{
 		void onSelectType(String mime_type);
@@ -159,5 +200,7 @@ public class FileTypeSelectDialog extends DialogFragment
 	{
 		fileTypeSelectListener=listener;
 	}
+
+	 */
 
 }

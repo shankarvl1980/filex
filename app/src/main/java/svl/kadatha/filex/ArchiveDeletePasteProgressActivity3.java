@@ -11,7 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.*;
 
-public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
+public class ArchiveDeletePasteProgressActivity3 extends BaseActivity implements FileReplaceConfirmationDialog.FileReplaceListener
 {
 
 	private final Handler h=new Handler();
@@ -205,6 +205,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 
 			String duplicate_file_name=intent.getStringExtra("duplicate_file_name");
 			FileReplaceConfirmationDialog replaceFileConfirmationDialog=new FileReplaceConfirmationDialog();
+			/*
 			replaceFileConfirmationDialog.setReplaceListener(new FileReplaceConfirmationDialog.FileReplaceListener()
 				{
 			 		public void onReplaceClick(boolean r, boolean a_all)
@@ -217,6 +218,8 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 					}
 
 				});
+
+			 */
 			Bundle b=new Bundle();
 			b.putString("duplicate_file_name",duplicate_file_name);
 
@@ -366,4 +369,11 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
+	@Override
+	public void onReplaceClick(boolean replace, boolean replaceall) {
+		if(archiveDeletePasteFileService!=null)
+		{
+			archiveDeletePasteFileService.onReplaceSelection(replace,replaceall);
+		}
+	}
 }

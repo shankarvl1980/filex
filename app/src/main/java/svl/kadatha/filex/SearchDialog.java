@@ -78,7 +78,8 @@ public class SearchDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		setCancelable(false);
+		//setRetainInstance(true);
 		for(FilePOJO filepojo:Global.STORAGE_DIR)
 		{
 			if(filepojo.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(filepojo.getPath()))))
@@ -286,6 +287,7 @@ public class SearchDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
+	/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -296,6 +298,8 @@ public class SearchDialog extends DialogFragment
 
 		super.onDestroyView();
 	}
+
+ */
 
 	private void setSizeGroupVisibilityGone()
 	{
