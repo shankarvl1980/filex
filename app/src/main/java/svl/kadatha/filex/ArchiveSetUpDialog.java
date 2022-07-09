@@ -62,8 +62,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
 
 
-
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -76,7 +74,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
+		setCancelable(false);
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -582,7 +581,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	
+/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -590,13 +589,14 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+ */
 	
 
 	public void seekSAFPermission()
 	{
 		((MainActivity)context).clear_cache=false;
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		//startActivityForResult(intent, saf_permission_request_code);
 		activityResultLauncher_SAF_permission.launch(intent);
 	}
 

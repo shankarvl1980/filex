@@ -146,7 +146,8 @@ public class AppManagerActivity extends BaseActivity{
 
     public void set_visibility_searchbar(boolean visible)
     {
-        if(userAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED || systemAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
+        //if(userAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED || systemAppListFragment.asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
+        if(userAppListFragment.adapter==null || systemAppListFragment.adapter==null)
         {
             Global.print(context,getString(R.string.please_wait));
             return;

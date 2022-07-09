@@ -47,7 +47,6 @@ public class PreferencesDialog extends DialogFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setRetainInstance(true);
-        setCancelable(false);
 
     }
 

@@ -41,6 +41,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,7 +69,7 @@ public class AppManagerListFragment extends Fragment {
     private int scroll_distance;
     public AsyncTaskStatus asyncTaskStatus;
     private List<AppPOJO> appPOJOList,total_appPOJO_list;
-    private AppListAdapter adapter;
+    public AppListAdapter adapter;
     private Handler handler;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppPOJO> app_selected_array=new ArrayList<>();
@@ -79,11 +84,13 @@ public class AppManagerListFragment extends Fragment {
     public static String PLAY_STORE;
     public static String SHARE;
     private String package_clicked_for_delete="";
+    public static final String APP_ACTION_REQUEST_CODE="app_action_request_code";
+    //private FragmentManager fragmentManager;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        setRetainInstance(true);
+        //setRetainInstance(true);
         this.context=context;
     }
 
@@ -100,7 +107,7 @@ public class AppManagerListFragment extends Fragment {
         CONTROL_PANEL=getString(R.string.control_panel);
         PLAY_STORE=getString(R.string.play_store);
         SHARE=getString(R.string.share);
-
+/*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -163,6 +170,8 @@ public class AppManagerListFragment extends Fragment {
                 asyncTaskStatus=AsyncTaskStatus.COMPLETED;
             }
         }).start();
+
+ */
 
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -238,6 +247,35 @@ public class AppManagerListFragment extends Fragment {
         search_btn.setOnClickListener(toolBarClickListener);
         sort_btn.setOnClickListener(toolBarClickListener);
 
+        AppManagerListViewModel viewModel= new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(AppManagerListViewModel.class);
+        viewModel.populate(app_type);
+        //MutableLiveData<Boolean>isFinished=viewModel.isFinished;
+        viewModel.isFinished.observe(AppManagerListFragment.this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    appPOJOList=viewModel.appPOJOList;
+                    total_appPOJO_list=appPOJOList;
+                    Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
+                    adapter=new AppListAdapter();
+                    recyclerView.setAdapter(adapter);
+                    progressBar.setVisibility(View.GONE);
+                    num_all_app=total_appPOJO_list.size();
+                    app_count_textview.setText(""+num_all_app);
+                    if(num_all_app<=0)
+                    {
+                        recyclerView.setVisibility(View.GONE);
+                        empty_tv.setVisibility(View.VISIBLE);
+                        //enable_disable_buttons(false);
+                    }
+                }
+
+            }
+        });
+
+
+/*
         handler=new Handler();
         handler.post(new Runnable() {
             @Override
@@ -265,6 +303,8 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
+ */
+
         listPopWindow=new PopupWindow(context);
         ListView listView=new ListView(context);
         listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
@@ -275,6 +315,58 @@ public class AppManagerListFragment extends Fragment {
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
         int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
         listView.setOnItemClickListener(new ListPopupWindowClickListener());
+
+        ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResultListener(APP_ACTION_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                String app_action=result.getString("app_action");
+                String app_path=result.getString("app_path");
+                String package_name=result.getString("package_name");
+                if (BACKUP.equals(app_action)) {
+                    MoveToCopyToProcedure(app_path);
+                } else if (UNINSTALL.equals(app_action)) {
+                    //String app_pkg_name = appPOJO.getPackage_name();
+                    if (package_clicked_for_delete.equals("")) {
+                        package_clicked_for_delete = package_name;
+                    }
+                    Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+                    uninstall_intent.setData(Uri.parse("package:" + package_name));
+                    unInstallActivityResultLauncher.launch(uninstall_intent);
+                } else if (CONTROL_PANEL.equals(app_action)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", package_name, null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else if (PLAY_STORE.equals(app_action)) {
+                    final String appPackageName = package_name;
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                } else if (SHARE.equals(app_action)) {
+
+                    Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(app_path));
+                    FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
+                    /*
+                    try {
+                        PackageManager pm = context.getPackageManager();
+                        ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), 0);
+                        File srcFile = new File(ai.publicSourceDir);
+                        Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(srcFile.getPath()));
+                        FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
+
+                    } catch (Exception e) {
+                        Global.print(context,getString(R.string.could_not_perform_action));
+                    }
+
+                     */
+
+                }
+                clear_selection();
+            }
+        });
         return v;
     }
 
@@ -307,7 +399,8 @@ public class AppManagerListFragment extends Fragment {
         listPopWindow.dismiss();
     }
 
-    private void extract_icon(String file_with_package_name, PackageManager packageManager, PackageInfo packageInfo)
+
+    public static void extract_icon(String file_with_package_name, PackageManager packageManager, PackageInfo packageInfo)
     {
         if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
         {
@@ -488,7 +581,8 @@ public class AppManagerListFragment extends Fragment {
         {
             ((AppManagerActivity)context).set_visibility_searchbar(false);
         }
-        AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize(),appPOJO.getVersion());
+        AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize(),appPOJO.getVersion(),appPOJO.getPath());
+        /*
         appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
             @Override
             public void onSelectType(String app_action) {
@@ -519,24 +613,14 @@ public class AppManagerListFragment extends Fragment {
 
                     Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(appPOJO.getPath()));
                     FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-                    /*
-                    try {
-                        PackageManager pm = context.getPackageManager();
-                        ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), 0);
-                        File srcFile = new File(ai.publicSourceDir);
-                        Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(srcFile.getPath()));
-                        FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-
-                    } catch (Exception e) {
-                        Global.print(context,getString(R.string.could_not_perform_action));
-                    }
-
-                     */
 
                 }
                 clear_selection();
             }
         });
+
+         */
+
         appActionSelectDialog.show(((AppManagerActivity)context).fm,"");
     }
 
@@ -701,7 +785,7 @@ public class AppManagerListFragment extends Fragment {
     }
 
 
-    public class AppPOJO
+    public static class AppPOJO
     {
         private final String name;
         private final String lower_name;
@@ -724,7 +808,7 @@ public class AppManagerListFragment extends Fragment {
             this.size=FileUtil.humanReadableByteCount(app_size_long,Global.BYTE_COUNT_BLOCK_1000);
             this.dateLong=app_date_long;
             this.date=Global.SDF.format(dateLong);
-            this.version=getString(R.string.version)+" "+version;
+            this.version=version;
         }
 
         public String getName(){return this.name;}

@@ -31,7 +31,8 @@ public class AppManagerSortDialog extends DialogFragment
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);
+        setCancelable(false);
+        //this.setRetainInstance(true);
     }
 
     @Override
@@ -160,7 +161,7 @@ public class AppManagerSortDialog extends DialogFragment
     }
 
 
-
+/*
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
@@ -168,6 +169,8 @@ public class AppManagerSortDialog extends DialogFragment
         }
         super.onDestroyView();
     }
+
+ */
 
     private class SortButtonClickListener implements View.OnClickListener
     {
@@ -196,7 +199,7 @@ public class AppManagerSortDialog extends DialogFragment
             {
                 ViewPager viewPager=((AppManagerActivity)context).viewPager;
                 AppManagerListFragment appManagerListFragment=(AppManagerListFragment) viewPager.getAdapter().instantiateItem(viewPager,1);//fragmentManager.findFragmentById(R.id.app_manager_list_container);
-                if(appManagerListFragment!=null && appManagerListFragment.asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                if(appManagerListFragment!=null && appManagerListFragment.adapter!=null)
                 {
                     Global.APP_MANAGER_SORT=selected_sort;
                     set_selection();

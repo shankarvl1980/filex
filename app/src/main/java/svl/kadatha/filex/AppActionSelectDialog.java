@@ -23,10 +23,11 @@ import java.util.List;
 public class AppActionSelectDialog extends DialogFragment
 {
     private Context context;
-    private AppActionSelectListener appActionSelectListener;
+    //private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
-    private String app_name,package_name,app_size,version;
+    private String app_name,package_name,app_size,version,app_path;
     private List<String> action_list;
+    private Bundle bundle;
 
 
     @Override
@@ -40,16 +41,18 @@ public class AppActionSelectDialog extends DialogFragment
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        Bundle bundle=getArguments();
+        //setRetainInstance(true);
+        setCancelable(false);
+        bundle=getArguments();
         app_name=bundle.getString("app_name");
         package_name=bundle.getString("package_name");
         app_size=bundle.getString("app_size");
         version=bundle.getString("version");
+        app_path=bundle.getString("app_path");
         action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
     }
 
-    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version)
+    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version, String app_path)
     {
         AppActionSelectDialog appActionSelectDialog=new AppActionSelectDialog();
         Bundle bundle=new Bundle();
@@ -57,6 +60,7 @@ public class AppActionSelectDialog extends DialogFragment
         bundle.putString("package_name",package_name);
         bundle.putString("app_size",app_size);
         bundle.putString("version",version);
+        bundle.putString("app_path",app_path);
         appActionSelectDialog.setArguments(bundle);
         return appActionSelectDialog;
     }
@@ -77,7 +81,7 @@ public class AppActionSelectDialog extends DialogFragment
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_size_tv.setText(app_size);
-        app_version_tv.setText(version);
+        app_version_tv.setText(getString(R.string.version)+" "+  version);
 
         RecyclerView app_action_recyclerview = v.findViewById(R.id.fragment_app_action_recyclerView);
         app_action_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
@@ -92,10 +96,14 @@ public class AppActionSelectDialog extends DialogFragment
         {
             public void onClick(View p1)
             {
+                /*
                 if(appActionSelectListener!=null)
                 {
                     appActionSelectListener.onSelectType("cancel");
                 }
+
+                 */
+
                 dismissAllowingStateLoss();
             }
         });
@@ -126,14 +134,16 @@ public class AppActionSelectDialog extends DialogFragment
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
             getDialog().setDismissMessage(null);
         }
         super.onDestroyView();
-
     }
+
+     */
 
     private class AppActionRecyclerViewAdapter extends RecyclerView.Adapter<AppActionRecyclerViewAdapter.VH>
     {
@@ -176,10 +186,15 @@ public class AppActionSelectDialog extends DialogFragment
                     public void onClick(View p1)
                     {
                         pos=getBindingAdapterPosition();
+                        /*
                         if(appActionSelectListener!=null)
                         {
                             appActionSelectListener.onSelectType(action_list.get(pos));
                         }
+
+                         */
+                        bundle.putString("app_action",action_list.get(pos));
+                        ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
                         dismissAllowingStateLoss();
                     }
                 });
@@ -188,7 +203,7 @@ public class AppActionSelectDialog extends DialogFragment
 
     }
 
-
+/*
     interface AppActionSelectListener
     {
         void onSelectType(String app_action);
@@ -198,5 +213,7 @@ public class AppActionSelectDialog extends DialogFragment
     {
         appActionSelectListener=listener;
     }
+
+ */
 
 }

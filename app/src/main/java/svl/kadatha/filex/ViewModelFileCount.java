@@ -24,12 +24,12 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class ViewModelFileCount extends ViewModel {
 
     MutableLiveData<Integer> total_no_of_files=new MutableLiveData<>();
-    long total_size_of_files;
-    int cumulative_no_of_files;
+    private long total_size_of_files;
+    private int cumulative_no_of_files;
     MutableLiveData<String> size_of_files_formatted=new MutableLiveData<>();
-    Future<?> future;
-    boolean isCancelled;
-    boolean alreadyRun;
+    private Future<?> future;
+    private boolean isCancelled;
+    private boolean alreadyRun;
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -38,7 +38,6 @@ public class ViewModelFileCount extends ViewModel {
             future.cancel(true);
             isCancelled=true;
         }
-        Log.d("shankar","oncleared called");
     }
 
     private void cancel(boolean mayInterruptRunning){
