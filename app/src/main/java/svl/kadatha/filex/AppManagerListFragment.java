@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -247,10 +248,9 @@ public class AppManagerListFragment extends Fragment {
         search_btn.setOnClickListener(toolBarClickListener);
         sort_btn.setOnClickListener(toolBarClickListener);
 
-        AppManagerListViewModel viewModel= new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(AppManagerListViewModel.class);
+        AppManagerListViewModel viewModel= new ViewModelProvider(this).get(AppManagerListViewModel.class);
         viewModel.populate(app_type);
-        //MutableLiveData<Boolean>isFinished=viewModel.isFinished;
-        viewModel.isFinished.observe(AppManagerListFragment.this, new Observer<Boolean>() {
+        viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if(aBoolean)

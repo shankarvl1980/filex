@@ -419,17 +419,11 @@ public class DeleteFileAlertDialog extends DialogFragment
 
 		public void count()
 		{
+			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
 			ExecutorService executorService=MyExecutorService.getExecutorService();
 			future= executorService.submit(new Runnable() {
 				@Override
 				public void run() {
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
-						}
-					});
-
 					String file_path=source_list_files.get(0);
 					if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
 					{

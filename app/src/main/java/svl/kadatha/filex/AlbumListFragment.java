@@ -27,6 +27,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,8 +52,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	private Toolbar bottom_toolbar;
 	private AudioSelectListener audioSelectListener;
 
-	public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-	public List<AlbumPOJO> album_selected_array=new ArrayList<>();
+	//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
+	//public List<AlbumPOJO> album_selected_array=new ArrayList<>();
 	//public static Bitmap SELECTED_ALBUM_ART;
 	private List<AlbumPOJO> album_selected_pojo_copy;
 	private boolean toolbar_visible=true;
@@ -61,7 +63,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	private TextView empty_tv;
 	private int num_all_album;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
-
+	public AudioListViewModel audioListViewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -74,7 +76,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 	}
 
@@ -139,14 +141,43 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		empty_tv=v.findViewById(R.id.album_list_empty);
 		progress_bar=v.findViewById(R.id.album_list_progressbar);
 
+		asyncTaskStatus=AsyncTaskStatus.STARTED;
+		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
+		audioListViewModel.listAlbum();
+		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					album_list=audioListViewModel.album_list;
+					total_album_list=audioListViewModel.album_list;
+					albumListRecyclerViewAdapter=new AlbumListRecyclerViewAdapter();
+					recyclerview.setAdapter(albumListRecyclerViewAdapter);
+					num_all_album=total_album_list.size();
+					if(num_all_album<=0)
+					{
+						recyclerview.setVisibility(View.GONE);
+						empty_tv.setVisibility(View.VISIBLE);
+						enable_disable_buttons(false);
+					}
 
-		int size=mselecteditems.size();
+					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
+					progress_bar.setVisibility(View.GONE);
+					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
+				}
+			}
+		});
+
+		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_album);
+		/*
 		if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
 		{
 			new AlbumListExtractor().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
+
+		 */
 
 		return v;
 	}
@@ -248,7 +279,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				enable_disable_buttons(false);
 			}
 			
-			file_number_view.setText(mselecteditems.size()+"/"+num_all_album);
+			file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
 			progress_bar.setVisibility(View.GONE);
 			asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 		}
@@ -260,6 +291,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
+			if(albumListRecyclerViewAdapter==null)return;
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
@@ -269,18 +301,18 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				}
 			} else if (id == R.id.toolbar_btn_2) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (album_selected_array.size() < 1) {
+				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
-				new AlbumListDetailsExtractor(album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				new AlbumListDetailsExtractor(audioListViewModel.album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_3) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (album_selected_array.size() < 1) {
+				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
 				album_selected_pojo_copy = new ArrayList<>();
-				album_selected_pojo_copy.addAll(album_selected_array);
+				album_selected_pojo_copy.addAll(audioListViewModel.album_selected_array);
 				AudioSaveListDialog audioSaveListDialog = new AudioSaveListDialog();
 				audioSaveListDialog.setSaveAudioListListener(new AudioSaveListDialog.SaveAudioListListener() {
 					public void save_audio_list(String list_name) {
@@ -312,19 +344,19 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			} else if (id == R.id.toolbar_btn_4) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
 				int size = album_list.size();
-				if (mselecteditems.size() < size) {
-					mselecteditems = new SparseBooleanArray();
-					album_selected_array = new ArrayList<>();
+				if (audioListViewModel.mselecteditems.size() < size) {
+					audioListViewModel.mselecteditems = new SparseBooleanArray();
+					audioListViewModel.album_selected_array = new ArrayList<>();
 					for (int i = 0; i < size; ++i) {
-						mselecteditems.put(i, true);
-						album_selected_array.add(album_list.get(i));
+						audioListViewModel.mselecteditems.put(i, true);
+						audioListViewModel.album_selected_array.add(album_list.get(i));
 					}
 					all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
 					albumListRecyclerViewAdapter.notifyDataSetChanged();
 				} else {
 					clear_selection();
 				}
-				int s=mselecteditems.size();
+				int s=audioListViewModel.mselecteditems.size();
 				if (s >= 1) {
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible = true;
@@ -340,11 +372,11 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 	public void clear_selection()
 	{
-		album_selected_array=new ArrayList<>();
-		mselecteditems=new SparseBooleanArray();
+		audioListViewModel.album_selected_array=new ArrayList<>();
+		audioListViewModel.mselecteditems=new SparseBooleanArray();
 		if(albumListRecyclerViewAdapter!=null)albumListRecyclerViewAdapter.notifyDataSetChanged();
 		enable_disable_buttons(false);
-		file_number_view.setText(mselecteditems.size()+"/"+num_all_album);
+		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 	} 
 	
@@ -487,7 +519,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			public void onClick(View p1)
 			{
 				pos=getBindingAdapterPosition();
-				int size=mselecteditems.size();
+				int size=audioListViewModel.mselecteditems.size();
 				if(size>0)
 				{
 					onLongClickProcedure(p1,size);
@@ -522,7 +554,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			@Override
 			public boolean onLongClick(View p1)
 			{
-				onLongClickProcedure(p1,mselecteditems.size());
+				onLongClickProcedure(p1,audioListViewModel.mselecteditems.size());
 				return true;
 			}
 
@@ -531,12 +563,12 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			{
 				pos=getBindingAdapterPosition();
 
-				if(mselecteditems.get(pos,false))
+				if(audioListViewModel.mselecteditems.get(pos,false))
 				{
-					mselecteditems.delete(pos);
+					audioListViewModel.mselecteditems.delete(pos);
 					v.setSelected(false);
 					((AlbumListRecyclerViewItem)v).set_selected(false);
-					album_selected_array.remove(album_list.get(pos));
+					audioListViewModel.album_selected_array.remove(album_list.get(pos));
 					--size;
 					if(size>=1)
 					{
@@ -555,10 +587,10 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				}
 				else
 				{
-					mselecteditems.put(pos,true);
+					audioListViewModel.mselecteditems.put(pos,true);
 					v.setSelected(true);
 					((AlbumListRecyclerViewItem)v).set_selected(true);
-					album_selected_array.add(album_list.get(pos));
+					audioListViewModel.album_selected_array.add(album_list.get(pos));
 			
 					bottom_toolbar.setVisibility(View.VISIBLE);
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -591,7 +623,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			String album_name=album.getAlbumName();
 			String no_of_songs=getString(R.string.tracks_colon)+" "+album.getNoOfSongs();
 			String artist=getString(R.string.artists_colon)+" "+album.getArtist();
-			boolean item_selected=mselecteditems.get(p2,false);
+			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
 			p1.view.setData(album_name,no_of_songs,artist,item_selected);
 			p1.view.setSelected(item_selected);
 
@@ -632,7 +664,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				@Override
 				protected void publishResults(CharSequence constraint, FilterResults results) {
 					int t=album_list.size();
-					if(mselecteditems.size()>0)
+					if(audioListViewModel.mselecteditems.size()>0)
 					{
 						clear_selection();
 					}
@@ -640,7 +672,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					{
 						notifyDataSetChanged();
 					}
-					file_number_view.setText(mselecteditems.size()+"/"+t);
+					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+t);
 
 				}
 			};

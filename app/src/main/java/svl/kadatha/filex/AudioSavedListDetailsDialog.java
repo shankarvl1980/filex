@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,6 +36,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,8 +60,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private Button remove_btn;
 	private Button play_btn;
 	private Button overflow_btn;
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-	public List<AudioPOJO> audio_selected_array=new ArrayList<>();
+    //public SparseBooleanArray mselecteditems=new SparseBooleanArray();
+	//public List<AudioPOJO> audio_selected_array=new ArrayList<>();
 	public List<AudioPOJO> clicked_audio_list,total_audio_list;
 	private AudioSelectListener audioSelectListener;
 	private String audio_list_clicked_name;
@@ -76,6 +79,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private int playing_audio_text_color,rest_audio_text_color;
 	private int listview_height;
+	private AudioListViewModel audioListViewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -88,7 +92,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
 		Bundle bundle=getArguments();
@@ -126,6 +130,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		search_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if(currentAudioListRecyclerViewAdapter==null)return;
 				if(!search_toolbar_visible)
 				{
 					set_visibility_searchbar(true);
@@ -137,17 +142,17 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-
+					if(currentAudioListRecyclerViewAdapter==null)return;
 					int size=clicked_audio_list.size();
 
-					if(mselecteditems.size()<size)
+					if(audioListViewModel.mselecteditems.size()<size)
 					{
-						mselecteditems=new SparseBooleanArray();
-						audio_selected_array=new ArrayList<>();
+						audioListViewModel.mselecteditems=new SparseBooleanArray();
+						audioListViewModel.audio_selected_array=new ArrayList<>();
 						for(int i=0;i<size;++i)
 						{
-							mselecteditems.put(i,true);
-							audio_selected_array.add(clicked_audio_list.get(i));
+							audioListViewModel.mselecteditems.put(i,true);
+							audioListViewModel.audio_selected_array.add(clicked_audio_list.get(i));
 						}
 						
 						currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -161,7 +166,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					{
 						clear_selection();
 					}
-					file_number_view.setText(mselecteditems.size()+"/"+num_all_audio);
+					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 				}
 			});
 
@@ -214,7 +219,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 					else if(scroll_distance<-threshold && !toolbar_visible)
 					{
-						if(mselecteditems.size()>0)
+						if(audioListViewModel.mselecteditems.size()>0)
 						{
 							bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 							toolbar_visible=true;
@@ -236,7 +241,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-					if(mselecteditems.size()>0)
+					if(audioListViewModel.mselecteditems.size()>0)
 					{
 						clear_selection();
 					}
@@ -311,7 +316,49 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		listview_height=Global.GET_HEIGHT_LIST_VIEW(listView);
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 		
-		int size=mselecteditems.size();
+
+
+		asyncTaskStatus=AsyncTaskStatus.STARTED;
+		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+		pbf.show(((AudioPlayerActivity)context).fm,"progressbar_dialog");
+
+		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
+		audioListViewModel.fetch_audio_list(audio_list_clicked_name,whether_saved_play_list);
+
+		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+
+					clicked_audio_list=audioListViewModel.audio_list;
+					total_audio_list=audioListViewModel.audio_list;
+					currentAudioListRecyclerViewAdapter=new CurrentListRecyclerViewAdapter();
+					CurrentAudioListRecyclerview.setAdapter(currentAudioListRecyclerViewAdapter);
+					num_all_audio=total_audio_list.size();
+					if(num_all_audio==0)
+					{
+						CurrentAudioListRecyclerview.setVisibility(View.GONE);
+						empty_audio_list_tv.setVisibility(View.VISIBLE);
+					}
+					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
+					if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
+					pbf.dismissAllowingStateLoss();
+					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
+				}
+				Log.d("shankar","is finished "+aBoolean);
+			}
+		});
+
+
+		/*
+		if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+		{
+			new FetchAudioListDetailsAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		}
+
+		 */
+		int size=audioListViewModel.mselecteditems.size();
 		if(size==0)
 		{
 			bottom_toolbar.setVisibility(View.GONE);
@@ -324,11 +371,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			toolbar_visible=true;
 		}
 		file_number_view.setText(size+"/"+num_all_audio);
-		if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-		{
-			new FetchAudioListDetailsAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		}
-		
+
 
 		return v;
 	}
@@ -361,7 +404,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			CurrentAudioListRecyclerview.setVisibility(View.GONE);
 			empty_audio_list_tv.setVisibility(View.VISIBLE);
 		}
-		file_number_view.setText(mselecteditems.size()+"/"+num_all_audio);
+		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 
 
 		if(AudioPlayerService.CURRENT_PLAY_NUMBER<0)
@@ -408,7 +451,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	}
 
 
-
+/*
 	@Override
 	public void onDestroyView()
 	{
@@ -420,7 +463,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
-	
+
+ */
+	/*
 	private class FetchAudioListDetailsAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		ProgressBarFragment pbf;
@@ -469,14 +514,15 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				CurrentAudioListRecyclerview.setVisibility(View.GONE);
 				empty_audio_list_tv.setVisibility(View.VISIBLE);
 			}
-			file_number_view.setText(mselecteditems.size()+"/"+num_all_audio);
+			file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 			if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
 			pbf.dismissAllowingStateLoss();
 			asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 		}
-
-
 	}
+
+	 */
+	/*
 	private void fetch_audio_list(String list_name, boolean whether_saved_play_list)
 	{
 
@@ -509,16 +555,18 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		total_audio_list=clicked_audio_list;
 	}
 
+	 */
+
 
 	public void clear_selection()
 	{
-		audio_selected_array=new ArrayList<>();
-		mselecteditems=new SparseBooleanArray();
+		audioListViewModel.audio_selected_array=new ArrayList<>();
+		audioListViewModel.mselecteditems=new SparseBooleanArray();
 		if(currentAudioListRecyclerViewAdapter!=null)currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
 		bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
 		toolbar_visible=false;
 		scroll_distance=0;
-		file_number_view.setText(mselecteditems.size()+"/"+num_all_audio);
+		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 		all_select_btn.setImageResource(R.drawable.select_icon);
 
 	}
@@ -573,24 +621,25 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
+			if(currentAudioListRecyclerViewAdapter==null)return;
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-			if(audio_selected_array.size()<1)
+			if(audioListViewModel.audio_selected_array.size()<1)
 			{
 				return;
 			}
 
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
-				remove_and_save(audio_list_clicked_name, audio_selected_array, mselecteditems);
+				remove_and_save(audio_list_clicked_name, audioListViewModel.audio_selected_array, audioListViewModel.mselecteditems);
 				Global.print(context,getString(R.string.removed_the_selected_audios));
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_2) {
 				AudioPlayerService.AUDIO_QUEUED_ARRAY = new ArrayList<>();
-				AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_selected_array;
+				AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_selected_array;
 				if(!whether_saved_play_list)
 				{
 					clicked_audio_list.clear();
-					clicked_audio_list.addAll(audio_selected_array);
+					clicked_audio_list.addAll(audioListViewModel.audio_selected_array);
 					currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
 				}
 
@@ -612,7 +661,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			} else if (id == R.id.toolbar_btn_3) {
 				if (number_button == 4) {
 
-					AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_array);
+					AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audioListViewModel.audio_selected_array);
 					Global.print(context,getString(R.string.added_audios_current_play_list));
 					clear_selection();
 				} else {
@@ -642,12 +691,12 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			switch(p3)
 			{
 				case 0:
-					if(audio_selected_array.size()<1)
+					if(audioListViewModel.audio_selected_array.size()<1)
 					{
 						break;
 					}
 					ArrayList<File> file_list=new ArrayList<>();
-					for(AudioPOJO audio:audio_selected_array)
+					for(AudioPOJO audio:audioListViewModel.audio_selected_array)
 					{
 						file_list.add(new File(audio.getData()));
 					}
@@ -656,11 +705,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					break;
 
 				case 1:
-					if(audio_selected_array.size()<1)
+					if(audioListViewModel.audio_selected_array.size()<1)
 					{
 						break;
 					}
-					for(AudioPOJO audio:audio_selected_array)
+					for(AudioPOJO audio:audioListViewModel.audio_selected_array)
 					{
 						files_selected_array.add(audio.getData());
 					}
@@ -695,7 +744,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			public void onClick(View p1)
 			{
 				pos=getBindingAdapterPosition();
-				int size=mselecteditems.size();
+				int size=audioListViewModel.mselecteditems.size();
 				if(size>0)
 				{
 					onLongClickProcedure(p1,size);
@@ -734,7 +783,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			@Override
 			public boolean onLongClick(View p1)
 			{
-				onLongClickProcedure(p1,mselecteditems.size());
+				onLongClickProcedure(p1,audioListViewModel.mselecteditems.size());
 				return true;
 			}
 
@@ -742,13 +791,13 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				pos=getBindingAdapterPosition();
 
-				if(mselecteditems.get(pos,false))
+				if(audioListViewModel.mselecteditems.get(pos,false))
 				{
-					mselecteditems.delete(pos);
+					audioListViewModel.mselecteditems.delete(pos);
 
 					v.setSelected(false);
 					((AudioListRecyclerViewItem)v).set_selected(false);
-					audio_selected_array.remove(clicked_audio_list.get(pos));
+					audioListViewModel.audio_selected_array.remove(clicked_audio_list.get(pos));
 					--size;
 					if(size>=1)
 					{
@@ -768,10 +817,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				}
 				else
 				{
-					mselecteditems.put(pos,true);
+					audioListViewModel.mselecteditems.put(pos,true);
 					v.setSelected(true);
 					((AudioListRecyclerViewItem)v).set_selected(true);
-					audio_selected_array.add(clicked_audio_list.get(pos));
+					audioListViewModel.audio_selected_array.add(clicked_audio_list.get(pos));
 					bottom_toolbar.setVisibility(View.VISIBLE);
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=true;
@@ -805,7 +854,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			if(duration_string!=null) duration=Long.parseLong(duration_string);
 			String duration_str=getString(R.string.duration_colon)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
-			boolean item_selected=mselecteditems.get(p2,false);
+			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
 
 			if(!whether_saved_play_list && p2==AudioPlayerService.CURRENT_PLAY_NUMBER)
 			{
@@ -864,7 +913,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				@Override
 				protected void publishResults(CharSequence constraint, FilterResults results) {
 					int t=clicked_audio_list.size();
-					if(mselecteditems.size()>0)
+					if(audioListViewModel.mselecteditems.size()>0)
 					{
 						clear_selection();
 					}
@@ -872,7 +921,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					{
 						notifyDataSetChanged();
 					}
-					file_number_view.setText(mselecteditems.size()+"/"+t);
+					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+t);
 
 				}
 			};

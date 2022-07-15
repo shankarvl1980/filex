@@ -538,7 +538,7 @@ public class AudioPlayerActivity extends BaseActivity
 			switch (current_item)
 			{
 				case 1:
-					if(aalf.mselecteditems.size()>0)
+					if(aalf.audioListViewModel.mselecteditems.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();
@@ -555,7 +555,7 @@ public class AudioPlayerActivity extends BaseActivity
 					}
 					break;
 				case 2:
-					if(albumlf.mselecteditems.size()>0)
+					if(albumlf.audioListViewModel.mselecteditems.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();
@@ -574,7 +574,7 @@ public class AudioPlayerActivity extends BaseActivity
 					}
 					break;
 				case 3:
-					if(aslf.mselecteditems.size()>0)
+					if(aslf.audioListViewModel.mselecteditems.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();
