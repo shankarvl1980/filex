@@ -139,6 +139,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				}
 			}
 		});
+
 		all_select_btn=v.findViewById(R.id.album_details_all_select);
 		all_select_btn.setOnClickListener(new View.OnClickListener()
 			{
@@ -578,7 +579,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			remove_btn.setAlpha(Global.ENABLE_ALFA);
 			play_btn.setAlpha(Global.ENABLE_ALFA);
 			overflow_btn.setAlpha(Global.ENABLE_ALFA);
-
 		}
 		else
 		{
@@ -616,7 +616,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	
 	private class ToolbarButtonClickListener implements View.OnClickListener
 	{
-
 		@Override
 		public void onClick(View p1)
 		{

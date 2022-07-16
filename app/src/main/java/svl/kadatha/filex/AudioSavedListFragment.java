@@ -171,6 +171,7 @@ public class AudioSavedListFragment extends Fragment
 					}
 					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
 					progress_bar.setVisibility(View.GONE);
+					clear_selection();
 					//AsyncExtractIsInProgress=false;
 				}
 			}
@@ -247,7 +248,7 @@ public class AudioSavedListFragment extends Fragment
 						audioListViewModel.fetch_saved_audio_list(audioListViewModel.audio_list_selected_array);
 
 					}
-					clear_selection();
+
 				}
 
 			}

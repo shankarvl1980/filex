@@ -104,7 +104,7 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		FilenameFilter file_name_filter = new FilenameFilter() {
 			public boolean accept(File fi, String na) {
 				if (MainActivity.SHOW_HIDDEN_FILE) {

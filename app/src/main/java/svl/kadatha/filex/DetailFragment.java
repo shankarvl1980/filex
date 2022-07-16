@@ -109,6 +109,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
 	private static final String FILE_TYPE_REQUEST_CODE="detail_fragment_file_type_request_code";
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -131,7 +132,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
@@ -192,10 +193,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		}
 
+		/*
 		if(pbf_polling!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
+
+		 */
 
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 			if(asynctask_status!=AsyncTaskStatus.STARTED)
@@ -271,6 +275,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
+		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 
 
 		recyclerView=v.findViewById(R.id.fragment_detail_container);

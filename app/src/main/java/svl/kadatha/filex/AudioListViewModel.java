@@ -121,44 +121,6 @@ public class AudioListViewModel extends AndroidViewModel {
         });
     }
 
-    /*
-    public void listAudio(String where)
-    {
-        if(alreadyRun) return;
-        alreadyRun=true;
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                audio_list=new ArrayList<>();
-                Cursor cursor=application.getApplicationContext().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
-                if(cursor!=null && cursor.getCount()>0)
-                {
-                    while(cursor.moveToNext())
-                    {
-                        int id=cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                        String data=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                        String title=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        String album=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                        String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                        String duration=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-
-                        if(new File(data).exists())
-                        {
-                            audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
-                        }
-
-                    }
-
-                    cursor.close();
-                }
-                isFinished.postValue(true);
-            }
-        });
-
-    }
-
-     */
 
     public void listAudio(List<AlbumPOJO> album_list, String action, String list_name,boolean runOnlyOnce)
     {
@@ -368,8 +330,6 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public void fetch_saved_audio_list(List<String> audio_selected_list)
     {
-        if(alreadyRun) return;
-        alreadyRun=true;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future=executorService.submit(new Runnable() {
             @Override
@@ -383,6 +343,7 @@ public class AudioListViewModel extends AndroidViewModel {
             }
         });
     }
+
 
     private List<AudioPOJO> fetch_audio_list(String list_name)
     {
