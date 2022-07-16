@@ -168,6 +168,12 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			}
 		});
 
+		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				progress_bar.setVisibility(View.GONE);
+			}
+		});
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_album);
@@ -222,7 +228,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		save_btn.setEnabled(enable);
 
 	}
-
+/*
 	private class AlbumListExtractor extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		final Uri album_uri=MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
@@ -284,6 +290,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 		}
 	}
+
+ */
 	
 	private class ToolbarClickListener implements View.OnClickListener
 	{
@@ -291,7 +299,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(albumListRecyclerViewAdapter==null)return;
+			if(progress_bar.getVisibility()==View.VISIBLE) return;
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
@@ -304,7 +312,9 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
-				new AlbumListDetailsExtractor(audioListViewModel.album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				//new AlbumListDetailsExtractor(audioListViewModel.album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				progress_bar.setVisibility(View.VISIBLE);
+				audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"p","");
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_3) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
@@ -322,19 +332,23 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 							saveNewAudioListDialog.setOnSaveAudioListener(new SaveNewAudioListDialog.OnSaveAudioListListener() {
 								public void save_audio_list(String list_name) {
 
-									new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+									//new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+									progress_bar.setVisibility(View.VISIBLE);
+									audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"s",list_name);
 								}
 
 							});
 							saveNewAudioListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "saveaudiolist_dialog");
 
 						} else if (list_name.equals("")) {
-							new AlbumListDetailsExtractor(album_selected_pojo_copy, 'q', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							//new AlbumListDetailsExtractor(album_selected_pojo_copy, 'q', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							progress_bar.setVisibility(View.VISIBLE);
+							audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"q","");
 						} else {
 
-							new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+							//new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							progress_bar.setVisibility(View.VISIBLE);
+							audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"s",list_name);
 
 						}
 					}
@@ -380,17 +394,17 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 	} 
 	
-	
+/*
 	private class AlbumListDetailsExtractor extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
-		final char action;
+		final String action;
 		final String list_name;
 		final List<AudioPOJO> extracted_audio_list=new ArrayList<>();
 		final List<AlbumPOJO> albumList;
 		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 		boolean list_created;
 		
-		AlbumListDetailsExtractor(List<AlbumPOJO> list,char action, String list_name)
+		AlbumListDetailsExtractor(List<AlbumPOJO> list,String action, String list_name)
 		{
 			this.action=action;
 			this.list_name=list_name;
@@ -434,12 +448,12 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				assert cursor != null;
 				cursor.close();
 			}
-			if(action=='q')
+			if(action.equals("q"))
 			{
 				AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(extracted_audio_list);
 				
 			}
-			else if(action=='s')
+			else if(action.equals("s"))
 			{
 				
 				if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
@@ -474,7 +488,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		{
 			// TODO: Implement this method
 			super.onPostExecute(result);
-			if(action=='p')
+			if(action.equals("p"))
 			{
 				if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
 				{
@@ -485,7 +499,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					audioSelectListener.onAudioSelect(data,audio);
 				}
 			}
-			else if(action=='s')
+			else if(action.equals("s"))
 			{
 				if(list_created)
 				{
@@ -499,6 +513,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		
 		}
 	}
+
+ */
 
 
 	private class AlbumListRecyclerViewAdapter extends RecyclerView.Adapter <AlbumListRecyclerViewAdapter.ViewHolder> implements Filterable

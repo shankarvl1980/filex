@@ -370,7 +370,7 @@ public class AllAudioListFragment extends Fragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(audioListRecyclerViewAdapter==null) return;
+			if(progress_bar.getVisibility()==View.VISIBLE) return;
 			final Bundle bundle=new Bundle();
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -80,6 +81,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private int playing_audio_text_color,rest_audio_text_color;
 	private int listview_height;
 	private AudioListViewModel audioListViewModel;
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -130,7 +132,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		search_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(currentAudioListRecyclerViewAdapter==null)return;
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
 				if(!search_toolbar_visible)
 				{
 					set_visibility_searchbar(true);
@@ -142,7 +144,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-					if(currentAudioListRecyclerViewAdapter==null)return;
+					if(progress_bar.getVisibility()==View.VISIBLE)return;
 					int size=clicked_audio_list.size();
 
 					if(audioListViewModel.mselecteditems.size()<size)
@@ -260,7 +262,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				}
 
 			});
-		
+
+		progress_bar=v.findViewById(R.id.album_details_progressbar);
 		
 		EquallyDistributedButtonsWithTextLayout tb_layout=new EquallyDistributedButtonsWithTextLayout(context,number_button,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 
@@ -319,18 +322,15 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 
 		asyncTaskStatus=AsyncTaskStatus.STARTED;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		pbf.show(((AudioPlayerActivity)context).fm,"progressbar_dialog");
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
-		audioListViewModel.fetch_audio_list(audio_list_clicked_name,whether_saved_play_list);
+		audioListViewModel.fetch_saved_audio_list(audio_list_clicked_name,whether_saved_play_list);
 
 		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
 				{
-
 					clicked_audio_list=audioListViewModel.audio_list;
 					total_audio_list=audioListViewModel.audio_list;
 					currentAudioListRecyclerViewAdapter=new CurrentListRecyclerViewAdapter();
@@ -343,10 +343,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 					if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
-					pbf.dismissAllowingStateLoss();
+					progress_bar.setVisibility(View.GONE);
 					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 				}
-				Log.d("shankar","is finished "+aBoolean);
+
 			}
 		});
 
@@ -621,7 +621,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(currentAudioListRecyclerViewAdapter==null)return;
+			if(progress_bar.getVisibility()==View.VISIBLE)return;
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
 			if(audioListViewModel.audio_selected_array.size()<1)
 			{

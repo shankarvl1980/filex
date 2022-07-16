@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 import android.app.Application;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -24,6 +25,7 @@ public class AudioListViewModel extends AndroidViewModel {
     private boolean alreadyRun,isCancelled;
     private Future<?> future;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 
     public List<AudioPOJO> audio_selected_array=new ArrayList<>();
@@ -33,6 +35,8 @@ public class AudioListViewModel extends AndroidViewModel {
     public List<AlbumPOJO> album_list;
 
     public List<String> audio_list_selected_array=new ArrayList<>();
+
+    public boolean audio_list_created;
 
 
     public AudioListViewModel(@NonNull Application application) {
@@ -115,6 +119,7 @@ public class AudioListViewModel extends AndroidViewModel {
         });
     }
 
+    /*
     public void listAudio(String where)
     {
         if(alreadyRun) return;
@@ -151,6 +156,83 @@ public class AudioListViewModel extends AndroidViewModel {
 
     }
 
+     */
+
+    public void listAudio(List<String> album_id_list, String action, String list_name)
+    {
+        if(alreadyRun) return;
+        alreadyRun=true;
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                audio_list_created=false;
+                AudioDatabaseHelper audioDatabaseHelper = null;
+                if(list_name!=null)
+                {
+                    audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+                }
+
+                for(String album_id:album_id_list)
+                {
+                    Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
+                    Cursor cursor=application.getContentResolver().query(uri,null,where,null,null);
+                    if(cursor!=null && cursor.getCount()>0)
+                    {
+                        while(cursor.moveToNext())
+                        {
+                            int id=cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                            String data=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                            String title=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            String album=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                            String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String duration=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+
+                            if(new File(data).exists())
+                            {
+                                audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
+                            }
+                        }
+                        cursor.close();
+                    }
+                }
+
+                if(action!=null)
+                {
+                    switch(action)
+                    {
+                        case "q":
+                            AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_list);
+                            break;
+                        case "s":
+                            if(audioDatabaseHelper!=null)
+                            {
+                                if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
+                                {
+                                    audioDatabaseHelper.insert(list_name,audio_list);
+                                }
+                                else
+                                {
+                                    audioDatabaseHelper.createTable(list_name);
+                                    audioDatabaseHelper.insert(list_name,audio_list);
+                                    AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
+                                    audio_list_created=true;
+                                }
+                            }
+
+                            break;
+                        default:
+                            AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
+                            break;
+                    }
+                }
+
+                isAudioFetchingFromAlbumFinished.postValue(true);
+            }
+        });
+    }
+
     public void listAlbum()
     {
         if(alreadyRun) return;
@@ -183,7 +265,7 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public void fetch_audio_list(String list_name, boolean whether_saved_play_list)
+    public void fetch_saved_audio_list(String list_name, boolean whether_saved_play_list)
     {
         if(alreadyRun) return;
         alreadyRun=true;
@@ -216,7 +298,6 @@ public class AudioListViewModel extends AndroidViewModel {
                             it.remove();
                         }
                     }
-
                 }
 
                 isFinished.postValue(true);

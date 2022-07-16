@@ -49,7 +49,7 @@ public class AudioSavedListFragment extends Fragment
 	private boolean AsyncExtractIsInProgress;
 	private int num_all_audio_list;
 	public AudioListViewModel audioListViewModel;
-	final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+	public FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(Context context)
@@ -102,6 +102,7 @@ public class AudioSavedListFragment extends Fragment
 		all_select_btn.setOnClickListener(toolbarClickListener);
 
 		file_number_view=v.findViewById(R.id.audio_saved_list_file_number);
+		progress_bar=v.findViewById(R.id.audio_saved_list_progressbar);
 		RecyclerView audio_recycler_view = v.findViewById(R.id.fragment_audio_saved_list_recyclerview);
 		audio_recycler_view.addItemDecoration(Global.DIVIDERITEMDECORATION);
 		audio_recycler_view.setLayoutManager(new LinearLayoutManager(context));
@@ -147,6 +148,32 @@ public class AudioSavedListFragment extends Fragment
 
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
+		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
+					AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_list;
+					if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
+					{
+						AudioPlayerService.CURRENT_PLAY_NUMBER=0;
+						AudioPOJO audio=AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
+						Uri data=null;
+						File f=new File(audio.getData());
+						if(f.exists())
+						{
+							data= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
+						}
+
+						audioSelectListener.onAudioSelect(data,audio);
+
+					}
+					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+					//AsyncExtractIsInProgress=false;
+				}
+			}
+		});
 
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
@@ -198,11 +225,11 @@ public class AudioSavedListFragment extends Fragment
 	
 	private class ToolbarClickListener implements View.OnClickListener
 	{
-
 		@Override
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
+			if(progress_bar.getVisibility()==View.VISIBLE)return;
 			int id=p1.getId();
 			if(id==R.id.toolbar_btn_1)
 			{
@@ -215,35 +242,9 @@ public class AudioSavedListFragment extends Fragment
 						extractAudioFromSavedListAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 						 */
-						pbf.show(((AudioPlayerActivity)context).fm,"");
+						progress_bar.setVisibility(View.VISIBLE);
 						audioListViewModel.fetch_saved_audio_list(audioListViewModel.audio_list_selected_array);
-						audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-							@Override
-							public void onChanged(Boolean aBoolean) {
-								if(aBoolean)
-								{
-									AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
-									AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_list;
-									if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
-									{
-										AudioPlayerService.CURRENT_PLAY_NUMBER=0;
-										AudioPOJO audio=AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
-										Uri data=null;
-										File f=new File(audio.getData());
-										if(f.exists())
-										{
-											data= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
-										}
 
-										audioSelectListener.onAudioSelect(data,audio);
-
-									}
-									pbf.dismissAllowingStateLoss();
-									((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
-									//AsyncExtractIsInProgress=false;
-								}
-							}
-						});
 					}
 					clear_selection();
 				}
@@ -453,9 +454,6 @@ public class AudioSavedListFragment extends Fragment
 							}
 							else
 							{
-								ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-								pbf.show(((AudioPlayerActivity)context).fm,"");
-
 								Bundle bundle=new Bundle();
 								bundle.putInt("pos",pos);
 								bundle.putString("list_name",saved_audio_list.get(pos));
@@ -476,8 +474,6 @@ public class AudioSavedListFragment extends Fragment
 									});
 								audioSavedListDetailsDialog.setArguments(bundle);
 								audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).fm,"");
-
-								pbf.dismissAllowingStateLoss();
 							}
 						}
 

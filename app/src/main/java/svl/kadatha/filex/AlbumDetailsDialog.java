@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -43,6 +44,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AlbumDetailsDialog extends DialogFragment
@@ -76,6 +78,7 @@ public class AlbumDetailsDialog extends DialogFragment
 	private EditText search_edittext;
 	private boolean search_toolbar_visible;
 	private AudioListViewModel audioListViewModel;
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -118,7 +121,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		search_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(audioListRecyclerViewAdapter==null)return;
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
 				if(!search_toolbar_visible)
 				{
 					set_visibility_searchbar(true);
@@ -131,7 +134,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-					if(audioListRecyclerViewAdapter==null)return;
+					if(progress_bar.getVisibility()==View.VISIBLE)return;
 					int size=audio_list.size();
 					if(audioListViewModel.mselecteditems.size()<size)
 					{
@@ -249,7 +252,9 @@ public class AlbumDetailsDialog extends DialogFragment
 			}
 			
 		});
-		
+
+		progress_bar=v.findViewById(R.id.album_details_progressbar);
+
 		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
 		int[] drawables ={R.drawable.delete_icon,R.drawable.play_icon,R.drawable.add_list_icon,R.drawable.overflow_icon};
 		String [] titles={getString(R.string.delete),getString(R.string.play),getString(R.string.list),getString(R.string.more)};
@@ -281,12 +286,11 @@ public class AlbumDetailsDialog extends DialogFragment
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
 		asyncTaskStatus=AsyncTaskStatus.STARTED;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		pbf.show(((AudioPlayerActivity)context).fm,"progressbar_dialog");
-		final String where=MediaStore.Audio.Media.ALBUM_ID +" = " +albumID;
+
+
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
-		audioListViewModel.listAudio(where);
-		audioListViewModel.isFinished.observe(this, new Observer<Boolean>() {
+		audioListViewModel.listAudio(Collections.singletonList(albumID),null,null);
+		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(this, new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
@@ -303,7 +307,7 @@ public class AlbumDetailsDialog extends DialogFragment
 						empty_audio_list_tv.setVisibility(View.VISIBLE);
 					}
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
-					pbf.dismissAllowingStateLoss();
+					progress_bar.setVisibility(View.GONE);
 					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 				}
 			}
@@ -754,7 +758,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(audioListRecyclerViewAdapter==null)return;
+			if(progress_bar.getVisibility()==View.VISIBLE)return;
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
 			if (audioListViewModel.audio_selected_array.size() < 1) {
 				return;
