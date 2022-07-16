@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -74,6 +75,7 @@ public class AllAudioListFragment extends Fragment
 	public boolean whether_audios_set_to_current_list, img_btns_enabled;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
 	public AudioListViewModel audioListViewModel;
+	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="all_audio_save_audio_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -204,9 +206,59 @@ public class AllAudioListFragment extends Fragment
 			}
 		});
 
+
+		audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					progress_bar.setVisibility(View.GONE);
+					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					clear_selection();
+				}
+			}
+		});
+
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_audio);
+		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAVE_AUDIO_LIST_REQUEST_CODE))
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+					String list_name=result.getString("list_name");
+					if(list_name.equals(""))
+					{
+						audioListViewModel.save_audio("q",list_name);
+						//AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_list_copy);
+						//Global.print(context,getString(R.string.added_audios_current_play_list));
+					}
+					/*
+					else if (AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name)) {
+						audioListViewModel.save_audio("s",list_name);
+						//((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
+						Global.print(context,getString(R.string.added_audios_to) + list_name + "'");
+					}
+
+					 */
+					else
+					{
+						audioListViewModel.save_audio("s",list_name);
+						//((AudioPlayerActivity) context).audioDatabaseHelper.createTable(list_name);
+						//((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
+						//AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
+
+						//Global.print(context,"'" + list_name + "' " + getString(R.string.audio_list_created));
+
+					}
+
+				}
+			}
+		});
+
 
 		return v;
 	}
@@ -403,14 +455,15 @@ public class AllAudioListFragment extends Fragment
 				if (audioListViewModel.audio_selected_array.size() < 1) {
 					return;
 				}
-				final List<AudioPOJO> audio_selected_list_copy = new ArrayList<>(audioListViewModel.audio_selected_array);
 
-				AudioSaveListDialog audioSaveListDialog = new AudioSaveListDialog();
+				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
+				/*
 				audioSaveListDialog.setSaveAudioListListener(new AudioSaveListDialog.SaveAudioListListener() {
 					public void save_audio_list(String list_name) {
 						if (list_name == null) {
 
 							SaveNewAudioListDialog saveNewAudioListDialog = new SaveNewAudioListDialog();
+
 							saveNewAudioListDialog.setOnSaveAudioListener(new SaveNewAudioListDialog.OnSaveAudioListListener() {
 								public void save_audio_list(String list_name) {
 
@@ -423,6 +476,8 @@ public class AllAudioListFragment extends Fragment
 								}
 
 							});
+
+
 							saveNewAudioListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "saveaudiolist_dialog");
 
 						} else if (list_name.equals("")) {
@@ -437,9 +492,11 @@ public class AllAudioListFragment extends Fragment
 					}
 				});
 
+				 */
+
 
 				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
-				clear_selection();
+
 			} else if (id == R.id.toolbar_btn_4) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
 				if (audioListViewModel.audio_selected_array.size() < 1) {

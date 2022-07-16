@@ -142,7 +142,7 @@ public class AudioSavedListFragment extends Fragment
 		saved_audio_list.addAll(AudioPlayerActivity.AUDIO_SAVED_LIST);
 		audio_saved_list_adapter=new AudioSavedListRecyclerAdapter();
 		audio_recycler_view.setAdapter(audio_saved_list_adapter);
-		
+		progress_bar.setVisibility(View.GONE);
 		num_all_audio_list=saved_audio_list.size();
 
 
@@ -170,6 +170,7 @@ public class AudioSavedListFragment extends Fragment
 
 					}
 					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+					progress_bar.setVisibility(View.GONE);
 					//AsyncExtractIsInProgress=false;
 				}
 			}

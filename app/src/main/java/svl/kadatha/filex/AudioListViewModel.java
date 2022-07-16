@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -26,6 +27,7 @@ public class AudioListViewModel extends AndroidViewModel {
     private Future<?> future;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
+    public MutableLiveData<Boolean> isSavingAudioFinished=new MutableLiveData<>();
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 
     public List<AudioPOJO> audio_selected_array=new ArrayList<>();
@@ -158,14 +160,16 @@ public class AudioListViewModel extends AndroidViewModel {
 
      */
 
-    public void listAudio(List<String> album_id_list, String action, String list_name)
+    public void listAudio(List<AlbumPOJO> album_list, String action, String list_name,boolean runOnlyOnce)
     {
-        if(alreadyRun) return;
-        alreadyRun=true;
+        if(alreadyRun && runOnlyOnce) return;
+
+        if(runOnlyOnce) alreadyRun=true;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                audio_list=new ArrayList<>();
                 audio_list_created=false;
                 AudioDatabaseHelper audioDatabaseHelper = null;
                 if(list_name!=null)
@@ -173,13 +177,17 @@ public class AudioListViewModel extends AndroidViewModel {
                     audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
                 }
 
-                for(String album_id:album_id_list)
+                for(AlbumPOJO albumPOJO:album_list)
                 {
+                    String album_id=albumPOJO.getId();
                     Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
+
                     Cursor cursor=application.getContentResolver().query(uri,null,where,null,null);
+
                     if(cursor!=null && cursor.getCount()>0)
                     {
+
                         while(cursor.moveToNext())
                         {
                             int id=cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
@@ -195,15 +203,19 @@ public class AudioListViewModel extends AndroidViewModel {
                             }
                         }
                         cursor.close();
+
                     }
                 }
 
                 if(action!=null)
                 {
+
                     switch(action)
                     {
                         case "q":
                             AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_list);
+
+                            //Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
                             break;
                         case "s":
                             if(audioDatabaseHelper!=null)
@@ -211,6 +223,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
                                     audioDatabaseHelper.insert(list_name,audio_list);
+                                    //Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_to) + list_name + "'");
                                 }
                                 else
                                 {
@@ -218,12 +231,15 @@ public class AudioListViewModel extends AndroidViewModel {
                                     audioDatabaseHelper.insert(list_name,audio_list);
                                     AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
                                     audio_list_created=true;
+                                    //Global.print(application.getApplicationContext(),"'" + list_name + "' " + application.getApplicationContext().getString(R.string.audio_list_created));
                                 }
+
                             }
 
                             break;
                         default:
                             AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
+                            //Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
                             break;
                     }
                 }
@@ -231,6 +247,50 @@ public class AudioListViewModel extends AndroidViewModel {
                 isAudioFetchingFromAlbumFinished.postValue(true);
             }
         });
+    }
+
+    public void save_audio(String action, String list_name)
+    {
+        AudioDatabaseHelper audioDatabaseHelper = null;
+        if(list_name!=null)
+        {
+            audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+        }
+
+        if(action!=null)
+        {
+            switch(action)
+            {
+                case "q":
+                    AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_array);
+                    Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                    break;
+                case "s":
+                    if(audioDatabaseHelper!=null)
+                    {
+                        if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
+                        {
+                            audioDatabaseHelper.insert(list_name,audio_selected_array);
+                            Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_to) + list_name + "'");
+                        }
+                        else
+                        {
+                            audioDatabaseHelper.createTable(list_name);
+                            audioDatabaseHelper.insert(list_name,audio_selected_array);
+                            AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
+                            audio_list_created=true;
+                            Global.print(application.getApplicationContext(),"'" + list_name + "' " + application.getApplicationContext().getString(R.string.audio_list_created));
+                        }
+                    }
+
+                    break;
+                default:
+                    AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_selected_array;
+                    Global.print(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                    break;
+            }
+        }
+        isSavingAudioFinished.postValue(true);
     }
 
     public void listAlbum()

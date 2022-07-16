@@ -9,14 +9,19 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 public class SaveNewAudioListDialog extends DialogFragment
 {
     private EditText new_file_name_edittext;
     private Context context;
 	private InputMethodManager imm;
-    private OnSaveAudioListListener onSaveAudioListListener;
+    //private OnSaveAudioListListener onSaveAudioListListener;
+	private FragmentManager fragmentManager;
+	private String request_code;
+	Bundle bundle;
 
 
 	@Override
@@ -24,6 +29,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -31,7 +37,19 @@ public class SaveNewAudioListDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
+		setCancelable(false);
+		bundle=getArguments();
+		request_code=bundle.getString("request_code");
+	}
+
+	public static SaveNewAudioListDialog getInstance(String request_code)
+	{
+		SaveNewAudioListDialog saveNewAudioListDialog=new SaveNewAudioListDialog();
+		Bundle bundle=new Bundle();
+		bundle.putString("request_code",request_code);
+		saveNewAudioListDialog.setArguments(bundle);
+		return saveNewAudioListDialog;
 	}
 
 	@Override
@@ -62,8 +80,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 			{
 				public void onClick(View v)
 				{
-
-
 					String new_name=new_file_name_edittext.getText().toString().trim();
 					if(new_name.equals("") || new_name.equals(null))
 					{
@@ -84,18 +100,18 @@ public class SaveNewAudioListDialog extends DialogFragment
 						return;
 					}
 				
-					
+					/*
 					if(onSaveAudioListListener!=null)
 					{
 						onSaveAudioListListener.save_audio_list(new_name);
 					}
-					
 
+
+					 */
+					bundle.putString("list_name",new_name);
+					fragmentManager.setFragmentResult(request_code,bundle);
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
-					
 					dismissAllowingStateLoss();
-			
-
 				}	
 
 
@@ -151,7 +167,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 
 	}
 
-
+/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -162,6 +178,9 @@ public class SaveNewAudioListDialog extends DialogFragment
 		super.onDestroyView();
 	}
 
+ */
+
+	/*
 	interface OnSaveAudioListListener
 	{
 		void save_audio_list(String list_name);
@@ -171,5 +190,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 	{
 		onSaveAudioListListener=listener;
 	}
+
+	 */
 
 }
