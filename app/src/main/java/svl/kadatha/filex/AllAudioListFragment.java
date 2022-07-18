@@ -230,30 +230,8 @@ public class AllAudioListFragment extends Fragment
 				{
 					progress_bar.setVisibility(View.VISIBLE);
 					String list_name=result.getString("list_name");
-					if(list_name.equals(""))
-					{
-						audioListViewModel.save_audio("q",list_name);
-						//AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_list_copy);
-						//Global.print(context,getString(R.string.added_audios_current_play_list));
-					}
-					/*
-					else if (AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name)) {
-						audioListViewModel.save_audio("s",list_name);
-						//((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
-						Global.print(context,getString(R.string.added_audios_to) + list_name + "'");
-					}
-
-					 */
-					else
-					{
-						audioListViewModel.save_audio("s",list_name);
-						//((AudioPlayerActivity) context).audioDatabaseHelper.createTable(list_name);
-						//((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
-						//AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
-
-						//Global.print(context,"'" + list_name + "' " + getString(R.string.audio_list_created));
-
-					}
+					audioListViewModel.isSavingAudioFinished.setValue(false);
+					audioListViewModel.save_audio(list_name.equals("") ? "q" : "s",list_name);
 
 				}
 			}

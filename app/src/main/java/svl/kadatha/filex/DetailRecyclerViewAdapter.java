@@ -38,7 +38,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
 		handler_remove=new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
-		mainActivity.file_number_view.setText(df.mselecteditems.size()+"/"+df.file_list_size);
+		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
 		{
 			File f=new File(df.fileclickselected);
@@ -113,7 +113,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		public void onClick(View p1)
 		{
 			pos=getBindingAdapterPosition();
-			int size=df.mselecteditems.size();
+			int size=df.viewModel.mselecteditems.size();
 			if(size>0)
 			{
 				longClickMethod(p1,size);
@@ -131,10 +131,10 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		private void longClickMethod (View v, int size)
 		{
 			pos=getBindingAdapterPosition();
-			if(df.mselecteditems.get(pos,false))
+			if(df.viewModel.mselecteditems.get(pos,false))
 			{
-				df.mselecteditems.delete(pos);
-				df.mselecteditemsFilePath.delete(pos);
+				df.viewModel.mselecteditems.delete(pos);
+				df.viewModel.mselecteditemsFilePath.delete(pos);
 				v.setSelected(false);
 				((RecyclerViewLayout)v).set_selected(false);
 				--size;
@@ -169,8 +169,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			}
 			else
 			{
-				df.mselecteditems.put(pos,true);
-				df.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
+				df.viewModel.mselecteditems.put(pos,true);
+				df.viewModel.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
 				v.setSelected(true);
 				((RecyclerViewLayout)v).set_selected(true);
 				++size;
@@ -203,7 +203,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		@Override
 		public boolean onLongClick(View p1)
 		{
-			longClickMethod(p1,df.mselecteditems.size());
+			longClickMethod(p1,df.viewModel.mselecteditems.size());
 			return true;
 		}
 	}
@@ -218,7 +218,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	public void onBindViewHolder(DetailRecyclerViewAdapter.ViewHolder p1, int p2)
 	{
 		FilePOJO file=df.filePOJO_list.get(p2);
-		boolean selected=df.mselecteditems.get(p2,false);
+		boolean selected=df.viewModel.mselecteditems.get(p2,false);
 		p1.view.setData(file,selected);
 		p1.view.setSelected(selected);
 	}
@@ -248,7 +248,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			protected void publishResults(CharSequence constraint, FilterResults results) {
 
 				int t=df.filePOJO_list.size();
-				if(df.mselecteditems.size()>0)
+				if(df.viewModel.mselecteditems.size()>0)
 				{
 					deselectAll();
 				}
@@ -261,7 +261,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 						df.recyclerView.setVisibility(View.VISIBLE);
 						df.folder_empty.setVisibility(View.GONE);
 				}
-				mainActivity.file_number_view.setText(df.mselecteditems.size()+ "/" +t);
+				mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+ "/" +t);
 
 			}
 		};
@@ -281,8 +281,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	{
 		if(df!=null)
 		{
-			df.mselecteditems=new SparseBooleanArray();
-			df.mselecteditemsFilePath=new SparseArray<>();
+			df.viewModel.mselecteditems=new SparseBooleanArray();
+			df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 			df.mainActivity.clearCache(file_path,fileObjectType);
 			df.modification_observed=true;
 		}
@@ -327,7 +327,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 					}
 
 					df.file_list_size=df.totalFilePOJO_list.size();
-					mainActivity.file_number_view.setText(df.mselecteditems.size()+"/"+df.file_list_size);
+					mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 					if(df.filePOJO_list!=null && df.filePOJO_list.size()==0)
 					{
 						df.recyclerView.setVisibility(View.GONE);
@@ -405,17 +405,17 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 	public void selectAll()
 	{
-		df.mselecteditems=new SparseBooleanArray();
-		df.mselecteditemsFilePath=new SparseArray<>();
+		df.viewModel.mselecteditems=new SparseBooleanArray();
+		df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 		int size=df.filePOJO_list.size();
 
 		for(int i=0;i<size;++i)
 		{
-			df.mselecteditems.put(i,true);
-			df.mselecteditemsFilePath.put(i,df.filePOJO_list.get(i).getPath());
+			df.viewModel.mselecteditems.put(i,true);
+			df.viewModel.mselecteditemsFilePath.put(i,df.filePOJO_list.get(i).getPath());
 		}
 
-		int s=df.mselecteditems.size();
+		int s=df.viewModel.mselecteditems.size();
 		if(s==1)
 		{
 			mainActivity.rename.setEnabled(true);

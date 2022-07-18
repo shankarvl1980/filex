@@ -7,6 +7,7 @@ import android.graphics.drawable.*;
 import android.graphics.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 
@@ -15,8 +16,9 @@ public class CancelableProgressBarDialog extends DialogFragment
     private Context context;
 	private TextView title;
 	private String title_string="";
-	private ProgresBarFragmentCancelListener progresBarFragmentCancelListener;
-
+	//private ProgresBarFragmentCancelListener progresBarFragmentCancelListener;
+	private Bundle bundle;
+	private String request_code;
 
 
 	@Override
@@ -31,9 +33,18 @@ public class CancelableProgressBarDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		setRetainInstance(true);
+		//setRetainInstance(true);
+		bundle=getArguments();
+		request_code=bundle.getString("request_code");
+	}
 
-
+	public static CancelableProgressBarDialog getInstance(String request_code)
+	{
+		CancelableProgressBarDialog cancelableProgressBarDialog=new CancelableProgressBarDialog();
+		Bundle bundle=new Bundle();
+		bundle.putString("request_code",request_code);
+		cancelableProgressBarDialog.setArguments(bundle);
+		return cancelableProgressBarDialog;
 	}
 
 	@Override
@@ -58,11 +69,17 @@ public class CancelableProgressBarDialog extends DialogFragment
 		{
 			public void onClick(View p)
 			{
+
+				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+				dismissAllowingStateLoss();
+				/*
 				if(progresBarFragmentCancelListener!=null)
 				{
 					progresBarFragmentCancelListener.on_cancel_progress();
 					
 				}
+
+				 */
 			}
 			
 		});
@@ -84,7 +101,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 	}
 	
 	
-
+/*
 	@Override
 	public void onDestroyView()
 	{
@@ -96,6 +113,8 @@ public class CancelableProgressBarDialog extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+ */
 	
 	
 	public void set_title(String heading)
@@ -106,6 +125,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 			title.setText(title_string);
 		}
 	}
+	/*
 	public void setProgressBarCancelListener(ProgresBarFragmentCancelListener listener)
 	{
 		progresBarFragmentCancelListener=listener;
@@ -115,5 +135,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 	{
 		void on_cancel_progress();
 	}
+
+	 */
 
 }

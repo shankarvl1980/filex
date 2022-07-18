@@ -30,12 +30,14 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -112,13 +114,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private static final int BUFFER_SIZE=8192;
 	public FileObjectType fileObjectType;
 	private PopupWindow listPopWindow;
-    //private static FragmentManager FM;
 	public FragmentManager fm;
 	private LocalBroadcastManager localBroadcastManager;
 	private InputMethodManager imm;
 	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
 	public boolean clear_cache;
-
+	private static final String CANCEL_PROGRESS_REQUEST_CODE="file_editor_cancel_progress_request_code";
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -289,7 +290,17 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 
-		cpbf=new CancelableProgressBarDialog();
+		cpbf=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+		fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE) && fileOpenAsyncTask!=null)
+				{
+					fileOpenAsyncTask.cancel(true);
+				}
+			}
+		});
+		/*
 		cpbf.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener()
 		{
 			public void on_cancel_progress()
@@ -301,6 +312,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				cpbf.dismissAllowingStateLoss();
 			}
 		});
+
+		 */
 		Intent intent=getIntent();
 		if(intent!=null)
 		{

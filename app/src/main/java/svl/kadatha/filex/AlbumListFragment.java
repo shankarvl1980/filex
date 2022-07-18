@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -175,10 +176,14 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
-				progress_bar.setVisibility(View.GONE);
-				((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-				((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-				clear_selection();
+				if(aBoolean)
+				{
+					progress_bar.setVisibility(View.GONE);
+					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					clear_selection();
+				}
+
 			}
 		});
 		int size=audioListViewModel.mselecteditems.size();
@@ -200,33 +205,8 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				{
 					String list_name=result.getString("list_name");
 					progress_bar.setVisibility(View.VISIBLE);
-
-					if(list_name.equals(""))
-					{
-
-						audioListViewModel.listAudio(audioListViewModel.album_selected_array,"q","",false);
-						/*
-						AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_list_copy);
-						Global.print(context,getString(R.string.added_audios_current_play_list));
-
-						 */
-					}
-
-					else
-					{
-						//progress_bar.setVisibility(View.VISIBLE);
-						audioListViewModel.listAudio(audioListViewModel.album_selected_array,"s",list_name,false);
-						/*
-						((AudioPlayerActivity) context).audioDatabaseHelper.createTable(list_name);
-						((AudioPlayerActivity) context).audioDatabaseHelper.insert(list_name, audio_selected_list_copy);
-						AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
-						((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-						Global.print(context,"'" + list_name + "' " + getString(R.string.audio_list_created));
-
-						 */
-
-					}
-
+					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
+					audioListViewModel.listAudio(audioListViewModel.album_selected_array,list_name.equals("") ? "q" : "s",list_name);
 				}
 			}
 		});
@@ -360,8 +340,9 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				}
 				//new AlbumListDetailsExtractor(audioListViewModel.album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				progress_bar.setVisibility(View.VISIBLE);
-				audioListViewModel.listAudio(audioListViewModel.album_selected_array,"p","",false);
-				clear_selection();
+				audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
+				audioListViewModel.listAudio(audioListViewModel.album_selected_array,"p","");
+
 			} else if (id == R.id.toolbar_btn_3) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
 				if (audioListViewModel.album_selected_array.size() < 1) {

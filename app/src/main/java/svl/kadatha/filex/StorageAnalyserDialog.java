@@ -68,7 +68,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     private AsyncTaskStatus asynctask_status;
     private AsyncTaskFilePopulate asyncTaskFilePopulate;
     private static final String FILE_TYPE_REQUEST_CODE="storage_analyser_file_type_request_code";
-
+    private static final String CANCEL_PROGRESS_REQUEST_CODE="storage_anayliser_cancel_progress_request_code";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -233,6 +233,17 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             }
         });
 
+        storageAnalyserActivity.fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
+                {
+                    if(asyncTaskFilePopulate!=null) asyncTaskFilePopulate.cancel(true);
+                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
+                    storageAnalyserActivity.onClickCancel();
+                }
+            }
+        });
         after_filledFilePojos_procedure();
 /*
         storageAnalyserActivity.fm.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
@@ -457,8 +468,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         protected void onPreExecute() {
             super.onPreExecute();
             asynctask_status=AsyncTaskStatus.STARTED;
-            cancelableProgressBarDialog=new CancelableProgressBarDialog();
+            cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
             cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+            /*
             cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
                 @Override
                 public void on_cancel_progress() {
@@ -467,6 +479,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     storageAnalyserActivity.onClickCancel();
                 }
             });
+
+             */
 
             if(storageAnalyserActivity.fm==null)
             {
@@ -986,8 +1000,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
             if(cancelableProgressBarDialog==null)
             {
-                cancelableProgressBarDialog=new CancelableProgressBarDialog();
+                cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
                 cancelableProgressBarDialog.set_title(getString(R.string.analysing));
+                /*
                 cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
                     @Override
                     public void on_cancel_progress() {
@@ -996,6 +1011,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                         storageAnalyserActivity.onClickCancel();
                     }
                 });
+
+                 */
 
                 if(storageAnalyserActivity.fm==null)
                 {

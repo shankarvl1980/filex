@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -32,6 +33,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -86,12 +89,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private long search_upper_limit_size=0;
 	
 	static final String SEARCH_RESULT="Search";
-	public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-	public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
+
 	public MainActivity mainActivity;
 	private Context context;
-	AsyncTaskLibrarySearch asyncTaskLibrarySearch;
-	AsyncTaskFilePopulate asyncTaskFilePopulate;
+	//AsyncTaskLibrarySearch asyncTaskLibrarySearch;
+	//AsyncTaskFilePopulate asyncTaskFilePopulate;
 	public boolean archive_view;
 
 	private AsyncTaskStatus asynctask_status;
@@ -104,12 +106,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
-	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
+	//private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
 	private static final String FILE_TYPE_REQUEST_CODE="detail_fragment_file_type_request_code";
-	private FrameLayout progress_bar;
+	public FrameLayout progress_bar;
+	public FilePOJOViewModel viewModel;
+	private final CancelableProgressBarDialog cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -201,52 +206,14 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		 */
 
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-				{
 
-					if(mainActivity==null)
-					{
-						context=getContext();
-						mainActivity=(MainActivity)context;
-
-					}
-					search_file_name=mainActivity.search_file_name;
-					search_in_dir=mainActivity.search_in_dir;
-					search_file_type=mainActivity.search_file_type;
-					search_whole_word=mainActivity.search_whole_word;
-					search_case_sensitive=mainActivity.search_case_sensitive;
-					search_regex=mainActivity.search_regex;
-					search_lower_limit_size=mainActivity.search_lower_limit_size;
-					search_upper_limit_size=mainActivity.search_upper_limit_size;
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				}
-				else
-				{
-
-					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-				}
-			}
-
-		}
-		else
-		{
-
-			filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-			filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-			filled_filePOJOs=true;
-
-		}
 
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+		/*
 		if(cache_cleared)
 		{
 			//Log.d("shankar","in createview, cache_cleared is true");
@@ -258,18 +225,25 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
+					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					cancelableProgressBarDialog.set_title(getString(R.string.searching));
+					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 				}
 				else
 				{
 
-					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					viewModel.isFinished.setValue(false);
+					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view);
 				}
 			}
 
 		}
+
+		 */
 
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
@@ -355,7 +329,74 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		folder_empty=v.findViewById(R.id.empty_folder);
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
-		after_filledFilePojos_procedure();
+
+		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
+		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+
+					if(mainActivity==null)
+					{
+						context=getContext();
+						mainActivity=(MainActivity)context;
+
+					}
+					search_file_name=mainActivity.search_file_name;
+					search_in_dir=mainActivity.search_in_dir;
+					search_file_type=mainActivity.search_file_type;
+					search_whole_word=mainActivity.search_whole_word;
+					search_case_sensitive=mainActivity.search_case_sensitive;
+					search_regex=mainActivity.search_regex;
+					search_lower_limit_size=mainActivity.search_lower_limit_size;
+					search_upper_limit_size=mainActivity.search_upper_limit_size;
+
+					cancelableProgressBarDialog.set_title(getString(R.string.searching));
+					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
+					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+				else
+				{
+
+					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view);
+
+				}
+			}
+
+		}
+		else
+		{
+
+			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+			filled_filePOJOs=true;
+			after_filledFilePojos_procedure();
+
+		}
+
+		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					after_filledFilePojos_procedure();
+				}
+			}
+		});
+
+		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+integer);
+			}
+		});
+
+
 
 		/*
 		mainActivity.fm.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
@@ -381,6 +422,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		});
 
 		 */
+
+		mainActivity.fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
+				{
+					viewModel.cancel(true);
+					if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
+						after_filledFilePojos_procedure();
+				}
+
+			}
+		});
 		return v;
 	}
 
@@ -403,14 +457,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 
-					asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
+					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					cancelableProgressBarDialog.set_title(getString(R.string.searching));
+					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 				}
 				else
 				{
 
-					asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					viewModel.isFinished.setValue(false);
+					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view);
 				}
 
 			}
@@ -420,7 +479,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
 				}
 			}).start();
-			after_filledFilePojos_procedure();
+			//after_filledFilePojos_procedure();
 		}
 		else if(local_activity_delete)
 		{
@@ -429,15 +488,61 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-				asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
+				//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				cancelableProgressBarDialog.set_title(getString(R.string.searching));
+				cancelableProgressBarDialog.show(mainActivity.fm,"");
+				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
-			after_filledFilePojos_procedure();
+			//after_filledFilePojos_procedure();
 		}
 
 	}
 
+	private void after_filledFilePojos_procedure()
+	{
 
+		if(MainActivity.SHOW_HIDDEN_FILE)
+		{
+			filePOJO_list=viewModel.filePOJOS;
+			totalFilePOJO_list=viewModel.filePOJOS;
+		}
+		else
+		{
+			filePOJO_list=viewModel.filePOJOS_filtered;
+			totalFilePOJO_list=viewModel.filePOJOS_filtered;
+		}
+		totalFilePOJO_list_Size=totalFilePOJO_list.size();
+		file_list_size=totalFilePOJO_list_Size;//filePOJO_list.size();
+		mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+
+		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+		adapter=new DetailRecyclerViewAdapter(context,archive_view);
+		set_adapter();
+
+		progress_bar.setVisibility(View.GONE);
+		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
+		{
+			cancelableProgressBarDialog.dismissAllowingStateLoss();
+		}
+
+		if(TO_BE_MOVED_TO_FILE_POJO!=null)
+		{
+			int idx=filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);
+			if(llm!=null)
+			{
+				llm.scrollToPositionWithOffset(idx,0);
+			}
+			else if(glm!=null)
+			{
+				glm.scrollToPositionWithOffset(idx,0);
+			}
+
+			TO_BE_MOVED_TO_FILE_POJO=null;
+		}
+	}
+
+/*
 	private void after_filledFilePojos_procedure()
 	{
 		final Handler handler_inter=new Handler();
@@ -448,13 +553,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					if(MainActivity.SHOW_HIDDEN_FILE)
 					{
-						filePOJO_list=filePOJOS;
-						totalFilePOJO_list=filePOJOS;
+						filePOJO_list=viewModel.filePOJOS;
+						totalFilePOJO_list=viewModel.filePOJOS;
 					}
 					else
 					{
-						filePOJO_list=filePOJOS_filtered;
-						totalFilePOJO_list=filePOJOS_filtered;
+						filePOJO_list=viewModel.filePOJOS_filtered;
+						totalFilePOJO_list=viewModel.filePOJOS_filtered;
 					}
 					totalFilePOJO_list_Size=totalFilePOJO_list.size();
 					file_list_size=filePOJO_list.size();
@@ -494,6 +599,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		});
 
 	}
+
+ */
 
 
 	@Override
@@ -788,13 +895,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
-		mselecteditems=new SparseBooleanArray();
-		mselecteditemsFilePath=new SparseArray<>();
+		viewModel.mselecteditems=new SparseBooleanArray();
+		viewModel.mselecteditemsFilePath=new SparseArray<>();
 		if(adapter!=null)
 		{
 			adapter.notifyDataSetChanged();
 			file_list_size=filePOJO_list.size();
-			mainActivity.file_number_view.setText(mselecteditems.size()+"/"+file_list_size);
+			mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
 
 			if(file_list_size==0)
@@ -848,47 +955,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	private class AsyncTaskFilePopulate extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-    {
-
-    	@Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-			asynctask_status=AsyncTaskStatus.STARTED;
-			pbf_polling=ProgressBarFragment.newInstance();
-			if(mainActivity.fm==null)
-			{
-				context=getContext();
-				mainActivity=(MainActivity)context;
-				mainActivity.fm=mainActivity.getSupportFragmentManager();
-			}
-			pbf_polling.show(mainActivity.fm,"");
-        }
-
-		@Override
-		protected void onCancelled(Void unused) {
-			super.onCancelled(unused);
-			asynctask_status=AsyncTaskStatus.COMPLETED;
-			pbf_polling.dismissAllowingStateLoss();
-			filled_filePOJOs=true;
-		}
-
-		@Override
-        protected Void doInBackground(Void... voids) {
-            filled_filePOJOs=false;
-            filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-            return null;
-        }
-
-
-		@Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            asynctask_status=AsyncTaskStatus.COMPLETED;
-            pbf_polling.dismissAllowingStateLoss();
-        }
-    }
-
+	/*
 	private class AsyncTaskLibrarySearch extends svl.kadatha.filex.AsyncTask<Void, Integer,Void>
 	{
 		final String library_or_search;
@@ -906,12 +973,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			this.lower_limit_size=lower_limit_size;
 			this.upper_limit_size=upper_limit_size;
 			cancelableProgressBarDialog.set_title(getString(R.string.searching));
-			cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-				@Override
-				public void on_cancel_progress() {
-					cancel(true);
-				}
-			});
+
 		}
 		
 		@Override
@@ -948,12 +1010,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 			if(totalFilePOJO_list!=null)
 			{
-				Iterator<FilePOJO> iterator=filePOJOS.iterator();
+				Iterator<FilePOJO> iterator=viewModel.filePOJOS.iterator();
 				while(iterator.hasNext())
 				{
 					if(isCancelled())
 					{
-						filePOJOS_filtered=filePOJOS;
+						viewModel.filePOJOS_filtered=viewModel.filePOJOS;
 						return null;
 					}
 					FilePOJO filePOJO=iterator.next();
@@ -963,12 +1025,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}
 
-				filePOJOS_filtered=filePOJOS;
+				viewModel.filePOJOS_filtered=viewModel.filePOJOS;
 				return null;
 			}
 
 
-			filePOJOS.clear(); filePOJOS_filtered.clear();
+			viewModel.filePOJOS.clear(); viewModel.filePOJOS_filtered.clear();
 			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
 			{
 				for(FilePOJO f : search_in_dir)
@@ -1032,13 +1094,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 			}
 
-
-
 			if(Global.DETAILED_SEARCH_LIBRARY)
 			{
 				if(media_category!=null && media_category.equals("Download"))
 				{
-					search_download(filePOJOS,filePOJOS_filtered);
+					search_download(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
 				}
 				else
 				{
@@ -1046,11 +1106,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						if(upper_limit_size==0L && lower_limit_size==0L)
 						{
-							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered);
 						}
 						else
 						{
-							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered,lower_limit_size,upper_limit_size);
+							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered,lower_limit_size,upper_limit_size);
 						}
 
 					}
@@ -1060,7 +1120,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				if(media_category!=null && media_category.equals("Download"))
 				{
-					search_download(filePOJOS,filePOJOS_filtered);
+					search_download(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
 				}
 				else if(library_or_search.equals(SEARCH_RESULT))
 				{
@@ -1068,17 +1128,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						if(upper_limit_size==0L && lower_limit_size==0L)
 						{
-							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered);
+							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered);
 						}
 						else
 						{
-							search_file(what_to_find,file_type,f.getPath(),filePOJOS,filePOJOS_filtered,lower_limit_size,upper_limit_size);
+							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered,lower_limit_size,upper_limit_size);
 						}
 					}
 				}
 				else
 				{
-					search_file(filePOJOS,filePOJOS_filtered);
+					search_file(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
 				}
 			}
 
@@ -1142,8 +1202,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						publishProgress(count);
 					}
 				}
+				cursor.close();
 			}
-			if(cursor != null) cursor.close();
+
 		}
 
 		private void search_download(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered)
@@ -1272,7 +1333,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			super.onProgressUpdate(values);
-			mainActivity.file_number_view.setText(mselecteditems.size()+"/"+(file_list_size=values[0]));
+			mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+(file_list_size=values[0]));
 		}
 
 		@Override
@@ -1282,11 +1343,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			super.onPostExecute(result);
 			cancelableProgressBarDialog.dismissAllowingStateLoss();
 			asynctask_status=AsyncTaskStatus.COMPLETED;
-			Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
-			Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
+			Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,viewModel.filePOJOS);
+			Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,viewModel.filePOJOS_filtered);
             filled_filePOJOs=true;
 		}
 	}
+
+	 */
 	
 	private class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder>
 	{

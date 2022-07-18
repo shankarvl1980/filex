@@ -270,8 +270,11 @@ public class PropertiesDialog extends DialogFragment
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(PROPERTIES_DIALOG_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				String file_path=result.getString("file_path");
-				getPermissions(new File(file_path));
+				if(requestKey.equals(PROPERTIES_DIALOG_REQUEST_CODE))
+				{
+					String file_path=result.getString("file_path");
+					getPermissions(new File(file_path));
+				}
 			}
 		});
 		return v;

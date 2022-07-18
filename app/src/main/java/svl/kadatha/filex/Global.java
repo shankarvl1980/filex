@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Debug;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
@@ -22,6 +24,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -921,6 +924,17 @@ public class Global
 	public static void print(Context context,String msg)
 	{
 		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+	}
+
+	public static void print_background_thread(Context context,String msg)
+	{
+		Handler handler=new Handler(Looper.getMainLooper());
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 }
 

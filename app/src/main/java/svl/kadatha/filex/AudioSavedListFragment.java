@@ -245,6 +245,7 @@ public class AudioSavedListFragment extends Fragment
 
 						 */
 						progress_bar.setVisibility(View.VISIBLE);
+						audioListViewModel.isFinished.setValue(false);
 						audioListViewModel.fetch_saved_audio_list(audioListViewModel.audio_list_selected_array);
 
 					}

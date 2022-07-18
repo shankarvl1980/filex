@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,15 +23,7 @@
 
 		/>
 
-	<!--
-	app:fastScrollEnabled="true"
-		app:fastScrollHorizontalThumbDrawable="@drawable/scroll_thumb_icon"
-		app:fastScrollHorizontalTrackDrawable="@drawable/scrollbar"
-		app:fastScrollVerticalThumbDrawable="@drawable/scroll_thumb_icon"
-		app:fastScrollVerticalTrackDrawable="@drawable/scrollbar"
 
-
-	-->
 	<TextView
 		android:id="@+id/empty_folder"
 		android:layout_width="match_parent"
@@ -42,16 +34,6 @@
 		android:paddingBottom="?attr/actionBarSize"
 		android:visibility="gone" />
 
-	<!--androidx.appcompat.widget.Toolbar
-		android:id="@+id/audio_list_bottom_toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/toolbar_background"
-		android:layout_gravity="bottom"
-		android:elevation="6dp"
-		app:contentInsetLeft="0dp"
-		app:contentInsetStart="0dp"
-		/-->
 
 	<FrameLayout
 		android:id="@+id/fragment_detail_progressbar"
@@ -72,10 +54,10 @@
 
 
 
-</LinearLayout>
+</LinearLayout-->
 
 
-<!--FrameLayout
+<FrameLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
@@ -87,8 +69,9 @@ android:layout_height="match_parent"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_gravity="top"
-	android:background="@color/filepath_recyclerview_background"
+	android:background="?attr/filepath_recyclerview_background"
 	android:elevation="6dp"/>
+
 
 <androidx.recyclerview.widget.RecyclerView
 	android:id="@+id/fragment_detail_container"
@@ -97,9 +80,11 @@ android:layout_height="match_parent"
 	android:background="@null"
 	android:scrollbars="vertical"
 	android:paddingTop="28sp"
-	android:paddingBottom="?attr/actionBarSize"
+	android:paddingBottom="100dp"
 	android:clipToPadding="false"
 	style="@style/my_scrollbar"/>
+
+
 
 <TextView
 	android:id="@+id/empty_folder"
@@ -110,5 +95,24 @@ android:layout_height="match_parent"
 	android:text="@string/no_file_found"
 	android:visibility="gone" />
 
-</FrameLayout-->
+
+	<FrameLayout
+		android:id="@+id/fragment_detail_progressbar"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:clickable="true"
+		android:focusable="true"
+		android:foregroundGravity="center"
+		android:elevation="7dp"
+		>
+		<ProgressBar
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:layout_gravity="center"
+			/>
+	</FrameLayout>
+
+
+</FrameLayout>
 
