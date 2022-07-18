@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -19,6 +20,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,7 +49,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public UsbFile currentUsbFile;
 	private ProgressBarFragment pbf_polling;
 	public TextView folder_selected_textview;
-	private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
+	//private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
 	public boolean filled_filePOJOs;
@@ -55,7 +58,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	private final int request_code=5678;
 	public int file_list_size;
 	private AsyncTaskStatus asynctask_status;
-	private AsyncTaskFilePopulate asyncTaskFilePopulate;
+	//private AsyncTaskFilePopulate asyncTaskFilePopulate;
+	public FrameLayout progress_bar;
+	public FilePOJOViewModel viewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -78,7 +83,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		asynctask_status = AsyncTaskStatus.NOT_YET_STARTED;
 		fileclickselected=getTag();
 		if(fileclickselected==null)
@@ -123,27 +128,15 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			}
 		}
 
+		/*
 		if(pbf_polling!=null)
 		{
 			pbf_polling.dismissAllowingStateLoss();
 		}
 
+		 */
 
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-				asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-
-		}
-		else
-		{
-			filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-			filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-			filled_filePOJOs=true;
-		}
 
 	}
 	
@@ -151,6 +144,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+		/*
 		if(cache_cleared)
 		{
 			cache_cleared=false;
@@ -163,6 +157,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			}
 
 		}
+
+		 */
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
 
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
@@ -173,6 +169,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
         folder_selected_textview = v.findViewById(R.id.file_selector_folder_selected);
 		recycler_view=v.findViewById(R.id.file_selectorRecyclerView);
 		folder_empty_textview=v.findViewById(R.id.file_selector_folder_empty);
+		progress_bar=v.findViewById(R.id.file_selector_progressbar);
 
 		if(FileSelectorActivity.FILE_GRID_LAYOUT)
 		{
@@ -189,7 +186,42 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 
 		folder_selected_textview.setText(fileclickselected);
-		after_filledFilePojos_procedure();
+
+		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
+		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
+
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+				//asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false);
+			}
+
+		}
+		else
+		{
+			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+			filled_filePOJOs=true;
+			after_filledFilePojos_procedure();
+		}
+
+		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					after_filledFilePojos_procedure();
+				}
+			}
+		});
+
+		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				fileSelectorActivity.file_number.setText(""+integer);
+			}
+		});
 
 		return v;
 	}
@@ -215,8 +247,10 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
-				asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-				asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
+				//asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				viewModel.isFinished.setValue(false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false);
 			}
 
 			new Thread(new Runnable() {
@@ -226,7 +260,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				}
 			}).start();
 
-			after_filledFilePojos_procedure();
+			//after_filledFilePojos_procedure();
 		}
 		else if(local_activity_delete)
 		{
@@ -237,6 +271,38 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
+	private void after_filledFilePojos_procedure()
+	{
+		final Handler handler_inter=new Handler();
+		handler_inter.post(new Runnable() {
+			@Override
+			public void run() {
+				if(FileSelectorActivity.SHOW_HIDDEN_FILE)
+				{
+					filePOJO_list=viewModel.filePOJOS;
+					totalFilePOJO_list=viewModel.filePOJOS;
+				}
+				else
+				{
+					filePOJO_list=viewModel.filePOJOS_filtered;
+					totalFilePOJO_list=viewModel.filePOJOS_filtered;
+				}
+				totalFilePOJO_list_Size=totalFilePOJO_list.size();
+				file_list_size=filePOJO_list.size();
+				fileSelectorActivity.file_number.setText(""+file_list_size);
+
+				Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
+				adapter=new FileSelectorAdapter();
+				set_adapter();
+				progress_bar.setVisibility(View.GONE);
+
+			}
+		});
+
+
+	}
+
+	/*
 	private void after_filledFilePojos_procedure()
 	{
 		final Handler handler_inter=new Handler();
@@ -275,10 +341,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				}
 			}
 		});
-
-
 	}
 
+	 */
 
 	@Override
 	public void onStop() {
@@ -345,6 +410,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
+	/*
 	private class AsyncTaskFilePopulate extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		@Override
@@ -385,6 +451,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			pbf_polling.dismissAllowingStateLoss();
 		}
 	}
+
+	 */
 
 
 

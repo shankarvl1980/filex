@@ -251,7 +251,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 
-
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));
@@ -501,7 +500,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	private void after_filledFilePojos_procedure()
 	{
-
 		if(MainActivity.SHOW_HIDDEN_FILE)
 		{
 			filePOJO_list=viewModel.filePOJOS;

@@ -42,6 +42,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cut_copy_delete_archive_progress.xml" value="0.23278985507246377" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_detail.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_selector.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_container.xml" value="0.23233695652173914" />

@@ -75,7 +75,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
-        //setRetainInstance(true);
         if (activity_catering.equals(STORAGE_ANALYSER)) {
             root_dir_linkedlist.addAll(((StorageAnalyserActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
@@ -83,7 +82,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             root_dir_linkedlist.addAll(((FileSelectorActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
 
-        //Log.d("shankar","recent from - "+activity_catering+" "+root_dir_linkedlist.size());
     }
 
 

@@ -69,14 +69,26 @@
 				app:layout_constraintBottom_toBottomOf="parent"
 				/>
 
-		<!--Space
-			android:id="@+id/recyclerview_padding"
-			android:layout_width="match_parent"
-			android:layout_height="@dimen/layout_margin"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintBottom_toTopOf="@id/fragment_file_selector_button_layout"
-			/-->
+	<FrameLayout
+		android:id="@+id/file_selector_progressbar"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:clickable="true"
+		android:focusable="true"
+		android:foregroundGravity="center"
+		android:elevation="7dp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		>
+		<ProgressBar
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:layout_gravity="center"
+			/>
+	</FrameLayout>
 
 
 
