@@ -113,7 +113,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     return;
                 }
 
-                if (storageAnalyserDialog.mselecteditems.size() < storageAnalyserDialog.filePOJO_list.size()) {
+                if (storageAnalyserDialog.viewModel.mselecteditems.size() < storageAnalyserDialog.filePOJO_list.size()) {
                     all_select.setImageResource(R.drawable.deselect_icon);
                     storageAnalyserDialog.selectAll();
                 } else {
@@ -187,17 +187,17 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog.mselecteditemsFilePath.size()==0)
+                if(storageAnalyserDialog.viewModel.mselecteditemsFilePath.size()==0)
                 {
                     Global.print(context,getString(R.string.could_not_perform_action));
                     DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
                     return;
                 }
                 final ArrayList<String> files_selected_array=new ArrayList<>();
-                int size = storageAnalyserDialog.mselecteditemsFilePath.size();
+                int size = storageAnalyserDialog.viewModel.mselecteditemsFilePath.size();
                 for (int i = 0; i < size; ++i) {
-                    int key = storageAnalyserDialog.mselecteditemsFilePath.keyAt(i);
-                    files_selected_array.add(storageAnalyserDialog.mselecteditemsFilePath.get(key));
+                    int key = storageAnalyserDialog.viewModel.mselecteditemsFilePath.keyAt(i);
+                    files_selected_array.add(storageAnalyserDialog.viewModel.mselecteditemsFilePath.get(key));
                 }
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,storageAnalyserDialog.fileObjectType,storageAnalyserDialog.fileclickselected,true);
@@ -294,7 +294,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private void onbackpressed(boolean onBackPressed)
     {
         StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserDialog.mselecteditems.size()>0)
+        if(storageAnalyserDialog.viewModel.mselecteditems.size()>0)
         {
             DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
         }
@@ -357,7 +357,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public void onClickCancel()
     {
         StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserDialog.mselecteditems.size()>0)
+        if(storageAnalyserDialog.viewModel.mselecteditems.size()>0)
         {
             DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
         }

@@ -194,7 +194,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			{
 				//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 				//asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 			}
 
 		}
@@ -250,7 +250,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 				//asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				viewModel.isFinished.setValue(false);
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 			}
 
 			new Thread(new Runnable() {
@@ -273,31 +273,24 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 	private void after_filledFilePojos_procedure()
 	{
-		final Handler handler_inter=new Handler();
-		handler_inter.post(new Runnable() {
-			@Override
-			public void run() {
-				if(FileSelectorActivity.SHOW_HIDDEN_FILE)
-				{
-					filePOJO_list=viewModel.filePOJOS;
-					totalFilePOJO_list=viewModel.filePOJOS;
-				}
-				else
-				{
-					filePOJO_list=viewModel.filePOJOS_filtered;
-					totalFilePOJO_list=viewModel.filePOJOS_filtered;
-				}
-				totalFilePOJO_list_Size=totalFilePOJO_list.size();
-				file_list_size=filePOJO_list.size();
-				fileSelectorActivity.file_number.setText(""+file_list_size);
+		if(FileSelectorActivity.SHOW_HIDDEN_FILE)
+		{
+			filePOJO_list=viewModel.filePOJOS;
+			totalFilePOJO_list=viewModel.filePOJOS;
+		}
+		else
+		{
+			filePOJO_list=viewModel.filePOJOS_filtered;
+			totalFilePOJO_list=viewModel.filePOJOS_filtered;
+		}
+		totalFilePOJO_list_Size=totalFilePOJO_list.size();
+		file_list_size=filePOJO_list.size();
+		fileSelectorActivity.file_number.setText(""+file_list_size);
 
-				Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
-				adapter=new FileSelectorAdapter();
-				set_adapter();
-				progress_bar.setVisibility(View.GONE);
-
-			}
-		});
+		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
+		adapter=new FileSelectorAdapter();
+		set_adapter();
+		progress_bar.setVisibility(View.GONE);
 
 
 	}
