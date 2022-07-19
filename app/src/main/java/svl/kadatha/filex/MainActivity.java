@@ -722,7 +722,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void set_visibility_searchbar(boolean visible)
 	{
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-		if(!df.filled_filePOJOs)
+		if(df.progress_bar.getVisibility()==View.VISIBLE)
 		{
 			Global.print(context,getString(R.string.please_wait));
 			return;

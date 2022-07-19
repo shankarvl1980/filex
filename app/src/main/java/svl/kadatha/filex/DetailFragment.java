@@ -443,6 +443,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+					progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isFinished.setValue(false);
 					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
 				}

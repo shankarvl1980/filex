@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -35,6 +36,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -61,12 +64,12 @@ public class ImageViewFragment extends Fragment
 	private ViewPager view_pager;
 	private Context context;
 	private ImageViewPagerAdapter image_view_adapter;
-	private int file_selected_idx=0;
+	//private int file_selected_idx=0;
     private Toolbar toolbar;
 	private LinearLayoutManager lm;
 	private PictureSelectorAdapter picture_selector_adapter;
-	private final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
-	private SparseBooleanArray selected_item_sparseboolean;
+	//private final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
+	//private SparseBooleanArray selected_item_sparseboolean;
 	private int preview_image_offset;
 	private Handler handler,polling_handler;
 	private Runnable runnable;
@@ -90,13 +93,15 @@ public class ImageViewFragment extends Fragment
 	private boolean toolbar_visible;
 	private LinearLayout image_view_selector_butt;
 	private TextView current_image_tv;
-	private int total_images;
+
 	private boolean fromArchiveView;
-	private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+	private final AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 	private FileObjectType fileObjectType;
 	private String source_folder,file_path;
 	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
+	public FilteredFilePOJOViewModel viewModel;
+	public FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -110,7 +115,6 @@ public class ImageViewFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 		FilenameFilter file_name_filter = new FilenameFilter() {
 			public boolean accept(File fi, String na) {
 				if (MainActivity.SHOW_HIDDEN_FILE) {
@@ -154,8 +158,8 @@ public class ImageViewFragment extends Fragment
 		{
 			currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
 		}
-		new AlbumPollingAsyncTask(album_file_pojo_list,Global.IMAGE_REGEX,source_folder,fileObjectType,fromArchiveView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+		//new AlbumPollingAsyncTask(album_file_pojo_list,Global.IMAGE_REGEX,source_folder,fileObjectType,fromArchiveView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -326,6 +330,7 @@ public class ImageViewFragment extends Fragment
 
 		image_view_selector_butt=v.findViewById(R.id.image_view_selector_recyclerview_group);
 		current_image_tv=v.findViewById(R.id.image_view_current_view);
+		progress_bar=v.findViewById(R.id.activity_picture_progressbar);
 
         final RecyclerView recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
         new LinearSnapHelper().attachToRecyclerView(recyclerview);
@@ -348,7 +353,7 @@ public class ImageViewFragment extends Fragment
 		}
 
 		preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
-		selected_item_sparseboolean=new SparseBooleanArray();
+		//selected_item_sparseboolean=new SparseBooleanArray();
 		lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 
 		view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -356,8 +361,8 @@ public class ImageViewFragment extends Fragment
 			public void onPageSelected(int i)
 			{
 				lm.scrollToPositionWithOffset(i,-preview_image_offset);
-				selected_item_sparseboolean=new SparseBooleanArray();
-				selected_item_sparseboolean.put(i,true);
+				viewModel.selected_item_sparseboolean=new SparseBooleanArray();
+				viewModel.selected_item_sparseboolean.put(i,true);
 				if(picture_selector_adapter!=null)
 				{
 					picture_selector_adapter.notifyDataSetChanged();
@@ -372,9 +377,9 @@ public class ImageViewFragment extends Fragment
 
 			public void onPageScrolled(int i,float p2, int p3)
 			{
-				file_selected_idx=i;
-				current_image_tv.setText(file_selected_idx+1+"/"+total_images);
-				currently_shown_file=album_file_pojo_list.get(i);
+				viewModel.file_selected_idx=i;
+				current_image_tv.setText(viewModel.file_selected_idx+1+"/"+viewModel.total_images);
+				currently_shown_file=viewModel.album_file_pojo_list.get(i);
 				title.setText(currently_shown_file.getName());
 			}
 		});
@@ -397,11 +402,36 @@ public class ImageViewFragment extends Fragment
 
 			}
 		};
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+
 		if(context==null)
 		{
 			context=getContext();
 		}
+
+		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+		viewModel.getAlbumFromCurrentFolder(fileObjectType,source_folder,Global.IMAGE_REGEX,fromArchiveView,fromThirdPartyApp,currently_shown_file);
+		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					image_view_adapter=new ImageViewPagerAdapter(viewModel.album_file_pojo_list);
+					view_pager.setAdapter(image_view_adapter);
+					view_pager.setCurrentItem(viewModel.file_selected_idx);
+					current_image_tv.setText(viewModel.file_selected_idx+1+"/"+viewModel.total_images);
+					viewModel.selected_item_sparseboolean.put(viewModel.file_selected_idx,true);
+					picture_selector_adapter=new PictureSelectorAdapter(viewModel.album_file_pojo_list);
+					lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
+					recyclerview.setLayoutManager(lm);
+					recyclerview.setAdapter(picture_selector_adapter);
+					lm.scrollToPositionWithOffset(viewModel.file_selected_idx,-preview_image_offset);
+					progress_bar.setVisibility(View.GONE);
+
+				}
+			}
+		});
+
+		/*
 		pbf.show(((ImageViewActivity)context).fm,"");
 		polling_handler.post(new Runnable() {
 			@Override
@@ -432,6 +462,8 @@ public class ImageViewFragment extends Fragment
 
 			}
 		});
+
+		 */
 
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -755,7 +787,7 @@ public class ImageViewFragment extends Fragment
 				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
 			}
 
-			p1.v.setSelected(selected_item_sparseboolean.get(p2,false));
+			p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));
 
 		}
 
@@ -787,6 +819,7 @@ public class ImageViewFragment extends Fragment
 		}
 	}
 
+	/*
 	private class AlbumPollingAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		final List<FilePOJO> album_list;
@@ -890,6 +923,8 @@ public class ImageViewFragment extends Fragment
 		}
 	}
 
+	 */
+
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
 	{
 
@@ -925,13 +960,13 @@ public class ImageViewFragment extends Fragment
 
 			if(deleted_files.size()>0)
 			{
-				album_file_pojo_list.removeAll(deleted_files);
-				total_images=album_file_pojo_list.size();
+				viewModel.album_file_pojo_list.removeAll(deleted_files);
+				viewModel.total_images=viewModel.album_file_pojo_list.size();
 				image_view_adapter.notifyDataSetChanged();
 				picture_selector_adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
-				if(album_file_pojo_list.size()<1)
+				if(viewModel.album_file_pojo_list.size()<1)
 				{
 					((ImageViewActivity)context).finish();
 				}
@@ -964,13 +999,13 @@ public class ImageViewFragment extends Fragment
 			super.onPostExecute(result);
 			if(deleted_files.size()>0)
 			{
-				album_file_pojo_list.removeAll(deleted_files);
-				total_images=album_file_pojo_list.size();
+				viewModel.album_file_pojo_list.removeAll(deleted_files);
+				viewModel.total_images=viewModel.album_file_pojo_list.size();
 				image_view_adapter.notifyDataSetChanged();
 				picture_selector_adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
-				if(album_file_pojo_list.size()<1)
+				if(viewModel.album_file_pojo_list.size()<1)
 				{
 					((ImageViewActivity)context).finish();
 				}

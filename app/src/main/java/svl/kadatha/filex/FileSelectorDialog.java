@@ -249,6 +249,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			{
 				//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
 				//asyncTaskFilePopulate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.isFinished.setValue(false);
 				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 			}

@@ -41,22 +41,12 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private boolean filled_size;
 
 
-
-    //private String library_or_search;
     private String what_to_find=null;
     private String media_category=null;
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
     private int count=0;
     public MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
-    //long lower_limit_size=0,upper_limit_size=0;
-
-    //private  String search_file_name;
-    //private Set<FilePOJO> search_in_dir=new HashSet<>();
-    //private  String search_file_type;
-    //private  boolean search_whole_word,search_case_sensitive,search_regex;
-    //private long search_lower_limit_size=0;
-    //private long search_upper_limit_size=0;
 
 
     public FilePOJOViewModel(@NonNull Application application) {
