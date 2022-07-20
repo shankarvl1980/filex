@@ -238,8 +238,16 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
             viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+            if(!viewModel.filled_size)
+            {
+                viewModel.fill_file_size(fileObjectType,fileclickselected,currentUsbFile,false);
+            }
+            else
+            {
+                after_filledFilePojos_procedure();
+            }
             filled_filePOJOs=true;
-            after_filledFilePojos_procedure();
+
         }
 
         viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -311,6 +319,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 //cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.isFinished.setValue(false);
+                viewModel.filled_size=false;
                 viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
             }
 

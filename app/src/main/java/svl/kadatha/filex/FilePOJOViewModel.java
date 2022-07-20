@@ -38,7 +38,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     private int total_no_of_files;
     private long total_size_of_files;
-    private boolean filled_size;
+    public boolean filled_size;
 
 
     private String what_to_find=null;
@@ -107,6 +107,31 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                 }
+                isFinished.postValue(true);
+                mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+            }
+        });
+    }
+
+    public synchronized void fill_file_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view)
+    {
+        if(filled_size) return;
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                long storage_space=0L;
+                String key=fileObjectType+fileclickselected;
+                for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
+                {
+                    if(Global.IS_CHILD_FILE(key,entry.getKey()))
+                    {
+                        storage_space=entry.getValue().getTotalSpace();
+                        break;
+                    }
+                }
+                final long final_storage_space = storage_space;
+                filled_size=fill_file_size(filePOJOS,final_storage_space);
                 isFinished.postValue(true);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }

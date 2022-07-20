@@ -159,7 +159,7 @@ public class ImageViewFragment extends Fragment
 			currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
 		}
 
-		//new AlbumPollingAsyncTask(album_file_pojo_list,Global.IMAGE_REGEX,source_folder,fileObjectType,fromArchiveView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
