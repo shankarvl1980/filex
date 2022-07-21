@@ -31,7 +31,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future;
+    private Future<?> future1,future2,future3;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
@@ -58,20 +58,14 @@ public class FilePOJOViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if(future!=null)
-        {
-            future.cancel(true);
-            isCancelled=true;
-        }
+        cancel(true);
     }
 
     public void cancel(boolean mayInterruptRunning){
-        if(future!=null)
-        {
-            future.cancel(mayInterruptRunning);
-            isCancelled=true;
-            //to remove from hashmmap
-        }
+        if(future1!=null) future1.cancel(mayInterruptRunning);
+        if(future2!=null) future2.cancel(mayInterruptRunning);
+        if(future3!=null) future3.cancel(mayInterruptRunning);
+        isCancelled=true;
     }
 
     private boolean isCancelled()
@@ -83,7 +77,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
@@ -117,7 +111,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     {
         if(filled_size) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 long storage_space=0L;
@@ -209,7 +203,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         count=0;
         mutable_file_count.postValue(count);
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 if(filePOJOS!=null)
@@ -483,7 +477,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             }
             catch(final PatternSyntaxException e)
             {
-                Global.print_background_thread(application.getApplicationContext(),e.getMessage());
+                Global.print_background_thread(application,e.getMessage());
             }
 
         }
@@ -530,7 +524,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             }
             catch(final PatternSyntaxException e)
             {
-                Global.print_background_thread(application.getApplicationContext(),e.getMessage());
+                Global.print_background_thread(application,e.getMessage());
             }
 
         }

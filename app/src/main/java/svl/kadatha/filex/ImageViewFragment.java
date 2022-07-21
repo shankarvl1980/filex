@@ -57,7 +57,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 public class ImageViewFragment extends Fragment
 {
 
@@ -158,7 +157,6 @@ public class ImageViewFragment extends Fragment
 		{
 			currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
 		}
-
 
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -409,7 +407,7 @@ public class ImageViewFragment extends Fragment
 		}
 
 		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
-		viewModel.getAlbumFromCurrentFolder(fileObjectType,source_folder,Global.IMAGE_REGEX,fromArchiveView,fromThirdPartyApp,currently_shown_file);
+		viewModel.getAlbumFromCurrentFolder(fileObjectType,source_folder,Global.IMAGE_REGEX,fromArchiveView,fromThirdPartyApp,currently_shown_file,false);
 		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
@@ -431,6 +429,15 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
+		viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+			}
+		});
 		/*
 		pbf.show(((ImageViewActivity)context).fm,"");
 		polling_handler.post(new Runnable() {
@@ -527,6 +534,10 @@ public class ImageViewFragment extends Fragment
 		public void onActivityResult(ActivityResult result) {
 			if(result.getResultCode()== Activity.RESULT_OK)
 			{
+				progress_bar.setVisibility(View.VISIBLE);
+				viewModel.hasWallPaperSet.setValue(false);
+				viewModel.setWallPaper(result,((ImageViewActivity)context).CacheDir);
+			/*
 				new svl.kadatha.filex.AsyncTask<Void,Void,Void>()
 				{
 					ProgressBarFragment pbf;
@@ -588,6 +599,8 @@ public class ImageViewFragment extends Fragment
 						pbf.dismissAllowingStateLoss();
 					}
 				}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+
+			 */
 
 			}
 			else

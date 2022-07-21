@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -30,6 +31,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -37,6 +40,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +67,7 @@ public class VideoViewContainerFragment extends Fragment
 	private boolean is_menu_opened;
 
 	private boolean asynctask_running;
-	private IndexedLinkedHashMap<FilePOJO,Integer> video_list;
+	//private IndexedLinkedHashMap<FilePOJO,Integer> video_list;
 	private Uri data;
 	private FilePOJO currently_shown_file;
 	private VideoViewPagerAdapter adapter;
@@ -76,9 +80,11 @@ public class VideoViewContainerFragment extends Fragment
 	private AlbumPollCompleteListener albumPollCompleteListener;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
-	private String source_folder;
+	private String source_folder,file_path;
 	private LocalBroadcastManager localBroadcastManager;
 	private VideoViewActivity videoViewActivity;
+	public FrameLayout progress_bar;
+	public FilteredFilePOJOViewModel viewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -98,6 +104,47 @@ public class VideoViewContainerFragment extends Fragment
 		firststart=true;
 
 		data=videoViewActivity.data;
+		Bundle bundle=getArguments();
+		if(bundle!=null)
+		{
+			file_path=bundle.getString("file_path");
+			fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+			fromArchiveView=bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
+
+			if(fileObjectType ==null || fileObjectType ==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				fromThirdPartyApp=true;
+				fileObjectType =FileObjectType.FILE_TYPE;
+			}
+
+			source_folder=new File(file_path).getParent();
+			if(fileObjectType ==FileObjectType.USB_TYPE)
+			{
+				if(MainActivity.usbFileRoot!=null)
+				{
+					try {
+						currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
+					} catch (IOException e) {
+
+					}
+				}
+			}
+			else if(fileObjectType==FileObjectType.ROOT_TYPE)
+			{
+				currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+			}
+			else
+			{
+				currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+			}
+
+		}
+
+
+
+
+
+		/*
 		currently_shown_file=videoViewActivity.currently_shown_file;
 		video_list=videoViewActivity.video_list;
 		file_selected_idx=videoViewActivity.file_selected_idx;
@@ -113,6 +160,8 @@ public class VideoViewContainerFragment extends Fragment
 
 
 		if(albumPollCompleteListener!=null) albumPollCompleteListener.onPollComplete();
+
+		 */
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -235,7 +284,7 @@ public class VideoViewContainerFragment extends Fragment
 			}
 
 		});
-		
+		progress_bar=v.findViewById(R.id.activity_video_progressbar);
 		floating_back_button=v.findViewById(R.id.floating_button_video_fragment);
 		floating_back_button.setOnClickListener(new View.OnClickListener()
 		{
@@ -245,9 +294,23 @@ public class VideoViewContainerFragment extends Fragment
 			}
 			
 		});
+		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+		viewModel.getAlbumFromCurrentFolder(fileObjectType,source_folder,Global.VIDEO_REGEX,fromArchiveView,fromThirdPartyApp,currently_shown_file,true);
+		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					adapter=new VideoViewPagerAdapter(((VideoViewActivity)context).fm,viewModel.video_list);
+					viewpager.setAdapter(adapter);
 
-		adapter=new VideoViewPagerAdapter(((VideoViewActivity)context).fm,video_list);
-		viewpager.setAdapter(adapter);
+					progress_bar.setVisibility(View.GONE);
+				}
+			}
+		});
+
+
+
 		viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
 			{
 				public void onPageSelected(int p)
@@ -268,7 +331,7 @@ public class VideoViewContainerFragment extends Fragment
 				{
 
 					file_selected_idx=p1;
-					currently_shown_file=video_list.getKeyAtIndex(p1);
+					currently_shown_file=viewModel.video_list.getKeyAtIndex(p1);
 					title.setText(currently_shown_file.getName());
 
 				}
@@ -302,12 +365,13 @@ public class VideoViewContainerFragment extends Fragment
 	}
 
 
-	public static VideoViewContainerFragment getNewInstance(FileObjectType fileObjectType,boolean fromArchiveView)
+	public static VideoViewContainerFragment getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
 	{
 		VideoViewContainerFragment frag=new VideoViewContainerFragment();
 		Bundle bundle=new Bundle();
-		bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
+		bundle.putString("file_path",file_path);
 		bundle.putBoolean("fromArchiveView",fromArchiveView);
+		bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
 		frag.setArguments(bundle);
 		return frag;
 	}
@@ -403,9 +467,9 @@ public class VideoViewContainerFragment extends Fragment
 
 			final VideoViewFragment frag;
 			boolean b=firststart;
-			FilePOJO filePOJO=video_list.getKeyAtIndex(p1);
+			FilePOJO filePOJO=viewModel.video_list.getKeyAtIndex(p1);
 			final String file_path=filePOJO.getPath();
-			int position=video_list.get(filePOJO);
+			int position=viewModel.video_list.get(filePOJO);
 			frag=VideoViewFragment.getNewInstance(fileObjectType,fromThirdPartyApp,file_path,position,p1,b);
 			firststart=false;
 
@@ -444,10 +508,10 @@ public class VideoViewContainerFragment extends Fragment
 				public void setPosition(Integer idx, Integer position)
 				{
 		
-					if(video_list.size()>idx) // condition is required, otherwise app crashes, when last video is removed
+					if(viewModel.video_list.size()>idx) // condition is required, otherwise app crashes, when last video is removed
 					{
 
-						video_list.put(video_list.getKeyAtIndex(idx),position);
+						viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx),position);
 
 					}
 				}
@@ -539,7 +603,7 @@ public class VideoViewContainerFragment extends Fragment
 			if(deleted_files.size()>0)
 			{
 
-				Iterator<Map.Entry<FilePOJO, Integer>> iterator=video_list.entrySet().iterator();
+				Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
 				for(FilePOJO filePOJO:deleted_files)
 				{
 					while(iterator.hasNext())
@@ -547,7 +611,7 @@ public class VideoViewContainerFragment extends Fragment
 						Map.Entry<FilePOJO,Integer> entry=iterator.next();
 						if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
 						{
-							video_list.removeIndex(filePOJO);
+							viewModel.video_list.removeIndex(filePOJO);
 							iterator.remove();
 							break;
 						}
@@ -558,7 +622,7 @@ public class VideoViewContainerFragment extends Fragment
 				adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
-				if(video_list.size()<1)
+				if(viewModel.video_list.size()<1)
 				{
 					((VideoViewActivity)context).finish();
 				}
@@ -591,7 +655,7 @@ public class VideoViewContainerFragment extends Fragment
 			super.onPostExecute(result);
 			if(deleted_files.size()>0)
 			{
-				Iterator<Map.Entry<FilePOJO, Integer>> iterator=video_list.entrySet().iterator();
+				Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
 				for(FilePOJO filePOJO:deleted_files)
 				{
 					while(iterator.hasNext())
@@ -599,7 +663,7 @@ public class VideoViewContainerFragment extends Fragment
 						Map.Entry<FilePOJO,Integer> entry=iterator.next();
 						if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
 						{
-							video_list.removeIndex(filePOJO);
+							viewModel.video_list.removeIndex(filePOJO);
 							iterator.remove();
 							break;
 						}
@@ -610,7 +674,7 @@ public class VideoViewContainerFragment extends Fragment
 				adapter.notifyDataSetChanged();
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
-				if(video_list.size()<1)
+				if(viewModel.video_list.size()<1)
 				{
 					((VideoViewActivity)context).finish();
 				}

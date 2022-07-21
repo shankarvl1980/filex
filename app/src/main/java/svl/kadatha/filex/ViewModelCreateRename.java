@@ -50,7 +50,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     }
                     else if(fileObjectType== FileObjectType.FILE_TYPE)
                     {
-                        file_created=FileUtil.createSAFNewFile(application.getApplicationContext(),parent_folder,new_name,tree_uri,tree_uri_path);
+                        file_created=FileUtil.createSAFNewFile(application,parent_folder,new_name,tree_uri,tree_uri_path);
                     }
                     else if(fileObjectType== FileObjectType.USB_TYPE)
                     {
@@ -92,7 +92,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     }
                     else if(fileObjectType== FileObjectType.FILE_TYPE)
                     {
-                        file_created=FileUtil.mkdirSAF(application.getApplicationContext(),parent_folder,new_name,tree_uri,tree_uri_path);
+                        file_created=FileUtil.mkdirSAF(application,parent_folder,new_name,tree_uri,tree_uri_path);
                     }
                     else if(fileObjectType== FileObjectType.USB_TYPE)
                     {
@@ -159,16 +159,16 @@ public class ViewModelCreateRename extends AndroidViewModel {
                             boolean isDir=new File(new_file_path).isDirectory();
                             if(!isDir && !isDirectory)
                             {
-                                if(FileUtil.deleteSAFDirectory(application.getApplicationContext(),new_file_path,tree_uri,tree_uri_path))
+                                if(FileUtil.deleteSAFDirectory(application,new_file_path,tree_uri,tree_uri_path))
                                 {
-                                    fileNameChanged=FileUtil.renameSAFFile(application.getApplicationContext(),parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+                                    fileNameChanged=FileUtil.renameSAFFile(application,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
                                 }
                             }
 
                         }
                         else
                         {
-                            fileNameChanged=FileUtil.renameSAFFile(application.getApplicationContext(),parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+                            fileNameChanged=FileUtil.renameSAFFile(application,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
                         }
                     }
                 }

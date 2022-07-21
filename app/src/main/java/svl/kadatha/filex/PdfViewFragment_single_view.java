@@ -39,6 +39,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -62,17 +64,17 @@ public class PdfViewFragment_single_view extends Fragment
     private String file_path;
     private FilePOJO currently_shown_file;
     //private File pdf_file;
-    private final List<Bitmap> list_pdf_pages=new ArrayList<>();
+
     private AsyncTaskStatus asyncTaskStatus;
     private Handler h;
     private Handler handler;
-    private int image_selected_idx=0,previously_selected_image_idx=0;
+    //private int image_selected_idx=0,previously_selected_image_idx=0;
     private PdfViewPagerAdapter pdf_view_adapter;
     private PictureSelectorAdapter picture_selector_adapter;
     //private PdfPageViewRecyclerViewAdapter pdfPageViewRecyclerViewAdapter;
     private final int s=0;
     //private TextView total_pages_tv;
-    private int total_pages;
+    //private int total_pages;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
@@ -93,19 +95,21 @@ public class PdfViewFragment_single_view extends Fragment
     private Runnable runnable;
     private ViewPager view_pager;
     private LinearLayoutManager lm;
-    private SparseBooleanArray selected_item_sparseboolean;
+
     private int preview_image_offset;
     private int floating_button_height;
     private int recyclerview_height;
     //private List<Bitmap> bitmapList=new ArrayList<>();
-    private AsyncTaskPdfPages asyncTaskPdfPages;
+    //private AsyncTaskPdfPages asyncTaskPdfPages;
     private LinearLayout image_view_selector_butt;
     private String source_folder;
-    private PdfRenderer pdfRenderer;
+
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp;
-    private double size_per_page_MB;
-    private static final int SAFE_MEMORY_BUFFER=3;
+
+    public static final int SAFE_MEMORY_BUFFER=3;
+    public FrameLayout progress_bar;
+    public FilteredFilePOJOViewModel viewModel;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -117,7 +121,6 @@ public class PdfViewFragment_single_view extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         data=((PdfViewActivity)context).data;
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         Bundle bundle=getArguments();
@@ -152,8 +155,8 @@ public class PdfViewFragment_single_view extends Fragment
             currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
         }
 
-        asyncTaskPdfPages = new AsyncTaskPdfPages();
-        asyncTaskPdfPages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //asyncTaskPdfPages = new AsyncTaskPdfPages();
+        //asyncTaskPdfPages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -296,6 +299,7 @@ public class PdfViewFragment_single_view extends Fragment
             }
 
         });
+        progress_bar=v.findViewById(R.id.activity_picture_progressbar);
         current_page_tv=v.findViewById(R.id.image_view_current_view);
         image_view_selector_butt=v.findViewById(R.id.image_view_selector_recyclerview_group);
         recyclerview=v.findViewById(R.id.activity_picture_view_recyclerview);
@@ -319,7 +323,6 @@ public class PdfViewFragment_single_view extends Fragment
         }
 
         preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
-        selected_item_sparseboolean=new SparseBooleanArray();
         lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 
 
@@ -328,8 +331,8 @@ public class PdfViewFragment_single_view extends Fragment
             public void onPageSelected(int i)
             {
                 lm.scrollToPositionWithOffset(i,-preview_image_offset);
-                selected_item_sparseboolean=new SparseBooleanArray();
-                selected_item_sparseboolean.put(i,true);
+                viewModel.selected_item_sparseboolean=new SparseBooleanArray();
+                viewModel.selected_item_sparseboolean.put(i,true);
                 if(picture_selector_adapter!=null)
                 {
                     picture_selector_adapter.notifyDataSetChanged();
@@ -344,9 +347,9 @@ public class PdfViewFragment_single_view extends Fragment
 
             public void onPageScrolled(int i,float p2, int p3)
             {
-                previously_selected_image_idx=image_selected_idx;
-                image_selected_idx=i;
-                current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
+                viewModel.previously_selected_image_idx=viewModel.image_selected_idx;
+                viewModel.image_selected_idx=i;
+                current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
 
             }
         });
@@ -370,7 +373,48 @@ public class PdfViewFragment_single_view extends Fragment
             }
         };
 
+        viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+        viewModel.initializePdfRenderer(fileObjectType,currently_shown_file,data,fromThirdPartyApp);
+        viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    pdf_view_adapter=new PdfViewPagerAdapter();
+                    view_pager.setAdapter(pdf_view_adapter);
+                    view_pager.setCurrentItem(viewModel.image_selected_idx);
+                    viewModel.selected_item_sparseboolean.put(viewModel.image_selected_idx,true);
+                    picture_selector_adapter=new PictureSelectorAdapter(viewModel.total_pages);
 
+                    recyclerview.setLayoutManager(lm);
+                    recyclerview.setAdapter(picture_selector_adapter);
+                    lm.scrollToPositionWithOffset(viewModel.image_selected_idx,-preview_image_offset);
+                    current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
+                }
+            }
+        });
+
+        viewModel.isPdfBitmapFetched.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    if(viewModel.out_of_memory_exception_thrown)((PdfViewActivity)context).finish();
+                    View view=view_pager.findViewWithTag(viewModel.pdf_current_position);
+                    if(view !=null)
+                    {
+                        FrameLayout frameLayout=(FrameLayout) view;
+                        ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
+                        GlideApp.with(context).load(viewModel.bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
+                        view.setTag("loaded");
+                    }
+                    progress_bar.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        /*
         h.post(new Runnable() {
             @Override
             public void run() {
@@ -395,6 +439,8 @@ public class PdfViewFragment_single_view extends Fragment
                 }
             }
         });
+
+         */
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -479,14 +525,7 @@ public class PdfViewFragment_single_view extends Fragment
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
-    @Override
-    public void onDestroy() {
-        if(asyncTaskPdfPages!=null)
-        {
-            asyncTaskPdfPages.cancel(true);
-        }
-        super.onDestroy();
-    }
+
 
     private void image_view_on_click_procedure()
     {
@@ -538,7 +577,7 @@ public class PdfViewFragment_single_view extends Fragment
         public int getCount()
         {
             // TODO: Implement this method
-            return total_pages;//bitmapList.size();
+            return viewModel.total_pages;//bitmapList.size();
         }
 
         @Override
@@ -566,6 +605,9 @@ public class PdfViewFragment_single_view extends Fragment
             v.setTag(position);
             container.addView(v);
             new BitmapFetchAsyncTask(position).execute();
+//            progress_bar.setVisibility(View.VISIBLE);
+//            viewModel.isPdfBitmapFetched.setValue(false);
+//            viewModel.fetchBitmapFromPDF(position);
             return v;
         }
 
@@ -587,6 +629,7 @@ public class PdfViewFragment_single_view extends Fragment
 
     }
 
+
     private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
     {
         final int position;
@@ -599,54 +642,35 @@ public class PdfViewFragment_single_view extends Fragment
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(pbf!=null)
-            {
-                pbf.dismissAllowingStateLoss();
-            }
-
-            pbf=ProgressBarFragment.newInstance();
-            pbf.show(((PdfViewActivity)context).fm,"");
-
+//            if(pbf!=null)
+//            {
+//                pbf.dismissAllowingStateLoss();
+//            }
+//
+//            pbf=ProgressBarFragment.newInstance();
+//            pbf.show(((PdfViewActivity)context).fm,"");
+            progress_bar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER)) {
+            if(viewModel.size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER)) {
 
                 try {
-                    bitmap=getBitmap(pdfRenderer,position);
-                    pbf.dismissAllowingStateLoss();
+                    bitmap=getBitmap(viewModel.pdfRenderer,position);
                 }
                 catch (SecurityException e)
                 {
-                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Global.print(context,getString(R.string.security_exception_thrown));
-                        }
-                    });
-                    pbf.dismissAllowingStateLoss();
+                    Global.print_background_thread(context,getString(R.string.security_exception_thrown));
                 }
                 catch (OutOfMemoryError error)
                 {
-                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Global.print(context,getString(R.string.outofmemory_exception_thrown));
-                        }
-                    });
-                    pbf.dismissAllowingStateLoss();
+                    Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
                     ((PdfViewActivity)context).finish();
                 }
                 catch (Exception e)
                 {
-                    ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Global.print(context,getString(R.string.exception_thrown));
-                        }
-                    });
-                    pbf.dismissAllowingStateLoss();
+                    Global.print_background_thread(context,getString(R.string.exception_thrown));
                 }
 
             }
@@ -656,7 +680,6 @@ public class PdfViewFragment_single_view extends Fragment
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            pbf.dismissAllowingStateLoss();
             View view=view_pager.findViewWithTag(position);
             if(view !=null)
             {
@@ -665,7 +688,7 @@ public class PdfViewFragment_single_view extends Fragment
                 GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
                 view.setTag("loaded");
             }
-
+            progress_bar.setVisibility(View.GONE);
         }
     }
 
@@ -688,10 +711,11 @@ public class PdfViewFragment_single_view extends Fragment
 
     private class PictureSelectorAdapter extends RecyclerView.Adapter<PictureSelectorAdapter.VH>
     {
-        final List<Bitmap> picture_list;
-        PictureSelectorAdapter(List<Bitmap>list)
+        //final List<Bitmap> picture_list;
+        int total_pages;
+        PictureSelectorAdapter(int total_pages)
         {
-            picture_list=list;
+            this.total_pages=total_pages;
         }
 
         @Override
@@ -709,7 +733,7 @@ public class PdfViewFragment_single_view extends Fragment
             //Bitmap bitmap=picture_list.get(p2);
             //GlideApp.with(context).load(bitmap).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
             p1.textView.setText(p2+1+"");
-            p1.v.setSelected(selected_item_sparseboolean.get(p2,false));
+            p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));
 
         }
 
@@ -717,7 +741,7 @@ public class PdfViewFragment_single_view extends Fragment
         public int getItemCount()
         {
             // TODO: Implement this method
-            return picture_list.size();
+            return total_pages;
         }
 
         private class VH extends RecyclerView.ViewHolder implements View.OnClickListener
@@ -736,12 +760,19 @@ public class PdfViewFragment_single_view extends Fragment
             public void onClick(View p1)
             {
                 // TODO: Implement this method
-                view_pager.setCurrentItem(getBindingAdapterPosition());
+                if(progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.wait_ellipse));
+                }
+                else
+                {
+                    view_pager.setCurrentItem(getBindingAdapterPosition());
+                }
             }
         }
     }
 
-
+/*
     private class AsyncTaskPdfPages extends svl.kadatha.filex.AsyncTask<Void,Bitmap,Void>
     {
         @Override
@@ -857,6 +888,8 @@ public class PdfViewFragment_single_view extends Fragment
             //cancelableProgressBarDialog.dismissAllowingStateLoss();
         }
     }
+
+ */
 
     private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
     {

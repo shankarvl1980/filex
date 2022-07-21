@@ -25,12 +25,12 @@ public class VideoViewActivity extends BaseActivity
 	public boolean toolbar_visible,fromArchiveView;
 	public FileObjectType fileObjectType;
 	private VideoViewContainerFragment videoViewContainerFragment;
-    ProgressBarFragment pbf;
-	public IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
+    //ProgressBarFragment pbf;
+	//public IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
 	private AlbumPollFragment albumPollFragment;
 	private static final String ALBUM_POLL_FRAGMENT_TAG="album_poll_fragment";
-	private Handler handler;
-	public FilePOJO currently_shown_file;
+	//private Handler handler;
+	//public FilePOJO currently_shown_file;
 	public boolean fromThirdPartyApp;
 	public String source_folder;
 	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
@@ -49,7 +49,7 @@ public class VideoViewActivity extends BaseActivity
 		tinyDB=new TinyDB(context);
 		localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
-		handler=new Handler();
+		//handler=new Handler();
 		Intent intent=getIntent();
 		if(savedInstanceState==null)
 		{
@@ -65,6 +65,7 @@ public class VideoViewActivity extends BaseActivity
 		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
         String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 		if(file_path ==null) file_path =PathUtil.getPath(context,data);
+		/*
 		pbf = ProgressBarFragment.newInstance();
 		pbf.show(fm,"");
 		albumPollFragment=AlbumPollFragment.getInstance(file_path,fileObjectType,Global.VIDEO_REGEX,fromArchiveView);
@@ -91,6 +92,9 @@ public class VideoViewActivity extends BaseActivity
 			}
 		});
 
+		 */
+		videoViewContainerFragment= VideoViewContainerFragment.getNewInstance(file_path,fromArchiveView,fileObjectType);
+		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}
 
 	@Override
@@ -132,6 +136,7 @@ public class VideoViewActivity extends BaseActivity
 		});
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

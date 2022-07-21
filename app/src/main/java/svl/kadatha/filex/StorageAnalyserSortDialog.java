@@ -200,7 +200,7 @@ public class StorageAnalyserSortDialog extends DialogFragment
             {
                 FragmentManager fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
                 StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)fragmentManager.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog!=null && storageAnalyserDialog.progress_bar.getVisibility()!=View.VISIBLE)
+                if(storageAnalyserDialog!=null && storageAnalyserDialog.progress_bar.getVisibility()==View.GONE)
                 {
                     Global.STORAGE_ANALYSER_SORT=selected_sort;
                     set_selection();

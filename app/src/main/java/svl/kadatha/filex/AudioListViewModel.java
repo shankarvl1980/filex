@@ -26,7 +26,7 @@ public class AudioListViewModel extends AndroidViewModel {
 
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future;
+    private Future<?> future1,future2,future3,future4,future5,future6;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
     public MutableLiveData<Boolean> isSavingAudioFinished=new MutableLiveData<>();
@@ -51,19 +51,17 @@ public class AudioListViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if(future!=null)
-        {
-            future.cancel(true);
-            isCancelled=true;
-        }
+        cancel(true);
     }
 
     private void cancel(boolean mayInterruptRunning){
-        if(future!=null)
-        {
-            future.cancel(mayInterruptRunning);
-            isCancelled=true;
-        }
+        if(future1!=null) future1.cancel(mayInterruptRunning);
+        if(future2!=null) future2.cancel(mayInterruptRunning);
+        if(future3!=null) future3.cancel(mayInterruptRunning);
+        if(future4!=null) future4.cancel(mayInterruptRunning);
+        if(future5!=null) future5.cancel(mayInterruptRunning);
+        if(future6!=null) future6.cancel(mayInterruptRunning);
+        isCancelled=true;
     }
 
 
@@ -71,7 +69,7 @@ public class AudioListViewModel extends AndroidViewModel {
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 audio_list=new ArrayList<>();
@@ -123,11 +121,11 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public void listAudio(List<AlbumPOJO> album_list, String action, String list_name)
+    public synchronized void listAudio(List<AlbumPOJO> album_list, String action, String list_name)
     {
         if(Boolean.TRUE.equals(isAudioFetchingFromAlbumFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 audio_list=new ArrayList<>();
@@ -135,7 +133,7 @@ public class AudioListViewModel extends AndroidViewModel {
                 AudioDatabaseHelper audioDatabaseHelper = null;
                 if(list_name!=null)
                 {
-                    audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+                    audioDatabaseHelper=new AudioDatabaseHelper(application);
                 }
 
                 for(AlbumPOJO albumPOJO:album_list)
@@ -175,7 +173,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     {
                         case "q":
                             AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_list);
-                            Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                            Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                         case "s":
                             if(audioDatabaseHelper!=null)
@@ -183,7 +181,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
                                     audioDatabaseHelper.insert(list_name,audio_list);
-                                    Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_to) + list_name + "'");
+                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) + list_name + "'");
                                 }
                                 else
                                 {
@@ -191,7 +189,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                     audioDatabaseHelper.insert(list_name,audio_list);
                                     AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
                                     audio_list_created=true;
-                                    Global.print_background_thread(application.getApplicationContext(),"'" + list_name + "' " + application.getApplicationContext().getString(R.string.audio_list_created));
+                                    Global.print_background_thread(application,"'" + list_name + "' " + application.getString(R.string.audio_list_created));
                                 }
 
                             }
@@ -199,7 +197,7 @@ public class AudioListViewModel extends AndroidViewModel {
                             break;
                         default:
                             AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
-                            Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                            Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                     }
                 }
@@ -209,17 +207,17 @@ public class AudioListViewModel extends AndroidViewModel {
         });
     }
 
-    public void save_audio(String action, String list_name)
+    public synchronized void save_audio(String action, String list_name)
     {
         if(Boolean.TRUE.equals(isSavingAudioFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 AudioDatabaseHelper audioDatabaseHelper = null;
                 if(list_name!=null)
                 {
-                    audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+                    audioDatabaseHelper=new AudioDatabaseHelper(application);
                 }
 
                 if(action!=null)
@@ -228,7 +226,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     {
                         case "q":
                             AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_array);
-                            Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                            Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                         case "s":
                             if(audioDatabaseHelper!=null)
@@ -236,7 +234,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
                                     audioDatabaseHelper.insert(list_name,audio_selected_array);
-                                    Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_to) + list_name + "'");
+                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) + list_name + "'");
                                 }
                                 else
                                 {
@@ -244,14 +242,14 @@ public class AudioListViewModel extends AndroidViewModel {
                                     audioDatabaseHelper.insert(list_name,audio_selected_array);
                                     AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
                                     audio_list_created=true;
-                                    Global.print_background_thread(application.getApplicationContext(),"'" + list_name + "' " + application.getApplicationContext().getString(R.string.audio_list_created));
+                                    Global.print_background_thread(application,"'" + list_name + "' " + application.getString(R.string.audio_list_created));
                                 }
                             }
 
                             break;
                         default:
                             AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_selected_array;
-                            Global.print_background_thread(application.getApplicationContext(),application.getApplicationContext().getString(R.string.added_audios_current_play_list));
+                            Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                     }
                 }
@@ -261,11 +259,11 @@ public class AudioListViewModel extends AndroidViewModel {
 
     }
 
-    public void listAlbum()
+    public synchronized void listAlbum()
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 album_list=new ArrayList<>();
@@ -292,11 +290,11 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public void fetch_saved_audio_list(String list_name, boolean whether_saved_play_list)
+    public synchronized void fetch_saved_audio_list(String list_name, boolean whether_saved_play_list)
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future5=executorService.submit(new Runnable() {
             @Override
             public void run() {
                audio_list=new ArrayList<>();
@@ -312,7 +310,7 @@ public class AudioListViewModel extends AndroidViewModel {
                 }
                 else if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                 {
-                    AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+                    AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application);
                     audio_list=audioDatabaseHelper.getAudioList(list_name);
                     Iterator<AudioPOJO> it=audio_list.iterator();
                     while(it.hasNext())
@@ -332,11 +330,11 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public void fetch_saved_audio_list(List<String> audio_selected_list)
+    public synchronized void fetch_saved_audio_list(List<String> audio_selected_list)
     {
         if(Boolean.TRUE.equals(isFinished.getValue()))return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 audio_list=new ArrayList<>();
@@ -360,7 +358,7 @@ public class AudioListViewModel extends AndroidViewModel {
 
         else if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
         {
-            AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application.getApplicationContext());
+            AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application);
             clicked_audio_list=audioDatabaseHelper.getAudioList(list_name);
             Iterator<AudioPOJO> it=clicked_audio_list.iterator();
             while(it.hasNext())

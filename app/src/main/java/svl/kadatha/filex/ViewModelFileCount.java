@@ -33,19 +33,12 @@ public class ViewModelFileCount extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if(future!=null)
-        {
-            future.cancel(true);
-            isCancelled=true;
-        }
+        cancel(true);
     }
 
     private void cancel(boolean mayInterruptRunning){
-        if(future!=null)
-        {
-            future.cancel(mayInterruptRunning);
-            isCancelled=true;
-        }
+        if(future!=null) future.cancel(mayInterruptRunning);
+        isCancelled=true;
     }
 
     private boolean isCancelled()
@@ -53,7 +46,7 @@ public class ViewModelFileCount extends ViewModel {
         return isCancelled;
     }
 
-    public void count(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
+    public synchronized void count(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
     {
         if(alreadyRun) return;
         alreadyRun=true;
@@ -147,7 +140,6 @@ public class ViewModelFileCount extends ViewModel {
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
             size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-            //publishProgress();
         }
     }
 

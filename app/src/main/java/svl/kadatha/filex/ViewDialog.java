@@ -343,8 +343,6 @@ public class ViewDialog extends DialogFragment
 				break;
 
 
-
-
 			case "d_size_desc":
 			case "f_size_desc":
 				size_desc_btn.setSelected(true);
@@ -420,7 +418,7 @@ public class ViewDialog extends DialogFragment
 				{
 
 					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-					if(df!=null && df.filled_filePOJOs)
+					if(df!=null && df.progress_bar.getVisibility()==View.GONE)
 					{
 						Global.SORT=selected_sort;
 						set_selection();
@@ -441,7 +439,7 @@ public class ViewDialog extends DialogFragment
 				{
 
 					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
-					if(fileSelectorDialog!=null && fileSelectorDialog.filled_filePOJOs)
+					if(fileSelectorDialog!=null && fileSelectorDialog.progress_bar.getVisibility()==View.GONE)
 					{
 						FileSelectorActivity.SORT=selected_sort;
 						set_selection();
