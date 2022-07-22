@@ -49,6 +49,8 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -101,8 +103,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	ViewPager viewPager;
 	public TinyDB tinyDB;
 
-
-
 	static File ZIP_FILE;
 	static List<String> LIBRARY_CATEGORIES=new ArrayList<>();
 
@@ -154,6 +154,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public Set<FilePOJO>search_in_dir;
 	public String search_file_type;
 	public boolean search_whole_word,search_case_sensitive,search_regex;
+	private MainActivityViewModel viewModel;
 
 
 	@Override
@@ -337,6 +338,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			public void onClick(View v)
 			{
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				Bundle bundle=new Bundle();
 				ArrayList<String> files_selected_array=new ArrayList<>();
 				ArrayList<String> zipentry_selected_array=new ArrayList<>();
@@ -413,6 +419,44 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewPager.setAdapter(viewPagerAdapter);
 		
 */
+		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
+		viewModel.isExtractionCompleted.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					archive_view=viewModel.zipFileExtracted;
+					if(viewModel.zipFileExtracted)
+					{
+						toolbar_shown_prior_archive=toolbar_shown;
+						createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
+					}
+					else
+					{
+						if(Global.ARCHIVE_EXTRACT_DIR.exists())
+						{
+							FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
+						}
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						df.progress_bar.setVisibility(View.GONE);
+					}
+					viewModel.isExtractionCompleted.setValue(false);
+				}
+			}
+		});
+
+		viewModel.isDeletionCompleted.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+			if(aBoolean)
+			{
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				df.progress_bar.setVisibility(View.GONE);
+				viewModel.isDeletionCompleted.setValue(false);
+			}
+			}
+		});
+
 		SHOW_HIDDEN_FILE=tinyDB.getBoolean("show_hidden_file");
 
         RecyclerView storageDirListRecyclerView = findViewById(R.id.drawer_recyclerview);
@@ -899,8 +943,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				return;
 			}
 
-			ArchiveViewAsyncTask archiveViewAsyncTask=new ArchiveViewAsyncTask(zipfile);
-			archiveViewAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+			df.progress_bar.setVisibility(View.VISIBLE);
+			viewModel.isExtractionCompleted.setValue(false);
+			viewModel.extractArchive(zipfile);
+			//ArchiveViewAsyncTask archiveViewAsyncTask=new ArchiveViewAsyncTask(zipfile);
+			//archiveViewAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
 	}
 
@@ -1227,11 +1275,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						if(getCacheDir().exists())
 						{
-							new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							df.progress_bar.setVisibility(View.VISIBLE);
+							viewModel.isDeletionCompleted.setValue(false);
+							viewModel.deleteDirectory(getCacheDir());
+							//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
 						if(Global.ARCHIVE_EXTRACT_DIR.exists())
 						{
-							new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							df.progress_bar.setVisibility(View.VISIBLE);
+							viewModel.isDeletionCompleted.setValue(false);
+							viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+							//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
 						finish();
 					}
@@ -1333,7 +1387,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		if(Global.ARCHIVE_EXTRACT_DIR.exists())
 		{
-			new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+			df.progress_bar.setVisibility(View.VISIBLE);
+			viewModel.isDeletionCompleted.setValue(false);
+			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+			//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
 		}
@@ -1504,6 +1562,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					set_visibility_searchbar(false);
 				}
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 					Global.print(context,getString(R.string.file_can_not_be_created_here));
@@ -1538,12 +1601,23 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					set_visibility_searchbar(false);
 				}
-				if (getCacheDir().exists()) {
-					new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+				if(getCacheDir().exists())
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+					viewModel.isDeletionCompleted.setValue(false);
+					viewModel.deleteDirectory(getCacheDir());
+					//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
-				if (Global.ARCHIVE_EXTRACT_DIR.exists()) {
-					new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+				if(Global.ARCHIVE_EXTRACT_DIR.exists())
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+					viewModel.isDeletionCompleted.setValue(false);
+					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+					//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
+
 				finish();
 			}
 		}
@@ -1722,6 +1796,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			int size;
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
 					Global.print(context,getString(R.string.file_can_not_be_created_here));
@@ -1732,6 +1811,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			} else if (id == R.id.toolbar_btn_2) {
 				fm.beginTransaction().detach(df).attach(df).commit();
 			} else if (id == R.id.toolbar_btn_3) {
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				actionmode_finish(df,df.fileclickselected);
 				if(df.fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
@@ -1813,11 +1897,20 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onClick(View v) {
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
-				if (getCacheDir().exists()) {
-					new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(getCacheDir().exists())
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+					viewModel.isDeletionCompleted.setValue(false);
+					viewModel.deleteDirectory(getCacheDir());
+					//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
-				if (Global.ARCHIVE_EXTRACT_DIR.exists()) {
-					new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				if(Global.ARCHIVE_EXTRACT_DIR.exists())
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+					viewModel.isDeletionCompleted.setValue(false);
+					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+					//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
@@ -1986,6 +2079,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
+
+	/*
 	private class ArchiveViewAsyncTask1 extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final Uri data;
@@ -2073,6 +2168,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 	}
+
+	 */
+
+	/*
 	private class ArchiveViewAsyncTask extends svl.kadatha.filex.AsyncTask<Void, Void, Boolean>
 	{
 		final ZipFile zipfile;
@@ -2150,7 +2249,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	}
 
+	 */
 
+
+	/*
 	public class AsyncTaskDeleteDirectory extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final File dir;
@@ -2186,6 +2288,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			pbf.dismissAllowingStateLoss();
 		}
 	}
+
+	 */
 
 
 	private void setupDevice() {

@@ -29,14 +29,18 @@ public class Iterate
 			if(f.isDirectory())
 			{
 				File[] files_array=f.listFiles();
-				if (files_array.length != 0) {
-					populate(files_array, target_list_files, include_folder);
-				}
-				target_list_files.add(f);
-				if(include_folder)
+				if(files_array!=null)
 				{
-					no_of_files++;
+					if (files_array.length != 0) {
+						populate(files_array, target_list_files, include_folder);
+					}
+					target_list_files.add(f);
+					if(include_folder)
+					{
+						no_of_files++;
+					}
 				}
+
 			}
 			else
 			{
@@ -61,14 +65,16 @@ public class Iterate
 		if(f.isDirectory())
 		{
 			File[] files_array=f.listFiles();
-
-			if (files_array!=null && files_array.length != 0) {
-				populate(files_array, target_list_files, include_folder);
-			}
-			target_list_files.add(f);
-			if(include_folder)
+			if(files_array!=null)
 			{
-				no_of_files++;
+				if (files_array!=null && files_array.length != 0) {
+					populate(files_array, target_list_files, include_folder);
+				}
+				target_list_files.add(f);
+				if(include_folder)
+				{
+					no_of_files++;
+				}
 			}
 		}
 		else

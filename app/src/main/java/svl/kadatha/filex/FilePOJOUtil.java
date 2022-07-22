@@ -846,6 +846,11 @@ public class FilePOJOUtil {
                 int size=file_array.length;
                 for(int i=0;i<size;++i)
                 {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     File f=file_array[i];
                     FilePOJO filePOJO =MAKE_FilePOJO(f,true,archive_view,fileObjectType);
                     if(!filePOJO.getName().startsWith("."))
