@@ -27,7 +27,7 @@ public class VideoViewActivity extends BaseActivity
 	private VideoViewContainerFragment videoViewContainerFragment;
     //ProgressBarFragment pbf;
 	//public IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
-	private AlbumPollFragment albumPollFragment;
+	//private AlbumPollFragment albumPollFragment;
 	private static final String ALBUM_POLL_FRAGMENT_TAG="album_poll_fragment";
 	//private Handler handler;
 	//public FilePOJO currently_shown_file;
