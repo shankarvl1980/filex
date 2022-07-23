@@ -9,6 +9,7 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;
@@ -48,7 +49,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public boolean out_of_memory_exception_thrown;
     public MutableLiveData<Boolean> isPdfBitmapFetched=new MutableLiveData<>();
     public int image_selected_idx=0,previously_selected_image_idx=0,pdf_current_position;
-
+    public String source_folder,file_path;
+    public FilePOJO currently_shown_file;
+    public boolean firststart;
 
 
     public FilteredFilePOJOViewModel(@NonNull Application application) {
@@ -77,27 +80,54 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void getAlbumFromCurrentFolder(FileObjectType fileObjectType, String source_folder, String regex, boolean fromArchiveView, boolean fromThirdPartyApp, FilePOJO currently_shown_file, boolean whetherVideo )
+    public synchronized void getAlbumFromCurrentFolder(FileObjectType fileObjectType,String file_path,String regex, boolean fromArchiveView, boolean fromThirdPartyApp, boolean whetherVideo )
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        firststart=true;
+        this.file_path=file_path;
+        source_folder=new File(file_path).getParent();
         ExecutorService executorService=MyExecutorService.getExecutorService();
+        String finalSource_folder = source_folder;
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-                if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+source_folder))
+                String name=new File(file_path).getName();
+
+                if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
-                    FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,source_folder,null,false);
+                    if(MainActivity.usbFileRoot!=null)
+                    {
+                        try {
+                            currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
+                        } catch (IOException e) {
+
+                        }
+                    }
+                }
+                else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+                else
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+
+
+                List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
+                if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+ finalSource_folder))
+                {
+                    FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType, finalSource_folder,null,false);
                 }
                 else
                 {
                     if(MainActivity.SHOW_HIDDEN_FILE)
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder) ;
+                        filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+ finalSource_folder) ;
                     }
                     else
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
+                        filePOJOS=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+ finalSource_folder);
                     }
                 }
 

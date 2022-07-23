@@ -82,12 +82,35 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		fromThirdPartyApp=bundle.getBoolean("fromThirdPartyApp");
 		file_path=bundle.getString("file_path");
-		position=bundle.getInt("position");
-		idx=bundle.getInt("idx");
-		firststart=bundle.getBoolean("firststart");
-		setRetainInstance(true);
+		if(savedInstanceState==null)
+		{
+			position=bundle.getInt("position");
+			idx=bundle.getInt("idx");
+			firststart=bundle.getBoolean("firststart");
+		}
+		else
+		{
+			position=savedInstanceState.getInt("position");
+			idx=savedInstanceState.getInt("idx");
+			firststart=savedInstanceState.getBoolean("firststart");
+			isPlaying=savedInstanceState.getBoolean("isPlaying");
+			orientation=savedInstanceState.getInt("orientation");
+		}
 
 	}
+
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("firststart",firststart);
+		outState.putInt("position",position);
+		outState.putInt("idx",idx);
+		outState.putBoolean("isPlaying",isPlaying);
+		outState.putInt("orientation",orientation);
+	}
+
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)

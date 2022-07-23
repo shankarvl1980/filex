@@ -78,14 +78,8 @@ public class AudioListViewModel extends AndroidViewModel {
                 Cursor cursor=application.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
                 if(cursor!=null && cursor.getCount()>0)
                 {
-
                     while(cursor.moveToNext())
                     {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         if(isCancelled)break;
                         String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                         String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
@@ -97,11 +91,6 @@ public class AudioListViewModel extends AndroidViewModel {
                         {
                             while(audio_cursor.moveToNext())
                             {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                                 if(isCancelled)break;
                                 int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                                 String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
@@ -148,11 +137,6 @@ public class AudioListViewModel extends AndroidViewModel {
 
                 for(AlbumPOJO albumPOJO:album_list)
                 {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     String album_id=albumPOJO.getId();
                     Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
@@ -161,15 +145,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
                     if(cursor!=null && cursor.getCount()>0)
                     {
-
                         while(cursor.moveToNext())
                         {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
                             int id=cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                             String data=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                             String title=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
@@ -293,11 +270,6 @@ public class AudioListViewModel extends AndroidViewModel {
                 {
                     while(cursor.moveToNext())
                     {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         if(isCancelled)break;
                         String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                         String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
@@ -328,11 +300,6 @@ public class AudioListViewModel extends AndroidViewModel {
                 {
                     for(AudioPOJO audio:AudioPlayerService.AUDIO_QUEUED_ARRAY)
                     {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         if(new File(audio.getData()).exists())
                         {
                             audio_list.add(audio);
@@ -346,11 +313,6 @@ public class AudioListViewModel extends AndroidViewModel {
                     Iterator<AudioPOJO> it=audio_list.iterator();
                     while(it.hasNext())
                     {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         AudioPOJO audio=it.next();
                         if(!new File(audio.getData()).exists())
                         {
@@ -376,11 +338,6 @@ public class AudioListViewModel extends AndroidViewModel {
                 audio_list=new ArrayList<>();
                 for(String list_name:audio_selected_list)
                 {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     audio_list.addAll(fetch_audio_list(list_name));
                 }
                 isFinished.postValue(true);
@@ -404,11 +361,6 @@ public class AudioListViewModel extends AndroidViewModel {
             Iterator<AudioPOJO> it=clicked_audio_list.iterator();
             while(it.hasNext())
             {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 AudioPOJO audio=it.next();
                 if(!new File(audio.getData()).exists())
                 {
