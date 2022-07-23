@@ -1533,7 +1533,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				RecentDialog recentDialogFragment = new RecentDialog();
 				recentDialogFragment.show(fm, "recent_file_dialog");
 			} else if (id == R.id.detail_fragment_all_select) {
-				if (df.adapter == null) {
+				if (df.adapter == null || df.progress_bar.getVisibility()==View.VISIBLE) {
+					Global.print(context,getString(R.string.please_wait));
 					return;
 				}
 
@@ -1586,7 +1587,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 
 			} else if (id == R.id.toolbar_btn_3) {
-
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				fm.beginTransaction().detach(df).commit();
 				fm.beginTransaction().attach(df).commit();
 				Global.WORKOUT_AVAILABLE_SPACE();
@@ -1810,6 +1815,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				CreateFileAlertDialog dialog = CreateFileAlertDialog.getInstance(df.fileclickselected,df.fileObjectType);
 				dialog.show(fm, "create_file_dialog");
 			} else if (id == R.id.toolbar_btn_2) {
+				if(df.progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				fm.beginTransaction().detach(df).attach(df).commit();
 			} else if (id == R.id.toolbar_btn_3) {
 				if(df.progress_bar.getVisibility()==View.VISIBLE)

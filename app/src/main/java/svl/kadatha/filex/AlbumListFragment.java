@@ -326,7 +326,11 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(progress_bar.getVisibility()==View.VISIBLE) return;
+			if(progress_bar.getVisibility()==View.VISIBLE)
+			{
+				Global.print(context,getString(R.string.please_wait));
+				return;
+			}
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);

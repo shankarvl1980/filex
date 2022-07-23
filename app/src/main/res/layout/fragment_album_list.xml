@@ -63,7 +63,7 @@
 		android:clickable="true"
 		android:focusable="true"
 		android:foregroundGravity="center"
-		android:elevation="7dp"
+		android:elevation="6dp"
 		>
 		<ProgressBar
 

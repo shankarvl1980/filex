@@ -73,7 +73,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         TinyDB tinyDB = new TinyDB(context);
         fm=getSupportFragmentManager();
         FM=fm;
-        //PM=getPackageManager();
         pm=getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
         ImageButton back_btn=findViewById(R.id.storage_analyser_back_btn);
@@ -109,7 +108,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-                if (storageAnalyserDialog.adapter == null) {
+                if (storageAnalyserDialog.adapter == null || storageAnalyserDialog.progress_bar.getVisibility()==View.VISIBLE) {
+                    Global.print(context,getString(R.string.please_wait));
                     return;
                 }
 
@@ -153,6 +153,11 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserDialog.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
                 fm.beginTransaction().detach(storageAnalyserDialog).commit();
                 fm.beginTransaction().attach(storageAnalyserDialog).commit();
             }

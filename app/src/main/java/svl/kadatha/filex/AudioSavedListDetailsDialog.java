@@ -132,7 +132,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		search_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(progress_bar.getVisibility()==View.VISIBLE)return;
+				if(progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				if(!search_toolbar_visible)
 				{
 					set_visibility_searchbar(true);
@@ -145,7 +149,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-					if(progress_bar.getVisibility()==View.VISIBLE)return;
+					if(progress_bar.getVisibility()==View.VISIBLE)
+					{
+						Global.print(context,getString(R.string.please_wait));
+						return;
+					}
 					int size=clicked_audio_list.size();
 
 					if(audioListViewModel.mselecteditems.size()<size)
@@ -620,7 +628,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(progress_bar.getVisibility()==View.VISIBLE)return;
+			if(progress_bar.getVisibility()==View.VISIBLE)
+			{
+				Global.print(context,getString(R.string.please_wait));
+				return;
+			}
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
 			if(audioListViewModel.audio_selected_array.size()<1)
 			{
