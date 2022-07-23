@@ -250,6 +250,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             public void onClick(View v)
             {
                 FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
+                if(fileSelectorDialog.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
                 switch (action_sought_request_code) {
                     case FOLDER_SELECT_REQUEST_CODE:
                         if (fileSelectorDialog.fileclickselected == null) {

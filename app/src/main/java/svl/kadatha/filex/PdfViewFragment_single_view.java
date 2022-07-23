@@ -394,24 +394,6 @@ public class PdfViewFragment_single_view extends Fragment
             }
         });
 
-        viewModel.isPdfBitmapFetched.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
-                {
-                    if(viewModel.out_of_memory_exception_thrown)((PdfViewActivity)context).finish();
-                    View view=view_pager.findViewWithTag(viewModel.pdf_current_position);
-                    if(view !=null)
-                    {
-                        FrameLayout frameLayout=(FrameLayout) view;
-                        ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
-                        GlideApp.with(context).load(viewModel.bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
-                        view.setTag("loaded");
-                    }
-                    progress_bar.setVisibility(View.GONE);
-                }
-            }
-        });
 
 
         /*
@@ -608,6 +590,25 @@ public class PdfViewFragment_single_view extends Fragment
 //            progress_bar.setVisibility(View.VISIBLE);
 //            viewModel.isPdfBitmapFetched.setValue(false);
 //            viewModel.fetchBitmapFromPDF(position);
+//            viewModel.isPdfBitmapFetched.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//                @Override
+//                public void onChanged(Boolean aBoolean) {
+//                    if(aBoolean)
+//                    {
+//                        if(viewModel.out_of_memory_exception_thrown)((PdfViewActivity)context).finish();
+//                        View view=view_pager.findViewWithTag(viewModel.pdf_current_position);
+//                        if(view !=null)
+//                        {
+//                            FrameLayout frameLayout=(FrameLayout) view;
+//                            ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
+//                            GlideApp.with(context).load(viewModel.bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
+//                            view.setTag("loaded");
+//                        }
+//                        progress_bar.setVisibility(View.GONE);
+//                    }
+//                }
+//            });
+
             return v;
         }
 

@@ -199,7 +199,7 @@ public class AppManagerSortDialog extends DialogFragment
             {
                 ViewPager viewPager=((AppManagerActivity)context).viewPager;
                 AppManagerListFragment appManagerListFragment=(AppManagerListFragment) viewPager.getAdapter().instantiateItem(viewPager,1);//fragmentManager.findFragmentById(R.id.app_manager_list_container);
-                if(appManagerListFragment!=null && appManagerListFragment.adapter!=null)
+                if(appManagerListFragment!=null && appManagerListFragment.progressBar.getVisibility()==View.GONE)
                 {
                     Global.APP_MANAGER_SORT=selected_sort;
                     set_selection();

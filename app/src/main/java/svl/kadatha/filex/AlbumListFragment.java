@@ -173,19 +173,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			}
 		});
 
-		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
-				{
-					progress_bar.setVisibility(View.GONE);
-					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-					clear_selection();
-				}
 
-			}
-		});
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_album);
@@ -207,6 +195,19 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					progress_bar.setVisibility(View.VISIBLE);
 					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 					audioListViewModel.listAudio(audioListViewModel.album_selected_array,list_name.equals("") ? "q" : "s",list_name);
+					audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								progress_bar.setVisibility(View.GONE);
+								((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+								((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+								clear_selection();
+							}
+
+						}
+					});
 				}
 			}
 		});

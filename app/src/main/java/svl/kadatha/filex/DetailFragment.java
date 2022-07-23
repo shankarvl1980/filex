@@ -137,7 +137,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");

@@ -425,7 +425,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 {
                     return;
                 }
-
                 File file=file_list[i];
                 FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
                 f_pojos.add(filePOJO);

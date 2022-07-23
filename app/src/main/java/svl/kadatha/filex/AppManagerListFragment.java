@@ -63,7 +63,7 @@ public class AppManagerListFragment extends Fragment {
     private Context context;
     private String app_type="";
     private RecyclerView recyclerView;
-    private FrameLayout progressBar;
+    public FrameLayout progressBar;
     private TextView app_count_textview;
     private Toolbar bottom_toolbar;
     private boolean toolbar_visible=true;
@@ -91,7 +91,6 @@ public class AppManagerListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        //setRetainInstance(true);
         this.context=context;
     }
 
@@ -260,7 +259,6 @@ public class AppManagerListFragment extends Fragment {
                     Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
                     adapter=new AppListAdapter();
                     recyclerView.setAdapter(adapter);
-                    progressBar.setVisibility(View.GONE);
                     num_all_app=total_appPOJO_list.size();
                     app_count_textview.setText(""+num_all_app);
                     if(num_all_app<=0)
@@ -269,6 +267,7 @@ public class AppManagerListFragment extends Fragment {
                         empty_tv.setVisibility(View.VISIBLE);
                         //enable_disable_buttons(false);
                     }
+                    progressBar.setVisibility(View.GONE);
                 }
 
             }

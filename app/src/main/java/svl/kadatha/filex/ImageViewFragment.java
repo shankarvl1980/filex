@@ -429,15 +429,7 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
-		viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-			}
-		});
+
 		/*
 		pbf.show(((ImageViewActivity)context).fm,"");
 		polling_handler.post(new Runnable() {
@@ -537,6 +529,15 @@ public class ImageViewFragment extends Fragment
 				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.hasWallPaperSet.setValue(false);
 				viewModel.setWallPaper(result,((ImageViewActivity)context).CacheDir);
+				viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+					@Override
+					public void onChanged(Boolean aBoolean) {
+						if(aBoolean)
+						{
+							progress_bar.setVisibility(View.GONE);
+						}
+					}
+				});
 			/*
 				new svl.kadatha.filex.AsyncTask<Void,Void,Void>()
 				{
