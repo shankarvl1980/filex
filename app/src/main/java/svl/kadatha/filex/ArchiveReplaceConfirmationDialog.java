@@ -11,9 +11,11 @@ import android.widget.Button;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArchiveReplaceConfirmationDialog extends DialogFragment
 {
@@ -21,7 +23,9 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
     private String zip_folder_name;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private String archive_action;
-	private ArchiveReplaceDialogListener archiveReplaceDialogListener;
+	//private ArchiveReplaceDialogListener archiveReplaceDialogListener;
+	private Bundle bdl;
+	private String request_code;
 
 
 
@@ -30,18 +34,31 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 		setCancelable(false);
-		
-		
 		Bundle bundle=getArguments();
-        String dest_folder = bundle.getString("dest_folder");
-        String zip_file_path = bundle.getString("zip_file_path");
-        String zip_file_name = bundle.getString("zip_file_name");
-		zip_folder_name=bundle.getString("zip_folder_name");
-		files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-		archive_action=bundle.getString("archive_action");
+        //String dest_folder = bundle.getString("dest_folder");
+        //String zip_file_path = bundle.getString("zip_file_path");
+        //String zip_file_name = bundle.getString("zip_file_name");
+		request_code=bundle.getString("request_code");
+		bdl=bundle.getBundle("bdl");
+		zip_folder_name=bdl.getString("zip_folder_name");
+		//files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
+		archive_action=bdl.getString("archive_action");
 
+	}
+
+	public static ArchiveReplaceConfirmationDialog getInstance(String request_code,Bundle bdl)
+	{
+		ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=new ArchiveReplaceConfirmationDialog();
+		Bundle bundle=new Bundle();
+//		bundle.getString("dest_folder");
+//		bundle.getString("zip_file_path");
+//		bundle.getString("zip_file_name");
+		bundle.putString("request_code",request_code);
+		bundle.putBundle("bdl",bdl);
+//		bundle.putStringArrayList("files_selected_array",files_selected_array);
+		archiveReplaceConfirmationDialog.setArguments(bundle);
+		return archiveReplaceConfirmationDialog;
 	}
 
 	@Override
@@ -70,13 +87,15 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 			public void onClick(View v)
 			{
 
+				/*
 				if(archiveReplaceDialogListener!=null)
 				{
 					archiveReplaceDialogListener.onYes();
 				}
+
+				 */
+				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bdl);
 				dismissAllowingStateLoss();
-				
-				
 			}
 			
 		});
@@ -104,7 +123,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	}
 
 	
-	
+	/*
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance()) {
@@ -113,7 +132,10 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		super.onDestroyView();
 
 	}
-	
+
+	 */
+
+	/*
 	public void setArchiveReplaceDialogListener(ArchiveReplaceDialogListener listener)
 	{
 		archiveReplaceDialogListener=listener;
@@ -124,5 +146,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		
 		void onYes();
 	}
+
+	 */
 	
 }

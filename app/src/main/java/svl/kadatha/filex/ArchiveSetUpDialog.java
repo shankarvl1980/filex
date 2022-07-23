@@ -28,6 +28,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -60,7 +61,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private String first_file_name,parent_file_name,parent_file_path;
 	public final static String ARCHIVE_ACTION_ZIP="archive-zip";
 	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
-
+	private final static String ARCHIVE_REPLACE_REQUEST_CODE="archive_replace_request_code";
+	private Class emptyService;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -198,6 +200,43 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		});
 
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, ArchiveSetUpDialog.this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
+				{
+					String archive_action=result.getString("archive_action");
+					emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+					if(archive_action.equals(ARCHIVE_ACTION_ZIP))
+					{
+						String zip_folder_path=result.getString("zip_folder_path");
+						files_selected_array.remove(zip_folder_path+".zip");
+						result.putStringArrayList("files_selected_array",files_selected_array);
+						Intent intent=new Intent(context,emptyService);
+						intent.setAction(ARCHIVE_ACTION_ZIP);
+						intent.putExtra("bundle",result);
+						context.startActivity(intent);
+						imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+						dismissAllowingStateLoss();
+					}
+					else if(archive_action.equals(ARCHIVE_ACTION_UNZIP))
+					{
+						Intent intent = new Intent(context, emptyService);
+						intent.setAction(ARCHIVE_ACTION_UNZIP);
+						intent.putExtra("bundle", result);
+						context.startActivity(intent);
+						imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+						dismissAllowingStateLoss();
+					}
+
+				}
+			}
+		});
+
+
+
+
+
 		switch(archive_action)
 		{
 			case ARCHIVE_ACTION_ZIP:
@@ -255,7 +294,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 
 
-						final Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+						emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
 						{
 							Global.print(context,getString(R.string.maximum_3_services_processed));
@@ -276,6 +315,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putString("tree_uri_path",tree_uri_path);
 						bundle.putParcelable("tree_uri",tree_uri);
 						bundle.putString("source_folder",parent_file_path);
+						bundle.putString("zip_folder_path",zip_folder_path);
 						bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
 						bundle.putSerializable("destFileObjectType",destFileObjectType);
 
@@ -283,23 +323,23 @@ public class ArchiveSetUpDialog extends DialogFragment
 						{
 							if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 							{
-								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=new ArchiveReplaceConfirmationDialog();
-								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener()
-								{
-									public void onYes()
-									{
-										files_selected_array.remove(zip_folder_path+".zip");
-										bundle.putStringArrayList("files_selected_array",files_selected_array);
-										Intent intent=new Intent(context,emptyService);
-										intent.setAction(ARCHIVE_ACTION_ZIP);
-										intent.putExtra("bundle",bundle);
-										context.startActivity(intent);
-										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-										dismissAllowingStateLoss();
-
-									}
-								});
-								archiveReplaceConfirmationDialog.setArguments(bundle);
+								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
+//								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener()
+//								{
+//									public void onYes()
+//									{
+//										files_selected_array.remove(zip_folder_path+".zip");
+//										bundle.putStringArrayList("files_selected_array",files_selected_array);
+//										Intent intent=new Intent(context,emptyService);
+//										intent.setAction(ARCHIVE_ACTION_ZIP);
+//										intent.putExtra("bundle",bundle);
+//										context.startActivity(intent);
+//										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+//										dismissAllowingStateLoss();
+//
+//									}
+//								});
+//								archiveReplaceConfirmationDialog.setArguments(bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 
 							}
@@ -384,7 +424,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 
 
-						final Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
+						emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if (emptyService == null) {
 							Global.print(context,getString(R.string.maximum_3_services_processed));
 							return;
@@ -396,19 +436,20 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putString("zip_folder_name", zip_output_folder);
 						if (create_folder_checkbox.isChecked() && whether_file_already_exists(zip_folder_path, destFileObjectType)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
-								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = new ArchiveReplaceConfirmationDialog();
-								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener() {
-									public void onYes() {
-										Intent intent = new Intent(context, emptyService);
-										intent.setAction(ARCHIVE_ACTION_UNZIP);
-										intent.putExtra("bundle", bundle);
-										context.startActivity(intent);
-										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-										dismissAllowingStateLoss();
-									}
-								});
-								archiveReplaceConfirmationDialog.setArguments(bundle);
+								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
+//								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener() {
+//									public void onYes() {
+//										Intent intent = new Intent(context, emptyService);
+//										intent.setAction(ARCHIVE_ACTION_UNZIP);
+//										intent.putExtra("bundle", bundle);
+//										context.startActivity(intent);
+//										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
+//										dismissAllowingStateLoss();
+//									}
+//								});
+//								archiveReplaceConfirmationDialog.setArguments(bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
+
 							} else {
 								Global.print(context,getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
 
