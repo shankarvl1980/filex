@@ -99,7 +99,7 @@ class FileIntentDispatch
 						bundle.putString("mime_type",mime_type);
 						bundle.putBoolean("clear_top",clear_top);
 						bundle.putBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
-						bundle.putSerializable("fileObjectType",FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+						bundle.putSerializable("fileObjectType",fileObjectType);
 						AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
 						/*
 						appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {

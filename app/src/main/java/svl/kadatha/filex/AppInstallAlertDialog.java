@@ -69,8 +69,8 @@ public class AppInstallAlertDialog extends DialogFragment
         if(bundle!=null)
         {
             Uri data = bundle.getParcelable("data");
-            viewModel.app_package_name=bundle.getString("app_check_name");
-            remember_app_check_box=bundle.getBoolean("remember_app_check_box");
+            viewModel.app_package_name=bundle.getString("app_package_name");
+            remember_app_check_box=bundle.getBoolean("remember_app_check_box",false);
             file_path=bundle.getString("file_path");
             viewModel.mime_type=bundle.getString("mime_type");
             for(MimePOJO mimePOJO:Global.MIME_POJOS)
@@ -83,7 +83,7 @@ public class AppInstallAlertDialog extends DialogFragment
             }
             boolean clear_top = bundle.getBoolean("clear_top");
             boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
-            FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
             intent=new Intent(Intent.ACTION_VIEW);
             FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,viewModel.mime_type,file_path,"",fileObjectType,fromArchiveView,clear_top,data);
         }
@@ -141,7 +141,6 @@ public class AppInstallAlertDialog extends DialogFragment
                 context.startActivity(intent);
 
                 if (remember_app_check_box) {
-                    Log.d("shankar","while inserting remember the choice "+ remember_app_check_box);
                     defaultAppDatabaseHelper.insert_row(viewModel.mime_type, viewModel.file_type, viewModel.app_name, viewModel.app_package_name);
                 }
                 defaultAppDatabaseHelper.close();

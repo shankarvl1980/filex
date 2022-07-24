@@ -136,6 +136,10 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
 
     public long insert_row(String mime_type, String file_type, String app_name, String app_package_name)
     {
+        if(mime_type==null || file_type==null || app_name==null || app_package_name==null)
+        {
+            return 0;
+        }
         SQLiteDatabase db=getWritableDatabase();
         onCreate(db);
         ContentValues contentValues=new ContentValues();
