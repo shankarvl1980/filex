@@ -106,7 +106,7 @@ public class PdfViewFragment_view_container extends Fragment
     private PdfViewFragment_view_container pdfViewFragment_view_container;
     private PdfPageLoadListener pdfPageLoadListener;
     private boolean pdf_file_opened;
-
+    private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -214,7 +214,8 @@ public class PdfViewFragment_view_container extends Fragment
                             break;
                         }
                         files_selected_array.add(currently_shown_file.getPath());
-                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,fileObjectType);
+                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+                        /*
                         deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
                         {
                             public void onSelectOK()
@@ -231,6 +232,8 @@ public class PdfViewFragment_view_container extends Fragment
 
                             }
                         });
+
+                         */
                         deleteFileAlertDialogOtherActivity.show(((PdfViewActivity)context).fm,"deletefilealertotheractivity");
                         break;
 

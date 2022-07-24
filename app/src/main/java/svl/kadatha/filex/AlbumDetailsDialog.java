@@ -64,7 +64,7 @@ public class AlbumDetailsDialog extends DialogFragment
 	//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 	//public List<AudioPOJO> audio_selected_array=new ArrayList<>();
 	private List<AudioPOJO> audios_selected_for_delete;
-	private ArrayList<AudioPOJO> deleted_audios=new ArrayList<>();
+	private final ArrayList<AudioPOJO> deleted_audios=new ArrayList<>();
 	private final String tree_uri_path="";
 	private Uri tree_uri;
 	private final int request_code=802;
@@ -82,6 +82,7 @@ public class AlbumDetailsDialog extends DialogFragment
 	private AudioListViewModel audioListViewModel;
 	private FrameLayout progress_bar;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="album_details_save_audio_request_code";
+	private static final String DELETE_FILE_REQUEST_CODE="album_details_file_delete_request_code";
 	//private List<AudioPOJO> audio_selected_list_copy;
 
 	@Override
@@ -377,6 +378,51 @@ public class AlbumDetailsDialog extends DialogFragment
 				}
 			}
 		});
+
+
+		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+				{
+					/*
+					final DeleteAudioDialog deleteAudioDialog = DeleteAudioDialog.getInstance(files_selected_array,true,deleteFileAlertDialogOtherActivity.tree_uri,deleteFileAlertDialogOtherActivity.tree_uri_path);
+					deleteAudioDialog.setDeleteAudioCompleteListener(new DeleteAudioDialog.DeleteAudioCompleteListener() {
+						public void onDeleteComplete() {
+							deleted_audios = new ArrayList<>();
+							int size=audios_selected_for_delete.size();
+							for(int i=0;i<size;++i)
+							{
+								AudioPOJO audio=audios_selected_for_delete.get(i);
+								if (!new File(audio.getData()).exists()) {
+									deleted_audios.add(audio);
+								}
+
+							}
+							audio_list.removeAll(deleted_audios);
+							total_audio_list.removeAll(deleted_audios);
+							num_all_audio=total_audio_list.size();
+							audioListRecyclerViewAdapter.notifyDataSetChanged();
+							if(num_all_audio==0)
+							{
+								selected_album_recyclerview.setVisibility(View.GONE);
+								empty_audio_list_tv.setVisibility(View.VISIBLE);
+							}
+
+							((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_audios);
+							((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						}
+
+					});
+					deleteAudioDialog.show(((AudioPlayerActivity) context).fm, "");
+					clear_selection();
+
+					 */
+
+				}
+			}
+		});
+
 
 		return v;
 	}
@@ -826,7 +872,8 @@ public class AlbumDetailsDialog extends DialogFragment
 					audios_selected_for_delete.add(audio);
 
 				}
-				final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
+				final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.FILE_TYPE);
+				/*
 				deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener() {
 					public void onSelectOK() {
 
@@ -863,6 +910,8 @@ public class AlbumDetailsDialog extends DialogFragment
 
 					}
 				});
+
+				 */
 				deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
 
 			} else if (id == R.id.toolbar_btn_2) {

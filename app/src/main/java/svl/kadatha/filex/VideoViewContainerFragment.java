@@ -26,11 +26,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -84,6 +86,7 @@ public class VideoViewContainerFragment extends Fragment
 	private VideoViewActivity videoViewActivity;
 	public FrameLayout progress_bar;
 	public FilteredFilePOJOViewModel viewModel;
+	private static final String DELETE_FILE_REQUEST_CODE="video_file_delete_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -190,7 +193,8 @@ public class VideoViewContainerFragment extends Fragment
 								break;
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
-							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,fileObjectType);
+							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+							/*
 							deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
 								{
 									public void onSelectOK()
@@ -207,6 +211,8 @@ public class VideoViewContainerFragment extends Fragment
 
 									}
 								});
+
+							 */
 							deleteFileAlertDialogOtherActivity.show(((VideoViewActivity)context).fm,"deletefilealertotheractivity");
 							break;
 						case 1:
@@ -335,6 +341,25 @@ public class VideoViewContainerFragment extends Fragment
 		};
 
 		handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+				{
+					if(!asynctask_running)
+					{
+						asynctask_running=true;
+						files_selected_for_delete=new ArrayList<>();
+						deleted_files=new ArrayList<>();
+						files_selected_for_delete.add(viewModel.currently_shown_file);
+						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					}
+
+				}
+			}
+		});
 
 		return v;
 	}

@@ -32,6 +32,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -120,6 +121,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
 	public boolean clear_cache;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="file_editor_cancel_progress_request_code";
+	private static final String DELETE_FILE_REQUEST_CODE="text_file_delete_request_code";
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -223,7 +225,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							break;
 						}
 						files_selected_array.add(currently_shown_file.getPath());
-						DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,fileObjectType);
+						DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+						/*
 						deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
 						{
 							public void onSelectOK()
@@ -240,6 +243,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 							}
 						});
+
+						 */
 						deleteFileAlertDialogOtherActivity.show(fm,"deletefilealertotheractivity");
 						break;
 
@@ -379,6 +384,25 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 		onClick_edit_button();
+
+		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+				{
+					if(!asynctask_running)
+					{
+						asynctask_running=true;
+						files_selected_for_delete=new ArrayList<>();
+						deleted_files=new ArrayList<>();
+						files_selected_for_delete.add(currently_shown_file);
+						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					}
+				}
+			}
+		});
+
 
 	}
 

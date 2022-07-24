@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,6 +55,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private Button delete_btn,rename_btn,edit_btn;
     private Handler handler;
     private PermissionsUtil permissionsUtil;
+    private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
 
 
     @Override
@@ -75,7 +77,8 @@ public class FtpDetailsDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);
+        //this.setRetainInstance(true);
+        setCancelable(false);
         handler=new Handler();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
         progressBarFragment=ProgressBarFragment.newInstance();
@@ -129,9 +132,6 @@ public class FtpDetailsDialog extends DialogFragment {
         });
 
 
-
-
-
         Button scan_btn=v.findViewById(R.id.fragment_ftp_scan_btn);
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +179,19 @@ public class FtpDetailsDialog extends DialogFragment {
         int size=mselecteditems.size();
         enable_disable_buttons(size != 0, size);
 
+        fragmentManager.setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FTP_DELETE_REQUEST_CODE))
+                {
+                    ftpPJO_selected_for_delete=new ArrayList<>();
+                    ftpPJO_selected_for_delete.addAll(ftpPOJO_selected_array);
+                    clear_selection();
+                    new DeleteFtpPOJOAsyncTask(ftpPJO_selected_for_delete).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        });
+
         return v;
     }
 
@@ -193,6 +206,7 @@ public class FtpDetailsDialog extends DialogFragment {
 
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if(getDialog()!=null && getRetainInstance())
@@ -201,6 +215,8 @@ public class FtpDetailsDialog extends DialogFragment {
         }
         super.onDestroyView();
     }
+
+     */
 
     public void clear_selection()
     {
@@ -499,7 +515,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     FtpPOJO ftpPOJO=ftpPOJO_selected_array.get(0);
                     String display=ftpPOJO.display;
-                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance((display==null || display.equals("")) ? ftpPOJO.server : display,s);
+                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.equals("")) ? ftpPOJO.server : display,s);
+                    /*
                     deleteFtpAlertDialog.setDeleteFtpAlertDialogListener(new DeleteFtpAlertDialog.DeleteFtpAlertDialogListener() {
                         @Override
                         public void onOkClick() {
@@ -514,6 +531,8 @@ public class FtpDetailsDialog extends DialogFragment {
                             clear_selection();
                         }
                     });
+
+                     */
                     deleteFtpAlertDialog.show(fragmentManager,"");
                 }
 

@@ -35,10 +35,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -110,6 +112,7 @@ public class PdfViewFragment_single_view extends Fragment
     public static final int SAFE_MEMORY_BUFFER=3;
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
+    private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -216,7 +219,8 @@ public class PdfViewFragment_single_view extends Fragment
                             break;
                         }
                         files_selected_array.add(currently_shown_file.getPath());
-                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,fileObjectType);
+                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+                        /*
                         deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
                         {
                             public void onSelectOK()
@@ -233,6 +237,8 @@ public class PdfViewFragment_single_view extends Fragment
 
                             }
                         });
+
+                         */
                         deleteFileAlertDialogOtherActivity.show(((PdfViewActivity)context).fm,"deletefilealertotheractivity");
                         break;
 
@@ -428,6 +434,25 @@ public class PdfViewFragment_single_view extends Fragment
             @Override
             public void onClick(View view) {
                 image_view_on_click_procedure();
+            }
+        });
+
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+                {
+                    if(!asynctask_running)
+                    {
+                        asynctask_running=true;
+                        files_selected_for_delete=new ArrayList<>();
+                        deleted_files=new ArrayList<>();
+                        files_selected_for_delete.add(currently_shown_file);
+                        delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+                        delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+
+                }
             }
         });
 

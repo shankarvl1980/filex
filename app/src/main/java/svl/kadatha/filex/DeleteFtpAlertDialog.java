@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class DeleteFtpAlertDialog extends DialogFragment {
@@ -21,7 +22,8 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     private Context context;
     private String ftp_display;
     private int ftp_selected_size;
-    private DeleteFtpAlertDialogListener deleteFtpAlertDialogListener;
+    private String request_code;
+    //private DeleteFtpAlertDialogListener deleteFtpAlertDialogListener;
 
 
     @Override
@@ -36,11 +38,13 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);
+        //this.setRetainInstance(true);
+        setCancelable(false);
         Bundle bundle=getArguments();
 
         if(bundle!=null)
         {
+            request_code=bundle.getString("request_code");
             ftp_display=bundle.getString("ftp_display");
             ftp_selected_size=bundle.getInt("ftp_selected_size");
 
@@ -48,10 +52,11 @@ public class DeleteFtpAlertDialog extends DialogFragment {
 
     }
 
-    public static DeleteFtpAlertDialog getInstance(String ftp_display, int ftp_selected_size)
+    public static DeleteFtpAlertDialog getInstance(String request_code,String ftp_display, int ftp_selected_size)
     {
         DeleteFtpAlertDialog deleteFtpAlertDialog=new DeleteFtpAlertDialog();
         Bundle bundle=new Bundle();
+        bundle.putString("request_code",request_code);
         bundle.putString("ftp_display",ftp_display);
         bundle.putInt("ftp_selected_size",ftp_selected_size);
         deleteFtpAlertDialog.setArguments(bundle);
@@ -89,10 +94,14 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
+                /*
                 if(deleteFtpAlertDialogListener!=null)
                 {
                     deleteFtpAlertDialogListener.onOkClick();
                 }
+
+                 */
+                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,null);
                 dismissAllowingStateLoss();
             }
 
@@ -102,10 +111,13 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
+                /*
                 if(deleteFtpAlertDialogListener!=null)
                 {
                     deleteFtpAlertDialogListener.onCancelClick();
                 }
+
+                 */
                 dismissAllowingStateLoss();
             }
         });
@@ -125,6 +137,7 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if(getDialog()!=null && getShowsDialog())
@@ -134,6 +147,9 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         super.onDestroyView();
     }
 
+     */
+
+    /*
     public void setDeleteFtpAlertDialogListener(DeleteFtpAlertDialogListener listener)
     {
         deleteFtpAlertDialogListener=listener;
@@ -144,4 +160,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         void onOkClick();
         void onCancelClick();
     }
+
+     */
 }

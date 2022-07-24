@@ -37,11 +37,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -90,6 +92,7 @@ public class AudioPlayFragment extends Fragment
 	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
+	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -385,6 +388,25 @@ public class AudioPlayFragment extends Fragment
 			public void onClick(View v)
 			{
 				audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_NEXT).sendToTarget();
+			}
+		});
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+				{
+					if(!asynctask_running)
+					{
+						asynctask_running=true;
+						files_selected_for_delete=new ArrayList<>();
+						deleted_files=new ArrayList<>();
+						files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
+						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
+						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					}
+
+				}
 			}
 		});
 
@@ -709,7 +731,8 @@ public class AudioPlayFragment extends Fragment
 						break;
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
-					DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
+					DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
+					/*
 					deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
 						{
 							public void onSelectOK()
@@ -726,6 +749,8 @@ public class AudioPlayFragment extends Fragment
 
 							}
 						});
+
+					 */
 					deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"deletefilealertotheractivity");
 					break;
 				case 1:
