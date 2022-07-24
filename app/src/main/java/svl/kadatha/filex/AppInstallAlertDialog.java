@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,6 +141,7 @@ public class AppInstallAlertDialog extends DialogFragment
                 context.startActivity(intent);
 
                 if (remember_app_check_box) {
+                    Log.d("shankar","while inserting remember the choice "+ remember_app_check_box);
                     defaultAppDatabaseHelper.insert_row(viewModel.mime_type, viewModel.file_type, viewModel.app_name, viewModel.app_package_name);
                 }
                 defaultAppDatabaseHelper.close();

@@ -242,37 +242,6 @@ public class AppSelectorDialog extends DialogFragment
                             bundle.putString("app_package_name",app_package_name);
                             bundle.putBoolean("remember_app_check_box",remember_app_check_box.isChecked());
                             AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
-                            /*
-                            appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
-                                @Override
-                                public void on_ok_click() {
-                                    if(Global.FILEX_PACKAGE.equals(app_package_name))
-                                    {
-                                        AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                                        if(appCompatActivity instanceof MainActivity)
-                                        {
-                                            ((MainActivity)context).clear_cache=false;
-                                        }
-                                        else if(appCompatActivity instanceof StorageAnalyserActivity)
-                                        {
-                                            ((StorageAnalyserActivity)context).clear_cache=false;
-                                        }
-                                    }
-                                    intent.setPackage(app_package_name);
-                                    context.startActivity(intent);
-
-                                    if(remember_app_check_box.isChecked())
-                                    {
-                                        defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
-                                    }
-                                    defaultAppDatabaseHelper.close();
-                                    dismissAllowingStateLoss();
-                                }
-
-                            });
-
-                             */
-
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
                             appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
                             dismissAllowingStateLoss();
