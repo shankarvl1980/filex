@@ -23,6 +23,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,9 +53,12 @@ public class AppSelectorDialog extends DialogFragment
     private String file_path,mime_type,file_type;
 
     private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
-    private List<AppPOJO> appPOJOList;
+
     private Intent intent;
     private Handler handler;
+    private Bundle bundle;
+    private FrameLayout progress_bar;
+    public AppSelectorViewModel viewModel;
 
 
     @Override
@@ -66,7 +72,8 @@ public class AppSelectorDialog extends DialogFragment
         super.onCreate(savedInstanceState);
         setCancelable(false);
         //setRetainInstance(true);
-        Bundle bundle=getArguments();
+        bundle=getArguments();
+
         if(bundle!=null)
         {
             Uri data = bundle.getParcelable("data");
@@ -123,6 +130,8 @@ public class AppSelectorDialog extends DialogFragment
 
             }
         });
+
+        progress_bar=v.findViewById(R.id.fragment_app_selector_progressbar);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_app_selector_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 
@@ -135,11 +144,30 @@ public class AppSelectorDialog extends DialogFragment
             }
         });
 
+
+        viewModel=new ViewModelProvider(this).get(AppSelectorViewModel.class);
+        viewModel.populateAppList(intent);
+        viewModel.isFinished.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(viewModel.appPOJOList);
+                    app_recycler_view.setAdapter(appRecyclerAdapter);
+                    app_recycler_view.setLayoutManager(new LinearLayoutManager(context));
+                    progress_bar.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        /*
         if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
         {
             //new AppListAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             new AppListTask().execute();
         }
+
+         */
 
         return v;
     }
@@ -179,7 +207,136 @@ public class AppSelectorDialog extends DialogFragment
      */
 
 
-    private static class AppPOJO
+    private class AppRecyclerAdapter extends RecyclerView.Adapter<AppSelectorDialog.AppRecyclerAdapter.ViewHolder>
+    {
+        final List<AppPOJO> appPOJOList;
+        final DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
+        AppRecyclerAdapter(List<AppPOJO> appPOJOList)
+        {
+            this.appPOJOList=appPOJOList;
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder
+        {
+            final View v;
+            final ImageView app_icon_image_view;
+            final TextView app_name_text_view;
+
+            ViewHolder(View v)
+            {
+                super(v);
+                this.v=v;
+                app_icon_image_view=v.findViewById(R.id.image_storage_dir);
+                app_name_text_view=v.findViewById(R.id.text_storage_dir_name);
+
+                v.setOnClickListener(new View.OnClickListener()
+                {
+                    public void onClick(View p)
+                    {
+                        int pos=getBindingAdapterPosition();
+                        AppPOJO appPOJO=appPOJOList.get(pos);
+                        final String app_name=appPOJO.app_name;
+                        final String app_package_name=appPOJO.app_package_name;
+                        if(file_type.equals("APK"))
+                        {
+                            bundle.putString("app_package_name",app_package_name);
+                            bundle.putBoolean("remember_app_check_box",remember_app_check_box.isChecked());
+                            AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
+                            /*
+                            appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
+                                @Override
+                                public void on_ok_click() {
+                                    if(Global.FILEX_PACKAGE.equals(app_package_name))
+                                    {
+                                        AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+                                        if(appCompatActivity instanceof MainActivity)
+                                        {
+                                            ((MainActivity)context).clear_cache=false;
+                                        }
+                                        else if(appCompatActivity instanceof StorageAnalyserActivity)
+                                        {
+                                            ((StorageAnalyserActivity)context).clear_cache=false;
+                                        }
+                                    }
+                                    intent.setPackage(app_package_name);
+                                    context.startActivity(intent);
+
+                                    if(remember_app_check_box.isChecked())
+                                    {
+                                        defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
+                                    }
+                                    defaultAppDatabaseHelper.close();
+                                    dismissAllowingStateLoss();
+                                }
+
+                            });
+
+                             */
+
+                            AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+                            appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
+                            dismissAllowingStateLoss();
+
+                        }
+                        else
+                        {
+                            if(Global.FILEX_PACKAGE.equals(app_package_name))
+                            {
+                                AppCompatActivity appCompatActivity=(AppCompatActivity)context;
+                                if(appCompatActivity instanceof MainActivity)
+                                {
+                                    ((MainActivity)context).clear_cache=false;
+                                }
+                                else if(appCompatActivity instanceof StorageAnalyserActivity)
+                                {
+                                    ((StorageAnalyserActivity)context).clear_cache=false;
+                                }
+                            }
+                            intent.setPackage(app_package_name);
+                            context.startActivity(intent);
+
+                            if(remember_app_check_box.isChecked())
+                            {
+                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
+                            }
+                            defaultAppDatabaseHelper.close();
+                            dismissAllowingStateLoss();
+                        }
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public AppRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
+        {
+            // TODO: Implement this method
+            View v= LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
+            return new AppRecyclerAdapter.ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(AppRecyclerAdapter.ViewHolder p1, int p2)
+        {
+            // TODO: Implement this method
+            AppPOJO appPOJO=appPOJOList.get(p2);
+            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.app_icon_image_view);
+            p1.app_name_text_view.setText(appPOJO.app_name);
+
+        }
+
+        @Override
+        public int getItemCount()
+        {
+            // TODO: Implement this method
+            return appPOJOList.size();
+        }
+    }
+
+
+
+    public static class AppPOJO
     {
         final String app_name;
         final String app_package_name;
@@ -191,7 +348,7 @@ public class AppSelectorDialog extends DialogFragment
         }
     }
 
-
+/*
     private class AppListTask
     {
         PackageManager packageManager;
@@ -204,9 +361,9 @@ public class AppSelectorDialog extends DialogFragment
                 @Override
                 public void run() {
 
-                    if(appPOJOList==null)
+                    if(viewModel.appPOJOList==null)
                     {
-                        appPOJOList=new ArrayList<>();
+                        viewModel.viewModel.appPOJOList=new ArrayList<>();
                         if(intent==null)
                         {
                             return;
@@ -256,7 +413,7 @@ public class AppSelectorDialog extends DialogFragment
                                 }
 
                             }
-                            appPOJOList.add(new AppPOJO(app_name, app_package_name));
+                            viewModel.appPOJOList.add(new AppPOJO(app_name, app_package_name));
 
                         }
 
@@ -269,7 +426,7 @@ public class AppSelectorDialog extends DialogFragment
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(appPOJOList);
+                            AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(viewModel.appPOJOList);
                             app_recycler_view.setAdapter(appRecyclerAdapter);
                             app_recycler_view.setLayoutManager(new LinearLayoutManager(context));
                             asyncTaskStatus=AsyncTaskStatus.COMPLETED;
@@ -281,6 +438,9 @@ public class AppSelectorDialog extends DialogFragment
         }
     }
 
+ */
+
+    /*
     private class AppListAsyncTask extends svl.kadatha.filex.AsyncTask<Void, Void, Void>
     {
         PackageManager packageManager;
@@ -367,125 +527,7 @@ public class AppSelectorDialog extends DialogFragment
         }
     }
 
-    private class AppRecyclerAdapter extends RecyclerView.Adapter<AppSelectorDialog.AppRecyclerAdapter.ViewHolder>
-    {
-        final List<AppPOJO> appPOJOList;
-        final DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
-        AppRecyclerAdapter(List<AppPOJO> appPOJOList)
-        {
-            this.appPOJOList=appPOJOList;
-        }
+     */
 
-        class ViewHolder extends RecyclerView.ViewHolder
-        {
-            final View v;
-            final ImageView app_icon_image_view;
-            final TextView app_name_text_view;
-
-            ViewHolder(View v)
-            {
-                super(v);
-                this.v=v;
-                app_icon_image_view=v.findViewById(R.id.image_storage_dir);
-                app_name_text_view=v.findViewById(R.id.text_storage_dir_name);
-
-                v.setOnClickListener(new View.OnClickListener()
-                {
-                    public void onClick(View p)
-                    {
-                        int pos=getBindingAdapterPosition();
-                        AppPOJO appPOJO=appPOJOList.get(pos);
-                        final String app_name=appPOJO.app_name;
-                        final String app_package_name=appPOJO.app_package_name;
-                        if(file_type.equals("APK"))
-                        {
-                            AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(file_path);
-                            appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
-                                @Override
-                                public void on_ok_click() {
-                                    if(Global.FILEX_PACKAGE.equals(app_package_name))
-                                    {
-                                        AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                                        if(appCompatActivity instanceof MainActivity)
-                                        {
-                                            ((MainActivity)context).clear_cache=false;
-                                        }
-                                        else if(appCompatActivity instanceof StorageAnalyserActivity)
-                                        {
-                                            ((StorageAnalyserActivity)context).clear_cache=false;
-                                        }
-                                    }
-                                    intent.setPackage(app_package_name);
-                                    context.startActivity(intent);
-
-                                    if(remember_app_check_box.isChecked())
-                                    {
-                                        defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
-                                    }
-                                    defaultAppDatabaseHelper.close();
-                                    dismissAllowingStateLoss();
-                                }
-
-                            });
-
-                            AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                            appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
-
-                        }
-                        else
-                        {
-                            if(Global.FILEX_PACKAGE.equals(app_package_name))
-                            {
-                                AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                                if(appCompatActivity instanceof MainActivity)
-                                {
-                                    ((MainActivity)context).clear_cache=false;
-                                }
-                                else if(appCompatActivity instanceof StorageAnalyserActivity)
-                                {
-                                    ((StorageAnalyserActivity)context).clear_cache=false;
-                                }
-                            }
-                            intent.setPackage(app_package_name);
-                            context.startActivity(intent);
-
-                            if(remember_app_check_box.isChecked())
-                            {
-                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
-                            }
-                            defaultAppDatabaseHelper.close();
-                            dismissAllowingStateLoss();
-                        }
-
-                    }
-                });
-            }
-        }
-
-        @Override
-        public AppRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
-        {
-            // TODO: Implement this method
-            View v= LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
-            return new AppRecyclerAdapter.ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(AppRecyclerAdapter.ViewHolder p1, int p2)
-        {
-            // TODO: Implement this method
-            AppPOJO appPOJO=appPOJOList.get(p2);
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.app_icon_image_view);
-            p1.app_name_text_view.setText(appPOJO.app_name);
-
-        }
-
-        @Override
-        public int getItemCount()
-        {
-            // TODO: Implement this method
-            return appPOJOList.size();
-        }
-    }
 
 }

@@ -36,8 +36,10 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_details.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_all_audio_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_apk_install_alert_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_action.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_manager.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_selector.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archive_setup.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_audio_saved_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />

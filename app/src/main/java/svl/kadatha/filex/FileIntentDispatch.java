@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -91,7 +92,16 @@ class FileIntentDispatch
 				{
 					if(mime_type.equals("application/vnd.android.package-archive"))
 					{
-						AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(file_path);
+						Bundle bundle=new Bundle();
+						bundle.putParcelable("data",uri);
+						bundle.putString("app_check_name",package_name);
+						bundle.putString("file_path",file_path);
+						bundle.putString("mime_type",mime_type);
+						bundle.putBoolean("clear_top",clear_top);
+						bundle.putBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
+						bundle.putSerializable("fileObjectType",FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+						AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
+						/*
 						appInstallAlertDialog.setAppInstallDialogListener(new AppInstallAlertDialog.AppInstallDialogListener() {
 							@Override
 							public void on_ok_click() {
@@ -113,6 +123,8 @@ class FileIntentDispatch
 							}
 
 						});
+
+						 */
 
 						appInstallAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 					}
