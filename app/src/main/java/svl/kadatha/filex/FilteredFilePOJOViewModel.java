@@ -270,13 +270,38 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    public void initializePdfRenderer(FileObjectType fileObjectType,FilePOJO currently_shown_file,Uri data,boolean fromThirdPartyApp)
+    public void initializePdfRenderer(FileObjectType fileObjectType,String file_path,Uri data,boolean fromThirdPartyApp)
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        this.file_path=file_path;
+        source_folder=new File(file_path).getParent();
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
+
+                if(fileObjectType ==FileObjectType.USB_TYPE)
+                {
+                    if(MainActivity.usbFileRoot!=null)
+                    {
+                        try {
+                            currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
+                        } catch (IOException e) {
+
+                        }
+                    }
+                }
+                else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+                else
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+
+
+
                 try {
 
                     long file_size;

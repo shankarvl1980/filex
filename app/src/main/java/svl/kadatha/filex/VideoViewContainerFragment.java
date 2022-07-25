@@ -58,10 +58,10 @@ public class VideoViewContainerFragment extends Fragment
 	//private ListPopupWindow listPopWindow;
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-	private List<FilePOJO> files_selected_for_delete,deleted_files;
-	private DeleteFileAsyncTask delete_file_async_task;
-	private String tree_uri_path="";
-	private Uri tree_uri;
+	private List<FilePOJO> files_selected_for_delete; //,deleted_files;
+	//private DeleteFileAsyncTask delete_file_async_task;
+	//private String tree_uri_path="";
+	//private Uri tree_uri;
 	private final int request_code=904;
 	private Handler handler;
 	private Runnable runnable;
@@ -342,24 +342,62 @@ public class VideoViewContainerFragment extends Fragment
 
 		handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
+
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
 				{
-					if(!asynctask_running)
-					{
-						asynctask_running=true;
-						files_selected_for_delete=new ArrayList<>();
-						deleted_files=new ArrayList<>();
-						files_selected_for_delete.add(viewModel.currently_shown_file);
-						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					}
+					progress_bar.setVisibility(View.VISIBLE);
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+
+					files_selected_for_delete=new ArrayList<>();
+					files_selected_for_delete.add(viewModel.currently_shown_file);
+					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(VideoViewContainerFragment.this).get(DeleteFileOtherActivityViewModel.class);
+					deleteFileOtherActivityViewModel.deleteFile(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+								{
+									Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
+									for(FilePOJO filePOJO:deleteFileOtherActivityViewModel.deleted_files)
+									{
+										while(iterator.hasNext())
+										{
+											Map.Entry<FilePOJO,Integer> entry=iterator.next();
+											if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
+											{
+												viewModel.video_list.removeIndex(filePOJO);
+												iterator.remove();
+												break;
+											}
+										}
+
+									}
+
+									adapter.notifyDataSetChanged();
+									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
+									if(viewModel.video_list.size()<1)
+									{
+										((VideoViewActivity)context).finish();
+									}
+
+								}
+								progress_bar.setVisibility(View.GONE);
+							}
+						}
+					});
 
 				}
 			}
 		});
+
+
 
 		return v;
 	}
@@ -382,6 +420,7 @@ public class VideoViewContainerFragment extends Fragment
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
+	/*
 	public void seekSAFPermission()
 	{
 		((VideoViewActivity)context).clear_cache=false;
@@ -440,6 +479,8 @@ public class VideoViewContainerFragment extends Fragment
 			return true;
 		}
 	}
+
+	 */
 
 	
 	private class VideoViewPagerAdapter extends FragmentStatePagerAdapter
@@ -565,6 +606,7 @@ public class VideoViewContainerFragment extends Fragment
 		toolBarVisibleListener=listener;
 	}
 
+	/*
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
 	{
 
@@ -761,5 +803,7 @@ public class VideoViewContainerFragment extends Fragment
 		}
 
 	}
+
+	 */
 
 }
