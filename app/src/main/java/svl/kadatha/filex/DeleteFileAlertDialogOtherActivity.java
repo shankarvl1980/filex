@@ -52,6 +52,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	private int size;
 	private Button okbutton;
 	private String request_code;
+	private Bundle bundle;
 
 
     @Override
@@ -61,7 +62,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 		super.onCreate(savedInstanceState);
 		//this.setRetainInstance(true);
 		setCancelable(false);
-		Bundle bundle=getArguments();
+		bundle=getArguments();
 		request_code=bundle.getString("request_code");
 		files_selected_array=bundle.getStringArrayList("files_selected_array");
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
@@ -145,7 +146,9 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 					}
 
-					((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,null);
+					bundle.putParcelable("tree_uri",tree_uri);
+					bundle.putString("tree_uri_path",tree_uri_path);
+					((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
 					dismissAllowingStateLoss();
 
 				}

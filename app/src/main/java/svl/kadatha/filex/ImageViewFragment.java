@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -80,12 +81,12 @@ public class ImageViewFragment extends Fragment
 	private TextView title;
 	//private FilePOJO currently_shown_file;
 	private List<FilePOJO> files_selected_for_delete;
-	private List<FilePOJO> deleted_files;
-	private String tree_uri_path="";
-	private Uri tree_uri;
+//	private List<FilePOJO> deleted_files;
+//	private String tree_uri_path="";
+//	private Uri tree_uri;
 	private final int saf_request_code=234;
 	private final int crop_request_code=890;
-	private DeleteFileAsyncTask delete_file_async_task;
+	//private DeleteFileAsyncTask delete_file_async_task;
 	private boolean asynctask_running;
 	private Uri data;
 	private int floating_button_height;
@@ -480,24 +481,58 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
+
+//		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
+//		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//			@Override
+//			public void onChanged(Boolean aBoolean) {
+//
+//			}
+//		});
+
+
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
 				{
-					if(!asynctask_running)
-					{
-						asynctask_running=true;
-						files_selected_for_delete=new ArrayList<>();
-						deleted_files=new ArrayList<>();
-						files_selected_for_delete.add(viewModel.currently_shown_file);
-						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					}
+					progress_bar.setVisibility(View.VISIBLE);
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+
+					files_selected_for_delete=new ArrayList<>();
+					files_selected_for_delete.add(viewModel.currently_shown_file);
+					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
+					deleteFileOtherActivityViewModel.deleteFile(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+								{
+									viewModel.album_file_pojo_list.removeAll(deleteFileOtherActivityViewModel.deleted_files);
+									viewModel.total_images=viewModel.album_file_pojo_list.size();
+									image_view_adapter.notifyDataSetChanged();
+									picture_selector_adapter.notifyDataSetChanged();
+									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
+									if(viewModel.album_file_pojo_list.size()<1)
+									{
+										((ImageViewActivity)context).finish();
+									}
+
+								}
+								progress_bar.setVisibility(View.GONE);
+							}
+						}
+					});
 
 				}
 			}
 		});
+
+
 		return v;
 	}
 
@@ -518,6 +553,7 @@ public class ImageViewFragment extends Fragment
 		return frag;
 	}
 
+	/*
 	 public void seekSAFPermission()
 	 {
 		 ((ImageViewActivity)context).clear_cache=false;
@@ -545,6 +581,8 @@ public class ImageViewFragment extends Fragment
 			 }
 		 }
 	 });
+
+	 */
 
 	private final ActivityResultLauncher<Intent>activityResultLauncher_crop_request=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@RequiresApi(api = Build.VERSION_CODES.N)
@@ -637,7 +675,7 @@ public class ImageViewFragment extends Fragment
 		}
 	});
 
-
+/*
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
@@ -667,6 +705,8 @@ public class ImageViewFragment extends Fragment
 			return true;
 		}
 	}
+
+ */
 
 	private void image_view_on_click_procedure()
 	{
@@ -964,7 +1004,7 @@ public class ImageViewFragment extends Fragment
 	}
 
 	 */
-
+/*
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
 	{
 
@@ -1135,5 +1175,7 @@ public class ImageViewFragment extends Fragment
 		}
 
 	}
+
+ */
 
 }
