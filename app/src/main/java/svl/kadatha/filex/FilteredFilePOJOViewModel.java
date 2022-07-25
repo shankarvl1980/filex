@@ -11,14 +11,18 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.View;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -398,6 +402,5 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         page.close();
         return bitmap;
     }
-
 
 }

@@ -53,6 +53,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	private Button okbutton;
 	private String request_code;
 	private Bundle bundle;
+	private String source_folder;
 
 
     @Override
@@ -69,6 +70,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 //        fileCountSize = new FileCountSize(files_selected_array,fileObjectType);
 //		fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		size=files_selected_array.size();
+		source_folder=new File(files_selected_array.get(0)).getParent();
 
 	}
 	
@@ -148,6 +150,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 					bundle.putParcelable("tree_uri",tree_uri);
 					bundle.putString("tree_uri_path",tree_uri_path);
+					bundle.putString("source_folder",source_folder);
 					((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
 					dismissAllowingStateLoss();
 

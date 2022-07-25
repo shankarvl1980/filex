@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -44,6 +45,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -77,11 +80,11 @@ public class AudioPlayFragment extends Fragment
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private List<AudioPOJO> files_selected_for_delete;
-	private ArrayList<AudioPOJO> deleted_files=new ArrayList<>();
-	private String tree_uri_path="";
-	private Uri tree_uri;
+	//private ArrayList<AudioPOJO> deleted_files=new ArrayList<>();
+	//private String tree_uri_path="";
+	//private Uri tree_uri;
 	private final int request_code=982;
-	private DeleteFileAsyncTask delete_file_async_task;
+	//private DeleteFileAsyncTask delete_file_async_task;
 	private boolean asynctask_running;
 	public String audio_file_name="";
 	public Bitmap album_art;
@@ -93,6 +96,7 @@ public class AudioPlayFragment extends Fragment
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -391,20 +395,42 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
+		progress_bar=v.findViewById(R.id.audio_play_progressbar);
+		progress_bar.setVisibility(View.GONE);
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
 				{
-					if(!asynctask_running)
-					{
-						asynctask_running=true;
-						files_selected_for_delete=new ArrayList<>();
-						deleted_files=new ArrayList<>();
-						files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
-						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					}
+					progress_bar.setVisibility(View.VISIBLE);
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+					String source_folder=result.getString("source_folder");
+					files_selected_for_delete=new ArrayList<>();
+					files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
+					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AudioPlayFragment.this).get(DeleteFileOtherActivityViewModel.class);
+					deleteFileOtherActivityViewModel.deleteAudioPOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
+								{
+									if(audio_player_service!=null)
+									{
+										audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
+									}
+									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
+									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+									AudioPlayerActivity.AUDIO_FILE=null;
+
+								}
+								progress_bar.setVisibility(View.GONE);
+							}
+						}
+					});
 
 				}
 			}
@@ -630,7 +656,8 @@ public class AudioPlayFragment extends Fragment
 		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
 
 	}
-	
+
+	/*
 	public void seekSAFPermission()
 	{
 		((AudioPlayerActivity)context).clear_cache=false;
@@ -661,6 +688,8 @@ public class AudioPlayFragment extends Fragment
 		}
 	});
 
+	 */
+
 	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
 		public void onActivityResult(ActivityResult result) {
@@ -675,7 +704,7 @@ public class AudioPlayFragment extends Fragment
 		}
 	});
 
-
+/*
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
@@ -706,6 +735,7 @@ public class AudioPlayFragment extends Fragment
 		}
 	}
 
+ */
 	private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
 	{
 
@@ -880,6 +910,7 @@ public class AudioPlayFragment extends Fragment
 		Global.print(context,getString(R.string.ringtone_set));
 	}
 
+	/*
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
 	{
 		final List<AudioPOJO> src_file_list;
@@ -1050,6 +1081,8 @@ public class AudioPlayFragment extends Fragment
 		}
 
 	}
+
+	 */
 
 
 	private void AlbumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp)
