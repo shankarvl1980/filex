@@ -48,7 +48,7 @@ public class PasteSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		setCancelable(false);
 
 		bundle=getArguments();

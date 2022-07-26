@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -39,6 +40,8 @@ import androidx.core.content.FileProvider;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -64,14 +67,14 @@ import java.util.List;
 public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
 {
     File file;
-	private FilePOJO currently_shown_file;
+//	private FilePOJO currently_shown_file;
 	public boolean fromArchiveView,fromThirdPartyApp;
 	private String source_folder;
 	FileSaveServiceConnection serviceConnection;
 	private boolean fileServiceBound;
 	private List<FilePOJO> files_selected_for_delete;
-	private List<FilePOJO> deleted_files;
-	private DeleteFileAsyncTask delete_file_async_task;
+	//private List<FilePOJO> deleted_files;
+	//private DeleteFileAsyncTask delete_file_async_task;
 	private boolean asynctask_running;
 	private boolean permission_requested;
 	private String tree_uri_path="";
@@ -83,36 +86,36 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	static final int EOL_N = 0;
 	static final int EOL_R = 1;
 	static final int EOL_RN = 2;
-	int eol,altered_eol;
+	//int eol,altered_eol;
 	static float FILE_EDITOR_TEXT_SIZE;
-	private TextViewUndoRedoBatch textViewUndoRedo;
+//	private TextViewUndoRedoBatch textViewUndoRedo;
 	private TextView file_name;
 	private final int request_code=876;
 	private final String preference_name="undoredo";
 	private SaveFileConfirmationDialog saveConfirmationAlertDialog;
     private svl.kadatha.filex.ObservableScrollView scrollview;
 	private FileEditorSettingsDialog fileEditorSettingsDialog;
-	private FileOpenAsyncTask fileOpenAsyncTask;
-	private boolean updated=true,to_be_closed_after_save;
+//	private FileOpenAsyncTask fileOpenAsyncTask;
+//	private boolean updated=true,to_be_closed_after_save;
 	private Context context;
-	private String action_after_save="";
+//	private String action_after_save="";
 	static int LINE_NUMBER_SIZE;
     TinyDB tinyDB;
-	private CancelableProgressBarDialog cpbf;
-	private LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
-	private int current_page=0;
-	private long current_page_end_point=0L;
-	private boolean file_start,file_end;
+//	private CancelableProgressBarDialog cpbf;
+	private final LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
+//	private int current_page=0;
+//	private long current_page_end_point=0L;
+//	private boolean file_start,file_end;
 	boolean isWritable,isFileBig;
-	private File temporary_file_for_save;
+//	private File temporary_file_for_save;
 	private ProgressBarFragment pbf;
 	private Class emptyService;
-    private String file_path;
+//    private String file_path;
 	private Uri data;
-	private boolean file_loading_started;
+//	private boolean file_loading_started;
 	private KeyBoardUtil keyBoardUtil;
-	private boolean file_format_supported=true;
-	private static final int BUFFER_SIZE=8192;
+//	private boolean file_format_supported=true;
+	public static final int BUFFER_SIZE=8192;
 	public FileObjectType fileObjectType;
 	private PopupWindow listPopWindow;
 	public FragmentManager fm;
@@ -122,6 +125,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public boolean clear_cache;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="file_editor_cancel_progress_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="text_file_delete_request_code";
+	private FrameLayout progress_bar;
+	public FileEditorViewModel viewModel;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -143,8 +148,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			setContentView(R.layout.activity_file_editor);
 		}
+		viewModel=new ViewModelProvider(this).get(FileEditorViewModel.class);
 
-		eol=altered_eol=EOL_N;
+		viewModel.eol=viewModel.altered_eol=EOL_N;
 		FILE_EDITOR_TEXT_SIZE=tinyDB.getFloat("file_editor_text_size");
 		if(FILE_EDITOR_TEXT_SIZE<=0 || FILE_EDITOR_TEXT_SIZE> FileEditorSettingsDialog.MAX_TEXT_SIZE)
 		{
@@ -160,6 +166,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         Toolbar top_toolbar = findViewById(R.id.file_editor_top_toolbar);
+		progress_bar=findViewById(R.id.file_editor_progressbar);
         FloatingActionButton floating_back_button = findViewById(R.id.file_editor_floating_action_button_back);
 		floating_back_button.setOnClickListener(new View.OnClickListener()
 		{
@@ -224,7 +231,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
 						}
-						files_selected_array.add(currently_shown_file.getPath());
+						files_selected_array.add(viewModel.currently_shown_file.getPath());
 						DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
 						/*
 						deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
@@ -256,7 +263,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 						else if(fileObjectType==FileObjectType.FILE_TYPE)
 						{
-							src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(currently_shown_file.getPath()));
+							src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
 						if(src_uri==null)
 						{
@@ -275,7 +282,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
 						}
-						files_selected_array.add(currently_shown_file.getPath());
+						files_selected_array.add(viewModel.currently_shown_file.getPath());
 						PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,fileObjectType);
 						propertiesDialog.show(fm,"properties_dialog");
 						break;
@@ -295,30 +302,78 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 
-		cpbf=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+		//cpbf=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 		fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE) && fileOpenAsyncTask!=null)
+				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
 				{
-					fileOpenAsyncTask.cancel(true);
+					//fileOpenAsyncTask.cancel(true);
+					viewModel.cancel(true);
 				}
-			}
-		});
-		/*
-		cpbf.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener()
-		{
-			public void on_cancel_progress()
-			{
-				if(fileOpenAsyncTask!=null)
-				{
-					fileOpenAsyncTask.cancel(true);
-				}
-				cpbf.dismissAllowingStateLoss();
 			}
 		});
 
-		 */
+		viewModel.isReadingFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(!viewModel.fileRead)
+					{
+						viewModel.file_start=viewModel.file_end=true;
+						Global.print(context,getString(R.string.file_could_not_be_opened));
+					}
+					viewModel.file_format_supported=viewModel.fileRead;
+					viewModel.textViewUndoRedo.stopListening();
+					viewModel.textViewUndoRedo.clearHistory();
+					undo_button.setEnabled(false);
+					undo_button.setAlpha(Global.DISABLE_ALFA);
+					redo_button.setEnabled(false);
+					redo_button.setAlpha(Global.DISABLE_ALFA);
+
+					if(viewModel.file_start)
+					{
+						up_button.setEnabled(false);
+						up_button.setAlpha(Global.DISABLE_ALFA);
+
+					}
+					else
+					{
+						up_button.setEnabled(true);
+						up_button.setAlpha(Global.ENABLE_ALFA);
+					}
+
+					if(viewModel.file_end)
+					{
+						down_button.setEnabled(false);
+						down_button.setAlpha(Global.DISABLE_ALFA);
+					}
+					else
+					{
+						down_button.setEnabled(true);
+						down_button.setAlpha(Global.ENABLE_ALFA);
+					}
+
+
+					{
+
+						filetext_container_edittext.setText(viewModel.stringBuilder.toString());
+						scrollview.smoothScrollTo(0,0);
+
+					}
+
+					viewModel.textViewUndoRedo.startListening();
+//			cpbf.dismissAllowingStateLoss();
+					progress_bar.setVisibility(View.GONE);
+					viewModel.file_loading_started=false;
+
+
+					progress_bar.setVisibility(View.GONE);
+				}
+			}
+		});
+
 		Intent intent=getIntent();
 		if(intent!=null)
 		{
@@ -365,8 +420,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		filetext_container_edittext=findViewById(R.id.textfile_edittext);
 		filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
-		textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
-		textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener()
+		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
+		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener()
 		{
 			public void onEditTextChange()
 			{
@@ -375,7 +430,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				undo_button.setAlpha(Global.ENABLE_ALFA);
 				save_button.setEnabled(true);
 				save_button.setAlpha(Global.ENABLE_ALFA);
-				updated=false;
+				viewModel.updated=false;
 
 				redo_button.setEnabled(false);
 				redo_button.setAlpha(Global.DISABLE_ALFA);
@@ -384,7 +439,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 		onClick_edit_button();
-
+/*
 		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -403,6 +458,42 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
+ */
+
+		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+
+					files_selected_for_delete=new ArrayList<>();
+					files_selected_for_delete.add(viewModel.currently_shown_file);
+					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+								{
+									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
+									clear_cache=false;
+									finish();
+								}
+								progress_bar.setVisibility(View.GONE);
+							}
+						}
+					});
+
+				}
+			}
+		});
+
 
 	}
 
@@ -411,8 +502,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		data=intent.getData();
         fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-		if(file_path==null) file_path=PathUtil.getPath(context,data);
+		viewModel.file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+		if(viewModel.file_path==null) viewModel.file_path=PathUtil.getPath(context,data);
 
 		if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
@@ -421,13 +512,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 
 
-		source_folder=new File(file_path).getParent();
+		source_folder=new File(viewModel.file_path).getParent();
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
 			if(MainActivity.usbFileRoot!=null)
 			{
 				try {
-					currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
+					viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(viewModel.file_path)),false);
 
 				} catch (IOException e) {
 
@@ -436,12 +527,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else
 		{
-			currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
+			viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(viewModel.file_path),false,false,fileObjectType);
 		}
 
 
-		file=new File(file_path);
-		isWritable=FileUtil.isWritable(fileObjectType,file_path);
+		file=new File(viewModel.file_path);
+		isWritable=FileUtil.isWritable(fileObjectType,viewModel.file_path);
 
 		if(savedInstanceState==null)
 		{
@@ -451,9 +542,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				{
 					file_name.setText(file.getName());
 				}
-				eol=altered_eol=getEOL(data);
+				viewModel.eol=viewModel.altered_eol=getEOL(data);
 
-				if(!openFile(current_page_end_point))
+				if(!openFile(viewModel.current_page_end_point))
 				{
 					clear_cache=false;
 					finish();
@@ -483,7 +574,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							}
 							else
 							{
-								temporary_file_for_save=getExternalFilesDir("file_save_temp");
+								viewModel.temporary_file_for_save=getExternalFilesDir("file_save_temp");
 								isFileBig=false;
 								break;
 							}
@@ -619,23 +710,23 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void go_previous()
 	{
-		if(file_start || file_loading_started)
+		if(viewModel.file_start || viewModel.file_loading_started)
 		{
 			return;
 		}
 		if(data!=null)
 		{
-			file=new File(file_path);
+			file=new File(viewModel.file_path);
 			long prev_page_end_point=0L;
-			current_page=current_page-2;
-			if(current_page<=0)
+			viewModel.current_page=viewModel.current_page-2;
+			if(viewModel.current_page<=0)
 			{
-				current_page=0;
+				viewModel.current_page=0;
 			}
 			else
 			{
-				prev_page_end_point=page_pointer_hashmap.get(current_page);
-				current_page--;
+				prev_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page);
+				viewModel.current_page--;
 			}
 			openFile(prev_page_end_point);
 		}
@@ -643,18 +734,18 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void go_next()
 	{
-		if(file_end || file_loading_started)
+		if(viewModel.file_end || viewModel.file_loading_started)
 		{
 			return;
 		}
 
 		if(data!=null)
 		{
-			file=new File(file_path);
-			if(current_page!=0 )
+			file=new File(viewModel.file_path);
+			if(viewModel.current_page!=0 )
 			{
-				current_page_end_point=page_pointer_hashmap.get(current_page);
-				openFile(current_page_end_point);
+				viewModel.current_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page);
+				openFile(viewModel.current_page_end_point);
 			}
 
 		}
@@ -666,8 +757,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
-			fileOpenAsyncTask=new FileOpenAsyncTask(new FileInputStream(fd),pointer, false);
-			fileOpenAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+			progress_bar.setVisibility(View.VISIBLE);
+			viewModel.isReadingFinished.postValue(false);
+			viewModel.openFile(file,new FileInputStream(fd),pointer, false);
+//			fileOpenAsyncTask=new FileOpenAsyncTask(new FileInputStream(fd),pointer, false);
+//			fileOpenAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			return true;
 		}
 		catch(FileNotFoundException e)
@@ -687,15 +782,15 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public void onEOLchanged(int eol)
 	{
 		// TODO: Implement this method
-		if(!file_format_supported)
+		if(!viewModel.file_format_supported)
 		{
 			return;
 		}
-		if(this.eol!=eol)
+		if(viewModel.eol!=eol)
 		{
 			save_button.setEnabled(true);
 			save_button.setAlpha(Global.ENABLE_ALFA);
-			updated=false;
+			viewModel.updated=false;
 		}
 	}
 
@@ -712,7 +807,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		if (save) {
 			start_file_save_service();
 		} else {
-			updated = true;
+			viewModel.updated = true;
 			go_previous();
 		}
 	}
@@ -721,7 +816,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public void on_being_closed(boolean to_close_after_save) {
 		if(to_close_after_save)
 		{
-			to_be_closed_after_save=to_close_after_save;
+			viewModel.to_be_closed_after_save=to_close_after_save;
 			start_file_save_service();
 		}
 		else
@@ -737,6 +832,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
+			if(progress_bar.getVisibility()==View.VISIBLE)return;
+
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				if (fromArchiveView || fromThirdPartyApp) {
@@ -751,35 +848,35 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				onClick_edit_button();
 			} else if (id == R.id.toolbar_btn_2) {
-				if (textViewUndoRedo.getCanUndo()) {
-					textViewUndoRedo.undo();
+				if (viewModel.textViewUndoRedo.getCanUndo()) {
+					viewModel.textViewUndoRedo.undo();
 					save_button.setEnabled(true);
 					save_button.setAlpha(Global.ENABLE_ALFA);
-					updated = false;
-					if (!textViewUndoRedo.getCanUndo()) {
+					viewModel.updated = false;
+					if (!viewModel.textViewUndoRedo.getCanUndo()) {
 						undo_button.setEnabled(false);
 						undo_button.setAlpha(Global.DISABLE_ALFA);
 
 						save_button.setEnabled(false);
 						save_button.setAlpha(Global.DISABLE_ALFA);
-						updated = true;
+						viewModel.updated = true;
 					}
 
-					if (textViewUndoRedo.getCanRedo()) {
+					if (viewModel.textViewUndoRedo.getCanRedo()) {
 						redo_button.setEnabled(true);
 						redo_button.setAlpha(Global.ENABLE_ALFA);
 					}
 				}
 			} else if (id == R.id.toolbar_btn_3) {
-				if (textViewUndoRedo.getCanRedo()) {
-					textViewUndoRedo.redo();
-					updated = false;
-					if (!textViewUndoRedo.getCanRedo()) {
+				if (viewModel.textViewUndoRedo.getCanRedo()) {
+					viewModel.textViewUndoRedo.redo();
+					viewModel.updated = false;
+					if (!viewModel.textViewUndoRedo.getCanRedo()) {
 						redo_button.setEnabled(false);
 						redo_button.setAlpha(Global.DISABLE_ALFA);
 					}
 
-					if (textViewUndoRedo.getCanUndo()) {
+					if (viewModel.textViewUndoRedo.getCanUndo()) {
 						undo_button.setEnabled(true);
 						undo_button.setAlpha(Global.ENABLE_ALFA);
 						save_button.setEnabled(true);
@@ -790,7 +887,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				edit_mode = false;
 				start_file_save_service();
 			} else if (id == R.id.toolbar_btn_5) {
-				if (!updated) {
+				if (!viewModel.updated) {
 
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
 					/*
@@ -811,7 +908,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					go_previous();
 				}
 			} else if (id == R.id.toolbar_btn_6) {
-				if (!updated) {
+				if (!viewModel.updated) {
 
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
 					/*
@@ -843,7 +940,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 		}
-		else if(!updated)
+		else if(!viewModel.updated)
 		{
 
 			saveConfirmationAlertDialog=SaveFileConfirmationDialog.getInstance(true);
@@ -870,7 +967,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else
 		{
-			textViewUndoRedo.disconnect();
+			viewModel.textViewUndoRedo.disconnect();
 			clear_cache=false;
 			finish();
 		}
@@ -883,20 +980,20 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		super.onSaveInstanceState(outState);
 		outState.putBoolean("edit_mode",edit_button.isSelected());
 		outState.putString("file_name",file_name.getText().toString());
-		outState.putString("file_path",file_path);
-		outState.putBoolean("updated",updated);
-		outState.putBoolean("to_be_closed_after_save",to_be_closed_after_save);
-		outState.putInt("eol",eol);
-		outState.putInt("altered_eol",altered_eol);
-		outState.putSerializable("page_pointer_hashmap",page_pointer_hashmap);
-		outState.putInt("current_page",current_page);
-		outState.putLong("current_page_end_point",current_page_end_point);
-		outState.putBoolean("file_start",file_start);
-		outState.putBoolean("file_end",file_end);
-		outState.putString("action_after_save",action_after_save);
-		outState.putBoolean("file_format_supported",file_format_supported);
-		outState.putSerializable("temporary_file_for_save",temporary_file_for_save);
-		textViewUndoRedo.storePersistentState(outState,preference_name);
+//		outState.putString("file_path",file_path);
+//		outState.putBoolean("updated",updated);
+//		outState.putBoolean("to_be_closed_after_save",to_be_closed_after_save);
+//		outState.putInt("eol",eol);
+//		outState.putInt("altered_eol",altered_eol);
+//		outState.putSerializable("page_pointer_hashmap",page_pointer_hashmap);
+//		outState.putInt("current_page",current_page);
+//		outState.putLong("current_page_end_point",current_page_end_point);
+//		outState.putBoolean("file_start",file_start);
+//		outState.putBoolean("file_end",file_end);
+//		outState.putString("action_after_save",action_after_save);
+//		outState.putBoolean("file_format_supported",file_format_supported);
+//		outState.putSerializable("temporary_file_for_save",temporary_file_for_save);
+//		viewModel.textViewUndoRedo.storePersistentState(outState,preference_name);
 
 		outState.putBoolean("clear_cache",clear_cache);
 
@@ -909,35 +1006,35 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		super.onRestoreInstanceState(savedInstanceState);
 		edit_mode=savedInstanceState.getBoolean("edit_mode");
 		file_name.setText(savedInstanceState.getString("file_name"));
-		file_path=savedInstanceState.getString("file_path");
-		updated=savedInstanceState.getBoolean("updated");
-		to_be_closed_after_save=savedInstanceState.getBoolean("to_be_closed_after_save");
-		eol=savedInstanceState.getInt("eol");
-		altered_eol=savedInstanceState.getInt("altered_eol");
-		Serializable serializable = savedInstanceState.getSerializable("page_pointer_hashmap");
-		try {
-			page_pointer_hashmap=(LinkedHashMap<Integer,Long>)serializable;
-		} catch (ClassCastException e) {
-			clear_cache=false;
-			finish();
-		}
-
-		current_page=savedInstanceState.getInt("current_page");
-		current_page_end_point=savedInstanceState.getLong("current_page_end_point");
-		file_start=savedInstanceState.getBoolean("file_start");
-		file_end=savedInstanceState.getBoolean("file_end");
-		action_after_save=savedInstanceState.getString("action_after_save");
-		file_format_supported=savedInstanceState.getBoolean("file_format_supported");
-		temporary_file_for_save= (File) savedInstanceState.getSerializable("temporary_file_for_save");
-		textViewUndoRedo.restorePersistentState(savedInstanceState,preference_name);
-		textViewUndoRedo.startListening();
+//		file_path=savedInstanceState.getString("file_path");
+//		updated=savedInstanceState.getBoolean("updated");
+//		to_be_closed_after_save=savedInstanceState.getBoolean("to_be_closed_after_save");
+//		eol=savedInstanceState.getInt("eol");
+//		altered_eol=savedInstanceState.getInt("altered_eol");
+//		Serializable serializable = savedInstanceState.getSerializable("page_pointer_hashmap");
+//		try {
+//			page_pointer_hashmap=(LinkedHashMap<Integer,Long>)serializable;
+//		} catch (ClassCastException e) {
+//			clear_cache=false;
+//			finish();
+//		}
+//
+//		current_page=savedInstanceState.getInt("current_page");
+//		current_page_end_point=savedInstanceState.getLong("current_page_end_point");
+//		file_start=savedInstanceState.getBoolean("file_start");
+//		file_end=savedInstanceState.getBoolean("file_end");
+//		action_after_save=savedInstanceState.getString("action_after_save");
+//		file_format_supported=savedInstanceState.getBoolean("file_format_supported");
+//		temporary_file_for_save= (File) savedInstanceState.getSerializable("temporary_file_for_save");
+//		textViewUndoRedo.restorePersistentState(savedInstanceState,preference_name);
+//		textViewUndoRedo.startListening();
 		onClick_edit_button();
-		if(file_start)
+		if(viewModel.file_start)
 		{
 			up_button.setEnabled(false);
 			up_button.setAlpha(Global.DISABLE_ALFA);
 		}
-		if(file_end)
+		if(viewModel.file_end)
 		{
 			down_button.setEnabled(false);
 			down_button.setAlpha(Global.DISABLE_ALFA);
@@ -975,19 +1072,19 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void onClick_edit_button()
 	{
-		if(!file_format_supported)
+		if(!viewModel.file_format_supported)
 		{
 			return;
 		}
 
 		if(edit_mode)
 		{
-			if(textViewUndoRedo.getCanUndo())
+			if(viewModel.textViewUndoRedo.getCanUndo())
 			{
 				undo_button.setEnabled(true);
-				save_button.setEnabled(!updated);
+				save_button.setEnabled(!viewModel.updated);
 			}
-			if(textViewUndoRedo.getCanRedo())
+			if(viewModel.textViewUndoRedo.getCanRedo())
 			{
 				redo_button.setEnabled(true);
 			}
@@ -1039,31 +1136,31 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private void start_file_save_service()
 	{
 
-		if(!file.exists() || temporary_file_for_save==null)
+		if(!file.exists() || viewModel.temporary_file_for_save==null)
 		{
 			return;
 		}
 
 		long prev_page_end_point=0L;
-		if(current_page>1)
+		if(viewModel.current_page>1)
 		{
-			prev_page_end_point=page_pointer_hashmap.get(current_page-1);
+			prev_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page-1);
 		}
 		Bundle bundle=new Bundle();
 		bundle.putBoolean("isWritable",isWritable);
-		bundle.putString("file_path",file_path);
+		bundle.putString("file_path",viewModel.file_path);
 		bundle.putString("content",filetext_container_edittext.getText().toString());
 
-		bundle.putInt("eol",eol);
-		bundle.putInt("altered_eol",altered_eol);
+		bundle.putInt("eol",viewModel.eol);
+		bundle.putInt("altered_eol",viewModel.altered_eol);
 		bundle.putLong("prev_page_end_point",prev_page_end_point);
-		bundle.putLong("current_page_end_point",current_page_end_point);
-		bundle.putSerializable("page_pointer_hashmap",page_pointer_hashmap);
-		bundle.putString("temporary_file_path",temporary_file_for_save.getAbsolutePath());
-		bundle.putInt("current_page",current_page);
+		bundle.putLong("current_page_end_point",viewModel.current_page_end_point);
+		bundle.putSerializable("page_pointer_hashmap",viewModel.page_pointer_hashmap);
+		bundle.putString("temporary_file_path",viewModel.temporary_file_for_save.getAbsolutePath());
+		bundle.putInt("current_page",viewModel.current_page);
 
 		if (!isWritable) {
-			if(!check_SAF_permission(file_path,fileObjectType))
+			if(!check_SAF_permission(viewModel.file_path,fileObjectType))
 			{
 				return;
 			}
@@ -1119,13 +1216,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									current_page_end_point=fileSaveService1.page_pointer_hashmap.get(current_page);
-									page_pointer_hashmap=fileSaveService1.page_pointer_hashmap;
-									updated=result;
+									viewModel.current_page_end_point=fileSaveService1.page_pointer_hashmap.get(viewModel.current_page);
+									viewModel.page_pointer_hashmap=fileSaveService1.page_pointer_hashmap;
+									viewModel.updated=result;
 
 									if(result)
 									{
-										eol=altered_eol;
+										viewModel.eol=viewModel.altered_eol;
 										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 									}
 									else
@@ -1133,16 +1230,16 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 										Global.print(context,getString(R.string.file_could_not_be_saved));
 									}
 
-									if(to_be_closed_after_save)
+									if(viewModel.to_be_closed_after_save)
 									{
 										clear_cache=false;
 										finish();
 									}
-									else if(action_after_save.equals("go_previous"))
+									else if(viewModel.action_after_save.equals("go_previous"))
 									{
 										go_previous();
 									}
-									else if(action_after_save.equals("go_next"))
+									else if(viewModel.action_after_save.equals("go_next"))
 									{
 										go_next();
 									}
@@ -1169,13 +1266,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									current_page_end_point=fileSaveService2.page_pointer_hashmap.get(current_page);
-									page_pointer_hashmap=fileSaveService2.page_pointer_hashmap;
-									updated=result;
+									viewModel.current_page_end_point=fileSaveService2.page_pointer_hashmap.get(viewModel.current_page);
+									viewModel.page_pointer_hashmap=fileSaveService2.page_pointer_hashmap;
+									viewModel.updated=result;
 
 									if(result)
 									{
-										eol=altered_eol;
+										viewModel.eol=viewModel.altered_eol;
 										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 									}
 									else
@@ -1183,16 +1280,16 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 										Global.print(context,getString(R.string.file_could_not_be_saved));
 									}
 
-									if(to_be_closed_after_save)
+									if(viewModel.to_be_closed_after_save)
 									{
 										clear_cache=false;
 										finish();
 									}
-									else if(action_after_save.equals("go_previous"))
+									else if(viewModel.action_after_save.equals("go_previous"))
 									{
 										go_previous();
 									}
-									else if(action_after_save.equals("go_next"))
+									else if(viewModel.action_after_save.equals("go_next"))
 									{
 										go_next();
 									}
@@ -1221,7 +1318,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	}
 
-
+/*
 	private class FileOpenAsyncTask extends svl.kadatha.filex.AsyncTask<Void,StringBuilder,Boolean>
 	{
 
@@ -1233,7 +1330,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		FileOpenAsyncTask (FileInputStream fileInputStream,long file_pointer, boolean go_back)
 		{
-			file_loading_started=true;
+			viewModel.file_loading_started=true;
 			this.fileInputStream=fileInputStream;
 			this.file_pointer=file_pointer;
 			this.go_back=go_back;
@@ -1244,8 +1341,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			// TODO: Implement this method
 			super.onPreExecute();
-			cpbf.set_title(getString(R.string.opening_the_file));
-			cpbf.show(fm,"progress_dialog");
+//			cpbf.set_title(getString(R.string.opening_the_file));
+//			cpbf.show(fm,"progress_dialog");
+			progress_bar.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -1253,7 +1351,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			// TODO: Implement this method
 			super.onCancelled(result);
-			cpbf.dismissAllowingStateLoss();
+			//cpbf.dismissAllowingStateLoss();
+			progress_bar.setVisibility(View.GONE);
 			clear_cache=false;
 			finish();
 		}
@@ -1262,7 +1361,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		protected Boolean doInBackground(Void...f)
 		{
 			// TODO: Implement this method
-			file_start= file_pointer == 0L;
+			viewModel.file_start= file_pointer == 0L;
 			try
 			{
 
@@ -1290,7 +1389,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							if(m==10)
 							{
 								to_break=true;
-								eol=altered_eol=EOL_N;
+								viewModel.eol=viewModel.altered_eol=EOL_N;
 								break;
 							}
 							else if(m==13)
@@ -1298,12 +1397,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								if(n==10)
 								{
 									file_pointer++;
-									eol=altered_eol=EOL_RN;
+									viewModel.eol=viewModel.altered_eol=EOL_RN;
 
 								}
 								else
 								{
-									eol=altered_eol=EOL_R;
+									viewModel.eol=viewModel.altered_eol=EOL_R;
 								}
 								to_break=true;
 								break;
@@ -1315,7 +1414,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							break;
 						}
 					}
-					page_pointer_hashmap.put(current_page,file_pointer);
+					viewModel.page_pointer_hashmap.put(viewModel.current_page,file_pointer);
 				}
 
 				buf.clear();
@@ -1324,7 +1423,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				String line;
 				int count=0;
 				long br=0,total_bytes_read=0;
-				int eol_len=(eol==EOL_RN) ? 2 : 1;
+				int eol_len=(viewModel.eol==EOL_RN) ? 2 : 1;
                 int max_lines_to_display = 200;
                 while((line=bufferedReader.readLine())!=null)
 				{
@@ -1333,7 +1432,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					count++;
 					if(count>= max_lines_to_display)
 					{
-						file_end=false;
+						viewModel.file_end=false;
 						total_bytes_read=file_pointer+br;
 
 						break;
@@ -1341,13 +1440,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				}
 				if(count< max_lines_to_display)
 				{
-					file_end=true;
+					viewModel.file_end=true;
 					total_bytes_read=file.length();
 				}
 
-				current_page++;
-				current_page_end_point=total_bytes_read;
-				page_pointer_hashmap.put(current_page,current_page_end_point);
+				viewModel.current_page++;
+				viewModel.current_page_end_point=total_bytes_read;
+				viewModel.page_pointer_hashmap.put(viewModel.current_page,viewModel.current_page_end_point);
 				return true;
 
 			} catch(IOException e)
@@ -1376,18 +1475,18 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			// TODO: Implement this method
 			if(!result)
 			{
-				file_start=file_end=true;
+				viewModel.file_start=viewModel.file_end=true;
 				Global.print(context,getString(R.string.file_could_not_be_opened));
 			}
-			file_format_supported=result;
-			textViewUndoRedo.stopListening();
-			textViewUndoRedo.clearHistory();
+			viewModel.file_format_supported=result;
+			viewModel.textViewUndoRedo.stopListening();
+			viewModel.textViewUndoRedo.clearHistory();
 			undo_button.setEnabled(false);
 			undo_button.setAlpha(Global.DISABLE_ALFA);
 			redo_button.setEnabled(false);
 			redo_button.setAlpha(Global.DISABLE_ALFA);
 
-			if(file_start)
+			if(viewModel.file_start)
 			{
 				up_button.setEnabled(false);
 				up_button.setAlpha(Global.DISABLE_ALFA);
@@ -1399,7 +1498,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				up_button.setAlpha(Global.ENABLE_ALFA);
 			}
 
-			if(file_end)
+			if(viewModel.file_end)
 			{
 				down_button.setEnabled(false);
 				down_button.setAlpha(Global.DISABLE_ALFA);
@@ -1418,12 +1517,15 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 			}
 
-			textViewUndoRedo.startListening();
-			cpbf.dismissAllowingStateLoss();
-			file_loading_started=false;
+			viewModel.textViewUndoRedo.startListening();
+//			cpbf.dismissAllowingStateLoss();
+			progress_bar.setVisibility(View.GONE);
+			viewModel.file_loading_started=false;
 		}
 		
 	}
+
+ */
 	
 
 	static Class getEmptyService()
@@ -1496,7 +1598,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		
 	}
 
-
+/*
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
 	{
 
@@ -1539,7 +1641,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
-				clear_cache=false;
+				viewModel.clear_cache=false;
 				finish();
 
 			}
@@ -1574,7 +1676,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			{
 				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
 				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
-				clear_cache=false;
+				viewModel.clear_cache=false;
 				finish();
 
 			}
@@ -1663,6 +1765,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 
 	}
+
+ */
 
 
 

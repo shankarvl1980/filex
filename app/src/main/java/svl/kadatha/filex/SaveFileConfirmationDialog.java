@@ -144,7 +144,6 @@ public class SaveFileConfirmationDialog extends DialogFragment
 	
 	interface SaveFileListener
 	{
-		
 		void next_action(boolean save);
 		void on_being_closed(boolean to_close_after_save);
 	}

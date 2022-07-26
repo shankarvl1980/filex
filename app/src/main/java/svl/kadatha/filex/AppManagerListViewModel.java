@@ -33,6 +33,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         this.application=application;
     }
 
+
     @Override
     protected void onCleared() {
         super.onCleared();

@@ -30,6 +30,8 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/settings_drawer_icon.xml" value="0.2495" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/woofer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_app_manager.xml" value="0.23233695652173914" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_editor.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_editor_horizontal_scroll.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_selector.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_storage_analyser.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/app_manager_recycler_layout.xml" value="0.25416666666666665" />

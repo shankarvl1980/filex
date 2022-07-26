@@ -45,7 +45,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		//setRetainInstance(true);
-		selected_eol=fileEditorActivity.eol;
+		selected_eol=fileEditorActivity.viewModel.eol;
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
 		fromArchiveView=fileEditorActivity.fromArchiveView;
@@ -87,7 +87,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 				}
 				else
 				{
-					switch(fileEditorActivity.eol)
+					switch(fileEditorActivity.viewModel.eol)
 					{
 						case FileEditorActivity.EOL_N:
 							unix_rb.setChecked(true);
@@ -188,7 +188,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		
 				}
 				
-				((FileEditorActivity)context).altered_eol=selected_eol;
+				((FileEditorActivity)context).viewModel.altered_eol=selected_eol;
 				if(eol_changeListener!=null)
 				{
 					eol_changeListener.onEOLchanged(selected_eol);
