@@ -41,6 +41,7 @@ public class AudioListViewModel extends AndroidViewModel {
     public List<String> audio_list_selected_array=new ArrayList<>();
 
     public boolean audio_list_created;
+    public List<AudioPOJO> audios_selected_for_delete;
 
 
     public AudioListViewModel(@NonNull Application application) {

@@ -57,11 +57,11 @@ public class AllAudioListFragment extends Fragment
 	private Toolbar bottom_toolbar;
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-	private List<AudioPOJO> audios_selected_for_delete;
-	private final ArrayList<AudioPOJO> deleted_audios=new ArrayList<>();
+	//private List<AudioPOJO> audios_selected_for_delete;
+	//private final ArrayList<AudioPOJO> deleted_audios=new ArrayList<>();
 	private boolean permission_requested;
-	private final String tree_uri_path="";
-	private Uri tree_uri;
+	//private final String tree_uri_path="";
+	//private Uri tree_uri;
 	private final int request_code=982;
 	private boolean asynctask_running;
 //	public SparseBooleanArray mselecteditems=new SparseBooleanArray();
@@ -240,39 +240,38 @@ public class AllAudioListFragment extends Fragment
 			}
 		});
 
+
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
 				{
-					/*
-					final DeleteAudioDialog deleteAudioDialog = DeleteAudioDialog.getInstance(files_selected_array,false,deleteFileAlertDialogOtherActivity.tree_uri,deleteFileAlertDialogOtherActivity.tree_uri_path);
-					deleteAudioDialog.setDeleteAudioCompleteListener(new DeleteAudioDialog.DeleteAudioCompleteListener() {
-						public void onDeleteComplete() {
-							deleted_audios = new ArrayList<>();
-							int size=audios_selected_for_delete.size();
-							for(int i=0;i<size;++i)
+					progress_bar.setVisibility(View.VISIBLE);
+					Uri tree_uri=result.getParcelable("tree_uri");
+					String tree_uri_path=result.getString("tree_uri_path");
+					String source_folder=result.getString("source_folder");
+					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AllAudioListFragment.this).get(DeleteFileOtherActivityViewModel.class);
+					deleteFileOtherActivityViewModel.deleteAudioPOJO(audioListViewModel.audios_selected_for_delete,FileObjectType.FILE_TYPE,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
 							{
-								AudioPOJO audio=audios_selected_for_delete.get(i);
-								if (!new File(audio.getData()).exists()) {
-									deleted_audios.add(audio);
+								if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
+								{
+									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
+									((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+
 								}
-
+								progress_bar.setVisibility(View.GONE);
 							}
-
-							((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_audios);
-							((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 						}
-
 					});
-					deleteAudioDialog.show(((AudioPlayerActivity) context).fm, "");
-					clear_selection();
-
-					 */
 
 				}
 			}
 		});
+
 
 		return v;
 	}
@@ -609,13 +608,13 @@ public class AllAudioListFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					audios_selected_for_delete = new ArrayList<>();
+					audioListViewModel.audios_selected_for_delete = new ArrayList<>();
 					int size=audioListViewModel.audio_selected_array.size();
 					for(int i=0;i<size;++i)
 					{
 						AudioPOJO audio=audioListViewModel.audio_selected_array.get(i);
 						files_selected_array.add(audio.getData());
-						audios_selected_for_delete.add(audio);
+						audioListViewModel.audios_selected_for_delete.add(audio);
 
 					}
 					final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);

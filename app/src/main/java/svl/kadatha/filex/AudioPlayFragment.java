@@ -341,10 +341,14 @@ public class AudioPlayFragment extends Fragment
 
 			});
 
+		progress_bar=v.findViewById(R.id.audio_play_progressbar);
+		progress_bar.setVisibility(View.GONE);
+
 		previous_btn.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
 			{
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
 				audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_PREVIOUS).sendToTarget();
 			}
 		});
@@ -353,6 +357,7 @@ public class AudioPlayFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
+					if(progress_bar.getVisibility()==View.VISIBLE)return;
 					audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_BACKWARD).sendToTarget();
 				}
 			});
@@ -361,7 +366,7 @@ public class AudioPlayFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
-
+					if(progress_bar.getVisibility()==View.VISIBLE)return;
 					if(audio_player_service.prepared && !audio_player_service.playmode)
 					{
 						audio_player_service.handler.obtainMessage(AudioPlayerService.START).sendToTarget();
@@ -383,6 +388,7 @@ public class AudioPlayFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
+					if(progress_bar.getVisibility()==View.VISIBLE)return;
 					audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_FORWARD).sendToTarget();
 				}
 			});
@@ -391,12 +397,12 @@ public class AudioPlayFragment extends Fragment
 		{
 			public void onClick(View v)
 			{
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
 				audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_NEXT).sendToTarget();
 			}
 		});
 
-		progress_bar=v.findViewById(R.id.audio_play_progressbar);
-		progress_bar.setVisibility(View.GONE);
+
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
