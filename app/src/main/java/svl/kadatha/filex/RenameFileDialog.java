@@ -62,6 +62,7 @@ public class RenameFileDialog extends DialogFragment
 	public static final String REPLACEMENT_CONFIRMATION="replacement_confirmation";
 	private String new_name;
 	private Handler handler;
+	private final static String SAF_PERMISSION_REQUEST_CODE="rename_file_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -160,7 +161,18 @@ public class RenameFileDialog extends DialogFragment
 			}
 		});
 
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					okbutton.callOnClick();
+				}
 
+			}
+		});
 
 		okbutton.setOnClickListener(new View.OnClickListener()
 		{
@@ -633,7 +645,8 @@ public class RenameFileDialog extends DialogFragment
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -646,6 +659,8 @@ public class RenameFileDialog extends DialogFragment
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(fragmentManager,"saf_permission_dialog");
 			//saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
@@ -671,7 +686,8 @@ public class RenameFileDialog extends DialogFragment
 		new_file_name_edittext.requestFocus();
 		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 	}
-	
+
+	/*
 	public void seekSAFPermission()
 	{
 		((MainActivity)context).clear_cache=false;
@@ -697,6 +713,8 @@ public class RenameFileDialog extends DialogFragment
 		}
 	}
 	});
+
+	 */
 
 /*
 	@Override

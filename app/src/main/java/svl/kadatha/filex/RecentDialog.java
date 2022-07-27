@@ -54,7 +54,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private FilePOJO clicked_filepojo;
 	private static final String FILE_TYPE_REQUEST_CODE="recent_file_type_request_code";
 	private FragmentManager fragmentManager;
-
+	private final static String SAF_PERMISSION_REQUEST_CODE="recent_dialog_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -145,13 +145,24 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		});
 
  */
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
 
+				}
+
+			}
+		});
 		return v;
 		
 	}
 
 
-
+/*
 	public void seekSAFPermission()
 	{
 		((MainActivity)context).clear_cache=false;
@@ -175,6 +186,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		}
 	});
+
+ */
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
@@ -207,7 +220,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -220,6 +234,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			//saf_permission_requested=true;
 			return false;

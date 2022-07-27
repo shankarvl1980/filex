@@ -27,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -59,6 +60,7 @@ public class CreateFileDialog extends DialogFragment
 	private final List<String> dest_file_names=new ArrayList<>();
 	private List<FilePOJO> destFilePOJOs;
 	private Handler handler;
+	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
 
 
 	@Override
@@ -227,6 +229,19 @@ public class CreateFileDialog extends DialogFragment
 			}
 				
 				
+		});
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, CreateFileDialog.this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					okbutton.callOnClick();
+				}
+
+			}
 		});
 		return v;
 	}
@@ -639,7 +654,8 @@ public class CreateFileDialog extends DialogFragment
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -651,7 +667,10 @@ public class CreateFileDialog extends DialogFragment
 				{
 				}
 			});
+
+			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+
 			//saf_permission_requested=true;
 
 			return false;
@@ -662,6 +681,7 @@ public class CreateFileDialog extends DialogFragment
 		}
 	}
 
+	/*
 	public void seekSAFPermission()
 	{
 		((MainActivity)context).clear_cache=false;
@@ -687,6 +707,8 @@ public class CreateFileDialog extends DialogFragment
 		}
 	}
 });
+
+	 */
 
 
 	@Override

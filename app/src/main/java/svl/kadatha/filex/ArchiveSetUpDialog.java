@@ -62,6 +62,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	public final static String ARCHIVE_ACTION_ZIP="archive-zip";
 	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
 	private final static String ARCHIVE_REPLACE_REQUEST_CODE="archive_replace_request_code";
+	private final static String SAF_PERMISSION_REQUEST_CODE="archive_set_up_saf_permission_request_code";
 	private Class emptyService;
 
 	@Override
@@ -233,7 +234,19 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		});
 
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					saf_permission_requested = false;
+					okbutton.callOnClick();
+				}
 
+			}
+		});
 
 
 
@@ -501,7 +514,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -514,6 +528,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 					
 				}
 			});
+
+			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);

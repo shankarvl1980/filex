@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -35,7 +36,8 @@ public class PasteSetUpDialog extends DialogFragment
 	private FileObjectType sourceFileObjectType,destFileObjectType;
 	private int size;
 	private boolean saf_permission_requested;
-
+	private final static String SAF_PERMISSION_REQUEST_CODE_SOURCE="paste_set_up_saf_permission_request_code_source";
+	private final static String SAF_PERMISSION_REQUEST_CODE_DEST="paste_set_up_saf_permission_request_code_dest";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -110,10 +112,48 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			dismissAllowingStateLoss();
 		}
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE_DEST))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					if(check_permission_for_destination(dest_folder,destFileObjectType) && check_permission_for_source(source_folder,sourceFileObjectType))
+					{
+						initiate_startActivity();
+					}
+
+				}
+
+			}
+		});
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_SOURCE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE_SOURCE))
+				{
+					source_uri=result.getParcelable("tree_uri");
+					source_uri_path=result.getString("tree_uri_path");
+					if(check_permission_for_destination(dest_folder,destFileObjectType) && check_permission_for_source(source_folder,sourceFileObjectType))
+					{
+						initiate_startActivity();
+					}
+
+				}
+
+			}
+		});
+
+
+
+
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 	
-	
+	/*
 	public void seekSAFPermission()
 	{
 		((MainActivity)context).clear_cache=false;
@@ -147,6 +187,8 @@ public class PasteSetUpDialog extends DialogFragment
 
 		}
 	});
+
+	 */
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
 	{
@@ -261,7 +303,8 @@ public class PasteSetUpDialog extends DialogFragment
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_DEST,parent_file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -274,6 +317,8 @@ public class PasteSetUpDialog extends DialogFragment
 					dismissAllowingStateLoss(); // should be dismissed as this fragment has no view
 				}
 			});
+
+			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			return false;
@@ -296,7 +341,8 @@ public class PasteSetUpDialog extends DialogFragment
 
 		if(source_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_SOURCE,parent_file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -309,6 +355,8 @@ public class PasteSetUpDialog extends DialogFragment
 					dismissAllowingStateLoss(); //should be dismissed as this fragment has no view
 				}
 			});
+
+			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			saf_permission_requested=true;
 			return false;

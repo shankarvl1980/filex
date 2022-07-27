@@ -18,8 +18,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -61,6 +63,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	//private AsyncTaskFilePopulate asyncTaskFilePopulate;
 	public FrameLayout progress_bar;
 	public FilePOJOViewModel viewModel;
+	private final static String SAF_PERMISSION_REQUEST_CODE="file_selector_dialog_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -220,6 +223,19 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			@Override
 			public void onChanged(Integer integer) {
 				fileSelectorActivity.file_number.setText(""+integer);
+			}
+		});
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+
+				}
+
 			}
 		});
 
@@ -590,6 +606,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
+	/*
 	public void seekSAFPermission()
 	{
 		fileSelectorActivity.clear_cache=false;
@@ -613,6 +630,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		}
 	});
+
+	 */
 
 
 	public void clearSelectionAndNotifyDataSetChanged()
@@ -663,7 +682,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -676,6 +696,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(fileSelectorActivity.fm, "saf_permission_dialog");
 			return false;
 		}

@@ -125,6 +125,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public boolean clear_cache;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="file_editor_cancel_progress_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="text_file_delete_request_code";
+	private final static String SAF_PERMISSION_REQUEST_CODE="file_editor_saf_permission_request_code";
 	private FrameLayout progress_bar;
 	public FileEditorViewModel viewModel;
 
@@ -366,7 +367,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					viewModel.textViewUndoRedo.startListening();
 //			cpbf.dismissAllowingStateLoss();
 					progress_bar.setVisibility(View.GONE);
-					viewModel.file_loading_started=false;
+//					viewModel.file_loading_started=false;
 
 
 					progress_bar.setVisibility(View.GONE);
@@ -494,6 +495,18 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
+		fm.setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					start_file_save_service();
+				}
+
+			}
+		});
 
 	}
 
@@ -688,7 +701,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 
 		if(tree_uri_path.equals("")) {
-			SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
 				public void onOKBtnClicked() {
 					seekSAFPermission();
@@ -698,6 +712,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(fm, "saf_permission_dialog");
 			return false;
 		}
@@ -710,7 +726,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void go_previous()
 	{
-		if(viewModel.file_start || viewModel.file_loading_started)
+		if(viewModel.file_start)// || viewModel.file_loading_started)
 		{
 			return;
 		}
@@ -734,7 +750,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void go_next()
 	{
-		if(viewModel.file_end || viewModel.file_loading_started)
+		if(viewModel.file_end)// || viewModel.file_loading_started)
 		{
 			return;
 		}
@@ -759,7 +775,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			FileDescriptor fd=pfd.getFileDescriptor();
 
 			progress_bar.setVisibility(View.VISIBLE);
-			viewModel.isReadingFinished.postValue(false);
+			viewModel.isReadingFinished.setValue(false);
 			viewModel.openFile(file,new FileInputStream(fd),pointer, false);
 //			fileOpenAsyncTask=new FileOpenAsyncTask(new FileInputStream(fd),pointer, false);
 //			fileOpenAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -832,7 +848,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		public void onClick(View p1)
 		{
 			// TODO: Implement this method
-			if(progress_bar.getVisibility()==View.VISIBLE)return;
+			if(progress_bar.getVisibility()==View.VISIBLE)
+			{
+				Global.print(context,getString(R.string.please_wait));
+				return;
+			}
 
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
@@ -1044,6 +1064,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	}
 
+	/*
 	public void seekSAFPermission()
 	{
 		clear_cache=false;
@@ -1068,6 +1089,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		}
 	});
+
+	 */
 
 
 	private void onClick_edit_button()

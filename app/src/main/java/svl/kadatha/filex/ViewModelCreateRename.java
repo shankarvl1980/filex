@@ -31,7 +31,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
     public void createFile(File file, FileObjectType fileObjectType, boolean isWritable, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri)
     {
-        //createdFilePOJO.setValue(null);
 
         final String new_file_path=file.getAbsolutePath();
         final String new_name=file.getName();

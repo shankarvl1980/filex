@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
@@ -74,6 +75,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     private static final String CANCEL_PROGRESS_REQUEST_CODE="storage_anayliser_cancel_progress_request_code";
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
+    private final static String SAF_PERMISSION_REQUEST_CODE="storage_analyser_dialog_saf_permission_request_code";
 
 
     @Override
@@ -264,6 +266,19 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             @Override
             public void onChanged(Integer integer) {
                 storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+integer);
+            }
+        });
+
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+                {
+                    tree_uri=result.getParcelable("tree_uri");
+                    tree_uri_path=result.getString("tree_uri_path");
+
+                }
+
             }
         });
 
@@ -843,6 +858,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         is_toolbar_visible=true;
     }
 
+    /*
     public void seekSAFPermission()
     {
         storageAnalyserActivity.clear_cache=false;
@@ -866,6 +882,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         }
     });
+
+     */
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -1006,7 +1024,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(tree_uri_path.equals(""))
         {
-            SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+            /*
             safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
             {
                 public void onOKBtnClicked()
@@ -1019,6 +1038,8 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                 }
             });
+
+             */
             safpermissionhelper.show(storageAnalyserActivity.fm, "saf_permission_dialog");
             return false;
         }

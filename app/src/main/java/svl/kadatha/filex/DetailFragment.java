@@ -29,6 +29,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
@@ -115,6 +116,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public FilePOJOViewModel viewModel;
 	private CancelableProgressBarDialog cancelableProgressBarDialog;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
+	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -408,6 +410,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 			}
 		});
+
+		mainActivity.fm.setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+
+				}
+
+			}
+		});
 		return v;
 	}
 
@@ -639,7 +654,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return df;
 	}
 
-
+/*
 	public void seekSAFPermission()
 	{
 		mainActivity.clear_cache=false;
@@ -663,6 +678,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 });
+
+ */
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 	@Override
@@ -906,7 +923,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		if(tree_uri_path.equals(""))
 		{
-			SAFPermissionHelperDialog safpermissionhelper=new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
 			{
 				public void onOKBtnClicked()
@@ -919,6 +937,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(mainActivity.fm,"saf_permission_dialog");
 			return false;
 		}

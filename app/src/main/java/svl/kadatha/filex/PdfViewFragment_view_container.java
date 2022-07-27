@@ -34,10 +34,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -107,6 +109,7 @@ public class PdfViewFragment_view_container extends Fragment
     private PdfPageLoadListener pdfPageLoadListener;
     private boolean pdf_file_opened;
     private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
+    private final static String SAF_PERMISSION_REQUEST_CODE="pdf_view_container_saf_permission_request_code";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -410,7 +413,19 @@ public class PdfViewFragment_view_container extends Fragment
             }
         });
 
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+                {
+                    tree_uri=result.getParcelable("tree_uri");
+                    tree_uri_path=result.getString("tree_uri_path");
+                    delete_file_async_task = new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
+                    delete_file_async_task.executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR);
+                }
 
+            }
+        });
         return v;
     }
 
@@ -426,6 +441,7 @@ public class PdfViewFragment_view_container extends Fragment
         return  pdfViewFragment;
     }
 
+    /*
     public void seekSAFPermission()
     {
         ((PdfViewActivity)context).clear_cache=false;
@@ -451,6 +467,8 @@ public class PdfViewFragment_view_container extends Fragment
         }
     });
 
+     */
+
 
     private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
     {
@@ -462,7 +480,8 @@ public class PdfViewFragment_view_container extends Fragment
         }
 
         if(tree_uri_path.equals("")) {
-            SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
+            SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+            /*
             safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
                 public void onOKBtnClicked() {
                     seekSAFPermission();
@@ -472,6 +491,8 @@ public class PdfViewFragment_view_container extends Fragment
 
                 }
             });
+
+             */
             safpermissionhelper.show(((PdfViewActivity)context).fm, "saf_permission_dialog");
             return false;
         }

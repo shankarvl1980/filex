@@ -35,7 +35,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public String action_after_save="";
     public FilePOJO currently_shown_file;
     public TextViewUndoRedoBatch textViewUndoRedo;
-    public boolean file_loading_started;
+    //public boolean file_loading_started;
     private BufferedReader bufferedReader;
     private long file_pointer;
     public boolean fileRead;
@@ -69,7 +69,7 @@ public class FileEditorViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                file_loading_started=true;
+                //file_loading_started=true;
                 file_start= file_pointer == 0L;
                 try
                 {
@@ -133,7 +133,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                     int count=0;
                     long br=0,total_bytes_read=0;
                     int eol_len=(eol==FileEditorActivity.EOL_RN) ? 2 : 1;
-                    int max_lines_to_display = 200;
+                    int max_lines_to_display = 500;
                     while((line=bufferedReader.readLine())!=null)
                     {
                         br+=line.getBytes().length+eol_len;
@@ -147,6 +147,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                             break;
                         }
                     }
+                    
                     if(count< max_lines_to_display)
                     {
                         file_end=true;

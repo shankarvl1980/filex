@@ -22,8 +22,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -54,7 +56,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	private String request_code;
 	private Bundle bundle;
 	private String source_folder;
-
+	private final static String SAF_PERMISSION_REQUEST_CODE="delete_file_other_saf_permission_request_code";
 
     @Override
 	public void onCreate(Bundle savedInstanceState)
@@ -167,6 +169,21 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 			});
 
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					okbutton.callOnClick();
+				}
+
+			}
+		});
+
+
 		if(savedInstanceState!=null)
 		{
 
@@ -211,6 +228,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 	 */
 
+	/*
 	public void seekSAFPermission()
 	{
 		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
@@ -256,6 +274,8 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	}
 });
 
+	 */
+
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
@@ -264,10 +284,15 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			tree_uri_path=uriPOJO.get_path();
 			tree_uri=uriPOJO.get_uri();
 		}
+		else
+		{
+			return false;
+		}
 
 
 		if(tree_uri_path.equals("")) {
-			SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
+			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
 				public void onOKBtnClicked() {
 					seekSAFPermission();
@@ -277,6 +302,8 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 				}
 			});
+
+			 */
 			safpermissionhelper.show(getActivity().getSupportFragmentManager(), "saf_permission_dialog");
 			return false;
 		}
