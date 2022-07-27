@@ -58,6 +58,7 @@ public class DefaultAppsDialog extends DialogFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
      //   setRetainInstance(true);
+        setCancelable(false);
         defaultAppPOJOS=new ArrayList<>();
         selectedDefaultPOJOS=new ArrayList<>();
 

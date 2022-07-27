@@ -19,7 +19,7 @@ public class ProgressBarFragment extends DialogFragment
 		// TODO: Implement this method
 		//Context context = getContext();
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		//setRetainInstance(true);
 		setCancelable(false);
 	}
 
@@ -51,6 +51,8 @@ public class ProgressBarFragment extends DialogFragment
 		w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 	}
+
+	/*
 	@Override
 	public void onDestroyView() 
 	{
@@ -60,4 +62,6 @@ public class ProgressBarFragment extends DialogFragment
 		}
 		super.onDestroyView();
 	}
+
+	 */
 }

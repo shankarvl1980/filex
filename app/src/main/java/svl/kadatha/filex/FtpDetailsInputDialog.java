@@ -28,15 +28,18 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
     private RadioButton mode_active_radio_btn;
     private RadioButton anonymous_radio_btn;
-    private FtpDatabaseModificationListener ftpDatabaseModificationListener;
+    //private FtpDatabaseModificationListener ftpDatabaseModificationListener;
     private boolean update;
     private PermissionsUtil permissionsUtil;
+    private String request_code;
+    Bundle bundle;
 
 
-    public static FtpDetailsInputDialog getInstance(String server)
+    public static FtpDetailsInputDialog getInstance(String request_code,String server)
     {
         FtpDetailsInputDialog ftpDetailsInputDialog=new FtpDetailsInputDialog();
         Bundle bundle=new Bundle();
+        bundle.putString("request_code",request_code);
         bundle.putString("server",server);
         ftpDetailsInputDialog.setArguments(bundle);
         return ftpDetailsInputDialog;
@@ -59,10 +62,12 @@ public class FtpDetailsInputDialog extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        Bundle bundle=getArguments();
+        //setRetainInstance(true);
+        setCancelable(false);
+        bundle=getArguments();
         if(bundle!=null)
         {
+            request_code=bundle.getString("request_code");
             original_server=bundle.getString("server");
             server=bundle.getString("server");
             if(original_server!=null && !original_server.equals(""))
@@ -148,11 +153,12 @@ public class FtpDetailsInputDialog extends DialogFragment {
                         row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
                     }
 
-                    if(row_number>0 && ftpDatabaseModificationListener!=null)
+                    if(row_number>0)// && ftpDatabaseModificationListener!=null)
                     {
 
                         FtpDetailsDialog.FtpPOJO ftpPOJO=new FtpDetailsDialog.FtpPOJO(server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                        ftpDatabaseModificationListener.onInsert(ftpPOJO);
+                        //ftpDatabaseModificationListener.onInsert(ftpPOJO);
+                        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
                     }
 
                     dismissAllowingStateLoss();
@@ -185,6 +191,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
 
     }
 
+    /*
     @Override
     public void onDestroyView() {
         if(getDialog()!=null && getRetainInstance())
@@ -194,7 +201,9 @@ public class FtpDetailsInputDialog extends DialogFragment {
         super.onDestroyView();
     }
 
+     */
 
+/*
     public void setFtpDatabaseModificationListener(FtpDatabaseModificationListener listener)
     {
         ftpDatabaseModificationListener=listener;
@@ -203,5 +212,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
     interface FtpDatabaseModificationListener {
         void onInsert(FtpDetailsDialog.FtpPOJO ftpPOJO);
     }
+
+ */
 
 }

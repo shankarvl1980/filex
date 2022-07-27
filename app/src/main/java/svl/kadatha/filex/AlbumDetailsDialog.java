@@ -98,6 +98,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		//setRetainInstance(true);
+		setCancelable(false);
 		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		if(bundle!=null)

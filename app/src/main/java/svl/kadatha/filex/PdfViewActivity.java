@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-public class PdfViewActivity extends BaseActivity implements PdfViewFragment.PdfFragmentShownListener {
+public class PdfViewActivity extends BaseActivity {
 
     private Context context;
     public FragmentManager fm;
@@ -101,9 +101,5 @@ public class PdfViewActivity extends BaseActivity implements PdfViewFragment.Pdf
         super.onBackPressed();
     }
 
-    @Override
-    public void onFragmentShown(PdfViewFragment pvf) {
-        PdfViewFragment_view_container pdfViewFragment_view_container= (PdfViewFragment_view_container) getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);
-        pdfViewFragment_view_container.onFragmentShown(pvf);
-    }
+
 }

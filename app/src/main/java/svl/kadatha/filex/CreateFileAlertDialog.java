@@ -32,6 +32,7 @@ public class CreateFileAlertDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		//this.setRetainInstance(true);
+		setCancelable(false);
 		type_file=new String[]{getString(R.string.file),getString(R.string.folder)};
 		Bundle bundle=getArguments();
 		if(bundle!=null)

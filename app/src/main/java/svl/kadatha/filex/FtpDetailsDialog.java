@@ -56,8 +56,9 @@ public class FtpDetailsDialog extends DialogFragment {
     private Handler handler;
     private PermissionsUtil permissionsUtil;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
-
-
+    private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NULL="ftp_input_details_request_code_null";
+    private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL="ftp_input_details_request_code_non_null";
+    private final static String FTP_RENAME_REQUEST_CODE="ftp_rename_request_code";
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -191,6 +192,73 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
             }
         });
+
+        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE_NULL, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NULL))
+                {
+//                    Iterator<FtpPOJO> iterator=ftpPOJOList.iterator();
+//                    while(iterator.hasNext())
+//                    {
+//                        if(iterator.next().server.equals(ftpPOJO.server))
+//                        {
+//                            iterator.remove();
+//                            break;
+//                        }
+//                    }
+//                    ftpPOJOList.add(ftpPOJO);
+//                    ftpListAdapter.notifyDataSetChanged();
+
+                }
+            }
+        });
+
+        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL))
+                {
+//                    Iterator<FtpPOJO> iterator=ftpPOJOList.iterator();
+//                    while(iterator.hasNext())
+//                    {
+//                        if(iterator.next().server.equals(ftp_server))
+//                        {
+//
+//                            iterator.remove();
+//                            break;
+//                        }
+//                    }
+//                    iterator=ftpPOJOList.iterator();
+//                    while(iterator.hasNext())
+//                    {
+//                        if(iterator.next().server.equals(ftpPOJO.server))
+//                        {
+//
+//                            iterator.remove();
+//                            break;
+//                        }
+//                    }
+//                    int max_idx=ftpPOJOList.size();
+//                    ftpPOJOList.add(Math.min(idx, max_idx),ftpPOJO);
+//                    ftpListAdapter.notifyDataSetChanged();
+
+                }
+            }
+        });
+
+        fragmentManager.setFragmentResultListener(FTP_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FTP_RENAME_REQUEST_CODE))
+                {
+                    String new_name=result.getString("new_name");
+//                    ftpPOJO.display=new_name;
+//                    ftpListAdapter.notifyItemChanged(idx);
+                }
+            }
+        });
+
 
         return v;
     }
@@ -488,7 +556,8 @@ public class FtpDetailsDialog extends DialogFragment {
             if(id==R.id.toolbar_btn_1)
             {
                 clear_selection();
-                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(null);
+                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE_NULL,null);
+                /*
                 ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
                     @Override
                     public void onInsert(FtpPOJO ftpPOJO) {
@@ -506,6 +575,8 @@ public class FtpDetailsDialog extends DialogFragment {
                     }
 
                 });
+
+                 */
                 ftpDetailsInputDialog.show(fragmentManager,"");
             }
             if(id==R.id.toolbar_btn_2)
@@ -545,7 +616,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     FtpPOJO ftpPOJO=ftpPOJO_selected_array.get(0);
                     int idx=ftpPOJOList.indexOf(ftpPOJO);
-                    FtpDisplayRenameDialog ftpDisplayRenameDialog=FtpDisplayRenameDialog.getInstance(ftpPOJO.server,ftpPOJO.display);
+                    FtpDisplayRenameDialog ftpDisplayRenameDialog=FtpDisplayRenameDialog.getInstance(FTP_RENAME_REQUEST_CODE,ftpPOJO.server,ftpPOJO.display);
+                    /*
                     ftpDisplayRenameDialog.setFtpRenameListener(new FtpDisplayRenameDialog.FtpRenameListener() {
                         @Override
                         public void onRenameFtp(String new_name) {
@@ -553,6 +625,8 @@ public class FtpDetailsDialog extends DialogFragment {
                                 ftpListAdapter.notifyItemChanged(idx);
                         }
                     });
+
+                     */
                     ftpDisplayRenameDialog.show(fragmentManager,"");
                 }
                 clear_selection();
@@ -565,7 +639,8 @@ public class FtpDetailsDialog extends DialogFragment {
                     FtpPOJO tobe_replaced_ftp=ftpPOJO_selected_array.get(0);
                     String ftp_server=tobe_replaced_ftp.server;
                     int idx=ftpPOJOList.indexOf(tobe_replaced_ftp);
-                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(ftp_server);
+                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL,ftp_server);
+                    /*
                     ftpDetailsInputDialog.setFtpDatabaseModificationListener(new FtpDetailsInputDialog.FtpDatabaseModificationListener() {
                         @Override
                         public void onInsert(FtpPOJO ftpPOJO) {
@@ -596,6 +671,8 @@ public class FtpDetailsDialog extends DialogFragment {
                         }
 
                     });
+
+                     */
                     ftpDetailsInputDialog.show(fragmentManager,"");
                 }
 

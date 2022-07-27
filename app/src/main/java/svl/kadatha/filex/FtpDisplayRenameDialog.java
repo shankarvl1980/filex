@@ -24,8 +24,10 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     private String server, display;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
-    private FtpRenameListener ftpRenameListener;
+    //private FtpRenameListener ftpRenameListener;
     private FtpDatabaseHelper ftpDatabaseHelper;
+    private String request_code;
+    private Bundle bundle;
 
 
     @Override
@@ -47,10 +49,12 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);
-        Bundle bundle=getArguments();
+        //this.setRetainInstance(true);
+        setCancelable(false);
+        bundle=getArguments();
         if(bundle!=null)
         {
+            request_code=bundle.getString("request_code");
             server=bundle.getString("server");
             display=bundle.getString("display");
         }
@@ -124,9 +128,12 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     return;
                 }
                 int i=ftpDatabaseHelper.change_display(server,new_name);
-                if(i>0 && ftpRenameListener!=null)
+                if(i>0)// && ftpRenameListener!=null)
                 {
-                    ftpRenameListener.onRenameFtp(new_name);
+                    bundle.putString("new_name",new_name);
+                    ((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+
+                    //ftpRenameListener.onRenameFtp(new_name);
                 }
                 imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
@@ -148,10 +155,11 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         return v;
     }
 
-    public static FtpDisplayRenameDialog getInstance(String server, String display)
+    public static FtpDisplayRenameDialog getInstance(String request_code,String server, String display)
     {
         FtpDisplayRenameDialog ftpDisplayRenameDialog=new FtpDisplayRenameDialog();
         Bundle bundle=new Bundle();
+        bundle.putString("request_code",request_code);
         bundle.putString("server",server);
         bundle.putString("display",display);
         ftpDisplayRenameDialog.setArguments(bundle);
@@ -172,7 +180,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
-
+/*
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
@@ -180,6 +188,8 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         }
         super.onDestroyView();
     }
+
+ */
 
     @Override
     public void onCancel(DialogInterface dialog)
@@ -197,6 +207,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         super.onDismiss(dialog);
     }
 
+    /*
     interface FtpRenameListener
     {
         void onRenameFtp(String new_name);
@@ -206,5 +217,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     {
         ftpRenameListener=listener;
     }
+
+     */
 
 }
