@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -24,8 +23,7 @@ public class VideoViewActivity extends BaseActivity
 	public int current_page_idx,file_selected_idx;
 	public boolean toolbar_visible,fromArchiveView;
 	public FileObjectType fileObjectType;
-	private VideoViewContainerFragment videoViewContainerFragment;
-    //ProgressBarFragment pbf;
+	//ProgressBarFragment pbf;
 	//public IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
 	//private AlbumPollFragment albumPollFragment;
 	private static final String ALBUM_POLL_FRAGMENT_TAG="album_poll_fragment";
@@ -93,7 +91,7 @@ public class VideoViewActivity extends BaseActivity
 		});
 
 		 */
-		videoViewContainerFragment= VideoViewContainerFragment.getNewInstance(file_path,fromArchiveView,fileObjectType);
+		VideoViewContainerFragment videoViewContainerFragment = VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType);
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}
 

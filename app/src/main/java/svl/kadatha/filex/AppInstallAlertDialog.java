@@ -2,14 +2,11 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +21,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
-import java.util.List;
 
 
 public class AppInstallAlertDialog extends DialogFragment
@@ -45,8 +40,6 @@ public class AppInstallAlertDialog extends DialogFragment
     //private String package_name, app_name, version, installed_version;
     //private AppInstallDialogListener appInstallDialogListener;
     private boolean remember_app_check_box;
-    private AsyncTaskStatus asyncTaskStatus;
-    private Handler handler;
     private Intent intent;
     private AppSelectorViewModel viewModel;
     private FrameLayout progress_bar;
@@ -64,7 +57,7 @@ public class AppInstallAlertDialog extends DialogFragment
         super.onCreate(savedInstanceState);
         setCancelable(false);
         Bundle bundle=getArguments();
-        asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+        AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
         viewModel=new ViewModelProvider(this).get(AppSelectorViewModel.class);
         if(bundle!=null)
         {
@@ -92,7 +85,7 @@ public class AppInstallAlertDialog extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        handler=new Handler();
+        Handler handler = new Handler();
         View v=inflater.inflate(R.layout.fragment_apk_install_alert_dialog,container,false);
         app_icon_image_view=v.findViewById(R.id.fragment_apk_install_icon_imageview);
         app_name_tv=v.findViewById(R.id.fragment_apk_install_apk_name_tv);

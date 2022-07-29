@@ -1,13 +1,11 @@
 package svl.kadatha.filex;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,17 +19,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -64,7 +56,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private FileObjectType sourceFileObjectType;
 	private Button okbutton;
     private OKButtonClickListener okButtonClickListener;
-	private String other_file_permission;
 	private String source_folder;
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="delete_file_saf_permission_request_code";
@@ -97,7 +88,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 			//fileCountSize=new FileCountSize(files_selected_array,sourceFileObjectType);
 			//fileCountSize.count();
 		}
-		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(source_folder);
+		String other_file_permission = Global.GET_OTHER_FILE_PERMISSION(source_folder);
 		handler=new Handler(Looper.getMainLooper());
 	}
 

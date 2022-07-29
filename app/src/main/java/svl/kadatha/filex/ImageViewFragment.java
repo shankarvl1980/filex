@@ -1,17 +1,14 @@
 package svl.kadatha.filex;
 
 import android.app.Activity;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -49,15 +46,12 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ImageViewFragment extends Fragment
@@ -73,7 +67,7 @@ public class ImageViewFragment extends Fragment
 	//private final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
 	//private SparseBooleanArray selected_item_sparseboolean;
 	private int preview_image_offset;
-	private Handler handler,polling_handler;
+	private Handler handler;
 	private Runnable runnable;
 	private boolean is_menu_opened;
 	private PopupWindow listPopWindow;
@@ -182,7 +176,7 @@ public class ImageViewFragment extends Fragment
 		View v=inflater.inflate(R.layout.fragment_image_view,container,false);
 		toolbar_visible=true;
 		handler=new Handler();
-		polling_handler=new Handler();
+		Handler polling_handler = new Handler();
 		toolbar=v.findViewById(R.id.activity_picture_toolbar);
 		title=v.findViewById(R.id.activity_picture_name);
 		ImageView overflow = v.findViewById(R.id.activity_picture_overflow);

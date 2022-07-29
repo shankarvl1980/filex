@@ -1,13 +1,9 @@
 package svl.kadatha.filex;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +17,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -39,11 +31,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
-import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -77,7 +67,6 @@ public class VideoViewContainerFragment extends Fragment
 	private OnPageSelectListener onPageSelectListener;
 	private ToolBarVisibleListener toolBarVisibleListener;
 	private boolean toolbar_visible,fromArchiveView;
-	private AlbumPollCompleteListener albumPollCompleteListener;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 	private String file_path;
@@ -583,7 +572,6 @@ public class VideoViewContainerFragment extends Fragment
 
 	public void setAlbumPollCompleteListener(AlbumPollCompleteListener listener)
 	{
-		albumPollCompleteListener=listener;
 	}
 
 	interface OnPageSelectListener

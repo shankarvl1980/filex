@@ -2,13 +2,9 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +30,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,10 +49,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	private Toolbar bottom_toolbar;
 	private AudioSelectListener audioSelectListener;
 
-	//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-	//public List<AlbumPOJO> album_selected_array=new ArrayList<>();
-	//public static Bitmap SELECTED_ALBUM_ART;
-	private List<AlbumPOJO> album_selected_pojo_copy;
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
 	private AsyncTaskStatus asyncTaskStatus;
@@ -353,7 +344,10 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
-				album_selected_pojo_copy = new ArrayList<>();
+				//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
+				//public List<AlbumPOJO> album_selected_array=new ArrayList<>();
+				//public static Bitmap SELECTED_ALBUM_ART;
+				List<AlbumPOJO> album_selected_pojo_copy = new ArrayList<>();
 				album_selected_pojo_copy.addAll(audioListViewModel.album_selected_array);
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
 

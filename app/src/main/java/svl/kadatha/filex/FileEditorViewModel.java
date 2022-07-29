@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 
 public class FileEditorViewModel extends AndroidViewModel {
 
-    private boolean isCancelled;
     private Future<?> future1,future2,future3;
     public MutableLiveData<Boolean> isReadingFinished=new MutableLiveData<>();
     File file;
@@ -56,7 +55,7 @@ public class FileEditorViewModel extends AndroidViewModel {
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
-        isCancelled=true;
+        boolean isCancelled = true;
     }
 
     public synchronized void openFile(File file, FileInputStream fileInputStream, long f_pointer, boolean go_back)

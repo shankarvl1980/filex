@@ -1,13 +1,10 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Looper;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
@@ -20,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.logging.Handler;
 
 public class AudioListViewModel extends AndroidViewModel {
 

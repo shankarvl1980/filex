@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ArchiveReplaceConfirmationDialog extends DialogFragment
 {

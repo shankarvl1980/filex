@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 
@@ -16,7 +15,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

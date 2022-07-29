@@ -25,7 +25,10 @@ public class AppActionSelectDialog extends DialogFragment
     private Context context;
     //private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
-    private String app_name,package_name,app_size,version,app_path;
+    private String app_name;
+    private String package_name;
+    private String app_size;
+    private String version;
     private List<String> action_list;
     private Bundle bundle;
 
@@ -48,7 +51,7 @@ public class AppActionSelectDialog extends DialogFragment
         package_name=bundle.getString("package_name");
         app_size=bundle.getString("app_size");
         version=bundle.getString("version");
-        app_path=bundle.getString("app_path");
+        String app_path = bundle.getString("app_path");
         action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
     }
 

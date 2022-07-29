@@ -1,21 +1,13 @@
 package svl.kadatha.filex;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.DocumentsContract;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 

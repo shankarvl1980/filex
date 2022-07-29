@@ -19,12 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class FileTypeSelectDialog extends DialogFragment
 {
 	private Context context;
-    //private FileTypeSelectListener fileTypeSelectListener;
-	//private final LinkedHashMap<String,String> file_type_set=new LinkedHashMap<>();
-	//private List<String> file_type_list;
-	//private List<String> file_mime_list;
-	private FragmentManager fragmentManager;
-	private Bundle bundle;
 	private String mime_type,file_path,tree_uri_path;
 	private Uri tree_uri;
 	private FileObjectType fileObjectType;
@@ -34,7 +28,11 @@ public class FileTypeSelectDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
+		//private FileTypeSelectListener fileTypeSelectListener;
+		//private final LinkedHashMap<String,String> file_type_set=new LinkedHashMap<>();
+		//private List<String> file_type_list;
+		//private List<String> file_mime_list;
+		FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -44,13 +42,13 @@ public class FileTypeSelectDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		//setRetainInstance(true);
-		bundle=getArguments();
-		mime_type=bundle.getString("mime_type");
-		file_path=bundle.getString("file_path");
+		Bundle bundle = getArguments();
+		mime_type= bundle.getString("mime_type");
+		file_path= bundle.getString("file_path");
 		fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
-		archive_view=bundle.getBoolean("archive_view");
-		tree_uri=bundle.getParcelable("tree_uri");
-		tree_uri_path=bundle.getString("tree_uri_path");
+		archive_view= bundle.getBoolean("archive_view");
+		tree_uri= bundle.getParcelable("tree_uri");
+		tree_uri_path= bundle.getString("tree_uri_path");
 	}
 
 	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)

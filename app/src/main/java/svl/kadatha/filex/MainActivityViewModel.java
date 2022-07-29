@@ -1,18 +1,11 @@
 package svl.kadatha.filex;
 
-import android.app.Application;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
-
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;

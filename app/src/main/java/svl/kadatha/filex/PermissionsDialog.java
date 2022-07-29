@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import java.io.File;
 import java.io.IOException;
 
 public class PermissionsDialog extends DialogFragment

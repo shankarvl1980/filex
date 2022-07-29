@@ -3,7 +3,6 @@ import android.content.*;
 import android.widget.*;
 
 import android.view.*;
-import android.view.animation.*;
 import android.os.*;
 import android.graphics.drawable.*;
 import android.graphics.*;

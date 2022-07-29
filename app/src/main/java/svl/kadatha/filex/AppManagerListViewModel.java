@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     private boolean alreadyRun;
     private Future<?> future;
-    private boolean isCancelled;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
@@ -38,7 +36,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         future.cancel(true);
-        isCancelled=true;
+        boolean isCancelled = true;
     }
 
     public void populate(String app_type)

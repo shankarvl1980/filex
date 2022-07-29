@@ -1,8 +1,6 @@
 package svl.kadatha.filex;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,7 +9,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
@@ -28,10 +25,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -54,11 +47,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class PdfViewFragment_single_view extends Fragment
 {
@@ -67,8 +57,6 @@ public class PdfViewFragment_single_view extends Fragment
     //private FilePOJO currently_shown_file;
     //private File pdf_file;
 
-    private AsyncTaskStatus asyncTaskStatus;
-    private Handler h;
     private Handler handler;
     //private int image_selected_idx=0,previously_selected_image_idx=0;
     private PdfViewPagerAdapter pdf_view_adapter;
@@ -125,7 +113,7 @@ public class PdfViewFragment_single_view extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data=((PdfViewActivity)context).data;
-        asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
+        AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
@@ -179,7 +167,7 @@ public class PdfViewFragment_single_view extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        h=new Handler();
+        Handler h = new Handler();
         handler=new Handler();
         Handler hand = new Handler();
         View v=inflater.inflate(R.layout.fragment_image_view,container,false);

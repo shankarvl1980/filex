@@ -3,7 +3,6 @@ import android.content.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.os.*;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.widget.TableRow.*;

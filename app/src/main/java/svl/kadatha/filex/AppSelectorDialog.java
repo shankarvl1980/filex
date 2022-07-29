@@ -2,17 +2,10 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,23 +32,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public class AppSelectorDialog extends DialogFragment
 {
     private Context context;
     private RecyclerView app_recycler_view;
     private CheckBox remember_app_check_box;
-    private String file_path,mime_type,file_type;
+    private String mime_type;
+    private String file_type;
 
     private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
     private Intent intent;
-    private Handler handler;
     private Bundle bundle;
     private FrameLayout progress_bar;
     public AppSelectorViewModel viewModel;
@@ -77,7 +66,7 @@ public class AppSelectorDialog extends DialogFragment
         if(bundle!=null)
         {
             Uri data = bundle.getParcelable("data");
-            file_path=bundle.getString("file_path");
+            String file_path = bundle.getString("file_path");
             mime_type=bundle.getString("mime_type");
             for(MimePOJO mimePOJO:Global.MIME_POJOS)
             {
@@ -91,10 +80,10 @@ public class AppSelectorDialog extends DialogFragment
             boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
             intent=new Intent(Intent.ACTION_VIEW);
-            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,file_path,"",fileObjectType,fromArchiveView,clear_top,data);
+            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,fromArchiveView,clear_top,data);
         }
 
-        handler=new Handler(Looper.getMainLooper());
+        Handler handler = new Handler(Looper.getMainLooper());
         if(savedInstanceState!=null)
         {
             asyncTaskStatus= (AsyncTaskStatus) savedInstanceState.get("asyncTaskStatus");
