@@ -36,7 +36,6 @@ public class PasteSetUpDialog extends DialogFragment
 	private ArrayList<String> files_selected_array=new ArrayList<>();
 	private FileObjectType sourceFileObjectType,destFileObjectType;
 	private int size;
-	//private boolean saf_permission_requested;
 	private final static String SAF_PERMISSION_REQUEST_CODE_SOURCE="paste_set_up_saf_permission_request_code_source";
 	private final static String SAF_PERMISSION_REQUEST_CODE_DEST="paste_set_up_saf_permission_request_code_dest";
 

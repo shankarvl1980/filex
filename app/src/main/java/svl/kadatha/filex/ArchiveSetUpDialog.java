@@ -51,7 +51,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 	private final int saf_permission_request_code=112;
 	private final int folder_select_request_code=1569;
-	private boolean saf_permission_requested;
 	private String tree_uri_path="";
 	//private final String source_uri_path="";
 	private Uri tree_uri,source_uri;
@@ -241,7 +240,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 					tree_uri=result.getParcelable("tree_uri");
 					tree_uri_path=result.getString("tree_uri_path");
-					saf_permission_requested = false;
+		//			saf_permission_requested = false;
 					okbutton.callOnClick();
 				}
 
@@ -531,7 +530,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-			saf_permission_requested=true;
+			//saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
 			return false;
 		}
@@ -666,7 +665,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				treeUri = result.getData().getData();
 				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
 
-				saf_permission_requested = false;
+				//saf_permission_requested = false;
 				okbutton.callOnClick();
 			}
 			else

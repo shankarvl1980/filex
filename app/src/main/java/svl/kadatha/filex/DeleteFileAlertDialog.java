@@ -58,8 +58,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private Context context;
     private String tree_uri_path="";
 	private Uri tree_uri;
-	//private boolean saf_permission_requested;
-	//private final int request_code=89;
 	private int size=0;
 	private boolean whether_native_file_exists;
 	private Bundle bundle;

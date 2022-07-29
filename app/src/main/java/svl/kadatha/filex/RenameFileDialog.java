@@ -47,7 +47,6 @@ public class RenameFileDialog extends DialogFragment
     private DetailFragment df;
 	private InputMethodManager imm;
 	private Context context;
-	//private boolean saf_permission_requested;
 	private String tree_uri_path="";
 	private Uri tree_uri;
     private String parent_file_path,existing_name;
