@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -35,7 +36,7 @@ public class PasteSetUpDialog extends DialogFragment
 	private ArrayList<String> files_selected_array=new ArrayList<>();
 	private FileObjectType sourceFileObjectType,destFileObjectType;
 	private int size;
-	private boolean saf_permission_requested;
+	//private boolean saf_permission_requested;
 	private final static String SAF_PERMISSION_REQUEST_CODE_SOURCE="paste_set_up_saf_permission_request_code_source";
 	private final static String SAF_PERMISSION_REQUEST_CODE_DEST="paste_set_up_saf_permission_request_code_dest";
 
@@ -100,18 +101,24 @@ public class PasteSetUpDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		if(check_permission_for_source(source_folder,sourceFileObjectType))
+		MainActivityViewModel viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
+		if(!viewModel.checkedSAFPermissionPasteSetUp)
 		{
-			if(check_permission_for_destination(dest_folder,destFileObjectType))
+			if(check_permission_for_source(source_folder,sourceFileObjectType))
 			{
-				initiate_startActivity();
+				if(check_permission_for_destination(dest_folder,destFileObjectType))
+				{
+					initiate_startActivity();
+				}
 			}
+			viewModel.setSAFCheckedBoolean();
 		}
 
-		if(!saf_permission_requested)
-		{
-			dismissAllowingStateLoss();
-		}
+
+//		if(!saf_permission_requested)
+//		{
+//			dismissAllowingStateLoss();
+//		}
 
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
 			@Override
@@ -147,6 +154,17 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 		});
 
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAFPermissionHelperDialog.SAF_PERMISSION_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAFPermissionHelperDialog.SAF_PERMISSION_CANCEL_REQUEST_CODE))
+				{
+					Global.print(context,getString(R.string.permission_not_granted));
+					dismissAllowingStateLoss();
+				}
+
+			}
+		});
 
 
 
@@ -320,7 +338,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-			saf_permission_requested=true;
 			return false;
 		}
 		else
@@ -358,7 +375,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-			saf_permission_requested=true;
 			return false;
 		}
 		else

@@ -27,6 +27,7 @@ public class MainActivityViewModel extends ViewModel {
     public MutableLiveData<Boolean> isExtractionCompleted=new MutableLiveData<>();
     public boolean zipFileExtracted;
     public MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
+    public boolean checkedSAFPermissionPasteSetUp;
 
 
 
@@ -103,4 +104,8 @@ public class MainActivityViewModel extends ViewModel {
         });
     }
 
+    public void setSAFCheckedBoolean()
+    {
+        checkedSAFPermissionPasteSetUp=true;
+    }
 }

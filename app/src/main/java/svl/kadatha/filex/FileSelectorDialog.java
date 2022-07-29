@@ -284,7 +284,21 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			after_filledFilePojos_procedure();
+			//after_filledFilePojos_procedure();
+			if(FileSelectorActivity.SHOW_HIDDEN_FILE)
+			{
+				filePOJO_list=viewModel.filePOJOS;
+				totalFilePOJO_list=viewModel.filePOJOS;
+			}
+			else
+			{
+				filePOJO_list=viewModel.filePOJOS_filtered;
+				totalFilePOJO_list=viewModel.filePOJOS_filtered;
+			}
+			totalFilePOJO_list_Size=totalFilePOJO_list.size();
+			file_list_size=filePOJO_list.size();
+			fileSelectorActivity.file_number.setText(""+file_list_size);
+			adapter.notifyDataSetChanged();
 		}
 	}
 

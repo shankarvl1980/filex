@@ -33,11 +33,13 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -76,6 +78,7 @@ public class AllAudioListFragment extends Fragment
 	public boolean whether_audios_set_to_current_list, img_btns_enabled;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
 	public AudioListViewModel audioListViewModel;
+	private LocalBroadcastManager localBroadcastManager;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="all_audio_save_audio_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="all_audio_file_delete_request_code";
 
@@ -83,6 +86,7 @@ public class AllAudioListFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		localBroadcastManager= LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override
@@ -250,6 +254,30 @@ public class AllAudioListFragment extends Fragment
 					Uri tree_uri=result.getParcelable("tree_uri");
 					String tree_uri_path=result.getString("tree_uri_path");
 					String source_folder=result.getString("source_folder");
+					DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AllAudioListFragment.this).get(DeleteAudioViewModel.class);
+					deleteAudioViewModel.deleteAudioPOJO(false,audioListViewModel.audios_selected_for_delete,tree_uri,tree_uri_path);
+					deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								if(deleteAudioViewModel.deleted_audio_files.size()>0)
+								{
+									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
+									((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+									Global.print(context,getString(R.string.selected_audios_deleted));
+								}
+								else
+								{
+									Global.print(context,getString(R.string.selected_audios_could_not_be_deleted));
+								}
+								progress_bar.setVisibility(View.GONE);
+							}
+						}
+					});
+
+					/*
 					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AllAudioListFragment.this).get(DeleteFileOtherActivityViewModel.class);
 					deleteFileOtherActivityViewModel.deleteAudioPOJO(audioListViewModel.audios_selected_for_delete,FileObjectType.FILE_TYPE,tree_uri,tree_uri_path);
 					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -261,12 +289,19 @@ public class AllAudioListFragment extends Fragment
 								{
 									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
 									((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+									Global.print(context,getString(R.string.selected_audios_deleted));
+								}
+								else
+								{
+									Global.print(context,getString(R.string.selected_audios_could_not_be_deleted));
 								}
 								progress_bar.setVisibility(View.GONE);
 							}
 						}
 					});
+
+					 */
 
 				}
 			}

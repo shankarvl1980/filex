@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 						String file_path=files_selected_array.get(0);
 						if(!FileUtil.isWritable(fileObjectType,file_path))
 						{
+							Log.d("shankar","is writable");
 							if (!check_SAF_permission(file_path, fileObjectType)) return;
 						}
 
@@ -279,19 +281,19 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
+		Log.d("shankar","checking saf");
 		if(uriPOJO!=null)
 		{
+			Log.d("shankar","uripojo is not null");
 			tree_uri_path=uriPOJO.get_path();
 			tree_uri=uriPOJO.get_uri();
-		}
-		else
-		{
-			return false;
 		}
 
 
 		if(tree_uri_path.equals("")) {
+			Log.d("shankar","safpermission helpe dialong being launced");
 			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			Log.d("shankar","safpermission helpe dialong launced");
 			/*
 			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
 				public void onOKBtnClicked() {
@@ -309,6 +311,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 		}
 		else
 		{
+			Log.d("shankar","uri_path is not equal to  "+tree_uri_path);
 			return true;
 		}
 	}

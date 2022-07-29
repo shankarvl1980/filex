@@ -29,6 +29,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	private FileObjectType fileObjectType;
 	private Bundle bundle;
 	private String request_code;
+	public static final String SAF_PERMISSION_CANCEL_REQUEST_CODE="saf_permission_cancel_request_code";
 
     //SAFPermissionHelperDialog(){}
     /*
@@ -113,6 +114,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 				}
 
 				 */
+				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(SAF_PERMISSION_CANCEL_REQUEST_CODE,null);
 				dismissAllowingStateLoss();
 			}
 		});

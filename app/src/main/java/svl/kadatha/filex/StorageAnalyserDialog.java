@@ -350,7 +350,17 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
-            after_filledFilePojos_procedure();
+            //after_filledFilePojos_procedure();
+            totalFilePOJO_list=viewModel.filePOJOS;
+            filePOJO_list=viewModel.filePOJOS;
+            totalFilePOJO_list_Size=totalFilePOJO_list.size();
+            file_list_size=filePOJO_list.size();
+            if(storageAnalyserActivity!=null)
+            {
+                storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
+                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+            }
+            adapter.notifyDataSetChanged();
         }
     }
 
