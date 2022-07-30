@@ -344,7 +344,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
 
-	public class ArchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void, String,Boolean>
+	public class ArchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final String zip_file_name=zip_folder_name+".zip";
 		UsbFile parentUsbFile,zipUsbFile;
@@ -357,7 +357,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_CANCEL(context,dest_folder,zip_file_name,destFileObjectType,tree_uri,tree_uri_path,zipUsbFile);
 			stopForeground(true);
 			stopSelf();
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_create)+" '"+zip_file_name+"'",notification_id);
 			}
@@ -475,7 +475,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 							counter_size_files+=(!file.isDirectory()) ? file.getLength() : 0;
 							size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 							mutable_count_no_files.postValue(counter_no_files);
-							publishProgress(file.getName());
+							copied_file_name=file.getName();
 							String zip_entry_path=(lengthParentPath!=0) ? file.getAbsolutePath().substring(lengthParentPath+1):file.getAbsolutePath().substring(file.getParent().getAbsolutePath().length()+1);
 
 							ZipEntry zipEntry;
@@ -544,7 +544,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=file.length();
 				size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(file.getName());
+				copied_file_name=file.getName();
 				String zip_entry_path=(lengthParentPath!=0) ? file.getCanonicalPath().substring(lengthParentPath+1):file.getCanonicalPath().substring(file.getParentFile().getCanonicalPath().length()+1);
 
 				ZipEntry zipEntry;
@@ -571,12 +571,15 @@ public class ArchiveDeletePasteFileService3 extends Service
 			}
 		}
 
+		/*
 		@Override
 		protected void onProgressUpdate(String[] file_name)
 		{
 			// TODO: Implement this method
 			copied_file_name=file_name[0];
 		}
+
+		 */
 
 		@Override
 		protected void onPostExecute(Boolean result)
@@ -586,7 +589,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -599,7 +602,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 		}
 	}
 
-	public class UnarchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
+	public class UnarchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 
 		String zip_dest_path;
@@ -635,7 +638,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_extract)+" '"+new File(zip_file_path).getName()+"'",notification_id);
 			}
@@ -737,7 +740,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=zipEntry.getSize();
 				size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(zip_entry_name);
+				copied_file_name=zip_entry_name;
 
 				int idx=zip_entry_name.indexOf(File.separator);
 				if(idx!=-1)
@@ -818,7 +821,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					counter_size_files+=zipEntry.getSize();
 					size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 					mutable_count_no_files.postValue(counter_no_files);
-					publishProgress(zip_entry_name);
+					copied_file_name=zip_entry_name;
 					String entry_name=zipEntry.getName();
 					int idx=entry_name.indexOf(File.separator);
 					if(idx!=-1)
@@ -866,6 +869,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			}
 		}
 
+		/*
 		@Override
 		protected void onProgressUpdate(String[] values)
 		{
@@ -873,6 +877,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 			super.onProgressUpdate(values);
 			copied_file_name=values[0];
 		}
+
+		 */
 
 		@Override
 		protected void onPostExecute(Boolean result)
@@ -883,7 +889,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -896,7 +902,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 		}
 	}
 
-	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
+	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 
 		final LinkedHashMap<Integer,String> deleted_file_path_index_hashmap=new LinkedHashMap<>();
@@ -913,7 +919,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_delete_selected_files)+" "+source_folder,notification_id);
 			}
@@ -1130,7 +1136,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			counter_size_files+=folder.length();
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 			mutable_count_no_files.postValue(counter_no_files);
-			publishProgress(folder.getName());
+			deleted_file_name=folder.getName();
 			success=folder.delete();
 
 			return success;
@@ -1167,7 +1173,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			counter_size_files+=folder.length();
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 			mutable_count_no_files.postValue(counter_no_files);
-			publishProgress(folder.getName());
+			deleted_file_name=folder.getName();
 			success=FileUtil.deleteSAFDirectory(context,folder.getAbsolutePath(),source_uri,source_uri_path);
 
 			return success;
@@ -1206,7 +1212,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			counter_size_files+=(!folder.isDirectory()) ? folder.getLength() : 0;
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 			mutable_count_no_files.postValue(counter_no_files);
-			publishProgress(folder.getName());
+			deleted_file_name=folder.getName();
 			try {
 				folder.delete();
 				success=true;
@@ -1253,7 +1259,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=folder.getSize();
 				size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(folder.getName());
+				deleted_file_name=folder.getName();
 				if(folder.isDirectory())
 				{
 					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
@@ -1269,6 +1275,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			return success;
 		}
 
+		/*
 		@Override
 		protected void onProgressUpdate(String... file_name)
 		{
@@ -1276,6 +1283,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 			super.onProgressUpdate(file_name);
 			deleted_file_name=file_name[0];
 		}
+
+		 */
 
 		@Override
 		protected void onPostExecute(Boolean result)
@@ -1286,7 +1295,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,!result,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -1305,7 +1314,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 		}
 	}
 
-	public class CutCopyAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
+	public class CutCopyAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		String duplicate_file_name;
 		List<String> overwritten_copied_file_name_list=new ArrayList<>();
@@ -1321,7 +1330,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,filePOJO, cut,true);
 				stopForeground(true);
 				stopSelf();
-				if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+				if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 				{
 					if(cut)
 					{
@@ -1390,8 +1399,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 										mutable_count_no_files.postValue(counter_no_files);
 									}
-									publishProgress(file);
-									String f_name=file.getName();
+									copied_file=file.getName();
 									String f_path=file.getAbsolutePath();
 									files_selected_array.remove(f_path);
 									it++;
@@ -1410,7 +1418,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity3.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1440,7 +1448,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 									size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 									mutable_count_no_files.postValue(counter_no_files);
 								}
-								publishProgress(file);
+								copied_file=file.getName();
 								copy_result=Copy_File_File(file,dest_file_path,cut);
 							}
 							else // that is cut and paste  from external directory
@@ -1546,7 +1554,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 										mutable_count_no_files.postValue(counter_no_files);
 									}
-									publishProgress(new File(src_file_path));
+									copied_file=src_file_name;
 									files_selected_array.remove(src_file_path);
 									it++;
 									copy_result=true;
@@ -1565,7 +1573,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity3.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1666,7 +1674,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 										mutable_count_no_files.postValue(counter_no_files);
 									}
-									publishProgress(new File(src_file_path));
+									copied_file=src_file_name;
 									files_selected_array.remove(src_file_path);
 									it++;
 									copy_result=true;
@@ -1685,7 +1693,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity3.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1834,7 +1842,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(source);
+				copied_file=source.getName();
 				success=FileUtil.copy_File_File(source,destination,cut);
 			}
 
@@ -1925,7 +1933,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(source);
+				copied_file=source.getName();
 				success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
 			}
 
@@ -1994,7 +2002,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(source);
+				copied_file=source.getName();
 				success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut);
 			}
 
@@ -2062,7 +2070,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(source);
+				copied_file=source.getName();
 				success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut);
 			}
 
@@ -2132,7 +2140,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=src_usbfile.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(new File(src_usbfile.getAbsolutePath()));
+				copied_file=new File(src_usbfile.getAbsolutePath()).getName();
 				success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut);
 			}
 			return success;
@@ -2200,7 +2208,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=src_usbfile.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(new File(src_usbfile.getAbsolutePath()));
+				copied_file=new File(src_usbfile.getAbsolutePath()).getName();
 				success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut);
 			}
 			return success;
@@ -2288,7 +2296,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=source.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(new File(source.getAbsolutePath()));
+				copied_file=new File(source.getAbsolutePath()).getName();
 				success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
 			}
 
@@ -2358,7 +2366,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=src_ftpfile.getSize();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(new File(src_file_path));
+				copied_file=new File(src_file_path).getName();
 				success=FileUtil.copy_FtpFile_File(src_file_path,destination,cut);
 			}
 
@@ -2434,7 +2442,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 				counter_size_files+=src_ftpfile.getSize();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
 				mutable_count_no_files.postValue(counter_no_files);
-				publishProgress(new File(src_file_path));
+				copied_file=new File(src_file_path).getName();
 				success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut);
 			}
 
@@ -2442,7 +2450,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 		}
 
 
-
+/*
 		@Override
 		protected void onProgressUpdate(File[] file)
 		{
@@ -2451,6 +2459,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 			copied_file=file[0].getName();
 
 		}
+
+ */
 
 		@Override
 		protected void onPostExecute(Boolean result)
@@ -2461,7 +2471,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity3.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
