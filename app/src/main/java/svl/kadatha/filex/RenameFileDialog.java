@@ -466,7 +466,7 @@ public class RenameFileDialog extends DialogFragment
 
 	}
 
-
+/*
 	private class RenameFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
 	{
 		boolean fileNameChanged = false;
@@ -594,6 +594,8 @@ public class RenameFileDialog extends DialogFragment
 			onRenameResult(fileNameChanged,new_name,filePOJO);
 		}
 	}
+
+ */
 
 	private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO)
 	{
@@ -734,7 +736,7 @@ public class RenameFileDialog extends DialogFragment
 		super.onDismiss(dialog);
 	}
 
-
+/*
 	private class RenameAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final Context context;
@@ -791,6 +793,8 @@ public class RenameFileDialog extends DialogFragment
 			onRenameResult(result,new_name,filePOJO);
 		}
 	}
+
+ */
 
 	private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
 	{

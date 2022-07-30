@@ -32,7 +32,7 @@ public class PropertiesDialog extends DialogFragment
 	private String size_of_files_format;
 	private ArrayList<String> files_selected_array=new ArrayList<>();
 	//private final ArrayList<File> files_selected_for_properties=new ArrayList<>();
-	private FileCountSize AsyncTaskFileCountSize;
+	//private FileCountSize AsyncTaskFileCountSize;
 	private FileObjectType fileObjectType;
 	private String source_folder;
 	private int size;
@@ -373,7 +373,7 @@ public class PropertiesDialog extends DialogFragment
 	}
 
 
-
+/*
 	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void> {
 		long total_size_of_files;
 		final List<String> source_list_files;
@@ -551,5 +551,7 @@ public class PropertiesDialog extends DialogFragment
 			super.onCancelled(result);
 		}
 	}
+
+ */
 
 }

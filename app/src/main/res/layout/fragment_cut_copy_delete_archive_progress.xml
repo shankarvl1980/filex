@@ -170,26 +170,45 @@
 
 	<TextView
 		android:id="@+id/fragment_cut_copy_delete_archive_no_files"
-		android:layout_width="0dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="start"
 		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-		app:layout_constraintEnd_toStartOf="@+id/fragment_cut_copy_delete_archive_size_files"
-		app:layout_constraintHorizontal_chainStyle="spread"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
 
-	<TextView
+
+		<TextView
+			android:id="@+id/fragment_cut_copy_delete_archive_total_no_files"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:gravity="start"
+			android:paddingEnd="@dimen/layout_margin"
+			app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
+			app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_size_files"
+			app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
+
+
+		<TextView
 		android:id="@+id/fragment_cut_copy_delete_archive_size_files"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:gravity="end"
 		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
+		app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_total_no_files"
+			app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_size_files"
 		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
+
+		<TextView
+			android:id="@+id/fragment_cut_copy_delete_archive_total_size_files"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="end"
+			android:paddingEnd="@dimen/layout_margin"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_size_files"
+			app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
+
 
 	<TextView
 		android:id="@+id/dialog_fragment_timetaken"

@@ -23,13 +23,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future1,future2,future3;
+    private Future<?> future1,future2,future3, future4;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
@@ -63,6 +65,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
+        if(future4!=null) future4.cancel(mayInterruptRunning);
         isCancelled=true;
     }
 
@@ -526,4 +529,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
         }
     }
+
+
 }

@@ -186,6 +186,8 @@ public class Global
 
 	static DividerItemDecoration DIVIDERITEMDECORATION;
 
+	static final String TAG="shankar";
+
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
 		List<UriPermission> permission_list=context.getContentResolver().getPersistedUriPermissions();

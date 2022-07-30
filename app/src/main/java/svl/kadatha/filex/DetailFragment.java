@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -712,7 +713,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			file_ext=file_name.substring(idx+1);
 		}
 
-		 if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
+		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
 			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path);
 			/*
@@ -828,6 +829,26 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 
 							ZipFile finalZipfile = zipfile;
+
+							progress_bar.setVisibility(View.VISIBLE);
+							ExtractZipFileViewModel extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
+							//extractZipFileViewModel.isFinished.setValue(false);
+							extractZipFileViewModel.extractZip(finalZipfile,zip_entry);
+							extractZipFileViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+								@Override
+								public void onChanged(Boolean aBoolean) {
+									if(aBoolean)
+									{
+										if(extractZipFileViewModel.isZipExtracted)
+										{
+											progress_bar.setVisibility(View.GONE);
+											file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+											extractZipFileViewModel.isZipExtracted=false;
+										}
+									}
+								}
+							});
+							/*
 							new svl.kadatha.filex.AsyncTask<Void,Void,Boolean>()
 							{
 								ProgressBarFragment pbf;
@@ -854,6 +875,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 								}
 							}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
+
+							 */
 
 						}
 						else

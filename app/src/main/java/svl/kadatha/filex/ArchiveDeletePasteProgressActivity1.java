@@ -2,11 +2,13 @@ package svl.kadatha.filex;
 
 import android.os.*;
 import android.content.*;
+import android.util.Log;
 import android.widget.*;
 import android.view.*;
 import android.widget.AbsListView.*;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.*;
@@ -19,7 +21,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity implements
 	private TextView from_textview;
 	private TextView to_textview;
 	private TextView copied_textview;
-	private TextView no_files,size_files;
+	private TextView no_files,size_files,total_no_of_files,total_size_files;
 	private EditText current_file;
 	private ServiceConnection serviceConnection;
 	private ArchiveDeletePasteFileService1 archiveDeletePasteFileService;
@@ -52,6 +54,8 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity implements
 		copied_textview.setKeyListener(null);
 		no_files=findViewById(R.id.fragment_cut_copy_delete_archive_no_files);
 		size_files=findViewById(R.id.fragment_cut_copy_delete_archive_size_files);
+		total_no_of_files=findViewById(R.id.fragment_cut_copy_delete_archive_total_no_files);
+		total_size_files=findViewById(R.id.fragment_cut_copy_delete_archive_total_size_files);
 		cancelProgressBar=findViewById(R.id.fragment_cut_copy_delete_progress_cancel_progress);
 		ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
@@ -127,6 +131,12 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity implements
 						}
 
 					});
+
+				if(archiveDeletePasteFileService!=null)
+				{
+					bind_data();
+				}
+
 			}
 
 			public void onServiceDisconnected(ComponentName componentName)
@@ -242,6 +252,8 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity implements
 		Intent service_intent=new Intent(this,ArchiveDeletePasteFileService1.class);
 		bindService(service_intent,serviceConnection,Context.BIND_AUTO_CREATE);
 
+
+/*
 		h.post(new Runnable()
 			{
 				public void run()
@@ -318,6 +330,93 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity implements
 					h.postDelayed(this,500);
 				}
 			});
+
+ */
+	}
+
+	private void bind_data()
+	{
+		if ("archive-zip".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action))
+		{
+			archiveDeletePasteFileService.fileCountSize.mutable_size_of_files_to_be_archived_copied.observe(this, new Observer<String>() {
+				@Override
+				public void onChanged(String s) {
+					total_no_of_files.setText("/" + archiveDeletePasteFileService.fileCountSize.total_no_of_files);
+					total_size_files.setText("/" + s);
+				}
+			});
+		}
+
+		archiveDeletePasteFileService.mutable_count_no_files.observe(this, new Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				switch(intent_action)
+				{
+					case "archive-zip":
+						//if(archiveDeletePasteFileService.archive_action!=null)
+					{
+						current_file.setText(archiveDeletePasteFileService.zip_folder_name);
+						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+
+						from_textview.setText(archiveDeletePasteFileService.zip_file_path);
+						to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
+
+						no_files.setText(""+integer);
+						size_files.setText(archiveDeletePasteFileService.size_of_files_archived);
+					}
+					break;
+
+					case "archive-unzip":
+
+						//if(archiveDeletePasteFileService.archive_action!=null)
+					{
+						from_textview.setText(archiveDeletePasteFileService.zip_file_path);
+						to_textview.setText(archiveDeletePasteFileService.zip_folder_name!=null ? archiveDeletePasteFileService.dest_folder+File.separator+archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
+						current_file.setText(archiveDeletePasteFileService.current_file_name);
+						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+						no_files.setText(getString(R.string.extracted) + ": " + integer + (integer < 2 ? " file" : " files"));
+						size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_archived);
+					}
+					break;
+
+					case "delete":
+						//if(archiveDeletePasteFileService.current_file_name!=null)
+					{
+						from_textview.setText(archiveDeletePasteFileService.source_folder);
+						current_file.setText(archiveDeletePasteFileService.current_file_name);
+						copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
+						if(archiveDeletePasteFileService.isFromInternal)
+						{
+							no_files.setText(getString(R.string.deleted) + ": " + integer + (integer < 2 ? " file" : " files"));
+							size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_format);
+						}
+
+					}
+
+					break;
+
+					case "paste-cut":
+					case "paste-copy":
+
+						//if(archiveDeletePasteFileService.dest_folder!=null)
+					{
+						from_textview.setText(archiveDeletePasteFileService.source_folder);
+						to_textview.setText(archiveDeletePasteFileService.dest_folder);
+
+						current_file.setText(archiveDeletePasteFileService.current_file_name);
+						copied_textview.setText(archiveDeletePasteFileService.copied_file);
+						no_files.setText(""+integer);
+						size_files.setText(archiveDeletePasteFileService.size_of_files_copied);
+
+					}
+					break;
+
+				}
+
+			}
+		});
+
+
 	}
 
 	@Override

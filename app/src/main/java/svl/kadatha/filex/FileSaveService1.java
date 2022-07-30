@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 
 import java.io.BufferedReader;
@@ -22,6 +23,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class FileSaveService1 extends Service
 {
@@ -38,6 +41,8 @@ public class FileSaveService1 extends Service
 	final LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
 	private NotifManager nm;
     static boolean SERVICE_COMPLETED=true;
+	private Future future;
+	private Handler handler;
 	
 	
 	@Override
@@ -48,6 +53,7 @@ public class FileSaveService1 extends Service
 		SERVICE_COMPLETED=false;
 		context=this;
 		nm=new NotifManager(context);
+		handler=new Handler();
 	}
 
 	@Override
@@ -71,7 +77,8 @@ public class FileSaveService1 extends Service
 			temporary_file_for_save=new File(bundle.getString("temporary_file_path"));
 			current_page=bundle.getInt("current_page");
 			
-			new FileSaveAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			//new FileSaveAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			filesave();
             int notification_id = 980;
             startForeground(notification_id,nm.build(getString(R.string.being_updated)+"-"+"'"+file.getName()+"'", notification_id));
 		
@@ -111,8 +118,98 @@ public class FileSaveService1 extends Service
 		SERVICE_COMPLETED=true;
 	}
 	
-	
-	
+
+	private void filesave()
+	{
+		String eol_string = null;
+		if(file==null || !file.exists())
+		{
+			return;
+		}
+
+		switch(altered_eol)
+		{
+
+			case FileEditorActivity.EOL_N:
+				eol_string="\n";
+				break;
+			case FileEditorActivity.EOL_R:
+				eol_string="\r";
+				break;
+			case FileEditorActivity.EOL_RN:
+				eol_string="\r\n";
+				break;
+		}
+
+
+		if(!eol_string.equals("\n"))
+		{
+			content=content.replaceAll("\n",eol_string);
+		}
+
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		String finalEol_string = eol_string;
+		future=executorService.submit(new Runnable() {
+			@Override
+			public void run() {
+				boolean result;
+				FileOutputStream fileOutputStream;
+				if(isWritable)
+				{
+					if(eol==altered_eol)
+					{
+						result=save_file(null,prev_page_end_point,current_page_end_point,content.getBytes());
+					}
+					else
+					{
+						result=save_file_with_altered_eol(null,prev_page_end_point,current_page_end_point,content, finalEol_string);
+					}
+
+				}
+				else
+				{
+
+					fileOutputStream=FileUtil.get_fileoutputstream(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
+					if(fileOutputStream!=null)
+					{
+						if(eol==altered_eol)
+						{
+							result=save_file(fileOutputStream,prev_page_end_point,current_page_end_point,content.getBytes());
+
+						}
+						else
+						{
+							result=save_file_with_altered_eol(fileOutputStream,prev_page_end_point,current_page_end_point,content, finalEol_string);
+						}
+
+
+					}
+					else
+					{
+						result=false;
+					}
+
+
+				}
+
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if(fileSaveServiceCompletionListener!=null)
+						{
+							fileSaveServiceCompletionListener.onServiceCompletion(result);
+						}
+						stopForeground(true);
+						stopSelf();
+						SERVICE_COMPLETED=true;
+
+					}
+				});
+			}
+		});
+	}
+
+	/*
 	private class FileSaveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void, Boolean>
 	{
 		FileOutputStream fileOutputStream;
@@ -233,6 +330,8 @@ public class FileSaveService1 extends Service
 		}
 
 	}
+
+	 */
 
 	private boolean save_file(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, byte[] content)
 	{

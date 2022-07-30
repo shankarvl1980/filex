@@ -8,6 +8,10 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileInputStream;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
@@ -46,16 +50,17 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 	private NotifManager nm;
 	private final int notification_id=880;
-	int total_no_of_files;
-	long total_size_of_files;
-	String size_of_files_to_be_archived_copied;
+	//	int total_no_of_files;
+//	long total_size_of_files;
+//	String size_of_files_to_be_archived_copied;
 	String size_of_files_archived;
-	int counter_no_files;
-	long counter_size_files;
+	public MutableLiveData<Integer>mutable_count_no_files=new MutableLiveData<>();
+	private int counter_no_files;
+	private long counter_size_files;
 	String copied_file_name;
 	final List<Integer> total_folderwise_no_of_files=new ArrayList<>();
 	final List<Long> total_folderwise_size_of_files=new ArrayList<>();
-	private ArchiveDeletePasteServiceUtil.FileCountSize fileCountSize;
+	public ArchiveDeletePasteServiceUtil.FileCountSize fileCountSize;
 	private ArchiveAsyncTask archiveAsyncTask;
 	private UnarchiveAsyncTask unarchiveAsyncTask;
 	private String tree_uri_path="",source_uri_path="";
@@ -124,8 +129,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 					tree_uri_path=bundle.getString("tree_uri_path");
 					tree_uri=bundle.getParcelable("tree_uri");
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,2);
-					fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,1);
+					fileCountSize.fileCount();
 					archiveAsyncTask=new ArchiveAsyncTask();
 					archiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.zipping)+" '"+zip_folder_name+".zip "+getString(R.string.at)+" "+dest_folder;
@@ -190,12 +195,13 @@ public class ArchiveDeletePasteFileService2 extends Service
 					cut=bundle.getBoolean("cut");
 					isWritable=bundle.getBoolean("isWritable");
 					source_folder=bundle.getString("source_folder");
-					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,2);
-					fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,1);
+					fileCountSize.fileCount();
 
 
 					dest_file_names=new ArrayList<>();
 					List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+
 					if(destFilePOJOs==null)
 					{
 						UsbFile currentUsbFile=null;
@@ -214,6 +220,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 						FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),destFileObjectType,dest_folder,currentUsbFile,false);
 						destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
 					}
+
+
 					for(FilePOJO filePOJO:destFilePOJOs)
 					{
 						dest_file_names.add(filePOJO.getName());
@@ -249,6 +257,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			{
 				counter_no_files+=total_folderwise_no_of_files.get(it);
 				counter_size_files+=total_folderwise_size_of_files.get(it);
+				mutable_count_no_files.setValue(counter_no_files);
 				it++;
 			}
 
@@ -348,7 +357,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_CANCEL(context,dest_folder,zip_file_name,destFileObjectType,tree_uri,tree_uri_path,zipUsbFile);
 			stopForeground(true);
 			stopSelf();
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_create)+" '"+zip_file_name+"'",notification_id);
 			}
@@ -465,6 +474,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 							counter_no_files++;
 							counter_size_files+=(!file.isDirectory()) ? file.getLength() : 0;
 							size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+							mutable_count_no_files.postValue(counter_no_files);
 							publishProgress(file.getName());
 							String zip_entry_path=(lengthParentPath!=0) ? file.getAbsolutePath().substring(lengthParentPath+1):file.getAbsolutePath().substring(file.getParent().getAbsolutePath().length()+1);
 
@@ -533,6 +543,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=file.length();
 				size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(file.getName());
 				String zip_entry_path=(lengthParentPath!=0) ? file.getCanonicalPath().substring(lengthParentPath+1):file.getCanonicalPath().substring(file.getParentFile().getCanonicalPath().length()+1);
 
@@ -575,7 +586,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -624,7 +635,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_extract)+" '"+new File(zip_file_path).getName()+"'",notification_id);
 			}
@@ -725,6 +736,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=zipEntry.getSize();
 				size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(zip_entry_name);
 
 				int idx=zip_entry_name.indexOf(File.separator);
@@ -805,6 +817,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					counter_no_files++;
 					counter_size_files+=zipEntry.getSize();
 					size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+					mutable_count_no_files.postValue(counter_no_files);
 					publishProgress(zip_entry_name);
 					String entry_name=zipEntry.getName();
 					int idx=entry_name.indexOf(File.separator);
@@ -870,7 +883,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -900,7 +913,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(getString(R.string.could_not_delete_selected_files)+" "+source_folder,notification_id);
 			}
@@ -963,7 +976,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 				}
 				if(success)
 				{
-					//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file_path);
 					deleted_file_names.add(current_file_name);
 					deleted_files_path_list.add(file_path);
 				}
@@ -996,7 +1008,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 						success=deleteNativeDirectory(f);
 						if(success)
 						{
-							//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),f.getAbsolutePath());
 							deleted_file_names.add(current_file_name);
 							deleted_files_path_list.add(file_path);
 						}
@@ -1017,7 +1028,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 						success=deleteSAFDirectory(file);
 						if(success)
 						{
-							//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file.getAbsolutePath());
 							deleted_file_names.add(current_file_name);
 							deleted_files_path_list.add(file_path);
 						}
@@ -1039,7 +1049,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=deleteUsbDirectory(f);
 					if(success)
 					{
-						//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),f.getAbsolutePath());
 						deleted_file_names.add(current_file_name);
 						deleted_files_path_list.add(file_path);
 
@@ -1115,13 +1124,12 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 					}
 				}
-
-
 			}
 
 			counter_no_files++;
 			counter_size_files+=folder.length();
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+			mutable_count_no_files.postValue(counter_no_files);
 			publishProgress(folder.getName());
 			success=folder.delete();
 
@@ -1158,6 +1166,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			counter_no_files++;
 			counter_size_files+=folder.length();
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+			mutable_count_no_files.postValue(counter_no_files);
 			publishProgress(folder.getName());
 			success=FileUtil.deleteSAFDirectory(context,folder.getAbsolutePath(),source_uri,source_uri_path);
 
@@ -1196,6 +1205,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			counter_no_files++;
 			counter_size_files+=(!folder.isDirectory()) ? folder.getLength() : 0;
 			size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+			mutable_count_no_files.postValue(counter_no_files);
 			publishProgress(folder.getName());
 			try {
 				folder.delete();
@@ -1242,6 +1252,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=folder.getSize();
 				size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(folder.getName());
 				if(folder.isDirectory())
 				{
@@ -1275,7 +1286,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,!result,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
@@ -1310,7 +1321,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				String notification_content=ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,dest_folder,sourceFileObjectType,destFileObjectType,filePOJO, cut,true);
 				stopForeground(true);
 				stopSelf();
-				if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+				if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 				{
 					if(cut)
 					{
@@ -1377,6 +1388,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 										counter_no_files+=total_folderwise_no_of_files.get(it);
 										counter_size_files+=total_folderwise_size_of_files.get(it);
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+										mutable_count_no_files.postValue(counter_no_files);
 									}
 									publishProgress(file);
 									String f_name=file.getName();
@@ -1398,7 +1410,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity2.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1426,6 +1438,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 									counter_no_files+=total_folderwise_no_of_files.get(it);
 									counter_size_files+=total_folderwise_size_of_files.get(it);
 									size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+									mutable_count_no_files.postValue(counter_no_files);
 								}
 								publishProgress(file);
 								copy_result=Copy_File_File(file,dest_file_path,cut);
@@ -1531,6 +1544,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 										counter_no_files+=total_folderwise_no_of_files.get(it);
 										counter_size_files+=total_folderwise_size_of_files.get(it);
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+										mutable_count_no_files.postValue(counter_no_files);
 									}
 									publishProgress(new File(src_file_path));
 									files_selected_array.remove(src_file_path);
@@ -1551,7 +1565,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity2.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1650,6 +1664,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 										counter_no_files+=total_folderwise_no_of_files.get(it);
 										counter_size_files+=total_folderwise_size_of_files.get(it);
 										size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+										mutable_count_no_files.postValue(counter_no_files);
 									}
 									publishProgress(new File(src_file_path));
 									files_selected_array.remove(src_file_path);
@@ -1670,7 +1685,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 					if(duplicate_found && !replace)
 					{
-						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity2.class);
+						Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("cut",cut);
 						intent.putExtra("REPLACE_ACTION", REPLACE_ACTION);
@@ -1785,6 +1800,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				if(files_name_array==null)
 				{
 					++counter_no_files;
+					mutable_count_no_files.postValue(counter_no_files);
 					return true;
 				}
 
@@ -1801,6 +1817,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_File_File(srcFile,inner_dest_file_path,cut);
 				}
 				++counter_no_files;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteNativeDirectory(source);
@@ -1816,6 +1833,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(source);
 				success=FileUtil.copy_File_File(source,destination,cut);
 			}
@@ -1874,6 +1892,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				if(files_name_list==null)
 				{
 					++counter_no_files;
+					mutable_count_no_files.postValue(counter_no_files);
 					return true;
 				}
 				int size=files_name_list.length;
@@ -1889,6 +1908,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteNativeDirectory(source);
@@ -1904,6 +1924,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(source);
 				success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
 			}
@@ -1941,6 +1962,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				if(files_name_list==null)
 				{
 					++counter_no_files;
+					mutable_count_no_files.postValue(counter_no_files);
 					return true;
 				}
 				int size=files_name_list.length;
@@ -1955,6 +1977,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteNativeDirectory(source);
@@ -1970,6 +1993,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(source);
 				success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut);
 			}
@@ -2006,6 +2030,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				if(files_name_list==null)
 				{
 					++counter_no_files;
+					mutable_count_no_files.postValue(counter_no_files);
 					return true;
 				}
 				int size=files_name_list.length;
@@ -2020,6 +2045,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteNativeDirectory(source);
@@ -2035,6 +2061,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=source.length();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(source);
 				success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut);
 			}
@@ -2089,6 +2116,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_UsbFile_UsbFile(inner_usbfile, file_path, inner_usbfile.getName(),cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteUsbDirectory(src_usbfile);
@@ -2103,6 +2131,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=src_usbfile.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(new File(src_usbfile.getAbsolutePath()));
 				success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut);
 			}
@@ -2155,6 +2184,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteUsbDirectory(src_usbfile);
@@ -2169,6 +2199,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=src_usbfile.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(new File(src_usbfile.getAbsolutePath()));
 				success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut);
 			}
@@ -2240,6 +2271,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteUsbDirectory(source);
@@ -2255,6 +2287,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=source.getLength();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(new File(source.getAbsolutePath()));
 				success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
 			}
@@ -2309,6 +2342,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					success=Copy_FtpFile_File(inner_source_file,inner_dest_file, inner_ftpfile_name,cut);
 				}
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteFtpDirectory(src_file_path);
@@ -2323,6 +2357,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=src_ftpfile.getSize();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(new File(src_file_path));
 				success=FileUtil.copy_FtpFile_File(src_file_path,destination,cut);
 			}
@@ -2382,6 +2417,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				}
 
 				counter_no_files++;
+				mutable_count_no_files.postValue(counter_no_files);
 				if(success&&cut)
 				{
 					FileUtil.deleteFtpDirectory(src_file_path);
@@ -2397,6 +2433,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_no_files++;
 				counter_size_files+=src_ftpfile.getSize();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+				mutable_count_no_files.postValue(counter_no_files);
 				publishProgress(new File(src_file_path));
 				success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut);
 			}
@@ -2424,7 +2461,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			if(!ArchiveDeletePasteProgressActivity2.PROGRESS_ACTIVITY_SHOWN)
+			if(!ArchiveDeletePasteProgressActivity1.PROGRESS_ACTIVITY_SHOWN)
 			{
 				nm.notify(notification_content,notification_id);
 			}
