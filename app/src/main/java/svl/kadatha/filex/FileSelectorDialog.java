@@ -200,7 +200,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		{
 			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
 			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-			filled_filePOJOs=true;
 			after_filledFilePojos_procedure();
 		}
 
