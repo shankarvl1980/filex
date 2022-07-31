@@ -9,6 +9,7 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;
@@ -108,7 +109,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
                 }
 
-
+                Log.d(Global.TAG,"currently shown file "+currently_shown_file.getName());
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
                 if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+ finalSource_folder))
                 {

@@ -829,11 +829,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 
 							ZipFile finalZipfile = zipfile;
-
 							progress_bar.setVisibility(View.VISIBLE);
 							ExtractZipFileViewModel extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
-							//extractZipFileViewModel.isFinished.setValue(false);
-							extractZipFileViewModel.extractZip(finalZipfile,zip_entry);
+							extractZipFileViewModel.extractZip(filePOJO,finalZipfile,zip_entry);
 							extractZipFileViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 								@Override
 								public void onChanged(Boolean aBoolean) {
@@ -842,32 +840,32 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 										if(extractZipFileViewModel.isZipExtracted)
 										{
 											progress_bar.setVisibility(View.GONE);
-											file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+											file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName());
 											extractZipFileViewModel.isZipExtracted=false;
+											extractZipFileViewModel.isFinished.setValue(false);
 										}
 									}
 								}
 							});
-							/*
+/*
 							new svl.kadatha.filex.AsyncTask<Void,Void,Boolean>()
 							{
 								ProgressBarFragment pbf;
 								@Override
 								protected void onPreExecute() {
 									super.onPreExecute();
-									pbf=ProgressBarFragment.newInstance();
-									pbf.show(mainActivity.fm,null);
+									progress_bar.setVisibility(View.VISIBLE);
 								}
 
 								@Override
 								protected Boolean doInBackground(Void... voids) {
-									return ExtractZipFile.read_zipentry(context, finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
+									return ExtractZipFileViewModel.EXTRACT_ZIP(finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
 								}
 
 								@Override
 								protected void onPostExecute(Boolean aBoolean) {
 									super.onPostExecute(aBoolean);
-									pbf.dismissAllowingStateLoss();
+									progress_bar.setVisibility(View.GONE);
 									if(aBoolean)
 									{
 										file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
@@ -876,7 +874,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								}
 							}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 
-							 */
+ */
 
 						}
 						else
@@ -910,7 +908,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 			});
 	}
-	
+
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{

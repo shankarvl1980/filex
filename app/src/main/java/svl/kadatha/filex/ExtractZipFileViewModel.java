@@ -25,6 +25,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 	private Future<?> future1,future2,future3, future4;
 	public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 	public boolean isZipExtracted;
+	public FilePOJO filePOJO;
 
 
 
@@ -52,22 +53,23 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 		return isCancelled;
 	}
 
-	public synchronized void extractZip(ZipFile finalZipfile, ZipEntry zip_entry)
+	public synchronized void extractZip(FilePOJO filePOJO,ZipFile finalZipfile, ZipEntry zip_entry)
 	{
-		//if(Boolean.TRUE.equals(isFinished.getValue()) ==true)return;
+		if(Boolean.TRUE.equals(isFinished.getValue()) ==true)return;
 		isZipExtracted=false;
+		this.filePOJO=filePOJO;
 		ExecutorService executorService=MyExecutorService.getExecutorService();
 		future1=executorService.submit(new Runnable() {
 			@Override
 			public void run() {
-				isZipExtracted=read_zipentry(finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
+				isZipExtracted=EXTRACT_ZIP(finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
 				isFinished.postValue(true);
 			}
 		});
 	}
 
 
-	private boolean read_zipentry(ZipFile zipfile, ZipEntry zipEntry, File ZipDestFolder)
+	public static boolean EXTRACT_ZIP(ZipFile zipfile, ZipEntry zipEntry, File ZipDestFolder)
 	{
 		InputStream inStream=null;
 
