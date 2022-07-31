@@ -567,18 +567,18 @@ public class ArchiveDeletePasteServiceUtil {
 //        MutableLiveData<Integer> mutable_total_no_of_files=new MutableLiveData<>();
 //        MutableLiveData<Long> mutable_total_size_of_files=new MutableLiveData<>();
         MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
-        final int service_number;
+//        final int service_number;
         String source_folder;
-        ArchiveDeletePasteFileService1 service1;
-        ArchiveDeletePasteFileService2 service2;
-        ArchiveDeletePasteFileService3 service3;
+//        ArchiveDeletePasteFileService1 service1;
+//        ArchiveDeletePasteFileService2 service2;
+//        ArchiveDeletePasteFileService3 service3;
 
 
         private boolean isCancelled;
         private Future<?> future1,future2,future3, future4;
 
 
-        FileCountSize(Context context,List<String> files_selected_array, Uri source_uri,String source_uri_path, FileObjectType sourceFileObjectType, int service_number)
+        FileCountSize(Context context,List<String> files_selected_array, Uri source_uri,String source_uri_path, FileObjectType sourceFileObjectType)
         {
             this.context=context;
             this.files_selected_array=files_selected_array;
@@ -586,7 +586,7 @@ public class ArchiveDeletePasteServiceUtil {
             this.target_uri= source_uri;
             this.target_uri_path= source_uri_path;
             this.sourceFileObjectType=sourceFileObjectType;
-            this.service_number=service_number;
+
         }
 
 

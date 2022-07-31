@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -98,6 +99,7 @@ public class InstaCropperActivity extends AppCompatActivity {
     private Uri mOutputUri;
     private String file_name;
     public static final String ACTIVITY_NAME="INSTA_CROPPER_ACTIVITY";
+    public FrameLayout progress_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,8 @@ public class InstaCropperActivity extends AppCompatActivity {
         });
 
         mInstaCropper = findViewById(R.id.instacropper);
+        progress_bar=findViewById(R.id.instacropper_activity_progressbar);
+        progress_bar.setVisibility(View.GONE);
         localBroadcastManager= LocalBroadcastManager.getInstance(this);
         Intent intent = getIntent();
 

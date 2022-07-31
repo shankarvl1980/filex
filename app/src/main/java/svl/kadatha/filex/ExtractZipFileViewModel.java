@@ -55,7 +55,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 	public synchronized void extractZip(FilePOJO filePOJO,ZipFile finalZipfile, ZipEntry zip_entry)
 	{
-		if(Boolean.TRUE.equals(isFinished.getValue()) ==true)return;
+		if(Boolean.TRUE.equals(isFinished.getValue()))return;
 		isZipExtracted=false;
 		this.filePOJO=filePOJO;
 		ExecutorService executorService=MyExecutorService.getExecutorService();

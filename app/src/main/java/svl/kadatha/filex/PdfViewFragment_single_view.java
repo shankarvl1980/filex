@@ -57,7 +57,10 @@ public class PdfViewFragment_single_view extends Fragment
     private String file_path;
     //private FilePOJO currently_shown_file;
     //private File pdf_file;
-
+    private long availableHeapMemory;
+    public static final int SAFE_MEMORY_BUFFER=3;
+//    private int density_dpi;
+//    private int image_view_width,image_view_height;
     private Handler handler;
     //private int image_selected_idx=0,previously_selected_image_idx=0;
     private PdfViewPagerAdapter pdf_view_adapter;
@@ -73,6 +76,7 @@ public class PdfViewFragment_single_view extends Fragment
     //private String tree_uri_path="";
     //private Uri tree_uri;
     private final int saf_request_code=268;
+    //private PdfRenderer pdfRenderer;
     //private DeleteFileAsyncTask delete_file_async_task;
     private boolean asynctask_running;
     private Uri data;
@@ -98,7 +102,7 @@ public class PdfViewFragment_single_view extends Fragment
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp,fromArchiveView;
 
-    public static final int SAFE_MEMORY_BUFFER=3;
+
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
     private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
@@ -122,7 +126,6 @@ public class PdfViewFragment_single_view extends Fragment
             file_path = bundle.getString("file_path");
             fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
             fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-            Log.d(Global.TAG,"is from archive view "+fromArchiveView);
         }
 
         if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -473,6 +476,11 @@ public class PdfViewFragment_single_view extends Fragment
         return v;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        availableHeapMemory=Global.AVAILABLE_MEMORY_MB();
+    }
 
     public static PdfViewFragment_single_view getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
     {
@@ -626,31 +634,10 @@ public class PdfViewFragment_single_view extends Fragment
                     image_view_on_click_procedure();
                 }
             });
+
             v.setTag(position);
             container.addView(v);
             new BitmapFetchAsyncTask(position).execute();
-//            progress_bar.setVisibility(View.VISIBLE);
-//            viewModel.isPdfBitmapFetched.setValue(false);
-//            viewModel.fetchBitmapFromPDF(position);
-//            viewModel.isPdfBitmapFetched.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-//                @Override
-//                public void onChanged(Boolean aBoolean) {
-//                    if(aBoolean)
-//                    {
-//                        if(viewModel.out_of_memory_exception_thrown)((PdfViewActivity)context).finish();
-//                        View view=view_pager.findViewWithTag(viewModel.pdf_current_position);
-//                        if(view !=null)
-//                        {
-//                            FrameLayout frameLayout=(FrameLayout) view;
-//                            ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
-//                            GlideApp.with(context).load(viewModel.bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
-//                            view.setTag("loaded");
-//                        }
-//                        progress_bar.setVisibility(View.GONE);
-//                    }
-//                }
-//            });
-
             return v;
         }
 
@@ -672,6 +659,44 @@ public class PdfViewFragment_single_view extends Fragment
 
     }
 
+/*
+    public synchronized void fetchBitmapFromPDF(int position)
+    {
+        if(Boolean.TRUE.equals(viewModel.isPdfBitmapFetched.getValue())) return;
+        final Bitmap[] bitmap = new Bitmap[1];
+        ExecutorService executorService= Executors.newSingleThreadExecutor();//MyExecutorService.getExecutorService();
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                if(viewModel.size_per_page_MB*3<(availableHeapMemory-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
+                    try {
+                        bitmap[0] =getBitmap(viewModel.pdfRenderer,position);
+                    }
+                    catch (SecurityException e)
+                    {
+                        Global.print_background_thread(context,getString(R.string.security_exception_thrown));
+
+                    }
+                    catch (OutOfMemoryError error)
+                    {
+                        Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
+                        ((PdfViewActivity)context).finish();
+                    }
+                    catch (Exception e)
+                    {
+                        Global.print_background_thread(context,getString(R.string.exception_thrown));
+
+                    }
+                    viewModel.isPdfBitmapFetched.postValue(true);
+                }
+            }
+        });
+    }
+
+ */
+
+
+
 
     private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
     {
@@ -685,22 +710,17 @@ public class PdfViewFragment_single_view extends Fragment
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            if(pbf!=null)
-//            {
-//                pbf.dismissAllowingStateLoss();
-//            }
-//
-//            pbf=ProgressBarFragment.newInstance();
-//            pbf.show(((PdfViewActivity)context).fm,"");
             progress_bar.setVisibility(View.VISIBLE);
+
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if(viewModel.size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-SAFE_MEMORY_BUFFER)) {
+            if(viewModel.size_per_page_MB*6<(availableHeapMemory-SAFE_MEMORY_BUFFER)) {
 
                 try {
                     bitmap=getBitmap(viewModel.pdfRenderer,position);
+
                 }
                 catch (SecurityException e)
                 {
@@ -717,6 +737,11 @@ public class PdfViewFragment_single_view extends Fragment
                 }
 
             }
+            else
+            {
+                Global.print_background_thread(context,getString(R.string.file_is_big));
+            }
+
             return null;
         }
 
@@ -740,9 +765,15 @@ public class PdfViewFragment_single_view extends Fragment
 
     private Bitmap getBitmap(PdfRenderer pdfRenderer, int i)
     {
+
         PdfRenderer.Page page= pdfRenderer.openPage(i);
-        Bitmap bitmap=Bitmap.createBitmap(page.getWidth(),page.getHeight(),
-                Bitmap.Config.ARGB_8888);
+        int pageWidth=page.getWidth();
+        int pageHeight=page.getHeight();
+        //int pdf_density=density_dpi/72;
+        //float scale = Math.min((float) image_view_width / pageWidth, (float) image_view_height / pageHeight);
+        int required_width= 2*pageWidth;
+        int required_height= 2*pageHeight;
+        Bitmap bitmap=Bitmap.createBitmap(required_width,required_height, Bitmap.Config.ARGB_8888);
         Canvas canvas=new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
         canvas.drawBitmap(bitmap,0f,0f,null);

@@ -10,7 +10,6 @@ import android.os.IBinder;
 
 
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileInputStream;
@@ -129,7 +128,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					tree_uri_path=bundle.getString("tree_uri_path");
 					tree_uri=bundle.getParcelable("tree_uri");
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,1);
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
 					archiveAsyncTask=new ArchiveAsyncTask();
 					archiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -195,7 +194,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 					cut=bundle.getBoolean("cut");
 					isWritable=bundle.getBoolean("isWritable");
 					source_folder=bundle.getString("source_folder");
-					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType,1);
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
 
 

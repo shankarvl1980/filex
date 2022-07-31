@@ -24,6 +24,7 @@ import android.view.animation.DecelerateInterpolator;
 
 public class InstaCropperView extends View {
 
+    public Context context;
     public static final float DEFAULT_MINIMUM_RATIO = 4F/5F;
     public static final float DEFAULT_MAXIMUM_RATIO = 1.91F;
     public static final float DEFAULT_RATIO = 1F;
@@ -74,16 +75,19 @@ public class InstaCropperView extends View {
 
     public InstaCropperView(Context context) {
         super(context);
+        this.context=context;
         initialize(context, null, 0, 0);
     }
 
     public InstaCropperView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context=context;
         initialize(context, attrs, 0, 0);
     }
 
     public InstaCropperView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context=context;
         initialize(context, attrs, defStyleAttr, 0);
     }
 
@@ -185,12 +189,10 @@ public class InstaCropperView extends View {
 
         new svl.kadatha.filex.AsyncTask<Void, Void, Bitmap>() {
 
-            ProgressBarFragment pbf;
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                pbf=ProgressBarFragment.newInstance();
-                pbf.show(((InstaCropperActivity)getContext()).getSupportFragmentManager(),"");
+                ((InstaCropperActivity)context).progress_bar.setVisibility(VISIBLE);
             }
 
             @Override
@@ -304,7 +306,7 @@ public class InstaCropperView extends View {
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 //callback.onBitmapReady(bitmap);
-                pbf.dismissAllowingStateLoss();
+                ((InstaCropperActivity)context).progress_bar.setVisibility(GONE);
             }
 
         }.execute();

@@ -9,7 +9,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;
@@ -109,7 +108,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
                 }
 
-                Log.d(Global.TAG,"currently shown file "+currently_shown_file.getName());
+
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
                 if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+ finalSource_folder))
                 {
@@ -355,7 +354,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                if(size_per_page_MB*3<(Global.AVAILABLE_MEMORY_MB()-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
+                if(size_per_page_MB*6<(Global.AVAILABLE_MEMORY_MB()-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
                     pdf_current_position=position;
                     try {
                         bitmap=getBitmap(pdfRenderer,position);

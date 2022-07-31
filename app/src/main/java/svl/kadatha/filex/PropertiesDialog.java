@@ -16,8 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.util.*;
 import java.io.*;
 

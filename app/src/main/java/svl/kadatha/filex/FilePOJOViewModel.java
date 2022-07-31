@@ -23,8 +23,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 

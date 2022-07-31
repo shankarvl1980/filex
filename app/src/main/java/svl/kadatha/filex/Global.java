@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.DocumentsContract;
@@ -885,11 +884,12 @@ public class Global
 		}
 	}
 
-	public static double AVAILABLE_MEMORY_MB(){
-		double max = Runtime.getRuntime().maxMemory()/1024;
-		Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
-		Debug.getMemoryInfo(memoryInfo);
-		return (max - memoryInfo.getTotalPss())/1024;
+	public static long AVAILABLE_MEMORY_MB(){
+		Runtime runtime=Runtime.getRuntime();
+		long usedMemInMB=(runtime.totalMemory()-runtime.freeMemory())/1048576L;
+		long maxHeapSizeInMB=runtime.maxMemory()/1048576L;
+		long availableHeapSizeMB=maxHeapSizeInMB-usedMemInMB;
+		return availableHeapSizeMB;
 	}
 
 	public static long GET_URI_FILE_SIZE(Uri fileUri,Context context) {
@@ -936,6 +936,46 @@ public class Global
 				Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+
+	private static int calculateInSampleSize(
+			BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) >= reqHeight
+					&& (halfWidth / inSampleSize) >= reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
+	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+														 int reqWidth, int reqHeight) {
+
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeResource(res, resId, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeResource(res, resId, options);
 	}
 }
 

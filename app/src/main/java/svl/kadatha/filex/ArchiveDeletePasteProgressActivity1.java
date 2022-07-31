@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 
 import android.os.*;
 import android.content.*;
-import android.util.Log;
 import android.widget.*;
 import android.view.*;
 import android.widget.AbsListView.*;

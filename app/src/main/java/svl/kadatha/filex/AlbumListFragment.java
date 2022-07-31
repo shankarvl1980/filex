@@ -347,8 +347,7 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 				//public List<AlbumPOJO> album_selected_array=new ArrayList<>();
 				//public static Bitmap SELECTED_ALBUM_ART;
-				List<AlbumPOJO> album_selected_pojo_copy = new ArrayList<>();
-				album_selected_pojo_copy.addAll(audioListViewModel.album_selected_array);
+				List<AlbumPOJO> album_selected_pojo_copy = new ArrayList<>(audioListViewModel.album_selected_array);
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
 
 				/*
