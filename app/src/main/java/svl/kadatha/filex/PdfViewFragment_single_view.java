@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -739,7 +738,7 @@ public class PdfViewFragment_single_view extends Fragment
             }
             else
             {
-                Global.print_background_thread(context,getString(R.string.file_is_big));
+                Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
             }
 
             return null;
