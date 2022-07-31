@@ -26,6 +26,7 @@
 	<string name="audio_list_created">audio list created.</string>
 
 	<string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/\' and new line characters</string>
+	<string name="avoid_name_involving_period_characters">Avoid name involving characters \'.,\'</string>
 	<string name="maximum_3_services_processed">Maximum 3 services only be processed at a time.</string>
 	<string name="directory_not_exist_not_valid">Directory mentioned does not exist or not valid.</string>
 	<string name="extract">Extract</string>
@@ -345,6 +346,9 @@
 	<string name="upper_bound_colon">Upper bound:</string>
 	<string name="deleted_audio_file">Deleted the audio file</string>
 	<string name="deleted_file">Deleted the file</string>
+    <string name="name_contains_space">name contains space</string>
+	<string name="name_field_cannot_be_empty">Name field cannot be empty</string>
+	<string name="a_list_exists_with_given_name">A list already exists with the given name</string>
 
 
 	<string-array name="library_categories">

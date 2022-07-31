@@ -83,18 +83,29 @@ public class SaveNewAudioListDialog extends DialogFragment
 					String new_name=new_file_name_edittext.getText().toString().trim();
 					if(new_name.equals("") || new_name.equals(null))
 					{
-						Global.print(context,"Name field cannot be empty");
+						Global.print(context,getString(R.string.name_field_cannot_be_empty));
 						return;
 					}
 					if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
 					{
-						Global.print(context,"Avoid name involving characters '\\*:?/'");
+						Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+						return;
+					}
+					if(new_name.contains(".") || new_name.contains(",") || new_name.contains("'"))
+					{
+						Global.print(context,getString(R.string.avoid_name_involving_period_characters));
+						return;
+					}
+
+					if(!new_name.matches("\\S+"))
+					{
+						Global.print(context,getString(R.string.name_contains_space));
 						return;
 					}
 					
 					if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(new_name))
 					{
-						Global.print(context,"'"+new_name+"' can not be created. A file with the same name already exists");
+						Global.print(context,getString(R.string.a_list_exists_with_given_name));
 						imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 						dismissAllowingStateLoss();
 						return;
