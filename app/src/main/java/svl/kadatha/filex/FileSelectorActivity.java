@@ -231,6 +231,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         searchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
+                if(fileSelectorDialog.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
                 if(!search_toolbar_visible)
                 {
                     set_visibility_searchbar(true);
@@ -430,11 +436,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public void set_visibility_searchbar(boolean visible)
     {
         FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fm.findFragmentById(R.id.file_selector_container);
-        if(!fileSelectorDialog.filled_filePOJOs)
+        if(fileSelectorDialog.progress_bar.getVisibility()==View.VISIBLE && visible)
         {
             Global.print(context,getString(R.string.please_wait));
             return;
         }
+
         search_toolbar_visible=visible;
         if(search_toolbar_visible)
         {

@@ -49,7 +49,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	//private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
-	public boolean filled_filePOJOs;
+	//public boolean filled_filePOJOs;
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	private final int request_code=5678;
