@@ -433,6 +433,7 @@ public class AudioPlayFragment extends Fragment
 
 								}
 								progress_bar.setVisibility(View.GONE);
+
 							}
 						}
 					});

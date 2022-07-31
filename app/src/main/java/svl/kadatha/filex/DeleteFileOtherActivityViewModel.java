@@ -75,6 +75,14 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                     isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
                 }
                 deleteFromFolder(src_file_list,fileObjectType,tree_uri,tree_uri_path);
+                if(deleted_files.size()>0)
+                {
+                    Global.print_background_thread(application,application.getString(R.string.deleted_file));
+                }
+                else
+                {
+                    Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
+                }
                 isFinished.postValue(true);
             }
         });
@@ -175,6 +183,14 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                     isFromInternal=FileUtil.isFromInternal(fileObjectType,src_audio_file_list.get(0).getData());
                 }
                 deleteAudioPOJOFromFolder(src_audio_file_list,fileObjectType,tree_uri,tree_uri_path);
+                if(deleted_audio_files.size()>0)
+                {
+                    Global.print_background_thread(application,application.getString(R.string.deleted_audio_file));
+                }
+                else
+                {
+                    Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
+                }
                 isFinished.postValue(true);
             }
         });
