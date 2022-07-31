@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -95,12 +96,13 @@ public class PdfViewFragment_single_view extends Fragment
     //private String source_folder;
 
     private FileObjectType fileObjectType;
-    private boolean fromThirdPartyApp;
+    private boolean fromThirdPartyApp,fromArchiveView;
 
     public static final int SAFE_MEMORY_BUFFER=3;
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
     private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -118,8 +120,9 @@ public class PdfViewFragment_single_view extends Fragment
         if(bundle!=null)
         {
             file_path = bundle.getString("file_path");
-            boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
+            fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
             fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            Log.d(Global.TAG,"is from archive view "+fromArchiveView);
         }
 
         if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -204,7 +207,7 @@ public class PdfViewFragment_single_view extends Fragment
                 switch(p1)
                 {
                     case 0:
-                        if(fromThirdPartyApp)
+                        if(fromArchiveView || fromThirdPartyApp)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;

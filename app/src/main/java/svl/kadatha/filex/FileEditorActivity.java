@@ -216,7 +216,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				{
 					case 0:
 
-						if(fromThirdPartyApp)
+						if(fromArchiveView || fromThirdPartyApp)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;

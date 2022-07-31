@@ -112,15 +112,6 @@ public class ImageViewFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		FilenameFilter file_name_filter = new FilenameFilter() {
-			public boolean accept(File fi, String na) {
-				if (MainActivity.SHOW_HIDDEN_FILE) {
-					return true;
-				} else {
-					return !na.startsWith(".");
-				}
-			}
-		};
 
 		data=((ImageViewActivity)context).data;
 
