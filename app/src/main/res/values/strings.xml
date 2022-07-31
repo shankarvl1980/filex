@@ -343,6 +343,8 @@
     <string name="cannot_open_here">cannot open here</string>
     <string name="lower_bound_colon">Lower bound:</string>
 	<string name="upper_bound_colon">Upper bound:</string>
+	<string name="deleted_audio_file">Deleted the audio file</string>
+	<string name="deleted_file">Deleted the file</string>
 
 
 	<string-array name="library_categories">
