@@ -176,7 +176,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
                                     audioDatabaseHelper.insert(list_name,audio_list);
-                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) + list_name + "'");
+                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) +" '"+ list_name + "'");
                                 }
                                 else
                                 {
@@ -229,7 +229,7 @@ public class AudioListViewModel extends AndroidViewModel {
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
                                     audioDatabaseHelper.insert(list_name,audio_selected_array);
-                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) + list_name + "'");
+                                    Global.print_background_thread(application,application.getString(R.string.added_audios_to) +" '" +list_name + "'");
                                 }
                                 else
                                 {
