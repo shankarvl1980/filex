@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import java.util.regex.Pattern;
+
 public class SaveNewAudioListDialog extends DialogFragment
 {
     private EditText new_file_name_edittext;
@@ -86,16 +88,19 @@ public class SaveNewAudioListDialog extends DialogFragment
 						Global.print(context,getString(R.string.name_field_cannot_be_empty));
 						return;
 					}
+
+					if(!CheckStringForSpecialCharacters.isStringOnlyAlphabet(new_name))
+					{
+						Global.print(context,getString(R.string.name_should_contain_only_alphabets_without_spaces));
+						return;
+					}
+
 					if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
 					{
 						Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 						return;
 					}
-					if(new_name.contains(".") || new_name.contains(",") || new_name.contains("'"))
-					{
-						Global.print(context,getString(R.string.avoid_name_involving_period_characters));
-						return;
-					}
+
 
 					if(!new_name.matches("\\S+"))
 					{
@@ -106,8 +111,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 					if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(new_name))
 					{
 						Global.print(context,getString(R.string.a_list_exists_with_given_name));
-						imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
-						dismissAllowingStateLoss();
 						return;
 					}
 				
