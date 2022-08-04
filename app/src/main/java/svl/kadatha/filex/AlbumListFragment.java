@@ -35,7 +35,7 @@ import java.util.List;
 
 
 
-public class AlbumListFragment extends Fragment//implements LoaderManager.LoaderCallbacks<Cursor>
+public class AlbumListFragment extends Fragment
 {
 
 	private Context context;
@@ -72,7 +72,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 	}
 
@@ -80,9 +79,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-
-		//Handler handler = new Handler();
-
 		View v=inflater.inflate(R.layout.fragment_album_list,container,false);
 		file_number_view=v.findViewById(R.id.album_list_file_number);
 		bottom_toolbar=v.findViewById(R.id.album_list_bottom_toolbar);
@@ -168,14 +164,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_album);
-		/*
-		if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-		{
-			new AlbumListExtractor().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		}
-
-		 */
-
 
 		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -246,71 +234,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		save_btn.setEnabled(enable);
 
 	}
-/*
-	private class AlbumListExtractor extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		final Uri album_uri=MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			asyncTaskStatus=AsyncTaskStatus.STARTED;
-		}
-
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			if(album_list!=null)
-			{
-				return null;
-			}
-			album_list=new ArrayList<>();
-			total_album_list=new ArrayList<>();
-			Cursor cursor=context.getContentResolver().query(album_uri,null,null,null,null);
-			if(cursor!=null && cursor.getCount()>0)
-			{
-				while(cursor.moveToNext())
-				{
-
-					String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
-					String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-					String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
-					String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
-					String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
-				}
-				total_album_list=album_list;
-			}
-			assert cursor != null;
-			cursor.close();
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			albumListRecyclerViewAdapter=new AlbumListRecyclerViewAdapter();
-			recyclerview.setAdapter(albumListRecyclerViewAdapter);
-			num_all_album=total_album_list.size();
-			if(num_all_album<=0)
-			{
-				recyclerview.setVisibility(View.GONE);
-				empty_tv.setVisibility(View.VISIBLE);
-				enable_disable_buttons(false);
-			}
-			
-			file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
-			progress_bar.setVisibility(View.GONE);
-			asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-		}
-	}
-
- */
-	
 	private class ToolbarClickListener implements View.OnClickListener
 	{
 		@Override
@@ -334,7 +257,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
-				//new AlbumListDetailsExtractor(audioListViewModel.album_selected_array, 'p', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				progress_bar.setVisibility(View.VISIBLE);
 				audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 				audioListViewModel.listAudio(audioListViewModel.album_selected_array,"p","");
@@ -344,44 +266,10 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 				if (audioListViewModel.album_selected_array.size() < 1) {
 					return;
 				}
-				//public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-				//public List<AlbumPOJO> album_selected_array=new ArrayList<>();
-				//public static Bitmap SELECTED_ALBUM_ART;
-				List<AlbumPOJO> album_selected_pojo_copy = new ArrayList<>(audioListViewModel.album_selected_array);
+
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
 
-				/*
-				audioSaveListDialog.setSaveAudioListListener(new AudioSaveListDialog.SaveAudioListListener() {
-					public void save_audio_list(String list_name) {
-						if (list_name == null) {
 
-							SaveNewAudioListDialog saveNewAudioListDialog = new SaveNewAudioListDialog();
-							saveNewAudioListDialog.setOnSaveAudioListener(new SaveNewAudioListDialog.OnSaveAudioListListener() {
-								public void save_audio_list(String list_name) {
-
-									//new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-									progress_bar.setVisibility(View.VISIBLE);
-									audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"s",list_name,false);
-								}
-
-							});
-							saveNewAudioListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "saveaudiolist_dialog");
-
-						} else if (list_name.equals("")) {
-							//new AlbumListDetailsExtractor(album_selected_pojo_copy, 'q', "").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-							progress_bar.setVisibility(View.VISIBLE);
-							audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"q","",false);
-						} else {
-
-							//new AlbumListDetailsExtractor(album_selected_pojo_copy, 's', list_name).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-							progress_bar.setVisibility(View.VISIBLE);
-							audioListViewModel.listAudio(audioListViewModel.audio_list_selected_array,"s",list_name,false);
-
-						}
-					}
-				});
-
-				 */
 				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
 
 			} else if (id == R.id.toolbar_btn_4) {
@@ -423,128 +311,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 	} 
 	
-/*
-	private class AlbumListDetailsExtractor extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		final String action;
-		final String list_name;
-		final List<AudioPOJO> extracted_audio_list=new ArrayList<>();
-		final List<AlbumPOJO> albumList;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		boolean list_created;
-		
-		AlbumListDetailsExtractor(List<AlbumPOJO> list,String action, String list_name)
-		{
-			this.action=action;
-			this.list_name=list_name;
-			this.albumList=list;
-		}
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			pbf.show(((AudioPlayerActivity)context).fm,"");
-		}
-
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			for(AlbumPOJO Album:albumList)
-			{
-				String album_id=Album.getId();
-				Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-				String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
-				Cursor cursor=context.getContentResolver().query(uri,null,where,null,null);
-				if(cursor!=null && cursor.getCount()>0)
-				{
-					while(cursor.moveToNext())
-					{
-						int id=cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-						String data=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-						String title=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-						String album=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-						String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-						String duration=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-
-						if(new File(data).exists())
-						{
-							extracted_audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
-						}
-					}
-				}
-				assert cursor != null;
-				cursor.close();
-			}
-			if(action.equals("q"))
-			{
-				AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(extracted_audio_list);
-				
-			}
-			else if(action.equals("s"))
-			{
-				
-				if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
-				{
-					((AudioPlayerActivity)context).audioDatabaseHelper.insert(list_name,extracted_audio_list);
-				}
-				else
-				{
-					((AudioPlayerActivity)context).audioDatabaseHelper.createTable(list_name);
-					((AudioPlayerActivity)context).audioDatabaseHelper.insert(list_name,extracted_audio_list);
-					AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
-					list_created=true;
-				}
-			}
-			else
-			{
-				AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
-				AudioPlayerService.AUDIO_QUEUED_ARRAY=extracted_audio_list;
-			}
-			return null;
-		}
-
-		@Override
-		protected void onProgressUpdate(Void[] values)
-		{
-			// TODO: Implement this method
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			if(action.equals("p"))
-			{
-				if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
-				{
-					AudioPlayerService.CURRENT_PLAY_NUMBER=0;
-					AudioPOJO audio=AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
-					Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-					Uri data=Uri.withAppendedPath(uri,String.valueOf(audio.getId()));
-					audioSelectListener.onAudioSelect(data,audio);
-				}
-			}
-			else if(action.equals("s"))
-			{
-				if(list_created)
-				{
-					Global.print(context,"'"+list_name+ "' "+getString(R.string.audio_list_created));
-				}
-				
-				((AudioPlayerActivity)context).trigger_audio_list_saved_listener();
-			}
-			pbf.dismissAllowingStateLoss();
-			((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
-		
-		}
-	}
-
- */
-
 
 	private class AlbumListRecyclerViewAdapter extends RecyclerView.Adapter <AlbumListRecyclerViewAdapter.ViewHolder> implements Filterable
 	{
@@ -592,7 +358,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 					albumDetailsDialog.show(((AudioPlayerActivity)context).fm,"");
 					
 				}
-
 			}
 
 
@@ -780,7 +545,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			artisttextview= view.findViewById(R.id.audio_file_artist);
 
 
-
 			int second_line_font_size;
 			int first_line_font_size;
 			if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
@@ -818,7 +582,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 			{
 				itemWidth =Global.SCREEN_WIDTH;
 			}
-
 		}
 
 
@@ -828,7 +591,6 @@ public class AlbumListFragment extends Fragment//implements LoaderManager.Loader
 
 			int iconheight,maxHeight=0;
 			int usedWidth=Global.TEN_DP;
-
 
 			measureChildWithMargins(album_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(albumimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);

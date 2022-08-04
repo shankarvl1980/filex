@@ -1,9 +1,13 @@
 package svl.kadatha.filex;
+
+import android.content.Context;
 import android.content.res.Configuration;
-import android.view.*;
-import android.content.*;
-import android.util.*;
-import android.widget.*;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 public class EquallyDistributedDialogButtonsLayout extends ViewGroup
 {

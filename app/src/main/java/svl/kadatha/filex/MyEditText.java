@@ -2,9 +2,10 @@ package svl.kadatha.filex;
 
 
 import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.graphics.*;
-import android.view.*;
+import android.view.KeyEvent;
 
 import androidx.appcompat.widget.AppCompatEditText;
 

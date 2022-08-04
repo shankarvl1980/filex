@@ -3,7 +3,6 @@ package svl.kadatha.filex;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-//import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;

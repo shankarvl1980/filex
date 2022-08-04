@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -23,13 +24,13 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class RenameFileDialog extends DialogFragment
 {

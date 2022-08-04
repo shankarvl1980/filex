@@ -1,11 +1,16 @@
 package svl.kadatha.filex;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
-import android.content.*;
-import android.graphics.drawable.*;
-import android.graphics.*;
-import android.widget.TableRow.*;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TableRow.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

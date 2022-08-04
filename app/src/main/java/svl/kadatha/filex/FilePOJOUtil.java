@@ -8,8 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedReader;
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOUtil {
 

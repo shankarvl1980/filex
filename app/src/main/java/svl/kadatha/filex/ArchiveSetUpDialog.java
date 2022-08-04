@@ -30,10 +30,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import java.io.File;
 import java.util.ArrayList;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 
 public class ArchiveSetUpDialog extends DialogFragment
@@ -76,7 +76,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		Bundle bundle=getArguments();
 		if(bundle!=null)
@@ -130,6 +129,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 		TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
 		TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
+		TextView zip_name_suffix=zipdialogview.findViewById(R.id.dialog_archive_textview_zip_suffix);
+		if(archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
 		create_folder_checkbox= zipdialogview.findViewById(R.id.dialog_archive_checkbox);
 		zip_file_edittext= zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
 		RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);

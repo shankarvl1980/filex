@@ -1,5 +1,6 @@
 package svl.kadatha.filex;
-import android.content.*;
+
+import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;

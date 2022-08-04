@@ -3,11 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-
     >
 	
 	<TextView
-
 		android:id="@+id/dialog_archive_heading"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -53,14 +51,27 @@
 
 			/>
 		<EditText
-			android:layout_width="match_parent"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:id="@+id/dialog_archive_textview_zipname"
 			android:textColor="?attr/edit_text_color"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/dialog_archive_outputfilename"
-
+			app:layout_constraintEnd_toStartOf="@id/dialog_archive_textview_zip_suffix"
 			/>
+
+			<TextView
+				android:id="@+id/dialog_archive_textview_zip_suffix"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="@dimen/layout_margin"
+				android:text=".zip"
+				android:textSize="16sp"
+				app:layout_constraintBottom_toBottomOf="@id/dialog_archive_textview_zipname"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dialog_archive_outputfilename"
+
+				/>
 		<CheckBox
 			android:id="@+id/dialog_archive_checkbox"
 			android:layout_height="wrap_content"

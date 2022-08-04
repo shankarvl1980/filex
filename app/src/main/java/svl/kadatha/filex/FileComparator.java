@@ -1,8 +1,9 @@
 package svl.kadatha.filex;
-import me.jahnen.libaums.core.fs.UsbFile;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Comparator;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FileComparator
 {

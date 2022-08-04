@@ -14,9 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
-
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedInputStream;
@@ -37,6 +34,9 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 /**
 	 * Utility class for helping parsing file systems.
@@ -1382,7 +1382,7 @@ import java.util.List;
 		int unit = si ? 1000 : 1024;
 		if (bytes < unit) return bytes + " B";
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		String pre = (si ? "KMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+		String pre = ("KMGTPE").charAt(exp-1) + (si ? "" : "i");
 		//return (long)(bytes/Math.pow(unit,exp)*100+0.5)/100.0 + " "+pre+"B";
 		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
 	}

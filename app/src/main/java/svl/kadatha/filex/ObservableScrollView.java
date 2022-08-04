@@ -1,7 +1,8 @@
 package svl.kadatha.filex;
-import android.widget.*;
-import android.content.*;
-import android.util.*;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.ScrollView;
 
 public class ObservableScrollView extends ScrollView
 {

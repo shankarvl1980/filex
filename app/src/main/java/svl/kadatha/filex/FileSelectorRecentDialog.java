@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -25,10 +26,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.jahnen.libaums.core.UsbMassStorageDevice;
-
 import java.io.File;
 import java.util.LinkedList;
+
+import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 public class FileSelectorRecentDialog extends DialogFragment implements FileSelectorActivity.RecentDialogListener, StorageAnalyserActivity.RecentDialogListener
 {

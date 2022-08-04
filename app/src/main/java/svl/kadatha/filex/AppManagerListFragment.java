@@ -261,7 +261,6 @@ public class AppManagerListFragment extends Fragment {
                     {
                         recyclerView.setVisibility(View.GONE);
                         empty_tv.setVisibility(View.VISIBLE);
-                        //enable_disable_buttons(false);
                     }
                     progressBar.setVisibility(View.GONE);
                 }
@@ -269,36 +268,6 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
-
-/*
-        handler=new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
-                {
-                    handler.postDelayed(this,500);
-                }
-                else
-                {
-                    Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
-                    adapter=new AppListAdapter();
-                    recyclerView.setAdapter(adapter);
-                    progressBar.setVisibility(View.GONE);
-                    num_all_app=total_appPOJO_list.size();
-                    app_count_textview.setText(""+num_all_app);
-                    if(num_all_app<=0)
-                    {
-                        recyclerView.setVisibility(View.GONE);
-                        empty_tv.setVisibility(View.VISIBLE);
-                        //enable_disable_buttons(false);
-                    }
-                    handler.removeCallbacks(this);
-                }
-            }
-        });
-
- */
 
         listPopWindow=new PopupWindow(context);
         ListView listView=new ListView(context);
@@ -321,7 +290,6 @@ public class AppManagerListFragment extends Fragment {
                 if (BACKUP.equals(app_action)) {
                     MoveToCopyToProcedure(app_path);
                 } else if (UNINSTALL.equals(app_action)) {
-                    //String app_pkg_name = appPOJO.getPackage_name();
                     if (package_clicked_for_delete.equals("")) {
                         package_clicked_for_delete = package_name;
                     }
@@ -550,7 +518,7 @@ public class AppManagerListFragment extends Fragment {
                                 mselecteditems.put(pos,true);
                                 app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
-                                show_app_action_select_dialog(appPOJOList.get(pos));
+                                //show_app_action_select_dialog(appPOJOList.get(pos));
                             }
                             else
                             {
@@ -562,8 +530,9 @@ public class AppManagerListFragment extends Fragment {
                             mselecteditems.put(pos,true);
                             app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
-                            show_app_action_select_dialog(appPOJOList.get(pos));
+                            //show_app_action_select_dialog(appPOJOList.get(pos));
                         }
+                        show_app_action_select_dialog(appPOJOList.get(pos));
                     }
                 });
 
@@ -578,45 +547,6 @@ public class AppManagerListFragment extends Fragment {
             ((AppManagerActivity)context).set_visibility_searchbar(false);
         }
         AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize(),appPOJO.getVersion(),appPOJO.getPath());
-        /*
-        appActionSelectDialog.setAppActionSelectListener(new AppActionSelectDialog.AppActionSelectListener() {
-            @Override
-            public void onSelectType(String app_action) {
-                if (BACKUP.equals(app_action)) {
-                    MoveToCopyToProcedure(appPOJO.getPath());
-                } else if (UNINSTALL.equals(app_action)) {
-                    String app_pkg_name = appPOJO.getPackage_name();
-                    if (package_clicked_for_delete.equals("")) {
-                        package_clicked_for_delete = app_pkg_name;
-                    }
-                    Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-                    uninstall_intent.setData(Uri.parse("package:" + app_pkg_name));
-                    unInstallActivityResultLauncher.launch(uninstall_intent);
-                } else if (CONTROL_PANEL.equals(app_action)) {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", appPOJO.getPackage_name(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                } else if (PLAY_STORE.equals(app_action)) {
-                    final String appPackageName = appPOJO.getPackage_name();
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                    } catch (ActivityNotFoundException anfe) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                    }
-                } else if (SHARE.equals(app_action)) {
-
-                    Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(appPOJO.getPath()));
-                    FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-
-                }
-                clear_selection();
-            }
-        });
-
-         */
-
         appActionSelectDialog.show(((AppManagerActivity)context).fm,"");
     }
 

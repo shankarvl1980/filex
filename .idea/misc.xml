@@ -36,7 +36,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_instacropper.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_storage_analyser.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/app_manager_recycler_layout.xml" value="0.25416666666666665" />
-        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_details.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_details.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_all_audio_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_apk_install_alert_dialog.xml" value="0.25416666666666665" />
@@ -45,6 +45,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_selector.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archive_setup.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_audio_saved_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_create_rename_delete.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cut_copy_delete_archive_progress.xml" value="0.23278985507246377" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_detail.xml" value="0.25416666666666665" />

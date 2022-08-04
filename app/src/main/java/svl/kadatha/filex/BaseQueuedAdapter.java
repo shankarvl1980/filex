@@ -1,10 +1,14 @@
 package svl.kadatha.filex;
-import java.util.*;
-import android.os.*;
+
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.MainThread;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayDeque;
+import java.util.List;
 
 
 public abstract class BaseQueuedAdapter < VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH>

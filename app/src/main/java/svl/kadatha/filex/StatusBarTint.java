@@ -1,10 +1,11 @@
 package svl.kadatha.filex;
-import android.graphics.*;
+
+import android.graphics.Color;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.*;
-
-import android.view.*;
+import androidx.core.content.ContextCompat;
 
 public class StatusBarTint 
 {

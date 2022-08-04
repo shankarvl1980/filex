@@ -1,7 +1,8 @@
 package svl.kadatha.filex;
+
 import androidx.recyclerview.widget.DiffUtil;
 
-import java.util.*;
+import java.util.List;
 
 public class DetailRecyclerViewAdapterDiffUtil extends DiffUtil.Callback
 {

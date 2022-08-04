@@ -1,11 +1,20 @@
 package svl.kadatha.filex;
-import android.content.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
-import android.widget.TableRow.*;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow.LayoutParams;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +23,12 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import me.jahnen.libaums.core.fs.UsbFile;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-import java.util.*;
-import java.io.*;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class PropertiesDialog extends DialogFragment
 {

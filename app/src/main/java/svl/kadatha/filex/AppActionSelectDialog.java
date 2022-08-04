@@ -1,11 +1,18 @@
 package svl.kadatha.filex;
+
+import android.content.Context;
 import android.content.res.Configuration;
-import android.os.*;
-import android.view.*;
-import android.content.*;
-import android.graphics.drawable.*;
-import android.graphics.*;
-import android.widget.*;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -23,7 +30,6 @@ import java.util.List;
 public class AppActionSelectDialog extends DialogFragment
 {
     private Context context;
-    //private AppActionSelectListener appActionSelectListener;
     private AppManagerListFragment.AppPOJO appPOJO;
     private String app_name;
     private String package_name;
@@ -44,7 +50,6 @@ public class AppActionSelectDialog extends DialogFragment
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
         setCancelable(false);
         bundle=getArguments();
         app_name=bundle.getString("app_name");
@@ -99,14 +104,6 @@ public class AppActionSelectDialog extends DialogFragment
         {
             public void onClick(View p1)
             {
-                /*
-                if(appActionSelectListener!=null)
-                {
-                    appActionSelectListener.onSelectType("cancel");
-                }
-
-                 */
-
                 dismissAllowingStateLoss();
             }
         });
@@ -137,16 +134,6 @@ public class AppActionSelectDialog extends DialogFragment
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
-    /*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
 
     private class AppActionRecyclerViewAdapter extends RecyclerView.Adapter<AppActionRecyclerViewAdapter.VH>
     {
@@ -189,13 +176,6 @@ public class AppActionSelectDialog extends DialogFragment
                     public void onClick(View p1)
                     {
                         pos=getBindingAdapterPosition();
-                        /*
-                        if(appActionSelectListener!=null)
-                        {
-                            appActionSelectListener.onSelectType(action_list.get(pos));
-                        }
-
-                         */
                         bundle.putString("app_action",action_list.get(pos));
                         ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
                         dismissAllowingStateLoss();

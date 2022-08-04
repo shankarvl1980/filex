@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,12 +31,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class StorageAnalyserDialog extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {

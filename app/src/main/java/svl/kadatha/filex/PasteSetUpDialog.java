@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,12 +14,12 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class PasteSetUpDialog extends DialogFragment
 {

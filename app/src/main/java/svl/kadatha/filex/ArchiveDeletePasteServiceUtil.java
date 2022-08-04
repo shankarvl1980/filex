@@ -8,9 +8,6 @@ import android.provider.DocumentsContract;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-import me.jahnen.libaums.core.fs.UsbFileOutputStream;
-
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedOutputStream;
@@ -25,6 +22,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
+
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 
 public class ArchiveDeletePasteServiceUtil {
 

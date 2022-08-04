@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-//import android.support.media.ExifInterface;
 import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;

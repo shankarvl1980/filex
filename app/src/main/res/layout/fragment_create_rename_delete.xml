@@ -43,7 +43,7 @@
 
 	<EditText
 		android:id="@+id/dialog_fragment_rename_delete_newfilename"
-		android:layout_width="match_parent"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:paddingStart="@dimen/layout_margin"
 		android:paddingEnd="@dimen/layout_margin"
@@ -52,7 +52,20 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_rename_delete_message"
+		app:layout_constraintEnd_toStartOf="@id/dialog_fragment_rename_delete_filename_suffix"
 
+		/>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/dialog_fragment_rename_delete_filename_suffix"
+		android:padding="@dimen/layout_margin"
+		android:textSize="16sp"
+		android:text=".apk"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintBottom_toBottomOf="@id/dialog_fragment_rename_delete_newfilename"
+		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_rename_delete_message"
+		android:visibility="gone"
 		/>
 
 

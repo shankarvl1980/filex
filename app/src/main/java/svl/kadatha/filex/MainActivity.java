@@ -54,9 +54,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import me.jahnen.libaums.core.UsbMassStorageDevice;
-import me.jahnen.libaums.core.fs.FileSystem;
-import me.jahnen.libaums.core.fs.UsbFile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -73,6 +70,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipFile;
+
+import me.jahnen.libaums.core.UsbMassStorageDevice;
+import me.jahnen.libaums.core.fs.FileSystem;
+import me.jahnen.libaums.core.fs.UsbFile;
 
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener

@@ -1,6 +1,6 @@
 package svl.kadatha.filex;
 
-	import android.content.ContentResolver;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +15,9 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 
 import androidx.annotation.NonNull;
-	import androidx.core.content.FileProvider;
+import androidx.core.content.FileProvider;
 
-	import java.io.File;
+import java.io.File;
 
 //import de.jeisfeld.augendiagnoselib.Application;
 

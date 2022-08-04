@@ -26,8 +26,6 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
@@ -36,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class DeleteFileAlertDialog extends DialogFragment
 {

@@ -19,19 +19,19 @@ import android.webkit.MimeTypeMap;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import me.jahnen.libaums.core.UsbMassStorageDevice;
-import me.jahnen.libaums.core.fs.FileSystem;
-import me.jahnen.libaums.core.fs.UsbFile;
-import me.jahnen.libaums.core.fs.UsbFileInputStream;
-import me.jahnen.libaums.core.fs.UsbFileOutputStream;
-import me.jahnen.libaums.core.partition.Partition;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import me.jahnen.libaums.core.UsbMassStorageDevice;
+import me.jahnen.libaums.core.fs.FileSystem;
+import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileInputStream;
+import me.jahnen.libaums.core.fs.UsbFileOutputStream;
+import me.jahnen.libaums.core.partition.Partition;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class UsbDocumentProvider extends DocumentsProvider {

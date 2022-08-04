@@ -23,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class CreateFileDialog extends DialogFragment
 {
@@ -66,7 +66,6 @@ public class CreateFileDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		Bundle bundle=getArguments();
 		if(bundle!=null)
@@ -78,29 +77,6 @@ public class CreateFileDialog extends DialogFragment
 
 
 		destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
-
-/*
-		if(destFilePOJOs==null) //first start of app after installation, hashmap size is zero
-		{
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				String [] file_names_array;
-				if((file_names_array=new File(parent_folder).list())!=null)
-				{
-					dest_file_names.addAll(Arrays.asList(file_names_array));
-				}
-
-			}
-		}
-		else
-		{
-			for(FilePOJO filePOJO:destFilePOJOs)
-			{
-				dest_file_names.add(filePOJO.getName());
-			}
-		}
-
- */
 
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);
 		handler=new Handler(Looper.getMainLooper());

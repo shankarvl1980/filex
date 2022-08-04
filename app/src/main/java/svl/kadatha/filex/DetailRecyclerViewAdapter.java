@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.SparseArray;
@@ -11,12 +12,12 @@ import android.widget.Filterable;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 
 public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecyclerViewAdapter.ViewHolder> implements Filterable
