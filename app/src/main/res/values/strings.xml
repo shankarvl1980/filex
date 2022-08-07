@@ -349,6 +349,7 @@
 	<string name="name_field_cannot_be_empty">Name field cannot be empty</string>
 	<string name="a_list_exists_with_given_name">A list already exists with the given name</string>
 	<string name="name_should_contain_only_alphabets_without_spaces">Name should contain only alphabets without spaces</string>
+	<string name="copied_apk_file">Copied APK file</string>
 
 
 	<string-array name="library_categories">

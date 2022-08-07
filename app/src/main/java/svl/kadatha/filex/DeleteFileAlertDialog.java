@@ -412,383 +412,386 @@ public class DeleteFileAlertDialog extends DialogFragment
 		}
 	}
 
-	private class FileCountSize
-	{
-		long total_size_of_files;
-		final List<String> source_list_files;
-		final boolean include_folder;
-		final FileObjectType sourceFileObjectType;
-		Future<?> future;
-		boolean isCancelled;
 
-		FileCountSize(ArrayList<String> source_list_files, FileObjectType fileObjectType)
-		{
-			this.source_list_files=source_list_files;
-			this.include_folder= true;
-			this.sourceFileObjectType=fileObjectType;
-		}
+//	private class FileCountSize
+//	{
+//		long total_size_of_files;
+//		final List<String> source_list_files;
+//		final boolean include_folder;
+//		final FileObjectType sourceFileObjectType;
+//		Future<?> future;
+//		boolean isCancelled;
+//
+//		FileCountSize(ArrayList<String> source_list_files, FileObjectType fileObjectType)
+//		{
+//			this.source_list_files=source_list_files;
+//			this.include_folder= true;
+//			this.sourceFileObjectType=fileObjectType;
+//		}
+//
+//		public void count()
+//		{
+//			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
+//			ExecutorService executorService=MyExecutorService.getExecutorService();
+//			future= executorService.submit(new Runnable() {
+//				@Override
+//				public void run() {
+//					String file_path=source_list_files.get(0);
+//					if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
+//					{
+//						File[] f_array=new File[size];
+//						for(int i=0;i<size;++i)
+//						{
+//							File f=new File(source_list_files.get(i));
+//							f_array[i]=f;
+//						}
+//						populate(f_array,include_folder);
+//
+//					}
+//					else if(sourceFileObjectType== FileObjectType.USB_TYPE)
+//					{
+//						UsbFile[] f_array=new UsbFile[size];
+//						for(int i=0;i<size;++i)
+//						{
+//							UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
+//							f_array[i]=f;
+//						}
+//						populate(f_array,include_folder);
+//					}
+//					else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
+//					{
+//						File[] f_array=new File[size];
+//						for(int i=0;i<size;++i)
+//						{
+//							File f=new File(source_list_files.get(i));
+//							f_array[i]=f;
+//						}
+//						populate(f_array,include_folder);
+//
+//					}
+//					else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+//					{
+//						FTPFile[] f_array=new FTPFile[size];
+//						for(int i=0;i<size;++i)
+//						{
+//
+//							FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+//							f_array[i]=f;
+//
+//						}
+//						populate(f_array,include_folder,source_folder);
+//
+//					}
+//
+//				}
+//			});
+//		}
+//		/*
+//		@Override
+//		protected void onPreExecute() {
+//			super.onPreExecute();
+//			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
+//		}
+//
+//		 */
+//
+//		private void cancel(boolean mayInterruptRunning){
+//			if(future!=null)
+//			{
+//				future.cancel(mayInterruptRunning);
+//				isCancelled=true;
+//			}
+//		}
+//
+//		private boolean isCancelled()
+//		{
+//			return isCancelled;
+//		}
+//
+///*
+//		@Override
+//		protected void onCancelled() {
+//			super.onCancelled();
+//			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,source_folder);
+//		}
+//
+// */
+//
+//		/*
+//		@Override
+//		protected Void doInBackground(Void[] p1)
+//		{
+//			// TODO: Implement this method
+//
+//			String file_path=source_list_files.get(0);
+//			if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
+//			{
+//				File[] f_array=new File[size];
+//				for(int i=0;i<size;++i)
+//				{
+//					File f=new File(source_list_files.get(i));
+//					f_array[i]=f;
+//				}
+//				populate(f_array,include_folder);
+//
+//			}
+//			else if(sourceFileObjectType== FileObjectType.USB_TYPE)
+//			{
+//				UsbFile[] f_array=new UsbFile[size];
+//				for(int i=0;i<size;++i)
+//				{
+//					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
+//					f_array[i]=f;
+//				}
+//				populate(f_array,include_folder);
+//			}
+//			else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
+//			{
+//				File[] f_array=new File[size];
+//				for(int i=0;i<size;++i)
+//				{
+//					File f=new File(source_list_files.get(i));
+//					f_array[i]=f;
+//				}
+//				populate(f_array,include_folder);
+//
+//			}
+//			else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+//			{
+//				FTPFile[] f_array=new FTPFile[size];
+//				for(int i=0;i<size;++i)
+//				{
+//
+//					FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
+//					f_array[i]=f;
+//
+//				}
+//				populate(f_array,include_folder,source_folder);
+//
+//			}
+//			return null;
+//		}
+//		*/
+//
+//		private void populate(File[] source_list_files,boolean include_folder)
+//		{
+//			int size=source_list_files.length;
+//			for(int i=0;i<size;++i)
+//			{
+//				File f=source_list_files[i];
+//				if(isCancelled())
+//				{
+//					return;
+//				}
+//				int no_of_files=0;
+//				long size_of_files=0L;
+//				if(f.isDirectory())
+//				{
+//					if(f.list()!=null)
+//					{
+//						populate(f.listFiles(),include_folder);
+//					}
+//					if(include_folder)
+//					{
+//						no_of_files++;
+//					}
+//				}
+//				else
+//				{
+//					no_of_files++;
+//					size_of_files+=f.length();
+//				}
+//				total_no_of_files+=no_of_files;
+//				total_size_of_files+=size_of_files;
+//				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+//				publishProgress();
+//			}
+//		}
+//
+//		private void populate(UsbFile[] source_list_files, boolean include_folder)
+//		{
+//			int size=source_list_files.length;
+//			for(int i=0;i<size;++i)
+//			{
+//				UsbFile f=source_list_files[i];
+//				if(isCancelled())
+//				{
+//					return;
+//				}
+//				int no_of_files=0;
+//				long size_of_files=0L;
+//				if(f.isDirectory())
+//				{
+//					try {
+//						populate(f.listFiles(),include_folder);
+//					} catch (IOException e) {
+//
+//					}
+//					if(include_folder)
+//					{
+//						no_of_files++;
+//					}
+//				}
+//				else
+//				{
+//					no_of_files++;
+//					size_of_files+=f.getLength();
+//				}
+//				total_no_of_files+=no_of_files;
+//				total_size_of_files+=size_of_files;
+//				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+//				publishProgress();
+//			}
+//		}
+//
+//		private void populate(FTPFile[] source_list_files, boolean include_folder, String path)
+//		{
+//			int size=source_list_files.length;
+//			for(int i=0;i<size;++i)
+//			{
+//				FTPFile f=source_list_files[i];
+//				if(isCancelled())
+//				{
+//					return;
+//				}
+//				int no_of_files=0;
+//				long size_of_files=0L;
+//				if(f.isDirectory())
+//				{
+//					try {
+//						String name=f.getName();
+//						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+//						populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
+//					} catch (IOException e) {
+//
+//					}
+//					if(include_folder)
+//					{
+//						no_of_files++;
+//					}
+//				}
+//				else
+//				{
+//					no_of_files++;
+//					size_of_files+=f.getSize();
+//				}
+//				total_no_of_files+=no_of_files;
+//				total_size_of_files+=size_of_files;
+//				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+//				publishProgress();
+//			}
+//		}
+//
+//
+//		private void populate(List<String> source_list_files,boolean include_folder)
+//		{
+//			int size=source_list_files.size();
+//			for(int i=0;i<size;++i)
+//			{
+//				if(isCancelled())
+//				{
+//					return;
+//				}
+//				int no_of_files=0;
+//				long size_of_files=0L;
+//				String parent_file_path=source_list_files.get(i);
+//				Uri uri=FileUtil.getDocumentUri(parent_file_path,tree_uri,tree_uri_path);
+//				if(FileUtil.isDirectory(context,uri))
+//				{
+//					Uri children_uri=DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(parent_file_path,tree_uri,tree_uri_path));
+//					Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
+//					if(cursor!=null && cursor.getCount()>0)
+//					{
+//						List<String>inner_source_list_files=new ArrayList<>();
+//						while(cursor.moveToNext())
+//						{
+//
+//							String docID=cursor.getString(0);
+//							String displayName=cursor.getString(1);
+//							inner_source_list_files.add(parent_file_path+File.separator+displayName);
+//
+//						}
+//						cursor.close();
+//						populate(inner_source_list_files,include_folder);
+//
+//					}
+//
+//					if(include_folder)
+//					{
+//						no_of_files++;
+//					}
+//				}
+//				else
+//				{
+//					no_of_files++;
+//					size_of_files+=FileUtil.getSize(context,uri);
+//				}
+//				total_no_of_files+=no_of_files;
+//				total_size_of_files+=size_of_files;
+//				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
+//				publishProgress();
+//			}
+//		}
+//
+//		public void publishProgress()
+//		{
+//			handler.post(new Runnable() {
+//				@Override
+//				public void run() {
+//					if(no_files_textview!=null)
+//					{
+//						no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
+//						size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
+//					}
+//				}
+//			});
+//		}
+//
+//		/*
+//		@Override
+//		protected void onProgressUpdate(Void[] values)
+//		{
+//			// TODO: Implement this method
+//			super.onProgressUpdate(values);
+//			if(no_files_textview!=null)
+//			{
+//				no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
+//				size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
+//			}
+//		}
+//
+//		 */
+//
+//		/*
+//		@Override
+//		protected void onPostExecute(Void result)
+//		{
+//			// TODO: Implement this method
+//			super.onPostExecute(result);
+//		}
+//
+//		@Override
+//		protected void onCancelled(Void result)
+//		{
+//			// TODO: Implement this method
+//			super.onCancelled(result);
+//		}
+//
+//		 */
+//	}
 
-		public void count()
-		{
-			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
-			ExecutorService executorService=MyExecutorService.getExecutorService();
-			future= executorService.submit(new Runnable() {
-				@Override
-				public void run() {
-					String file_path=source_list_files.get(0);
-					if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
-					{
-						File[] f_array=new File[size];
-						for(int i=0;i<size;++i)
-						{
-							File f=new File(source_list_files.get(i));
-							f_array[i]=f;
-						}
-						populate(f_array,include_folder);
-
-					}
-					else if(sourceFileObjectType== FileObjectType.USB_TYPE)
-					{
-						UsbFile[] f_array=new UsbFile[size];
-						for(int i=0;i<size;++i)
-						{
-							UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
-							f_array[i]=f;
-						}
-						populate(f_array,include_folder);
-					}
-					else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
-					{
-						File[] f_array=new File[size];
-						for(int i=0;i<size;++i)
-						{
-							File f=new File(source_list_files.get(i));
-							f_array[i]=f;
-						}
-						populate(f_array,include_folder);
-
-					}
-					else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-					{
-						FTPFile[] f_array=new FTPFile[size];
-						for(int i=0;i<size;++i)
-						{
-
-							FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
-							f_array[i]=f;
-
-						}
-						populate(f_array,include_folder,source_folder);
-
-					}
-
-				}
-			});
-		}
-		/*
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
-		}
-
-		 */
-
-		private void cancel(boolean mayInterruptRunning){
-			if(future!=null)
-			{
-				future.cancel(mayInterruptRunning);
-				isCancelled=true;
-			}
-		}
-
-		private boolean isCancelled()
-		{
-			return isCancelled;
-		}
-
-/*
-		@Override
-		protected void onCancelled() {
-			super.onCancelled();
-			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,source_folder);
-		}
-
- */
-
-		/*
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-
-			String file_path=source_list_files.get(0);
-			if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
-			{
-				File[] f_array=new File[size];
-				for(int i=0;i<size;++i)
-				{
-					File f=new File(source_list_files.get(i));
-					f_array[i]=f;
-				}
-				populate(f_array,include_folder);
-
-			}
-			else if(sourceFileObjectType== FileObjectType.USB_TYPE)
-			{
-				UsbFile[] f_array=new UsbFile[size];
-				for(int i=0;i<size;++i)
-				{
-					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
-					f_array[i]=f;
-				}
-				populate(f_array,include_folder);
-			}
-			else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				File[] f_array=new File[size];
-				for(int i=0;i<size;++i)
-				{
-					File f=new File(source_list_files.get(i));
-					f_array[i]=f;
-				}
-				populate(f_array,include_folder);
-
-			}
-			else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-			{
-				FTPFile[] f_array=new FTPFile[size];
-				for(int i=0;i<size;++i)
-				{
-
-					FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
-					f_array[i]=f;
-
-				}
-				populate(f_array,include_folder,source_folder);
-
-			}
-			return null;
-		}
-		*/
-
-		private void populate(File[] source_list_files,boolean include_folder)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				File f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					if(f.list()!=null)
-					{
-						populate(f.listFiles(),include_folder);
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.length();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		private void populate(UsbFile[] source_list_files, boolean include_folder)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				UsbFile f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					try {
-						populate(f.listFiles(),include_folder);
-					} catch (IOException e) {
-
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.getLength();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		private void populate(FTPFile[] source_list_files, boolean include_folder, String path)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				FTPFile f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					try {
-						String name=f.getName();
-						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
-						populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
-					} catch (IOException e) {
-
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.getSize();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-
-		private void populate(List<String> source_list_files,boolean include_folder)
-		{
-			int size=source_list_files.size();
-			for(int i=0;i<size;++i)
-			{
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				String parent_file_path=source_list_files.get(i);
-				Uri uri=FileUtil.getDocumentUri(parent_file_path,tree_uri,tree_uri_path);
-				if(FileUtil.isDirectory(context,uri))
-				{
-					Uri children_uri=DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(parent_file_path,tree_uri,tree_uri_path));
-					Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
-					if(cursor!=null && cursor.getCount()>0)
-					{
-						List<String>inner_source_list_files=new ArrayList<>();
-						while(cursor.moveToNext())
-						{
-
-							String docID=cursor.getString(0);
-							String displayName=cursor.getString(1);
-							inner_source_list_files.add(parent_file_path+File.separator+displayName);
-
-						}
-						cursor.close();
-						populate(inner_source_list_files,include_folder);
-
-					}
-
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=FileUtil.getSize(context,uri);
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		public void publishProgress()
-		{
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					if(no_files_textview!=null)
-					{
-						no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
-						size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
-					}
-				}
-			});
-		}
-
-		/*
-		@Override
-		protected void onProgressUpdate(Void[] values)
-		{
-			// TODO: Implement this method
-			super.onProgressUpdate(values);
-			if(no_files_textview!=null)
-			{
-				no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
-				size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
-			}
-		}
-
-		 */
-
-		/*
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onCancelled(Void result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-		}
-
-		 */
-	}
 
 	interface OKButtonClickListener
 	{
 		void deleteDialogOKButtonClick();
 	}
 
-	/*
+/*
 	public void setOKButtonClickListener(OKButtonClickListener listener)
 	{
 		this.okButtonClickListener=listener;
 	}
 
 	 */
+	
 }

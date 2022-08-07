@@ -36,6 +36,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -51,8 +52,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class AppManagerListFragment extends Fragment {
 
@@ -67,12 +71,14 @@ public class AppManagerListFragment extends Fragment {
     public AsyncTaskStatus asyncTaskStatus;
     private List<AppPOJO> appPOJOList,total_appPOJO_list;
     public AppListAdapter adapter;
-    private Handler handler;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppPOJO> app_selected_array=new ArrayList<>();
     private AppManagerActivity.SearchFilterListener searchFilterListener;
     private int num_all_app;
     private TextView empty_tv;
+    private String tree_uri_path="";
+    private Uri tree_uri;
+    private List<FilePOJO> destFilePOJOs;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     public static String BACKUP;
@@ -81,8 +87,10 @@ public class AppManagerListFragment extends Fragment {
     public static String PLAY_STORE;
     public static String SHARE;
     private String package_clicked_for_delete="";
+    AppManagerListViewModel viewModel;
     public static final String APP_ACTION_REQUEST_CODE="app_action_request_code";
-    //private FragmentManager fragmentManager;
+    private final static String SAF_PERMISSION_REQUEST_CODE="back_up_apk_saf_permission_request_code";
+    private final static String APK_REPLACEMENT_REQUEST_CODE="apk_replace_request_code";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -103,71 +111,6 @@ public class AppManagerListFragment extends Fragment {
         CONTROL_PANEL=getString(R.string.control_panel);
         PLAY_STORE=getString(R.string.play_store);
         SHARE=getString(R.string.share);
-/*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                asyncTaskStatus=AsyncTaskStatus.STARTED;
-                int flags = PackageManager.GET_META_DATA |
-                        PackageManager.GET_SHARED_LIBRARY_FILES |
-                        PackageManager.GET_UNINSTALLED_PACKAGES;
-
-                appPOJOList=new ArrayList<>();
-                total_appPOJO_list=new ArrayList<>();
-                final PackageManager packageManager = context.getPackageManager();
-                List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
-                for (PackageInfo packageInfo : packageInfos)
-                {
-                    if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
-                    {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
-                        {
-                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                            String package_name=packageInfo.packageName;
-                            String version=packageInfo.versionName;
-                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                            if(publicsourcedir==null)
-                            {
-                                continue;
-                            }
-                            File file = new File(publicsourcedir);
-                            String path=file.getAbsolutePath();
-                            long size=file.length();
-                            long date=file.lastModified();
-                            extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date,version));
-
-                        }
-                    }
-                    else
-                    {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
-                        {
-                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                            String package_name=packageInfo.packageName;
-                            String version=packageInfo.versionName;
-                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                            if(publicsourcedir==null)
-                            {
-                                continue;
-                            }
-                            File file = new File(publicsourcedir);
-                            String path=file.getAbsolutePath();
-                            long size=file.length();
-                            long date=file.lastModified();
-                            extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppPOJO(name, package_name, path, size, date,version));
-
-                        }
-                    }
-
-                }
-                total_appPOJO_list=appPOJOList;
-                asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-            }
-        }).start();
-
- */
 
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -219,9 +162,7 @@ public class AppManagerListFragment extends Fragment {
                 {
                     scroll_distance+=dy;
                 }
-
             }
-
 
         });
 
@@ -243,7 +184,7 @@ public class AppManagerListFragment extends Fragment {
         search_btn.setOnClickListener(toolBarClickListener);
         sort_btn.setOnClickListener(toolBarClickListener);
 
-        AppManagerListViewModel viewModel= new ViewModelProvider(this).get(AppManagerListViewModel.class);
+        viewModel= new ViewModelProvider(this).get(AppManagerListViewModel.class);
         viewModel.populate(app_type);
         viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
@@ -288,7 +229,7 @@ public class AppManagerListFragment extends Fragment {
                 String app_path=result.getString("app_path");
                 String package_name=result.getString("package_name");
                 if (BACKUP.equals(app_action)) {
-                    MoveToCopyToProcedure(app_path);
+                    MoveToCopyToProcedure(app_path,result);
                 } else if (UNINSTALL.equals(app_action)) {
                     if (package_clicked_for_delete.equals("")) {
                         package_clicked_for_delete = package_name;
@@ -331,6 +272,44 @@ public class AppManagerListFragment extends Fragment {
                 clear_selection();
             }
         });
+
+
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(APK_REPLACEMENT_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(APK_REPLACEMENT_REQUEST_CODE))
+                {
+                    back_up(result);
+                }
+            }
+        });
+
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+                {
+                    tree_uri=result.getParcelable("tree_uri");
+                    tree_uri_path=result.getString("tree_uri_path");
+                    back_up(result);
+                }
+
+            }
+        });
+
+        viewModel.isBackedUp.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    progressBar.setVisibility(View.GONE);
+                    Global.print(context,getString(R.string.copied_apk_file));
+                }
+
+
+            }
+        });
+
         return v;
     }
 
@@ -434,6 +413,27 @@ public class AppManagerListFragment extends Fragment {
         app_count_textview.setText(""+num_all_app);
     }
 
+    private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)
+    {
+        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path,fileObjectType);
+        if(uriPOJO!=null)
+        {
+            tree_uri_path=uriPOJO.get_path();
+            tree_uri=uriPOJO.get_uri();
+
+        }
+
+        if(tree_uri_path.equals(""))
+        {
+            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
+            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH> implements Filterable
     {
@@ -574,27 +574,105 @@ public class AppManagerListFragment extends Fragment {
             if (result.getResultCode() == Activity.RESULT_OK)
             {
                 Bundle bundle = result.getData().getBundleExtra("bundle");
-                ArrayList<String> files_selected_array=new ArrayList<>(bundle.getStringArrayList("files_selected_array"));
-                boolean cut=bundle.getBoolean("cut");
-                String source_folder=bundle.getString("source_folder");
                 String dest_folder=bundle.getString("dest_folder");
-                FileObjectType sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
-                FileObjectType destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
-                if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
-                    Global.print(context,!cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+                FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
+                String new_name=bundle.getString("new_name");
+                File file=new File(dest_folder,new_name);
+                String file_path=file.getAbsolutePath();
+                if(whether_file_already_exists(file_path,destFileObjectType))
+                {
+                    ApkBackupReplaceConfirmationDialog apkBackupReplaceConfirmationDialog=ApkBackupReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
+                    apkBackupReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
                 }
-
                 else
                 {
-                    PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-                            destFileObjectType, dest_folder, cut);
-                    pasteSetUpDialog.show(((AppManagerActivity)context).fm, "paste_dialog");
-
+                    back_up(bundle);
                 }
+
             }
         }
     });
 
+
+    private void back_up(Bundle bundle)
+    {
+        String dest_folder=bundle.getString("dest_folder");
+        FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
+        String new_name=bundle.getString("new_name");
+        File file=new File(dest_folder,new_name);
+        String file_path=file.getAbsolutePath();
+        if(is_file_writable(file_path,destFileObjectType))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            viewModel.isBackedUp.setValue(false);
+            viewModel.back_up(new ArrayList<>(Collections.singletonList(file_path)),dest_folder,destFileObjectType,tree_uri,tree_uri_path);
+        }
+
+    }
+
+    private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
+    {
+        if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+        {
+            File new_file=new File(new_file_path);
+            return new_file.exists();
+
+        }
+        else if(fileObjectType== FileObjectType.USB_TYPE)
+        {
+            UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,new_file_path);
+            return usbFile != null;
+
+        }
+        else if(fileObjectType==FileObjectType.ROOT_TYPE)
+        {
+            if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+            {
+                return !RootUtils.WHETHER_FILE_EXISTS(new_file_path);
+            }
+            else
+            {
+                Global.print(context,getString(R.string.root_access_not_avaialable));
+                return false;
+            }
+
+        }
+        else
+        {
+            if(check_SAF_permission(new_file_path,fileObjectType))
+            {
+                return FileUtil.exists(context, new_file_path, tree_uri, tree_uri_path);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
+
+    private boolean is_file_writable(String file_path,FileObjectType fileObjectType)
+    {
+        if(fileObjectType==FileObjectType.FILE_TYPE)
+        {
+            boolean isWritable;
+            isWritable=FileUtil.isWritable(fileObjectType,file_path);
+            if(isWritable)
+            {
+                return true;
+            }
+            else
+            {
+                return check_SAF_permission(file_path,fileObjectType);
+            }
+        }
+        else if(fileObjectType==FileObjectType.FTP_TYPE)
+        {
+            return false;
+        }
+        else return fileObjectType == FileObjectType.USB_TYPE;
+
+    }
 
 
     public boolean isPackageExisted(String targetPackage){
@@ -607,9 +685,8 @@ public class AppManagerListFragment extends Fragment {
         return true;
     }
 
-    private void MoveToCopyToProcedure(String file_path)
+    private void MoveToCopyToProcedure(String file_path, Bundle bundle)
     {
-        Bundle bundle=new Bundle();
         ArrayList<String>files_selected_array=new ArrayList<>();
         files_selected_array.add(file_path);
         bundle.putString("source_folder", new File(file_path).getParent());
@@ -621,7 +698,6 @@ public class AppManagerListFragment extends Fragment {
         intent.putExtra("bundle",bundle);
         intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
         activityResultLauncher_file_select.launch(intent);
-
     }
 
 
@@ -640,6 +716,8 @@ public class AppManagerListFragment extends Fragment {
             context.startActivity(chooser);
         }
     }
+
+
 
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener

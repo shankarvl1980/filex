@@ -157,7 +157,6 @@ public class CreateFileDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-				boolean file_created=false;
 				String new_name=new_file_name_edittext.getText().toString().trim();
 				if(new_name.equals(""))
 				{
@@ -179,7 +178,7 @@ public class CreateFileDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					return;
 				}
-				//new FileCreateAsyncTask(file,isWritable).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 				//viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
 				new CreateFileTask(file,isWritable).createFile();
 			}	
@@ -194,8 +193,6 @@ public class CreateFileDialog extends DialogFragment
 				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 				dismissAllowingStateLoss();
 			}
-				
-				
 		});
 
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, CreateFileDialog.this, new FragmentResultListener() {
@@ -229,7 +226,6 @@ public class CreateFileDialog extends DialogFragment
 			this.isWritable=isWritable;
 			new_file_path=file.getAbsolutePath();
 			new_name=file.getName();
-			//this.handler=handler;
 		}
 
 		public void createFile()
@@ -364,149 +360,6 @@ public class CreateFileDialog extends DialogFragment
 		}
 	}
 
-	/*
-	private class FileCreateAsyncTask extends AsyncTask<Void,Void,Boolean>
-	{
-		final File file;
-		final boolean isWritable;
-		boolean file_created;
-		final String new_file_path;
-		final String new_name;
-		FilePOJO filePOJO;
-		FileCreateAsyncTask(File file,boolean isWritable)
-		{
-			this.file=file;
-			this.isWritable=isWritable;
-			new_file_path=file.getAbsolutePath();
-			new_name=file.getName();
-		}
-		@Override
-		protected Boolean doInBackground(Void... voids) {
-
-			if(file_type==0)
-			{
-				if(isWritable)
-				{
-					file_created=FileUtil.createNativeNewFile(file);
-				}
-				else if(fileObjectType== FileObjectType.FILE_TYPE)
-				{
-					file_created=FileUtil.createSAFNewFile(context,parent_folder,new_name,tree_uri,tree_uri_path);
-				}
-				else if(fileObjectType== FileObjectType.USB_TYPE)
-				{
-					UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-					file_created=FileUtil.createUsbFile(parentUsbFile,new_name);
-
-				}
-				else if(fileObjectType==FileObjectType.ROOT_TYPE)
-				{
-					//file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
-					if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
-					{
-						file_created=FileUtil.createNativeNewFile(file);
-					}
-				}
-				else if(fileObjectType==FileObjectType.FTP_TYPE)
-				{
-					if(Global.CHECK_FTP_SERVER_CONNECTED())
-					{
-						InputStream bin = new ByteArrayInputStream(new byte[0]);
-						try {
-							file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
-						} catch (IOException e) {
-							file_created=false;
-						}
-					}
-					else
-					{
-						file_created=false;
-					}
-
-				}
-			}
-			else if(file_type==1)
-			{
-				if(isWritable)
-				{
-					file_created=FileUtil.mkdirNative(file);
-				}
-				else if(fileObjectType== FileObjectType.FILE_TYPE)
-				{
-					file_created=FileUtil.mkdirSAF(context,parent_folder,new_name,tree_uri,tree_uri_path);
-				}
-				else if(fileObjectType== FileObjectType.USB_TYPE)
-				{
-					UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-					file_created=FileUtil.mkdirUsb(parentUsbFile,new_name);
-				}
-				else if(fileObjectType==FileObjectType.ROOT_TYPE)
-				{
-					//file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
-					if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
-					{
-						file_created=FileUtil.mkdirNative(file);
-
-					}
-
-				}
-				else if(fileObjectType==FileObjectType.FTP_TYPE)
-				{
-					if(Global.CHECK_FTP_SERVER_CONNECTED())
-					{
-						try {
-							file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
-						} catch (IOException e) {
-						}
-					}
-					else
-					{
-						file_created=false;
-					}
-
-				}
-
-			}
-			if(file_created)
-			{
-				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
-				Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean aBoolean) {
-			super.onPostExecute(aBoolean);
-			if(file_created)
-			{
-				df.clearSelectionAndNotifyDataSetChanged();
-				int idx=df.filePOJO_list.indexOf(filePOJO);
-				if(df.llm!=null)
-				{
-					df.llm.scrollToPositionWithOffset(idx,0);
-				}
-				else if(df.glm!=null)
-				{
-					df.glm.scrollToPositionWithOffset(idx,0);
-				}
-
-				Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
-			}
-			else
-			{
-				Global.print(context,getString(R.string.could_not_create));
-			}
-			Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
-			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
-			dismissAllowingStateLoss();
-
-		}
-	}
-
-	 */
 
 	public static CreateFileDialog getInstance(int file_type, String parent_folder, FileObjectType fileObjectType)
 	{
@@ -527,6 +380,12 @@ public class CreateFileDialog extends DialogFragment
 		{
 			if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
+				if(new_file.exists())
+				{
+					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+					return false;
+				}
+				/*
 				String [] file_names_array;
 				if((file_names_array=new File(parent_folder).list())!=null)
 				{
@@ -539,6 +398,8 @@ public class CreateFileDialog extends DialogFragment
 						}
 					}
 				}
+
+				 */
 
 			}
 		}
@@ -555,14 +416,6 @@ public class CreateFileDialog extends DialogFragment
 			}
 		}
 
-		/*
-		if(dest_file_names.contains(new_file.getName()))
-		{
-			print(getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
-			return false;
-		}
-
-		 */
 		if(fileObjectType== FileObjectType.FILE_TYPE)
 		{
 			if(isWritable)
@@ -622,24 +475,7 @@ public class CreateFileDialog extends DialogFragment
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-				}
-			});
-
-			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-
-			//saf_permission_requested=true;
-
 			return false;
 		}
 		else

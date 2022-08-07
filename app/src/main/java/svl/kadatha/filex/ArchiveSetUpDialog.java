@@ -241,7 +241,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 					tree_uri=result.getParcelable("tree_uri");
 					tree_uri_path=result.getString("tree_uri_path");
-		//			saf_permission_requested = false;
 					okbutton.callOnClick();
 				}
 
@@ -337,22 +336,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 							if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 							{
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-//								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener()
-//								{
-//									public void onYes()
-//									{
-//										files_selected_array.remove(zip_folder_path+".zip");
-//										bundle.putStringArrayList("files_selected_array",files_selected_array);
-//										Intent intent=new Intent(context,emptyService);
-//										intent.setAction(ARCHIVE_ACTION_ZIP);
-//										intent.putExtra("bundle",bundle);
-//										context.startActivity(intent);
-//										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-//										dismissAllowingStateLoss();
-//
-//									}
-//								});
-//								archiveReplaceConfirmationDialog.setArguments(bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
 
 							}
@@ -515,23 +498,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-					
-				}
-			});
-
-			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-			//saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
 			return false;
 		}
@@ -638,17 +605,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-	
 
 	public void seekSAFPermission()
 	{
@@ -666,7 +622,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				treeUri = result.getData().getData();
 				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
 
-				//saf_permission_requested = false;
 				okbutton.callOnClick();
 			}
 			else

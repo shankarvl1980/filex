@@ -38,14 +38,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	private String request_code;
 	public static final String SAF_PERMISSION_CANCEL_REQUEST_CODE="saf_permission_cancel_request_code";
 
-    //SAFPermissionHelperDialog(){}
-    /*
-	SAFPermissionHelperDialog(boolean forUSB)
-	{
-		this.forUSB=forUSB;
-	}
-
-     */
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -58,7 +50,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");
@@ -97,15 +88,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 			public void onClick(View v)
 			{
 				seekSAFPermission();
-				/*
-				if(safPermissionHelperListener!=null)
-				{
-					safPermissionHelperListener.onOKBtnClicked();
-				}
-
-				dismissAllowingStateLoss();
-
-				 */
 			}
 		});
 		
@@ -114,13 +96,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 			
 			public void onClick(View v)
 			{
-				/*
-				if(safPermissionHelperListener!=null)
-				{
-					safPermissionHelperListener.onCancelBtnClicked();
-				}
-
-				 */
 				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(SAF_PERMISSION_CANCEL_REQUEST_CODE,null);
 				dismissAllowingStateLoss();
 			}
@@ -151,18 +126,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		
 	}
 
-	/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
-	 */
 
 	private void seekSAFPermission()
 	{
@@ -190,6 +153,10 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		else if(appCompatActivity instanceof PdfViewActivity)
 		{
 			((PdfViewActivity)appCompatActivity).clear_cache=false;
+		}
+		else if(appCompatActivity instanceof AppManagerActivity)
+		{
+			((AppManagerActivity)appCompatActivity).clear_cache=false;
 		}
 
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);

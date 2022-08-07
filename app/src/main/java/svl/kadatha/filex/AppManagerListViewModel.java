@@ -1,30 +1,41 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import me.jahnen.libaums.core.fs.UsbFile;
+
 public class AppManagerListViewModel extends AndroidViewModel {
 
     private boolean alreadyRun;
-    private Future<?> future;
+    private Future<?> future1,future2, future3;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<AppManagerListFragment.AppPOJO> app_selected_array=new ArrayList<>();
+    public MutableLiveData<Boolean> isBackedUp=new MutableLiveData<>();
+    private boolean isCancelled;
+    private FileObjectType destFileObjectType;
 
     public AppManagerListViewModel(@NonNull Application application) {
         super(application);
@@ -35,8 +46,20 @@ public class AppManagerListViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        future.cancel(true);
-        boolean isCancelled = true;
+        cancel(true);
+    }
+
+    public void cancel(boolean mayInterruptRunning){
+        if(future1!=null) future1.cancel(mayInterruptRunning);
+        if(future2!=null) future2.cancel(mayInterruptRunning);
+        if(future3!=null) future3.cancel(mayInterruptRunning);
+
+        isCancelled=true;
+    }
+
+    private boolean isCancelled()
+    {
+        return isCancelled;
     }
 
     public void populate(String app_type)
@@ -44,7 +67,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         if(alreadyRun)return;
         alreadyRun=true;
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 int flags = PackageManager.GET_META_DATA |
@@ -105,6 +128,825 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
         });
 
+    }
+
+
+    public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,Uri tree_uri,String tree_uri_path)
+    {
+        if(Boolean.TRUE.equals(isBackedUp.getValue())) return;
+        this.destFileObjectType=destFileObjectType;
+        List<String>dest_file_names=new ArrayList<>();
+        List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+
+        if(destFilePOJOs==null)
+        {
+            UsbFile currentUsbFile=null;
+            if(destFileObjectType==FileObjectType.USB_TYPE)
+            {
+                if(MainActivity.usbFileRoot!=null)
+                {
+                    try {
+                        currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
+
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),destFileObjectType,dest_folder,currentUsbFile,false);
+            destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+        }
+
+
+        for(FilePOJO filePOJO:destFilePOJOs)
+        {
+            dest_file_names.add(filePOJO.getName());
+        }
+
+
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future2=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<String> overwritten_copied_file_name_list;
+                boolean copy_result = false;
+                final boolean cut=false;
+                String current_file_name;
+                boolean isWritable=FileUtil.isWritable(destFileObjectType,dest_folder);
+                final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
+                final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
+
+                if(destFileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    if(destFileObjectType==FileObjectType.USB_TYPE)
+                    {
+                        isBackedUp.postValue(true);
+                        return;
+                    }
+
+                }
+                List<File> src_file_list=new ArrayList<>();
+
+                for(String s: files_selected_array)
+                {
+                    File file=new File(s);
+                    src_file_list.add(file);
+                }
+
+                overwritten_copied_file_name_list=new ArrayList<>(dest_file_names);
+                r:for(File file:src_file_list)
+                {
+                    if(isCancelled()|| file==null)
+                    {
+                        isBackedUp.postValue(true);
+                        return;
+                    }
+
+                    current_file_name=file.getName();
+                    String dest_file_path=dest_folder+File.separator+current_file_name;
+                    boolean isSourceFromInternal=true;//FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
+                    if(isWritable)
+                    {
+                        if(isSourceFromInternal)
+                        {
+                            copy_result=Copy_File_File(file,dest_file_path,cut);
+                        }
+
+                    }
+                    else
+                    {
+                        if(isSourceFromInternal)
+                        {
+                            if(destFileObjectType==FileObjectType.FILE_TYPE)
+                            {
+                                copy_result=Copy_File_SAFFile(application,file,dest_folder, file.getName(),tree_uri,tree_uri_path,cut);
+                            }
+                            else if(destFileObjectType==FileObjectType.USB_TYPE)
+                            {
+                                copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),cut);
+                            }
+                            else if(destFileObjectType==FileObjectType.FTP_TYPE)
+                            {
+                                copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),cut);
+                            }
+
+                        }
+                        else
+                        {
+                            if(destFileObjectType==FileObjectType.FILE_TYPE)
+                            {
+                                copy_result=Copy_File_SAFFile(application,file,dest_folder, file.getName(),tree_uri,tree_uri_path,false);  //in case of cut in saf not cutting here, cutting separately down
+                            }
+                            else if (destFileObjectType==FileObjectType.USB_TYPE)
+                            {
+                                copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),false);
+                            }
+                            else if(destFileObjectType==FileObjectType.FTP_TYPE)
+                            {
+                                copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),false);
+                            }
+
+                        }
+
+                    }
+                    String f_p=file.getAbsolutePath();
+                    if(copy_result)
+                    {
+                        copied_files_name.add(file.getName());
+                        copied_source_file_path_list.add(f_p);
+
+                    }
+
+                    files_selected_array.remove(f_p);
+                }
+
+                if(copied_files_name.size()>0)
+                {
+                    List<String> overwritten_copied_file_path_list=new ArrayList<>();
+                    overwritten_copied_file_name_list.retainAll(copied_files_name);
+                    for(String name:overwritten_copied_file_name_list)
+                    {
+                        overwritten_copied_file_path_list.add(dest_folder.equals(File.separator) ? dest_folder+name : dest_folder+File.separator+name);
+                    }
+
+                    FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
+
+                    copied_files_name.clear();
+                    copied_source_file_path_list.clear();
+                }
+
+                isBackedUp.postValue(true);
+            }
+        });
+    }
+
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_File_File(File source, String dest_file_path,boolean cut)
+    {
+        boolean success=false;
+        File destination=new File(dest_file_path);
+        if (source.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+            if(!destination.exists())// || !destination.isDirectory())
+            {
+                if(!(success=FileUtil.mkdirsNative(destination)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(destination.isDirectory()) success=true;   //make success true as destination dir exists to execute cut directory
+            }
+
+            String[] files_name_array = source.list();
+            if(files_name_array==null)
+            {
+//                ++counter_no_files;
+//                mutable_count_no_files.postValue(counter_no_files);
+                return true;
+            }
+
+            int size=files_name_array.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_file_name=files_name_array[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+                File srcFile = new File(source, inner_file_name);
+                String inner_dest_file_path=dest_file_path+File.separator+inner_file_name;
+                success=Copy_File_File(srcFile,inner_dest_file_path,cut);
+            }
+//            ++counter_no_files;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteNativeDirectory(source);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=source.length();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=source.getName();
+            success=FileUtil.copy_File_File(source,destination,cut);
+        }
+
+        return success;
+    }
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut)
+    {
+        boolean success=false;
+
+        if (source.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+
+            if(destFileObjectType==FileObjectType.FILE_TYPE)
+            {
+                File destination=new File(dest_file_path,name);
+                if(!destination.exists())// || !destination.isDirectory())
+                {
+                    if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
+                    {
+                        return false;
+                    }
+                }
+                else {
+                    if(destination.isDirectory()) success=true;
+                }
+
+            }
+				/*
+				//for other SAF
+				else
+				{
+					Uri dest_uri=FileUtil.getDocumentUri(context,dest_file_path+File.separator+name,uri,uri_path);
+					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
+					{
+						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
+						{
+							return false;
+						}
+					}
+
+				}
+
+				 */
+
+
+            String[] files_name_list = source.list();
+            if(files_name_list==null)
+            {
+//                ++counter_no_files;
+//                mutable_count_no_files.postValue(counter_no_files);
+                return true;
+            }
+            int size=files_name_list.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_file_name=files_name_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+                File srcFile = new File(source, inner_file_name);
+                String inner_dest_file=dest_file_path+File.separator+name;
+                success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteNativeDirectory(source);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=source.length();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=source.getName();
+            success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
+        }
+
+        return success;
+    }
+
+    public boolean Copy_File_UsbFile(File source, String dest_file_path,String name,boolean cut)
+    {
+        boolean success=false;
+
+        if (source.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
+            if(dest_usbFile==null) // || !dest_usbFile.isDirectory())
+            {
+                dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
+                if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(dest_usbFile.isDirectory()) success=true;
+            }
+
+
+            String[] files_name_list = source.list();
+            if(files_name_list==null)
+            {
+//                ++counter_no_files;
+//                mutable_count_no_files.postValue(counter_no_files);
+                return true;
+            }
+            int size=files_name_list.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_file_name=files_name_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+                File srcFile = new File(source, inner_file_name);
+                success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteNativeDirectory(source);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=source.length();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=source.getName();
+            success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut);
+        }
+
+        return success;
+    }
+
+    public boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut)
+    {
+        boolean success=false;
+
+        if (source.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
+            if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
+            {
+                if(!(success=FileUtil.mkdirFtp(file_path)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(dest_ftpFile.isDirectory()) success=true;
+            }
+
+
+            String[] files_name_list = source.list();
+            if(files_name_list==null)
+            {
+//                ++counter_no_files;
+//                mutable_count_no_files.postValue(counter_no_files);
+                return true;
+            }
+            int size=files_name_list.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_file_name=files_name_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+                File srcFile = new File(source, inner_file_name);
+                success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteNativeDirectory(source);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=source.length();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=source.getName();
+            success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut);
+        }
+
+        return success;
+    }
+
+
+    @SuppressWarnings("null")
+
+    public boolean Copy_UsbFile_UsbFile(UsbFile src_usbfile, String dest_file_path, String name,boolean cut)
+    {
+        boolean success=false;
+        if (src_usbfile.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
+            if(dest_usbFile==null)// || !dest_usbFile.isDirectory())
+            {
+                dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
+                if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(dest_usbFile.isDirectory()) success=true;
+            }
+
+
+            UsbFile[] inner_source_list;
+            try {
+                inner_source_list = src_usbfile.listFiles();
+            } catch (IOException e) {
+                return false;
+            }
+
+
+            int size=inner_source_list.length;
+            for (int i=0;i<size;++i)
+            {
+                UsbFile inner_usbfile=inner_source_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+                success=Copy_UsbFile_UsbFile(inner_usbfile, file_path, inner_usbfile.getName(),cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteUsbDirectory(src_usbfile);
+            }
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=src_usbfile.getLength();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=new File(src_usbfile.getAbsolutePath()).getName();
+            success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut);
+        }
+        return success;
+    }
+
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
+    {
+        boolean success=false;
+        File destination=new File(parent_file_path,name);
+        if (src_usbfile.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+            if(!destination.exists()) // || !destination.isDirectory())
+            {
+                if(!(success=FileUtil.mkdirsNative(destination)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(destination.isDirectory()) success=true;
+            }
+
+
+            UsbFile[] inner_source_list;
+            try {
+                inner_source_list = src_usbfile.listFiles();
+            } catch (IOException e) {
+                return false;
+            }
+
+
+            int size=inner_source_list.length;
+            for (int i=0;i<size;++i)
+            {
+                UsbFile inner_usbfile=inner_source_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+
+                String inner_dest_file=parent_file_path+File.separator+name;
+                success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteUsbDirectory(src_usbfile);
+            }
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=src_usbfile.getLength();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=new File(src_usbfile.getAbsolutePath()).getName();
+            success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut);
+        }
+        return success;
+    }
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_UsbFile_SAFFile(Context context, UsbFile source, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
+    {
+        boolean success=false;
+
+        if (source.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+            if(destFileObjectType==FileObjectType.FILE_TYPE)
+            {
+                File destination=new File(dest_file_path,name);
+                if(!destination.exists()) // || !destination.isDirectory())
+                {
+                    if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
+                    {
+                        return false;
+                    }
+                }
+                else {
+                    if(destination.isDirectory()) success=true;
+                }
+
+            }
+				/*
+				//for other SAF
+				else
+				{
+					Uri dest_uri=FileUtil.getDocumentUri(context,dest_file_path+File.separator+name,uri,uri_path);
+					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
+					{
+						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
+						{
+							return false;
+						}
+					}
+
+				}
+
+				 */
+
+
+            UsbFile[] files_name_list;
+            try {
+                files_name_list = source.listFiles();
+            } catch (IOException e) {
+                return  false;
+            }
+            int size=files_name_list.length;
+            for (int i=0;i<size;++i)
+            {
+                UsbFile inner_usbfile=files_name_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+
+                String inner_dest_file=dest_file_path+File.separator+name;
+                success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteUsbDirectory(source);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=source.getLength();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=new File(source.getAbsolutePath()).getName();
+            success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
+        }
+
+        return success;
+    }
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_FtpFile_File(String src_file_path, String parent_file_path, String name,boolean cut)
+    {
+        boolean success=false;
+        File destination=new File(parent_file_path,name);
+        FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
+        if (src_ftpfile.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+            if(!destination.exists()) // || !destination.isDirectory())
+            {
+                if(!(success=FileUtil.mkdirsNative(destination)))
+                {
+                    return false;
+                }
+            }
+            else {
+                if(destination.isDirectory()) success=true;
+            }
+
+
+            String[] inner_source_list;
+            try {
+                inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+            } catch (IOException e) {
+                return false;
+            }
+
+
+            int size=inner_source_list.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_ftpfile_name=inner_source_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+
+                String inner_dest_file=parent_file_path+File.separator+name;
+                String inner_source_file=(src_file_path.endsWith(File.separator)) ? src_file_path+inner_ftpfile_name : src_file_path+File.separator+inner_ftpfile_name;
+                success=Copy_FtpFile_File(inner_source_file,inner_dest_file, inner_ftpfile_name,cut);
+            }
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteFtpDirectory(src_file_path);
+            }
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=src_ftpfile.getSize();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=new File(src_file_path).getName();
+            success=FileUtil.copy_FtpFile_File(src_file_path,destination,cut);
+        }
+
+        return success;
+    }
+
+
+    @SuppressWarnings("null")
+    public boolean Copy_FtpFile_SAFFile(Context context, String src_file_path, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
+    {
+        boolean success=false;
+        FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
+        if (src_ftpfile.isDirectory())
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+
+            if(destFileObjectType==FileObjectType.FILE_TYPE)
+            {
+                File destination=new File(dest_file_path,name);
+                if(!destination.exists()) // || !destination.isDirectory())
+                {
+                    if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
+                    {
+                        return false;
+                    }
+                }
+                else {
+                    if(destination.isDirectory()) success=true;
+                }
+
+            }
+
+            String[] inner_source_list;
+            try {
+                inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+            } catch (IOException e) {
+                return false;
+            }
+
+
+            int size=inner_source_list.length;
+            for (int i=0;i<size;++i)
+            {
+                String inner_ftpfile_name=inner_source_list[i];
+                if(isCancelled())
+                {
+                    return false;
+                }
+
+                String inner_dest_file=dest_file_path+File.separator+name;
+                String inner_source_file=(src_file_path.endsWith(File.separator)) ? src_file_path+inner_ftpfile_name : src_file_path+File.separator+inner_ftpfile_name;
+                success=Copy_FtpFile_SAFFile(context,inner_source_file,inner_dest_file,inner_ftpfile_name,uri,uri_path,cut);
+            }
+
+//            counter_no_files++;
+//            mutable_count_no_files.postValue(counter_no_files);
+            if(success&&cut)
+            {
+                FileUtil.deleteFtpDirectory(src_file_path);
+            }
+
+        }
+        else
+        {
+            if(isCancelled())
+            {
+                return false;
+            }
+//            counter_no_files++;
+//            counter_size_files+=src_ftpfile.getSize();
+//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
+//            mutable_count_no_files.postValue(counter_no_files);
+//            copied_file=new File(src_file_path).getName();
+            success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut);
+        }
+
+        return success;
     }
 
 }

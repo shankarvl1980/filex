@@ -570,15 +570,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 			}
 		}
 
-		/*
-		@Override
-		protected void onProgressUpdate(String[] file_name)
-		{
-			// TODO: Implement this method
-			copied_file_name=file_name[0];
-		}
-
-		 */
 
 		@Override
 		protected void onPostExecute(Boolean result)

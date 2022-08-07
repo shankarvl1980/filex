@@ -51,7 +51,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
 		
 		Bundle bundle=getArguments();
@@ -63,7 +62,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//return super.onCreateView(inflater, container, savedInstanceState);
+
 
 		View v=inflater.inflate(R.layout.fragment_replace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
@@ -93,8 +92,8 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		no_button.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
-			{			
-				
+			{
+
 				if(fileReplaceListener!=null)
 				{
 					fileReplaceListener.onReplaceClick(false,apply_all_checkbox.isChecked());
@@ -117,32 +116,10 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-
-	}
-
-	 */
-	
-	/*
-	public void setReplaceListener(FileReplaceListener fileReplaceListener)
-	{
-		this.fileReplaceListener=fileReplaceListener;
-	}
-
-	 */
-
 
 	interface FileReplaceListener
 	{
 		void onReplaceClick(boolean replace, boolean replaceall);
 	}
-	
+
 }

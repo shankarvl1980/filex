@@ -35,15 +35,10 @@ public class AppInstallAlertDialog extends DialogFragment
     private ImageView app_icon_image_view;
     private TextView app_name_tv,package_name_tv, version_tv,installed_version_tv, message_tv;
     private String file_path;
-    //private String mime_type,file_type,app_package_name;
-
-    //private String package_name, app_name, version, installed_version;
-    //private AppInstallDialogListener appInstallDialogListener;
     private boolean remember_app_check_box;
     private Intent intent;
     private AppSelectorViewModel viewModel;
     private FrameLayout progress_bar;
-
 
 
     @Override
@@ -57,7 +52,6 @@ public class AppInstallAlertDialog extends DialogFragment
         super.onCreate(savedInstanceState);
         setCancelable(false);
         Bundle bundle=getArguments();
-        AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
         viewModel=new ViewModelProvider(this).get(AppSelectorViewModel.class);
         if(bundle!=null)
         {
@@ -85,7 +79,6 @@ public class AppInstallAlertDialog extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Handler handler = new Handler();
         View v=inflater.inflate(R.layout.fragment_apk_install_alert_dialog,container,false);
         app_icon_image_view=v.findViewById(R.id.fragment_apk_install_icon_imageview);
         app_name_tv=v.findViewById(R.id.fragment_apk_install_apk_name_tv);
@@ -93,24 +86,6 @@ public class AppInstallAlertDialog extends DialogFragment
         version_tv=v.findViewById(R.id.fragment_apk_install_apk_version_tv);
         installed_version_tv=v.findViewById(R.id.fragment_apk_install_apk_installed_version_tv);
         message_tv=v.findViewById(R.id.fragment_apk_install_message);
-       /*
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
-
-                    handler.removeCallbacks(this);
-                }
-                else
-                {
-                    handler.postDelayed(this,25);
-                }
-            }
-        });
-
-        */
-
         progress_bar=v.findViewById(R.id.fragment_apk_install_progressbar);
         FrameLayout button_layout = v.findViewById(R.id.fragment_apk_install_button_layout);
         button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -187,9 +162,7 @@ public class AppInstallAlertDialog extends DialogFragment
         AppInstallAlertDialog appInstallAlertDialog =new AppInstallAlertDialog();
         appInstallAlertDialog.setArguments(bundle);
         return appInstallAlertDialog;
-
     }
-
 
 
     @Override
@@ -199,99 +172,5 @@ public class AppInstallAlertDialog extends DialogFragment
         window.setLayout(Global.DIALOG_WIDTH, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-
-    /*
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(getDialog() != null && getRetainInstance())
-        {
-            getDialog().setDismissMessage(null);
-        }
-    }
-
-     */
-
-    /*
-    private class ApkArchiveInfoAsyncTask extends AsyncTask<Void, Void, Void>
-    {
-        ProgressBarFragment progressBarFragment;
-        PackageManager packageManager;
-        FragmentManager fragmentManager;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            asyncTaskStatus=AsyncTaskStatus.STARTED;
-            AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-            fragmentManager=appCompatActivity.getSupportFragmentManager();
-            packageManager=appCompatActivity.getPackageManager();
-            progressBarFragment=ProgressBarFragment.newInstance();
-            progressBarFragment.show(fragmentManager,"");
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            PackageInfo packageInfo=packageManager.getPackageArchiveInfo(file_path,0);
-            if(packageInfo!=null)
-            {
-                packageInfo.applicationInfo.publicSourceDir=file_path;
-                viewModel.package_name=packageInfo.applicationInfo.packageName;
-                viewModel.app_name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                viewModel.version=packageInfo.versionName;
-            }
-            if(viewModel.package_name==null)
-            {
-                String na=getString(R.string.na);
-                viewModel.app_name=na;
-                viewModel.package_name=na;
-                viewModel.version=na;
-                viewModel.installed_version=na;
-                return null;
-            }
-
-            List<PackageInfo> packageInfoList=packageManager.getInstalledPackages(PackageManager.GET_META_DATA);
-            int size=packageInfoList.size();
-            for(int i=0; i<size; ++i)
-            {
-                PackageInfo pi=packageInfoList.get(i);
-                if(viewModel.package_name.equals(pi.packageName))
-                {
-                    viewModel.installed_version=pi.versionName;
-                    break;
-                }
-
-            }
-            if(viewModel.installed_version==null)
-            {
-                viewModel.installed_version=getString(R.string.na);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-            progressBarFragment.dismissAllowingStateLoss();
-        }
-    }
-
-     */
-
-    /*
-    public void setAppInstallDialogListener(AppInstallDialogListener listener)
-    {
-        appInstallDialogListener=listener;
-    }
-
-    interface AppInstallDialogListener
-    {
-        void on_ok_click();
-    }
-
-     */
 
 }

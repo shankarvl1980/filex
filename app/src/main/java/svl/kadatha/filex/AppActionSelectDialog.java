@@ -30,7 +30,6 @@ import java.util.List;
 public class AppActionSelectDialog extends DialogFragment
 {
     private Context context;
-    private AppManagerListFragment.AppPOJO appPOJO;
     private String app_name;
     private String package_name;
     private String app_size;
@@ -177,7 +176,16 @@ public class AppActionSelectDialog extends DialogFragment
                     {
                         pos=getBindingAdapterPosition();
                         bundle.putString("app_action",action_list.get(pos));
-                        ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
+                        if(action_list.get(pos).equals(AppManagerListFragment.BACKUP))
+                        {
+                            ApkBackUpNameDialog apkBackUpNameDialog=ApkBackUpNameDialog.getInstance(bundle);
+                            apkBackUpNameDialog.show(((AppManagerActivity)context).getSupportFragmentManager(),"");
+                        }
+                        else
+                        {
+                            ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
+                        }
+
                         dismissAllowingStateLoss();
                     }
                 });
@@ -185,18 +193,5 @@ public class AppActionSelectDialog extends DialogFragment
         }
 
     }
-
-/*
-    interface AppActionSelectListener
-    {
-        void onSelectType(String app_action);
-    }
-
-    public void setAppActionSelectListener(AppActionSelectListener listener)
-    {
-        appActionSelectListener=listener;
-    }
-
- */
 
 }
