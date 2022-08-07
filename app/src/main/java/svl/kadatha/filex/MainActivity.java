@@ -977,7 +977,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
 	{
-		//Log.d("shankar","broadcast_file_pojo_cache_removal triggered");
 	    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
 	}
 
@@ -1387,7 +1386,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 				}
 			});
-			//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
 		}
@@ -1608,7 +1607,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df.progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(getCacheDir());
-					//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 
 				if(Global.ARCHIVE_EXTRACT_DIR.exists())
@@ -1616,7 +1614,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df.progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-					//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 
 				finish();
@@ -2085,217 +2082,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
-
-	/*
-	private class ArchiveViewAsyncTask1 extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
-	{
-		final Uri data;
-		boolean success;
-		InputStream inStream;
-		ZipInputStream zipInputStream;
-		final ProgressBarFragment progressbarFragment=ProgressBarFragment.newInstance();
-		ArchiveViewAsyncTask1(Uri data)
-		{
-			this.data=data;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			progressbarFragment.show(fm,"progressbar_dialog");
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... voids) {
-			if(Global.ARCHIVE_EXTRACT_DIR.exists())
-			{
-				FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-			}
-			try {
-				inStream=getContentResolver().openInputStream(data);
-				zipInputStream=new ZipInputStream(inStream);
-				ZipEntry zipEntry=zipInputStream.getNextEntry();
-				while (zipEntry!=null){
-					File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipEntry.getName());
-					if(zipEntry.isDirectory() && !f.exists())
-					{
-						success=f.mkdirs();
-					}
-					else if(!zipEntry.isDirectory())
-					{
-						if(!f.getParentFile().exists())
-						{
-							success=f.getParentFile().mkdirs();
-						}
-						try
-						{
-							success=f.createNewFile();
-						}
-						catch(IOException e)
-						{
-							success=false;
-						}
-					}
-					zipEntry=zipInputStream.getNextEntry();
-				}
-
-			} catch(IOException e){
-				success=false;
-			} finally {
-				try {
-					inStream.close();
-					return success;
-				}
-				catch (IOException e){
-					success=false;
-				}
-			}
-			return success;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			super.onPostExecute(result);
-			progressbarFragment.dismissAllowingStateLoss();
-			archive_view=result;
-			if(result)
-			{
-				toolbar_shown_prior_archive=toolbar_shown;
-				createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
-			}
-
-			else
-			{
-				if(Global.ARCHIVE_EXTRACT_DIR.exists())
-				{
-					FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				}
-
-			}
-		}
-	}
-
-	 */
-
-	/*
-	private class ArchiveViewAsyncTask extends svl.kadatha.filex.AsyncTask<Void, Void, Boolean>
-	{
-		final ZipFile zipfile;
-		boolean success;
-		final ProgressBarFragment progressbarFragment=ProgressBarFragment.newInstance();
-		ArchiveViewAsyncTask(ZipFile zip_file)
-		{
-			this.zipfile=zip_file;
-		}
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			progressbarFragment.show(fm,"progressbar_dialog");
-		}
-
-		@Override
-		protected Boolean doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			if(Global.ARCHIVE_EXTRACT_DIR.exists())
-			{
-				FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-			}
-
-			Enumeration<? extends ZipEntry> zip_entries=zipfile.entries();
-			while(zip_entries.hasMoreElements())
-			{
-				ZipEntry zipentry=zip_entries.nextElement();
-				File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipentry.getName());
-				if(zipentry.isDirectory() && !f.exists())
-				{
-					success=f.mkdirs();
-				}
-				else if(!zipentry.isDirectory())
-				{
-					if(!f.getParentFile().exists())
-					{
-						success=f.getParentFile().mkdirs();
-					}
-					try
-					{
-						success=f.createNewFile();
-					}
-					catch(IOException e)
-					{
-						success=false;
-					}
-				}
-			}
-			return success;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			progressbarFragment.dismissAllowingStateLoss();
-			archive_view=result;
-			if(result)
-			{
-				toolbar_shown_prior_archive=toolbar_shown;
-				createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
-			}
-			else
-			{
-				if(Global.ARCHIVE_EXTRACT_DIR.exists())
-				{
-					FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				}
-			}
-		}
-
-	}
-
-	 */
-
-
-	/*
-	public class AsyncTaskDeleteDirectory extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
-	{
-		final File dir;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		AsyncTaskDeleteDirectory(File f)
-		{
-			dir=f;
-		}
-
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			pbf.show(((AppCompatActivity)context).getSupportFragmentManager(),"progressbar_dialog");
-		}
-
-		@Override
-		protected Boolean doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			{
-				FileUtil.deleteNativeDirectory(dir);
-			}
-			return !dir.exists();
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			pbf.dismissAllowingStateLoss();
-		}
-	}
-
-	 */
 
 
 	private void setupDevice() {

@@ -7,11 +7,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -131,9 +133,9 @@ public class AppManagerListViewModel extends AndroidViewModel {
     }
 
 
-    public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,Uri tree_uri,String tree_uri_path)
+    public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,List<String> new_name_list,Uri tree_uri,String tree_uri_path)
     {
-        if(Boolean.TRUE.equals(isBackedUp.getValue())) return;
+       // if(Boolean.TRUE.equals(isBackedUp.getValue())) return;
         this.destFileObjectType=destFileObjectType;
         List<String>dest_file_names=new ArrayList<>();
         List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
@@ -168,13 +170,14 @@ public class AppManagerListViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
+
                 List<String> overwritten_copied_file_name_list;
                 boolean copy_result = false;
                 final boolean cut=false;
                 String current_file_name;
                 boolean isWritable=FileUtil.isWritable(destFileObjectType,dest_folder);
                 final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
-                final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
+                //final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
 
                 if(destFileObjectType==FileObjectType.ROOT_TYPE)
                 {
@@ -193,71 +196,37 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     src_file_list.add(file);
                 }
 
+                int count = 0;
                 overwritten_copied_file_name_list=new ArrayList<>(dest_file_names);
-                r:for(File file:src_file_list)
-                {
-                    if(isCancelled()|| file==null)
-                    {
+                for (File file : src_file_list) {
+                    if (isCancelled() || file == null) {
                         isBackedUp.postValue(true);
                         return;
                     }
 
-                    current_file_name=file.getName();
-                    String dest_file_path=dest_folder+File.separator+current_file_name;
-                    boolean isSourceFromInternal=true;//FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
-                    if(isWritable)
-                    {
-                        if(isSourceFromInternal)
-                        {
-                            copy_result=Copy_File_File(file,dest_file_path,cut);
+                    current_file_name = new_name_list.get(count);
+                    String dest_file_path = dest_folder + File.separator + current_file_name;
+                    //boolean isSourceFromInternal = true;//FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
+                    if (isWritable) {
+                        copy_result = Copy_File_File(file, dest_file_path, cut);
+                    } else {
+                        if (destFileObjectType == FileObjectType.FILE_TYPE) {
+                            copy_result = Copy_File_SAFFile(application, file, dest_folder, current_file_name, tree_uri, tree_uri_path, cut);
+                        } else if (destFileObjectType == FileObjectType.USB_TYPE) {
+                            copy_result = Copy_File_UsbFile(file, dest_folder, current_file_name, cut);
+                        } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
+                            copy_result = Copy_File_FtpFile(file, dest_folder, current_file_name, cut);
                         }
 
                     }
-                    else
-                    {
-                        if(isSourceFromInternal)
-                        {
-                            if(destFileObjectType==FileObjectType.FILE_TYPE)
-                            {
-                                copy_result=Copy_File_SAFFile(application,file,dest_folder, file.getName(),tree_uri,tree_uri_path,cut);
-                            }
-                            else if(destFileObjectType==FileObjectType.USB_TYPE)
-                            {
-                                copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),cut);
-                            }
-                            else if(destFileObjectType==FileObjectType.FTP_TYPE)
-                            {
-                                copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),cut);
-                            }
-
-                        }
-                        else
-                        {
-                            if(destFileObjectType==FileObjectType.FILE_TYPE)
-                            {
-                                copy_result=Copy_File_SAFFile(application,file,dest_folder, file.getName(),tree_uri,tree_uri_path,false);  //in case of cut in saf not cutting here, cutting separately down
-                            }
-                            else if (destFileObjectType==FileObjectType.USB_TYPE)
-                            {
-                                copy_result = Copy_File_UsbFile(file,dest_folder,file.getName(),false);
-                            }
-                            else if(destFileObjectType==FileObjectType.FTP_TYPE)
-                            {
-                                copy_result=Copy_File_FtpFile(file,dest_folder,file.getName(),false);
-                            }
-
-                        }
-
-                    }
-                    String f_p=file.getAbsolutePath();
-                    if(copy_result)
-                    {
-                        copied_files_name.add(file.getName());
-                        copied_source_file_path_list.add(f_p);
+                    String f_p = file.getAbsolutePath();
+                    if (copy_result) {
+                        copied_files_name.add(current_file_name);
 
                     }
 
                     files_selected_array.remove(f_p);
+                    ++count;
                 }
 
                 if(copied_files_name.size()>0)
@@ -270,9 +239,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     }
 
                     FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
-
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AppManagerActivity.ACTIVITY_NAME);
                     copied_files_name.clear();
-                    copied_source_file_path_list.clear();
                 }
 
                 isBackedUp.postValue(true);
@@ -307,8 +275,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             String[] files_name_array = source.list();
             if(files_name_array==null)
             {
-//                ++counter_no_files;
-//                mutable_count_no_files.postValue(counter_no_files);
+
                 return true;
             }
 
@@ -324,12 +291,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String inner_dest_file_path=dest_file_path+File.separator+inner_file_name;
                 success=Copy_File_File(srcFile,inner_dest_file_path,cut);
             }
-//            ++counter_no_files;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteNativeDirectory(source);
-            }
 
         }
         else
@@ -338,11 +299,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=source.length();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=source.getName();
             success=FileUtil.copy_File_File(source,destination,cut);
         }
 
@@ -399,8 +355,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             String[] files_name_list = source.list();
             if(files_name_list==null)
             {
-//                ++counter_no_files;
-//                mutable_count_no_files.postValue(counter_no_files);
                 return true;
             }
             int size=files_name_list.length;
@@ -415,12 +369,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String inner_dest_file=dest_file_path+File.separator+name;
                 success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteNativeDirectory(source);
-            }
 
         }
         else
@@ -429,11 +377,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=source.length();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=source.getName();
             success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
         }
 
@@ -469,8 +412,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             String[] files_name_list = source.list();
             if(files_name_list==null)
             {
-//                ++counter_no_files;
-//                mutable_count_no_files.postValue(counter_no_files);
                 return true;
             }
             int size=files_name_list.length;
@@ -484,12 +425,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 File srcFile = new File(source, inner_file_name);
                 success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteNativeDirectory(source);
-            }
 
         }
         else
@@ -498,11 +433,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=source.length();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=source.getName();
             success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut);
         }
 
@@ -537,8 +467,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             String[] files_name_list = source.list();
             if(files_name_list==null)
             {
-//                ++counter_no_files;
-//                mutable_count_no_files.postValue(counter_no_files);
                 return true;
             }
             int size=files_name_list.length;
@@ -552,13 +480,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 File srcFile = new File(source, inner_file_name);
                 success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteNativeDirectory(source);
-            }
-
         }
         else
         {
@@ -566,11 +487,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=source.length();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=source.getName();
             success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut);
         }
 
@@ -623,12 +539,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
                 success=Copy_UsbFile_UsbFile(inner_usbfile, file_path, inner_usbfile.getName(),cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteUsbDirectory(src_usbfile);
-            }
         }
         else
         {
@@ -636,11 +546,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=src_usbfile.getLength();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=new File(src_usbfile.getAbsolutePath()).getName();
+
             success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut);
         }
         return success;
@@ -691,12 +597,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String inner_dest_file=parent_file_path+File.separator+name;
                 success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteUsbDirectory(src_usbfile);
-            }
+
         }
         else
         {
@@ -704,11 +605,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=src_usbfile.getLength();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=new File(src_usbfile.getAbsolutePath()).getName();
             success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut);
         }
         return success;
@@ -778,12 +674,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String inner_dest_file=dest_file_path+File.separator+name;
                 success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteUsbDirectory(source);
-            }
 
         }
         else
@@ -792,11 +682,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=source.getLength();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=new File(source.getAbsolutePath()).getName();
+
             success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
         }
 
@@ -849,12 +735,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String inner_source_file=(src_file_path.endsWith(File.separator)) ? src_file_path+inner_ftpfile_name : src_file_path+File.separator+inner_ftpfile_name;
                 success=Copy_FtpFile_File(inner_source_file,inner_dest_file, inner_ftpfile_name,cut);
             }
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteFtpDirectory(src_file_path);
-            }
+
         }
         else
         {
@@ -862,11 +743,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=src_ftpfile.getSize();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=new File(src_file_path).getName();
+
             success=FileUtil.copy_FtpFile_File(src_file_path,destination,cut);
         }
 
@@ -924,13 +801,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 success=Copy_FtpFile_SAFFile(context,inner_source_file,inner_dest_file,inner_ftpfile_name,uri,uri_path,cut);
             }
 
-//            counter_no_files++;
-//            mutable_count_no_files.postValue(counter_no_files);
-            if(success&&cut)
-            {
-                FileUtil.deleteFtpDirectory(src_file_path);
-            }
-
         }
         else
         {
@@ -938,11 +808,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-//            counter_no_files++;
-//            counter_size_files+=src_ftpfile.getSize();
-//            size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//            mutable_count_no_files.postValue(counter_no_files);
-//            copied_file=new File(src_file_path).getName();
             success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut);
         }
 

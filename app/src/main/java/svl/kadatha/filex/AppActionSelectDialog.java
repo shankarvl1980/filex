@@ -59,7 +59,7 @@ public class AppActionSelectDialog extends DialogFragment
         action_list=new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP,AppManagerListFragment.UNINSTALL,AppManagerListFragment.CONTROL_PANEL,AppManagerListFragment.PLAY_STORE));
     }
 
-    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version, String app_path)
+    public static AppActionSelectDialog getInstance(String app_name,String package_name,String app_size, String version,String app_path)
     {
         AppActionSelectDialog appActionSelectDialog=new AppActionSelectDialog();
         Bundle bundle=new Bundle();

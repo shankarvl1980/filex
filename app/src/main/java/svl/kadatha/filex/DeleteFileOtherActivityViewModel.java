@@ -23,13 +23,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private boolean isFromInternal;
     public List<FilePOJO> deleted_files;
     public List<String> deleted_file_name_list;
-    //private List<FilePOJO> src_file_list;
-    //private List<AudioPOJO> src_audio_file_list;
     public ArrayList<AudioPOJO> deleted_audio_files;
-    //private FileObjectType fileObjectType;
-    //private Uri tree_uri;
-    //private String tree_uri_path;
-
 
 
     public DeleteFileOtherActivityViewModel(@NonNull Application application) {
@@ -59,10 +53,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteFilePOJO(List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
-//        src_file_list=msrc_file_list;
-//        fileObjectType=mfileObjectType;
-//        tree_uri=mtree_uri;
-//        tree_uri_path=mtree_uri_path;
+
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -167,10 +158,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteAudioPOJO(List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
-//        src_audio_file_list=msrc_file_list;
-//        fileObjectType=mfileObjectType;
-//        tree_uri=mtree_uri;
-//        tree_uri_path=mtree_uri_path;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override

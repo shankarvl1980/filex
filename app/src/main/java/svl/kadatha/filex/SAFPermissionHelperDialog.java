@@ -26,8 +26,6 @@ import androidx.fragment.app.DialogFragment;
 
 public class SAFPermissionHelperDialog extends DialogFragment
 {
-
-    //private SafPermissionHelperListener safPermissionHelperListener;
     private boolean forUSB;
 	private Context context;
 	private String tree_uri_path="";
@@ -111,6 +109,14 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		bundle.putString("request_code",request_code);
 		bundle.putString("file_path",file_path);
 		bundle.putSerializable("fileObjectType",fileObjectType);
+		safPermissionHelperDialog.setArguments(bundle);
+		return safPermissionHelperDialog;
+	}
+
+	public static SAFPermissionHelperDialog getInstance(String request_code, Bundle bundle)
+	{
+		SAFPermissionHelperDialog safPermissionHelperDialog=new SAFPermissionHelperDialog();
+		bundle.putString("request_code",request_code);
 		safPermissionHelperDialog.setArguments(bundle);
 		return safPermissionHelperDialog;
 	}
@@ -209,19 +215,4 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		return !tree_uri_path.equals("");
 	}
 
-
-	
-	/*
-	public void set_safpermissionhelperlistener(SafPermissionHelperListener safpermissionlistener)
-	{
-		safPermissionHelperListener=safpermissionlistener;
-	}
-	
-	interface SafPermissionHelperListener
-	{
-		void onOKBtnClicked();
-		void onCancelBtnClicked();
-	}
-
-	 */
 }

@@ -71,6 +71,8 @@ public class ApkBackUpNameDialog extends DialogFragment
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView file_label_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
         new_file_name_edittext=v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);
+        String app_name=bundle.getString("app_name")+"_"+bundle.getString("version");
+        new_file_name_edittext.setText(app_name);
         TextView file_name_suffix=v.findViewById(R.id.dialog_fragment_rename_delete_filename_suffix);
         file_name_suffix.setVisibility(View.VISIBLE);
         TextView no_of_files_textview = v.findViewById(R.id.dialog_fragment_rename_delete_no_of_files);
@@ -107,6 +109,7 @@ public class ApkBackUpNameDialog extends DialogFragment
                 new_name=new_name+".apk";
                 bundle.putString("new_name",new_name);
                 ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
+                imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
             }
 

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -303,9 +304,9 @@ public class AppManagerListFragment extends Fragment {
                 if(aBoolean)
                 {
                     progressBar.setVisibility(View.GONE);
+                    viewModel.isBackedUp.setValue(false);
                     Global.print(context,getString(R.string.copied_apk_file));
                 }
-
 
             }
         });
@@ -413,27 +414,6 @@ public class AppManagerListFragment extends Fragment {
         app_count_textview.setText(""+num_all_app);
     }
 
-    private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)
-    {
-        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path,fileObjectType);
-        if(uriPOJO!=null)
-        {
-            tree_uri_path=uriPOJO.get_path();
-            tree_uri=uriPOJO.get_uri();
-
-        }
-
-        if(tree_uri_path.equals(""))
-        {
-            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
-            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
 
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH> implements Filterable
     {
@@ -579,7 +559,9 @@ public class AppManagerListFragment extends Fragment {
                 String new_name=bundle.getString("new_name");
                 File file=new File(dest_folder,new_name);
                 String file_path=file.getAbsolutePath();
-                if(whether_file_already_exists(file_path,destFileObjectType))
+                bundle.putString("file_path",dest_folder);
+                bundle.putSerializable("fileObjectType",destFileObjectType);
+                if(whether_file_already_exists(file_path,destFileObjectType,bundle))
                 {
                     ApkBackupReplaceConfirmationDialog apkBackupReplaceConfirmationDialog=ApkBackupReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
                     apkBackupReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
@@ -596,21 +578,21 @@ public class AppManagerListFragment extends Fragment {
 
     private void back_up(Bundle bundle)
     {
+        String app_path=bundle.getString("app_path");
         String dest_folder=bundle.getString("dest_folder");
         FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
         String new_name=bundle.getString("new_name");
-        File file=new File(dest_folder,new_name);
-        String file_path=file.getAbsolutePath();
-        if(is_file_writable(file_path,destFileObjectType))
+        bundle.putString("file_path",dest_folder);
+        bundle.putSerializable("fileObjectType",destFileObjectType);
+        if(is_file_writable(dest_folder,destFileObjectType,bundle))
         {
             progressBar.setVisibility(View.VISIBLE);
-            viewModel.isBackedUp.setValue(false);
-            viewModel.back_up(new ArrayList<>(Collections.singletonList(file_path)),dest_folder,destFileObjectType,tree_uri,tree_uri_path);
+            viewModel.back_up(new ArrayList<>(Collections.singletonList(app_path)),dest_folder,destFileObjectType,Collections.singletonList(new_name),tree_uri,tree_uri_path);
         }
 
     }
 
-    private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
+    private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType,Bundle bundle)
     {
         if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
         {
@@ -639,7 +621,7 @@ public class AppManagerListFragment extends Fragment {
         }
         else
         {
-            if(check_SAF_permission(new_file_path,fileObjectType))
+            if(check_SAF_permission(new_file_path,fileObjectType,bundle))
             {
                 return FileUtil.exists(context, new_file_path, tree_uri, tree_uri_path);
             }
@@ -651,7 +633,7 @@ public class AppManagerListFragment extends Fragment {
 
     }
 
-    private boolean is_file_writable(String file_path,FileObjectType fileObjectType)
+    private boolean is_file_writable(String file_path,FileObjectType fileObjectType,Bundle bundle)
     {
         if(fileObjectType==FileObjectType.FILE_TYPE)
         {
@@ -663,7 +645,7 @@ public class AppManagerListFragment extends Fragment {
             }
             else
             {
-                return check_SAF_permission(file_path,fileObjectType);
+                return check_SAF_permission(file_path,fileObjectType,bundle);
             }
         }
         else if(fileObjectType==FileObjectType.FTP_TYPE)
@@ -672,6 +654,28 @@ public class AppManagerListFragment extends Fragment {
         }
         else return fileObjectType == FileObjectType.USB_TYPE;
 
+    }
+
+    private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType,Bundle bundle)
+    {
+        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path,fileObjectType);
+        if(uriPOJO!=null)
+        {
+            tree_uri_path=uriPOJO.get_path();
+            tree_uri=uriPOJO.get_uri();
+
+        }
+
+        if(tree_uri_path.equals(""))
+        {
+            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,bundle);
+            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 
