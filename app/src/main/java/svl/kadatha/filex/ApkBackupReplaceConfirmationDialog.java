@@ -14,8 +14,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.ArrayList;
-
 public class ApkBackupReplaceConfirmationDialog extends DialogFragment
 {
 

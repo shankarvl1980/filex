@@ -2,14 +2,12 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +24,8 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class DeleteFileAlertDialog extends DialogFragment
 {
@@ -57,7 +47,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private Button okbutton;
     private OKButtonClickListener okButtonClickListener;
 	private String source_folder;
-	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="delete_file_saf_permission_request_code";
 
 
@@ -89,7 +78,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 			//fileCountSize.count();
 		}
 		String other_file_permission = Global.GET_OTHER_FILE_PERMISSION(source_folder);
-		handler=new Handler(Looper.getMainLooper());
+		Handler handler = new Handler(Looper.getMainLooper());
 	}
 
 	public static DeleteFileAlertDialog getInstance(ArrayList<String> files_selected_array, FileObjectType sourceFileObjectType, String source_folder,boolean storage_analyser_delete )

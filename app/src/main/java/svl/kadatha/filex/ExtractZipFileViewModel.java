@@ -20,7 +20,6 @@ import java.util.zip.ZipFile;
 public class ExtractZipFileViewModel extends AndroidViewModel
 {
 
-	private final Application application;
 	private boolean isCancelled;
 	private Future<?> future1,future2,future3, future4;
 	public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
@@ -31,7 +30,6 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 	public ExtractZipFileViewModel(@NonNull Application application) {
 		super(application);
-		this.application=application;
 	}
 
 	@Override

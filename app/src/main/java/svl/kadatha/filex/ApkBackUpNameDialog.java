@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,25 +16,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentResultListener;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class ApkBackUpNameDialog extends DialogFragment
 {
     private EditText new_file_name_edittext;
-    private Button okbutton;
     private Context context;
     private InputMethodManager imm;
     private Bundle bundle;
@@ -81,7 +64,7 @@ public class ApkBackUpNameDialog extends DialogFragment
         files_size_textview.setVisibility(View.GONE);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_rename_delete_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-        okbutton= buttons_layout.findViewById(R.id.first_button);
+        Button okbutton = buttons_layout.findViewById(R.id.first_button);
         okbutton.setText(R.string.ok);
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
         cancelbutton.setText(R.string.cancel);

@@ -40,7 +40,6 @@ public class FileSaveService2 extends Service
 	final LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
 	private NotifManager nm;
     static boolean SERVICE_COMPLETED=true;
-	private Future future;
 	private Handler handler;
 
 
@@ -148,44 +147,32 @@ public class FileSaveService2 extends Service
 
 		ExecutorService executorService=MyExecutorService.getExecutorService();
 		String finalEol_string = eol_string;
-		future=executorService.submit(new Runnable() {
+		Future future = executorService.submit(new Runnable() {
 			@Override
 			public void run() {
 				boolean result;
 				FileOutputStream fileOutputStream;
-				if(isWritable)
-				{
-					if(eol==altered_eol)
-					{
-						result=save_file(null,prev_page_end_point,current_page_end_point,content.getBytes());
-					}
-					else
-					{
-						result=save_file_with_altered_eol(null,prev_page_end_point,current_page_end_point,content, finalEol_string);
+				if (isWritable) {
+					if (eol == altered_eol) {
+						result = save_file(null, prev_page_end_point, current_page_end_point, content.getBytes());
+					} else {
+						result = save_file_with_altered_eol(null, prev_page_end_point, current_page_end_point, content, finalEol_string);
 					}
 
-				}
-				else
-				{
+				} else {
 
-					fileOutputStream=FileUtil.get_fileoutputstream(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-					if(fileOutputStream!=null)
-					{
-						if(eol==altered_eol)
-						{
-							result=save_file(fileOutputStream,prev_page_end_point,current_page_end_point,content.getBytes());
+					fileOutputStream = FileUtil.get_fileoutputstream(context, file.getAbsolutePath(), tree_uri, tree_uri_path);
+					if (fileOutputStream != null) {
+						if (eol == altered_eol) {
+							result = save_file(fileOutputStream, prev_page_end_point, current_page_end_point, content.getBytes());
 
-						}
-						else
-						{
-							result=save_file_with_altered_eol(fileOutputStream,prev_page_end_point,current_page_end_point,content, finalEol_string);
+						} else {
+							result = save_file_with_altered_eol(fileOutputStream, prev_page_end_point, current_page_end_point, content, finalEol_string);
 						}
 
 
-					}
-					else
-					{
-						result=false;
+					} else {
+						result = false;
 					}
 
 
@@ -194,13 +181,12 @@ public class FileSaveService2 extends Service
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						if(fileSaveServiceCompletionListener!=null)
-						{
+						if (fileSaveServiceCompletionListener != null) {
 							fileSaveServiceCompletionListener.onServiceCompletion(result);
 						}
 						stopForeground(true);
 						stopSelf();
-						SERVICE_COMPLETED=true;
+						SERVICE_COMPLETED = true;
 
 					}
 				});
