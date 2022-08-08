@@ -187,14 +187,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		}
 
-		/*
-		if(pbf_polling!=null)
-		{
-			pbf_polling.dismissAllowingStateLoss();
-		}
-
-		 */
-
 
 
 	}
@@ -202,38 +194,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		/*
-		if(cache_cleared)
-		{
-			//Log.d("shankar","in createview, cache_cleared is true");
-			cache_cleared=false;
-			local_activity_delete=false;
-			modification_observed=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-				{
-
-					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-					cancelableProgressBarDialog.show(mainActivity.fm,"");
-					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-				}
-				else
-				{
-
-					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-					viewModel.isFinished.setValue(false);
-					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view);
-				}
-			}
-
-		}
-
-		 */
-
 		View v=inflater.inflate(R.layout.fragment_detail,container,false);
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
@@ -343,14 +303,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					cancelableProgressBarDialog.set_title(getString(R.string.searching));
 					cancelableProgressBarDialog.show(mainActivity.fm,"");
 					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 				}
 				else
 				{
-
-					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
 
 				}
@@ -432,19 +388,14 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
-
-					//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-					//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 					cancelableProgressBarDialog.set_title(getString(R.string.searching));
 					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					viewModel.isFinished.setValue(false);
 					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 				}
 				else
 				{
-
-					//asyncTaskFilePopulate=new AsyncTaskFilePopulate();
-					//asyncTaskFilePopulate.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
 					progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isFinished.setValue(false);
 					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
@@ -466,15 +417,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				//asyncTaskLibrarySearch=new AsyncTaskLibrarySearch(file_click_selected_name,search_lower_limit_size,search_upper_limit_size);
-				//asyncTaskLibrarySearch.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				cancelableProgressBarDialog.show(mainActivity.fm,"");
+				viewModel.isFinished.setValue(false);
 				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
 			else
 			{
-				//after_filledFilePojos_procedure();
 				if(MainActivity.SHOW_HIDDEN_FILE)
 				{
 					filePOJO_list=viewModel.filePOJOS;

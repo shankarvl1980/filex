@@ -899,8 +899,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 	
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
-
-		final LinkedHashMap<Integer,String> deleted_file_path_index_hashmap=new LinkedHashMap<>();
 		final List<String> deleted_file_names=new ArrayList<>();
 		final List<String> deleted_files_path_list=new ArrayList<>();
 
