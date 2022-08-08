@@ -161,7 +161,7 @@ public class Iterate
 					{
 						String docID=cursor.getString(0);
 						String displayName=cursor.getString(1);
-						inner_source_list_files.add(parent_file_path+File.separator+displayName);
+						inner_source_list_files.add(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,displayName));
 					}
 					cursor.close();
 					populate(context,inner_source_list_files,target_list_files,include_folder,source_uri,source_uri_path);

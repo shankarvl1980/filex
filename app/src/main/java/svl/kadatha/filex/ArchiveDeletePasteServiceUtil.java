@@ -379,7 +379,7 @@ public class ArchiveDeletePasteServiceUtil {
         String notification_content;
         if(result)
         {
-            FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(dest_folder + File.separator + zip_file_name));
+            FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder,destFileObjectType,filePOJO);
             notification_content=context.getString(R.string.created)+" '"+zip_file_name+"' "+context.getString(R.string.at)+" "+dest_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
@@ -425,7 +425,7 @@ public class ArchiveDeletePasteServiceUtil {
 
     ) throws IOException {
         String zip_entry_name=zipEntry.getName();
-        String dest_file_path=zip_dest_path+File.separator+zip_entry_name;
+        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);//zip_dest_path+File.separator+zip_entry_name;
         File dest_file=new File(dest_file_path);
 
         if(zipEntry.isDirectory())
@@ -853,7 +853,7 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     try {
                         String name=f.getName();
-                        path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+                        path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);//(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
                         populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
                     } catch (IOException e) {
 

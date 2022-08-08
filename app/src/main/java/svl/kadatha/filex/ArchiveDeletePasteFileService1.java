@@ -612,7 +612,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 				zip_dest_path=dest_folder;
 			}
 			else {
-				zip_dest_path=dest_folder.endsWith(File.separator) ? dest_folder+zip_folder_name : dest_folder+File.separator+zip_folder_name;
+				//zip_dest_path=dest_folder.endsWith(File.separator) ? dest_folder+zip_folder_name : dest_folder+File.separator+zip_folder_name;
+				zip_dest_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_folder_name);
 			}
 
 			current_file_name=new File(zip_file_path).getName();
@@ -737,12 +738,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 				{
 					String first_part=zip_entry_name.substring(0,idx);
 					first_part_entry_name_set.add(first_part);
-					first_part_entry_path_set.add(zip_dest_path+File.separator+first_part);
+					//first_part_entry_path_set.add(zip_dest_path+File.separator+first_part);
+					first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,first_part));
 				}
 				else
 				{
 					first_part_entry_name_set.add(zip_entry_name);
-					first_part_entry_path_set.add(zip_folder_name+File.separator+zip_entry_name);
+					//first_part_entry_path_set.add(zip_folder_name+File.separator+zip_entry_name);
+					first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_folder_name,zip_entry_name));
 				}
 
 				return true;
@@ -818,12 +821,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 					{
 						String first_part=zip_entry_name.substring(0,idx);
 						first_part_entry_name_set.add(first_part);
-						first_part_entry_path_set.add(zip_dest_path+File.separator+first_part);
+						//first_part_entry_path_set.add(zip_dest_path+File.separator+first_part);
+						first_part_entry_path_set.add((Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,first_part)));
 					}
 					else
 					{
 						first_part_entry_name_set.add(zip_entry_name);
-						first_part_entry_path_set.add(zip_folder_name+File.separator+zip_entry_name);
+						//first_part_entry_path_set.add(zip_folder_name+File.separator+zip_entry_name);
+						first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_folder_name,zip_entry_name));
 					}
 
 				}
@@ -1237,7 +1242,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 							}
 							FTPFile tmpF = list[i];
 							String name=tmpF.getName();
-							String path=(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
+							String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);//(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
 							success=deleteFtpDirectory(path);
 
 						}
@@ -1425,7 +1430,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 						replace= (apply_all && replace);
 						current_file_name=file.getName();
-						String dest_file_path=dest_folder+File.separator+current_file_name;
+						String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,current_file_name);//dest_folder+File.separator+current_file_name;
 						boolean isSourceFromInternal=FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
 						if(isWritable)
 						{
@@ -1749,7 +1754,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				overwritten_copied_file_name_list.retainAll(copied_files_name);
 				for(String name:overwritten_copied_file_name_list)
 				{
-					overwritten_copied_file_path_list.add(dest_folder.equals(File.separator) ? dest_folder+name : dest_folder+File.separator+name);
+					overwritten_copied_file_path_list.add(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,name));
 				}
 
 				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
@@ -1811,7 +1816,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return false;
 					}
 					File srcFile = new File(source, inner_file_name);
-					String inner_dest_file_path=dest_file_path+File.separator+inner_file_name;
+					String inner_dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,inner_file_name);//dest_file_path+File.separator+inner_file_name;
 					success=Copy_File_File(srcFile,inner_dest_file_path,cut);
 				}
 				++counter_no_files;
@@ -1902,7 +1907,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return false;
 					}
 					File srcFile = new File(source, inner_file_name);
-					String inner_dest_file=dest_file_path+File.separator+name;
+					String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);//dest_file_path+File.separator+name;
 					success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
 				}
 				counter_no_files++;
@@ -1941,7 +1946,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 
-				String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);//dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
 				UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
 				if(dest_usbFile==null) // || !dest_usbFile.isDirectory())
 				{
@@ -2010,7 +2015,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 
-				String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);//dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
 				FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
 				if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
 				{
@@ -2080,7 +2085,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 
-				String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);//dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
 				UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
 				if(dest_usbFile==null)// || !dest_usbFile.isDirectory())
 				{
@@ -2178,7 +2183,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return false;
 					}
 
-					String inner_dest_file=parent_file_path+File.separator+name;
+					String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);//parent_file_path+File.separator+name;
 					success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
 				}
 				counter_no_files++;

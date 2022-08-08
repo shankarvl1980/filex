@@ -76,7 +76,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 			inStream=zipfile.getInputStream(zipEntry);
 			BufferedInputStream bufferedinStream=new BufferedInputStream(inStream);
-			File dir=new File(ZipDestFolder.getAbsolutePath()+File.separator+zipEntry.getName());
+			File dir=new File(Global.CONCATENATE_PARENT_CHILD_PATH(ZipDestFolder.getAbsolutePath(),zipEntry.getName()));
 			if(zipEntry.isDirectory() && !dir.exists())
 			{
 				return FileUtil.mkdirsNative(dir);

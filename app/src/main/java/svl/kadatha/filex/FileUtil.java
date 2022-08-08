@@ -84,7 +84,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		public static Uri createDocumentUri(Context context, @NonNull final String parent_file_path, @Nullable String name, @NonNull final boolean isDirectory,
 											@NonNull Uri tree_uri, String tree_uri_path)
 		{
-			Uri uri=getDocumentUri(parent_file_path+File.separator+name,tree_uri,tree_uri_path);
+			Uri uri=getDocumentUri(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name),tree_uri,tree_uri_path);
 			if(exists(context,uri))
 			{
 				return uri;
@@ -716,7 +716,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			//OutputStream outStream=null;
 
 			try (FileInputStream fileInStream = new FileInputStream(source)) {
-				String file_path = target_file_path.equals(File.separator) ? target_file_path + name : target_file_path + File.separator + name;
+				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);//target_file_path.equals(File.separator) ? target_file_path + name : target_file_path + File.separator + name;
 				success = MainActivity.FTP_CLIENT.storeFile(file_path, fileInStream);
 
 				if (success && cut) {
@@ -991,7 +991,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 							FTPFile tmpF = list[i];
 							String name=tmpF.getName();
-							String path=(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
+							String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);//(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
 							success=deleteFtpDirectory(path);
 
 						}

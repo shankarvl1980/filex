@@ -78,7 +78,7 @@ public class RenameFileDialog extends DialogFragment
 			fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
 			filePOJOHashmapKeyPath=bundle.getString("filePOJOHashmapKeyPath");
 		}
-		existing_file_path=parent_file_path.endsWith(File.separator) ? parent_file_path+existing_name : parent_file_path+File.separator+existing_name;
+		existing_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name);//parent_file_path.endsWith(File.separator) ? parent_file_path+existing_name : parent_file_path+File.separator+existing_name;
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(existing_file_path);
 		handler=new Handler(Looper.getMainLooper());
 
@@ -195,7 +195,7 @@ public class RenameFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.enter_file_name));
 					return;
 				}
-				new_file_path =(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
+				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);//(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
 
 				overwriting= whether_file_already_exists(new_file_path, fileObjectType);
 				isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
@@ -378,14 +378,14 @@ public class RenameFileDialog extends DialogFragment
 								{
 									if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
 									{
-										fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+										fileNameChanged=FileUtil.renameSAFFile(context,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
 									}
 								}
 
 							}
 							else
 							{
-								fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+								fileNameChanged=FileUtil.renameSAFFile(context,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
 							}
 						}
 					}

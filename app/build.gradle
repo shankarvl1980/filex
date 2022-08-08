@@ -16,13 +16,13 @@ android {
             keyPassword 'svl123filexalias'
         }
     }
-    compileSdkVersion 31
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "svl.kadatha.filex"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
 
         versionCode 10801
         versionName "1.8.1"

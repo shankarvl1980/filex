@@ -23,6 +23,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -976,6 +977,11 @@ public class Global
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
 		return BitmapFactory.decodeResource(res, resId, options);
+	}
+
+	public static String CONCATENATE_PARENT_CHILD_PATH(@NonNull String parent_file_path, @NonNull String child_file_name)
+	{
+		return parent_file_path.endsWith(File.separator) ? parent_file_path + child_file_name : parent_file_path + File.separator + child_file_name;
 	}
 }
 

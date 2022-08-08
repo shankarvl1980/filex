@@ -169,7 +169,8 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 
-				String new_file_path =(parent_folder.endsWith(File.separator)) ? parent_folder+new_name : parent_folder+File.separator+new_name;
+				//String new_file_path =(parent_folder.endsWith(File.separator)) ? parent_folder+new_name : parent_folder+File.separator+new_name;
+				String new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_folder,new_name);
 				File file=new File(new_file_path);
 
 				boolean isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
