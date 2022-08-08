@@ -5,11 +5,14 @@
       <map>
         <entry key="..\:/FileXManager/app/src/main/res/drawable/add_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/android_os_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/android_os_outlined_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/apk_file_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/archive_file_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/audio_file_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/copy_icon.xml" value="0.26927083333333335" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/dark_apk_file_icon.xml" value="0.2475" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/dark_play_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/down_arrow_drawer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/edit_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/exit_drawer_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/folder_icon.xml" value="0.26927083333333335" />
