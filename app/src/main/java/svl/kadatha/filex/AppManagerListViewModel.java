@@ -32,7 +32,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public List<AppManagerListFragment.AppPOJO> app_selected_array=new ArrayList<>();
     public MutableLiveData<Boolean> isBackedUp=new MutableLiveData<>();
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
@@ -133,7 +132,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,List<String> new_name_list,Uri tree_uri,String tree_uri_path)
     {
-       // if(Boolean.TRUE.equals(isBackedUp.getValue())) return;
         this.destFileObjectType=destFileObjectType;
         List<String>dest_file_names=new ArrayList<>();
         List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
@@ -175,7 +173,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String current_file_name;
                 boolean isWritable=FileUtil.isWritable(destFileObjectType,dest_folder);
                 final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
-                //final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
+
 
                 if(destFileObjectType==FileObjectType.ROOT_TYPE)
                 {
@@ -204,7 +202,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
                     current_file_name = new_name_list.get(count);
                     String dest_file_path = dest_folder + File.separator + current_file_name;
-                    //boolean isSourceFromInternal = true;//FileUtil.isFromInternal(sourceFileObjectType,file.getAbsolutePath());
+
                     if (isWritable) {
                         copy_result = Copy_File_File(file, dest_file_path, cut);
                     } else {

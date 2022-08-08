@@ -86,7 +86,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                String name=new File(file_path).getName();
+               // String name=new File(file_path).getName();
 
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
@@ -354,7 +354,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                if(size_per_page_MB*6<(Global.AVAILABLE_MEMORY_MB()-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
+                if(size_per_page_MB*10<(Global.AVAILABLE_MEMORY_MB()-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
                     pdf_current_position=position;
                     try {
                         bitmap=getBitmap(pdfRenderer,position);
@@ -368,7 +368,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     {
                         Global.print_background_thread(application,application.getString(R.string.outofmemory_exception_thrown));
                         out_of_memory_exception_thrown=true;
-                        //((PdfViewActivity)context).finish();
                     }
                     catch (Exception e)
                     {

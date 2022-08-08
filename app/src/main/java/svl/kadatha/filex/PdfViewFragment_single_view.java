@@ -53,32 +53,18 @@ public class PdfViewFragment_single_view extends Fragment
 {
     private Context context;
     private String file_path;
-    //private FilePOJO currently_shown_file;
-    //private File pdf_file;
     private long availableHeapMemory;
     public static final int SAFE_MEMORY_BUFFER=3;
-//    private int density_dpi;
-//    private int image_view_width,image_view_height;
     private Handler handler;
-    //private int image_selected_idx=0,previously_selected_image_idx=0;
     private PdfViewPagerAdapter pdf_view_adapter;
     private PictureSelectorAdapter picture_selector_adapter;
-    //private PdfPageViewRecyclerViewAdapter pdfPageViewRecyclerViewAdapter;
     private final int s=0;
-    //private TextView total_pages_tv;
-    //private int total_pages;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
-    //private List<FilePOJO> deleted_files;
-    //private String tree_uri_path="";
-    //private Uri tree_uri;
-    private final int saf_request_code=268;
-    //private PdfRenderer pdfRenderer;
-    //private DeleteFileAsyncTask delete_file_async_task;
-    private boolean asynctask_running;
+    //private boolean asynctask_running;
     private Uri data;
-    private ProgressBarFragment pbf;
+    //private ProgressBarFragment pbf;
     private LocalBroadcastManager localBroadcastManager;
     private RecyclerView recyclerview;
     private boolean toolbar_visible,is_menu_opened;
@@ -92,10 +78,8 @@ public class PdfViewFragment_single_view extends Fragment
     private int preview_image_offset;
     private int floating_button_height;
     private int recyclerview_height;
-    //private List<Bitmap> bitmapList=new ArrayList<>();
-    //private AsyncTaskPdfPages asyncTaskPdfPages;
     private LinearLayout image_view_selector_butt;
-    //private String source_folder;
+
 
     private FileObjectType fileObjectType;
     private boolean fromThirdPartyApp,fromArchiveView;
@@ -117,7 +101,6 @@ public class PdfViewFragment_single_view extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data=((PdfViewActivity)context).data;
-        AsyncTaskStatus asyncTaskStatus = AsyncTaskStatus.NOT_YET_STARTED;
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
@@ -131,30 +114,6 @@ public class PdfViewFragment_single_view extends Fragment
             fileObjectType=FileObjectType.FILE_TYPE;
             fromThirdPartyApp = true;
         }
-
-        /*
-        source_folder=new File(file_path).getParent();
-        if(fileObjectType==FileObjectType.USB_TYPE)
-        {
-            if(MainActivity.usbFileRoot!=null)
-            {
-                try {
-                    viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
-
-                } catch (IOException e) {
-
-                }
-            }
-        }
-        else
-        {
-            viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
-        }
-
-         */
-
-        //asyncTaskPdfPages = new AsyncTaskPdfPages();
-        //asyncTaskPdfPages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -171,9 +130,7 @@ public class PdfViewFragment_single_view extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        Handler h = new Handler();
         handler=new Handler();
-        Handler hand = new Handler();
         View v=inflater.inflate(R.layout.fragment_image_view,container,false);
         toolbar_visible=true;
         handler=new Handler();
@@ -202,7 +159,6 @@ public class PdfViewFragment_single_view extends Fragment
             public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
             {
 
-                final Bundle bundle=new Bundle();
                 final ArrayList<String> files_selected_array=new ArrayList<>();
 
                 switch(p1)
@@ -215,25 +171,6 @@ public class PdfViewFragment_single_view extends Fragment
                         }
                         files_selected_array.add(viewModel.currently_shown_file.getPath());
                         DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
-                        /*
-                        deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
-                        {
-                            public void onSelectOK()
-                            {
-                                if(!asynctask_running)
-                                {
-                                    asynctask_running=true;
-                                    files_selected_for_delete=new ArrayList<>();
-                                    deleted_files=new ArrayList<>();
-                                    files_selected_for_delete.add(currently_shown_file);
-                                    delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-                                    delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                                }
-
-                            }
-                        });
-
-                         */
                         deleteFileAlertDialogOtherActivity.show(((PdfViewActivity)context).fm,"deletefilealertotheractivity");
                         break;
 
@@ -397,35 +334,6 @@ public class PdfViewFragment_single_view extends Fragment
         });
 
 
-
-        /*
-        h.post(new Runnable() {
-            @Override
-            public void run() {
-                if(asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
-                {
-                    h.postDelayed(this,100);
-                }
-                else
-                {
-                    pdf_view_adapter=new PdfViewPagerAdapter();
-                    view_pager.setAdapter(pdf_view_adapter);
-                    view_pager.setCurrentItem(image_selected_idx);
-                    selected_item_sparseboolean.put(image_selected_idx,true);
-                    picture_selector_adapter=new PictureSelectorAdapter(list_pdf_pages);
-
-                    recyclerview.setLayoutManager(lm);
-                    recyclerview.setAdapter(picture_selector_adapter);
-                    lm.scrollToPositionWithOffset(image_selected_idx,-preview_image_offset);
-                    current_page_tv.setText(image_selected_idx+1+"/"+total_pages);
-                    handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-                    h.removeCallbacks(this);
-                }
-            }
-        });
-
-         */
-
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -491,63 +399,6 @@ public class PdfViewFragment_single_view extends Fragment
         return  pdfViewFragment;
     }
 
-    /*
-    public void seekSAFPermission()
-    {
-        ((PdfViewActivity)context).clear_cache=false;
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        activityResultLauncher.launch(intent);
-    }
-
-    private final ActivityResultLauncher<Intent>activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                Uri treeUri;
-                treeUri = result.getData().getData();
-                Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
-
-                boolean permission_requested = false;
-                delete_file_async_task = new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-                delete_file_async_task.executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR);
-
-            } else {
-                Global.print(context,getString(R.string.permission_not_granted));
-            }
-        }
-    });
-
-
-    private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
-    {
-        UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-        if(uriPOJO!=null)
-        {
-            tree_uri_path=uriPOJO.get_path();
-            tree_uri=uriPOJO.get_uri();
-        }
-
-        if(tree_uri_path.equals("")) {
-            SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
-            safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
-                public void onOKBtnClicked() {
-                    seekSAFPermission();
-                }
-
-                public void onCancelBtnClicked() {
-
-                }
-            });
-            safpermissionhelper.show(((PdfViewActivity)context).fm, "saf_permission_dialog");
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-     */
 
     @Override
     public void onDestroyView() {
@@ -595,8 +446,6 @@ public class PdfViewFragment_single_view extends Fragment
     private class PdfViewPagerAdapter extends PagerAdapter
     {
         TouchImageView image_view;
-        Bitmap bitmap;
-        AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
         PdfViewPagerAdapter()
         {
@@ -607,7 +456,7 @@ public class PdfViewFragment_single_view extends Fragment
         public int getCount()
         {
             // TODO: Implement this method
-            return viewModel.total_pages;//bitmapList.size();
+            return viewModel.total_pages;
         }
 
         @Override
@@ -714,7 +563,7 @@ public class PdfViewFragment_single_view extends Fragment
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if(viewModel.size_per_page_MB*6<(availableHeapMemory-SAFE_MEMORY_BUFFER)) {
+            if(viewModel.size_per_page_MB*10<(availableHeapMemory-SAFE_MEMORY_BUFFER)) {
 
                 try {
                     bitmap=getBitmap(viewModel.pdfRenderer,position);
@@ -783,7 +632,6 @@ public class PdfViewFragment_single_view extends Fragment
 
     private class PictureSelectorAdapter extends RecyclerView.Adapter<PictureSelectorAdapter.VH>
     {
-        //final List<Bitmap> picture_list;
         int total_pages;
         PictureSelectorAdapter(int total_pages)
         {
@@ -802,8 +650,6 @@ public class PdfViewFragment_single_view extends Fragment
         public void onBindViewHolder(PictureSelectorAdapter.VH p1, int p2)
         {
             // TODO: Implement this method
-            //Bitmap bitmap=picture_list.get(p2);
-            //GlideApp.with(context).load(bitmap).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
             p1.textView.setText(p2+1+"");
             p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));
 
@@ -843,289 +689,6 @@ public class PdfViewFragment_single_view extends Fragment
             }
         }
     }
-
-/*
-    private class AsyncTaskPdfPages extends svl.kadatha.filex.AsyncTask<Void,Bitmap,Void>
-    {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            asyncTaskStatus=AsyncTaskStatus.STARTED;
-            if(context==null)
-            {
-                context=getContext();
-            }
-            if(data==null)
-            {
-                data=((PdfViewActivity)context).data;
-            }
-
-        }
-
-        @Override
-        protected void onCancelled(Void aVoid) {
-            super.onCancelled(aVoid);
-            asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-            //cancelableProgressBarDialog.dismissAllowingStateLoss();
-        }
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-
-                long file_size;
-                if(fromThirdPartyApp)
-                {
-                    pdfRenderer = new PdfRenderer(context.getContentResolver().openFileDescriptor(data,"r"));
-                }
-                else if(fileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
-                }
-                else if(fileObjectType==FileObjectType.USB_TYPE)
-                {
-                    pdfRenderer = new PdfRenderer(context.getContentResolver().openFileDescriptor(data,"r"));
-                }
-                else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                {
-                    pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
-                }
-
-
-                file_size=currently_shown_file.getSizeLong();
-                if(file_size==0)
-                {
-                    file_size=Global.GET_URI_FILE_SIZE(data,context);
-                }
-
-                total_pages = pdfRenderer.getPageCount();
-                //Log.d("shankar","file size "+file_size);
-                if(file_size!=0)
-                {
-                    size_per_page_MB=(double)file_size/total_pages/1024/1024;
-                  //  Log.d("shankar","pages "+total_pages);
-                   // Log.d("shankar","size per page in MB "+size_per_page_MB);
-                    //Log.d("shankar","size per page in MB *3 "+size_per_page_MB*3);
-                }
-                double availablememory=Global.AVAILABLE_MEMORY_MB();
-                //Log.d("shankar","available memory "+availablememory);
-
-                int display_dpi=context.getResources().getDisplayMetrics().densityDpi;
-                float width=(float) Global.SCREEN_WIDTH;
-                for(int i = 0; i< total_pages; ++i)
-                {
-                    if(isCancelled())
-                    {
-                        return null;
-                    }
-
-                    list_pdf_pages.add(null);
-
-                }
-            }
-            catch (SecurityException e)
-            {
-                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Global.print(context,getString(R.string.security_exception_thrown)+" - "+getString(R.string.may_be_password_protected));
-                    }
-                });
-                return null;
-            }
-            catch (IOException e) {
-                ((PdfViewActivity)context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Global.print(context,getString(R.string.file_not_in_PDF_format_or_corrupted));
-                    }
-                });
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Bitmap... values) {
-            super.onProgressUpdate(values);
-            //bitmapList.add(values[0]);
-            //total_pages_tv.setText(current_page+"/"+total_pages);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-            //cancelableProgressBarDialog.dismissAllowingStateLoss();
-        }
-    }
-
- */
-
-    /*
-    private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
-    {
-
-        final List<FilePOJO> src_file_list;
-        final List<String> deleted_file_name_list=new ArrayList<>();
-
-        int counter_no_files;
-        long counter_size_files;
-        String current_file_name;
-        boolean isFromInternal;
-        String size_of_files_format;
-        final FileObjectType fileObjectType;
-        DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
-        {
-            this.src_file_list=src_file_list;
-            this.fileObjectType=fileObjectType;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            // TODO: Implement this method
-            pbf=ProgressBarFragment.newInstance();
-            pbf.show(((PdfViewActivity)context).fm,"progressbar_dialog");
-        }
-
-        @Override
-        protected void onCancelled(Boolean result)
-        {
-            // TODO: Implement this method
-            super.onCancelled(result);
-            if(deleted_files.size()>0)
-            {
-                pdf_view_adapter.notifyDataSetChanged();
-                picture_selector_adapter.notifyDataSetChanged();
-                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
-                ((PdfViewActivity)context).finish();
-            }
-
-            pbf.dismissAllowingStateLoss();
-            asynctask_running=false;
-
-        }
-
-        @Override
-        protected Boolean doInBackground(Void...p)
-        {
-            // TODO: Implement this method
-            boolean success;
-
-            if(fileObjectType==FileObjectType.FILE_TYPE)
-            {
-                isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
-            }
-            success=deleteFromFolder();
-            return success;
-        }
-
-
-        @Override
-        protected void onPostExecute(Boolean result)
-        {
-            // TODO: Implement this method
-
-            super.onPostExecute(result);
-            if(deleted_files.size()>0)
-            {
-                pdf_view_adapter.notifyDataSetChanged();
-                picture_selector_adapter.notifyDataSetChanged();
-                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
-                ((PdfViewActivity)context).finish();
-
-            }
-
-            pbf.dismissAllowingStateLoss();
-            asynctask_running=false;
-
-        }
-
-
-        private boolean deleteFromFolder()
-        {
-            boolean success=false;
-            int iteration=0;
-            int size=src_file_list.size();
-            if(fileObjectType==FileObjectType.FILE_TYPE)
-            {
-                if(isFromInternal)
-                {
-                    for(int i=0;i<size;++i)
-                    {
-                        if(isCancelled())
-                        {
-                            return false;
-                        }
-                        FilePOJO filePOJO=src_file_list.get(i);
-                        File f=new File(filePOJO.getPath());
-                        current_file_name=f.getName();
-                        success=FileUtil.deleteNativeDirectory(f);
-                        if(success)
-                        {
-                            deleted_files.add(filePOJO);
-                            deleted_file_name_list.add(current_file_name);
-                        }
-                        files_selected_for_delete.remove(filePOJO);
-                    }
-
-                }
-                else
-                {
-                    if(check_SAF_permission(src_file_list.get(0).getPath(),fileObjectType))
-                    {
-                        for(int i=0;i<size;++i)
-                        {
-                            if(isCancelled())
-                            {
-                                return false;
-                            }
-                            FilePOJO filePOJO=src_file_list.get(i);
-                            File file=new File(filePOJO.getPath());
-                            current_file_name=file.getName();
-                            success=FileUtil.deleteSAFDirectory(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-                            if(success)
-                            {
-                                deleted_files.add(filePOJO);
-                                deleted_file_name_list.add(current_file_name);
-                            }
-                            files_selected_for_delete.remove(filePOJO);
-                        }
-                    }
-
-                }
-            }
-            else if(fileObjectType==FileObjectType.USB_TYPE)
-            {
-                for(int i=0;i<size;++i)
-                {
-                    if(isCancelled())
-                    {
-                        return false;
-                    }
-                    FilePOJO filePOJO=src_file_list.get(i);
-                    UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
-                    current_file_name=f.getName();
-                    success=FileUtil.deleteUsbDirectory(f);
-                    if(success)
-                    {
-                        deleted_files.add(filePOJO);
-                        deleted_file_name_list.add(current_file_name);
-                    }
-                    files_selected_for_delete.remove(filePOJO);
-                }
-            }
-
-            return success;
-        }
-
-    }
-
-     */
 
 }
 

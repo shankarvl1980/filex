@@ -361,7 +361,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity implements
 				switch(intent_action)
 				{
 					case "archive-zip":
-						//if(archiveDeletePasteFileService.archive_action!=null)
 					{
 						current_file.setText(archiveDeletePasteFileService.zip_folder_name);
 						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);

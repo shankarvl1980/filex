@@ -118,34 +118,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			}
 			
 		});
-/*
-		fragmentManager.setFragmentResultListener(FILE_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
-			@Override
-			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				if(requestKey.equals(FILE_TYPE_REQUEST_CODE))
-				{
-					String mime_type=result.getString("mime_type");
-					String file_path=result.getString("file_path");
-					FileObjectType fileObjectType= (FileObjectType) result.getSerializable("fileObjectType");
-					boolean archive_view=result.getBoolean("archive_view");
-					Uri tree_uri=result.getParcelable("tree_uri");
-					String tree_uri_path=result.getString("tree_uri_path");
-					if(fileObjectType==FileObjectType.USB_TYPE)
-					{
-						if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-						{
-							FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
-						}
-					}
-					else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-					{
-						FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
-					}
-				}
-			}
-		});
 
- */
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {

@@ -291,8 +291,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		});
 
-
-		//cpbf=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 		fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -429,26 +427,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 		onClick_edit_button();
-/*
-		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
-			@Override
-			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
-				{
-					if(!asynctask_running)
-					{
-						asynctask_running=true;
-						files_selected_for_delete=new ArrayList<>();
-						deleted_files=new ArrayList<>();
-						files_selected_for_delete.add(currently_shown_file);
-						delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-						delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					}
-				}
-			}
-		});
-
- */
 
 		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
