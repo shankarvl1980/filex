@@ -20,7 +20,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 {
     private final Context context;
     private ImageView appimageview,appselect_indicator;
-    private TextView appnametextview, apppackagenametextview,appsizetextview,appdatetextview;
+    private TextView appnametextview, apppackagenametextview,appversiontextview,appsizetextview,appdatetextview;
     private int imageview_dimension;
     public int itemWidth, itemHeight;
     private int select_indicator_offset_linear;
@@ -53,6 +53,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         //appselect_indicator=view.findViewById(R.id.app_manager_select_indicator);
         appnametextview= view.findViewById(R.id.app_manager_app_name);
         apppackagenametextview= view.findViewById(R.id.app_manager_app_package);
+        appversiontextview=view.findViewById(R.id.app_manager_app_version);
         appsizetextview=view.findViewById(R.id.app_manager_app_size);
         appdatetextview=view.findViewById(R.id.app_manager_app_date);
 
@@ -129,6 +130,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
         appnametextview.setTextSize(first_line_font_size);
         apppackagenametextview.setTextSize(second_line_font_size);
+        appversiontextview.setTextSize(second_line_font_size);
         appsizetextview.setTextSize(second_line_font_size);
         appdatetextview.setTextSize(second_line_font_size);
 
@@ -190,6 +192,9 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             maxHeight+=apppackagenametextview.getMeasuredHeight();
+
+            measureChildWithMargins(appversiontextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            maxHeight+=appversiontextview.getMeasuredHeight();
 
             measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
             usedWidth+=appsizetextview.getMeasuredWidth()+Global.TEN_DP*2;
@@ -276,6 +281,10 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
             y+=v.getMeasuredHeight();
 
+            v=appversiontextview;
+            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+            y+=v.getMeasuredHeight();
+
             v=appsizetextview;
             v.layout(x,y,x+v.getMeasuredWidth()+Global.TEN_DP,y+v.getMeasuredHeight());
 
@@ -326,6 +335,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
         apppackagenametextview.setText(appPOJO.getPackage_name());
+        appversiontextview.setText(appPOJO.getVersion());
         appsizetextview.setText(appPOJO.getSize());
         appdatetextview.setText(appPOJO.getDate());
     }
