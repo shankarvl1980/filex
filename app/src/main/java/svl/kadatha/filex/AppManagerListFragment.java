@@ -560,8 +560,8 @@ public class AppManagerListFragment extends Fragment {
                 bundle.putSerializable("fileObjectType",destFileObjectType);
                 if(whether_file_already_exists(file_path,destFileObjectType,bundle))
                 {
-                    ApkBackupReplaceConfirmationDialog apkBackupReplaceConfirmationDialog=ApkBackupReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
-                    apkBackupReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+                    ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
+                    archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
                 }
                 else
                 {

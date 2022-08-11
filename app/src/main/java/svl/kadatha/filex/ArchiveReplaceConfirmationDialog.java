@@ -24,6 +24,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	private String archive_action;
 	private Bundle bundle;
 	private String request_code;
+	private String new_name;
 
 
 
@@ -37,6 +38,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		request_code=bundle.getString("request_code");
 		zip_folder_name=bundle.getString("zip_folder_name");
 		archive_action=bundle.getString("archive_action");
+		new_name=bundle.getString("new_name");
 
 	}
 
@@ -61,14 +63,22 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		yes_button.setText(R.string.yes);
         Button no_button = buttons_layout.findViewById(R.id.second_button);
 		no_button.setText(R.string.no);
-		if(archive_action.equals(ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP))
+		if(archive_action!=null)
 		{
-			confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+zip_folder_name+".zip'");
+			if(archive_action.equals(ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP))
+			{
+				confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+zip_folder_name+".zip'");
+			}
+			else
+			{
+				confirmation_message_textview.setText(getString(R.string.a_folder_with_same_already_exists_do_you_want_to_overwrite_it)+" '"+zip_folder_name+"'");
+			}
 		}
 		else
 		{
-			confirmation_message_textview.setText(getString(R.string.a_folder_with_same_already_exists_do_you_want_to_overwrite_it)+" '"+zip_folder_name+"'");
+			confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new_name+"'");
 		}
+
 		yes_button.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
