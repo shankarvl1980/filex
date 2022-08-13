@@ -150,7 +150,7 @@ public class AudioDatabaseHelper
         }
 		catch(SQLiteException e)
 		{
-			Global.print(context, "Exception thrown: could not extract entries");
+			Global.print(context, context.getString(R.string.exception_thrown_colon_could_not_extract_entries));
 		}
 		
 		 return audio_list;

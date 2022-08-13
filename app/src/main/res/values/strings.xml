@@ -350,9 +350,10 @@
 	<string name="a_list_exists_with_given_name">A list already exists with the given name</string>
 	<string name="name_should_contain_only_alphabets_without_spaces">Name should contain only alphabets without spaces</string>
 	<string name="copied_apk_file">Copied APK file</string>
+    <string name="exception_thrown_colon_could_not_extract_entries">Exception thrown: could not extract entries</string>
 
 
-	<string-array name="library_categories">
+    <string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>
