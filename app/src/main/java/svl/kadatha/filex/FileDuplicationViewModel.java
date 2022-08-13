@@ -14,15 +14,17 @@ public class FileDuplicationViewModel extends ViewModel {
     public MutableLiveData<Boolean> duplicationChecked=new MutableLiveData<>();
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public List<String> duplicate_file_path_array=new ArrayList<>();
+
     public List<FilePOJO> filePOJOS;
-    public ArrayList<String> not_to_be_replaced_files_path_array=new ArrayList<>();
+    public List<String> duplicate_file_path_array;
+    public ArrayList<String> not_to_be_replaced_files_path_array;
+    public ArrayList<String> overwritten_file_path_list;
 
     public String source_folder,dest_folder;
     public FileObjectType sourceFileObjectType,destFileObjectType;
     boolean cut;
     public ArrayList<String>files_selected_array;
-    public ArrayList<String> overwritten_file_path_list=new ArrayList<>();
+
 
 
     @Override
@@ -53,14 +55,16 @@ public class FileDuplicationViewModel extends ViewModel {
         this.destFileObjectType=destFileObjectType;
         this.cut=cut;
         this.files_selected_array=files_selected_array;
+
+        duplicate_file_path_array=new ArrayList<>();
+        not_to_be_replaced_files_path_array=new ArrayList<>();
+        overwritten_file_path_list=new ArrayList<>();
+
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                if(filePOJOS==null)
-                {
-                    filePOJOS=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
-                }
+                filePOJOS=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
                 int filePojoSize=filePOJOS.size();
                 int fileSelectedSize=files_selected_array.size();
                 FilePOJO filePOJO;

@@ -27,7 +27,6 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	private String new_name;
 
 
-
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{

@@ -63,34 +63,6 @@ public class VideoViewActivity extends BaseActivity
 		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
         String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 		if(file_path ==null) file_path =PathUtil.getPath(context,data);
-		/*
-		pbf = ProgressBarFragment.newInstance();
-		pbf.show(fm,"");
-		albumPollFragment=AlbumPollFragment.getInstance(file_path,fileObjectType,Global.VIDEO_REGEX,fromArchiveView);
-		fm.beginTransaction().replace(R.id.activity_blank_view_container, albumPollFragment,"").commit();
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if(albumPollFragment.asyncTaskStatus!= AsyncTaskStatus.COMPLETED)
-				{
-					handler.postDelayed(this, 100);
-				}
-				else
-				{
-					fromThirdPartyApp=albumPollFragment.fromThirdPartyApp;
-					file_selected_idx=albumPollFragment.file_selected_idx;
-					video_list=albumPollFragment.getVideoPollingResult();
-					currently_shown_file=albumPollFragment.currently_shown_file;
-					source_folder=albumPollFragment.source_folder;
-					videoViewContainerFragment= VideoViewContainerFragment.getNewInstance(fileObjectType,fromArchiveView);
-					set_listeners_on_video_container_fragment(videoViewContainerFragment);
-					handler.removeCallbacks(this);
-					pbf.dismissAllowingStateLoss();
-				}
-			}
-		});
-
-		 */
 		VideoViewContainerFragment videoViewContainerFragment = VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType);
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}

@@ -60,7 +60,6 @@ public class AppSelectorDialog extends DialogFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCancelable(false);
-        //setRetainInstance(true);
         bundle=getArguments();
 
         if(bundle!=null)
@@ -83,7 +82,6 @@ public class AppSelectorDialog extends DialogFragment
             FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,fromArchiveView,clear_top,data);
         }
 
-        Handler handler = new Handler(Looper.getMainLooper());
         if(savedInstanceState!=null)
         {
             asyncTaskStatus= (AsyncTaskStatus) savedInstanceState.get("asyncTaskStatus");
@@ -149,15 +147,6 @@ public class AppSelectorDialog extends DialogFragment
             }
         });
 
-        /*
-        if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-        {
-            //new AppListAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            new AppListTask().execute();
-        }
-
-         */
-
         return v;
     }
 
@@ -183,17 +172,6 @@ public class AppSelectorDialog extends DialogFragment
         super.onSaveInstanceState(outState);
         outState.putSerializable("asyncTaskStatus",asyncTaskStatus);
     }
-
-    /*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
 
 
     private class AppRecyclerAdapter extends RecyclerView.Adapter<AppSelectorDialog.AppRecyclerAdapter.ViewHolder>
@@ -305,187 +283,5 @@ public class AppSelectorDialog extends DialogFragment
             this.app_package_name=app_package_name;
         }
     }
-
-/*
-    private class AppListTask
-    {
-        PackageManager packageManager;
-        public void execute()
-        {
-            asyncTaskStatus=AsyncTaskStatus.STARTED;
-            packageManager= context.getPackageManager();
-            ExecutorService executorService=MyExecutorService.getExecutorService();
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-
-                    if(viewModel.appPOJOList==null)
-                    {
-                        viewModel.viewModel.appPOJOList=new ArrayList<>();
-                        if(intent==null)
-                        {
-                            return;
-                        }
-                        List<ResolveInfo> resolveInfoList=packageManager.queryIntentActivities(intent,0);
-                        int size=resolveInfoList.size();
-
-                        for(int i=0; i<size;++i)
-                        {
-                            ResolveInfo resolveInfo=resolveInfoList.get(i);
-                            String app_package_name=resolveInfo.activityInfo.packageName;
-                            String app_name=resolveInfo.loadLabel(packageManager).toString();
-
-                            String file_with_package_name=app_package_name+".png";
-                            if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
-                            {
-                                Drawable APKicon = resolveInfo.loadIcon(packageManager);
-                                Bitmap bitmap;
-                                if(APKicon instanceof BitmapDrawable)
-                                {
-                                    bitmap=((BitmapDrawable)APKicon).getBitmap();
-                                }
-                                else
-                                {
-                                    bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                                    Canvas canvas = new Canvas(bitmap);
-                                    APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                                    APKicon.draw(canvas);
-                                }
-
-                                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
-                                FileOutputStream fileOutputStream=null;
-                                try {
-                                    fileOutputStream=new FileOutputStream(f);
-                                    bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                                    fileOutputStream.close();
-                                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                                } catch (IOException e) {
-                                    if(fileOutputStream!=null)
-                                    {
-                                        try {
-                                            fileOutputStream.close();
-                                        } catch (IOException ioException) {
-
-                                        }
-                                    }
-                                }
-
-                            }
-                            viewModel.appPOJOList.add(new AppPOJO(app_name, app_package_name));
-
-                        }
-
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(viewModel.appPOJOList);
-                            app_recycler_view.setAdapter(appRecyclerAdapter);
-                            app_recycler_view.setLayoutManager(new LinearLayoutManager(context));
-                            asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-                        }
-                    });
-
-                }
-            });
-        }
-    }
-
- */
-
-    /*
-    private class AppListAsyncTask extends svl.kadatha.filex.AsyncTask<Void, Void, Void>
-    {
-        PackageManager packageManager;
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            asyncTaskStatus=AsyncTaskStatus.STARTED;
-            packageManager= context.getPackageManager();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if(appPOJOList==null)
-            {
-                appPOJOList=new ArrayList<>();
-                if(intent==null)
-                {
-                    return  null;
-                }
-                List<ResolveInfo> resolveInfoList=packageManager.queryIntentActivities(intent,0);
-                int size=resolveInfoList.size();
-
-                for(int i=0; i<size;++i)
-                {
-                    ResolveInfo resolveInfo=resolveInfoList.get(i);
-                    String app_package_name=resolveInfo.activityInfo.packageName;
-                    String app_name=resolveInfo.loadLabel(packageManager).toString();
-
-                    String file_with_package_name=app_package_name+".png";
-                    if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
-                    {
-                        Drawable APKicon = resolveInfo.loadIcon(packageManager);
-                        Bitmap bitmap;
-                        if(APKicon instanceof BitmapDrawable)
-                        {
-                            bitmap=((BitmapDrawable)APKicon).getBitmap();
-                        }
-                        else
-                        {
-                            bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                            Canvas canvas = new Canvas(bitmap);
-                            APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                            APKicon.draw(canvas);
-                        }
-
-                        File f=new File(Global.APK_ICON_DIR,file_with_package_name);
-                        FileOutputStream fileOutputStream=null;
-                        try {
-                            fileOutputStream=new FileOutputStream(f);
-                            bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                            fileOutputStream.close();
-                            Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                        } catch (IOException e) {
-                            if(fileOutputStream!=null)
-                            {
-                                try {
-                                    fileOutputStream.close();
-                                } catch (IOException ioException) {
-
-                                }
-                            }
-                        }
-
-                    }
-                    appPOJOList.add(new AppPOJO(app_name, app_package_name));
-
-                }
-
-            }
-            else
-            {
-                return  null;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(appPOJOList);
-            app_recycler_view.setAdapter(appRecyclerAdapter);
-            app_recycler_view.setLayoutManager(new LinearLayoutManager(context));
-            asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-        }
-    }
-
-     */
-
 
 }

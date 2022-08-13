@@ -37,7 +37,6 @@ public class AppManagerSortDialog extends DialogFragment
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
-        //this.setRetainInstance(true);
     }
 
     @Override
@@ -164,18 +163,6 @@ public class AppManagerSortDialog extends DialogFragment
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
     }
-
-
-/*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
- */
 
     private class SortButtonClickListener implements View.OnClickListener
     {

@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
@@ -26,7 +27,6 @@ import java.io.File;
 public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 {
 
-	private final Handler h=new Handler();
 	private Context context;
 	private TextView from_textview;
 	private TextView to_textview;
@@ -42,7 +42,8 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 	private boolean clear_cache;
 	private LocalBroadcastManager localBroadcastManager;
 	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_1";
-
+	private TextView dialog_title,from_label,to_label;
+	private TableRow to_table_row;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -52,10 +53,10 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
 		setFinishOnTouchOutside(false);
 		localBroadcastManager= LocalBroadcastManager.getInstance(this);
-		TextView dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
-		TableRow to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
-		TextView from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);
-		TextView to_label = findViewById(R.id.dialog_fragment_cut_copy_delete_to_label);
+		dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
+		to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
+		from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);
+		to_label = findViewById(R.id.dialog_fragment_cut_copy_delete_to_label);
 		from_textview=findViewById(R.id.dialog_fragment_cut_copy_from);
 		to_textview=findViewById(R.id.dialog_fragment_cut_copy_to);
 		current_file=findViewById(R.id.dialog_fragment_cut_copy_archive_current_file);
@@ -96,11 +97,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 				}
 				Global.print(context,getString(R.string.process_cancelled));
 				PROGRESS_ACTIVITY_SHOWN=false;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ignored) {
-
-				}
 				finish();
 
 			}
@@ -155,39 +151,45 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 			}
 
 		};
-		
+
+		Intent intent=getIntent();
+		if(intent!=null)
+		{
+			on_intent(intent,savedInstanceState);
+		}
+
+	}
+
+	private void on_intent(Intent intent, Bundle savedInstanceState)
+	{
 		if(savedInstanceState==null)
 		{
-			Intent intent=getIntent();
-			if(intent!=null)
+			intent_action=intent.getAction();
+			Bundle bundle=intent.getBundleExtra("bundle");
+			if(bundle!=null)
 			{
-				intent_action=intent.getAction();
-				Bundle bundle=intent.getBundleExtra("bundle");
-				if(bundle!=null)
+				sourceFileObjectType= (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+				Intent adp_intent=new Intent(this,ArchiveDeletePasteFileService1.class);
+
+				adp_intent.setAction(intent_action);
+				adp_intent.putExtra("bundle",bundle);
+
+				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 				{
-					sourceFileObjectType= (FileObjectType) bundle.getSerializable("sourceFileObjectType");
-					Intent adp_intent=new Intent(this,ArchiveDeletePasteFileService1.class);
-					
-					adp_intent.setAction(intent_action);
-					adp_intent.putExtra("bundle",bundle);
-
-					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
-					{
-						startForegroundService(adp_intent);
-					}
-					else
-					{
-						startService(adp_intent);
-					}
+					startForegroundService(adp_intent);
 				}
-
+				else
+				{
+					startService(adp_intent);
+				}
 			}
 		}
-		else {
+		else
+		{
 			intent_action=savedInstanceState.getString("intent_action");
 			sourceFileObjectType= (FileObjectType) savedInstanceState.getSerializable("sourceFileObjectType");
 		}
-		
+
 		switch(intent_action)
 		{
 			case "archive-zip":
@@ -210,13 +212,15 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 				dialog_title.setText(R.string.copying);
 				break;
 		}
-		
-	}
-
-	private void cancel_function() throws IllegalStateException
-	{
 
 	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		on_intent(intent,null);
+	}
+
 
 	@Override
 	protected void onResume()
@@ -249,7 +253,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 				switch(intent_action)
 				{
 					case "archive-zip":
-						//if(archiveDeletePasteFileService.archive_action!=null)
+
 					{
 						current_file.setText(archiveDeletePasteFileService.zip_folder_name);
 						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
@@ -264,7 +268,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 
 					case "archive-unzip":
 
-						//if(archiveDeletePasteFileService.archive_action!=null)
 					{
 						from_textview.setText(archiveDeletePasteFileService.zip_file_path);
 						to_textview.setText(archiveDeletePasteFileService.zip_folder_name!=null ? archiveDeletePasteFileService.dest_folder+File.separator+archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
@@ -276,7 +279,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 					break;
 
 					case "delete":
-						//if(archiveDeletePasteFileService.current_file_name!=null)
 					{
 						from_textview.setText(archiveDeletePasteFileService.source_folder);
 						current_file.setText(archiveDeletePasteFileService.current_file_name);
@@ -293,8 +295,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 
 					case "paste-cut":
 					case "paste-copy":
-
-						//if(archiveDeletePasteFileService.dest_folder!=null)
 					{
 						from_textview.setText(archiveDeletePasteFileService.source_folder);
 						to_textview.setText(archiveDeletePasteFileService.dest_folder);
@@ -323,6 +323,15 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		outState.putString("intent_action",intent_action);
 		outState.putSerializable("sourceFileObjectType",sourceFileObjectType);
 		outState.putBoolean("clear_cache",clear_cache);
+	}
+
+	@Override
+	protected void onPause()
+	{
+		// TODO: Implement this method
+		super.onPause();
+		unbindService(serviceConnection);
+		PROGRESS_ACTIVITY_SHOWN=false;
 	}
 
 	@Override
@@ -356,16 +365,5 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
-
-
-	@Override
-	protected void onPause()
-	{
-		// TODO: Implement this method
-		super.onPause();
-		unbindService(serviceConnection);
-		PROGRESS_ACTIVITY_SHOWN=false;
-	}
-
 
 }

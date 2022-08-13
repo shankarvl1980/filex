@@ -163,7 +163,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				if(aBoolean)
 				{
 					progress_bar.setVisibility(View.GONE);
-					confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
+					if(fileDuplicationViewModel.duplicate_file_path_array.size()>0)
+					{
+						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
+					}
+
 				}
 
 			}
@@ -201,10 +205,5 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-
-//	interface FileReplaceListener
-//	{
-//		void onReplaceClick(boolean replace, boolean replaceall);
-//	}
 
 }

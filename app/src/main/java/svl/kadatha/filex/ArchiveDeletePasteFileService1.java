@@ -81,7 +81,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 	String size_of_files_copied;
 	int it;
 	String copied_file;
-	public static final String REPLACE_ACTION="open replace file confirmation dialog";
 	private boolean isWritable;
 	FileObjectType sourceFileObjectType, destFileObjectType;
 
@@ -106,7 +105,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		// TODO: Implement this method
-		String notification_content;
+		String notification_content = null;
 		Bundle bundle=intent.getBundleExtra("bundle");
 		intent_action=intent.getAction();
 
@@ -130,7 +129,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					archiveAsyncTask=new ArchiveAsyncTask();
 					archiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.zipping)+" '"+zip_folder_name+".zip "+getString(R.string.at)+" "+dest_folder;
-					startForeground(notification_id,nm.build1(intent_action,notification_content,notification_id));
+
 				}
 				break;
 
@@ -155,7 +154,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					unarchiveAsyncTask=new UnarchiveAsyncTask();
 					unarchiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.unzipping)+" '"+zip_file_path+" "+getString(R.string.at)+" "+dest_folder;
-					startForeground(notification_id,nm.build1(intent_action,notification_content,notification_id));
+
 				}
 				break;
 			
@@ -172,7 +171,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
-					startForeground(notification_id,nm.build1(intent_action,notification_content,notification_id));
+
 				}
 				break;
 				
@@ -197,7 +196,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					cutCopyAsyncTask=new CutCopyAsyncTask();
 					cutCopyAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=(cut? getString(R.string.moving_files) +" "+getString(R.string.to_symbol)+" "+dest_folder : getString(R.string.copying_files)+" "+getString(R.string.to_symbol)+" "+dest_folder);
-					startForeground(notification_id,nm.build1(intent_action,notification_content,notification_id));
+
 				}
 				break;
 				
@@ -206,6 +205,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 				SERVICE_COMPLETED=true;
 				break;
 		}
+
+		startForeground(notification_id,nm.buildADPPActivity1(intent_action,notification_content,notification_id));
 		dest_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(dest_folder);
 		source_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(source_folder);
 		return START_NOT_STICKY;
@@ -1004,7 +1005,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 					success=deleteFtpDirectory(file_path);
 					if(success)
 					{
-						//deleted_file_path_index_hashmap.put(files_selected_index_array.get(i),file.getAbsolutePath());
 						deleted_file_names.add(current_file_name);
 						deleted_files_path_list.add(file_path);
 					}

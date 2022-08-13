@@ -16,9 +16,7 @@ public class NotifManager
     private final NotificationManager nm;
 	private final Context context;
 	final int pending_intent_flag;
-    //int paste_notification_id,delete_notification_id,archive_notification_id;
-	//NotificationCompat.InboxStyle inbox_style=new NotificationCompat.InboxStyle();
-	
+
 	NotifManager(Context context)
 	{
 		
@@ -51,7 +49,7 @@ public class NotifManager
 		nm.notify(paste_notification_id,notification_builder.build());
 	}
 
-	public Notification build1(String action,String notification_content_line, int notification_id)
+	public Notification buildADPPActivity1(String action,String notification_content_line, int notification_id)
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity1.class);
 		intent.setAction(action);
@@ -61,7 +59,7 @@ public class NotifManager
 		return notification_builder.build();
 	}
 	
-	public Notification build2(String action,String notification_content_line, int notification_id)
+	public Notification buildADPPActivity2(String action,String notification_content_line, int notification_id)
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity2.class);
 		intent.setAction(action);
@@ -71,7 +69,7 @@ public class NotifManager
 		return notification_builder.build();
 	}
 	
-	public Notification build3(String action,String notification_content_line, int notification_id)
+	public Notification buildADPPActivity3(String action,String notification_content_line, int notification_id)
 	{
 		Intent intent=new Intent(context,ArchiveDeletePasteProgressActivity3.class);
 		intent.setAction(action);

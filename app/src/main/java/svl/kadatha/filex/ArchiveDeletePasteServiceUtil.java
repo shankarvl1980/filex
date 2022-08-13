@@ -564,16 +564,8 @@ public class ArchiveDeletePasteServiceUtil {
         final FileObjectType sourceFileObjectType;
         int total_no_of_files;
         long total_size_of_files;
-//        MutableLiveData<Integer> mutable_total_no_of_files=new MutableLiveData<>();
-//        MutableLiveData<Long> mutable_total_size_of_files=new MutableLiveData<>();
         MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
-//        final int service_number;
         String source_folder;
-//        ArchiveDeletePasteFileService1 service1;
-//        ArchiveDeletePasteFileService2 service2;
-//        ArchiveDeletePasteFileService3 service3;
-
-
         private boolean isCancelled;
         private Future<?> future1,future2,future3, future4;
 
@@ -654,70 +646,6 @@ public class ArchiveDeletePasteServiceUtil {
             });
         }
 
-        /*
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            switch (service_number)
-            {
-                case 1:
-                    service1=(ArchiveDeletePasteFileService1)context;
-                    break;
-                case 2:
-                    service2=(ArchiveDeletePasteFileService2)context;
-                    break;
-                case 3:
-                    service3=(ArchiveDeletePasteFileService3)context;
-            }
-            source_folder=new File(files_selected_array.get(0)).getParent();
-        }
-
-        @Override
-        protected Void doInBackground(Void[] p1)
-        {
-            // TODO: Implement this method
-            int size=files_selected_array.size();
-
-            if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
-            {
-                File[] f_array=new File[size];
-                for(int i=0;i<size;++i)
-                {
-                    File f=new File(files_selected_array.get(i));
-                    f_array[i]=f;
-                }
-                populate(f_array,include_folder);
-            }
-            else if(sourceFileObjectType== FileObjectType.USB_TYPE)
-            {
-                UsbFile[] f_array=new UsbFile[size];
-                for(int i=0;i<size;++i)
-                {
-                    UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,files_selected_array.get(i));
-                    f_array[i]=f;
-                }
-                populate(f_array,include_folder);
-            }
-            else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                FTPFile[] f_array=new FTPFile[size];
-                for(int i=0;i<size;++i)
-                {
-
-                    FTPFile f = FileUtil.getFTPFile(files_selected_array.get(i));//MainActivity.FTP_CLIENT.mlistFile(files_selected_array.get(i));
-                    f_array[i]=f;
-                }
-                populate(f_array,include_folder,source_folder);
-            }
-            else
-            {
-                populate(files_selected_array,include_folder);
-            }
-
-            return null;
-        }
-
-         */
 
         private void populate(File[] source_list_files,boolean include_folder)
         {
@@ -749,31 +677,8 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-//                mutable_total_no_of_files.postValue(total_no_of_files);
-//                mutable_total_size_of_files.postValue(total_size_of_files);
-                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-                /*
-                switch (service_number)
-                {
-                    case 1:
-                        service1.total_no_of_files=total_no_of_files;
-                        service1.total_size_of_files=total_size_of_files;
-                        service1.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 2:
-                        service2.total_no_of_files=total_no_of_files;
-                        service2.total_size_of_files=total_size_of_files;
-                        service2.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 3:
-                        service3.total_no_of_files=total_no_of_files;
-                        service3.total_size_of_files=total_size_of_files;
-                        service3.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                }
-                publishProgress();
 
-                 */
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
             }
         }
 
@@ -808,31 +713,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-//                mutable_total_no_of_files.postValue(total_no_of_files);
-//                mutable_total_size_of_files.postValue(total_size_of_files);
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-                /*
-                switch (service_number)
-                {
-                    case 1:
-                        service1.total_no_of_files=total_no_of_files;
-                        service1.total_size_of_files=total_size_of_files;
-                        service1.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 2:
-                        service2.total_no_of_files=total_no_of_files;
-                        service2.total_size_of_files=total_size_of_files;
-                        service2.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 3:
-                        service3.total_no_of_files=total_no_of_files;
-                        service3.total_size_of_files=total_size_of_files;
-                        service3.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                }
-                publishProgress();
-
-                 */
             }
         }
 
@@ -870,31 +751,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-//                mutable_total_no_of_files.postValue(total_no_of_files);
-//                mutable_total_size_of_files.postValue(total_size_of_files);
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-                /*
-                switch (service_number)
-                {
-                    case 1:
-                        service1.total_no_of_files=total_no_of_files;
-                        service1.total_size_of_files=total_size_of_files;
-                        service1.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 2:
-                        service2.total_no_of_files=total_no_of_files;
-                        service2.total_size_of_files=total_size_of_files;
-                        service2.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 3:
-                        service3.total_no_of_files=total_no_of_files;
-                        service3.total_size_of_files=total_size_of_files;
-                        service3.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                }
-                publishProgress();
-
-                 */
             }
         }
 
@@ -939,59 +796,11 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-//                mutable_total_no_of_files.postValue(total_no_of_files);
-//                mutable_total_size_of_files.postValue(total_size_of_files);
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-                /*
-                switch (service_number)
-                {
-                    case 1:
-                        service1.total_no_of_files=total_no_of_files;
-                        service1.total_size_of_files=total_size_of_files;
-                        service1.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 2:
-                        service2.total_no_of_files=total_no_of_files;
-                        service2.total_size_of_files=total_size_of_files;
-                        service2.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                    case 3:
-                        service3.total_no_of_files=total_no_of_files;
-                        service3.total_size_of_files=total_size_of_files;
-                        service3.size_of_files_to_be_archived_copied=size_of_files_to_be_archived_copied;
-                        break;
-                }
-                publishProgress();
 
-                 */
             }
         }
 
-
-/*
-        @Override
-        protected void onProgressUpdate(Void[] values)
-        {
-            // TODO: Implement this method
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            // TODO: Implement this method
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onCancelled(Void result)
-        {
-            // TODO: Implement this method
-            super.onCancelled(result);
-        }
-
- */
     }
-
 
 }

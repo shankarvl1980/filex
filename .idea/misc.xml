@@ -47,6 +47,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_manager.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_app_selector.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archive_setup.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archivereplace_confirmation.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_audio_saved_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_create_rename_delete.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />
@@ -61,6 +62,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_recent.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_replace_confirmation.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_search_parameters.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_storage_analyser_sort.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_video_view_container.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_view.xml" value="0.24365942028985507" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/ftp_list_recyclerview_layout.xml" value="0.2128623188405797" />

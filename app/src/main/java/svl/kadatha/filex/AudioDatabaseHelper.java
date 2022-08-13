@@ -131,15 +131,6 @@ public class AudioDatabaseHelper
 			{
 				while(!c.isAfterLast())
 				{
-					/*
-					int id=c.getInt(c.getColumnIndex("id"));
-					String data=c.getString(c.getColumnIndex("data"));
-					String title=c.getString(c.getColumnIndex("title"));
-					String album=c.getString(c.getColumnIndex("album"));
-					String artist=c.getString(c.getColumnIndex("artist"));
-					String duration=c.getString(c.getColumnIndex("duration"));
-
-					 */
 
 					int id=c.getInt(0);
 					String data=c.getString(1);
@@ -150,7 +141,6 @@ public class AudioDatabaseHelper
 
 
 					AudioPOJO audio=new AudioPOJO(id, data, title, album, artist, duration,FileObjectType.FILE_TYPE);
-					//audio.setAlbumArt(AudioPlayerActivity.getAlbumArt(data,Global.IMAGEVIEW_DIMENSION_LARGE_LIST));
 					audio_list.add(audio);
 					c.moveToNext();
 
@@ -167,11 +157,4 @@ public class AudioDatabaseHelper
 		
 	}
 
-	/*
-	private void print()
-	{
-		Toast.makeText(context, "Exception thrown: could not extract entries",Toast.LENGTH_SHORT).show();
-	}
-
-	 */
 }

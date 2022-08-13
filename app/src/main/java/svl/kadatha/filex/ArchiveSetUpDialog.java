@@ -49,10 +49,7 @@ public class ArchiveSetUpDialog extends DialogFragment
     private String archive_action;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
-	private final int saf_permission_request_code=112;
-	private final int folder_select_request_code=1569;
 	private String tree_uri_path="";
-	//private final String source_uri_path="";
 	private Uri tree_uri,source_uri;
 	private FileObjectType sourceFileObjectType;
 	private FileObjectType current_dir_fileObjectType,custom_dir_fileObjectType,destFileObjectType;
@@ -433,17 +430,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						if (create_folder_checkbox.isChecked() && whether_file_already_exists(zip_folder_path, destFileObjectType)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-//								archiveReplaceConfirmationDialog.setArchiveReplaceDialogListener(new ArchiveReplaceConfirmationDialog.ArchiveReplaceDialogListener() {
-//									public void onYes() {
-//										Intent intent = new Intent(context, emptyService);
-//										intent.setAction(ARCHIVE_ACTION_UNZIP);
-//										intent.putExtra("bundle", bundle);
-//										context.startActivity(intent);
-//										imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(), 0);
-//										dismissAllowingStateLoss();
-//									}
-//								});
-//								archiveReplaceConfirmationDialog.setArguments(bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
 
 							} else {
