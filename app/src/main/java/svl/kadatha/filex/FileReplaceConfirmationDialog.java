@@ -28,19 +28,19 @@ import java.util.List;
 public class FileReplaceConfirmationDialog extends DialogFragment
 {
 	private CheckBox apply_all_checkbox;
-	private FileReplaceListener fileReplaceListener;
 	private Context context;
 	private FrameLayout progress_bar;
 	private Bundle bundle;
-	private boolean isWritable, isSourceFromInternal,cut;
-	private final String tree_uri_path="";
-	private final String source_uri_path="";
+	private boolean cut;
+//	private boolean isWritable, isSourceFromInternal;
+//	private final String tree_uri_path="";
+//	private final String source_uri_path="";
 	private String source_folder;
 	private String dest_folder;
-	private Uri tree_uri,source_uri;
+//	private Uri tree_uri,source_uri;
 
 	private FileObjectType sourceFileObjectType,destFileObjectType;
-	private List<FilePOJO> filePOJOS;
+//	private List<FilePOJO> filePOJOS;
 	FileDuplicationViewModel fileDuplicationViewModel;
 	ArrayList<String> files_selected_array;
 
@@ -49,20 +49,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
-		if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity1)
-		{
-			fileReplaceListener=((ArchiveDeletePasteProgressActivity1)context);
-		}
-		else if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity2)
-		{
-			fileReplaceListener=((ArchiveDeletePasteProgressActivity2)context);
-		}
-		else if(appCompatActivity instanceof ArchiveDeletePasteProgressActivity3)
-		{
-			fileReplaceListener=((ArchiveDeletePasteProgressActivity3)context);
-		}
-
 	}
 
 	@Override
@@ -89,7 +75,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 
-
 		View v=inflater.inflate(R.layout.fragment_replace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
@@ -105,24 +90,24 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-
 				if(apply_all_checkbox.isChecked())
 				{
-					files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-							destFileObjectType, dest_folder, cut);
+					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+					fileDuplicationViewModel.overwritten_file_path_list.addAll(fileDuplicationViewModel.duplicate_file_path_array);
+					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
+							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
 					dismissAllowingStateLoss();
 				}
 				else
 				{
 
-					fileDuplicationViewModel.duplicate_file_path_array.remove(0);
+					fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.duplicate_file_path_array.remove(0));
 					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
 					{
-						files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-								destFileObjectType, dest_folder, cut);
+						fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
+								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 						pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
 						dismissAllowingStateLoss();
 					}
@@ -143,20 +128,20 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 
 				if(apply_all_checkbox.isChecked())
 				{
-					files_selected_array.removeAll(fileDuplicationViewModel.duplicate_file_path_array);
-					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-							destFileObjectType, dest_folder, cut);
+					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.duplicate_file_path_array);
+					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
+							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
 					dismissAllowingStateLoss();
 				}
 				else
 				{
 					fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.duplicate_file_path_array.remove(0));
-					files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
 					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
 					{
-						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-								destFileObjectType, dest_folder, cut);
+						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
+								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 						pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
 						dismissAllowingStateLoss();
 					}
@@ -171,7 +156,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		});
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
-		fileDuplicationViewModel.checkForExistingFileWithSameName(dest_folder,destFileObjectType,files_selected_array,true);
+		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true);
 		fileDuplicationViewModel.duplicationChecked.observe(this, new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
@@ -189,8 +174,8 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	}
 
 
-	public static FileReplaceConfirmationDialog getInstance(String source_folder, ArrayList<String> files_selected_array,
-											   FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, String dest_folder, boolean cut_selected)
+	public static FileReplaceConfirmationDialog getInstance(String source_folder, FileObjectType sourceFileObjectType,String dest_folder,FileObjectType destFileObjectType,
+															ArrayList<String> files_selected_array,boolean cut_selected)
 	{
 		FileReplaceConfirmationDialog fileReplaceConfirmationDialog=new FileReplaceConfirmationDialog();
 		Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
@@ -217,9 +202,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	}
 
 
-	interface FileReplaceListener
-	{
-		void onReplaceClick(boolean replace, boolean replaceall);
-	}
+//	interface FileReplaceListener
+//	{
+//		void onReplaceClick(boolean replace, boolean replaceall);
+//	}
 
 }

@@ -65,14 +65,15 @@ public class PasteSetUpDialog extends DialogFragment
 
 	}
 
-	public static PasteSetUpDialog getInstance(String source_folder,ArrayList<String>files_selected_array,
-											   FileObjectType sourceFileObjectType,FileObjectType destFileObjectType,String dest_folder,boolean cut_selected)
+	public static PasteSetUpDialog getInstance(String source_folder,FileObjectType sourceFileObjectType,String dest_folder,FileObjectType destFileObjectType,
+											   ArrayList<String>files_selected_array,ArrayList<String>overwritten_file_path_list,boolean cut_selected)
 	{
 		PasteSetUpDialog pasteSetUpDialog=new PasteSetUpDialog();
 		Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
 		Bundle bundle=new Bundle();
 		bundle.putString("source_folder", source_folder);
 		bundle.putStringArrayList("files_selected_array", files_selected_array);
+		bundle.putStringArrayList("overwritten_file_path_list",overwritten_file_path_list);
 		bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
 		bundle.putSerializable("destFileObjectType", destFileObjectType);
 		bundle.putString("dest_folder", dest_folder);

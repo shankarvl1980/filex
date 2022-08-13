@@ -23,7 +23,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 
-public class ArchiveDeletePasteProgressActivity2 extends BaseActivity implements FileReplaceConfirmationDialog.FileReplaceListener
+public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 {
 
 	private final Handler h=new Handler();
@@ -213,42 +213,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity implements
 
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent)
-	{
-		// TODO: Implement this method
-		super.onNewIntent(intent);
-		String action=intent.getStringExtra("REPLACE_ACTION");
-		if(action!=null  && action.equals(ArchiveDeletePasteFileService2.REPLACE_ACTION))
-		{
-
-			String duplicate_file_name=intent.getStringExtra("duplicate_file_name");
-			FileReplaceConfirmationDialog replaceFileConfirmationDialog=new FileReplaceConfirmationDialog();
-			/*
-			replaceFileConfirmationDialog.setReplaceListener(new FileReplaceConfirmationDialog.FileReplaceListener()
-				{
-			 		public void onReplaceClick(boolean r, boolean a_all)
-			 		{
-						if(archiveDeletePasteFileService!=null)
-						{
-							archiveDeletePasteFileService.onReplaceSelection(r,a_all);
-						}
-
-					}
-
-				});
-
-			 */
-			Bundle b=new Bundle();
-			b.putString("duplicate_file_name",duplicate_file_name);
-
-			replaceFileConfirmationDialog.setArguments(b);
-
-			replaceFileConfirmationDialog.show(getSupportFragmentManager(),null);
-
-		}
-	}
-
 
 	@Override
 	protected void onResume()
@@ -261,86 +225,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity implements
 		Intent service_intent=new Intent(this,ArchiveDeletePasteFileService2.class);
 		bindService(service_intent,serviceConnection,Context.BIND_AUTO_CREATE);
 
-/*
-		h.post(new Runnable()
-			{
-				public void run()
-				{
 
-					switch(intent_action)
-					{
-						case "archive-zip":
-							if(archiveDeletePasteFileService!=null && archiveDeletePasteFileService.archive_action!=null)
-							{
-								current_file.setText(archiveDeletePasteFileService.zip_folder_name);
-								copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
-
-								from_textview.setText(archiveDeletePasteFileService.zip_file_path);
-								to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
-
-								no_files.setText(archiveDeletePasteFileService.counter_no_files + "/" + archiveDeletePasteFileService.total_no_of_files);
-								size_files.setText(archiveDeletePasteFileService.size_of_files_archived + "/" + archiveDeletePasteFileService.size_of_files_to_be_archived_copied);
-							}
-							break;
-
-						case "archive-unzip":
-
-							if(archiveDeletePasteFileService!=null && archiveDeletePasteFileService.archive_action!=null)
-							{
-								from_textview.setText(archiveDeletePasteFileService.zip_file_path);
-								to_textview.setText(archiveDeletePasteFileService.zip_folder_name!=null ? archiveDeletePasteFileService.dest_folder+File.separator+archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
-								current_file.setText(archiveDeletePasteFileService.current_file_name);
-								copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
-								no_files.setText(getString(R.string.extracted) + ": " + archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
-								size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_archived);
-							}
-							break;
-
-						case "delete":
-							if(archiveDeletePasteFileService!=null && archiveDeletePasteFileService.current_file_name!=null)
-							{
-								from_textview.setText(archiveDeletePasteFileService.source_folder);
-								current_file.setText(archiveDeletePasteFileService.current_file_name);
-								copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
-								if(archiveDeletePasteFileService.isFromInternal)
-								{
-									no_files.setText(getString(R.string.deleted) + ": " + archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
-									size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_format);
-								}
-
-							}
-
-							break;
-
-						case "paste-cut":
-						case "paste-copy":
-
-							if(archiveDeletePasteFileService!=null && archiveDeletePasteFileService.dest_folder!=null)
-							{
-								from_textview.setText(archiveDeletePasteFileService.source_folder);
-								to_textview.setText(archiveDeletePasteFileService.dest_folder);
-
-								current_file.setText(archiveDeletePasteFileService.current_file_name);
-								copied_textview.setText(archiveDeletePasteFileService.copied_file);
-								no_files.setText(archiveDeletePasteFileService.counter_no_files + "/" + archiveDeletePasteFileService.total_no_of_files);
-								size_files.setText(archiveDeletePasteFileService.size_of_files_copied + "/" + archiveDeletePasteFileService.size_of_files_to_be_archived_copied);
-
-							}
-							break;
-
-					}
-
-
-					if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
-					{
-						h.removeCallbacks(this);
-						finish();
-					}
-					h.postDelayed(this,500);
-				}
-			});
-
- */
 	}
 
 	private void bind_data()
@@ -478,12 +363,4 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity implements
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
-
-	@Override
-	public void onReplaceClick(boolean replace, boolean replaceall) {
-		if(archiveDeletePasteFileService!=null)
-		{
-			archiveDeletePasteFileService.onReplaceSelection(replace,replaceall);
-		}
-	}
 }

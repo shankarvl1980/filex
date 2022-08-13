@@ -18,6 +18,13 @@ public class FileDuplicationViewModel extends ViewModel {
     public List<FilePOJO> filePOJOS;
     public ArrayList<String> not_to_be_replaced_files_path_array=new ArrayList<>();
 
+    public String source_folder,dest_folder;
+    public FileObjectType sourceFileObjectType,destFileObjectType;
+    boolean cut;
+    public ArrayList<String>files_selected_array;
+    public ArrayList<String> overwritten_file_path_list=new ArrayList<>();
+
+
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -37,9 +44,15 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
 
-    public void checkForExistingFileWithSameName(String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array ,boolean findAllDuplicates)
+    public void checkForExistingFileWithSameName(String source_folder,FileObjectType sourceFileObjectType, String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array, boolean cut ,boolean findAllDuplicates)
     {
-        if(Boolean.TRUE.equals(duplicationChecked.getValue()) ==true)return;
+        if(Boolean.TRUE.equals(duplicationChecked.getValue()))return;
+        this.source_folder=source_folder;
+        this.sourceFileObjectType=sourceFileObjectType;
+        this.dest_folder=dest_folder;
+        this.destFileObjectType=destFileObjectType;
+        this.cut=cut;
+        this.files_selected_array=files_selected_array;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -61,7 +74,7 @@ public class FileDuplicationViewModel extends ViewModel {
                         file_path=files_selected_array.get(j);
                         if(filePOJO.getName().equals(new File(file_path).getName()))
                         {
-                            duplicate_file_path_array.add(filePOJO.getPath());
+                            duplicate_file_path_array.add(file_path);
 
                             if(!findAllDuplicates)
                             {

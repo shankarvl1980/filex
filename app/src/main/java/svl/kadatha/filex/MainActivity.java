@@ -149,6 +149,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public String search_file_type;
 	public boolean search_whole_word,search_case_sensitive,search_regex;
 	private MainActivityViewModel viewModel;
+	FileDuplicationViewModel fileDuplicationViewModel;
 
 
 	@Override
@@ -413,7 +414,32 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		
 */
 		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
+		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
+		fileDuplicationViewModel.duplicationChecked.observe(MainActivity.this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+					df.progress_bar.setVisibility(View.GONE);
+					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
+					{
+						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
+								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,
+								fileDuplicationViewModel.cut);
+						pasteSetUpDialog.show(fm, "paste_dialog");
+					}
+					else
+					{
+						FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
+								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array,fileDuplicationViewModel.cut);
+						fileReplaceConfirmationDialog.show(fm, "paste_dialog");
+					}
 
+				}
+
+			}
+		});
 
 
 		SHOW_HIDDEN_FILE=tinyDB.getBoolean("show_hidden_file");
@@ -706,8 +732,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			public void onDrawerStateChanged(int p){}
 			public void onDrawerSlide(View v, float f){}
 		});
-
-
 
 		if(savedInstanceState==null)
 		{
@@ -1054,11 +1078,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 
 					}
-
-					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-							destFileObjectType, dest_folder, cut);
-					pasteSetUpDialog.show(fm, "paste_dialog");
-
+					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+					df.progress_bar.setVisibility(View.VISIBLE);
+					fileDuplicationViewModel.duplicationChecked.setValue(false);
+					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,false);
 				}
 			}
 		}
@@ -1787,7 +1810,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			// TODO: Implement this method
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			ArrayList<String> files_selected_array=new ArrayList<>();
-			ArrayList<Integer> files_selected_index_array=new ArrayList<>();
+
 			int size;
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
@@ -1847,33 +1870,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
 					}
 					df.progress_bar.setVisibility(View.VISIBLE);
-					FileDuplicationViewModel fileDuplicationViewModel=new ViewModelProvider(MainActivity.this).get(FileDuplicationViewModel.class);
 					fileDuplicationViewModel.duplicationChecked.setValue(false);
-					fileDuplicationViewModel.duplicationChecked.observe(MainActivity.this, new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								ArrayList<String> files_path_array=new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
-								df.progress_bar.setVisibility(View.GONE);
-								if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
-								{
-									PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_path_array, sourceFileObjectType,
-											df.fileObjectType, df.fileclickselected, DetailFragment.CUT_SELECTED);
-									pasteSetUpDialog.show(fm, "paste_dialog");
-								}
-								else
-								{
-									FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(source_folder, files_path_array, sourceFileObjectType,
-											df.fileObjectType, df.fileclickselected, DetailFragment.CUT_SELECTED);
-									fileReplaceConfirmationDialog.show(fm, "paste_dialog");
-								}
-
-							}
-
-						}
-					});
-					fileDuplicationViewModel.checkForExistingFileWithSameName(df.fileclickselected,df.fileObjectType,files_selected_array,false);
+					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false);
 				}
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
 				DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = null;
@@ -1885,7 +1883,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					for (int i = 0; i < size; ++i) {
 						int key = df.viewModel.mselecteditemsFilePath.keyAt(i);
 						files_selected_array.add(df.viewModel.mselecteditemsFilePath.get(key));
-						files_selected_index_array.add(key);
 					}
 
 					DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
