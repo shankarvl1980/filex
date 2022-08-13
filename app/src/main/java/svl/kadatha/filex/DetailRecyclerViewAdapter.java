@@ -48,21 +48,21 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			{
 				if(!(archiveview && f.equals(Global.ARCHIVE_EXTRACT_DIR)))
 				{
-					mainActivity.parent_dir_imagebutton.setEnabled(true);
-					mainActivity.parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);
+					mainActivity.parent_dir_image_button.setEnabled(true);
+					mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 				}
 			}
 			else
 			{
 				mainActivity.current_dir_textview.setText(R.string.root_directory);
-				mainActivity.parent_dir_imagebutton.setEnabled(false);
-				mainActivity.parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+				mainActivity.parent_dir_image_button.setEnabled(false);
+				mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 			}
 		}
 		else if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
-			mainActivity.parent_dir_imagebutton.setEnabled(false);
-			mainActivity.parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+			mainActivity.parent_dir_image_button.setEnabled(false);
+			mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 
 			if(df.fileclickselected.equals(DetailFragment.SEARCH_RESULT))
 			{
@@ -83,14 +83,14 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 			if(parent_file!=null)
 			{
-				mainActivity.parent_dir_imagebutton.setEnabled(true);
-				mainActivity.parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);
+				mainActivity.parent_dir_image_button.setEnabled(true);
+				mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 			}
 			else
 			{
 				mainActivity.current_dir_textview.setText(DetailFragment.USB_FILE_PREFIX+File.separator);
-				mainActivity.parent_dir_imagebutton.setEnabled(false);
-				mainActivity.parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+				mainActivity.parent_dir_image_button.setEnabled(false);
+				mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 			}
 		}
 

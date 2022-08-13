@@ -26,7 +26,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOUtil {
 
-    //static private final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
     static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, boolean archive_view,FileObjectType fileObjectType)
     {
         String name=f.getName();
@@ -100,7 +99,6 @@ public class FilePOJOUtil {
         String name=f.getName();
         String path=f.getAbsolutePath();
         boolean isDirectory=f.isDirectory();
-        //String date=SDF.format(f.lastModified());
         long dateLong=0L;
         String date="date";
         long sizeLong=0L;

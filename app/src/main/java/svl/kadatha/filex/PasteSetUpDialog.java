@@ -26,7 +26,6 @@ public class PasteSetUpDialog extends DialogFragment
 	private Context context;
 	private Bundle bundle;
 	private boolean isWritable, isSourceFromInternal,cut;
-	private final int request_code=103;
 	private String tree_uri_path="",source_uri_path="",source_folder,dest_folder;
     private Uri tree_uri,source_uri;
 	private ArrayList<String> files_selected_array=new ArrayList<>();
@@ -46,13 +45,11 @@ public class PasteSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 
 		bundle=getArguments();
 		if(bundle!=null)
 		{
-			//files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 			files_selected_array=bundle.getStringArrayList("files_selected_array");
 			cut=bundle.getBoolean("cut");
 			source_folder=bundle.getString("source_folder");

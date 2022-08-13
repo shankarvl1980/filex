@@ -56,6 +56,25 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_applyall_confirmationCheckBox" />
 
+	<FrameLayout
+		android:id="@+id/file_replacement_dialog_progressbar"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:clickable="true"
+		android:focusable="true"
+		android:foregroundGravity="center"
+		android:elevation="6dp"
+		>
+		<ProgressBar
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:layout_gravity="center"
+			/>
+	</FrameLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

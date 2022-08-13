@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private boolean working_dir_open,library_or_search_shown;
 	DrawerLayout drawerLayout;
     public Button rename,working_dir_add_btn,working_dir_remove_btn;
-    public ImageButton parent_dir_imagebutton,all_select;
+    public ImageButton parent_dir_image_button,all_select;
 	private ImageView working_dir_expand_indicator,library_expand_indicator;
 	TextView file_number_view;
 	public static final String ACTIVITY_NAME="MAIN_ACTIVITY";
@@ -102,8 +102,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static List<String> LIBRARY_CATEGORIES=new ArrayList<>();
 
 	private Group working_dir_button_layout;
-	private final int folder_select_request_code=6926;
-    static boolean SHOW_HIDDEN_FILE;
+	static boolean SHOW_HIDDEN_FILE;
 	public String toolbar_shown="bottom";
 	static FilePOJO DRAWER_STORAGE_FILEPOJO_SELECTED;
 	static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
@@ -197,7 +196,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
-		//localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 		usbReceiver=new USBReceiver();
@@ -262,13 +260,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		file_number_view=findViewById(R.id.detail_fragment_file_number);
 
 		ImageButton home_button = findViewById(R.id.top_toolbar_home_button);
-		parent_dir_imagebutton=findViewById(R.id.top_toolbar_parent_dir_imagebutton);
+		parent_dir_image_button=findViewById(R.id.top_toolbar_parent_dir_imagebutton);
 		current_dir_textview=findViewById(R.id.top_toolbar_current_dir_label);
 		all_select=findViewById(R.id.detail_fragment_all_select);
 
         TopToolbarClickListener topToolbarClickListener = new TopToolbarClickListener();
 		home_button.setOnClickListener(topToolbarClickListener);
-		parent_dir_imagebutton.setOnClickListener(topToolbarClickListener);
+		parent_dir_image_button.setOnClickListener(topToolbarClickListener);
 		current_dir_textview.setOnClickListener(topToolbarClickListener);
 		all_select.setOnClickListener(topToolbarClickListener);
 
@@ -805,7 +803,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				switch(permission)
 				{
-					//case Manifest.permission.MANAGE_EXTERNAL_STORAGE:
 					case Manifest.permission.WRITE_EXTERNAL_STORAGE:
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 							if(shouldShowRequestPermissionRationale(permission))
@@ -1103,8 +1100,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				break;
 			case "extract":
 				extract_toolbar.setVisibility(View.VISIBLE);
-				parent_dir_imagebutton.setEnabled(false);
-				parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+				parent_dir_image_button.setEnabled(false);
+				parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 				bottom_toolbar.setVisibility(View.GONE);
 				break;
 		}
@@ -1229,8 +1226,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				if(df_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
 				{
-					parent_dir_imagebutton.setEnabled(false);
-					parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+					parent_dir_image_button.setEnabled(false);
+					parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 				}
 				countBackPressed=0;
 				/*
@@ -1316,8 +1313,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			toolbar_shown="extract";
 			if(detailfrag_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 			{
-				parent_dir_imagebutton.setEnabled(false);
-				parent_dir_imagebutton.setAlpha(Global.DISABLE_ALFA);
+				parent_dir_image_button.setEnabled(false);
+				parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 			}
 
 		}
@@ -1332,13 +1329,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			bottom_toolbar.setVisibility(View.GONE);
 			extract_toolbar.setVisibility(View.GONE);
 			toolbar_shown="paste";
-			parent_dir_imagebutton.setEnabled(true);
-			parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);
+			parent_dir_image_button.setEnabled(true);
+			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 		}
 		else
 		{
-			parent_dir_imagebutton.setEnabled(true);
-			parent_dir_imagebutton.setAlpha(Global.ENABLE_ALFA);
+			parent_dir_image_button.setEnabled(true);
+			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 
 			archive_exit();
 		}
@@ -1849,11 +1846,34 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
 					}
+					df.progress_bar.setVisibility(View.VISIBLE);
+					FileDuplicationViewModel fileDuplicationViewModel=new ViewModelProvider(MainActivity.this).get(FileDuplicationViewModel.class);
+					fileDuplicationViewModel.duplicationChecked.setValue(false);
+					fileDuplicationViewModel.duplicationChecked.observe(MainActivity.this, new Observer<Boolean>() {
+						@Override
+						public void onChanged(Boolean aBoolean) {
+							if(aBoolean)
+							{
+								ArrayList<String> files_path_array=new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
+								df.progress_bar.setVisibility(View.GONE);
+								if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
+								{
+									PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_path_array, sourceFileObjectType,
+											df.fileObjectType, df.fileclickselected, DetailFragment.CUT_SELECTED);
+									pasteSetUpDialog.show(fm, "paste_dialog");
+								}
+								else
+								{
+									FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(source_folder, files_path_array, sourceFileObjectType,
+											df.fileObjectType, df.fileclickselected, DetailFragment.CUT_SELECTED);
+									fileReplaceConfirmationDialog.show(fm, "paste_dialog");
+								}
 
-					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, files_selected_array, sourceFileObjectType,
-							df.fileObjectType, df.fileclickselected, DetailFragment.CUT_SELECTED);
-					pasteSetUpDialog.show(fm, "paste_dialog");
+							}
 
+						}
+					});
+					fileDuplicationViewModel.checkForExistingFileWithSameName(df.fileclickselected,df.fileObjectType,files_selected_array,false);
 				}
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
 				DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = null;
@@ -2239,7 +2259,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					break;
 				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
 					int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-					//Log.d("shankar","clear cache communicated to "+size+" detail fragments");
 					for(int i=0;i<size;++i)
 					{
 						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);

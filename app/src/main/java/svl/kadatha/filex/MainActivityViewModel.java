@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
@@ -21,6 +22,7 @@ public class MainActivityViewModel extends ViewModel {
     public boolean zipFileExtracted;
     public MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
     public boolean checkedSAFPermissionPasteSetUp;
+
 
 
 
@@ -101,4 +103,6 @@ public class MainActivityViewModel extends ViewModel {
     {
         checkedSAFPermissionPasteSetUp=true;
     }
+
+
 }
