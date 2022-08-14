@@ -166,7 +166,7 @@ public class Global
 	static public final int LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY=4000;
 	static public int ACTION_BAR_HEIGHT;
 
-	static public final boolean AFTER_ARCHIVE_GOTO_DEST_FOLDER=true;
+	static public final boolean AFTER_ARCHIVE_GOTO_DEST_FOLDER=false;
 
 	static public boolean DETAILED_SEARCH_LIBRARY;
 
@@ -177,7 +177,6 @@ public class Global
 	static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION=FILEX_PACKAGE+".FILE_DELETE";
 	static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION=FILEX_PACKAGE+".MODIFICATION_OBSERVED";
 	static public final String LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION=FILEX_PACKAGE+".FILE_POJO_CACHE_CLEAR";
-	//static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY=FILEX_PACKAGE+".FILE_DELETE_BY_MAIN_ACTIVITY";
 
 
 	static public int NAVIGATION_BAR_HEIGHT;
