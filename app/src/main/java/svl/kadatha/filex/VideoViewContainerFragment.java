@@ -457,14 +457,6 @@ public class VideoViewContainerFragment extends Fragment
 
 	}
 
-//	interface AlbumPollCompleteListener
-//	{
-//		void onPollComplete();
-//	}
-//
-//	public void setAlbumPollCompleteListener(AlbumPollCompleteListener listener)
-//	{
-//	}
 
 	interface OnPageSelectListener
 	{
