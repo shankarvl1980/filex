@@ -81,25 +81,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public MainActivity mainActivity;
 	private Context context;
-	//AsyncTaskLibrarySearch asyncTaskLibrarySearch;
-	//AsyncTaskFilePopulate asyncTaskFilePopulate;
 	public boolean archive_view;
 
 	private AsyncTaskStatus asynctask_status;
 	public FileObjectType fileObjectType;
 	public int file_list_size;
-	//ViewPager viewPager;
 	boolean is_toolbar_visible=true;
 	private Uri tree_uri;
 	private String tree_uri_path="";
-	private ProgressBarFragment pbf_polling;
 	public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
-	//private List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
-	private static final String FILE_TYPE_REQUEST_CODE="detail_fragment_file_type_request_code";
 	public FrameLayout progress_bar;
 	public FilePOJOViewModel viewModel;
 	private CancelableProgressBarDialog cancelableProgressBarDialog;
@@ -486,67 +480,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-/*
-	private void after_filledFilePojos_procedure()
-	{
-		final Handler handler_inter=new Handler();
-		handler_inter.post(new Runnable() {
-			@Override
-			public void run() {
-				if(filled_filePOJOs)
-				{
-					if(MainActivity.SHOW_HIDDEN_FILE)
-					{
-						filePOJO_list=viewModel.filePOJOS;
-						totalFilePOJO_list=viewModel.filePOJOS;
-					}
-					else
-					{
-						filePOJO_list=viewModel.filePOJOS_filtered;
-						totalFilePOJO_list=viewModel.filePOJOS_filtered;
-					}
-					totalFilePOJO_list_Size=totalFilePOJO_list.size();
-					file_list_size=filePOJO_list.size();
-                    mainActivity.file_number_view.setText(mselecteditems.size()+"/"+file_list_size);
-
-                    Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-					adapter=new DetailRecyclerViewAdapter(context,archive_view);
-					set_adapter();
-
-
-					if(pbf_polling!=null && pbf_polling.getDialog()!=null)
-					{
-						pbf_polling.dismissAllowingStateLoss();
-					}
-
-					if(TO_BE_MOVED_TO_FILE_POJO!=null)
-					{
-						int idx=filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);
-						if(llm!=null)
-						{
-							llm.scrollToPositionWithOffset(idx,0);
-						}
-						else if(glm!=null)
-						{
-							glm.scrollToPositionWithOffset(idx,0);
-						}
-
-						TO_BE_MOVED_TO_FILE_POJO=null;
-					}
-					handler_inter.removeCallbacks(this);
-				}
-				else
-				{
-					handler_inter.postDelayed(this,50);
-				}
-			}
-		});
-
-	}
-
- */
-
-
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -609,33 +542,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return df;
 	}
 
-/*
-	public void seekSAFPermission()
-	{
-		mainActivity.clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher_SAF_permission.launch(intent);
-	}
-
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-	@Override
-	public void onActivityResult(ActivityResult result) {
-		if (result.getResultCode()== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = result.getData().getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-		}
-		else
-		{
-			Global.print(context,getString(R.string.permission_not_granted));
-		}
-	}
-});
-
- */
-
 	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 	@Override
 	public void onActivityResult(ActivityResult result) {
@@ -664,27 +570,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
 			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path);
-			/*
-			fileTypeSelectFragment.setFileTypeSelectListener(new FileTypeSelectDialog.FileTypeSelectListener()
-				{
-					public void onSelectType(String mime_type)
-					{
-						if(fileObjectType==FileObjectType.USB_TYPE)
-						{
-							if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-							{
-								FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
-							}
-						}
-						else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-						{
-							FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
-						}
-
-					}
-				});
-
-			 */
 			fileTypeSelectFragment.show(mainActivity.fm,"");
 		}
 		else
@@ -795,35 +680,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 									}
 								}
 							});
-/*
-							new svl.kadatha.filex.AsyncTask<Void,Void,Boolean>()
-							{
-								ProgressBarFragment pbf;
-								@Override
-								protected void onPreExecute() {
-									super.onPreExecute();
-									progress_bar.setVisibility(View.VISIBLE);
-								}
-
-								@Override
-								protected Boolean doInBackground(Void... voids) {
-									return ExtractZipFileViewModel.EXTRACT_ZIP(finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
-								}
-
-								@Override
-								protected void onPostExecute(Boolean aBoolean) {
-									super.onPostExecute(aBoolean);
-									progress_bar.setVisibility(View.GONE);
-									if(aBoolean)
-									{
-										file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
-									}
-
-								}
-							}.executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-
- */
-
 						}
 						else
 						{
@@ -899,21 +755,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-
-				}
-			});
-
-			 */
 			safpermissionhelper.show(mainActivity.fm,"saf_permission_dialog");
 			return false;
 		}
@@ -923,402 +764,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	/*
-	private class AsyncTaskLibrarySearch extends svl.kadatha.filex.AsyncTask<Void, Integer,Void>
-	{
-		final String library_or_search;
-		String what_to_find=null;
-		String media_category=null;
-		final List<FilePOJO> path=new ArrayList<>();
-		String file_type="f";
-		int count=0;
-		long lower_limit_size=0,upper_limit_size=0;
-		final CancelableProgressBarDialog cancelableProgressBarDialog=new CancelableProgressBarDialog();
-		
-		AsyncTaskLibrarySearch(String library_or_search,long lower_limit_size,long upper_limit_size)
-		{
-			this.library_or_search=library_or_search;
-			this.lower_limit_size=lower_limit_size;
-			this.upper_limit_size=upper_limit_size;
-			cancelableProgressBarDialog.set_title(getString(R.string.searching));
-
-		}
-		
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			filled_filePOJOs=false;
-			asynctask_status=AsyncTaskStatus.STARTED;
-			if(mainActivity.fm==null)
-			{
-				context=getContext();
-				mainActivity=(MainActivity)context;
-				mainActivity.fm=mainActivity.getSupportFragmentManager();
-			}
-			cancelableProgressBarDialog.show(mainActivity.fm,"");
-
-		}
-
-		@Override
-		protected void onCancelled(Void result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-			cancelableProgressBarDialog.dismissAllowingStateLoss();
-			asynctask_status=AsyncTaskStatus.COMPLETED;
-            filled_filePOJOs=true;
-		}
-
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-
-			if(totalFilePOJO_list!=null)
-			{
-				Iterator<FilePOJO> iterator=viewModel.filePOJOS.iterator();
-				while(iterator.hasNext())
-				{
-					if(isCancelled())
-					{
-						viewModel.filePOJOS_filtered=viewModel.filePOJOS;
-						return null;
-					}
-					FilePOJO filePOJO=iterator.next();
-					if(!new File(filePOJO.getPath()).exists())
-					{
-						iterator.remove();
-					}
-				}
-
-				viewModel.filePOJOS_filtered=viewModel.filePOJOS;
-				return null;
-			}
-
-
-			viewModel.filePOJOS.clear(); viewModel.filePOJOS_filtered.clear();
-			if(library_or_search.equals(DetailFragment.SEARCH_RESULT))
-			{
-				for(FilePOJO f : search_in_dir)
-				{
-					if(f.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(f.getPath()))))
-					{
-						path.add(f);
-					}
-				}
-				if(search_regex)
-				{
-					what_to_find=search_file_name;
-				}
-				else if(search_whole_word)
-				{
-					what_to_find="\\Q"+search_file_name+"\\E";
-					if(!search_case_sensitive)
-					{
-						what_to_find="(?i)\\Q"+search_file_name+"\\E";
-					}
-				}
-				else
-				{
-					what_to_find=".*(\\Q"+search_file_name+"\\E).*";
-					if(!search_case_sensitive)
-					{
-						what_to_find=".*((?i)\\Q"+search_file_name+"\\E).*";
-					}
-				}
-				file_type=search_file_type;
-			}
-			else
-			{
-				for(FilePOJO f : Global.STORAGE_DIR)
-				{
-					if(f.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(f.getPath()))))
-					{
-						path.add(f);
-					}
-				}
-				if (getString(R.string.document).equals(library_or_search)) {
-					what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.java|\\.xml|\\.rtf|\\.cpp|\\.c|\\.h)$";
-					media_category="Documents";
-				} else if (getString(R.string.image).equals(library_or_search)) {
-					what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp)$";
-					media_category="Images";
-				} else if (getString(R.string.audio).equals(library_or_search)) {
-					what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus)$";
-					media_category="Audio";
-				} else if (getString(R.string.video).equals(library_or_search)) {
-					what_to_find = ".*((?i)\\.3gp|\\.mp4|\\.avi|\\.mov|\\.flv|\\.wmv|\\.webm)$";
-					media_category="Video";
-				} else if (getString(R.string.archive).equals(library_or_search)) {
-					what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip)$";
-				} else if (getString(R.string.apk).equals(library_or_search)) {
-					what_to_find = ".*(?i)\\.apk$";
-				} else if(getString(R.string.download).equals(library_or_search)){
-					what_to_find=".*";
-					media_category="Download";
-				}
-
-			}
-
-			if(Global.DETAILED_SEARCH_LIBRARY)
-			{
-				if(media_category!=null && media_category.equals("Download"))
-				{
-					search_download(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
-				}
-				else
-				{
-					for(FilePOJO f : path)
-					{
-						if(upper_limit_size==0L && lower_limit_size==0L)
-						{
-							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered);
-						}
-						else
-						{
-							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered,lower_limit_size,upper_limit_size);
-						}
-
-					}
-				}
-			}
-			else
-			{
-				if(media_category!=null && media_category.equals("Download"))
-				{
-					search_download(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
-				}
-				else if(library_or_search.equals(SEARCH_RESULT))
-				{
-					for(FilePOJO f : path)
-					{
-						if(upper_limit_size==0L && lower_limit_size==0L)
-						{
-							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered);
-						}
-						else
-						{
-							search_file(what_to_find,file_type,f.getPath(),viewModel.filePOJOS,viewModel.filePOJOS_filtered,lower_limit_size,upper_limit_size);
-						}
-					}
-				}
-				else
-				{
-					search_file(viewModel.filePOJOS,viewModel.filePOJOS_filtered);
-				}
-			}
-
-			return null;
-		}
-		
-		private void search_file(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered)
-		{
-			Cursor cursor=null;
-			switch (media_category)
-			{
-				case "Download":
-					search_download(f_pojos,f_pojos_filtered);
-					break;
-				case "Documents":
-
-					cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-							MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-									MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-
-							new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h"},null);
-
-					break;
-				case "Images":
-					cursor=context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
-					break;
-				case "Audio":
-					cursor=context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Audio.Media.DATA},null,null,null);
-					break;
-				case "Video":
-					cursor=context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Video.Media.DATA},null,null,null);
-					break;
-			}
-
-
-			if(cursor!=null && cursor.getCount()>0)
-			{
-				while(cursor.moveToNext())
-				{
-					if(isCancelled())
-					{
-						return;
-					}
-					String data=cursor.getString(0);
-					File f=new File(data);
-					if(f.exists())
-					{
-						FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
-						f_pojos.add(filePOJO);
-						f_pojos_filtered.add(filePOJO);
-						count++;
-						publishProgress(count);
-					}
-				}
-				cursor.close();
-			}
-
-		}
-
-		private void search_download(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered)
-		{
-			File f=new File("/storage/emulated/0/Download");
-			if(f.exists())
-			{
-				File[] file_list=f.listFiles();
-				int size=file_list.length;
-				for(int i=0;i<size;++i)
-				{
-					if(isCancelled())
-					{
-						return;
-					}
-
-					File file=file_list[i];
-					FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
-					f_pojos.add(filePOJO);
-					f_pojos_filtered.add(filePOJO);
-				}
-			}
-
-		}
-
-		private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException
-		{
-			File[] list=new File(search_dir).listFiles();
-			if(list==null) return;
-			int size=list.length;
-			for(int i=0;i<size;++i)
-			{
-				File f=list[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				try
-				{
-					if(f.isDirectory())
-					{
-						if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-						{
-							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
-							f_pojos.add(filePOJO);
-							f_pojos_filtered.add(filePOJO);
-							count++;
-						}
-						search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
-					}
-					else
-					{
-						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-						{
-							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
-							f_pojos.add(filePOJO);
-							f_pojos_filtered.add(filePOJO);
-							count++;
-						}
-					}
-					publishProgress(count);
-				}
-				catch(final PatternSyntaxException e)
-				{
-					mainActivity.runOnUiThread(new Runnable() {
-						public void run() {
-							Global.print(context,e.getMessage());
-						}
-					});
-				}
-
-			}
-		}
-
-		private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, long lower_limit_size, long upper_limit_size) throws PatternSyntaxException
-		{
-			File[] list=new File(search_dir).listFiles();
-			if(list==null) return;
-			int size=list.length;
-			for(int i=0;i<size;++i)
-			{
-				File f=list[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				try
-				{
-					if(f.isDirectory())
-					{
-						if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-						{
-							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
-							f_pojos.add(filePOJO);
-							f_pojos_filtered.add(filePOJO);
-							count++;
-						}
-						search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered, lower_limit_size, upper_limit_size);
-					}
-					else
-					{
-						long length=f.length();
-						if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
-						{
-							FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
-							f_pojos.add(filePOJO);
-							f_pojos_filtered.add(filePOJO);
-							count++;
-						}
-					}
-					publishProgress(count);
-				}
-				catch(final PatternSyntaxException e)
-				{
-					mainActivity.runOnUiThread(new Runnable() {
-						public void run() {
-							Global.print(context,e.getMessage());
-						}
-					});
-				}
-
-			}
-		}
-
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			super.onProgressUpdate(values);
-			mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+(file_list_size=values[0]));
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			cancelableProgressBarDialog.dismissAllowingStateLoss();
-			asynctask_status=AsyncTaskStatus.COMPLETED;
-			Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,viewModel.filePOJOS);
-			Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,viewModel.filePOJOS_filtered);
-            filled_filePOJOs=true;
-		}
-	}
-
-	 */
-	
 	private class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder>
 	{
 		final String[] filepath_string_array;
@@ -1446,8 +891,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			return filepath_string_array.length;
 		}
 	}
-
-
 
 }
 

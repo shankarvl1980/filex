@@ -62,7 +62,7 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public void listAudio()
+    public synchronized void listAudio()
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -80,7 +80,6 @@ public class AudioListViewModel extends AndroidViewModel {
                         if(isCancelled)break;
                         String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                         String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-                        Bitmap albumart=null;//Global.GET_RESIZED_BITMAP(album_path,Global.IMAGEVIEW_DIMENSION_LARGE_LIST);
 
                         String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
                         audio_cursor=application.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);

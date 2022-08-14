@@ -32,15 +32,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	private FrameLayout progress_bar;
 	private Bundle bundle;
 	private boolean cut;
-//	private boolean isWritable, isSourceFromInternal;
-//	private final String tree_uri_path="";
-//	private final String source_uri_path="";
 	private String source_folder;
 	private String dest_folder;
-//	private Uri tree_uri,source_uri;
-
 	private FileObjectType sourceFileObjectType,destFileObjectType;
-//	private List<FilePOJO> filePOJOS;
 	FileDuplicationViewModel fileDuplicationViewModel;
 	ArrayList<String> files_selected_array;
 
@@ -157,7 +151,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
 		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true);
-		fileDuplicationViewModel.duplicationChecked.observe(this, new Observer<Boolean>() {
+		fileDuplicationViewModel.isFinished.observe(this, new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
@@ -167,7 +161,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					{
 						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
 					}
-
 				}
 
 			}
@@ -204,6 +197,5 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
-
 
 }

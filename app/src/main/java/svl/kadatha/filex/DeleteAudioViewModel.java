@@ -24,7 +24,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
     public ArrayList<AudioPOJO> deleted_audio_files;
     public List<String> deleted_file_name_list;
     List<String> deleted_file_path_list;
-    //public List<Integer> deleted_files_idx;
     public boolean success;
 
     public DeleteAudioViewModel(@NonNull Application application) {
@@ -59,7 +58,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 deleted_audio_files=new ArrayList<>();
-                //deleted_files_idx=new ArrayList<>();
                 deleted_file_path_list=new ArrayList<>();
                 deleted_file_name_list=new ArrayList<>();
                 success=false;
@@ -126,7 +124,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                     deleted_file_path_list.add(file_path);
                     deleted_file_name_list.add(current_file_name);
                 }
-                //files_selected_for_delete.remove(file_path);
             }
 
         }
@@ -146,7 +143,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                     deleted_file_path_list.add(file_path);
                     deleted_file_name_list.add(current_file_name);
                 }
-                //files_selected_for_delete.remove(file_path);
             }
 
         }
@@ -179,7 +175,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                 deleted_file_path_list.add(file_path);
                 deleted_file_name_list.add(current_file_name);
             }
-           // files_selected_for_delete.remove(file_path);
         }
 
         return success;
@@ -211,10 +206,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
 
             }
         }
-//        counter_no_files++;
-//        counter_size_files+=folder.length();
-//        size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//        publishProgress(folder);
+
         success=folder.delete();
         return success;
     }
@@ -243,10 +235,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
 
         }
 
-//        counter_no_files++;
-//        counter_size_files+=folder.length();
-//        size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files,Global.BYTE_COUNT_BLOCK_1000);
-//        publishProgress(folder);
         success=FileUtil.deleteSAFDirectory(application,folder.getAbsolutePath(),tree_uri,tree_uri_path);
 
         return success;

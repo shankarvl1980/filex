@@ -87,27 +87,11 @@ public class CustomToolbarLayout extends ViewGroup
 			heightUsed=child.getMeasuredHeight()+child.getPaddingTop()+child.getPaddingBottom();
 			maxHeight=Math.max(maxHeight,heightUsed);
 		}
-		
-		//maxHeight+=getPaddingTop()+getPaddingBottom();
+
 		setMeasuredDimension(widthMeasureSpec,Global.ACTION_BAR_HEIGHT);
 		
 	}
-/*
-	@Override
-	protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed)
-	{
-		// TODO: Implement this method
-		MarginLayoutParams lp=(MarginLayoutParams)child.getLayoutParams();
-		widthUsed+=widthUsed+lp.leftMargin+lp.rightMargin;
-		heightUsed+=heightUsed+lp.topMargin+lp.topMargin;
-		int childWidthMeasureSpec=getChildMeasureSpec(parentWidthMeasureSpec,widthUsed,lp.width);
-		int childHeightMeasureSpec=getChildMeasureSpec(parentHeightMeasureSpec,heightUsed,lp.height);
-		measureChild(child,childWidthMeasureSpec,childHeightMeasureSpec);
-		//super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
-		
-	}
-	*/
-	
+
 	@Override
 	protected void onLayout(boolean p1, int p2, int p3, int p4, int p5)
 	{

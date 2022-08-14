@@ -290,7 +290,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 	
-
+/*
 	public void remove_item(final String source_folder, final List<String> deleted_files_list)
 	{
 
@@ -347,6 +347,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		});
 	}
 
+
+
 	private void remove_from_FilePOJO(String name, List<FilePOJO> list)
 	{
 		Iterator<FilePOJO> iterator=list.iterator();
@@ -358,48 +360,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 				break;
 			}
 		}
-	}
-
-/*
-	public void remove_item_index_based(final LinkedHashMap<Integer, String> index_array)
-	{
-		final List<Integer> reveresedKeySet=new ArrayList<>(index_array.keySet());
-		Collections.sort(reveresedKeySet,Collections.<Integer>reverseOrder());
-		final int s=reveresedKeySet.size();
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		pbf.show(MainActivity.FM,"");
-		handler_remove.post(new Runnable() {
-			@Override
-			public void run() {
-				if(df.filled_filePOJOs)
-				{
-					pbf.dismissAllowingStateLoss();
-					for(int i=0;i<s;++i)
-					{
-						int idx=reveresedKeySet.get(i);
-						String file_path=index_array.get(idx);
-						FilePOJO filePOJO=filePOJO_list.get(idx);
-						if(filePOJO.getPath().equals(file_path))
-						{
-							filePOJO_list.remove(filePOJO);
-							notifyItemRemoved(idx);
-						}
-						totalFilePOJO.remove(filePOJO);
-
-					}
-
-					df.file_list_size=totalFilePOJO.size();
-					mainActivity.file_number_view.setText(df.mselecteditems.size()+"/"+df.file_list_size);
-					MainActivity.Global.WORKOUT_AVAILABLE_SPACE();
-					handler_remove.removeCallbacks(this);
-				}
-				else
-				{
-					handler_remove.postDelayed(this,50);
-				}
-			}
-		});
-
 	}
 
  */

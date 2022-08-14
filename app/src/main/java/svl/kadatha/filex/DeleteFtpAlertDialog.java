@@ -23,7 +23,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     private String ftp_display;
     private int ftp_selected_size;
     private String request_code;
-    //private DeleteFtpAlertDialogListener deleteFtpAlertDialogListener;
 
 
     @Override
@@ -38,7 +37,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        //this.setRetainInstance(true);
         setCancelable(false);
         Bundle bundle=getArguments();
 
@@ -94,13 +92,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
-                /*
-                if(deleteFtpAlertDialogListener!=null)
-                {
-                    deleteFtpAlertDialogListener.onOkClick();
-                }
-
-                 */
                 ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,null);
                 dismissAllowingStateLoss();
             }
@@ -111,13 +102,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
-                /*
-                if(deleteFtpAlertDialogListener!=null)
-                {
-                    deleteFtpAlertDialogListener.onCancelClick();
-                }
-
-                 */
                 dismissAllowingStateLoss();
             }
         });
@@ -136,30 +120,4 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         window.setLayout(Global.DIALOG_WIDTH, AbsListView.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-
-    /*
-    @Override
-    public void onDestroyView() {
-        if(getDialog()!=null && getShowsDialog())
-        {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
-
-    /*
-    public void setDeleteFtpAlertDialogListener(DeleteFtpAlertDialogListener listener)
-    {
-        deleteFtpAlertDialogListener=listener;
-    }
-
-    interface DeleteFtpAlertDialogListener
-    {
-        void onOkClick();
-        void onCancelClick();
-    }
-
-     */
 }

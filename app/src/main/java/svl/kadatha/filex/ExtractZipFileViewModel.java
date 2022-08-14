@@ -26,8 +26,6 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 	public boolean isZipExtracted;
 	public FilePOJO filePOJO;
 
-
-
 	public ExtractZipFileViewModel(@NonNull Application application) {
 		super(application);
 	}

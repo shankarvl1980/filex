@@ -57,7 +57,6 @@ public class DefaultAppsDialog extends DialogFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   setRetainInstance(true);
         setCancelable(false);
         defaultAppPOJOS=new ArrayList<>();
         selectedDefaultPOJOS=new ArrayList<>();
@@ -191,19 +190,6 @@ public class DefaultAppsDialog extends DialogFragment
 
     }
 
-
-/*
-    @Override
-    public void onDestroyView() {
-
-        if(getDialog()!=null && getRetainInstance())
-        {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
- */
 
     public static class DefaultAppPOJO
     {

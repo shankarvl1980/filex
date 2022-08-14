@@ -75,7 +75,6 @@ public class FileSaveService2 extends Service
 			temporary_file_for_save=new File(bundle.getString("temporary_file_path"));
 			current_page=bundle.getInt("current_page");
 
-			//new FileSaveAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             filesave();
 			int notification_id = 981;
 			startForeground(notification_id,nm.build(getString(R.string.being_updated)+"-"+"'"+file.getName()+"'", notification_id));
@@ -194,115 +193,6 @@ public class FileSaveService2 extends Service
 		});
 	}
 
-	/*
-	private class FileSaveAsyncTask extends AsyncTask<Void,Void, Boolean>
-	{
-		FileOutputStream fileOutputStream;
-		String eol_string;
-
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			if(file==null || !file.exists())
-			{
-				cancel(true);
-			}
-
-			switch(altered_eol) 
-			{
-				case FileEditorActivity.EOL_N:
-					eol_string="\n";
-					break;
-				case FileEditorActivity.EOL_R:
-					eol_string="\r";
-					break;
-				case FileEditorActivity.EOL_RN:
-
-					eol_string="\r\n";
-					break;
-			}
-
-
-			if(!eol_string.equals("\n"))
-			{
-				content=content.replaceAll("\n",eol_string);
-			}
-
-		}
-
-		@Override
-		protected void onCancelled(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-			if(fileSaveServiceCompletionListener!=null)
-			{
-				fileSaveServiceCompletionListener.onServiceCompletion(false);
-			}
-			stopForeground(true);
-			stopSelf();
-			SERVICE_COMPLETED=true;
-		}
-
-		@Override
-		protected Boolean doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			if(isWritable)
-			{
-				if(eol==altered_eol)
-				{
-					return save_file(null,prev_page_end_point,current_page_end_point,content.getBytes());
-				}
-				else
-				{
-					return save_file_with_altered_eol(null,prev_page_end_point,current_page_end_point,content,eol_string);
-				}
-			}
-			else
-			{
-
-				fileOutputStream=FileUtil.get_fileoutputstream(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-				if(fileOutputStream!=null)
-				{
-					if(eol==altered_eol)
-					{
-						return save_file(fileOutputStream,prev_page_end_point,current_page_end_point,content.getBytes());
-
-					}
-					else
-					{
-						return save_file_with_altered_eol(fileOutputStream,prev_page_end_point,current_page_end_point,content,eol_string);
-					}
-
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
-
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			if(fileSaveServiceCompletionListener!=null)
-			{
-				fileSaveServiceCompletionListener.onServiceCompletion(result);
-			}
-			stopForeground(true);
-			stopSelf();
-			SERVICE_COMPLETED=true;
-		}
-
-	}
-
-	 */
 
 	private boolean save_file(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, byte[] content)
 	{

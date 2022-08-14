@@ -86,7 +86,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-               // String name=new File(file_path).getName();
 
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {

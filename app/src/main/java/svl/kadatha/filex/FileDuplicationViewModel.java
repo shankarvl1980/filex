@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 
 public class FileDuplicationViewModel extends ViewModel {
 
-    public MutableLiveData<Boolean> duplicationChecked=new MutableLiveData<>();
+    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
 
@@ -48,7 +48,7 @@ public class FileDuplicationViewModel extends ViewModel {
 
     public void checkForExistingFileWithSameName(String source_folder,FileObjectType sourceFileObjectType, String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array, boolean cut ,boolean findAllDuplicates)
     {
-        if(Boolean.TRUE.equals(duplicationChecked.getValue()))return;
+        if(Boolean.TRUE.equals(isFinished.getValue()))return;
         this.source_folder=source_folder;
         this.sourceFileObjectType=sourceFileObjectType;
         this.dest_folder=dest_folder;
@@ -92,7 +92,7 @@ public class FileDuplicationViewModel extends ViewModel {
                     if(stop_loop)break;
                 }
 
-                duplicationChecked.postValue(true);
+                isFinished.postValue(true);
             }
         });
 

@@ -219,7 +219,6 @@ public class FilePOJOUtil {
             //java.lang.Process process_long = Runtime.getRuntime().exec("ls -ld "+file_path);
             BufferedReader bf_long = new BufferedReader(new InputStreamReader(process_long.getInputStream()));
             String line_long=bf_long.readLine(); //consume first line as not required
-           // Log.d("shankar","ls line - "+line_long);
             if(line_long != null) {
 
                 return PARSE_MAKE_FilePOJO_ROOT(line_long,new File(file_path).getParent());
@@ -961,7 +960,6 @@ public class FilePOJOUtil {
 
         Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
-        //Log.d("shankar", "added to filepojo with key - "+fileObjectType+fileclickselected);
         return true;
     }
 

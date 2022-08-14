@@ -47,7 +47,6 @@ public class CreateFileDialog extends DialogFragment
 	private String parent_folder;
 	private FileObjectType fileObjectType;
 	private String other_file_permission;
-	private final List<String> dest_file_names=new ArrayList<>();
 	private List<FilePOJO> destFilePOJOs;
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
@@ -169,7 +168,6 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 
-				//String new_file_path =(parent_folder.endsWith(File.separator)) ? parent_folder+new_name : parent_folder+File.separator+new_name;
 				String new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_folder,new_name);
 				File file=new File(new_file_path);
 
@@ -386,22 +384,6 @@ public class CreateFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
 					return false;
 				}
-				/*
-				String [] file_names_array;
-				if((file_names_array=new File(parent_folder).list())!=null)
-				{
-					for(String name:file_names_array)
-					{
-						if(name.equals(new_file_name))
-						{
-							Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
-							return false;
-						}
-					}
-				}
-
-				 */
-
 			}
 		}
 		else
@@ -485,35 +467,6 @@ public class CreateFileDialog extends DialogFragment
 		}
 	}
 
-	/*
-	public void seekSAFPermission()
-	{
-		((MainActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-	@Override
-	public void onActivityResult(ActivityResult result) {
-		if (result.getResultCode()== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = result.getData().getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			//saf_permission_requested=false;
-			okbutton.callOnClick();
-		}
-		else
-		{
-			Global.print(context,getString(R.string.permission_not_granted));
-		}
-	}
-});
-
-	 */
-
 
 	@Override
 	public void onCancel(DialogInterface dialog)
@@ -531,19 +484,5 @@ public class CreateFileDialog extends DialogFragment
 		imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 		super.onDismiss(dialog);
 	}
-	
-/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-
 
 }

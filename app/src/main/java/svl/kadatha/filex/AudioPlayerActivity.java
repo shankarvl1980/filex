@@ -46,7 +46,6 @@ public class AudioPlayerActivity extends BaseActivity
     TinyDB tinyDB;
 	static AudioPOJO AUDIO_FILE;
 	public FragmentManager fm;
-    static final String AUDIO_LIST_PREFERENCE_NAME="AudioList";
 	static final int WRITE_SETTINGS_PERMISSION_REQUEST_CODE=59;
 	static ArrayList<String> AUDIO_SAVED_LIST=new ArrayList<>();
 	private Context context;
@@ -59,14 +58,13 @@ public class AudioPlayerActivity extends BaseActivity
 	public static List<Integer> EXISTING_AUDIOS_ID;
     public boolean search_toolbar_visible;
     public KeyBoardUtil keyBoardUtil;
-	public boolean fromArchiveView;
+	public boolean fromArchiveView,fromThirdPartyApp;
     AudioDatabaseHelper audioDatabaseHelper;
 	SQLiteDatabase db;
 	Uri data;
 	FileObjectType fileObjectType;
 	String file_path;
 	public static final String ACTIVITY_NAME="AUDIO_PLAYER_ACTIVITY";
-	private final int[] tab_title=new int[]{R.string.current_play,R.string.all_songs,R.string.album,R.string.audio_list};
 	public boolean clear_cache;
 	private LocalBroadcastManager localBroadcastManager;
 
@@ -169,24 +167,13 @@ public class AudioPlayerActivity extends BaseActivity
 		tab_layout.setupWithViewPager(view_pager);
 
 
-		Intent intent=getIntent();
-		if(savedInstanceState==null)
-		{
-			if(intent!=null)on_intent(intent);
-		}
-
-		//apf=(AudioPlayFragment) adapter.createFragment(0);
-		//aalf=(AllAudioListFragment) adapter.createFragment(1);
-		//albumlf=(AlbumListFragment) adapter.createFragment(2);
-		//aslf=(AudioSavedListFragment) adapter.createFragment(3);
-
-
 		adapter.startUpdate(view_pager);
 		apf=(AudioPlayFragment) adapter.instantiateItem(view_pager,0);
 		aalf=(AllAudioListFragment) adapter.instantiateItem(view_pager,1);
 		albumlf=(AlbumListFragment) adapter.instantiateItem(view_pager,2);
 		aslf=(AudioSavedListFragment) adapter.instantiateItem(view_pager,3);
 		adapter.finishUpdate(view_pager);
+
 
 		albumlf.setAudioSelectListener(new AlbumListFragment.AudioSelectListener()
 		{
@@ -203,13 +190,13 @@ public class AudioPlayerActivity extends BaseActivity
 					startService(service_intent);
 				}
 
+				AUDIO_FILE=audio;
 				if(apf!=null)
 				{
 					apf.setTitleArt(audio.getTitle(),audio.getData());
 					apf.audio_player_service.current_audio=audio;
-
 				}
-				AUDIO_FILE=audio;
+
 			}
 		});
 
@@ -232,14 +219,13 @@ public class AudioPlayerActivity extends BaseActivity
 					startService(service_intent);
 				}
 
+				AUDIO_FILE=audio;
 				if(apf!=null)
 				{
 					apf.setTitleArt(audio.getTitle(),audio.getData());
 					apf.audio_player_service.current_audio=audio;
 
 				}
-
-				AUDIO_FILE=audio;
 			}
 		});
 
@@ -258,14 +244,12 @@ public class AudioPlayerActivity extends BaseActivity
 					startService(service_intent);
 				}
 
+				AUDIO_FILE=audio;
 				if(apf!=null)
 				{
 					apf.setTitleArt(audio.getTitle(),audio.getData());
 					apf.audio_player_service.current_audio=audio;
-
 				}
-
-				AUDIO_FILE=audio;
 			}
 		});
 
@@ -279,9 +263,39 @@ public class AudioPlayerActivity extends BaseActivity
 		}).attach();
 
 		 */
+		Intent intent=getIntent();
+		if(intent!=null)
+		{
+			on_intent(intent,savedInstanceState);
+		}
+
+
+		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
+	}
+
+	private void on_intent(Intent intent, Bundle savedInstanceState)
+	{
+
+		data=intent.getData();
+		fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
+		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+		if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			fileObjectType=FileObjectType.FILE_TYPE;
+			fromThirdPartyApp=true;
+		}
+
 
 		if(savedInstanceState==null)
 		{
+			if(data!=null)
+			{
+				if(file_path==null) file_path=PathUtil.getPath(context,data);
+				String name=new File(file_path).getName();
+				AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+				apf.set_audio(file_path);
+			}
 			if(AUDIO_FILE==null)
 			{
 				view_pager.setCurrentItem(1);
@@ -289,31 +303,12 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 		}
 
-		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
-	}
-
-	private void on_intent(Intent intent)
-	{
-		data=intent.getData();
-		fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-
-
-		if(data!=null)
-		{
-			if(file_path==null) file_path=PathUtil.getPath(context,data);
-			String name=new File(file_path).getName();
-			AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
-		}
-
-
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		on_intent(intent);
+		on_intent(intent,null);
 	}
 
 

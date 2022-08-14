@@ -28,7 +28,6 @@ public class AudioSaveListDialog extends DialogFragment
     private Context context;
 	private final ArrayList<String> saved_audio_list=new ArrayList<>();
     private final ArrayList<String> create_add_array=new ArrayList<>();
-	//private SaveAudioListListener saveAudioListListener;
 	private String request_code;
 	private Bundle bundle;
 	private FragmentManager fragmentManager;
@@ -50,7 +49,6 @@ public class AudioSaveListDialog extends DialogFragment
 		request_code=bundle.getString("request_code");
 		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		saved_audio_list.addAll(AudioPlayerActivity.AUDIO_SAVED_LIST);
-		//setRetainInstance(true);
 		setCancelable(false);
 		create_add_array.add(getString(R.string.create_new_list));
 		create_add_array.add(getString(R.string.add_to_current_play_list));
@@ -113,34 +111,7 @@ public class AudioSaveListDialog extends DialogFragment
 
 	}
 
-	/*
-	interface SaveAudioListListener
-	{
-		void save_audio_list(String list_name);
-		
-	}
-	
-	public void setSaveAudioListListener(SaveAudioListListener listener)
-	{
-		saveAudioListListener=listener;
-	}
 
-	 */
-
-	/*
-	@Override
-	public void onDestroyView()
-	{
-		// TODO: Implement this method
-		if(getDialog()!=null && getRetainInstance())
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
-	 */
-	
 	private class CreateAddListRecyclerAdapter extends RecyclerView.Adapter<CreateAddListRecyclerAdapter.ViewHolder>
 	{
 		final List<String> audio_list;
@@ -166,25 +137,6 @@ public class AudioSaveListDialog extends DialogFragment
 						public void onClick(View p)
 						{
 							pos=getBindingAdapterPosition();
-							/*
-							ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-							pbf.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
-							if(saveAudioListListener!=null)
-							{
-								if(pos==0)
-								{
-									saveAudioListListener.save_audio_list(null);
-								}
-								else if(pos==1)
-								{
-									saveAudioListListener.save_audio_list("");
-								}
-
-
-							}
-							pbf.dismissAllowingStateLoss();
-
-							 */
 							if(pos==0)
 							{
 								SaveNewAudioListDialog saveNewAudioListDialog=SaveNewAudioListDialog.getInstance(request_code);
@@ -195,7 +147,6 @@ public class AudioSaveListDialog extends DialogFragment
 								bundle.putString("list_name","");
 								fragmentManager.setFragmentResult(request_code,bundle);
 							}
-
 
 							dismissAllowingStateLoss();
 							
@@ -269,16 +220,6 @@ public class AudioSaveListDialog extends DialogFragment
 						public void onClick(View p)
 						{
 							pos=getBindingAdapterPosition();
-							/*
-							ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-							pbf.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
-							if(saveAudioListListener!=null)
-							{
-								saveAudioListListener.save_audio_list(audio_list.get(pos));
-							}
-							pbf.dismissAllowingStateLoss();
-
-							 */
 							bundle.putString("list_name",audio_list.get(pos));
 							fragmentManager.setFragmentResult(request_code,bundle);
 							dismissAllowingStateLoss();

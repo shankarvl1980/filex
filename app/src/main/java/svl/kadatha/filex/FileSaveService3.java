@@ -1,11 +1,11 @@
 package svl.kadatha.filex;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 
 import java.io.BufferedReader;
@@ -19,8 +19,11 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class FileSaveService3 extends Service
 {
@@ -36,7 +39,8 @@ public class FileSaveService3 extends Service
 	long prev_page_end_point,current_page_end_point;
 	final LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
 	private NotifManager nm;
-    static boolean SERVICE_COMPLETED=true;
+	static boolean SERVICE_COMPLETED=true;
+	private Handler handler;
 
 
 	@Override
@@ -47,6 +51,7 @@ public class FileSaveService3 extends Service
 		SERVICE_COMPLETED=false;
 		context=this;
 		nm=new NotifManager(context);
+		handler=new Handler();
 	}
 
 	@Override
@@ -70,8 +75,8 @@ public class FileSaveService3 extends Service
 			temporary_file_for_save=new File(bundle.getString("temporary_file_path"));
 			current_page=bundle.getInt("current_page");
 
-			new FileSaveAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            int notification_id = 982;
+			filesave();
+			int notification_id = 986;
 			startForeground(notification_id,nm.build(getString(R.string.being_updated)+"-"+"'"+file.getName()+"'", notification_id));
 
 		}
@@ -111,127 +116,83 @@ public class FileSaveService3 extends Service
 	}
 
 
-
-	private class FileSaveAsyncTask extends AsyncTask<Void,Void, Boolean>
+	private void filesave()
 	{
-		FileOutputStream fileOutputStream;
-		String eol_string;
-
-
-		@Override
-		protected void onPreExecute()
+		String eol_string = null;
+		if(file==null || !file.exists())
 		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			if(file==null || !file.exists())
-			{
-				cancel(true);
-			}
-
-
-			switch(altered_eol) 
-			{
-
-				case FileEditorActivity.EOL_N:
-					eol_string="\n";
-					break;
-				case FileEditorActivity.EOL_R:
-					eol_string="\r";
-					break;
-				case FileEditorActivity.EOL_RN:
-
-					eol_string="\r\n";
-					break;
-			}
-
-
-			if(!eol_string.equals("\n"))
-			{
-				content=content.replaceAll("\n",eol_string);
-
-			}
-
+			return;
 		}
 
-		@Override
-		protected void onCancelled(Boolean result)
+		switch(altered_eol)
 		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-			if(fileSaveServiceCompletionListener!=null)
-			{
-				fileSaveServiceCompletionListener.onServiceCompletion(false);
-			}
-			stopForeground(true);
-			stopSelf();
-			SERVICE_COMPLETED=true;
+
+			case FileEditorActivity.EOL_N:
+				eol_string="\n";
+				break;
+			case FileEditorActivity.EOL_R:
+				eol_string="\r";
+				break;
+			case FileEditorActivity.EOL_RN:
+				eol_string="\r\n";
+				break;
 		}
 
 
-
-
-		@Override
-		protected Boolean doInBackground(Void[] p1)
+		if(!eol_string.equals("\n"))
 		{
-			// TODO: Implement this method
-			if(isWritable)
-			{
-				if(eol==altered_eol)
-				{
-					return save_file(null,prev_page_end_point,current_page_end_point,content.getBytes());
-				}
-				else
-				{
-					return save_file_with_altered_eol(null,prev_page_end_point,current_page_end_point,content,eol_string);
-				}
+			content=content.replaceAll("\n",eol_string);
+		}
 
-			}
-			else
-			{
-
-				fileOutputStream=FileUtil.get_fileoutputstream(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-				if(fileOutputStream!=null)
-				{
-					if(eol==altered_eol)
-					{
-						return save_file(fileOutputStream,prev_page_end_point,current_page_end_point,content.getBytes());
-
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		String finalEol_string = eol_string;
+		Future future = executorService.submit(new Runnable() {
+			@Override
+			public void run() {
+				boolean result;
+				FileOutputStream fileOutputStream;
+				if (isWritable) {
+					if (eol == altered_eol) {
+						result = save_file(null, prev_page_end_point, current_page_end_point, content.getBytes());
+					} else {
+						result = save_file_with_altered_eol(null, prev_page_end_point, current_page_end_point, content, finalEol_string);
 					}
-					else
-					{
-						return save_file_with_altered_eol(fileOutputStream,prev_page_end_point,current_page_end_point,content,eol_string);
+
+				} else {
+
+					fileOutputStream = FileUtil.get_fileoutputstream(context, file.getAbsolutePath(), tree_uri, tree_uri_path);
+					if (fileOutputStream != null) {
+						if (eol == altered_eol) {
+							result = save_file(fileOutputStream, prev_page_end_point, current_page_end_point, content.getBytes());
+
+						} else {
+							result = save_file_with_altered_eol(fileOutputStream, prev_page_end_point, current_page_end_point, content, finalEol_string);
+						}
+
+
+					} else {
+						result = false;
 					}
 
 
 				}
-				else
-				{
-					return false;
-				}
 
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (fileSaveServiceCompletionListener != null) {
+							fileSaveServiceCompletionListener.onServiceCompletion(result);
+						}
+						stopForeground(true);
+						stopSelf();
+						SERVICE_COMPLETED = true;
 
+					}
+				});
 			}
-
-
-		}
-
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			if(fileSaveServiceCompletionListener!=null)
-			{
-				fileSaveServiceCompletionListener.onServiceCompletion(result);
-			}
-			stopForeground(true);
-			stopSelf();
-			SERVICE_COMPLETED=true;
-
-		}
-
+		});
 	}
+
 
 	private boolean save_file(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, byte[] content)
 	{
@@ -333,17 +294,15 @@ public class FileSaveService3 extends Service
 		BufferedWriter bufferedWriter=null;
 		FileChannel fc=null;
 
-
 		try
 		{
 			FileInputStream fileInputStream=new FileInputStream(file);
-			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
 
 
 			bufferedReader.skip(current_page_end_point);
-
 			File temp_file_2=new File(temporary_file_for_save,file.getName()+"_2");
-			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true)));
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true), StandardCharsets.UTF_8));
 			String line;
 			while((line=bufferedReader.readLine())!=null)
 			{
@@ -367,13 +326,11 @@ public class FileSaveService3 extends Service
 
 			fc.truncate(prev_page_end_point);
 
-
-
 			fileInputStream=new FileInputStream(file);
-			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
 
 			File temp_file_1=new File(temporary_file_for_save,file.getName()+"_1");
-			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true)));
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true), StandardCharsets.UTF_8));
 			while((line=bufferedReader.readLine())!=null)
 			{
 

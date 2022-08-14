@@ -415,7 +415,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 */
 		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
-		fileDuplicationViewModel.duplicationChecked.observe(MainActivity.this, new Observer<Boolean>() {
+		fileDuplicationViewModel.isFinished.observe(MainActivity.this, new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
@@ -435,6 +435,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array,fileDuplicationViewModel.cut);
 						fileReplaceConfirmationDialog.show(fm, "paste_dialog");
 					}
+					fileDuplicationViewModel.isFinished.setValue(false);
 
 				}
 
@@ -927,7 +928,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			df.progress_bar.setVisibility(View.VISIBLE);
-			viewModel.isExtractionCompleted.setValue(false);
 			viewModel.extractArchive(zipfile);
 			viewModel.isExtractionCompleted.observe(this, new Observer<Boolean>() {
 				@Override
@@ -954,8 +954,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 			});
 
-			//ArchiveViewAsyncTask archiveViewAsyncTask=new ArchiveViewAsyncTask(zipfile);
-			//archiveViewAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
 	}
 
@@ -1080,7 +1078,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 					df.progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.duplicationChecked.setValue(false);
+					fileDuplicationViewModel.isFinished.setValue(false);
 					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,false);
 				}
 			}
@@ -1394,7 +1392,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			df.progress_bar.setVisibility(View.VISIBLE);
-			viewModel.isDeletionCompleted.setValue(false);
 			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 			viewModel.isDeletionCompleted.observe(this, new Observer<Boolean>() {
 				@Override
@@ -1870,7 +1867,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
 					}
 					df.progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.duplicationChecked.setValue(false);
+					fileDuplicationViewModel.isFinished.setValue(false);
 					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false);
 				}
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();

@@ -39,6 +39,9 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_instacropper.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_storage_analyser.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/app_manager_recycler_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/audio_save_list_dialog.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/audiolist_recyclerview_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/dialog_buttons_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_details.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_all_audio_list.xml" value="0.25416666666666665" />
@@ -49,10 +52,13 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archive_setup.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_archivereplace_confirmation.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_audio_saved_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cancelable_progressbar.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_create_file.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_create_rename_delete.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cut_copy_delete_archive_progress.xml" value="0.23278985507246377" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_detail.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_editor_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_selector.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.1" />
@@ -69,6 +75,8 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/main.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/pdf_viewpager_layout.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/search_bar_layout.xml" value="0.11302083333333333" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/toobar_img_buttons_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/toolbar_buttons_layout.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

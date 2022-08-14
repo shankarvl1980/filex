@@ -128,26 +128,6 @@ public class ImageViewFragment extends Fragment
 			fromThirdPartyApp=true;
 		}
 
-		/*
-		source_folder=new File(file_path).getParent();
-		if(fileObjectType==FileObjectType.USB_TYPE)
-		{
-			if(MainActivity.usbFileRoot!=null)
-			{
-				try {
-					currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path)),false);
-
-				} catch (IOException e) {
-
-				}
-			}
-		}
-		else
-		{
-			currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,fileObjectType);
-		}
-
-		 */
 
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
@@ -206,25 +186,6 @@ public class ImageViewFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
-							/*
-							deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
-								{
-									public void onSelectOK()
-									{
-										if(!asynctask_running)
-										{
-											asynctask_running=true;
-											files_selected_for_delete=new ArrayList<>();
-											deleted_files=new ArrayList<>();
-											files_selected_for_delete.add(viewModel.currently_shown_file);
-											delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-											delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-										}
-
-									}
-								});
-
-							 */
 							deleteFileAlertDialogOtherActivity.show(((ImageViewActivity)context).fm,"deletefilealertotheractivity");
 							break;
 							
@@ -345,7 +306,7 @@ public class ImageViewFragment extends Fragment
 		}
 
 		preview_image_offset=(int)getResources().getDimension(R.dimen.layout_margin);
-		//selected_item_sparseboolean=new SparseBooleanArray();
+
 		lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 
 		view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -424,39 +385,6 @@ public class ImageViewFragment extends Fragment
 		});
 
 
-		/*
-		pbf.show(((ImageViewActivity)context).fm,"");
-		polling_handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if(asyncTaskStatus!=AsyncTaskStatus.COMPLETED)
-				{
-					polling_handler.postDelayed(this,100);
-				}
-				else
-				{
-
-					image_view_adapter=new ImageViewPagerAdapter(album_file_pojo_list);
-					view_pager.setAdapter(image_view_adapter);
-					view_pager.setCurrentItem(file_selected_idx);
-					current_image_tv.setText(file_selected_idx+1+"/"+total_images);
-					selected_item_sparseboolean.put(file_selected_idx,true);
-					picture_selector_adapter=new PictureSelectorAdapter(album_file_pojo_list);
-					lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-					recyclerview.setLayoutManager(lm);
-					recyclerview.setAdapter(picture_selector_adapter);
-					lm.scrollToPositionWithOffset(file_selected_idx,-preview_image_offset);
-
-
-					pbf.dismissAllowingStateLoss();
-					handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-					polling_handler.removeCallbacks(this);
-				}
-
-			}
-		});
-
-		 */
 
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override

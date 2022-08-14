@@ -81,15 +81,8 @@ public class AudioPlayFragment extends Fragment
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private List<AudioPOJO> files_selected_for_delete;
-	//private ArrayList<AudioPOJO> deleted_files=new ArrayList<>();
-	//private String tree_uri_path="";
-	//private Uri tree_uri;
-	private final int request_code=982;
-	//private DeleteFileAsyncTask delete_file_async_task;
-	private boolean asynctask_running;
 	public String audio_file_name="";
 	public Bitmap album_art;
-	private AsyncTaskStatus asyncTaskStatus;
 	private boolean isDurationMoreThanHour,fromArchiveView;
 	private Uri data;
 	private FileObjectType fileObjectType;
@@ -97,7 +90,7 @@ public class AudioPlayFragment extends Fragment
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
-	private FrameLayout progress_bar;
+	private FrameLayout progress_bar;AudioPlayerActivity activity;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -105,6 +98,7 @@ public class AudioPlayFragment extends Fragment
 		this.context=context;
 		localBroadcastManager=LocalBroadcastManager.getInstance(context);
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+		activity=((AudioPlayerActivity)context);
 	}
 
 	@Override
@@ -112,47 +106,6 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
-		FilenameFilter file_name_filter = new FilenameFilter() {
-			public boolean accept(File fi, String na) {
-				if (MainActivity.SHOW_HIDDEN_FILE) {
-					return true;
-				} else {
-					return !na.startsWith(".");
-				}
-			}
-		};
-
-		AudioPlayerActivity activity=((AudioPlayerActivity)context);
-		data=activity.data;
-
-		String file_path = activity.file_path;
-		fromArchiveView = activity.fromArchiveView;
-		fileObjectType= activity.fileObjectType;
-
-		if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			fileObjectType=FileObjectType.FILE_TYPE;
-			fromThirdPartyApp=true;
-		}
-
-
-		if(data!=null)
-		{
-			String source_folder = new File(file_path).getParent();
-			AlbumPolling(source_folder,fileObjectType,fromThirdPartyApp);
-			Intent service_intent=new Intent(context,AudioPlayerService.class);
-			service_intent.setData(data);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-			{
-				context.startForegroundService(service_intent);
-			}
-			else
-			{
-				context.startService(service_intent);
-			}
-
-		}
 
 		onserviceconnection_handler=new Handler();
 	
@@ -162,6 +115,45 @@ public class AudioPlayFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.ringtone_icon,getString(R.string.set_as_ringtone)));
 		
+	}
+
+	public void set_audio(String file_path)
+	{
+		data=activity.data;
+		fromArchiveView = activity.fromArchiveView;
+		fileObjectType= activity.fileObjectType;
+		fromThirdPartyApp=activity.fromThirdPartyApp;
+
+		if(data!=null)
+		{
+			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
+			String source_folder = new File(file_path).getParent();
+			AudioPlayViewModel audioPlayViewModel=new ViewModelProvider(this).get(AudioPlayViewModel.class);
+			audioPlayViewModel.isFinished.observe(this, new Observer<Boolean>() {
+				@Override
+				public void onChanged(Boolean aBoolean) {
+					if(aBoolean)
+					{
+						Intent service_intent=new Intent(context,AudioPlayerService.class);
+						service_intent.setData(data);
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+						{
+							context.startForegroundService(service_intent);
+						}
+						else
+						{
+							context.startService(service_intent);
+						}
+						if(progress_bar!=null)progress_bar.setVisibility(View.GONE); //because on_intent is called before inflation of view
+						audioPlayViewModel.isFinished.setValue(false);
+					}
+
+				}
+			});
+
+			audioPlayViewModel.albumPolling(source_folder,fileObjectType,fromThirdPartyApp,fromArchiveView);
+		}
+
 	}
 
 	@Override
@@ -312,8 +304,7 @@ public class AudioPlayFragment extends Fragment
 		
 		
 		album_art_imageview=v.findViewById(R.id.fragment_current_play_albumart);
-		//album_art_image_view_dimension=album_art_imageview.getWidth();
-		
+
 		total_time_tv=v.findViewById(R.id.audio_player_total_time);
 		current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
 		seekbar=v.findViewById(R.id.audio_player_seekbar);
@@ -471,7 +462,6 @@ public class AudioPlayFragment extends Fragment
 				}
 
 			});
-
 	}
 	
 	
@@ -493,6 +483,7 @@ public class AudioPlayFragment extends Fragment
 		}
 
 	}
+
 	public void enable_disable_previous_next_btn()
 	{
 		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
@@ -506,7 +497,6 @@ public class AudioPlayFragment extends Fragment
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
 
 			return;
-			
 		}
 		if(AudioPlayerService.CURRENT_PLAY_NUMBER<=0)
 		{
@@ -566,7 +556,6 @@ public class AudioPlayFragment extends Fragment
 			{
 				if(audio_player_service==null)
 				{
-
 					onserviceconnection_handler.postDelayed(this,1000);
 				}
 				else
@@ -601,6 +590,16 @@ public class AudioPlayFragment extends Fragment
 	}
 
 	@Override
+	public void onStop() {
+		super.onStop();
+		if(service_bound)
+		{
+			context.unbindService(service_connection);
+			service_bound=false;
+		}
+	}
+
+	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
@@ -611,11 +610,7 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
-		if(service_bound)
-		{
-			context.unbindService(service_connection);
-			service_bound=false;
-		}
+
 		super.onDestroy();
 	}
 	
@@ -651,52 +646,16 @@ public class AudioPlayFragment extends Fragment
 	private void set_title_art(String audiofilepath)
 	{
 		audio_name_tv.setText(audio_file_name);
+		album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
 		if(album_art==null)
 		{
-			album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
-			if(album_art==null)
-			{
-				album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.woofer_icon);
+			album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.woofer_icon);
 
-			}
 		}
-
 		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
 
 	}
 
-	/*
-	public void seekSAFPermission()
-	{
-		((AudioPlayerActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-
-				boolean permission_requested = false;
-				delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-				delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-
-		}
-	});
-
-	 */
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
@@ -712,38 +671,6 @@ public class AudioPlayFragment extends Fragment
 		}
 	});
 
-/*
-	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
-	{
-		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-		if(uriPOJO!=null)
-		{
-			tree_uri_path=uriPOJO.get_path();
-			tree_uri=uriPOJO.get_uri();
-		}
-
-
-		if(tree_uri_path.equals("")) {
-			SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
-				public void onOKBtnClicked() {
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked() {
-
-				}
-			});
-			safpermissionhelper.show(((AudioPlayerActivity)context).fm, "saf_permission_dialog");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-
- */
 	private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
 	{
 
@@ -770,25 +697,6 @@ public class AudioPlayFragment extends Fragment
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
 					DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-					/*
-					deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
-						{
-							public void onSelectOK()
-							{
-								if(!asynctask_running)
-								{
-									asynctask_running=true;
-									files_selected_for_delete=new ArrayList<>();
-									deleted_files=new ArrayList<>();
-									files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
-									delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-									delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-								}
-
-							}
-						});
-
-					 */
 					deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"deletefilealertotheractivity");
 					break;
 				case 1:
@@ -837,7 +745,6 @@ public class AudioPlayFragment extends Fragment
 						if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 							Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
 							intent.setData(Uri.parse("package:" + context.getPackageName()));
-							//((AudioPlayerActivity)context).startActivityForResult(intent, AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE);
 							activityResultLauncher_write_settings.launch(intent);
 						} else {
 							ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_SETTINGS}, AudioPlayerActivity.WRITE_SETTINGS_PERMISSION_REQUEST_CODE);
@@ -918,254 +825,6 @@ public class AudioPlayFragment extends Fragment
 		Global.print(context,getString(R.string.ringtone_set));
 	}
 
-	/*
-	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,File,Boolean>
-	{
-		final List<AudioPOJO> src_file_list;
-		final List<String> deleted_file_name_list=new ArrayList<>();
 
-		int counter_no_files;
-		long counter_size_files;
-		String current_file_name;
-		boolean isFromInternal;
-		String size_of_files_format;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		final FileObjectType fileObjectType;
-		String source_folder;
-		DeleteFileAsyncTask(List<AudioPOJO> src_file_list, FileObjectType fileObjectType)
-		{
-			this.src_file_list=src_file_list;
-			this.fileObjectType=fileObjectType;
-		}
-
-
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			pbf.show(((AudioPlayerActivity)context).fm,"progressbar_dialog");
-			source_folder=new File(src_file_list.get(0).getData()).getParent();
-		}
-
-		@Override
-		protected void onCancelled(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-			
-			if(deleted_files.size()>0)
-			{
-				if(audio_player_service!=null)
-				{
-					audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
-				}
-				((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_files);
-				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
-				AudioPlayerActivity.AUDIO_FILE=null;
-
-			}
-			pbf.dismissAllowingStateLoss();
-			asynctask_running=false;
-
-		}
-
-		@Override
-		protected Boolean doInBackground(Void...p)
-		{
-			// TODO: Implement this method
-			boolean success;
-
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getData());
-			}
-			success=deleteFromFolder();
-			return success;
-
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-
-			super.onPostExecute(result);
-			if(deleted_files.size()>0)
-			{
-				if(audio_player_service!=null)
-				{
-					audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
-				}
-				((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleted_files);
-				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
-				AudioPlayerActivity.AUDIO_FILE=null;
-
-			}
-			pbf.dismissAllowingStateLoss();
-			asynctask_running=false;
-
-		}
-
-
-		private boolean deleteFromFolder()
-		{
-			boolean success=false;
-			int iteration=0;
-			int size=src_file_list.size();
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				if(isFromInternal)
-				{
-					for(int i=0;i<size;++i)
-					{
-						if(isCancelled())
-						{
-							return false;
-						}
-						AudioPOJO audioPOJO=src_file_list.get(i);
-						File f=new File(audioPOJO.getData());
-						current_file_name=f.getName();
-						success=FileUtil.deleteNativeDirectory(f);
-						if(success)
-						{
-							deleted_files.add(audioPOJO);
-							deleted_file_name_list.add(current_file_name);
-
-						}
-						files_selected_for_delete.remove(audioPOJO);
-					}
-				}
-				else
-				{
-					if(check_SAF_permission(src_file_list.get(0).getData(),FileObjectType.FILE_TYPE))
-					{
-						for(int i=0;i<size;++i)
-						{
-							if(isCancelled())
-							{
-								return false;
-							}
-							AudioPOJO audioPOJO=src_file_list.get(i);
-							File file=new File(audioPOJO.getData());
-							current_file_name=file.getName();
-							success=FileUtil.deleteSAFDirectory(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-							if(success)
-							{
-								deleted_files.add(audioPOJO);
-								deleted_file_name_list.add(current_file_name);
-
-							}
-							files_selected_for_delete.remove(audioPOJO);
-						}
-					}
-
-				}
-			}
-			else if(fileObjectType==FileObjectType.USB_TYPE)
-			{
-				for(int i=0;i<size;++i)
-				{
-					if(isCancelled())
-					{
-						return false;
-					}
-					AudioPOJO audioPOJO=src_file_list.get(i);
-					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,audioPOJO.getData());
-					current_file_name=f.getName();
-					success=FileUtil.deleteUsbDirectory(f);
-					if(success)
-					{
-						deleted_files.add(audioPOJO);
-						deleted_file_name_list.add(current_file_name);
-
-					}
-					files_selected_for_delete.remove(audioPOJO);
-				}
-			}
-
-			return success;
-		}
-
-	}
-
-	 */
-
-
-	private void AlbumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp)
-	{
-		List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+source_folder))
-		{
-			FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,source_folder,null,false);
-		}
-		else
-		{
-			if(MainActivity.SHOW_HIDDEN_FILE)
-			{
-				filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder) ;
-			}
-			else
-			{
-				filePOJOS=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
-			}
-		}
-
-		AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
-		AudioPlayerService.CURRENT_PLAY_NUMBER=0;
-
-		// limiting to the selected only, in case of file selected from usb storage by adding condition below
-		if(fromArchiveView || fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
-		{
-			AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
-		}
-		else
-		{
-			Collections.sort(filePOJOS,FileComparator.FilePOJOComparate(Global.SORT,false));
-			int size=filePOJOS.size();
-			int count=0;
-			for(int i=0; i<size;++i)
-			{
-				FilePOJO filePOJO=filePOJOS.get(i);
-				if(!filePOJO.getIsDirectory())
-				{
-					String file_ext;
-					int idx=filePOJO.getName().lastIndexOf(".");
-					if(idx!=-1)
-					{
-						file_ext=filePOJO.getName().substring(idx+1);
-						if(file_ext.matches(Global.AUDIO_REGEX))
-						{
-
-							AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,"0",fileObjectType);
-							AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
-
-							if(AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))AudioPlayerService.CURRENT_PLAY_NUMBER=count;
-							count++;
-
-						}
-						else if(filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle()))
-						{
-
-							AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
-							AudioPlayerService.CURRENT_PLAY_NUMBER=count;
-							count++;
-						}
-
-					}
-					else if(filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle()))
-					{
-
-						AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
-						AudioPlayerService.CURRENT_PLAY_NUMBER=count;
-						count++;
-					}
-
-				}
-			}
-
-		}
-	}
 
 }

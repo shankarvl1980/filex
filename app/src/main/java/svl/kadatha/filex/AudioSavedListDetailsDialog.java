@@ -58,13 +58,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private Button remove_btn;
 	private Button play_btn;
 	private Button overflow_btn;
-    //public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-	//public List<AudioPOJO> audio_selected_array=new ArrayList<>();
 	public List<AudioPOJO> clicked_audio_list,total_audio_list;
 	private AudioSelectListener audioSelectListener;
 	private String audio_list_clicked_name;
 	private boolean whether_saved_play_list;
-	private AsyncTaskStatus asyncTaskStatus;
 	private int number_button=3;
 	private boolean toolbar_visible;
 	private int scroll_distance;
@@ -91,9 +88,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
-		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
 		Bundle bundle=getArguments();
 		if(bundle!=null)
@@ -325,10 +320,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
 		listview_height=Global.GET_HEIGHT_LIST_VIEW(listView);
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
-		
 
-
-		asyncTaskStatus=AsyncTaskStatus.STARTED;
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.fetch_saved_audio_list(audio_list_clicked_name,whether_saved_play_list);
@@ -351,20 +343,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 					if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
 					progress_bar.setVisibility(View.GONE);
-					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 				}
 
 			}
 		});
 
-
-		/*
-		if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-		{
-			new FetchAudioListDetailsAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		}
-
-		 */
 		int size=audioListViewModel.mselecteditems.size();
 		if(size==0)
 		{
@@ -456,113 +439,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			set_visibility_searchbar(false);
 		}
 	}
-
-
-/*
-	@Override
-	public void onDestroyView()
-	{
-		// TODO: Implement this method
-		
-		if(getDialog()!=null && getRetainInstance())
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-	/*
-	private class FetchAudioListDetailsAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		ProgressBarFragment pbf;
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			asyncTaskStatus=AsyncTaskStatus.STARTED;
-			pbf=ProgressBarFragment.newInstance();
-			pbf.show(((AudioPlayerActivity)context).fm,"");
-		}
-
-		@Override
-		protected void onCancelled(Void result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-			pbf.dismissAllowingStateLoss();
-		}
-
-		
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			if(clicked_audio_list!=null)
-			{
-				return null;
-			}
-			clicked_audio_list=new ArrayList<>();
-			fetch_audio_list(audio_list_clicked_name,whether_saved_play_list);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			currentAudioListRecyclerViewAdapter=new CurrentListRecyclerViewAdapter();
-			CurrentAudioListRecyclerview.setAdapter(currentAudioListRecyclerViewAdapter);
-			num_all_audio=total_audio_list.size();
-			if(num_all_audio==0)
-			{
-				CurrentAudioListRecyclerview.setVisibility(View.GONE);
-				empty_audio_list_tv.setVisibility(View.VISIBLE);
-			}
-			file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
-			if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
-			pbf.dismissAllowingStateLoss();
-			asyncTaskStatus=AsyncTaskStatus.COMPLETED;
-		}
-	}
-
-	 */
-	/*
-	private void fetch_audio_list(String list_name, boolean whether_saved_play_list)
-	{
-
-		if(!whether_saved_play_list)
-		{
-			for(AudioPOJO audio:AudioPlayerService.AUDIO_QUEUED_ARRAY)
-			{
-				if(new File(audio.getData()).exists())
-				{
-					clicked_audio_list.add(audio);
-				}
-			}
-		}
-		else if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
-		{
-			audio_list_clicked_name=list_name;
-			clicked_audio_list=((AudioPlayerActivity)context).audioDatabaseHelper.getAudioList(list_name);
-			Iterator<AudioPOJO> it=clicked_audio_list.iterator();
-			while(it.hasNext())
-			{
-				AudioPOJO audio=it.next();
-				if(!new File(audio.getData()).exists())
-				{
-					((AudioPlayerActivity)context).audioDatabaseHelper.delete(list_name,audio.getId());
-					it.remove();
-				}
-			}
-
-		}
-		total_audio_list=clicked_audio_list;
-	}
-
-	 */
 
 
 	public void clear_selection()

@@ -51,7 +51,6 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup
 	
 	private void init()
 	{
-		//setLayoutParams(new MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT,ViewGroup.MarginLayoutParams.WRAP_CONTENT));
 		LayoutInflater.from(context).inflate(R.layout.dialog_buttons_layout,this,true);
         int dialog_width;
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)

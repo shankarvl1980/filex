@@ -37,7 +37,6 @@ public class CreateFileAlertDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		type_file=new String[]{getString(R.string.file),getString(R.string.folder)};
 		Bundle bundle=getArguments();
@@ -53,8 +52,6 @@ public class CreateFileAlertDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		
-
 		View v=inflater.inflate(R.layout.fragment_create_file,container,false);
         ListView file_folder_listview = v.findViewById(R.id.file_type_ListView);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_file_button_layout);
@@ -103,17 +100,4 @@ public class CreateFileAlertDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-
-	
-	/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
-	 */
-	
 }

@@ -21,7 +21,6 @@ public class FileEditorViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2,future3;
     public MutableLiveData<Boolean> isReadingFinished=new MutableLiveData<>();
-    File file;
     public int eol,altered_eol;
     public LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;
@@ -34,11 +33,11 @@ public class FileEditorViewModel extends AndroidViewModel {
     public String action_after_save="";
     public FilePOJO currently_shown_file;
     public TextViewUndoRedoBatch textViewUndoRedo;
-    //public boolean file_loading_started;
     private BufferedReader bufferedReader;
     private long file_pointer;
     public boolean fileRead;
     public StringBuilder stringBuilder;
+    private boolean isCancelled;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);
@@ -55,7 +54,12 @@ public class FileEditorViewModel extends AndroidViewModel {
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
-        boolean isCancelled = true;
+        isCancelled = true;
+    }
+
+    private boolean isCancelled()
+    {
+        return isCancelled;
     }
 
     public synchronized void openFile(File file, FileInputStream fileInputStream, long f_pointer, boolean go_back)
@@ -179,7 +183,5 @@ public class FileEditorViewModel extends AndroidViewModel {
             }
         });
     }
-
-
 
 }

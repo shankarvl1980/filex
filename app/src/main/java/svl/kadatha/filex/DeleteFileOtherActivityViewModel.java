@@ -186,7 +186,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private boolean deleteAudioPOJOFromFolder(List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
     {
         boolean success=false;
-        int iteration=0;
         int size=src_audio_file_list.size();
         String current_file_name;
         if(fileObjectType==FileObjectType.FILE_TYPE)

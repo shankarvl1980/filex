@@ -55,7 +55,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		//setRetainInstance(true);
 		selected_eol=fileEditorActivity.viewModel.eol;
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
@@ -278,19 +277,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
 
-
-	 */
 	interface EOL_ChangeListener
 	{
 		void onEOLchanged(int eol);

@@ -33,9 +33,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
     private int total_no_of_files;
 	private String size_of_files_to_be_deleted;
 	private Context context;
-    //private DeleteFileAlertDialogListener deleteFileAlertDialogListener;
     private FileObjectType fileObjectType;
-	//private FileCountSize fileCountSize;
 	public String tree_uri_path="";
 	public Uri tree_uri;
 	private int size;
@@ -50,14 +48,11 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");
 		files_selected_array=bundle.getStringArrayList("files_selected_array");
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-//        fileCountSize = new FileCountSize(files_selected_array,fileObjectType);
-//		fileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		size=files_selected_array.size();
 		source_folder=new File(files_selected_array.get(0)).getParent();
 
@@ -202,67 +197,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 		
 	}
 
-
-	/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-
-	}
-
-	 */
-
-	/*
-	public void seekSAFPermission()
-	{
-		AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-		if(appCompatActivity instanceof VideoViewActivity)
-		{
-			((VideoViewActivity)appCompatActivity).clear_cache=false;
-		}
-		else if(appCompatActivity instanceof AudioPlayerActivity)
-		{
-			((AudioPlayerActivity)appCompatActivity).clear_cache=false;
-		}
-		else if(appCompatActivity instanceof FileEditorActivity)
-		{
-			((FileEditorActivity)appCompatActivity).clear_cache=false;
-		}
-		else if(appCompatActivity instanceof ImageViewActivity)
-		{
-			((ImageViewActivity)appCompatActivity).clear_cache=false;
-		}
-		else if(appCompatActivity instanceof PdfViewActivity)
-		{
-			((PdfViewActivity)appCompatActivity).clear_cache=false;
-		}
-
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-	@Override
-	public void onActivityResult(ActivityResult result) {
-		if (result.getResultCode()== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = result.getData().getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-			okbutton.callOnClick();
-		}
-		else
-		{
-			Global.print(context,getString(R.string.permission_not_granted));
-		}
-	}
-});
-
-	 */
-
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
@@ -275,19 +209,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 
 		if(tree_uri_path.equals("")) {
 			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
-				public void onOKBtnClicked() {
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked() {
-
-				}
-			});
-
-			 */
 			safpermissionhelper.show(getActivity().getSupportFragmentManager(), "saf_permission_dialog");
 			return false;
 		}
@@ -296,238 +217,5 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			return true;
 		}
 	}
-
-	/*
-	public void setDeleteFileDialogListener(DeleteFileAlertDialogListener listener)
-	{
-		deleteFileAlertDialogListener=listener;
-	}
-	
-	interface DeleteFileAlertDialogListener
-	{
-		void onSelectOK();
-	}
-
-	 */
-
-	/*
-	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		long total_size_of_files;
-		final List<String> source_list_files;
-		final boolean include_folder;
-		final FileObjectType sourceFileObjectType;
-
-		FileCountSize(ArrayList<String> source_list_files, FileObjectType fileObjectType)
-		{
-			this.source_list_files=source_list_files;
-			this.include_folder= true;
-			this.sourceFileObjectType=fileObjectType;
-		}
-
-		@Override
-		protected Void doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-
-			String file_path=source_list_files.get(0);
-			if(sourceFileObjectType==FileObjectType.FILE_TYPE)
-			{
-				if(FileUtil.isFromInternal(sourceFileObjectType,file_path))
-				{
-					File[] f_array=new File[size];
-					for(int i=0;i<size;++i)
-					{
-						File f=new File(source_list_files.get(i));
-						f_array[i]=f;
-					}
-					populate(f_array,include_folder);
-				}
-				else
-				{
-					File[] f_array=new File[size];
-					for(int i=0;i<size;++i)
-					{
-						File f=new File(source_list_files.get(i));
-						f_array[i]=f;
-					}
-					populate(f_array,include_folder);
-
-				}
-			}
-			else if(sourceFileObjectType== FileObjectType.USB_TYPE)
-			{
-				UsbFile[] f_array=new UsbFile[size];
-				for(int i=0;i<size;++i)
-				{
-					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,source_list_files.get(i));
-					f_array[i]=f;
-				}
-				populate(f_array,include_folder);
-			}
-
-			else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				File[] f_array=new File[size];
-				for(int i=0;i<size;++i)
-				{
-					File f=new File(source_list_files.get(i));
-					f_array[i]=f;
-				}
-				populate(f_array,include_folder);
-
-			}
-			return null;
-		}
-
-		private void populate(File[] source_list_files,boolean include_folder)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				File f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					if(f.list()!=null)
-					{
-						populate(f.listFiles(),include_folder);
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.length();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		private void populate(UsbFile[] source_list_files, boolean include_folder)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				UsbFile f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					try {
-						populate(f.listFiles(),include_folder);
-					} catch (IOException e) {
-
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.getLength();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-
-		private void populate(List<String> source_list_files,boolean include_folder)
-		{
-			int size=source_list_files.size();
-			for(int i=0;i<size;++i)
-			{
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				String parent_file_path=source_list_files.get(i);
-				Uri uri=FileUtil.getDocumentUri(parent_file_path,tree_uri,tree_uri_path);
-				if(FileUtil.isDirectory(context,uri))
-				{
-					Uri children_uri=DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(parent_file_path,tree_uri,tree_uri_path));
-					Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
-					if(cursor!=null && cursor.getCount()>0)
-					{
-						List<String>inner_source_list_files=new ArrayList<>();
-						while(cursor.moveToNext())
-						{
-
-							String docID=cursor.getString(0);
-							String displayName=cursor.getString(1);
-							inner_source_list_files.add(parent_file_path+File.separator+displayName);
-
-						}
-						cursor.close();
-						populate(inner_source_list_files,include_folder);
-
-					}
-
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=FileUtil.getSize(context,uri);
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_to_be_deleted=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-		@Override
-		protected void onProgressUpdate(Void[] values)
-		{
-			// TODO: Implement this method
-			super.onProgressUpdate(values);
-			if(no_files_textview!=null)
-			{
-				no_files_textview.setText(getString(R.string.total_files_colon)+" "+total_no_of_files);
-				size_files_textview.setText(getString(R.string.size_colon)+" "+size_of_files_to_be_deleted);
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onCancelled(Void result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-		}
-	}
-
-	 */
 
 }

@@ -45,7 +45,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public String fileclickselected;
 	public FileObjectType fileObjectType;
 	public UsbFile currentUsbFile;
-	private ProgressBarFragment pbf_polling;
 	public TextView folder_selected_textview;
 	private FileModifyObserver fileModifyObserver;
 	public boolean local_activity_delete,modification_observed,cache_cleared;
@@ -78,7 +77,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		asynctask_status = AsyncTaskStatus.NOT_YET_STARTED;
 		fileclickselected=getTag();
 		if(fileclickselected==null)
@@ -287,48 +285,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 	}
 
-	/*
-	private void after_filledFilePojos_procedure()
-	{
-		final Handler handler_inter=new Handler();
-		handler_inter.post(new Runnable() {
-			@Override
-			public void run() {
-				if(filled_filePOJOs)
-				{
-					if(FileSelectorActivity.SHOW_HIDDEN_FILE)
-					{
-						filePOJO_list=filePOJOS;
-						totalFilePOJO_list=filePOJOS;
-					}
-					else
-					{
-						filePOJO_list=filePOJOS_filtered;
-						totalFilePOJO_list=filePOJOS_filtered;
-					}
-					totalFilePOJO_list_Size=totalFilePOJO_list.size();
-					file_list_size=filePOJO_list.size();
-					fileSelectorActivity.file_number.setText(""+file_list_size);
-
-					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
-					adapter=new FileSelectorAdapter();
-					set_adapter();
-					if(pbf_polling!=null && pbf_polling.getDialog()!=null)
-					{
-						pbf_polling.dismissAllowingStateLoss();
-					}
-
-					handler_inter.removeCallbacks(this);
-				}
-				else
-				{
-					handler_inter.postDelayed(this,50);
-				}
-			}
-		});
-	}
-
-	 */
 
 	@Override
 	public void onStop() {
@@ -394,51 +350,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			folder_empty_textview.setVisibility(View.GONE);
 		}
 	}
-
-	/*
-	private class AsyncTaskFilePopulate extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			asynctask_status=AsyncTaskStatus.STARTED;
-			pbf_polling=ProgressBarFragment.newInstance();
-			if(fileSelectorActivity.fm==null)
-			{
-				context=getContext();
-				fileSelectorActivity=(FileSelectorActivity) context;
-				fileSelectorActivity.fm=fileSelectorActivity.getSupportFragmentManager();
-			}
-
-			pbf_polling.show(fileSelectorActivity.fm,""); // don't show when archive view to avoid double pbf
-
-		}
-
-		@Override
-		protected void onCancelled(Void unused) {
-			super.onCancelled(unused);
-			asynctask_status=AsyncTaskStatus.COMPLETED;
-			pbf_polling.dismissAllowingStateLoss();
-			filled_filePOJOs=true;
-		}
-
-		@Override
-		protected Void doInBackground(Void... voids) {
-			filled_filePOJOs=false;
-			filled_filePOJOs=FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void unused) {
-			super.onPostExecute(unused);
-			asynctask_status=AsyncTaskStatus.COMPLETED;
-			pbf_polling.dismissAllowingStateLoss();
-		}
-	}
-
-	 */
-
 
 
 	public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable
@@ -581,33 +492,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 	}
 
-	/*
-	public void seekSAFPermission()
-	{
-		fileSelectorActivity.clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-
-		}
-	});
-
-	 */
-
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
@@ -635,8 +519,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 	public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
 	{
-		//mselecteditems=new SparseBooleanArray();
-		//mselecteditemsFilePath=new SparseArray<>();
 		fileSelectorActivity.clearCache(file_path,fileObjectType);
 		modification_observed=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
@@ -658,21 +540,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-
-				}
-			});
-
-			 */
 			safpermissionhelper.show(fileSelectorActivity.fm, "saf_permission_dialog");
 			return false;
 		}
