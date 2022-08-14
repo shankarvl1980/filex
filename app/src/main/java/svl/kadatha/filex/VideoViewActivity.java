@@ -91,12 +91,7 @@ public class VideoViewActivity extends BaseActivity
 			}
 		});
 
-		videoViewContainerFragment.setAlbumPollCompleteListener(new VideoViewContainerFragment.AlbumPollCompleteListener() {
-			@Override
-			public void onPollComplete() {
 
-			}
-		});
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}
 
