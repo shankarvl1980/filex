@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.SparseBooleanArray;
@@ -59,6 +58,11 @@ public class AudioListViewModel extends AndroidViewModel {
         if(future5!=null) future5.cancel(mayInterruptRunning);
         if(future6!=null) future6.cancel(mayInterruptRunning);
         isCancelled=true;
+    }
+
+    private boolean isCancelled()
+    {
+        return isCancelled;
     }
 
 

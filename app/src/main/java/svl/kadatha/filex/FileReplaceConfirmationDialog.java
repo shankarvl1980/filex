@@ -3,7 +3,6 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,14 +22,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class FileReplaceConfirmationDialog extends DialogFragment
 {
 	private CheckBox apply_all_checkbox;
 	private Context context;
 	private FrameLayout progress_bar;
-	private Bundle bundle;
 	private boolean cut;
 	private String source_folder;
 	private String dest_folder;
@@ -52,15 +49,15 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 
-		bundle=getArguments();
-		if(bundle!=null)
+		Bundle bundle = getArguments();
+		if(bundle !=null)
 		{
-			files_selected_array=bundle.getStringArrayList("files_selected_array");
-			cut=bundle.getBoolean("cut");
-			source_folder=bundle.getString("source_folder");
-			dest_folder=bundle.getString("dest_folder");
-			sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
-			destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
+			files_selected_array= bundle.getStringArrayList("files_selected_array");
+			cut= bundle.getBoolean("cut");
+			source_folder= bundle.getString("source_folder");
+			dest_folder= bundle.getString("dest_folder");
+			sourceFileObjectType=(FileObjectType) bundle.getSerializable("sourceFileObjectType");
+			destFileObjectType=(FileObjectType) bundle.getSerializable("destFileObjectType");
 		}
 	}
 

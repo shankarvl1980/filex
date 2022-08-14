@@ -59,8 +59,8 @@ public class VideoViewContainerFragment extends Fragment
 
 	private int floating_button_height;
 	private FloatingActionButton floating_back_button;
-	private OnPageSelectListener onPageSelectListener;
-	private ToolBarVisibleListener toolBarVisibleListener;
+//	private OnPageSelectListener onPageSelectListener;
+//	private ToolBarVisibleListener toolBarVisibleListener;
 	private boolean toolbar_visible,fromArchiveView;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
@@ -246,10 +246,10 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				public void onPageSelected(int p)
 				{
-					if(onPageSelectListener!=null)
-					{
-						onPageSelectListener.onPageSelect(p);
-					}
+//					if(onPageSelectListener!=null)
+//					{
+//						onPageSelectListener.onPageSelect(p);
+//					}
 					((VideoViewActivity)context).current_page_idx=p;
 				}
 
@@ -278,10 +278,10 @@ public class VideoViewContainerFragment extends Fragment
 					floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
 					//frag.toolbar.animate().translationY(toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=false;
-					if(toolBarVisibleListener!=null)
-					{
-						toolBarVisibleListener.onToolbarVisible(toolbar_visible);
-					}
+//					if(toolBarVisibleListener!=null)
+//					{
+//						toolBarVisibleListener.onToolbarVisible(toolbar_visible);
+//					}
 				}
 			}
 		};
@@ -419,10 +419,10 @@ public class VideoViewContainerFragment extends Fragment
 							toolbar_visible=true;
 							handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 						}
-						if(toolBarVisibleListener!=null)
-						{
-							toolBarVisibleListener.onToolbarVisible(toolbar_visible);
-						}
+//						if(toolBarVisibleListener!=null)
+//						{
+//							toolBarVisibleListener.onToolbarVisible(toolbar_visible);
+//						}
 					}
 				});
 
@@ -455,27 +455,6 @@ public class VideoViewContainerFragment extends Fragment
 			return POSITION_NONE;
 		}
 
-	}
-
-
-	interface OnPageSelectListener
-	{
-		void onPageSelect(int x);
-	}
-
-	public void setOnPageSelectListener(OnPageSelectListener listener)
-	{
-		onPageSelectListener=listener;
-	}
-
-	interface ToolBarVisibleListener
-	{
-		void onToolbarVisible(boolean visible);
-	}
-
-	public void setToolBarVisibleListener(ToolBarVisibleListener listener)
-	{
-		toolBarVisibleListener=listener;
 	}
 
 }

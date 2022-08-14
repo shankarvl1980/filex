@@ -54,11 +54,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -86,7 +84,6 @@ public class AudioPlayFragment extends Fragment
 	private boolean isDurationMoreThanHour,fromArchiveView;
 	private Uri data;
 	private FileObjectType fileObjectType;
-	private boolean fromThirdPartyApp;
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
@@ -122,7 +119,7 @@ public class AudioPlayFragment extends Fragment
 		data=activity.data;
 		fromArchiveView = activity.fromArchiveView;
 		fileObjectType= activity.fileObjectType;
-		fromThirdPartyApp=activity.fromThirdPartyApp;
+		boolean fromThirdPartyApp = activity.fromThirdPartyApp;
 
 		if(data!=null)
 		{
@@ -151,7 +148,7 @@ public class AudioPlayFragment extends Fragment
 				}
 			});
 
-			audioPlayViewModel.albumPolling(source_folder,fileObjectType,fromThirdPartyApp,fromArchiveView);
+			audioPlayViewModel.albumPolling(source_folder,fileObjectType, fromThirdPartyApp,fromArchiveView);
 		}
 
 	}

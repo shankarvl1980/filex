@@ -20,7 +20,7 @@ public class VideoViewActivity extends BaseActivity
 	private Context context;
 	TinyDB tinyDB;
 	private final List<OnPageSelectListener> onPageSelectListeners=new ArrayList<>();
-	public int current_page_idx,file_selected_idx;
+	public int current_page_idx;
 	public boolean toolbar_visible,fromArchiveView;
 	public FileObjectType fileObjectType;
 	public boolean fromThirdPartyApp;
@@ -66,6 +66,7 @@ public class VideoViewActivity extends BaseActivity
 		on_intent(intent);
 	}
 
+	/*
 	private void set_listeners_on_video_container_fragment(VideoViewContainerFragment videoViewContainerFragment)
 	{
 		videoViewContainerFragment.setOnPageSelectListener(new VideoViewContainerFragment.OnPageSelectListener() {
@@ -94,6 +95,8 @@ public class VideoViewActivity extends BaseActivity
 
 		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
 	}
+
+	 */
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

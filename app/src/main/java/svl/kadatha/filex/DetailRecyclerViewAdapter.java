@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -28,8 +26,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	private final MainActivity mainActivity;
 
 	private CardViewClickListener cardViewClickListener;
-    private final Handler handler_remove;
-	private boolean show_file_path;
+    private boolean show_file_path;
 
 
 	DetailRecyclerViewAdapter(Context context,boolean archiveview)
@@ -37,7 +34,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
-		handler_remove=new Handler();
+        Handler handler_remove = new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
