@@ -226,13 +226,14 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 DetailFragment.TO_BE_MOVED_TO_FILE_POJO=filePOJO;
+
                 if(destFileObjectType== FileObjectType.FILE_TYPE)
                 {
-                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
+                    ((MainActivity)df.getActivity()).createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
                 }
                 else if(destFileObjectType== FileObjectType.USB_TYPE && MainActivity.usbFileRoot!=null)
                 {
-                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
+                    ((MainActivity)df.getActivity()).createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
                 }
             }
             else

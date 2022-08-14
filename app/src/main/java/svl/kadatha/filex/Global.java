@@ -979,7 +979,7 @@ public class Global
 		return BitmapFactory.decodeResource(res, resId, options);
 	}
 
-	public static String CONCATENATE_PARENT_CHILD_PATH(@NonNull String parent_file_path, @NonNull String child_file_name)
+	public static String CONCATENATE_PARENT_CHILD_PATH(String parent_file_path, String child_file_name)
 	{
 		if(parent_file_path==null)parent_file_path="";
 		return parent_file_path.endsWith(File.separator) ? parent_file_path + child_file_name : parent_file_path + File.separator + child_file_name;

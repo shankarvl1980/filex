@@ -1165,7 +1165,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			actionmode_finish(df,file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
 		}
 
-		if(file_path.equals(DetailFragment.SEARCH_RESULT) || DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null)
+		if(file_path.equals(DetailFragment.SEARCH_RESULT))
 		{
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
 					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
