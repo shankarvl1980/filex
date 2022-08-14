@@ -188,8 +188,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 				{
 					Global.print(context,getString(R.string.permission_not_granted));
 				}
-
-
 			}
 			else
 			{

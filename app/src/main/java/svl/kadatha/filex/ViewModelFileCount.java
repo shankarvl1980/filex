@@ -168,7 +168,6 @@ public class ViewModelFileCount extends ViewModel {
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
             size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-            //publishProgress();
         }
     }
 
@@ -207,7 +206,6 @@ public class ViewModelFileCount extends ViewModel {
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
             size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
-            //publishProgress();
         }
     }
 

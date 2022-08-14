@@ -37,7 +37,6 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		Bundle bundle=getArguments();
         whether_closing = bundle.getBoolean("whether_closing");
 		setCancelable(false);
-		//setRetainInstance(true);
 	}
 
 	
@@ -125,36 +124,11 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 	}
-	
-/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
 
-	}
-
- */
-	
-	/*
-	public void setSaveFileListener(SaveFileListener listener)
-	{
-		saveFileListener=listener;
-	}
-
-	 */
-	
 	interface SaveFileListener
 	{
 		void next_action(boolean save);
 		void on_being_closed(boolean to_close_after_save);
 	}
 
-	
-	
-	
 }

@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 public abstract class MyAsyncTask {
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    //private MutableLiveData<Boolean>isFinished=new MutableLiveData<>();
     private boolean success;
     private final Handler handler;
 
@@ -37,7 +36,6 @@ public abstract class MyAsyncTask {
 
 
     public void cancel(boolean mayInterruptRunning){
-        //this.mayInterruptRunning=mayInterruptRunning;
         isCancelled=true;
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);

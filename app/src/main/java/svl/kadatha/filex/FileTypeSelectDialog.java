@@ -34,11 +34,6 @@ public class FileTypeSelectDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		//private FileTypeSelectListener fileTypeSelectListener;
-		//private final LinkedHashMap<String,String> file_type_set=new LinkedHashMap<>();
-		//private List<String> file_type_list;
-		//private List<String> file_mime_list;
-		FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -47,7 +42,6 @@ public class FileTypeSelectDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		//setRetainInstance(true);
 		Bundle bundle = getArguments();
 		mime_type= bundle.getString("mime_type");
 		file_path= bundle.getString("file_path");
@@ -119,17 +113,7 @@ public class FileTypeSelectDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
 
-	 */
-	
 	private class FileTypeRecyclerViewAdapter extends RecyclerView.Adapter<FileTypeRecyclerViewAdapter.VH>
 	{
 
@@ -193,18 +177,5 @@ public class FileTypeSelectDialog extends DialogFragment
 		}
 		
 	}
-	
-	/*
-	interface FileTypeSelectListener
-	{
-		void onSelectType(String mime_type);
-	}
-	
-	public void setFileTypeSelectListener(FileTypeSelectListener listener)
-	{
-		fileTypeSelectListener=listener;
-	}
-
-	 */
 
 }

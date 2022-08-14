@@ -148,8 +148,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         maxHeight=Math.max(iconheight,maxHeight);
 
-        int itemHeight_withoutpadding = maxHeight;
-
         maxHeight+=Global.FOUR_DP*2; //providing top and bottom margin of six dp
 
         itemHeight=maxHeight;
@@ -167,7 +165,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         int x,y=0;
 
         x=Global.TEN_DP;
-        int margin_offset_icon;
         View v=fileimageview;
         int top_for_icon=(itemHeight-imageview_dimension)/2;
         v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
@@ -176,7 +173,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         v=overlay_fileimageview;
         v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
         x+=v.getMeasuredWidth()+Global.TEN_DP;
-        margin_offset_icon=x;
 
 
         v=itemlinebackground;

@@ -45,19 +45,14 @@ public class VideoViewContainerFragment extends Fragment
 	private Context context;
 	private Toolbar toolbar;
 	private TextView title;
-	//private ListPopupWindow listPopWindow;
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private List<FilePOJO> files_selected_for_delete; //,deleted_files;
-	//private DeleteFileAsyncTask delete_file_async_task;
-	//private String tree_uri_path="";
-	//private Uri tree_uri;
-	private final int request_code=904;
 	private Handler handler;
 	private Runnable runnable;
 	private boolean is_menu_opened;
 
-	private boolean asynctask_running;
+	//private boolean asynctask_running;
 	private Uri data;
 
 	private VideoViewPagerAdapter adapter;
@@ -110,25 +105,6 @@ public class VideoViewContainerFragment extends Fragment
 
 		}
 
-
-		/*
-		currently_shown_file=videoViewActivity.currently_shown_file;
-		video_list=videoViewActivity.video_list;
-		file_selected_idx=videoViewActivity.file_selected_idx;
-		fromThirdPartyApp=videoViewActivity.fromThirdPartyApp;
-		source_folder=videoViewActivity.source_folder;
-		source_folder=videoViewActivity.source_folder;
-		Bundle bundle=getArguments();
-		if(bundle!=null)
-		{
-			fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
-			fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-		}
-
-
-		if(albumPollCompleteListener!=null) albumPollCompleteListener.onPollComplete();
-
-		 */
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -183,25 +159,6 @@ public class VideoViewContainerFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
-							/*
-							deleteFileAlertDialogOtherActivity.setDeleteFileDialogListener(new DeleteFileAlertDialogOtherActivity.DeleteFileAlertDialogListener()
-								{
-									public void onSelectOK()
-									{
-										if(!asynctask_running)
-										{
-											asynctask_running=true;
-											files_selected_for_delete=new ArrayList<>();
-											deleted_files=new ArrayList<>();
-											files_selected_for_delete.add(viewModel.currently_shown_file);
-											delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-											delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-										}
-
-									}
-								});
-
-							 */
 							deleteFileAlertDialogOtherActivity.show(((VideoViewActivity)context).fm,"deletefilealertotheractivity");
 							break;
 						case 1:
@@ -386,8 +343,6 @@ public class VideoViewContainerFragment extends Fragment
 			}
 		});
 
-
-
 		return v;
 	}
 
@@ -409,69 +364,6 @@ public class VideoViewContainerFragment extends Fragment
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
-	/*
-	public void seekSAFPermission()
-	{
-		((VideoViewActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent>activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-				boolean permission_requested = false;
-				delete_file_async_task=new DeleteFileAsyncTask(files_selected_for_delete,fileObjectType);
-				delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-
-		}
-	});
-
-
-	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
-	{
-		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-		if(uriPOJO!=null)
-		{
-			tree_uri_path=uriPOJO.get_path();
-			tree_uri=uriPOJO.get_uri();
-		}
-
-
-		if(tree_uri_path.equals("")) {
-			SAFPermissionHelperDialog safpermissionhelper = new SAFPermissionHelperDialog();
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener() {
-				public void onOKBtnClicked() {
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked() {
-
-				}
-			});
-			safpermissionhelper.show(((VideoViewActivity)context).fm, "saf_permission_dialog");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	 */
-
-	
 	private class VideoViewPagerAdapter extends FragmentStatePagerAdapter
 	{
 		final IndexedLinkedHashMap<FilePOJO,Integer> list;
@@ -565,14 +457,14 @@ public class VideoViewContainerFragment extends Fragment
 
 	}
 
-	interface AlbumPollCompleteListener
-	{
-		void onPollComplete();
-	}
-
-	public void setAlbumPollCompleteListener(AlbumPollCompleteListener listener)
-	{
-	}
+//	interface AlbumPollCompleteListener
+//	{
+//		void onPollComplete();
+//	}
+//
+//	public void setAlbumPollCompleteListener(AlbumPollCompleteListener listener)
+//	{
+//	}
 
 	interface OnPageSelectListener
 	{
@@ -593,205 +485,5 @@ public class VideoViewContainerFragment extends Fragment
 	{
 		toolBarVisibleListener=listener;
 	}
-
-	/*
-	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,String,Boolean>
-	{
-
-		final List<FilePOJO> src_file_list;
-		final List<String> deleted_file_name_list=new ArrayList<>();
-
-		int counter_no_files;
-		long counter_size_files;
-		String current_file_name;
-		boolean isFromInternal;
-		String size_of_files_format;
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		final FileObjectType fileObjectType;
-		DeleteFileAsyncTask(List<FilePOJO> src_file_list, FileObjectType fileObjectType)
-		{
-			this.src_file_list=src_file_list;
-			this.fileObjectType=fileObjectType;
-		}
-
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			pbf.show(((VideoViewActivity)context).fm,"progressbar_dialog");
-
-		}
-
-		@Override
-		protected void onCancelled(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onCancelled(result);
-
-			if(deleted_files.size()>0)
-			{
-
-				Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
-				for(FilePOJO filePOJO:deleted_files)
-				{
-					while(iterator.hasNext())
-					{
-						Map.Entry<FilePOJO,Integer> entry=iterator.next();
-						if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
-						{
-							viewModel.video_list.removeIndex(filePOJO);
-							iterator.remove();
-							break;
-						}
-					}
-
-				}
-
-				adapter.notifyDataSetChanged();
-				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
-				if(viewModel.video_list.size()<1)
-				{
-					((VideoViewActivity)context).finish();
-				}
-
-			}
-
-			pbf.dismissAllowingStateLoss();
-			asynctask_running=false;
-		}
-
-		@Override
-		protected Boolean doInBackground(Void...p)
-		{
-			// TODO: Implement this method
-			boolean success;
-
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
-			}
-			success=deleteFromFolder();
-			return success;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-
-			super.onPostExecute(result);
-			if(deleted_files.size()>0)
-			{
-				Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
-				for(FilePOJO filePOJO:deleted_files)
-				{
-					while(iterator.hasNext())
-					{
-						Map.Entry<FilePOJO,Integer> entry=iterator.next();
-						if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
-						{
-							viewModel.video_list.removeIndex(filePOJO);
-							iterator.remove();
-							break;
-						}
-					}
-
-				}
-
-				adapter.notifyDataSetChanged();
-				FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleted_file_name_list,fileObjectType);
-				Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
-				if(viewModel.video_list.size()<1)
-				{
-					((VideoViewActivity)context).finish();
-				}
-
-			}
-			pbf.dismissAllowingStateLoss();
-			asynctask_running=false;
-
-		}
-
-		private boolean deleteFromFolder()
-		{
-			boolean success=false;
-			int size=src_file_list.size();
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				if(isFromInternal)
-				{
-					for(int i=0;i<size;++i)
-					{
-						if(isCancelled())
-						{
-							return false;
-						}
-						FilePOJO filePOJO=src_file_list.get(i);
-						File f=new File(filePOJO.getPath());
-						current_file_name=f.getName();
-						success=FileUtil.deleteNativeDirectory(f);
-						if(success)
-						{
-							deleted_files.add(filePOJO);
-							deleted_file_name_list.add(current_file_name);
-						}
-						files_selected_for_delete.remove(filePOJO);
-					}
-
-				}
-				else
-				{
-					if(check_SAF_permission(src_file_list.get(0).getPath(),fileObjectType))
-					{
-						for(int i=0;i<size;++i)
-						{
-							if(isCancelled())
-							{
-								return false;
-							}
-							FilePOJO filePOJO=src_file_list.get(i);
-							File file=new File(filePOJO.getPath());
-							current_file_name=file.getName();
-							success=FileUtil.deleteSAFDirectory(context,file.getAbsolutePath(),tree_uri,tree_uri_path);
-							if(success)
-							{
-								deleted_files.add(filePOJO);
-								deleted_file_name_list.add(current_file_name);
-							}
-							files_selected_for_delete.remove(filePOJO);
-						}
-					}
-
-
-				}
-			}
-			else if(fileObjectType==FileObjectType.USB_TYPE)
-			{
-				for(int i=0;i<size;++i)
-				{
-					if(isCancelled())
-					{
-						return false;
-					}
-					FilePOJO filePOJO=src_file_list.get(i);
-					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
-					current_file_name=f.getName();
-					success=FileUtil.deleteUsbDirectory(f);
-					if(success)
-					{
-						deleted_files.add(filePOJO);
-						deleted_file_name_list.add(current_file_name);
-					}
-					files_selected_for_delete.remove(filePOJO);
-				}
-			}
-
-			return success;
-		}
-
-	}
-
-	 */
 
 }

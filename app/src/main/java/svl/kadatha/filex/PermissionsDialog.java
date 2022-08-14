@@ -23,7 +23,6 @@ public class PermissionsDialog extends DialogFragment
     private String file_path;
     private boolean owner_read,owner_write,owner_exe,grp_read,grp_write,grp_exe,other_read,other_write,other_exe;
 	private int owner_permission_int, group_permission_int,other_permission_int;
-	//private PermissionChangeListener permissionChangeListener;
 	private Context context;
 	private Bundle bundle;
 
@@ -39,7 +38,6 @@ public class PermissionsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		//setRetainInstance(true);
 		bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -138,14 +136,6 @@ public class PermissionsDialog extends DialogFragment
 				catch(IOException | InterruptedException e){}
 
 				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(PropertiesDialog.PROPERTIES_DIALOG_REQUEST_CODE,bundle);
-				/*
-				if(permissionChangeListener!=null)
-				{
-					permissionChangeListener.onPermissionChange(new File(file_path));
-				}
-
-				 */
-				
 				dismissAllowingStateLoss();
 			}
 		});
@@ -343,31 +333,7 @@ public class PermissionsDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		
 
 	}
-	
-/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-	/*
-	public void setPermissionChangeListener(PermissionChangeListener listener)
-	{
-		this.permissionChangeListener=listener;
-	}
-	
-	interface PermissionChangeListener
-	{
-		void onPermissionChange(File f);
-	}
-
-	 */
 
 }

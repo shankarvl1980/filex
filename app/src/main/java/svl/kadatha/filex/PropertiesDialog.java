@@ -33,15 +33,13 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class PropertiesDialog extends DialogFragment
 {
 	private Context context;
-	//private final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy hh:mm");
 	private TextView no_files_textview;
 	private TextView size_files_textview;
 	private String filename_str,file_path_str,file_type_str,file_no_str,file_size_str,file_date_str,file_permissions_str,symbolic_link_str,readable_str,writable_str,hidden_str;
-    private int total_no_of_files;
-	private String size_of_files_format;
+//    private int total_no_of_files;
+//	private String size_of_files_format;
 	private ArrayList<String> files_selected_array=new ArrayList<>();
-	//private final ArrayList<File> files_selected_for_properties=new ArrayList<>();
-	//private FileCountSize AsyncTaskFileCountSize;
+
 	private FileObjectType fileObjectType;
 	private String source_folder;
 	private int size;
@@ -60,15 +58,12 @@ public class PropertiesDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-//		setRetainInstance(true);
 		Bundle bundle=getArguments();
 		files_selected_array=bundle.getStringArrayList("files_selected_array");
 		size=files_selected_array.size();
 		source_folder=new File(files_selected_array.get(0)).getParent();
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) fileObjectType=FileObjectType.FILE_TYPE;
-	//	AsyncTaskFileCountSize=new FileCountSize(files_selected_array,fileObjectType);
-	//	AsyncTaskFileCountSize.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 		if(files_selected_array.size()==1)
 		{
@@ -217,16 +212,6 @@ public class PropertiesDialog extends DialogFragment
 							}
 
 							PermissionsDialog permissionsDialog=PermissionsDialog.getInstance(file_path_str,file_permissions_str,symbolic_link_str);
-							/*
-							permissionsDialog.setPermissionChangeListener(new PermissionsDialog.PermissionChangeListener()
-							{
-								public void onPermissionChange(File file)
-								{
-									getPermissions(file);
-								}
-							});
-
-							 */
 							permissionsDialog.show(((AppCompatActivity)context).getSupportFragmentManager().beginTransaction(),"permissions_dialog");
 						}
 					});
@@ -309,31 +294,6 @@ public class PropertiesDialog extends DialogFragment
 		
 	}
 
-/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-
-/*
-	@Override
-	public void onDismiss(DialogInterface dialog)
-	{
-		// TODO: Implement this method
-		super.onDismiss(dialog);
-		AsyncTaskFileCountSize.cancel(true);
-	}
-
- */
-
-
 	public void getPermissions(File file)
 	{
 		// TODO: Implement this method
@@ -380,187 +340,5 @@ public class PropertiesDialog extends DialogFragment
 
 		}
 	}
-
-
-/*
-	private class FileCountSize extends svl.kadatha.filex.AsyncTask<Void,Void,Void> {
-		long total_size_of_files;
-		final List<String> source_list_files;
-		final boolean include_folder;
-		final FileObjectType sourceFileObjectType;
-
-		FileCountSize(ArrayList<String> source_list_files, FileObjectType fileObjectType) {
-			this.source_list_files = source_list_files;
-			this.include_folder = true;
-			this.sourceFileObjectType = fileObjectType;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-		}
-
-		@Override
-		protected Void doInBackground(Void[] p1) {
-			// TODO: Implement this method
-			int size = source_list_files.size();
-			if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
-				File[] f_array = new File[size];
-				for (int i = 0; i < size; ++i) {
-					File f = new File(source_list_files.get(i));
-					f_array[i] = f;
-				}
-				populate(f_array, include_folder);
-
-
-			} else if (sourceFileObjectType == FileObjectType.USB_TYPE) {
-				UsbFile[] f_array = new UsbFile[size];
-				for (int i = 0; i < size; ++i) {
-					UsbFile f = FileUtil.getUsbFile(MainActivity.usbFileRoot, source_list_files.get(i));
-					f_array[i] = f;
-				}
-				populate(f_array, include_folder);
-			}
-			else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-			{
-				FTPFile[] f_array=new FTPFile[size];
-				for(int i=0;i<size;++i)
-				{
-
-					FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
-					f_array[i]=f;
-
-				}
-				populate(f_array,include_folder,source_folder);
-
-			}
-
-			return null;
-		}
-
-		private void populate(File[] source_list_files, boolean include_folder) {
-			int size = source_list_files.length;
-			for (int i = 0; i < size; ++i) {
-				File f = source_list_files[i];
-				if (isCancelled()) {
-					return;
-				}
-				int no_of_files = 0;
-				long size_of_files = 0L;
-				if (f.isDirectory()) {
-					if (f.list() != null) {
-						populate(f.listFiles(), include_folder);
-					}
-					if (include_folder) {
-						no_of_files++;
-					}
-				} else {
-					no_of_files++;
-					size_of_files += f.length();
-				}
-				total_no_of_files += no_of_files;
-				total_size_of_files += size_of_files;
-				size_of_files_format = FileUtil.humanReadableByteCount(total_size_of_files, Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		private void populate(UsbFile[] source_list_files, boolean include_folder) {
-			int size = source_list_files.length;
-			for (int i = 0; i < size; ++i) {
-				UsbFile f = source_list_files[i];
-				if (isCancelled()) {
-					return;
-				}
-				int no_of_files = 0;
-				long size_of_files = 0L;
-				if (f.isDirectory()) {
-					try {
-						if (f.list() != null) {
-							populate(f.listFiles(), include_folder);
-						}
-					} catch (IOException e) {
-
-					}
-					if (include_folder) {
-						no_of_files++;
-					}
-				} else {
-					no_of_files++;
-					size_of_files += f.getLength();
-				}
-				total_no_of_files += no_of_files;
-				total_size_of_files += size_of_files;
-				size_of_files_format = FileUtil.humanReadableByteCount(total_size_of_files, Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-		private void populate(FTPFile[] source_list_files, boolean include_folder, String path)
-		{
-			int size=source_list_files.length;
-			for(int i=0;i<size;++i)
-			{
-				FTPFile f=source_list_files[i];
-				if(isCancelled())
-				{
-					return;
-				}
-				int no_of_files=0;
-				long size_of_files=0L;
-				if(f.isDirectory())
-				{
-					try {
-						String name=f.getName();
-						path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
-						populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
-					} catch (IOException e) {
-
-					}
-					if(include_folder)
-					{
-						no_of_files++;
-					}
-				}
-				else
-				{
-					no_of_files++;
-					size_of_files+=f.getSize();
-				}
-				total_no_of_files+=no_of_files;
-				total_size_of_files+=size_of_files;
-				size_of_files_format=FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000);
-				publishProgress();
-			}
-		}
-
-
-		@Override
-		protected void onProgressUpdate(Void[] values) {
-			// TODO: Implement this method
-			super.onProgressUpdate(values);
-			if (no_files_textview != null) {
-
-				no_files_textview.setText(file_no_str=total_no_of_files +" " +(total_no_of_files==1 ? getString(R.string.file1) : getString(R.string.files)));
-				size_files_textview.setText(file_size_str=size_of_files_format);
-
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			// TODO: Implement this method
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onCancelled(Void result) {
-			// TODO: Implement this method
-			super.onCancelled(result);
-		}
-	}
-
- */
 
 }

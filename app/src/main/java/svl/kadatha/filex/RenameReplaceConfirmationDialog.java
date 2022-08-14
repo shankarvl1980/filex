@@ -21,7 +21,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 {
 
     private String rename_file_name;
-	//private RenameReplaceDialogListener renameDialogListener;
 	private FragmentManager fragmentManager;
 	private Context context;
 	private Bundle bundle;
@@ -48,7 +47,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
 		bundle=getArguments();
 		rename_file_name=bundle.getString("rename_file_name");
@@ -58,8 +56,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//return super.onCreateView(inflater, container, savedInstanceState);
-
 		View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);
@@ -76,16 +72,7 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 				{
 
 					fragmentManager.setFragmentResult(RenameFileDialog.REPLACEMENT_CONFIRMATION, bundle);
-					/*
-					if(renameDialogListener!=null)
-					{
-						renameDialogListener.rename_file();
-					}
-
-					 */
 					dismissAllowingStateLoss();
-
-
 				}
 
 			});
@@ -112,32 +99,4 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 	}
-
-
-/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-
-	}
-
- */
-
-	/*
-	public void setRenameReplaceDialogListener(RenameReplaceDialogListener listener)
-	{
-		renameDialogListener=listener;
-	}
-
-	interface RenameReplaceDialogListener
-	{
-
-		void rename_file();
-	}
-
-
-	 */
 }

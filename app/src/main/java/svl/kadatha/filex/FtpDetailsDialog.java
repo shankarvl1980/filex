@@ -78,7 +78,6 @@ public class FtpDetailsDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        //this.setRetainInstance(true);
         setCancelable(false);
         handler=new Handler();
         asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
@@ -274,17 +273,6 @@ public class FtpDetailsDialog extends DialogFragment {
 
     }
 
-    /*
-    @Override
-    public void onDestroyView() {
-        if(getDialog()!=null && getRetainInstance())
-        {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
 
     public void clear_selection()
     {

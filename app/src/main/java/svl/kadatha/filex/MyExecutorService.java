@@ -7,7 +7,7 @@ public class MyExecutorService {
 
     private static ExecutorService executorService;
 
-    public static ExecutorService getExecutorService()
+    public synchronized static ExecutorService getExecutorService()
     {
         if(executorService==null)
         {

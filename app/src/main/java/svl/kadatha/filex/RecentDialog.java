@@ -48,12 +48,10 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
     public static final int RECENT_SIZE=30;
     private Uri tree_uri;
 	private String tree_uri_path="";
-	private final int request_code=249;
 	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
 	private RecyclerView recent_recyclerview;
 	private TextView recent_label;
 	private FilePOJO clicked_filepojo;
-	private static final String FILE_TYPE_REQUEST_CODE="recent_file_type_request_code";
 	private FragmentManager fragmentManager;
 	private final static String SAF_PERMISSION_REQUEST_CODE="recent_dialog_saf_permission_request_code";
 
@@ -71,7 +69,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
 		root_dir_linkedlist.addAll(Global.STORAGE_DIR); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
 	}
@@ -135,34 +132,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		
 	}
 
-
-/*
-	public void seekSAFPermission()
-	{
-		((MainActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher_SAF_permission.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent>activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-
-		}
-	});
-
- */
-
 	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
 		public void onActivityResult(ActivityResult result) {
@@ -195,23 +164,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-
-				}
-			});
-
-			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
-			//saf_permission_requested=true;
 			return false;
 		}
 		else
@@ -244,17 +197,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
-	 */
-	
 	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
 	{
 		int idx=file_name.lastIndexOf(".");

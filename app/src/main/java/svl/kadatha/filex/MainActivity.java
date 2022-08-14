@@ -1281,14 +1281,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							df.progress_bar.setVisibility(View.VISIBLE);
 							viewModel.isDeletionCompleted.setValue(false);
 							viewModel.deleteDirectory(getCacheDir());
-							//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
 						if(Global.ARCHIVE_EXTRACT_DIR.exists())
 						{
 							df.progress_bar.setVisibility(View.VISIBLE);
 							viewModel.isDeletionCompleted.setValue(false);
 							viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-							//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						}
 						finish();
 					}
@@ -1920,14 +1918,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df.progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(getCacheDir());
-					//new AsyncTaskDeleteDirectory(getCacheDir()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				if(Global.ARCHIVE_EXTRACT_DIR.exists())
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
 					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-					//new AsyncTaskDeleteDirectory(Global.ARCHIVE_EXTRACT_DIR).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
@@ -2262,21 +2258,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 					break;
-				/*
-				case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION_BY_MAIN_ACTIVITY:
-					int s = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-					//Log.d("shankar","delete by main activity communicated to "+s+" detail fragments");
-					for(int i=0;i<s;++i)
-					{
-						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-						if(listener!=null)
-						{
-							listener.onDeleteByMainActivity();
-						}
-					}
-					break;
 
-				 */
 			}
 		}
 	}

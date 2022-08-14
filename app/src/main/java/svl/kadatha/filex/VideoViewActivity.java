@@ -23,12 +23,6 @@ public class VideoViewActivity extends BaseActivity
 	public int current_page_idx,file_selected_idx;
 	public boolean toolbar_visible,fromArchiveView;
 	public FileObjectType fileObjectType;
-	//ProgressBarFragment pbf;
-	//public IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
-	//private AlbumPollFragment albumPollFragment;
-	private static final String ALBUM_POLL_FRAGMENT_TAG="album_poll_fragment";
-	//private Handler handler;
-	//public FilePOJO currently_shown_file;
 	public boolean fromThirdPartyApp;
 	public String source_folder;
 	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
@@ -47,7 +41,6 @@ public class VideoViewActivity extends BaseActivity
 		tinyDB=new TinyDB(context);
 		localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
-		//handler=new Handler();
 		Intent intent=getIntent();
 		if(savedInstanceState==null)
 		{

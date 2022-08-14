@@ -58,13 +58,10 @@ public class PdfViewFragment_single_view extends Fragment
     private Handler handler;
     private PdfViewPagerAdapter pdf_view_adapter;
     private PictureSelectorAdapter picture_selector_adapter;
-    private final int s=0;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
-    //private boolean asynctask_running;
     private Uri data;
-    //private ProgressBarFragment pbf;
     private LocalBroadcastManager localBroadcastManager;
     private RecyclerView recyclerview;
     private boolean toolbar_visible,is_menu_opened;
@@ -505,45 +502,6 @@ public class PdfViewFragment_single_view extends Fragment
         }
 
     }
-
-/*
-    public synchronized void fetchBitmapFromPDF(int position)
-    {
-        if(Boolean.TRUE.equals(viewModel.isPdfBitmapFetched.getValue())) return;
-        final Bitmap[] bitmap = new Bitmap[1];
-        ExecutorService executorService= Executors.newSingleThreadExecutor();//MyExecutorService.getExecutorService();
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                if(viewModel.size_per_page_MB*3<(availableHeapMemory-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER)) {
-                    try {
-                        bitmap[0] =getBitmap(viewModel.pdfRenderer,position);
-                    }
-                    catch (SecurityException e)
-                    {
-                        Global.print_background_thread(context,getString(R.string.security_exception_thrown));
-
-                    }
-                    catch (OutOfMemoryError error)
-                    {
-                        Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
-                        ((PdfViewActivity)context).finish();
-                    }
-                    catch (Exception e)
-                    {
-                        Global.print_background_thread(context,getString(R.string.exception_thrown));
-
-                    }
-                    viewModel.isPdfBitmapFetched.postValue(true);
-                }
-            }
-        });
-    }
-
- */
-
-
-
 
     private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
     {

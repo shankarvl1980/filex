@@ -70,7 +70,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
-        TinyDB tinyDB = new TinyDB(context);
         fm=getSupportFragmentManager();
         FM=fm;
         pm=getPackageManager();

@@ -37,7 +37,6 @@ public class StorageAnalyserSortDialog extends DialogFragment
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        //this.setRetainInstance(true);
         setCancelable(false);
 
     }
@@ -165,18 +164,6 @@ public class StorageAnalyserSortDialog extends DialogFragment
         window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-
-
-/*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
- */
 
     private class SortButtonClickListener implements View.OnClickListener
     {

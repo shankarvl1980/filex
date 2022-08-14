@@ -51,14 +51,14 @@ public class SearchDialog extends DialogFragment
 	String search_file_type;
 	boolean search_whole_word,search_case_sensitive,search_regex;
 	private long size_multiplying_factor;
-	public static final String SEARCH_FILE_NAME="search_file_name";
-	public static final String SEARCH_IN_DIR="search_in_dir";
-	public static final String SEARCH_FILE_TYPE="search_file_type";
-	public static final String SEARCH_WHOLE_WORD="search_whole_word";
-	public static final String SEARCH_CASE_SENSITIVE="serach_case_sensitive";
-	public static final String SEARCH_REGEX="search_regex";
-	public static final String SEARCH_LOWER_LIMIT_SIZE="search_lower_limit_size";
-	public static final String SEARCH_UPPER_LIMIT_SIZE="search_upper_limit_size";
+//	public static final String SEARCH_FILE_NAME="search_file_name";
+//	public static final String SEARCH_IN_DIR="search_in_dir";
+//	public static final String SEARCH_FILE_TYPE="search_file_type";
+//	public static final String SEARCH_WHOLE_WORD="search_whole_word";
+//	public static final String SEARCH_CASE_SENSITIVE="serach_case_sensitive";
+//	public static final String SEARCH_REGEX="search_regex";
+//	public static final String SEARCH_LOWER_LIMIT_SIZE="search_lower_limit_size";
+//	public static final String SEARCH_UPPER_LIMIT_SIZE="search_upper_limit_size";
 
 	private Group size_group;
 	private String file_size_unit;
@@ -79,7 +79,6 @@ public class SearchDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		//setRetainInstance(true);
 		for(FilePOJO filepojo:Global.STORAGE_DIR)
 		{
 			if(filepojo.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(filepojo.getPath()))))
@@ -287,19 +286,6 @@ public class SearchDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-
-		super.onDestroyView();
-	}
-
- */
 
 	private void setSizeGroupVisibilityGone()
 	{
@@ -307,14 +293,6 @@ public class SearchDialog extends DialogFragment
 		lower_bound_edit_text.setText("");
 		upper_bound_edit_text.setText("");
 	}
-
-	/*
-	interface SearchDialogListener
-	{
-		void onCloseSearchDialog(String search_file_name, Set<FilePOJO> search_in_dir, String search_file_type, boolean search_whole_word, boolean search_case_sensitive, boolean search_regex, long lower_size_limit, long upper_size_limit);
-	}
-
-	 */
 
 
 	public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH>

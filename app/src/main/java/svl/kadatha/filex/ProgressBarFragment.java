@@ -21,16 +21,12 @@ public class ProgressBarFragment extends DialogFragment
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		//Context context = getContext();
 		super.onCreate(savedInstanceState);
-		//setRetainInstance(true);
 		setCancelable(false);
 	}
 
 	public static ProgressBarFragment newInstance() {
 
-		//Bundle args = new Bundle();
-		//fragment.setArguments(args);
 		return new ProgressBarFragment();
 	}
 
@@ -56,16 +52,4 @@ public class ProgressBarFragment extends DialogFragment
 		
 	}
 
-	/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
-	 */
 }

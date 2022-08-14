@@ -28,7 +28,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
     private RadioButton mode_active_radio_btn;
     private RadioButton anonymous_radio_btn;
-    //private FtpDatabaseModificationListener ftpDatabaseModificationListener;
     private boolean update;
     private PermissionsUtil permissionsUtil;
     private String request_code;
@@ -62,7 +61,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
         setCancelable(false);
         bundle=getArguments();
         if(bundle!=null)
@@ -190,29 +188,5 @@ public class FtpDetailsInputDialog extends DialogFragment {
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
     }
-
-    /*
-    @Override
-    public void onDestroyView() {
-        if(getDialog()!=null && getRetainInstance())
-        {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
-
-/*
-    public void setFtpDatabaseModificationListener(FtpDatabaseModificationListener listener)
-    {
-        ftpDatabaseModificationListener=listener;
-    }
-
-    interface FtpDatabaseModificationListener {
-        void onInsert(FtpDetailsDialog.FtpPOJO ftpPOJO);
-    }
-
- */
 
 }

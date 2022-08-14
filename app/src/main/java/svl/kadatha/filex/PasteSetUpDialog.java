@@ -107,12 +107,6 @@ public class PasteSetUpDialog extends DialogFragment
 			viewModel.setSAFCheckedBoolean();
 		}
 
-
-//		if(!saf_permission_requested)
-//		{
-//			dismissAllowingStateLoss();
-//		}
-
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -163,43 +157,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
-	
-	/*
-	public void seekSAFPermission()
-	{
-		((MainActivity)context).clear_cache=false;
-		saf_permission_requested=true;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			saf_permission_requested=false;
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-
-				if(check_permission_for_destination(dest_folder,destFileObjectType) && check_permission_for_source(source_folder,sourceFileObjectType))
-				{
-					initiate_startActivity();
-				}
-
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-				dismissAllowingStateLoss();
-			}
-
-		}
-	});
-
-	 */
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
 	{
@@ -315,21 +272,6 @@ public class PasteSetUpDialog extends DialogFragment
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_DEST,parent_file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-					dismissAllowingStateLoss(); // should be dismissed as this fragment has no view
-				}
-			});
-
-			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
@@ -352,21 +294,6 @@ public class PasteSetUpDialog extends DialogFragment
 		if(source_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_SOURCE,parent_file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-					dismissAllowingStateLoss(); //should be dismissed as this fragment has no view
-				}
-			});
-
-			 */
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
@@ -441,7 +368,6 @@ public class PasteSetUpDialog extends DialogFragment
 			{
 				if(ftpFile[0]!=null)
 				{
-					//result_came[0]=true;
 					return true;
 				}
 

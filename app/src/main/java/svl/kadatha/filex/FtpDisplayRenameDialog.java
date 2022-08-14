@@ -24,7 +24,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     private String server, display;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
-    //private FtpRenameListener ftpRenameListener;
     private FtpDatabaseHelper ftpDatabaseHelper;
     private String request_code;
     private Bundle bundle;
@@ -180,17 +179,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
-/*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
- */
-
     @Override
     public void onCancel(DialogInterface dialog)
     {
@@ -207,17 +195,5 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         super.onDismiss(dialog);
     }
 
-    /*
-    interface FtpRenameListener
-    {
-        void onRenameFtp(String new_name);
-    }
-
-    public void setFtpRenameListener(FtpRenameListener listener)
-    {
-        ftpRenameListener=listener;
-    }
-
-     */
 
 }

@@ -34,7 +34,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class RenameFileDialog extends DialogFragment
 {
-
     private EditText new_file_name_edittext;
     private DetailFragment df;
 	private InputMethodManager imm;
@@ -208,16 +207,6 @@ public class RenameFileDialog extends DialogFragment
 						if(isWritable)
 						{
 							RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-							/*
-							renameReplaceConfirmationDialog.setRenameReplaceDialogListener(new RenameReplaceConfirmationDialog.RenameReplaceDialogListener() {
-								@Override
-								public void rename_file() {
-
-									new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-								}
-							});
-
-							 */
 							renameReplaceConfirmationDialog.show(fragmentManager,"");
 
 						}
@@ -246,31 +235,11 @@ public class RenameFileDialog extends DialogFragment
 					else if(fileObjectType==FileObjectType.ROOT_TYPE)
 					{
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						/*
-						renameReplaceConfirmationDialog.setRenameReplaceDialogListener(new RenameReplaceConfirmationDialog.RenameReplaceDialogListener() {
-							@Override
-							public void rename_file() {
-
-								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-							}
-						});
-
-						 */
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						/*
-						renameReplaceConfirmationDialog.setRenameReplaceDialogListener(new RenameReplaceConfirmationDialog.RenameReplaceDialogListener() {
-							@Override
-							public void rename_file() {
-
-								new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-							}
-						});
-
-						 */
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
 
 					}
@@ -467,137 +436,6 @@ public class RenameFileDialog extends DialogFragment
 
 	}
 
-/*
-	private class RenameFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-	{
-		boolean fileNameChanged = false;
-		final String parent_file_path;
-		final String existing_name;
-		final String new_file_path;
-		final String new_name;
-		final File existing_file;
-		final File new_file;
-		FilePOJO filePOJO = null;
-		boolean overwriting;
-
-		RenameFileAsyncTask(String parent_file_path, String existing_name,String new_file_path, String new_name,boolean overwriting)
-		{
-			this.parent_file_path=parent_file_path;
-			this.existing_name=existing_name;
-			this.new_file_path=new_file_path;
-			this.new_name=new_name;
-			existing_file=new File(parent_file_path,existing_name);
-			new_file=new File(new_file_path);
-			this.overwriting=overwriting;
-		}
-
-		@Override
-		protected Void doInBackground(Void... voids) {
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				if(isWritable)
-				{
-					fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-
-				}
-				else
-				{
-					//if(whether_file_already_exists(new_file_path,fileObjectType)) //to overwrite file name
-					if(overwriting)
-					{
-						boolean isDir=new File(new_file_path).isDirectory();
-						if(!isDir && !isDirectory)
-						{
-							if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
-							{
-								fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-							}
-						}
-
-					}
-					else
-					{
-						fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-					}
-				}
-			}
-			else if(fileObjectType== FileObjectType.USB_TYPE)
-			{
-				UsbFile existingUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,existing_file.getAbsolutePath());
-				fileNameChanged=FileUtil.renameUsbFile(existingUsbFile,new_name);
-
-			}
-			else if (fileObjectType==FileObjectType.ROOT_TYPE)
-			{
-				if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-				{
-					//fileNameChanged=RootUtils.EXECUTE(Arrays.asList("mv",existing_file.getAbsolutePath(),new_file_path));
-					if(Global.SET_OTHER_FILE_PERMISSION("rwx",existing_file_path))
-					{
-						fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-					}
-
-
-				}
-				else
-				{
-					//print(getString(R.string.root_access_not_avaialable));
-					fileNameChanged=false;
-				}
-
-			}
-			else if(fileObjectType==FileObjectType.FTP_TYPE)
-			{
-				if(Global.CHECK_FTP_SERVER_CONNECTED())
-				{
-					try {
-						fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
-					} catch (IOException e) {
-					}
-				}
-				else
-				{
-					//print(getString(R.string.ftp_server_is_not_connected));
-				}
-
-
-			}
-
-			if(fileNameChanged)
-			{
-				//use filePOJOHashmapKeyPath to remove from Search Library also
-				if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-				{
-					if(overwriting)
-					{
-						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path),fileObjectType);
-					}
-					filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(filePOJOHashmapKeyPath,Collections.singletonList(new_file_path),fileObjectType, Collections.singletonList(existing_file_path));
-				}
-				else
-				{
-					if(overwriting)
-					{
-						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType);
-					}
-
-					filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
-				}
-
-
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void unused) {
-			super.onPostExecute(unused);
-			onRenameResult(fileNameChanged,new_name,filePOJO);
-		}
-	}
-
- */
-
 	private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO)
 	{
 		if(fileNameChanged)
@@ -640,23 +478,7 @@ public class RenameFileDialog extends DialogFragment
 		if(tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
-			/*
-			safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-			{
-				public void onOKBtnClicked()
-				{
-					seekSAFPermission();
-				}
-
-				public void onCancelBtnClicked()
-				{
-
-				}
-			});
-
-			 */
 			safpermissionhelper.show(fragmentManager,"saf_permission_dialog");
-			//saf_permission_requested=true;
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			return false;
 		}
@@ -681,46 +503,6 @@ public class RenameFileDialog extends DialogFragment
 		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 	}
 
-	/*
-	public void seekSAFPermission()
-	{
-		((MainActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher.launch(intent);
-	}
-
-	private final ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-	@Override
-	public void onActivityResult(ActivityResult result) {
-		if (result.getResultCode()== Activity.RESULT_OK)
-		{
-			Uri treeUri;
-			treeUri = result.getData().getData();
-			Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-
-			//saf_permission_requested=false;
-			okbutton.callOnClick();
-		}
-		else
-		{
-			Global.print(context,getString(R.string.permission_not_granted));
-		}
-	}
-	});
-
-	 */
-
-/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-
 	@Override
 	public void onCancel(DialogInterface dialog)
 	{
@@ -736,66 +518,6 @@ public class RenameFileDialog extends DialogFragment
 		imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 		super.onDismiss(dialog);
 	}
-
-/*
-	private class RenameAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
-	{
-		final Context context;
-		final String parent_file_path;
-        final String existing_name;
-        final String new_file_path;
-        final String new_name;
-		ProgressBarFragment pbf;
-		boolean fileNameChanged;
-		final FilePOJO filePOJO=null;
-		RenameAsyncTask(Context context,String parent_file_path,String existing_name,String new_file_path,String new_name)
-		{
-			this.context=context;
-			this.parent_file_path=parent_file_path;
-			this.existing_name=existing_name;
-			this.new_file_path=new_file_path;
-			this.new_name=new_name;
-		}
-		@Override
-		protected void onPreExecute()
-		{
-			// TODO: Implement this method
-			super.onPreExecute();
-			pbf=ProgressBarFragment.newInstance();
-			pbf.show(fragmentManager,"progressbar_dialog");
-
-		}
-
-		@Override
-		protected Boolean doInBackground(Void[] p1)
-		{
-			// TODO: Implement this method
-			if(FileUtil.deleteSAFDirectory(context,new_file_path,tree_uri,tree_uri_path))
-			{
-				fileNameChanged=FileUtil.renameSAFFile(context,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
-			}
-			return fileNameChanged;
-		}
-
-
-		@Override
-		protected void onProgressUpdate(Void[] values)
-		{
-			// TODO: Implement this method
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			// TODO: Implement this method
-			super.onPostExecute(result);
-			pbf.dismissAllowingStateLoss();
-			onRenameResult(result,new_name,filePOJO);
-		}
-	}
-
- */
 
 	private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
 	{

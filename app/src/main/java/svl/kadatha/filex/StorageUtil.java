@@ -91,40 +91,7 @@ public class StorageUtil
 		}
 
 		
-		
-/*
-		String[] different_sdcard_paths=new String[]
-		{
 
-			"/mnt/extsdcard",
-			"/mnt/external_sd",
-			"/mnt/media_rw/sdcard1",
-			"/removable/microsd",
-			"/mnt/emmc",
-			"/data/sdext",
-			"/data/sdext2",
-			"/data/sdext3",
-			"/data/sdext4"
-		};
-		
-		for(String path: different_sdcard_paths)
-		{
-			File f=new File(path);
-			if(f.exists() && f.isDirectory() && f.canWrite() && !f.isHidden() && isSymlink(f))
-			{
-				if(Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(f)))
-				{
-					verify_add_file_path(f,result);
-
-				}
-				
-			}
-			
-		}
-
- */
-		
-		
 		if(result.isEmpty())
 			return null;
 		return result;
@@ -203,18 +170,7 @@ public class StorageUtil
     {
 		if(file==null)
 			return null;
-		/*
-		final long totalSpace=file.getTotalSpace();
-		while(true)
-		{
-			final File parentFile=file.getParentFile();
-			String [] fl=parentFile.list();
-			if(parentFile==null||parentFile.getTotalSpace()!=totalSpace||parentFile.list()==null)
-				return file.getAbsolutePath();
-			file=parentFile;
-		}
 
-		 */
         String absolutePath=file.getAbsolutePath();
         return absolutePath.substring(0,absolutePath.indexOf("Android/data"));
     }

@@ -56,13 +56,10 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public boolean filled_filePOJOs;
     private Uri tree_uri;
     private String tree_uri_path="";
-    private final int request_code=5208;
     public int file_list_size;
     public boolean is_toolbar_visible=true, filled_file_size;
     private FilePOJO clicked_filepojo;
     private AsyncTaskStatus asynctask_status;
-    private static final String FILE_TYPE_REQUEST_CODE="storage_analyser_file_type_request_code";
-    private static final String CANCEL_PROGRESS_REQUEST_CODE="storage_anayliser_cancel_progress_request_code";
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     private final static String SAF_PERMISSION_REQUEST_CODE="storage_analyser_dialog_saf_permission_request_code";
@@ -402,165 +399,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
     }
 
-    /*
-    private class AsyncTaskFilePopulate extends svl.kadatha.filex.AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            asynctask_status=AsyncTaskStatus.STARTED;
-            cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-            cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-
-            cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                @Override
-                public void on_cancel_progress() {
-                    if(asyncTaskFilePopulate!=null) asyncTaskFilePopulate.cancel(true);
-                    if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                    storageAnalyserActivity.onClickCancel();
-                }
-            });
-
-
-            if(storageAnalyserActivity.fm==null)
-            {
-                context=getContext();
-                storageAnalyserActivity=(StorageAnalyserActivity) context;
-                storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
-            }
-
-            cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-        }
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            filled_filePOJOs=false;
-            filled_filePOJOs=FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,false);
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            filled_filePOJOs=true;
-        }
-
-
-        private boolean FILL_FILEPOJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
-                                            String fileclickselected,UsbFile usbFile ,boolean archive_view)
-        {
-
-            filePOJOS.clear(); filePOJOS_filtered.clear();
-            String other_permission_string = null;
-            File file=new File(fileclickselected);
-
-            if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-            {
-                File[] file_array;
-                if((file_array=file.listFiles())!=null)
-                {
-                    int size=file_array.length;
-                    for(int i=0;i<size;++i)
-                    {
-                        if(isCancelled())
-                        {
-                            return true;
-                        }
-                        File f=file_array[i];
-                        FilePOJO filePOJO =FilePOJOUtil.MAKE_FilePOJO(f,true,archive_view,fileObjectType);
-                        if(!filePOJO.getName().startsWith("."))
-                        {
-
-                            filePOJOS_filtered.add(filePOJO);
-                        }
-
-                        filePOJOS.add(filePOJO);
-
-                    }
-
-                }
-            }
-            else if(fileObjectType==FileObjectType.USB_TYPE)
-            {
-                if(MainActivity.usbFileRoot==null)
-                {
-                    return true;
-                }
-                else
-                {
-                    UsbFile[] file_array;
-                    try {
-                        if(usbFile==null)
-                        {
-                            usbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-                        }
-                        file_array=usbFile.listFiles();
-                        int size=file_array.length;
-                        for(int i=0;i<size;++i)
-                        {
-                            if(isCancelled())
-                            {
-                                return true;
-                            }
-                            UsbFile f=file_array[i];
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true);
-                            filePOJOS_filtered.add(filePOJO);
-                            filePOJOS.add(filePOJO);
-
-                        }
-
-                    } catch (IOException e) {
-                        MainActivity.usbFileRoot=null;
-                        return true;
-                    }
-                }
-            }
-            else if(fileObjectType==FileObjectType.FTP_TYPE)
-            {
-                if(!Global.CHECK_FTP_SERVER_CONNECTED())
-                {
-                    return true;
-                }
-                else
-                {
-                    FTPFile[] file_array;
-                    try {
-
-                        file_array=MainActivity.FTP_CLIENT.listFiles(fileclickselected);
-                        int size=file_array.length;
-                        for(int i=0;i<size;++i)
-                        {
-                            if(isCancelled())
-                            {
-                                return true;
-                            }
-                            FTPFile f=file_array[i];
-                            String name=f.getName();
-                            String path=(fileclickselected.endsWith(File.separator) ? fileclickselected+name : fileclickselected+File.separator+name);
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,fileObjectType,path);
-                            filePOJOS_filtered.add(filePOJO);
-                            filePOJOS.add(filePOJO);
-
-                        }
-
-                    } catch (IOException e) {
-                        return true;
-                    }
-                }
-            }
-
-            Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
-            return true;
-        }
-    }
-
-     */
-
-
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder>
     {
         @Override
@@ -733,33 +571,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         is_toolbar_visible=true;
     }
 
-    /*
-    public void seekSAFPermission()
-    {
-        storageAnalyserActivity.clear_cache=false;
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        activityResultLauncher.launch(intent);
-    }
-
-    private final ActivityResultLauncher<Intent>activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode()== Activity.RESULT_OK)
-            {
-                Uri treeUri;
-                treeUri = result.getData().getData();
-                Global.ON_REQUEST_URI_PERMISSION(context,treeUri);
-            }
-            else
-            {
-                Global.print(context,getString(R.string.permission_not_granted));
-            }
-
-        }
-    });
-
-     */
-
     private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -795,28 +606,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
             FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path);
-            /*
-            fileTypeSelectFragment.setFileTypeSelectListener(new FileTypeSelectDialog.FileTypeSelectListener()
-            {
-                public void onSelectType(String mime_type)
-                {
-
-                    if(fileObjectType==FileObjectType.USB_TYPE)
-                    {
-                        if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-                        {
-                            FileIntentDispatch.openUri(context,file_path,mime_type,false,false,fileObjectType,tree_uri,tree_uri_path);
-                        }
-                    }
-                    else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-                    {
-                        FileIntentDispatch.openFile(context,file_path,mime_type,false,false,fileObjectType);
-                    }
-
-                }
-            });
-
-             */
             fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
         else
@@ -900,21 +689,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         if(tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-            /*
-            safpermissionhelper.set_safpermissionhelperlistener(new SAFPermissionHelperDialog.SafPermissionHelperListener()
-            {
-                public void onOKBtnClicked()
-                {
-                    seekSAFPermission();
-                }
-
-                public void onCancelBtnClicked()
-                {
-
-                }
-            });
-
-             */
             safpermissionhelper.show(storageAnalyserActivity.fm, "saf_permission_dialog");
             return false;
         }
@@ -923,149 +697,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             return true;
         }
     }
-
-    /*
-    private class FillSizeAsyncTask extends AsyncTask<Void,Void,Void>
-    {
-
-        private int NO_OF_FILES;
-        private long SIZE_OF_FILES;
-
-        final List<FilePOJO>filePOJOS;
-        final long final_storage_space;
-
-        FillSizeAsyncTask(List<FilePOJO>filePOJOS,long final_storage_space)
-        {
-            this.filePOJOS=filePOJOS;
-            this.final_storage_space=final_storage_space;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            if(cancelableProgressBarDialog==null)
-            {
-                cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-                cancelableProgressBarDialog.set_title(getString(R.string.analysing));
-
-                cancelableProgressBarDialog.setProgressBarCancelListener(new CancelableProgressBarDialog.ProgresBarFragmentCancelListener() {
-                    @Override
-                    public void on_cancel_progress() {
-                        if(asyncTaskFilePopulate!=null) asyncTaskFilePopulate.cancel(true);
-                        if(fillSizeAsyncTask!=null) fillSizeAsyncTask.cancel(true);
-                        storageAnalyserActivity.onClickCancel();
-                    }
-                });
-
-                if(storageAnalyserActivity.fm==null)
-                {
-                    context=getContext();
-                    storageAnalyserActivity=(StorageAnalyserActivity) context;
-                    storageAnalyserActivity.fm=storageAnalyserActivity.getSupportFragmentManager();
-                }
-
-                cancelableProgressBarDialog.show(storageAnalyserActivity.fm, "");
-                //Log.d("shankar", "cancelable progress bar shown again");
-            }
-        }
-
-        @Override
-        protected void onCancelled(Void aVoid) {
-            super.onCancelled(aVoid);
-            filled_file_size=true;
-            FilePOJOUtil.SET_HASHMAP_FILE_POJO_SIZE_NULL(fileclickselected,fileObjectType);
-            asynctask_status=AsyncTaskStatus.COMPLETED;
-            if(cancelableProgressBarDialog!=null)
-            {
-                cancelableProgressBarDialog.dismissAllowingStateLoss();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            filled_file_size=false;
-            filled_file_size=fill_file_size(filePOJOS, final_storage_space);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            asynctask_status=AsyncTaskStatus.COMPLETED;
-            if(cancelableProgressBarDialog!=null)
-            {
-                cancelableProgressBarDialog.dismissAllowingStateLoss();
-            }
-
-        }
-
-        private void get_size(File f, boolean include_folder)
-        {
-            int no_of_files=0;
-            long size_of_files=0L;
-            if(isCancelled()) return;
-            if(f.isDirectory())
-            {
-
-                File[] files_array=f.listFiles();
-                if(files_array!=null && files_array.length!=0)
-                {
-                    for(File file:files_array)
-                    {
-                        get_size(file,include_folder);
-                    }
-                    if(include_folder)
-                    {
-                        no_of_files++;
-                    }
-                }
-
-            }
-            else
-            {
-                no_of_files++;
-                size_of_files+=f.length();
-            }
-
-            NO_OF_FILES+=no_of_files;
-            SIZE_OF_FILES+=size_of_files;
-        }
-
-
-        private boolean fill_file_size(List<FilePOJO> filePOJOS,long volume_storage_size)
-        {
-            if(filePOJOS==null) return true;
-            int size=filePOJOS.size();
-            for(int i=0;i<size;++i)
-            {
-                if(isCancelled()) return true;
-                FilePOJO filePOJO=filePOJOS.get(i);
-                NO_OF_FILES=0; SIZE_OF_FILES=0;
-                if(filePOJO.getTotalSizePercentage()!=null) continue;
-                if(filePOJO.getIsDirectory())
-                {
-                    get_size(new File(filePOJO.getPath()),true);
-                    filePOJO.setTotalFiles(NO_OF_FILES);
-                    filePOJO.setTotalSizeLong(SIZE_OF_FILES);
-                    filePOJO.setTotalSize(FileUtil.humanReadableByteCount(SIZE_OF_FILES,Global.BYTE_COUNT_BLOCK_1000));
-                    double percentage = SIZE_OF_FILES * 100.0/ volume_storage_size;
-                    filePOJO.setTotalSizePercentageDouble(percentage);
-                    filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
-                }
-                else
-                {
-                    double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
-                    filePOJO.setTotalSizePercentageDouble(percentage);
-                    filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
-                }
-
-            }
-            return true;
-        }
-    }
-
-     */
 
 }
 

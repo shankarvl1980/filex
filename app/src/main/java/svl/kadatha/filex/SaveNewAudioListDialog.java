@@ -25,7 +25,6 @@ public class SaveNewAudioListDialog extends DialogFragment
     private EditText new_file_name_edittext;
     private Context context;
 	private InputMethodManager imm;
-    //private OnSaveAudioListListener onSaveAudioListListener;
 	private FragmentManager fragmentManager;
 	private String request_code;
 	Bundle bundle;
@@ -44,7 +43,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");
@@ -118,15 +116,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 						Global.print(context,getString(R.string.a_list_exists_with_given_name));
 						return;
 					}
-				
-					/*
-					if(onSaveAudioListListener!=null)
-					{
-						onSaveAudioListListener.save_audio_list(new_name);
-					}
 
-
-					 */
 					bundle.putString("list_name",new_name);
 					fragmentManager.setFragmentResult(request_code,bundle);
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
@@ -143,7 +133,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					dismissAllowingStateLoss();
 				}
-
 
 			});
 
@@ -185,31 +174,5 @@ public class SaveNewAudioListDialog extends DialogFragment
 		super.onDismiss(dialog);
 
 	}
-
-/*
-	@Override
-	public void onDestroyView() 
-	{
-		if (getDialog() != null && getRetainInstance()) 
-		{
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-
-	/*
-	interface OnSaveAudioListListener
-	{
-		void save_audio_list(String list_name);
-	}
-	
-	public void setOnSaveAudioListener(OnSaveAudioListListener listener)
-	{
-		onSaveAudioListListener=listener;
-	}
-
-	 */
 
 }

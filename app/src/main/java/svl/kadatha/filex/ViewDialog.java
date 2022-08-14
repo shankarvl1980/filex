@@ -50,9 +50,7 @@ public class ViewDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
-		
 	}
 
 	@Override

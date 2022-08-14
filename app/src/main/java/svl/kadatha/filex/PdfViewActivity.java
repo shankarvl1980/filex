@@ -24,7 +24,6 @@ public class PdfViewActivity extends BaseActivity {
         context=this;
         setContentView(R.layout.activity_blank_view);
         fm=getSupportFragmentManager();
-        TinyDB tinyDB = new TinyDB(context);
         localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
         Intent intent=getIntent();

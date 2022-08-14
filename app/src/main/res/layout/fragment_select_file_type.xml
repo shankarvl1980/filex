@@ -82,14 +82,6 @@
             android:layout_height="wrap_content"
             android:background="@null">
 
-            <!--FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:layout_marginBottom="52dp"
-
-            -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

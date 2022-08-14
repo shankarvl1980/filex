@@ -15,7 +15,6 @@ public class ObservableScrollView extends ScrollView
 
     public ObservableScrollView(Context context, AttributeSet attrs, int defStyle) 
 	{
-      
 		super(context, attrs, defStyle);
     }
 

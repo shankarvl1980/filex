@@ -230,8 +230,6 @@ public class RecyclerViewLayout extends ViewGroup
 
 		}
 
-
-
 		fileimageview.getLayoutParams().width=imageview_dimension;
 		fileimageview.getLayoutParams().height=imageview_dimension;
 

@@ -37,9 +37,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private Context context;
     private final LinkedList<FilePOJO> root_dir_linkedlist=new LinkedList<>();
     public static final int RECENT_SIZE=30;
-    private Uri tree_uri;
-    private final String tree_uri_path="";
-    private final int request_code=3408;
     private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
     public static final String FILE_SELECTOR="file_selector";
     public static final String STORAGE_ANALYSER="storage_analyser";
@@ -172,17 +169,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-
-    /*
-    @Override
-    public void onDestroyView() {
-        if (getDialog() != null && getRetainInstance()) {
-            getDialog().setDismissMessage(null);
-        }
-        super.onDestroyView();
-    }
-
-     */
 
 
     @Override

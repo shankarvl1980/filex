@@ -10,13 +10,10 @@ public class MediaMountReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //Log.d("shankar","on media mount and dismount broadcast receive and action - "+intent.getAction());
         if(mediaMountListener!=null)
         {
             mediaMountListener.onMediaMount(intent.getAction());
         }
-        //Log.d("shankar","mouth point of sd card - ");
-
     }
 
     interface MediaMountListener
