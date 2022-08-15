@@ -522,11 +522,12 @@ public class ArchiveDeletePasteFileService3 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_COMPLETE(context,result,dest_folder,zip_file_name,destFileObjectType);
 			stopForeground(true);
 			stopSelf();
-
-			nm.notify(notification_content,notification_id);
 			if(serviceCompletionListener!=null)
 			{
 				serviceCompletionListener.onServiceCompletion(intent_action,result,zip_file_name,dest_folder);
+			}
+			else {
+				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
 		}
@@ -805,11 +806,12 @@ public class ArchiveDeletePasteFileService3 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNCTASK_COMPLETE(context,counter_no_files,dest_folder,written_file_name_list,destFileObjectType,written_file_path_list, zip_file_path,!result);
 			stopForeground(true);
 			stopSelf();
-
-			nm.notify(notification_content,notification_id);
 			if(serviceCompletionListener!=null)
 			{
 				serviceCompletionListener.onServiceCompletion(intent_action,counter_no_files>0,new File(zip_file_path).getName(),dest_folder);
+			}
+			else {
+				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
 		}
@@ -1192,7 +1194,6 @@ public class ArchiveDeletePasteFileService3 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,!result,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();
-			nm.notify(notification_content,notification_id);
 			if(serviceCompletionListener!=null)
 			{
 				if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -1203,6 +1204,9 @@ public class ArchiveDeletePasteFileService3 extends Service
 				{
 					serviceCompletionListener.onServiceCompletion(intent_action,s>0,null,source_folder);
 				}
+			}
+			else {
+				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
 		}
@@ -2107,11 +2111,12 @@ public class ArchiveDeletePasteFileService3 extends Service
 			stopForeground(true);
 			stopSelf();
 
-			nm.notify(notification_content,notification_id);
-
 			if(serviceCompletionListener!=null)
 			{
 				serviceCompletionListener.onServiceCompletion(intent_action,counter_no_files>0,null,dest_folder);
+			}
+			else {
+				nm.notify(notification_content,notification_id);
 			}
 
 			SERVICE_COMPLETED=true;
