@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FileXManager/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/add_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/android_os_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/android_os_outlined_icon.xml" value="0.25" />
@@ -20,6 +21,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/ftp_file_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/ftp_server_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/home_icon.xml" value="0.26927083333333335" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/ic_folder_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_audio_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_doc_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_download_icon.xml" value="0.26927083333333335" />

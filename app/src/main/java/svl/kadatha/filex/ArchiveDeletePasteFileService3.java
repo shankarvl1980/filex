@@ -47,7 +47,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 
 	private NotifManager nm;
-	private final int notification_id=830;
+	private final int notification_id=880;
 	String size_of_files_archived;
 	public MutableLiveData<Integer>mutable_count_no_files=new MutableLiveData<>();
 	private int counter_no_files;
@@ -522,6 +522,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 			String notification_content=ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_COMPLETE(context,result,dest_folder,zip_file_name,destFileObjectType);
 			stopForeground(true);
 			stopSelf();
+
+
 			if(serviceCompletionListener!=null)
 			{
 				serviceCompletionListener.onServiceCompletion(intent_action,result,zip_file_name,dest_folder);
@@ -1260,106 +1262,106 @@ public class ArchiveDeletePasteFileService3 extends Service
 					src_file_list.add(file);
 				}
 
-                for (File file : src_file_list) {
-                    if (isCancelled() || file == null) {
-                        return false;
-                    }
-                    current_file_name = file.getName();
-                    String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, current_file_name);//dest_folder+File.separator+current_file_name;
-                    boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file.getAbsolutePath());
-                    if (isWritable) {
-                        if (isSourceFromInternal) {
-                            if (it < total_folderwise_size_of_files.size()) {
-                                counter_no_files += total_folderwise_no_of_files.get(it);
-                                counter_size_files += total_folderwise_size_of_files.get(it);
-                                size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files, Global.BYTE_COUNT_BLOCK_1000);
-                                mutable_count_no_files.postValue(counter_no_files);
-                            }
-                            copied_file = file.getName();
-                            copy_result = Copy_File_File(file, dest_file_path, cut);
-                        } else // that is cut and paste  from external directory
-                        {
-                            copy_result = Copy_File_File(file, dest_file_path, false);
-                            if (copy_result && cut) {
-                                FileUtil.deleteSAFDirectory(context, file.getAbsolutePath(), source_uri, source_uri_path);
-                            }
-                        }
-                    } else {
-                        if (isSourceFromInternal) {
-                            if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                                copy_result = Copy_File_SAFFile(context, file, dest_folder, file.getName(), tree_uri, tree_uri_path, cut);
-                            } else if (destFileObjectType == FileObjectType.USB_TYPE) {
-                                copy_result = Copy_File_UsbFile(file, dest_folder, file.getName(), cut);
-                            } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
-                                copy_result = Copy_File_FtpFile(file, dest_folder, file.getName(), cut);
-                            }
+				for (File file : src_file_list) {
+					if (isCancelled() || file == null) {
+						return false;
+					}
+					current_file_name = file.getName();
+					String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, current_file_name);//dest_folder+File.separator+current_file_name;
+					boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file.getAbsolutePath());
+					if (isWritable) {
+						if (isSourceFromInternal) {
+							if (it < total_folderwise_size_of_files.size()) {
+								counter_no_files += total_folderwise_no_of_files.get(it);
+								counter_size_files += total_folderwise_size_of_files.get(it);
+								size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files, Global.BYTE_COUNT_BLOCK_1000);
+								mutable_count_no_files.postValue(counter_no_files);
+							}
+							copied_file = file.getName();
+							copy_result = Copy_File_File(file, dest_file_path, cut);
+						} else // that is cut and paste  from external directory
+						{
+							copy_result = Copy_File_File(file, dest_file_path, false);
+							if (copy_result && cut) {
+								FileUtil.deleteSAFDirectory(context, file.getAbsolutePath(), source_uri, source_uri_path);
+							}
+						}
+					} else {
+						if (isSourceFromInternal) {
+							if (destFileObjectType == FileObjectType.FILE_TYPE) {
+								copy_result = Copy_File_SAFFile(context, file, dest_folder, file.getName(), tree_uri, tree_uri_path, cut);
+							} else if (destFileObjectType == FileObjectType.USB_TYPE) {
+								copy_result = Copy_File_UsbFile(file, dest_folder, file.getName(), cut);
+							} else if (destFileObjectType == FileObjectType.FTP_TYPE) {
+								copy_result = Copy_File_FtpFile(file, dest_folder, file.getName(), cut);
+							}
 
-                        } else {
-                            if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                                copy_result = Copy_File_SAFFile(context, file, dest_folder, file.getName(), tree_uri, tree_uri_path, false);  //in case of cut in saf not cutting here, cutting separately down
-                            } else if (destFileObjectType == FileObjectType.USB_TYPE) {
-                                copy_result = Copy_File_UsbFile(file, dest_folder, file.getName(), false);
-                            } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
-                                copy_result = Copy_File_FtpFile(file, dest_folder, file.getName(), false);
-                            }
+						} else {
+							if (destFileObjectType == FileObjectType.FILE_TYPE) {
+								copy_result = Copy_File_SAFFile(context, file, dest_folder, file.getName(), tree_uri, tree_uri_path, false);  //in case of cut in saf not cutting here, cutting separately down
+							} else if (destFileObjectType == FileObjectType.USB_TYPE) {
+								copy_result = Copy_File_UsbFile(file, dest_folder, file.getName(), false);
+							} else if (destFileObjectType == FileObjectType.FTP_TYPE) {
+								copy_result = Copy_File_FtpFile(file, dest_folder, file.getName(), false);
+							}
 
-                            if (copy_result && cut) {
-                                FileUtil.deleteSAFDirectory(context, file.getAbsolutePath(), source_uri, source_uri_path);
-                            }
-                        }
+							if (copy_result && cut) {
+								FileUtil.deleteSAFDirectory(context, file.getAbsolutePath(), source_uri, source_uri_path);
+							}
+						}
 
-                    }
-                    String f_p = file.getAbsolutePath();
-                    if (copy_result) {
-                        copied_files_name.add(file.getName());
-                        copied_source_file_path_list.add(f_p);
+					}
+					String f_p = file.getAbsolutePath();
+					if (copy_result) {
+						copied_files_name.add(file.getName());
+						copied_source_file_path_list.add(f_p);
 
-                    }
+					}
 
-                    files_selected_array.remove(f_p);
-                    it++;
-                }
+					files_selected_array.remove(f_p);
+					it++;
+				}
 			}
 			else if(sourceFileObjectType ==FileObjectType.USB_TYPE)
 			{
 				List<String> src_file_path_list = new ArrayList<>(files_selected_array);
 
-                for (String src_file_path : src_file_path_list) {
-                    if (isCancelled() || src_file_path == null) {
-                        return false;
-                    }
+				for (String src_file_path : src_file_path_list) {
+					if (isCancelled() || src_file_path == null) {
+						return false;
+					}
 
-                    String src_file_name = new File(src_file_path).getName();
-                    current_file_name = src_file_name;
-                    UsbFile src_usbfile = FileUtil.getUsbFile(MainActivity.usbFileRoot, src_file_path);
-                    if (src_usbfile == null) {
-                        return false;
-                    }
+					String src_file_name = new File(src_file_path).getName();
+					current_file_name = src_file_name;
+					UsbFile src_usbfile = FileUtil.getUsbFile(MainActivity.usbFileRoot, src_file_path);
+					if (src_usbfile == null) {
+						return false;
+					}
 
-                    if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                        if (isWritable) {
-                            copy_result = Copy_UsbFile_File(src_usbfile, dest_folder, src_file_name, cut);
+					if (destFileObjectType == FileObjectType.FILE_TYPE) {
+						if (isWritable) {
+							copy_result = Copy_UsbFile_File(src_usbfile, dest_folder, src_file_name, cut);
 
-                        } else {
-                            copy_result = Copy_UsbFile_SAFFile(context, src_usbfile, dest_folder, src_file_name, tree_uri, tree_uri_path, cut);
-                        }
-                    } else if (destFileObjectType == FileObjectType.USB_TYPE) {
-                        copy_result = Copy_UsbFile_UsbFile(src_usbfile, dest_folder, src_file_name, cut);
-                    }
+						} else {
+							copy_result = Copy_UsbFile_SAFFile(context, src_usbfile, dest_folder, src_file_name, tree_uri, tree_uri_path, cut);
+						}
+					} else if (destFileObjectType == FileObjectType.USB_TYPE) {
+						copy_result = Copy_UsbFile_UsbFile(src_usbfile, dest_folder, src_file_name, cut);
+					}
 
 
-                    if (copy_result && cut) {
-                        FileUtil.deleteUsbDirectory(src_usbfile);
-                    }
+					if (copy_result && cut) {
+						FileUtil.deleteUsbDirectory(src_usbfile);
+					}
 
-                    if (copy_result) {
-                        copied_files_name.add(new File(src_file_path).getName());
-                        copied_source_file_path_list.add(src_file_path);
-                    }
+					if (copy_result) {
+						copied_files_name.add(new File(src_file_path).getName());
+						copied_source_file_path_list.add(src_file_path);
+					}
 
-                    files_selected_array.remove(src_file_path);
-                    it++;
-                }
+					files_selected_array.remove(src_file_path);
+					it++;
+				}
 			}
 			else if(sourceFileObjectType==FileObjectType.FTP_TYPE && destFileObjectType==FileObjectType.FTP_TYPE)
 			{
@@ -1369,26 +1371,26 @@ public class ArchiveDeletePasteFileService3 extends Service
 			{
 				List<String> src_file_path_list = new ArrayList<>(files_selected_array);
 
-                for (String src_file_path : src_file_path_list) {
-                    if (isCancelled() || src_file_path == null) {
-                        return false;
-                    }
+				for (String src_file_path : src_file_path_list) {
+					if (isCancelled() || src_file_path == null) {
+						return false;
+					}
 
-                    String src_file_name = new File(src_file_path).getName();
-                    current_file_name = src_file_name;
-                    FTPFile src_ftpfile = FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
-                    if (src_ftpfile == null) {
-                        return false;
-                    }
+					String src_file_name = new File(src_file_path).getName();
+					current_file_name = src_file_name;
+					FTPFile src_ftpfile = FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
+					if (src_ftpfile == null) {
+						return false;
+					}
 
-                    if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                        if (isWritable) {
-                            copy_result = Copy_FtpFile_File(src_file_path, dest_folder, src_file_name, cut);
+					if (destFileObjectType == FileObjectType.FILE_TYPE) {
+						if (isWritable) {
+							copy_result = Copy_FtpFile_File(src_file_path, dest_folder, src_file_name, cut);
 
-                        } else {
-                            copy_result = Copy_FtpFile_SAFFile(context, src_file_path, dest_folder, src_file_name, tree_uri, tree_uri_path, cut);
-                        }
-                    }
+						} else {
+							copy_result = Copy_FtpFile_SAFFile(context, src_file_path, dest_folder, src_file_name, tree_uri, tree_uri_path, cut);
+						}
+					}
 							/*
 							else if(destFileObjectType==FileObjectType.USB_TYPE)
 							{
@@ -1398,19 +1400,19 @@ public class ArchiveDeletePasteFileService3 extends Service
 							 */
 
 
-                    if (copy_result && cut) {
-                        FileUtil.deleteFtpDirectory(src_file_path);
-                    }
+					if (copy_result && cut) {
+						FileUtil.deleteFtpDirectory(src_file_path);
+					}
 
-                    if (copy_result) {
-                        copied_files_name.add(new File(src_file_path).getName());
-                        copied_source_file_path_list.add(src_file_path);
-                    }
+					if (copy_result) {
+						copied_files_name.add(new File(src_file_path).getName());
+						copied_source_file_path_list.add(src_file_path);
+					}
 
-                    files_selected_array.remove(src_file_path);
-                    it++;
+					files_selected_array.remove(src_file_path);
+					it++;
 
-                }
+				}
 			}
 			if(counter_no_files>0)
 			{
