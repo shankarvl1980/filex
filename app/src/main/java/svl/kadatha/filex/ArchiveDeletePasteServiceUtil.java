@@ -229,11 +229,11 @@ public class ArchiveDeletePasteServiceUtil {
 
                 if(destFileObjectType== FileObjectType.FILE_TYPE)
                 {
-                    ((MainActivity)df.getActivity()).createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
+                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
                 }
                 else if(destFileObjectType== FileObjectType.USB_TYPE && MainActivity.usbFileRoot!=null)
                 {
-                    ((MainActivity)df.getActivity()).createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
+                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
                 }
             }
             else

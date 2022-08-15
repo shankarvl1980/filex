@@ -76,7 +76,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	static int LINE_NUMBER_SIZE;
     TinyDB tinyDB;
 	boolean isWritable,isFileBig;
-	private ProgressBarFragment pbf;
 	private Class emptyService;
 	private Uri data;
 	private KeyBoardUtil keyBoardUtil;
@@ -161,6 +160,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			public void onClick(View p1)
 			{
+				if(progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				listPopWindow.showAsDropDown(p1,0,Global.SIX_DP);
 			}
 		});
@@ -185,7 +189,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
 			{
 
-				final Bundle bundle=new Bundle();
 				final ArrayList<String> files_selected_array=new ArrayList<>();
 
 				switch(p1)
@@ -308,7 +311,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 
 					viewModel.textViewUndoRedo.startListening();
-					progress_bar.setVisibility(View.GONE);
 					progress_bar.setVisibility(View.GONE);
 				}
 			}
@@ -982,8 +984,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		bundle.putString("tree_uri_path",tree_uri_path);
 		bundle.putParcelable("tree_uri",tree_uri);
-		pbf=ProgressBarFragment.newInstance();
-		pbf.show(fm,"");
+		progress_bar.setVisibility(View.VISIBLE);
 		emptyService=getEmptyService();
 		if(emptyService==null)
 		{
@@ -1059,10 +1060,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 										go_next();
 									}
 
-									if(pbf!=null)
-									{
-										pbf.dismissAllowingStateLoss();
-									}
+									progress_bar.setVisibility(View.GONE);
 								}
 						});
 					}
@@ -1108,10 +1106,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 										go_next();
 									}
 
-									if(pbf!=null)
-									{
-										pbf.dismissAllowingStateLoss();
-									}
+									progress_bar.setVisibility(View.GONE);
 								}
 							});
 					}

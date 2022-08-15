@@ -166,7 +166,7 @@ public class Global
 	static public final int LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY=4000;
 	static public int ACTION_BAR_HEIGHT;
 
-	static public final boolean AFTER_ARCHIVE_GOTO_DEST_FOLDER=false;
+	static public final boolean AFTER_ARCHIVE_GOTO_DEST_FOLDER=true;
 
 	static public boolean DETAILED_SEARCH_LIBRARY;
 

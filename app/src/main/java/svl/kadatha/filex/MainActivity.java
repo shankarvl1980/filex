@@ -1171,6 +1171,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
 
 		}
+		else if(DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null && !(fileObjectType+file_path).equals(existingFilePOJOkey))
+		{
+			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
+
+		}
 		else if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
 		{
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
