@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,6 +30,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +42,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class ArchiveSetUpDialog extends DialogFragment
 {
 	private Context context;
-	private String folderclickselected;
 	private CheckBox create_folder_checkbox;
 	private EditText zip_file_edittext,customdir_edittext;
     private RadioButton rb_current_dir,rb_custom_dir;
@@ -50,9 +52,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 	private String tree_uri_path="";
-	private Uri tree_uri,source_uri;
+	private Uri tree_uri;
 	private FileObjectType sourceFileObjectType;
-	private FileObjectType current_dir_fileObjectType,custom_dir_fileObjectType,destFileObjectType;
+	private FileObjectType current_dir_fileObjectType,destFileObjectType;
 	private InputMethodManager imm;
 	private String first_file_name,parent_file_name,parent_file_path;
 	public final static String ARCHIVE_ACTION_ZIP="archive-zip";
@@ -60,6 +62,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private final static String ARCHIVE_REPLACE_REQUEST_CODE="archive_replace_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="archive_set_up_saf_permission_request_code";
 	private Class emptyService;
+	private ArchiveSetUpViewModel viewModel;
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -101,8 +105,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 			parent_file_name =s.equals("0") ? first_file_name : s;
 		}
 
-		folderclickselected=Global.INTERNAL_PRIMARY_STORAGE_PATH;
-		custom_dir_fileObjectType=FileObjectType.FILE_TYPE;
 
 	}
 
@@ -135,6 +137,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 		rb_custom_dir= zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
 		customdir_edittext= zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
 		browsebutton= zipdialogview.findViewById(R.id.dialog_archive_browse_button);
+		progress_bar=zipdialogview.findViewById(R.id.fragment_archive_setup_progressbar);
+		progress_bar.setVisibility(View.GONE);
 		ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 		okbutton= zipdialogview.findViewById(R.id.first_button);
@@ -146,10 +150,108 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 		rb_current_dir.setText(parent_file_path);
 		rb_custom_dir.setText(R.string.choose_directory);
-		customdir_edittext.setText(folderclickselected);
 		rg.check(rb_current_dir.getId());
 		zip_file_path=files_selected_array.get(0);
 
+
+		viewModel=new ViewModelProvider(this).get(ArchiveSetUpViewModel.class);
+		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					progress_bar.setVisibility(View.GONE);
+					viewModel.isRecursiveFilesRemoved.setValue(false);
+					if(viewModel.files_selected_array.size()==0)
+					{
+						Global.print(context,getString(R.string.could_not_perform_action));
+						dismissAllowingStateLoss();
+						return;
+					}
+
+
+					String zip_folder_name=zip_file_edittext.getText().toString().trim();
+					if(zip_folder_name.equals(""))
+					{
+						Global.print(context,getString(R.string.enter_zip_file_name));
+						return;
+					}
+					if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
+					{
+						Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+						return;
+					}
+
+					String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
+					destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);   //(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
+
+					if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+					{
+						Global.print(context,getString(R.string.not_able_to_process));
+						return;
+					}
+
+
+					if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
+						Global.print(context,getString(R.string.directory_not_exist_not_valid));
+						return;
+					}
+
+					if(!is_file_writable(archivedestfolder,destFileObjectType))
+					{
+						return;
+					}
+
+					emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+					if(emptyService==null)
+					{
+						Global.print(context,getString(R.string.maximum_3_services_processed));
+						return;
+					}
+
+
+					final Bundle bundle=new Bundle();
+					bundle.putStringArrayList("files_selected_array", viewModel.files_selected_array);
+					bundle.putString("dest_folder",archivedestfolder);
+					bundle.putString("zip_file_path",zip_file_path);
+					bundle.putString("zip_folder_name",zip_folder_name);
+					bundle.putString("archive_action",archive_action);
+					bundle.putString("tree_uri_path",tree_uri_path);
+					bundle.putParcelable("tree_uri",tree_uri);
+					bundle.putString("source_folder",parent_file_path);
+					bundle.putString("zip_folder_path",zip_folder_path);
+					bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
+					bundle.putSerializable("destFileObjectType",destFileObjectType);
+
+					if(whether_file_already_exists(zip_folder_path+".zip",destFileObjectType))
+					{
+						if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
+						{
+							ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
+							archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+
+						}
+						else
+						{
+							Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
+						}
+					}
+					else
+					{
+						Intent intent=new Intent(context,emptyService);
+						intent.setAction(ARCHIVE_ACTION_ZIP);
+						intent.putExtra("bundle",bundle);
+						context.startActivity(intent);
+						imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
+						dismissAllowingStateLoss();
+					}
+				}
+
+			}
+		});
+
+		customdir_edittext.setText(viewModel.folderclickselected);
 		create_folder_checkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
 		{
 			public void onCheckedChanged(CompoundButton p1,boolean p2)
@@ -208,8 +310,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 					if(archive_action.equals(ARCHIVE_ACTION_ZIP))
 					{
 						String zip_folder_path=result.getString("zip_folder_path");
-						files_selected_array.remove(zip_folder_path+".zip");
-						result.putStringArrayList("files_selected_array",files_selected_array);
+						viewModel.files_selected_array.remove(zip_folder_path+".zip");
+						result.putStringArrayList("files_selected_array",viewModel.files_selected_array);
 						Intent intent=new Intent(context,emptyService);
 						intent.setAction(ARCHIVE_ACTION_ZIP);
 						intent.putExtra("bundle",result);
@@ -267,89 +369,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 					public void onClick(View v)
 					{
-
-						String zip_folder_name=zip_file_edittext.getText().toString().trim();
-						if(zip_folder_name.equals(""))
-						{
-							Global.print(context,getString(R.string.enter_zip_file_name));
-							return;
-						}
-						if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
-						{
-							Global.print(context,getString(R.string.avoid_name_involving_special_characters));
-							return;
-						}
-
+						progress_bar.setVisibility(View.VISIBLE);
 						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
-						final String zip_folder_path=(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
-
-						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
-						{
-							Global.print(context,getString(R.string.not_able_to_process));
-							return;
-						}
-
-
-						if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
-							Global.print(context,getString(R.string.directory_not_exist_not_valid));
-							return;
-						}
-
-						if(!is_file_writable(archivedestfolder,destFileObjectType))
-						{
-							return;
-						}
-
-
-
-						emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
-						if(emptyService==null)
-						{
-							Global.print(context,getString(R.string.maximum_3_services_processed));
-							return;
-						}
-						Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
-						if(files_selected_array.size()==0)
-						{
-							Global.print(context,getString(R.string.could_not_perform_action));
-							return;
-						}
-						final Bundle bundle=new Bundle();
-						bundle.putStringArrayList("files_selected_array",files_selected_array);
-						bundle.putString("dest_folder",archivedestfolder);
-						bundle.putString("zip_file_path",zip_file_path);
-						bundle.putString("zip_folder_name",zip_folder_name);
-						bundle.putString("archive_action",archive_action);
-						bundle.putString("tree_uri_path",tree_uri_path);
-						bundle.putParcelable("tree_uri",tree_uri);
-						bundle.putString("source_folder",parent_file_path);
-						bundle.putString("zip_folder_path",zip_folder_path);
-						bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
-						bundle.putSerializable("destFileObjectType",destFileObjectType);
-
-						if(whether_file_already_exists(zip_folder_path+".zip",destFileObjectType))
-						{
-							if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
-							{
-								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
-
-							}
-							else
-							{
-								Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
-							}
-						}
-						else
-						{
-							Intent intent=new Intent(context,emptyService);
-							intent.setAction(ARCHIVE_ACTION_ZIP);
-							intent.putExtra("bundle",bundle);
-							context.startActivity(intent);
-							imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
-							dismissAllowingStateLoss();
-						}
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+						viewModel.isRecursiveFilesRemoved.setValue(false);
+						viewModel.removeRecursiveFiles(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 					}
 
 				});
@@ -379,7 +403,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						String zip_folder_path;
 						String unarchivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : custom_dir_fileObjectType;
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 						bundle.putSerializable("destFileObjectType", destFileObjectType); //put destfileobjecttype after deciding which one to put
 
 						if (create_folder_checkbox.isChecked()) {
@@ -414,7 +438,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						if (!is_file_writable(unarchivedestfolder, destFileObjectType)) {
 							return;
 						}
-
 
 
 						emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
@@ -591,14 +614,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-
-	public void seekSAFPermission()
-	{
-		((MainActivity)context).clear_cache=false;
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		activityResultLauncher_SAF_permission.launch(intent);
-	}
-
 	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
 		public void onActivityResult(ActivityResult result) {
@@ -624,9 +639,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 			if (result.getResultCode() == Activity.RESULT_OK)
 			{
 				Intent intent=result.getData();
-				folderclickselected = intent.getStringExtra("folderclickselected");
-				custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
-				customdir_edittext.setText(folderclickselected);
+				viewModel.folderclickselected = intent.getStringExtra("folderclickselected");
+				viewModel.custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
+				customdir_edittext.setText(viewModel.folderclickselected);
 			}
 		}
 	});

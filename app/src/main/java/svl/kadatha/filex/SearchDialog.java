@@ -51,15 +51,6 @@ public class SearchDialog extends DialogFragment
 	String search_file_type;
 	boolean search_whole_word,search_case_sensitive,search_regex;
 	private long size_multiplying_factor;
-//	public static final String SEARCH_FILE_NAME="search_file_name";
-//	public static final String SEARCH_IN_DIR="search_in_dir";
-//	public static final String SEARCH_FILE_TYPE="search_file_type";
-//	public static final String SEARCH_WHOLE_WORD="search_whole_word";
-//	public static final String SEARCH_CASE_SENSITIVE="serach_case_sensitive";
-//	public static final String SEARCH_REGEX="search_regex";
-//	public static final String SEARCH_LOWER_LIMIT_SIZE="search_lower_limit_size";
-//	public static final String SEARCH_UPPER_LIMIT_SIZE="search_upper_limit_size";
-
 	private Group size_group;
 	private String file_size_unit;
 	private MainActivity mainActivity;
@@ -207,7 +198,7 @@ public class SearchDialog extends DialogFragment
 			{
 				if(lower_bound_edit_text.getText().toString().trim().equals("") && upper_bound_edit_text.getText().toString().trim().equals("") && search_file_name_edit_text.getText().toString().trim().equals(""))
 				{
-					Global.print(context,getString(R.string.enter_name));
+					Global.print(context,getString(R.string.enter_name_or_size_parameters));
 					return;
 				}
 				else

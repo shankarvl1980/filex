@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -64,6 +67,21 @@ public class FileDuplicationViewModel extends ViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+                {
+                    //process to have only files with unique file names
+                    Set<String> file_name_set=new HashSet<>();
+                    Iterator<String> iterator=files_selected_array.iterator();
+                    while(iterator.hasNext())
+                    {
+                        String file_path=iterator.next();
+                        boolean inserted=file_name_set.add(new File(file_path).getName());
+                        if(!inserted) iterator.remove();
+                    }
+
+                }
+                Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
+
                 filePOJOS=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
                 int filePojoSize=filePOJOS.size();
                 int fileSelectedSize=files_selected_array.size();

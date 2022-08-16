@@ -1063,19 +1063,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else
 				{
-					if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-					{
-						//process to have only files with unique file names
-						Set<String> file_name_set=new HashSet<>();
-						Iterator<String> iterator=files_selected_array.iterator();
-						while(iterator.hasNext())
-						{
-							String file_path=iterator.next();
-							boolean inserted=file_name_set.add(new File(file_path).getName());
-							if(!inserted) iterator.remove();
-						}
-
-					}
 					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 					df.progress_bar.setVisibility(View.VISIBLE);
 					fileDuplicationViewModel.isFinished.setValue(false);
@@ -1856,20 +1843,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
 					Global.print(context,DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
 				} else  {
-					if(DetailFragment.CUT_COPY_FILE_OBJECT_TYPE==FileObjectType.SEARCH_LIBRARY_TYPE)
-					{
-						//process to have only files with unique file names
-						Set<String> file_name_set=new HashSet<>();
-						for (String file_path : DetailFragment.FILE_SELECTED_FOR_CUT_COPY) {
-							boolean inserted = file_name_set.add(new File(file_path).getName());
-							if (inserted) files_selected_array.add(file_path);
-						}
-
-					}
-					else
-					{
-						files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
-					}
+					files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
 					df.progress_bar.setVisibility(View.VISIBLE);
 					fileDuplicationViewModel.isFinished.setValue(false);
 					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false);

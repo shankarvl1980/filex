@@ -62,14 +62,13 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			dismissAllowingStateLoss();
 		}
-
+		if(files_selected_array.size()==0)dismissAllowingStateLoss();
 	}
 
 	public static PasteSetUpDialog getInstance(String source_folder,FileObjectType sourceFileObjectType,String dest_folder,FileObjectType destFileObjectType,
 											   ArrayList<String>files_selected_array,ArrayList<String>overwritten_file_path_list,boolean cut_selected)
 	{
 		PasteSetUpDialog pasteSetUpDialog=new PasteSetUpDialog();
-		Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
 		Bundle bundle=new Bundle();
 		bundle.putString("source_folder", source_folder);
 		bundle.putStringArrayList("files_selected_array", files_selected_array);

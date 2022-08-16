@@ -335,7 +335,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
         apppackagenametextview.setText(appPOJO.getPackage_name());
-        appversiontextview.setText(appPOJO.getVersion());
+        appversiontextview.setText(context.getString(R.string.version)+" "+appPOJO.getVersion());
         appsizetextview.setText(appPOJO.getSize());
         appdatetextview.setText(appPOJO.getDate());
     }

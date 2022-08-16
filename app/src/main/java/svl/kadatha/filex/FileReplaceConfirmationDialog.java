@@ -172,7 +172,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 															ArrayList<String> files_selected_array,boolean cut_selected)
 	{
 		FileReplaceConfirmationDialog fileReplaceConfirmationDialog=new FileReplaceConfirmationDialog();
-		Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
 		Bundle bundle=new Bundle();
 		bundle.putString("source_folder", source_folder);
 		bundle.putStringArrayList("files_selected_array", files_selected_array);

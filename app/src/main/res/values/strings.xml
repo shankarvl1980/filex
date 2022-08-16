@@ -12,7 +12,7 @@
     <string name="close">Close</string>
 
 	<string name="ok">OK</string>
-	<string name="list_name_colon">List Name:</string>
+	<string name="list_name_colon">List Name</string>
 	<string name="enter_name">Enter name</string>
 
 
@@ -44,12 +44,12 @@
 
 	<string name="choose_directory">Choose directory</string>
 	<string name="archive">Archive</string>
-	<string name="output_file_colon">Output file:</string>
+	<string name="output_file_colon">Output file</string>
 
 	<string name="enter_file_name">Enter file name</string>
-	<string name="file_name_colon">File Name:</string>
+	<string name="file_name_colon">File Name</string>
 	<string name="enter_folder_name">Enter folder name</string>
-	<string name="folder_name_colon">Folder Name:</string>
+	<string name="folder_name_colon">Folder Name</string>
 
 	<string name="delete">Delete</string>
 
@@ -65,20 +65,20 @@
 	<string name="select_app">Select app</string>
 	<string name="remember_the_choice">Remember the choice</string>
 	<string name="create_folder">Create folder</string>
-	<string name="destination_folder">Destination folder:</string>
+	<string name="destination_folder">Destination folder</string>
 	<string name="replace_file">Replace File</string>
 	<string name="wait_till_the_process_completes">Wait till the process completes…</string>
 	<string name="create_file">Create File</string>
 	<string name="from">From</string>
 	<string name="to">To</string>
-	<string name="current_file_colon">Current File:</string>
+	<string name="current_file_colon">Current File</string>
 	<string name="settings">Settings</string>
-	<string name="end_of_line_colon">End of line:</string>
-	<string name="wrap_text_colon">Wrap text:</string>
-	<string name="text_size_colon">Text size:</string>
+	<string name="end_of_line_colon">End of line</string>
+	<string name="wrap_text_colon">Wrap text</string>
+	<string name="text_size_colon">Text size</string>
 	<string name="edit">Edit</string>
 	<string name="choose_folder">Choose Folder</string>
-	<string name="current_folder_colon">Current Folder:</string>
+	<string name="current_folder_colon">Current Folder</string>
 	<string name="folder_is_empty">Folder is empty.</string>
 	<string name="permissions">Permissions</string>
 	<string name="read">Read</string>
@@ -87,10 +87,10 @@
 	<string name="owner">Owner</string>
 	<string name="group">Group</string>
 	<string name="other">Other</string>
-	<string name="file_size_display_colon">File size display:</string>
+	<string name="file_size_display_colon">File size display</string>
 	<string name="block_1024">Block 1024</string>
 	<string name="block_1000">Block 1000</string>
-	<string name="default_apps_to_open_files_colon">Default apps to open files:</string>
+	<string name="default_apps_to_open_files_colon">Default apps to open files</string>
 	<string name="remove_defaults">Remove defaults</string>
 	<string name="properties">Properties</string>
 
@@ -105,17 +105,17 @@
 	<string name="regex">Regex</string>
 
 	<string name="file_directory">File/Directory</string>
-	<string name="search_in_colon">Search in:</string>
+	<string name="search_in_colon">Search in</string>
 	<string name="open_as">Open as</string>
 	<string name="view">View</string>
-	<string name="layout_colon">Layout:</string>
+	<string name="layout_colon">Layout</string>
 	<string name="list">List</string>
 	<string name="grid">Grid</string>
-	<string name="font_size_colon">Font size:</string>
+	<string name="font_size_colon">Font size</string>
 	<string name="small">Small</string>
 	<string name="medium">Medium</string>
 	<string name="large">Large</string>
-	<string name="sort_colon">Sort:</string>
+	<string name="sort_colon">Sort</string>
 	<string name="date">Date</string>
 	<string name="working_directory">Working Directory</string>
 	<string name="add">Add</string>
@@ -144,8 +144,8 @@
 	<string name="remove_default_apps">Remove default apps</string>
 	<string name="external_sd_card_permission_message">You need to give permission by selecting \'SD card\' to access files on external SD card.</string>
 	<string name="external_usb_permission_message">You need to give permission by selecting \'USB device\' to access files on USB storage.</string>
-	<string name="name_colon">Name:</string>
-	<string name="type_colon">Type:</string>
+	<string name="name_colon">Name</string>
+	<string name="type_colon">Type</string>
 	<string name="document">Document</string>
 	<string name="image">Image</string>
 	<string name="audio">Audio</string>
@@ -173,12 +173,12 @@
 	<string name="artists_colon">Artists:</string>
 	<string name="next_audio_colon">Next audio:</string>
 
-	<string name="total_files_colon">Total files:</string>
+	<string name="total_files_colon">Total files</string>
 	<string name="files">files</string>
 	<string name="file1">file</string>
-	<string name="size_colon">Size:</string>
+	<string name="size_colon">Size</string>
 
-	<string name="deleted_colon">Deleted:</string>
+	<string name="deleted_colon">Deleted</string>
 
 	<string name="refresh">Refresh</string>
 
@@ -193,9 +193,9 @@
 	<string name="play">Play</string>
 
 
-	<string name="tracks_colon">Tracks:</string>
+	<string name="tracks_colon">Tracks</string>
 
-	<string name="duration_colon">Duration:</string>
+	<string name="duration_colon">Duration</string>
 
 	<string name="not_able_to_process">not able to process</string>
 	<string name="wait_till_all_audios_populated_in_all_songs_tab">wait till all audios are populated in All Songs tab</string>
@@ -267,7 +267,7 @@
     <string name="cannot_be_hidden">cannot be hidden</string>
 	<string name="process_cancelled">process cancelled</string>
     <string name="removed_default_apps_to_open_files">Removed default apps to open files</string>
-    <string name="theme_colon">Theme:</string>
+    <string name="theme_colon">Theme</string>
 	<string name="blue">Blue</string>
 	<string name="dark">Dark</string>
 	<string name="download">Download</string>
@@ -286,7 +286,7 @@
 	<string name="system_default">System default</string>
     <string name="seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app">Seems that read and write permissions were not granted. Go to Settings and grant permissions to this app</string>
     <string name="path_copied">Path copied</string>
-    <string name="path_colon">Path:</string>
+    <string name="path_colon">Path</string>
     <string name="show_file_path_for_library_files">Show file path for library files</string>
     <string name="analyse_storage">Analyse Storage</string>
     <string name="file_to_storage">File/Storage</string>
@@ -339,10 +339,10 @@
     <string name="click_exit_button_to_exit">click Exit button to exit</string>
 	<string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
 	<string name="press_again_to_close_activity">press again to close the activity</string>
-	<string name="volume_colon">Volume:</string>
+	<string name="volume_colon">Volume</string>
     <string name="cannot_open_here">cannot open here</string>
-    <string name="lower_bound_colon">Lower bound:</string>
-	<string name="upper_bound_colon">Upper bound:</string>
+    <string name="lower_bound_colon">Lower bound</string>
+	<string name="upper_bound_colon">Upper bound</string>
 	<string name="deleted_audio_file">Deleted the audio file</string>
 	<string name="deleted_file">Deleted the file</string>
     <string name="name_contains_space">name contains space</string>
@@ -351,6 +351,7 @@
 	<string name="name_should_contain_only_alphabets_without_spaces">Name should contain only alphabets without spaces</string>
 	<string name="copied_apk_file">Copied APK file</string>
     <string name="exception_thrown_colon_could_not_extract_entries">Exception thrown: could not extract entries</string>
+    <string name="enter_name_or_size_parameters">Enter name or size parameters</string>
 
 
     <string-array name="library_categories">
