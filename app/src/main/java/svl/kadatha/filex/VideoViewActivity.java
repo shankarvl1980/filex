@@ -42,61 +42,34 @@ public class VideoViewActivity extends BaseActivity
 		localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
 		Intent intent=getIntent();
-		if(savedInstanceState==null)
-		{
-			on_intent(intent);
-		}
+		on_intent(intent,savedInstanceState);
 		toolbar_visible=true;
 	}
 
-	private void on_intent(Intent intent)
+	private void on_intent(Intent intent, Bundle savedInstanceState)
 	{
-		data=intent.getData();
-		fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-        String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-		if(file_path ==null) file_path =PathUtil.getPath(context,data);
-		VideoViewContainerFragment videoViewContainerFragment = VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType);
-		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
+		if(intent!=null)
+		{
+			data=intent.getData();
+			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
+			String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+			if(file_path ==null) file_path =PathUtil.getPath(context,data);
+			if (savedInstanceState==null)
+			{
+				fm.beginTransaction().replace(R.id.activity_blank_view_container, VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType),"").commit();
+			}
+
+		}
+
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		on_intent(intent);
+		on_intent(intent,null);
 	}
 
-	/*
-	private void set_listeners_on_video_container_fragment(VideoViewContainerFragment videoViewContainerFragment)
-	{
-		videoViewContainerFragment.setOnPageSelectListener(new VideoViewContainerFragment.OnPageSelectListener() {
-			@Override
-			public void onPageSelect(int x) {
-
-				for(OnPageSelectListener listener:onPageSelectListeners)
-				{
-					if(listener!=null)
-					{
-						listener.onPageSelect(x);
-					}
-				}
-
-			}
-		});
-
-		videoViewContainerFragment.setToolBarVisibleListener(new VideoViewContainerFragment.ToolBarVisibleListener() {
-			@Override
-			public void onToolbarVisible(boolean visible) {
-				toolbar_visible=visible;
-
-			}
-		});
-
-
-		fm.beginTransaction().replace(R.id.activity_blank_view_container, videoViewContainerFragment,"").commit();
-	}
-
-	 */
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

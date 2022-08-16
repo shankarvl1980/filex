@@ -27,26 +27,29 @@ public class PdfViewActivity extends BaseActivity {
         localBroadcastManager= LocalBroadcastManager.getInstance(context);
 
         Intent intent=getIntent();
-        if(savedInstanceState==null)
-        {
-           on_intent(intent);
-        }
+        on_intent(intent,savedInstanceState);
     }
 
-    private void on_intent(Intent intent)
+    private void on_intent(Intent intent, Bundle savedInstanceState)
     {
-        data=intent.getData();
-        boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-        FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-        String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-        if(file_path ==null) file_path =PathUtil.getPath(context,data);
-        fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
+        if(intent!=null)
+        {
+            data=intent.getData();
+            boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+            FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
+            String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+            if(file_path ==null) file_path =PathUtil.getPath(context,data);
+            if(savedInstanceState==null)
+            {
+                fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
+            }
+        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        on_intent(intent);
+        on_intent(intent,null);
     }
 
 

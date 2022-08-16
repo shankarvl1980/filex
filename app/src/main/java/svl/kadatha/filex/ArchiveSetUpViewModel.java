@@ -43,7 +43,7 @@ public class ArchiveSetUpViewModel extends ViewModel {
             @Override
             public void run() {
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
-                isRecursiveFilesRemoved.setValue(true);
+                isRecursiveFilesRemoved.postValue(true);
             }
         });
 

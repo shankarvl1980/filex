@@ -131,14 +131,11 @@ public class AppManagerActivity extends BaseActivity{
         adapter.finishUpdate(viewPager);
 
         Intent intent=getIntent();
-        if(savedInstanceState==null)
-        {
-            if(intent!=null) on_intent(intent);
-        }
+        on_intent(intent,savedInstanceState);
 
     }
 
-    private void on_intent(Intent intent)
+    private void on_intent(Intent intent,Bundle savedInstanceState)
     {
 
     }

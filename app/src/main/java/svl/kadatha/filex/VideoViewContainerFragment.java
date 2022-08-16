@@ -47,24 +47,17 @@ public class VideoViewContainerFragment extends Fragment
 	private TextView title;
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-	private List<FilePOJO> files_selected_for_delete; //,deleted_files;
+	private List<FilePOJO> files_selected_for_delete;
 	private Handler handler;
 	private Runnable runnable;
 	private boolean is_menu_opened;
-
-	//private boolean asynctask_running;
 	private Uri data;
 
 	private VideoViewPagerAdapter adapter;
 
 	private int floating_button_height;
 	private FloatingActionButton floating_back_button;
-//	private OnPageSelectListener onPageSelectListener;
-//	private ToolBarVisibleListener toolBarVisibleListener;
-	private boolean toolbar_visible,fromArchiveView;
-	private FileObjectType fileObjectType;
-	private boolean fromThirdPartyApp;
-	private String file_path;
+	private boolean toolbar_visible;
 
 	private LocalBroadcastManager localBroadcastManager;
 	private VideoViewActivity videoViewActivity;
@@ -86,25 +79,6 @@ public class VideoViewContainerFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-
-
-		data=videoViewActivity.data;
-		Bundle bundle=getArguments();
-		if(bundle!=null)
-		{
-			file_path=bundle.getString("file_path");
-			fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-			fromArchiveView=bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
-
-			if(fileObjectType ==null || fileObjectType ==FileObjectType.SEARCH_LIBRARY_TYPE)
-			{
-				fromThirdPartyApp=true;
-				fileObjectType =FileObjectType.FILE_TYPE;
-			}
-
-
-		}
-
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -152,23 +126,23 @@ public class VideoViewContainerFragment extends Fragment
 					switch(p1)
 					{
 						case 0:
-							if(fromArchiveView || fromThirdPartyApp)
+							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
-							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
 							deleteFileAlertDialogOtherActivity.show(((VideoViewActivity)context).fm,"deletefilealertotheractivity");
 							break;
 						case 1:
 							Uri src_uri=null;
-							if(fromThirdPartyApp)
+							if(viewModel.fromThirdPartyApp)
 							{
 								src_uri=data;
 
 							}
-							else if(fileObjectType==FileObjectType.FILE_TYPE)
+							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE)
 							{
 								src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -183,13 +157,13 @@ public class VideoViewContainerFragment extends Fragment
 
 							break;
 						case 2:
-							if(fromThirdPartyApp)
+							if(viewModel.fromThirdPartyApp)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
-							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,fileObjectType);
+							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
 							propertiesDialog.show(((VideoViewActivity)context).fm,"properties_dialog");
 							break;
 
@@ -222,7 +196,24 @@ public class VideoViewContainerFragment extends Fragment
 			
 		});
 		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
-		viewModel.getAlbumFromCurrentFolder(fileObjectType,file_path,Global.VIDEO_REGEX,fromArchiveView,fromThirdPartyApp,true);
+		data=videoViewActivity.data;
+		Bundle bundle=getArguments();
+		if(bundle!=null)
+		{
+			viewModel.file_path=bundle.getString("file_path");
+			viewModel.fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+			viewModel.fromArchiveView=bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
+
+			if(viewModel.fileObjectType ==null || viewModel.fileObjectType ==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				viewModel.fromThirdPartyApp=true;
+				viewModel.fileObjectType =FileObjectType.FILE_TYPE;
+			}
+
+		}
+
+
+		viewModel.getAlbumFromCurrentFolder(Global.VIDEO_REGEX,true);
 		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {
@@ -301,7 +292,7 @@ public class VideoViewContainerFragment extends Fragment
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
 					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(VideoViewContainerFragment.this).get(DeleteFileOtherActivityViewModel.class);
-					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
 					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 						@Override
 						public void onChanged(Boolean aBoolean) {
@@ -326,7 +317,7 @@ public class VideoViewContainerFragment extends Fragment
 									}
 
 									adapter.notifyDataSetChanged();
-									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
 									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
 									if(viewModel.video_list.size()<1)
 									{
@@ -392,7 +383,7 @@ public class VideoViewContainerFragment extends Fragment
 			FilePOJO filePOJO=viewModel.video_list.getKeyAtIndex(p1);
 			final String file_path=filePOJO.getPath();
 			int position=viewModel.video_list.get(filePOJO);
-			frag=VideoViewFragment.getNewInstance(fileObjectType,fromThirdPartyApp,file_path,position,p1,b);
+			frag=VideoViewFragment.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
 			viewModel.firststart=false;
 
 			frag.setVideoViewClickListener(new VideoViewFragment.VideoViewClickListener()

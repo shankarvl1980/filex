@@ -264,43 +264,42 @@ public class AudioPlayerActivity extends BaseActivity
 
 		 */
 		Intent intent=getIntent();
-		if(intent!=null)
-		{
-			on_intent(intent,savedInstanceState);
-		}
-
+		on_intent(intent,savedInstanceState);
 
 		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)
 	{
-
-		data=intent.getData();
-		fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-		file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-		if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		if(intent!=null)
 		{
-			fileObjectType=FileObjectType.FILE_TYPE;
-			fromThirdPartyApp=true;
-		}
+			data=intent.getData();
+			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
+			file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+			if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				fileObjectType=FileObjectType.FILE_TYPE;
+				fromThirdPartyApp=true;
+			}
 
 
-		if(savedInstanceState==null)
-		{
-			if(data!=null)
+			if(savedInstanceState==null)
 			{
-				if(file_path==null) file_path=PathUtil.getPath(context,data);
-				String name=new File(file_path).getName();
-				AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
-				apf.set_audio(file_path);
+				if(data!=null)
+				{
+					if(file_path==null) file_path=PathUtil.getPath(context,data);
+					String name=new File(file_path).getName();
+					AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+					apf.set_audio(file_path);
+				}
+				if(AUDIO_FILE==null)
+				{
+					view_pager.setCurrentItem(1);
+					apf.setTitleArt("",null);
+				}
 			}
-			if(AUDIO_FILE==null)
-			{
-				view_pager.setCurrentItem(1);
-				apf.setTitleArt("",null);
-			}
+
 		}
 
 	}

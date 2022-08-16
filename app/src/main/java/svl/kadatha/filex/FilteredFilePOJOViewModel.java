@@ -44,9 +44,17 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public boolean out_of_memory_exception_thrown;
     public MutableLiveData<Boolean> isPdfBitmapFetched=new MutableLiveData<>();
     public int image_selected_idx=0,previously_selected_image_idx=0,pdf_current_position;
-    public String source_folder,file_path;
+    public String source_folder;
     public FilePOJO currently_shown_file;
     public boolean firststart;
+
+    public boolean fromArchiveView;
+    public FileObjectType fileObjectType;
+    public boolean fromThirdPartyApp;
+    public String file_path;
+
+
+
 
 
     public FilteredFilePOJOViewModel(@NonNull Application application) {
@@ -75,7 +83,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void getAlbumFromCurrentFolder(FileObjectType fileObjectType,String file_path,String regex, boolean fromArchiveView, boolean fromThirdPartyApp, boolean whetherVideo )
+    public synchronized void getAlbumFromCurrentFolder(String regex, boolean whetherVideo )
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         firststart=true;

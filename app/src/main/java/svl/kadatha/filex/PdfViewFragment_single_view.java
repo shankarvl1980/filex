@@ -52,7 +52,6 @@ import java.util.List;
 public class PdfViewFragment_single_view extends Fragment
 {
     private Context context;
-    private String file_path;
     private long availableHeapMemory;
     public static final int SAFE_MEMORY_BUFFER=3;
     private Handler handler;
@@ -77,11 +76,6 @@ public class PdfViewFragment_single_view extends Fragment
     private int recyclerview_height;
     private LinearLayout image_view_selector_butt;
 
-
-    private FileObjectType fileObjectType;
-    private boolean fromThirdPartyApp,fromArchiveView;
-
-
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
     private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
@@ -97,21 +91,6 @@ public class PdfViewFragment_single_view extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        data=((PdfViewActivity)context).data;
-        Bundle bundle=getArguments();
-        if(bundle!=null)
-        {
-            file_path = bundle.getString("file_path");
-            fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
-            fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-        }
-
-        if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-        {
-            fileObjectType=FileObjectType.FILE_TYPE;
-            fromThirdPartyApp = true;
-        }
-
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -161,24 +140,24 @@ public class PdfViewFragment_single_view extends Fragment
                 switch(p1)
                 {
                     case 0:
-                        if(fromArchiveView || fromThirdPartyApp)
+                        if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
                         }
                         files_selected_array.add(viewModel.currently_shown_file.getPath());
-                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,fileObjectType);
+                        DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
                         deleteFileAlertDialogOtherActivity.show(((PdfViewActivity)context).fm,"deletefilealertotheractivity");
                         break;
 
                     case 1:
                         Uri src_uri=null;
-                        if(fromThirdPartyApp)
+                        if(viewModel.fromThirdPartyApp)
                         {
                             src_uri=data;
 
                         }
-                        else if(fileObjectType==FileObjectType.FILE_TYPE)
+                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE)
                         {
                             src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
                         }
@@ -194,7 +173,7 @@ public class PdfViewFragment_single_view extends Fragment
                         break;
 
                     case 2:
-                        if(fromThirdPartyApp)
+                        if(viewModel.fromThirdPartyApp)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -309,7 +288,21 @@ public class PdfViewFragment_single_view extends Fragment
         };
 
         viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
-        viewModel.initializePdfRenderer(fileObjectType,file_path,data,fromThirdPartyApp);
+        data=((PdfViewActivity)context).data;
+        Bundle bundle=getArguments();
+        if(bundle!=null)
+        {
+            viewModel.file_path = bundle.getString("file_path");
+            viewModel.fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
+            viewModel.fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            if(viewModel.fileObjectType==null || viewModel.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+            {
+                viewModel.fileObjectType=FileObjectType.FILE_TYPE;
+                viewModel.fromThirdPartyApp = true;
+            }
+        }
+
+        viewModel.initializePdfRenderer(viewModel.fileObjectType,viewModel.file_path,data,viewModel.fromThirdPartyApp);
         viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -351,7 +344,7 @@ public class PdfViewFragment_single_view extends Fragment
                     files_selected_for_delete=new ArrayList<>();
                     files_selected_for_delete.add(viewModel.currently_shown_file);
                     DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment_single_view.this).get(DeleteFileOtherActivityViewModel.class);
-                    deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+                    deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
                     deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                         @Override
                         public void onChanged(Boolean aBoolean) {
@@ -361,7 +354,7 @@ public class PdfViewFragment_single_view extends Fragment
                                 {
                                     pdf_view_adapter.notifyDataSetChanged();
                                     picture_selector_adapter.notifyDataSetChanged();
-                                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+                                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
                                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                                     ((PdfViewActivity)context).finish();
                                 }

@@ -317,10 +317,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 		Intent intent=getIntent();
-		if(intent!=null)
-		{
-			on_intent(intent, savedInstanceState);
-		}
+		on_intent(intent, savedInstanceState);
 
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
 		{
@@ -433,87 +430,89 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private void on_intent(Intent intent, @Nullable Bundle savedInstanceState)
 	{
-		data=intent.getData();
-        fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-		fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
-		viewModel.file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-		if(viewModel.file_path==null) viewModel.file_path=PathUtil.getPath(context,data);
-
-		if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		if(intent!=null)
 		{
-			fileObjectType=FileObjectType.FILE_TYPE;
-			fromThirdPartyApp=true;
-		}
+			data=intent.getData();
+			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
+			viewModel.file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+			if(viewModel.file_path==null) viewModel.file_path=PathUtil.getPath(context,data);
 
-
-		source_folder=new File(viewModel.file_path).getParent();
-		if(fileObjectType==FileObjectType.USB_TYPE)
-		{
-			if(MainActivity.usbFileRoot!=null)
+			if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				try {
-					viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(viewModel.file_path)),false);
+				fileObjectType=FileObjectType.FILE_TYPE;
+				fromThirdPartyApp=true;
+			}
 
-				} catch (IOException e) {
 
+			source_folder=new File(viewModel.file_path).getParent();
+			if(fileObjectType==FileObjectType.USB_TYPE)
+			{
+				if(MainActivity.usbFileRoot!=null)
+				{
+					try {
+						viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(viewModel.file_path)),false);
+
+					} catch (IOException e) {
+
+					}
 				}
 			}
-		}
-		else
-		{
-			viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(viewModel.file_path),false,false,fileObjectType);
-		}
-
-
-		file=new File(viewModel.file_path);
-		isWritable=FileUtil.isWritable(fileObjectType,viewModel.file_path);
-
-		if(savedInstanceState==null)
-		{
-			if(data!=null)
+			else
 			{
-				if(file!=null)
-				{
-					file_name.setText(file.getName());
-				}
-				viewModel.eol=viewModel.altered_eol=getEOL(data);
+				viewModel.currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(viewModel.file_path),false,false,fileObjectType);
+			}
 
-				if(!openFile(viewModel.current_page_end_point))
-				{
-					clear_cache=false;
-					finish();
-				}
 
-				if(file.exists())
+			file=new File(viewModel.file_path);
+			isWritable=FileUtil.isWritable(fileObjectType,viewModel.file_path);
+
+			if(savedInstanceState==null)
+			{
+				if(data!=null)
 				{
-					long internal_available_space,external_available_space,file_size;
-					file_size=file.length();
-					for(FilePOJO filePOJO:Global.STORAGE_DIR)
+					if(file!=null)
 					{
-						if(filePOJO.getFileObjectType()!=FileObjectType.FILE_TYPE)
-						{
-							continue;
-						}
-						if(!Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(filePOJO.getPath()))))
-						{
-							continue;
-						}
+						file_name.setText(file.getName());
+					}
+					viewModel.eol=viewModel.altered_eol=getEOL(data);
 
-						//if(filePOJO.getPath().endsWith("/0"))
+					if(!openFile(viewModel.current_page_end_point))
+					{
+						clear_cache=false;
+						finish();
+					}
+
+					if(file.exists())
+					{
+						long internal_available_space,external_available_space,file_size;
+						file_size=file.length();
+						for(FilePOJO filePOJO:Global.STORAGE_DIR)
 						{
-							internal_available_space=new File(Global.INTERNAL_PRIMARY_STORAGE_PATH).getUsableSpace();
-							if(file_size*2.5>internal_available_space)
+							if(filePOJO.getFileObjectType()!=FileObjectType.FILE_TYPE)
 							{
-								isFileBig=true;
+								continue;
 							}
-							else
+							if(!Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(filePOJO.getPath()))))
 							{
-								viewModel.temporary_file_for_save=getExternalFilesDir("file_save_temp");
-								isFileBig=false;
-								break;
+								continue;
 							}
-						}
-						// the following is for attempting to put cache in sd card
+
+							//if(filePOJO.getPath().endsWith("/0"))
+							{
+								internal_available_space=new File(Global.INTERNAL_PRIMARY_STORAGE_PATH).getUsableSpace();
+								if(file_size*2.5>internal_available_space)
+								{
+									isFileBig=true;
+								}
+								else
+								{
+									viewModel.temporary_file_for_save=getExternalFilesDir("file_save_temp");
+									isFileBig=false;
+									break;
+								}
+							}
+							// the following is for attempting to put cache in sd card
 						/*
 						else if(isFileBig || temporary_file_for_save==null)
 						{
@@ -548,10 +547,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 						 */
 
+						}
 					}
-				}
 
+				}
 			}
+
 		}
 
 	}

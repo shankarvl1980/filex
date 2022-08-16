@@ -151,64 +151,64 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		};
 
 		Intent intent=getIntent();
-		if(intent!=null)
-		{
-			on_intent(intent,savedInstanceState);
-		}
-
+		on_intent(intent,savedInstanceState);
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)
 	{
-		if(savedInstanceState==null)
+		if(intent!=null)
 		{
-			intent_action=intent.getAction();
-			Bundle bundle=intent.getBundleExtra("bundle");
-			if(bundle!=null)
+			if(savedInstanceState==null)
 			{
-				sourceFileObjectType= (FileObjectType) bundle.getSerializable("sourceFileObjectType");
-				Intent adp_intent=new Intent(this,ArchiveDeletePasteFileService2.class);
-
-				adp_intent.setAction(intent_action);
-				adp_intent.putExtra("bundle",bundle);
-
-				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+				intent_action=intent.getAction();
+				Bundle bundle=intent.getBundleExtra("bundle");
+				if(bundle!=null)
 				{
-					startForegroundService(adp_intent);
-				}
-				else
-				{
-					startService(adp_intent);
+					sourceFileObjectType= (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+					Intent adp_intent=new Intent(this,ArchiveDeletePasteFileService2.class);
+
+					adp_intent.setAction(intent_action);
+					adp_intent.putExtra("bundle",bundle);
+
+					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+					{
+						startForegroundService(adp_intent);
+					}
+					else
+					{
+						startService(adp_intent);
+					}
 				}
 			}
-		}
-		else
-		{
-			intent_action=savedInstanceState.getString("intent_action");
-			sourceFileObjectType= (FileObjectType) savedInstanceState.getSerializable("sourceFileObjectType");
-		}
+			else
+			{
+				intent_action=savedInstanceState.getString("intent_action");
+				sourceFileObjectType= (FileObjectType) savedInstanceState.getSerializable("sourceFileObjectType");
+			}
 
-		switch(intent_action)
-		{
-			case "archive-zip":
-				dialog_title.setText(R.string.archiving);
-				to_label.setText(R.string.archive_file);
-				break;
-			case "archive-unzip":
-				dialog_title.setText(R.string.extracting);
-				from_label.setText(R.string.archive_file);
-				to_label.setText(R.string.output_folder);
-				break;
-			case "delete":
-				dialog_title.setText(R.string.deleting);
-				to_table_row.setVisibility(View.GONE);
-				break;
-			case "paste-cut":
-				dialog_title.setText(R.string.moving);
-				break;
-			case "paste-copy":
-				dialog_title.setText(R.string.copying);
-				break;
+			switch(intent_action)
+			{
+				case "archive-zip":
+					dialog_title.setText(R.string.archiving);
+					to_label.setText(R.string.archive_file);
+					break;
+				case "archive-unzip":
+					dialog_title.setText(R.string.extracting);
+					from_label.setText(R.string.archive_file);
+					to_label.setText(R.string.output_folder);
+					break;
+				case "delete":
+					dialog_title.setText(R.string.deleting);
+					to_table_row.setVisibility(View.GONE);
+					break;
+				case "paste-cut":
+					dialog_title.setText(R.string.moving);
+					break;
+				case "paste-copy":
+					dialog_title.setText(R.string.copying);
+					break;
+			}
+
 		}
 
 	}

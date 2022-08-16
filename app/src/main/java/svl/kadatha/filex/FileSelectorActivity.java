@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,12 +180,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
         Intent intent=getIntent();
-        if(savedInstanceState==null)
-        {
-            on_intent(intent);
-        }
-
-
+        on_intent(intent,savedInstanceState);
         TextView heading = findViewById(R.id.file_selector_heading);
         if((action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) || action_sought_request_code==MOVE_COPY_REQUEST_CODE)
         {
@@ -269,6 +265,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             Intent intent = new Intent();
                             intent.putExtra("folderclickselected", fileSelectorDialog.folder_selected_textview.getText().toString());
                             intent.putExtra("destFileObjectType", fileSelectorDialog.fileObjectType);
+                            Log.d(Global.TAG,"file selected - "+fileSelectorDialog.folder_selected_textview.getText().toString()+" and object type is "+fileSelectorDialog.fileObjectType);
                             setResult(Activity.RESULT_OK, intent);
 
                         }
@@ -305,12 +302,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-    private void on_intent(Intent intent)
+    private void on_intent(Intent intent, Bundle savedInstanceState )
     {
         if(intent!=null)
         {
             action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,PICK_FILE_REQUEST_CODE);
             bundle=intent.getBundleExtra("bundle");
+        }
+        if(savedInstanceState==null)
+        {
             createFileSelectorFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
         }
     }
@@ -318,7 +318,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        on_intent(intent);
+        on_intent(intent,null);
     }
 
     @Override
