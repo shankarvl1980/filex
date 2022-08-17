@@ -99,7 +99,6 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 df.clearSelectionAndNotifyDataSetChanged();
             }
-
         }
 
         if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==fileObjectType)

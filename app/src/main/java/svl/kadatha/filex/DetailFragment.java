@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -390,6 +391,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(modification_observed)
 		{
+			Log.d(Global.TAG,"modificaiton observed");
 			mainActivity.actionmode_finish(this,fileclickselected);
 			//cache_cleared=false;
 			modification_observed=false;
@@ -422,6 +424,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		else if(local_activity_delete)
 		{
+			Log.d(Global.TAG,"local_activity observed");
 			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
@@ -447,6 +450,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				totalFilePOJO_list_Size=totalFilePOJO_list.size();
 				file_list_size=totalFilePOJO_list_Size;//filePOJO_list.size();
 				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+				Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 				adapter.notifyDataSetChanged();
 			}
 

@@ -36,7 +36,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     private int total_no_of_files;
     private long total_size_of_files;
-    public boolean filled_size;
+    //public boolean filled_size;
 
 
     private String what_to_find=null;
@@ -83,7 +83,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
                 if(fill_file_size_also)
                 {
-                    if(!filled_size)
+                    //if(!filled_size)
                     {
                         long storage_space=0L;
                         String key=fileObjectType+fileclickselected;
@@ -96,7 +96,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                             }
                         }
                         final long final_storage_space = storage_space;
-                        filled_size=fill_file_size(filePOJOS,final_storage_space);
+                        fill_file_size(filePOJOS,final_storage_space);
                     }
 
                 }
@@ -108,7 +108,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void fill_file_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view)
     {
-        if(filled_size) return;
+        if(Boolean.TRUE.equals(isFinished.getValue())) return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override
@@ -124,7 +124,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                 }
                 final long final_storage_space = storage_space;
-                filled_size=fill_file_size(filePOJOS,final_storage_space);
+                fill_file_size(filePOJOS,final_storage_space);
                 isFinished.postValue(true);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }

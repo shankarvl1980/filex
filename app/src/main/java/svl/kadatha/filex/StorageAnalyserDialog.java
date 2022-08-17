@@ -207,8 +207,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
             viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-            if(!viewModel.filled_size)
+            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
             {
+                viewModel.isFinished.setValue(false);
                 viewModel.fill_file_size(fileObjectType,fileclickselected,currentUsbFile,false);
             }
             else
@@ -278,7 +279,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             {
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.isFinished.setValue(false);
-                viewModel.filled_size=false;
                 viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
             }
 
@@ -304,6 +304,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
                 storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
             }
+            Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
             adapter.notifyDataSetChanged();
         }
     }

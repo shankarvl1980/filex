@@ -257,6 +257,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
 			file_list_size=filePOJO_list.size();
 			fileSelectorActivity.file_number.setText(""+file_list_size);
+			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 			adapter.notifyDataSetChanged();
 		}
 	}

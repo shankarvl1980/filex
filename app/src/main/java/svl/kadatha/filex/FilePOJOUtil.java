@@ -730,9 +730,9 @@ public class FilePOJOUtil {
 
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path,fileObjectType);
 
-            if(df!=null) df.mainActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
-            if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
-            if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
+//            if(df!=null) df.mainActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
+//            if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
+//            if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
         }
         if(size>0) SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0),fileObjectType);
     }
