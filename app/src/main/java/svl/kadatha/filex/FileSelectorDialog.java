@@ -219,27 +219,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
-		{
-			//cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.isFinished.setValue(false);
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
-			}
-
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
-				}
-			}).start();
-
-		}
-		else if(local_activity_delete)
+		if(local_activity_delete)
 		{
 			//cache_cleared=false;
 			modification_observed=false;
@@ -259,6 +239,26 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			fileSelectorActivity.file_number.setText(""+file_list_size);
 			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 			adapter.notifyDataSetChanged();
+		}
+		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+		{
+			//cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				progress_bar.setVisibility(View.VISIBLE);
+				viewModel.isFinished.setValue(false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
+			}
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+				}
+			}).start();
+
 		}
 	}
 

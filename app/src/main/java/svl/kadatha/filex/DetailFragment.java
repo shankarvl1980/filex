@@ -389,40 +389,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(modification_observed)
-		{
-			Log.d(Global.TAG,"modificaiton observed");
-			mainActivity.actionmode_finish(this,fileclickselected);
-			//cache_cleared=false;
-			modification_observed=false;
-			local_activity_delete=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-				{
-					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-					cancelableProgressBarDialog.show(mainActivity.fm,"");
-					viewModel.isFinished.setValue(false);
-					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-				}
-				else
-				{
-					progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isFinished.setValue(false);
-					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
-				}
-
-			}
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
-				}
-			}).start();
-
-		}
-		else if(local_activity_delete)
+		if(local_activity_delete)
 		{
 			Log.d(Global.TAG,"local_activity observed");
 			//cache_cleared=false;
@@ -456,6 +423,39 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		}
 
+		else if(modification_observed)
+		{
+			Log.d(Global.TAG,"modificaiton observed");
+			mainActivity.actionmode_finish(this,fileclickselected);
+			//cache_cleared=false;
+			modification_observed=false;
+			local_activity_delete=false;
+			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			{
+				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+					cancelableProgressBarDialog.set_title(getString(R.string.searching));
+					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					viewModel.isFinished.setValue(false);
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+					viewModel.isFinished.setValue(false);
+					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
+				}
+
+			}
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
+				}
+			}).start();
+
+		}
 	}
 
 	private void after_filledFilePojos_procedure()

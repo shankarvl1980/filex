@@ -267,8 +267,25 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     @Override
     public void onResume() {
         super.onResume();
+        if(local_activity_delete)
+        {
+            //cache_cleared=false;
+            modification_observed=false;
+            local_activity_delete=false;
 
-        if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+            totalFilePOJO_list=viewModel.filePOJOS;
+            filePOJO_list=viewModel.filePOJOS;
+            totalFilePOJO_list_Size=totalFilePOJO_list.size();
+            file_list_size=filePOJO_list.size();
+            if(storageAnalyserActivity!=null)
+            {
+                storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
+                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+            }
+            Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
+            adapter.notifyDataSetChanged();
+        }
+        else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
         {
             storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
             //cache_cleared=false;
@@ -289,24 +306,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                 }
             }).start();
         }
-        else if(local_activity_delete)
-        {
-            //cache_cleared=false;
-            modification_observed=false;
-            local_activity_delete=false;
 
-            totalFilePOJO_list=viewModel.filePOJOS;
-            filePOJO_list=viewModel.filePOJOS;
-            totalFilePOJO_list_Size=totalFilePOJO_list.size();
-            file_list_size=filePOJO_list.size();
-            if(storageAnalyserActivity!=null)
-            {
-                storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
-                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
-            }
-            Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
-            adapter.notifyDataSetChanged();
-        }
     }
 
     private void after_filledFilePojos_procedure()
