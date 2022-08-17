@@ -53,6 +53,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
 
     public synchronized void deleteAudioPOJO(boolean whetherFromAlbum, List<AudioPOJO> src_audio_file_list,Uri tree_uri, String tree_uri_path)
     {
+        if(Boolean.TRUE.equals(isFinished.getValue()))return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override

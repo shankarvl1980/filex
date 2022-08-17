@@ -139,8 +139,6 @@ public class AudioSavedListFragment extends Fragment
 		progress_bar.setVisibility(View.GONE);
 		num_all_audio_list=saved_audio_list.size();
 
-
-
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
@@ -164,6 +162,7 @@ public class AudioSavedListFragment extends Fragment
 					}
 					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
 					progress_bar.setVisibility(View.GONE);
+					audioListViewModel.isFinished.setValue(false);
 					clear_selection();
 				}
 			}

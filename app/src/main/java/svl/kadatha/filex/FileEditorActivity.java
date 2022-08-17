@@ -306,6 +306,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 					viewModel.textViewUndoRedo.startListening();
 					progress_bar.setVisibility(View.GONE);
+					viewModel.isReadingFinished.setValue(false);
 				}
 			}
 		});

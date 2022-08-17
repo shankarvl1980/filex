@@ -113,7 +113,5 @@ public class FileDuplicationViewModel extends ViewModel {
                 isFinished.postValue(true);
             }
         });
-
     }
-
 }

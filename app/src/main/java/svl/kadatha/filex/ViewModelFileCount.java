@@ -21,7 +21,7 @@ public class ViewModelFileCount extends ViewModel {
     MutableLiveData<String> size_of_files_formatted=new MutableLiveData<>();
     private Future<?> future;
     private boolean isCancelled;
-    private boolean alreadyRun;
+    public MutableLiveData<Boolean>isFinished=new MutableLiveData<>();
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -40,8 +40,7 @@ public class ViewModelFileCount extends ViewModel {
 
     public synchronized void count(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
     {
-        if(alreadyRun) return;
-        alreadyRun=true;
+        if(Boolean.TRUE.equals(isFinished.getValue()))return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future=executorService.submit(new Runnable() {
             @Override
@@ -94,7 +93,7 @@ public class ViewModelFileCount extends ViewModel {
                     populate(f_array,include_folder,source_folder);
 
                 }
-
+            isFinished.postValue(true);
             }
         });
     }

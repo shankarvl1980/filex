@@ -22,9 +22,6 @@ public class MainActivityViewModel extends ViewModel {
     public MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
     public boolean checkedSAFPermissionPasteSetUp;
 
-
-
-
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -88,6 +85,7 @@ public class MainActivityViewModel extends ViewModel {
 
     public void deleteDirectory(File dir)
     {
+        if(Boolean.TRUE.equals(isDeletionCompleted.getValue()))return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override

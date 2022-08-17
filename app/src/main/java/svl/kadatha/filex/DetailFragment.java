@@ -342,11 +342,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					if(extractZipFileViewModel.isZipExtracted)
 					{
-						progress_bar.setVisibility(View.GONE);
 						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName());
 						extractZipFileViewModel.isZipExtracted=false;
-
 					}
+					progress_bar.setVisibility(View.GONE);
 					extractZipFileViewModel.isFinished.setValue(false);
 				}
 			}

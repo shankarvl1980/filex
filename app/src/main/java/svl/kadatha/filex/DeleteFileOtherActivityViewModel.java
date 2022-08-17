@@ -54,6 +54,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteFilePOJO(List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
+        if(Boolean.TRUE.equals(isFinished.getValue()))return;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -158,6 +159,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteAudioPOJO(String source_folder,List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
+        if(Boolean.TRUE.equals(isFinished.getValue()))return;
         this.source_folder=source_folder;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {

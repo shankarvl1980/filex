@@ -54,9 +54,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public String file_path;
 
 
-
-
-
     public FilteredFilePOJOViewModel(@NonNull Application application) {
         super(application);
         this.application=application;

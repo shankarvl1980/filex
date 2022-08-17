@@ -16,6 +16,7 @@ public class PathUtil {
      */
     @SuppressLint("NewApi")
     public static String getPath(Context context, Uri uri) {
+        if(uri==null)return "";
         final boolean needToCheckUri = true;
         final boolean isOreoOrMore = Build.VERSION.SDK_INT >= 26;
         String selection = null;
