@@ -189,6 +189,27 @@ public class AllAudioListFragment extends Fragment
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_audio);
+
+		DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AllAudioListFragment.this).get(DeleteAudioViewModel.class);
+		deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(deleteAudioViewModel.deleted_audio_files.size()>0)
+					{
+						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
+						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteAudioViewModel.isFinished.setValue(false);
+				}
+			}
+		});
+
+
+
 		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -226,23 +247,7 @@ public class AllAudioListFragment extends Fragment
 					Uri tree_uri=result.getParcelable("tree_uri");
 					String tree_uri_path=result.getString("tree_uri_path");
 					String source_folder=result.getString("source_folder");
-					DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AllAudioListFragment.this).get(DeleteAudioViewModel.class);
 					deleteAudioViewModel.deleteAudioPOJO(false,audioListViewModel.audios_selected_for_delete,tree_uri,tree_uri_path);
-					deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								if(deleteAudioViewModel.deleted_audio_files.size()>0)
-								{
-									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
-									((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
-								}
-								progress_bar.setVisibility(View.GONE);
-							}
-						}
-					});
 
 				}
 			}

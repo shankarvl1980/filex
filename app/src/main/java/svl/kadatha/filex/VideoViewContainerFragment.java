@@ -231,6 +231,45 @@ public class VideoViewContainerFragment extends Fragment
 			}
 		});
 
+		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(VideoViewContainerFragment.this).get(DeleteFileOtherActivityViewModel.class);
+		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					{
+						Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
+						for(FilePOJO filePOJO:deleteFileOtherActivityViewModel.deleted_files)
+						{
+							while(iterator.hasNext())
+							{
+								Map.Entry<FilePOJO,Integer> entry=iterator.next();
+								if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
+								{
+									viewModel.video_list.removeIndex(filePOJO);
+									iterator.remove();
+									break;
+								}
+							}
+
+						}
+
+						adapter.notifyDataSetChanged();
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
+						if(viewModel.video_list.size()<1)
+						{
+							((VideoViewActivity)context).finish();
+						}
+
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+				}
+			}
+		});
+
 
 
 		viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -291,44 +330,8 @@ public class VideoViewContainerFragment extends Fragment
 
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(VideoViewContainerFragment.this).get(DeleteFileOtherActivityViewModel.class);
+
 					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
-					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
-								{
-									Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
-									for(FilePOJO filePOJO:deleteFileOtherActivityViewModel.deleted_files)
-									{
-										while(iterator.hasNext())
-										{
-											Map.Entry<FilePOJO,Integer> entry=iterator.next();
-											if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
-											{
-												viewModel.video_list.removeIndex(filePOJO);
-												iterator.remove();
-												break;
-											}
-										}
-
-									}
-
-									adapter.notifyDataSetChanged();
-									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,VideoViewActivity.ACTIVITY_NAME);
-									if(viewModel.video_list.size()<1)
-									{
-										((VideoViewActivity)context).finish();
-									}
-
-								}
-								progress_bar.setVisibility(View.GONE);
-							}
-						}
-					});
 
 				}
 			}

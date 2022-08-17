@@ -99,6 +99,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private CancelableProgressBarDialog cancelableProgressBarDialog;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
+	ExtractZipFileViewModel extractZipFileViewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -106,7 +107,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
-
 	}
 
 	@Override
@@ -334,6 +334,23 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 
+		extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
+		extractZipFileViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(extractZipFileViewModel.isZipExtracted)
+					{
+						progress_bar.setVisibility(View.GONE);
+						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName());
+						extractZipFileViewModel.isZipExtracted=false;
+
+					}
+					extractZipFileViewModel.isFinished.setValue(false);
+				}
+			}
+		});
 
 		mainActivity.fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -663,23 +680,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 							ZipFile finalZipfile = zipfile;
 							progress_bar.setVisibility(View.VISIBLE);
-							ExtractZipFileViewModel extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
+
 							extractZipFileViewModel.extractZip(filePOJO,finalZipfile,zip_entry);
-							extractZipFileViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-								@Override
-								public void onChanged(Boolean aBoolean) {
-									if(aBoolean)
-									{
-										if(extractZipFileViewModel.isZipExtracted)
-										{
-											progress_bar.setVisibility(View.GONE);
-											file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName());
-											extractZipFileViewModel.isZipExtracted=false;
-											extractZipFileViewModel.isFinished.setValue(false);
-										}
-									}
-								}
-							});
+
 						}
 						else
 						{

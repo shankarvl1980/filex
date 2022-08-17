@@ -301,14 +301,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						down_button.setEnabled(true);
 						down_button.setAlpha(Global.ENABLE_ALFA);
 					}
-
-
-					{
-
-						filetext_container_edittext.setText(viewModel.stringBuilder.toString());
-						scrollview.smoothScrollTo(0,0);
-
-					}
+					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
+					scrollview.smoothScrollTo(0,0);
 
 					viewModel.textViewUndoRedo.startListening();
 					progress_bar.setVisibility(View.GONE);
@@ -377,6 +371,26 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
+		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
+		deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					{
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
+						clear_cache=false;
+						finish();
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+				}
+			}
+		});
+
+
 		onClick_edit_button();
 
 		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
@@ -390,24 +404,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
+
 					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
-					deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
-								{
-									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
-									clear_cache=false;
-									finish();
-								}
-								progress_bar.setVisibility(View.GONE);
-							}
-						}
-					});
 
 				}
 			}

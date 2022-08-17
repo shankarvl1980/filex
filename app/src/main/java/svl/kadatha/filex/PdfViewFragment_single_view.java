@@ -323,6 +323,25 @@ public class PdfViewFragment_single_view extends Fragment
             }
         });
 
+        DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment_single_view.this).get(DeleteFileOtherActivityViewModel.class);
+        deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean)
+                {
+                    if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+                    {
+                        pdf_view_adapter.notifyDataSetChanged();
+                        picture_selector_adapter.notifyDataSetChanged();
+                        FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
+                        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
+                        ((PdfViewActivity)context).finish();
+                    }
+                    progress_bar.setVisibility(View.GONE);
+                    deleteFileOtherActivityViewModel.isFinished.setValue(false);
+                }
+            }
+        });
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,26 +362,7 @@ public class PdfViewFragment_single_view extends Fragment
 
                     files_selected_for_delete=new ArrayList<>();
                     files_selected_for_delete.add(viewModel.currently_shown_file);
-                    DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment_single_view.this).get(DeleteFileOtherActivityViewModel.class);
                     deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
-                    deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-                            if(aBoolean)
-                            {
-                                if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
-                                {
-                                    pdf_view_adapter.notifyDataSetChanged();
-                                    picture_selector_adapter.notifyDataSetChanged();
-                                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
-                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
-                                    ((PdfViewActivity)context).finish();
-                                }
-                                progress_bar.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-
                 }
             }
         });

@@ -414,6 +414,45 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		
 */
 		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
+		viewModel.isExtractionCompleted.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					archive_view=viewModel.zipFileExtracted;
+					if(viewModel.zipFileExtracted)
+					{
+						toolbar_shown_prior_archive=toolbar_shown;
+						createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
+					}
+					else
+					{
+						if(Global.ARCHIVE_EXTRACT_DIR.exists())
+						{
+							FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
+						}
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						df.progress_bar.setVisibility(View.GONE);
+					}
+					viewModel.isExtractionCompleted.setValue(false);
+				}
+			}
+		});
+
+		viewModel.isDeletionCompleted.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+					df.progress_bar.setVisibility(View.GONE);
+					viewModel.isDeletionCompleted.setValue(false);
+				}
+			}
+		});
+
+
+
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
 		fileDuplicationViewModel.isFinished.observe(MainActivity.this, new Observer<Boolean>() {
 			@Override
@@ -929,30 +968,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			df.progress_bar.setVisibility(View.VISIBLE);
 			viewModel.extractArchive(zipfile);
-			viewModel.isExtractionCompleted.observe(this, new Observer<Boolean>() {
-				@Override
-				public void onChanged(Boolean aBoolean) {
-					if(aBoolean)
-					{
-						archive_view=viewModel.zipFileExtracted;
-						if(viewModel.zipFileExtracted)
-						{
-							toolbar_shown_prior_archive=toolbar_shown;
-							createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
-						}
-						else
-						{
-							if(Global.ARCHIVE_EXTRACT_DIR.exists())
-							{
-								FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-							}
-							DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-							df.progress_bar.setVisibility(View.GONE);
-						}
-						viewModel.isExtractionCompleted.setValue(false);
-					}
-				}
-			});
 
 		}
 	}
@@ -1384,17 +1399,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			df.progress_bar.setVisibility(View.VISIBLE);
 			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-			viewModel.isDeletionCompleted.observe(this, new Observer<Boolean>() {
-				@Override
-				public void onChanged(Boolean aBoolean) {
-					if(aBoolean)
-					{
-						df.progress_bar.setVisibility(View.GONE);
-						viewModel.isDeletionCompleted.setValue(false);
-					}
-				}
-			});
-
 			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
 		}

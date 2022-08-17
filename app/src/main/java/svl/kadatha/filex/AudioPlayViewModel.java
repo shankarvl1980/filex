@@ -15,6 +15,12 @@ public class AudioPlayViewModel extends ViewModel {
     private Future<?> future1,future2;
     public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 
+    public boolean fromArchiveView;
+    public FileObjectType fileObjectType;
+    public boolean fromThirdPartyApp;
+    public String file_path;
+
+
 
     @Override
     protected void onCleared() {

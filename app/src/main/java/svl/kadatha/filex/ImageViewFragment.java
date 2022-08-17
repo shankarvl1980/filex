@@ -80,8 +80,10 @@ public class ImageViewFragment extends Fragment
 	private TextView current_image_tv;
 
 
+
 	private LocalBroadcastManager localBroadcastManager;
 	public FilteredFilePOJOViewModel viewModel;
+
 	public FrameLayout progress_bar;
 	private static final String DELETE_FILE_REQUEST_CODE="image_file_delete_request_code";
 
@@ -321,10 +323,6 @@ public class ImageViewFragment extends Fragment
 			}
 		};
 
-		if(context==null)
-		{
-			context=getContext();
-		}
 
 		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
 		data=((ImageViewActivity)context).data;
@@ -365,7 +363,31 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
+		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
+		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					{
+						viewModel.album_file_pojo_list.removeAll(deleteFileOtherActivityViewModel.deleted_files);
+						viewModel.total_images=viewModel.album_file_pojo_list.size();
+						image_view_adapter.notifyDataSetChanged();
+						picture_selector_adapter.notifyDataSetChanged();
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
+						if(viewModel.album_file_pojo_list.size()<1)
+						{
+							((ImageViewActivity)context).finish();
+						}
 
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+				}
+			}
+		});
 
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -386,31 +408,8 @@ public class ImageViewFragment extends Fragment
 
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
-					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
-					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
-								{
-									viewModel.album_file_pojo_list.removeAll(deleteFileOtherActivityViewModel.deleted_files);
-									viewModel.total_images=viewModel.album_file_pojo_list.size();
-									image_view_adapter.notifyDataSetChanged();
-									picture_selector_adapter.notifyDataSetChanged();
-									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
-									if(viewModel.album_file_pojo_list.size()<1)
-									{
-										((ImageViewActivity)context).finish();
-									}
 
-								}
-								progress_bar.setVisibility(View.GONE);
-							}
-						}
-					});
+					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
 
 				}
 			}

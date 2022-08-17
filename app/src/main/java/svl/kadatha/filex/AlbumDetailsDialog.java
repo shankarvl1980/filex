@@ -332,6 +332,33 @@ public class AlbumDetailsDialog extends DialogFragment
 		//hide keyboard when coming from search list of albumlist dialog
 		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 
+		DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AlbumDetailsDialog.this).get(DeleteAudioViewModel.class);
+		deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean) {
+					if (deleteAudioViewModel.deleted_audio_files.size() > 0) {
+						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
+						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
+						num_all_audio = total_audio_list.size();
+						audioListRecyclerViewAdapter.notifyDataSetChanged();
+						if (num_all_audio == 0) {
+							selected_album_recyclerview.setVisibility(View.GONE);
+							empty_audio_list_tv.setVisibility(View.VISIBLE);
+						}
+
+						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
+						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, AudioPlayerActivity.ACTIVITY_NAME);
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteAudioViewModel.isFinished.setValue(false);
+				}
+			}
+		});
+
+
+
 		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -371,30 +398,8 @@ public class AlbumDetailsDialog extends DialogFragment
 					String tree_uri_path=result.getString("tree_uri_path");
 					String source_folder=result.getString("source_folder");
 
-					DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AlbumDetailsDialog.this).get(DeleteAudioViewModel.class);
-					deleteAudioViewModel.deleteAudioPOJO(true,audioListViewModel.audios_selected_for_delete,tree_uri,tree_uri_path);
-					deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean) {
-								if (deleteAudioViewModel.deleted_audio_files.size() > 0) {
-									audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
-									total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
-									num_all_audio = total_audio_list.size();
-									audioListRecyclerViewAdapter.notifyDataSetChanged();
-									if (num_all_audio == 0) {
-										selected_album_recyclerview.setVisibility(View.GONE);
-										empty_audio_list_tv.setVisibility(View.VISIBLE);
-									}
 
-									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
-									((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, AudioPlayerActivity.ACTIVITY_NAME);
-								}
-								progress_bar.setVisibility(View.GONE);
-							}
-						}
-					});
+					deleteAudioViewModel.deleteAudioPOJO(true,audioListViewModel.audios_selected_for_delete,tree_uri,tree_uri_path);
 
 				}
 

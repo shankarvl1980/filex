@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,13 +82,13 @@ public class AudioPlayFragment extends Fragment
 	private List<AudioPOJO> files_selected_for_delete;
 	public String audio_file_name="";
 	public Bitmap album_art;
-	private boolean isDurationMoreThanHour,fromArchiveView;
+	private boolean isDurationMoreThanHour;
 	private Uri data;
-	private FileObjectType fileObjectType;
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
 	private FrameLayout progress_bar;AudioPlayerActivity activity;
+	private AudioPlayViewModel audioPlayViewModel;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -96,6 +97,29 @@ public class AudioPlayFragment extends Fragment
 		localBroadcastManager=LocalBroadcastManager.getInstance(context);
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		activity=((AudioPlayerActivity)context);
+		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
+		audioPlayViewModel.isFinished.observe(this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					Intent service_intent=new Intent(context,AudioPlayerService.class);
+					service_intent.setData(data);
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+					{
+						context.startForegroundService(service_intent);
+					}
+					else
+					{
+						context.startService(service_intent);
+					}
+					if(progress_bar!=null)progress_bar.setVisibility(View.GONE); //because on_intent is called before inflation of view
+					audioPlayViewModel.isFinished.setValue(false);
+				}
+
+			}
+		});
+
 	}
 
 	@Override
@@ -103,52 +127,42 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-
 		onserviceconnection_handler=new Handler();
-	
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.ringtone_icon,getString(R.string.set_as_ringtone)));
-		
+
 	}
 
-	public void set_audio(String file_path)
+	public void set_audio(AudioPOJO audioPOJO)
+	{
+		audioPlayViewModel.fromArchiveView = false;
+		audioPlayViewModel.fileObjectType= audioPOJO.getFileObjectType();
+		audioPlayViewModel.fromThirdPartyApp = false;
+		audioPlayViewModel.file_path=audioPOJO.getData();
+
+		setTitleArt(audioPOJO.getTitle(),audioPOJO.getData());
+		audio_player_service.current_audio=audioPOJO;
+
+	}
+
+	public void initiate_audio()
 	{
 		data=activity.data;
-		fromArchiveView = activity.fromArchiveView;
-		fileObjectType= activity.fileObjectType;
-		boolean fromThirdPartyApp = activity.fromThirdPartyApp;
 
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
-			String source_folder = new File(file_path).getParent();
-			AudioPlayViewModel audioPlayViewModel=new ViewModelProvider(this).get(AudioPlayViewModel.class);
-			audioPlayViewModel.isFinished.observe(this, new Observer<Boolean>() {
-				@Override
-				public void onChanged(Boolean aBoolean) {
-					if(aBoolean)
-					{
-						Intent service_intent=new Intent(context,AudioPlayerService.class);
-						service_intent.setData(data);
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-						{
-							context.startForegroundService(service_intent);
-						}
-						else
-						{
-							context.startService(service_intent);
-						}
-						if(progress_bar!=null)progress_bar.setVisibility(View.GONE); //because on_intent is called before inflation of view
-						audioPlayViewModel.isFinished.setValue(false);
-					}
 
-				}
-			});
+			audioPlayViewModel.fromArchiveView = activity.fromArchiveView;
+			audioPlayViewModel.fileObjectType= activity.fileObjectType;
+			audioPlayViewModel.fromThirdPartyApp = activity.fromThirdPartyApp;
+			audioPlayViewModel.file_path=activity.file_path;
 
-			audioPlayViewModel.albumPolling(source_folder,fileObjectType, fromThirdPartyApp,fromArchiveView);
+			String source_folder = new File(audioPlayViewModel.file_path).getParent();
+			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp,audioPlayViewModel.fromArchiveView);
 		}
 
 	}
@@ -213,7 +227,6 @@ public class AudioPlayFragment extends Fragment
 					}
 				});
 				service_bound=true;
-				
 			}
 			
 			public void onServiceDisconnected(ComponentName component_nane)
@@ -222,7 +235,7 @@ public class AudioPlayFragment extends Fragment
 				service_bound=false;
 			}
 		};
-		Toolbar top_toolbar = v.findViewById(R.id.current_play_toolbar);
+		//Toolbar top_toolbar = v.findViewById(R.id.current_play_toolbar);
 
 		SeekBar volumeControlSeekbar = v.findViewById(R.id.current_play_volume_seekbar);
 		volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -274,7 +287,6 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
-		fromArchiveView=((AudioPlayerActivity)context).fromArchiveView;
 
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
@@ -306,7 +318,6 @@ public class AudioPlayFragment extends Fragment
 		current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
 		seekbar=v.findViewById(R.id.audio_player_seekbar);
 
-
 		seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
 			{
 				public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
@@ -314,9 +325,7 @@ public class AudioPlayFragment extends Fragment
 					if(fromUser)
 					{
 						audio_player_service.seek_to(progress);
-
 					}
-
 				}
 
 				public void onStartTrackingTouch(SeekBar sb)
@@ -361,15 +370,12 @@ public class AudioPlayFragment extends Fragment
 						audio_player_service.handler.obtainMessage(AudioPlayerService.START).sendToTarget();
 						play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.pause_icon));
 						update_position();
-
 					}
 					else if(audio_player_service.prepared && audio_player_service.playmode)
 					{
 						audio_player_service.handler.obtainMessage(AudioPlayerService.PAUSE).sendToTarget();
 						play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon));
-
 					}
-
 				}
 			});
 
@@ -391,6 +397,29 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
+		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AudioPlayFragment.this).get(DeleteFileOtherActivityViewModel.class);
+		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
+					{
+						if(audio_player_service!=null)
+						{
+							audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
+						}
+						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
+						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(deleteFileOtherActivityViewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,audioPlayViewModel.fileObjectType);
+						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+						AudioPlayerActivity.AUDIO_FILE=null;
+					}
+					progress_bar.setVisibility(View.GONE);
+					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+				}
+			}
+		});
+
 
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -403,30 +432,8 @@ public class AudioPlayFragment extends Fragment
 					String source_folder=result.getString("source_folder");
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
-					DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AudioPlayFragment.this).get(DeleteFileOtherActivityViewModel.class);
-					deleteFileOtherActivityViewModel.deleteAudioPOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
-					deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
-								{
-									if(audio_player_service!=null)
-									{
-										audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
-									}
-									((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
-									FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
-									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
-									AudioPlayerActivity.AUDIO_FILE=null;
 
-								}
-								progress_bar.setVisibility(View.GONE);
-
-							}
-						}
-					});
+					deleteFileOtherActivityViewModel.deleteAudioPOJO(source_folder,files_selected_for_delete,audioPlayViewModel.fileObjectType,tree_uri,tree_uri_path);
 
 				}
 			}
@@ -675,14 +682,21 @@ public class AudioPlayFragment extends Fragment
 		public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
 		{
 			// TODO: Implement this method
-			final Bundle bundle=new Bundle();
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
+			if(audioPlayViewModel==null)
+			{
+				Log.d(Global.TAG,"audioplayview model is null");
+			}
+			else
+			{
+				Log.d(Global.TAG,"audio play view model is not null and fromthirdparty "+audioPlayViewModel.fromThirdPartyApp);
+			}
+
 			switch(p3)
 			{
-				
 				case 0:
-					if(fromArchiveView || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+					if(audioPlayViewModel.fromArchiveView || audioPlayViewModel.fromThirdPartyApp || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;
@@ -703,7 +717,7 @@ public class AudioPlayFragment extends Fragment
 						src_uri=data;
 
 					}
-					else if(fileObjectType==FileObjectType.FILE_TYPE)
+					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE)
 					{
 						src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
