@@ -47,7 +47,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public UsbFile currentUsbFile;
 	public TextView folder_selected_textview;
 	private FileModifyObserver fileModifyObserver;
-	public boolean local_activity_delete,modification_observed,cache_cleared;
+	public boolean local_activity_delete,modification_observed;//,cache_cleared;
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	public int file_list_size;
@@ -221,7 +221,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		super.onResume();
 		if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
-			cache_cleared=false;
+			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED)
@@ -241,7 +241,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 		else if(local_activity_delete)
 		{
-			cache_cleared=false;
+			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(FileSelectorActivity.SHOW_HIDDEN_FILE)
@@ -310,15 +310,15 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
 		if(file_path==null || fileObjectType==null)
 		{
-			cache_cleared=true;
+			//cache_cleared=true;
 		}
 		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
 		{
-			cache_cleared=true;
+			//cache_cleared=true;
 		}
 		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
 		{
-			cache_cleared=true;
+			//cache_cleared=true;
 		}
 	}
 

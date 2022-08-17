@@ -6,6 +6,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +75,10 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 else
                 {
                     Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
+                }
+                if(deleted_files.size()>0)
+                {
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
                 }
                 isFinished.postValue(true);
             }
@@ -181,6 +186,10 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 else
                 {
                     Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
+                }
+                if(deleted_audio_files.size()>0)
+                {
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
                 }
                 isFinished.postValue(true);
             }

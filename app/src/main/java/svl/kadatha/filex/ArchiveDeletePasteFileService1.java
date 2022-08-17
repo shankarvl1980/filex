@@ -829,7 +829,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onCancelled(result);
-			int s=deleted_file_names.size();
+			//int s=deleted_file_names.size();
 			ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNCTASK_COMPLETE(context,counter_no_files,source_folder,sourceFileObjectType,deleted_file_names,deleted_files_path_list,true,storage_analyser_delete);
 			stopForeground(true);
 			stopSelf();

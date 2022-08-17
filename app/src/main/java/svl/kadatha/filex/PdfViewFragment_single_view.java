@@ -334,7 +334,7 @@ public class PdfViewFragment_single_view extends Fragment
                         pdf_view_adapter.notifyDataSetChanged();
                         picture_selector_adapter.notifyDataSetChanged();
                         FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
-                        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
+                        //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                         ((PdfViewActivity)context).finish();
                     }
                     progress_bar.setVisibility(View.GONE);

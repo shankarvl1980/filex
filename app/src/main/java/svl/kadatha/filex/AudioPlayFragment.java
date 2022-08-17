@@ -411,7 +411,7 @@ public class AudioPlayFragment extends Fragment
 						}
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
 						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(deleteFileOtherActivityViewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,audioPlayViewModel.fileObjectType);
-						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
+						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 						AudioPlayerActivity.AUDIO_FILE=null;
 					}
 					progress_bar.setVisibility(View.GONE);

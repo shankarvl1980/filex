@@ -64,7 +64,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 			files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 			sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 			source_folder=bundle.getString("source_folder");
-            boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
+            //boolean storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 			size=files_selected_array.size();
 		}
 		String other_file_permission = Global.GET_OTHER_FILE_PERMISSION(source_folder);

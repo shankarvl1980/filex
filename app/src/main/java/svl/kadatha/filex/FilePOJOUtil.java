@@ -768,7 +768,6 @@ public class FilePOJOUtil {
         String parent_file_path=new File(file_path).getParent();
         if(parent_file_path!=null)
         {
-
             for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
                 if (Global.IS_CHILD_FILE(fileObjectType + file_path, entry.getKey())) {
                     List<FilePOJO> filePOJOS = entry.getValue();

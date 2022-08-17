@@ -341,7 +341,6 @@ public class AlbumDetailsDialog extends DialogFragment
 						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						num_all_audio = total_audio_list.size();
-						audioListRecyclerViewAdapter.notifyDataSetChanged();
 						if (num_all_audio == 0) {
 							selected_album_recyclerview.setVisibility(View.GONE);
 							empty_audio_list_tv.setVisibility(View.VISIBLE);
@@ -349,8 +348,9 @@ public class AlbumDetailsDialog extends DialogFragment
 
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-						Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, AudioPlayerActivity.ACTIVITY_NAME);
+						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, AudioPlayerActivity.ACTIVITY_NAME);
 					}
+					clear_selection();
 					progress_bar.setVisibility(View.GONE);
 					deleteAudioViewModel.isFinished.setValue(false);
 				}
