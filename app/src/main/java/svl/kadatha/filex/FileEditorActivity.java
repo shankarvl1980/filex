@@ -834,19 +834,21 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				start_file_save_service();
 			} else if (id == R.id.toolbar_btn_5) {
 				if (!viewModel.updated) {
-
+					viewModel.action_after_save="go_previous";
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 				} else {
+					viewModel.action_after_save="";
 					go_previous();
 				}
 			} else if (id == R.id.toolbar_btn_6) {
 				if (!viewModel.updated) {
-
+					viewModel.action_after_save="go_next";
 					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 
 				} else {
+					viewModel.action_after_save="";
 					go_next();
 				}
 			}
