@@ -31,7 +31,7 @@ public class TextViewUndoRedoBatch
         mTextView = textView;
         mEditHistory = new EditHistory();
         mChangeListener = new EditTextChangeListener();
-
+        mTextView.addTextChangedListener(mChangeListener);
 
     }
 
@@ -59,7 +59,7 @@ public class TextViewUndoRedoBatch
         mTextView.removeTextChangedListener(mChangeListener);
     }
 
-    public void connect(){ mTextView.addTextChangedListener(mChangeListener); }
+    //public void connect(){ mTextView.addTextChangedListener(mChangeListener); }
 /*
     public void setMaxHistorySize(int maxHistorySize) 
 	{

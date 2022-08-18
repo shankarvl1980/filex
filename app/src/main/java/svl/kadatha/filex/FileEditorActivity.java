@@ -576,17 +576,17 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		viewModel.textViewUndoRedo.connect();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		viewModel.textViewUndoRedo.disconnect();
-	}
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		viewModel.textViewUndoRedo.connect();
+//	}
+//
+//	@Override
+//	protected void onPause() {
+//		super.onPause();
+//		viewModel.textViewUndoRedo.disconnect();
+//	}
 
 	@Override
 	protected void onStop()
