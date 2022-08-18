@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,7 +62,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private Uri tree_uri;
 	EditText filetext_container_edittext;
 	private Button edit_button,undo_button,redo_button,save_button,up_button,down_button;
-    private boolean edit_mode;
+    public boolean edit_mode;
 	static boolean NOT_WRAP=true;
 	static final int EOL_N = 0;
 	static final int EOL_R = 1;
@@ -93,7 +92,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_editor_saf_permission_request_code";
 	private FrameLayout progress_bar;
 	public FileEditorViewModel viewModel;
-	private TextViewUndoRedoBatch.EditTextRedoUndoListener editTextRedoUndoListener;
+
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -132,7 +131,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		keyBoardUtil=new KeyBoardUtil(scrollview);
 
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        Toolbar top_toolbar = findViewById(R.id.file_editor_top_toolbar);
+        //Toolbar top_toolbar = findViewById(R.id.file_editor_top_toolbar);
 		progress_bar=findViewById(R.id.file_editor_progressbar);
         FloatingActionButton floating_back_button = findViewById(R.id.file_editor_floating_action_button_back);
 		floating_back_button.setOnClickListener(new View.OnClickListener()
@@ -306,9 +305,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
 					scrollview.smoothScrollTo(0,0);
 
-					if(edit_mode)viewModel.textViewUndoRedo.startListening();
+					viewModel.textViewUndoRedo.startListening();
 					progress_bar.setVisibility(View.GONE);
-					//viewModel.isReadingFinished.setValue(false);
 				}
 			}
 		});
@@ -354,8 +352,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		filetext_container_edittext=findViewById(R.id.textfile_edittext);
 		filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
-
-		editTextRedoUndoListener=new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
+		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
+		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
 			@Override
 			public void onEditTextChange() {
 				undo_button.setEnabled(true);
@@ -367,11 +365,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				redo_button.setAlpha(Global.DISABLE_ALFA);
 
 			}
-		};
-
-		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
-		viewModel.textViewUndoRedo.stopListening();
-		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(editTextRedoUndoListener);
+		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
@@ -383,6 +377,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					{
 						//FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
 						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
+						viewModel.textViewUndoRedo.disconnect();
 						clear_cache=false;
 						finish();
 					}
@@ -481,6 +476,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 					if(!openFile(viewModel.current_page_end_point))
 					{
+						viewModel.textViewUndoRedo.disconnect();
 						clear_cache=false;
 						finish();
 					}
@@ -580,6 +576,17 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		viewModel.textViewUndoRedo.connect();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		viewModel.textViewUndoRedo.disconnect();
+	}
 
 	@Override
 	protected void onStop()
@@ -682,7 +689,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		try
 		{
-			Log.d(Global.TAG,"opening");
 			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
 
@@ -717,7 +723,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			save_button.setEnabled(true);
 			save_button.setAlpha(Global.ENABLE_ALFA);
 			viewModel.updated=false;
-			Log.d(Global.TAG,"eolchange occured");
 		}
 	}
 
@@ -734,8 +739,17 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		if (save) {
 			start_file_save_service();
 		} else {
+			save_button.setEnabled(false);
+			save_button.setAlpha(Global.DISABLE_ALFA);
 			viewModel.updated = true;
-			go_previous();
+			if(viewModel.action_after_save.equals("go_previous"))
+			{
+				go_previous();
+			}
+			else if(viewModel.action_after_save.equals("go_next"))
+			{
+				go_next();
+			}
 		}
 	}
 
@@ -748,6 +762,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else
 		{
+			viewModel.textViewUndoRedo.disconnect();
 			clear_cache=false;
 			finish();
 		}
@@ -1054,6 +1069,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 									if(viewModel.to_be_closed_after_save)
 									{
+										viewModel.textViewUndoRedo.disconnect();
 										clear_cache=false;
 										finish();
 									}
@@ -1100,6 +1116,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 									if(viewModel.to_be_closed_after_save)
 									{
+										viewModel.textViewUndoRedo.disconnect();
 										clear_cache=false;
 										finish();
 									}

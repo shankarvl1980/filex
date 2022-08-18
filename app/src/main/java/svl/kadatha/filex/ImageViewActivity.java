@@ -3,7 +3,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -23,7 +22,6 @@ public class ImageViewActivity extends BaseActivity
 	public File CacheDir;
 	public static final String ACTIVITY_NAME="IMAGE_VIEW_ACTIVITY";
 	public boolean clear_cache;
-	private LocalBroadcastManager localBroadcastManager;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -35,7 +33,7 @@ public class ImageViewActivity extends BaseActivity
 		CacheDir=getExternalCacheDir();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
-		localBroadcastManager= LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);

@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +83,6 @@ public class AudioPlayFragment extends Fragment
 	public Bitmap album_art;
 	private boolean isDurationMoreThanHour;
 	private Uri data;
-	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
 	private FrameLayout progress_bar;AudioPlayerActivity activity;
@@ -94,7 +92,7 @@ public class AudioPlayFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		activity=((AudioPlayerActivity)context);
 		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
@@ -684,14 +682,6 @@ public class AudioPlayFragment extends Fragment
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
-			if(audioPlayViewModel==null)
-			{
-				Log.d(Global.TAG,"audioplayview model is null");
-			}
-			else
-			{
-				Log.d(Global.TAG,"audio play view model is not null and fromthirdparty "+audioPlayViewModel.fromThirdPartyApp);
-			}
 
 			switch(p3)
 			{

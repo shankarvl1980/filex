@@ -16,7 +16,6 @@ public class PdfViewActivity extends BaseActivity {
     public Uri data;
     public static final String ACTIVITY_NAME="PDF_VIEW_ACTIVITY";
     public boolean clear_cache;
-    private LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +23,7 @@ public class PdfViewActivity extends BaseActivity {
         context=this;
         setContentView(R.layout.activity_blank_view);
         fm=getSupportFragmentManager();
-        localBroadcastManager= LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);

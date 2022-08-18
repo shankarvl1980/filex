@@ -40,7 +40,6 @@ public class AppManagerActivity extends BaseActivity{
     public EditText search_edittext;
     private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
     public boolean clear_cache;
-    private LocalBroadcastManager localBroadcastManager;
     public static final String ACTIVITY_NAME="APP_MANAGER_ACTIVITY";
 
 
@@ -51,7 +50,7 @@ public class AppManagerActivity extends BaseActivity{
         context=this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         fm=getSupportFragmentManager();
-        localBroadcastManager= LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);
         keyBoardUtil=new KeyBoardUtil(containerLayout);
         search_toolbar=findViewById(R.id.app_manager_search_toolbar);

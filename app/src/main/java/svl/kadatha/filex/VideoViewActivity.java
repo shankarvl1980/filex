@@ -27,10 +27,9 @@ public class VideoViewActivity extends BaseActivity
 	public String source_folder;
 	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
 	public boolean clear_cache;
-	private LocalBroadcastManager localBroadcastManager;
 
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
  		// TODO: Implement this method
@@ -39,7 +38,7 @@ public class VideoViewActivity extends BaseActivity
 		fm=getSupportFragmentManager();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
-		localBroadcastManager= LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);

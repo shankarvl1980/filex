@@ -38,7 +38,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	private FileObjectType sourceFileObjectType;
 	private ProgressBar cancelProgressBar;
 	private boolean clear_cache;
-	private LocalBroadcastManager localBroadcastManager;
 	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_1";
 	private TextView dialog_title,from_label,to_label;
 	private TableRow to_table_row;
@@ -50,7 +49,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		context=this;
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
 		setFinishOnTouchOutside(false);
-		localBroadcastManager= LocalBroadcastManager.getInstance(this);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
 		to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
 		from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);

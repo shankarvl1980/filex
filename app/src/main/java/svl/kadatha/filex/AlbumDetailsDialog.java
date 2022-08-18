@@ -74,14 +74,13 @@ public class AlbumDetailsDialog extends DialogFragment
 	private boolean search_toolbar_visible;
 	private AudioListViewModel audioListViewModel;
 	private FrameLayout progress_bar;
-	private LocalBroadcastManager localBroadcastManager;
 
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		localBroadcastManager= LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override

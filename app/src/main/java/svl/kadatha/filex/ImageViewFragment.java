@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -80,8 +79,6 @@ public class ImageViewFragment extends Fragment
 	private TextView current_image_tv;
 
 
-
-	private LocalBroadcastManager localBroadcastManager;
 	public FilteredFilePOJOViewModel viewModel;
 
 	public FrameLayout progress_bar;
@@ -91,7 +88,7 @@ public class ImageViewFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override

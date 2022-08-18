@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -265,7 +264,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             Intent intent = new Intent();
                             intent.putExtra("folderclickselected", fileSelectorDialog.folder_selected_textview.getText().toString());
                             intent.putExtra("destFileObjectType", fileSelectorDialog.fileObjectType);
-                            Log.d(Global.TAG,"file selected - "+fileSelectorDialog.folder_selected_textview.getText().toString()+" and object type is "+fileSelectorDialog.fileObjectType);
                             setResult(Activity.RESULT_OK, intent);
 
                         }

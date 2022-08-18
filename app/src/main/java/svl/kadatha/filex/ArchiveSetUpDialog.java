@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -643,7 +642,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				viewModel.folderclickselected = intent.getStringExtra("folderclickselected");
 				viewModel.custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
 				customdir_edittext.setText(viewModel.folderclickselected);
-				Log.d(Global.TAG,"in result file selected - "+viewModel.folderclickselected+" and object type is "+viewModel.custom_dir_fileObjectType);
 			}
 		}
 	});

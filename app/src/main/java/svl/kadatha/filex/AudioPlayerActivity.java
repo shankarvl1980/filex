@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -67,7 +66,6 @@ public class AudioPlayerActivity extends BaseActivity
 	String file_path;
 	public static final String ACTIVITY_NAME="AUDIO_PLAYER_ACTIVITY";
 	public boolean clear_cache;
-	private LocalBroadcastManager localBroadcastManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -77,7 +75,7 @@ public class AudioPlayerActivity extends BaseActivity
 		setContentView(R.layout.activity_audio_player);
 		context=this;
 		tinyDB=new TinyDB(context);
-		localBroadcastManager= LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		
 		AUDIO_NOTIFICATION_INTENT_ACTION=getPackageName()+".AUDIO_NOTIFICATION";

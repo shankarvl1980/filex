@@ -61,7 +61,6 @@ public class PdfViewFragment_single_view extends Fragment
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
     private Uri data;
-    private LocalBroadcastManager localBroadcastManager;
     private RecyclerView recyclerview;
     private boolean toolbar_visible,is_menu_opened;
     private TextView title,current_page_tv;
@@ -85,7 +84,7 @@ public class PdfViewFragment_single_view extends Fragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        localBroadcastManager=LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
     }
 
     @Override

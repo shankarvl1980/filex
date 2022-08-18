@@ -59,7 +59,6 @@ public class VideoViewContainerFragment extends Fragment
 	private FloatingActionButton floating_back_button;
 	private boolean toolbar_visible;
 
-	private LocalBroadcastManager localBroadcastManager;
 	private VideoViewActivity videoViewActivity;
 	public FrameLayout progress_bar;
 	public FilteredFilePOJOViewModel viewModel;
@@ -69,7 +68,7 @@ public class VideoViewContainerFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		videoViewActivity=((VideoViewActivity)context);
 	}
 

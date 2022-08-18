@@ -62,7 +62,6 @@ public class AllAudioListFragment extends Fragment
 	public boolean whether_audios_set_to_current_list, img_btns_enabled;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
 	public AudioListViewModel audioListViewModel;
-	private LocalBroadcastManager localBroadcastManager;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="all_audio_save_audio_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="all_audio_file_delete_request_code";
 
@@ -70,7 +69,7 @@ public class AllAudioListFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		localBroadcastManager= LocalBroadcastManager.getInstance(context);
+		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override

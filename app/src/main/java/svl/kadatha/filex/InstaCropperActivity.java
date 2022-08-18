@@ -40,7 +40,6 @@ public class InstaCropperActivity extends AppCompatActivity {
     public static final String EXTRA_FILE_NAME="file_name";
 
     private boolean clear_cache;
-    private LocalBroadcastManager localBroadcastManager;
 
     public static Intent getIntent(Context context, Uri src, Uri dst, String file_name, int maxWidth, int outputQuality) {
         return getIntent(
@@ -117,7 +116,7 @@ public class InstaCropperActivity extends AppCompatActivity {
         mInstaCropper = findViewById(R.id.instacropper);
         progress_bar=findViewById(R.id.instacropper_activity_progressbar);
         progress_bar.setVisibility(View.GONE);
-        localBroadcastManager= LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         Intent intent = getIntent();
 
         Uri uri = intent.getData();
