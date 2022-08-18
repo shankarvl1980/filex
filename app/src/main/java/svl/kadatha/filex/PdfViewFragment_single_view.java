@@ -333,7 +333,7 @@ public class PdfViewFragment_single_view extends Fragment
                     {
                         pdf_view_adapter.notifyDataSetChanged();
                         picture_selector_adapter.notifyDataSetChanged();
-                        FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
+                        //FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
                         //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,PdfViewActivity.ACTIVITY_NAME);
                         ((PdfViewActivity)context).finish();
                     }
@@ -359,10 +359,10 @@ public class PdfViewFragment_single_view extends Fragment
                     progress_bar.setVisibility(View.VISIBLE);
                     Uri tree_uri=result.getParcelable("tree_uri");
                     String tree_uri_path=result.getString("tree_uri_path");
-
+                    String source_folder=result.getString("source_folder");
                     files_selected_for_delete=new ArrayList<>();
                     files_selected_for_delete.add(viewModel.currently_shown_file);
-                    deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
+                    deleteFileOtherActivityViewModel.deleteFilePOJO(source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
                 }
             }
         });

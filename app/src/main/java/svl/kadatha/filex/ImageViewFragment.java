@@ -375,7 +375,7 @@ public class ImageViewFragment extends Fragment
 						viewModel.total_images=viewModel.album_file_pojo_list.size();
 						image_view_adapter.notifyDataSetChanged();
 						picture_selector_adapter.notifyDataSetChanged();
-						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
+						//FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
 						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
 						if(viewModel.album_file_pojo_list.size()<1)
 						{
@@ -405,11 +405,9 @@ public class ImageViewFragment extends Fragment
 					progress_bar.setVisibility(View.VISIBLE);
 					Uri tree_uri=result.getParcelable("tree_uri");
 					String tree_uri_path=result.getString("tree_uri_path");
-
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-
-					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(viewModel.source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
 
 				}
 			}

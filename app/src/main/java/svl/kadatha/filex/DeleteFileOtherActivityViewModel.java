@@ -53,9 +53,10 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void deleteFilePOJO(List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
+    public synchronized void deleteFilePOJO(String source_folder,List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
         if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        this.source_folder=source_folder;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -78,6 +79,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 }
                 if(deleted_files.size()>0)
                 {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
                 }
                 isFinished.postValue(true);
@@ -189,6 +191,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 }
                 if(deleted_audio_files.size()>0)
                 {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
                 }
                 isFinished.postValue(true);

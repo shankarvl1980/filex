@@ -8,6 +8,7 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -348,6 +349,8 @@ public class TextViewUndoRedoBatch
 			{
                 return;
             }
+
+            Log.d(Global.TAG,"textchanging listening");
 
             mAfterChange = s.subSequence(start, start + count);
             makeBatch(start);

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,7 +54,7 @@ import java.util.List;
 
 public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
 {
-    File file;
+    private File file;
 	public boolean fromArchiveView,fromThirdPartyApp;
 	private String source_folder;
 	FileSaveServiceConnection serviceConnection;
@@ -92,6 +93,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_editor_saf_permission_request_code";
 	private FrameLayout progress_bar;
 	public FileEditorViewModel viewModel;
+	private TextViewUndoRedoBatch.EditTextRedoUndoListener editTextRedoUndoListener;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -304,15 +306,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
 					scrollview.smoothScrollTo(0,0);
 
-					viewModel.textViewUndoRedo.startListening();
+					if(edit_mode)viewModel.textViewUndoRedo.startListening();
 					progress_bar.setVisibility(View.GONE);
-					viewModel.isReadingFinished.setValue(false);
+					//viewModel.isReadingFinished.setValue(false);
 				}
 			}
 		});
 
-		Intent intent=getIntent();
-		on_intent(intent, savedInstanceState);
 
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
 		{
@@ -354,23 +354,24 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		filetext_container_edittext=findViewById(R.id.textfile_edittext);
 		filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
-		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
-		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener()
-		{
-			public void onEditTextChange()
-			{
 
+		editTextRedoUndoListener=new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
+			@Override
+			public void onEditTextChange() {
 				undo_button.setEnabled(true);
 				undo_button.setAlpha(Global.ENABLE_ALFA);
 				save_button.setEnabled(true);
 				save_button.setAlpha(Global.ENABLE_ALFA);
 				viewModel.updated=false;
-
 				redo_button.setEnabled(false);
 				redo_button.setAlpha(Global.DISABLE_ALFA);
 
 			}
-		});
+		};
+
+		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
+		viewModel.textViewUndoRedo.stopListening();
+		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(editTextRedoUndoListener);
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
@@ -380,7 +381,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				{
 					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
 					{
-						FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
+						//FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,fileObjectType);
 						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
 						clear_cache=false;
 						finish();
@@ -390,6 +391,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				}
 			}
 		});
+
+		Intent intent=getIntent();
+		on_intent(intent, savedInstanceState);
 
 
 		onClick_edit_button();
@@ -402,11 +406,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					progress_bar.setVisibility(View.VISIBLE);
 					Uri tree_uri=result.getParcelable("tree_uri");
 					String tree_uri_path=result.getString("tree_uri_path");
-
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
 
-					deleteFileOtherActivityViewModel.deleteFilePOJO(files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(source_folder,files_selected_for_delete,fileObjectType,tree_uri,tree_uri_path);
 
 				}
 			}
@@ -577,6 +580,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 
+
 	@Override
 	protected void onStop()
 	{
@@ -678,6 +682,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		try
 		{
+			Log.d(Global.TAG,"opening");
 			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
 
@@ -712,6 +717,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			save_button.setEnabled(true);
 			save_button.setAlpha(Global.ENABLE_ALFA);
 			viewModel.updated=false;
+			Log.d(Global.TAG,"eolchange occured");
 		}
 	}
 
@@ -910,7 +916,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			filetext_container_edittext.setShowSoftInputOnFocus(true);
 			filetext_container_edittext.requestFocus();
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-
+			viewModel.textViewUndoRedo.startListening();
 		}
 
 		else
@@ -924,7 +930,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			filetext_container_edittext.setShowSoftInputOnFocus(false);
 
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
-
+			viewModel.textViewUndoRedo.stopListening();
 		}
 		edit_button.setSelected(edit_mode);
 		setAlfaFileEditMenuItem();
