@@ -639,7 +639,7 @@ public class AudioPlayFragment extends Fragment
 					}
 					else
 					{
-						handler_for_art.postDelayed(this,500);
+						handler_for_art.postDelayed(this,100);
 					}
 				}
 			});
