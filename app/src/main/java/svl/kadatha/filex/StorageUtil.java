@@ -35,11 +35,9 @@ public class StorageUtil
 		}
 		final ArrayList<FilePOJO> result=new ArrayList<>();
 		STORAGE_DIR=new ArrayList<>(); //This is to ensure check on duplicate file paths
-		//if(new File("/").list()!=null && new File("/").canRead())
 		{
 			STORAGE_DIR.add(new File("/"));
 			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null));
-			//result.add(FilePOJOUtil.MAKE_FilePOJO(new File("/"),false,false));
 		}
 		
 
@@ -195,7 +193,6 @@ public class StorageUtil
 			if(idx!=-1)
 			{
 				file_ext=name.substring(idx+1);
-				//EXTRACT_ICON(name,path,file_ext,idx);
 				if(file_ext.matches(Global.VIDEO_REGEX))
 				{
 					overlay_visible=View.VISIBLE;

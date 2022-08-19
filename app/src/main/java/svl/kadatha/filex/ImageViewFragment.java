@@ -372,8 +372,6 @@ public class ImageViewFragment extends Fragment
 						viewModel.total_images=viewModel.album_file_pojo_list.size();
 						image_view_adapter.notifyDataSetChanged();
 						picture_selector_adapter.notifyDataSetChanged();
-						//FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(viewModel.source_folder,deleteFileOtherActivityViewModel.deleted_file_name_list,viewModel.fileObjectType);
-						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ImageViewActivity.ACTIVITY_NAME);
 						if(viewModel.album_file_pojo_list.size()<1)
 						{
 							((ImageViewActivity)context).finish();

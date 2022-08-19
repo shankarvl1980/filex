@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -90,7 +91,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	public boolean filled_filePOJOs;
-	public boolean local_activity_delete,modification_observed;//,cache_cleared;
+	public boolean local_activity_delete,modification_observed;
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
 	private FilePOJO clicked_filepojo;
@@ -390,7 +391,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(local_activity_delete)
 		{
-			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -424,7 +424,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		else if(modification_observed)
 		{
 			mainActivity.actionmode_finish(this,fileclickselected);
-			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(asynctask_status!=AsyncTaskStatus.STARTED)

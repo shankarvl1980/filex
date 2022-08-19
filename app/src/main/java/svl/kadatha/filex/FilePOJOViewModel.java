@@ -36,7 +36,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     private int total_no_of_files;
     private long total_size_of_files;
-    //public boolean filled_size;
+
 
 
     private String what_to_find=null;
@@ -83,7 +83,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
                 if(fill_file_size_also)
                 {
-                    //if(!filled_size)
                     {
                         long storage_space=0L;
                         String key=fileObjectType+fileclickselected;
