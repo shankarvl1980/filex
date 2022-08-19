@@ -22,7 +22,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 	private boolean isCancelled;
 	private Future<?> future1,future2,future3, future4;
-	public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+	public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 	public boolean isZipExtracted;
 	public FilePOJO filePOJO;
 

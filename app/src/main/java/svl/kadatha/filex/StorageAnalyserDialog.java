@@ -52,14 +52,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public UsbFile currentUsbFile;
     public TextView folder_selected_textview;
     private FileModifyObserver fileModifyObserver;
-    public boolean local_activity_delete,modification_observed;//,cache_cleared;
+    public boolean local_activity_delete,modification_observed;
     public boolean filled_filePOJOs;
     private Uri tree_uri;
     private String tree_uri_path="";
     public int file_list_size;
     public boolean is_toolbar_visible=true;
     private FilePOJO clicked_filepojo;
-    private AsyncTaskStatus asynctask_status;
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     private final static String SAF_PERMISSION_REQUEST_CODE="storage_analyser_dialog_saf_permission_request_code";
@@ -86,8 +85,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        asynctask_status = AsyncTaskStatus.NOT_YET_STARTED;
-
         fileclickselected=getTag();
         if(fileclickselected==null)
         {
@@ -196,12 +193,9 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         });
 
         viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-        if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-            if(asynctask_status!=AsyncTaskStatus.STARTED)
-            {
-                viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
-            }
-
+        if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+        {
+            viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
         }
         else
         {
@@ -269,7 +263,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         super.onResume();
         if(local_activity_delete)
         {
-            //cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
 
@@ -288,16 +281,11 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
         {
             storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
-            //cache_cleared=false;
             modification_observed=false;
             local_activity_delete=false;
-
-            if(asynctask_status!=AsyncTaskStatus.STARTED)
-            {
-                progress_bar.setVisibility(View.VISIBLE);
-                viewModel.isFinished.setValue(false);
-                viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
-            }
+            progress_bar.setVisibility(View.VISIBLE);
+            viewModel.isFinished.setValue(false);
+            viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
 
             new Thread(new Runnable() {
                 @Override

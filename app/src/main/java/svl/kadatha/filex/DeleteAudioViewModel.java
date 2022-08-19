@@ -19,7 +19,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     private boolean isFromInternal;
     public ArrayList<AudioPOJO> deleted_audio_files;
     public List<String> deleted_file_name_list;

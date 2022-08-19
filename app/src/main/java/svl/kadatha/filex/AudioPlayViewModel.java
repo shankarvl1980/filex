@@ -13,7 +13,7 @@ public class AudioPlayViewModel extends ViewModel {
 
     private boolean isCancelled;
     private Future<?> future1,future2;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 
     public boolean fromArchiveView;
     public FileObjectType fileObjectType;

@@ -310,7 +310,7 @@ public class RenameFileDialog extends DialogFragment
 		final File existing_file;
 		final File new_file;
 		FilePOJO filePOJO = null;
-		boolean overwriting;
+		final boolean overwriting;
 
 
 		RenameFileTask(String parent_file_path, String existing_name,String new_file_path, String new_name,boolean overwriting)

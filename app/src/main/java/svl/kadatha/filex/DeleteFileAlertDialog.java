@@ -42,7 +42,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	private String source_folder;
 	private final static String SAF_PERMISSION_REQUEST_CODE="delete_file_saf_permission_request_code";
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);

@@ -580,7 +580,7 @@ public class PdfViewFragment_single_view extends Fragment
 
     private class PictureSelectorAdapter extends RecyclerView.Adapter<PictureSelectorAdapter.VH>
     {
-        int total_pages;
+        final int total_pages;
         PictureSelectorAdapter(int total_pages)
         {
             this.total_pages=total_pages;

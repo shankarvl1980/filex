@@ -17,9 +17,9 @@ public class MainActivityViewModel extends ViewModel {
 
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public MutableLiveData<Boolean> isExtractionCompleted=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isExtractionCompleted=new MutableLiveData<>();
     public boolean zipFileExtracted;
-    public MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
     public boolean checkedSAFPermissionPasteSetUp;
 
     @Override

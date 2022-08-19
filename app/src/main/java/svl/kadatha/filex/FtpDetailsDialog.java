@@ -719,7 +719,7 @@ public class FtpDetailsDialog extends DialogFragment {
         final String user_name;
         final String password;
         final String encoding;
-        String display;
+        final String display;
         final int port;
         final boolean anonymous;
 

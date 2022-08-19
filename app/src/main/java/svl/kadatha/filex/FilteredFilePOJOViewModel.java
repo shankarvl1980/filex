@@ -30,8 +30,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4, future5;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
-    public MutableLiveData<Boolean> hasWallPaperSet=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> hasWallPaperSet=new MutableLiveData<>();
     public final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
     public final IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
     public int total_images;
@@ -42,7 +42,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public int total_pages;
     public Bitmap bitmap;
     public boolean out_of_memory_exception_thrown;
-    public MutableLiveData<Boolean> isPdfBitmapFetched=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isPdfBitmapFetched=new MutableLiveData<>();
     public int image_selected_idx=0,previously_selected_image_idx=0,pdf_current_position;
     public String source_folder;
     public FilePOJO currently_shown_file;

@@ -564,7 +564,7 @@ public class ArchiveDeletePasteServiceUtil {
         final FileObjectType sourceFileObjectType;
         int total_no_of_files;
         long total_size_of_files;
-        MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
+        final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
         String source_folder;
         private boolean isCancelled;
         private Future<?> future1,future2,future3, future4;

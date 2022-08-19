@@ -28,11 +28,11 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     private boolean alreadyRun;
     private Future<?> future1,future2, future3;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public MutableLiveData<Boolean> isBackedUp=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isBackedUp=new MutableLiveData<>();
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
 

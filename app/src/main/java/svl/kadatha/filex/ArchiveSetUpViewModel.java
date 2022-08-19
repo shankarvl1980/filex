@@ -11,7 +11,7 @@ public class ArchiveSetUpViewModel extends ViewModel {
 
     private boolean isCancelled;
     private Future<?> future1,future2;
-    public MutableLiveData<Boolean> isRecursiveFilesRemoved=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isRecursiveFilesRemoved=new MutableLiveData<>();
     public ArrayList<String> files_selected_array=new ArrayList<>();
     public String folderclickselected=Global.INTERNAL_PRIMARY_STORAGE_PATH;
     public FileObjectType custom_dir_fileObjectType=FileObjectType.FILE_TYPE;

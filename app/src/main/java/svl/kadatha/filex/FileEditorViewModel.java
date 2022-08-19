@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 public class FileEditorViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2,future3;
-    public MutableLiveData<Boolean> isReadingFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isReadingFinished=new MutableLiveData<>();
     public int eol,altered_eol;
     public LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;

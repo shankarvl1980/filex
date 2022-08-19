@@ -20,7 +20,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     private boolean isFromInternal;
     public List<FilePOJO> deleted_files;
     public List<String> deleted_file_name_list;

@@ -30,7 +30,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3, future4;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
@@ -44,7 +44,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
     private int count=0;
-    public MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
+    public final MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
 
 
     public FilePOJOViewModel(@NonNull Application application) {

@@ -19,9 +19,9 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class ViewModelCreateRename extends AndroidViewModel {
 
     private final Application application;
-    public MutableLiveData<FilePOJO> createdFilePOJO=new MutableLiveData<>();
-    public MutableLiveData<FilePOJO> renamedFilePOJO=new MutableLiveData<>();
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<FilePOJO> createdFilePOJO=new MutableLiveData<>();
+    public final MutableLiveData<FilePOJO> renamedFilePOJO=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);

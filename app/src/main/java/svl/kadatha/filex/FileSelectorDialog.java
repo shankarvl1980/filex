@@ -47,11 +47,10 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public UsbFile currentUsbFile;
 	public TextView folder_selected_textview;
 	private FileModifyObserver fileModifyObserver;
-	public boolean local_activity_delete,modification_observed;//,cache_cleared;
+	public boolean local_activity_delete,modification_observed;
 	private Uri tree_uri;
 	private String tree_uri_path="";
 	public int file_list_size;
-	private AsyncTaskStatus asynctask_status;
 	public FrameLayout progress_bar;
 	public FilePOJOViewModel viewModel;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_selector_dialog_saf_permission_request_code";
@@ -77,7 +76,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		asynctask_status = AsyncTaskStatus.NOT_YET_STARTED;
 		fileclickselected=getTag();
 		if(fileclickselected==null)
 		{
@@ -157,13 +155,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		folder_selected_textview.setText(fileclickselected);
 
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
-			{
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
-			}
-
+		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+		{
+			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 		}
 		else
 		{
@@ -221,7 +215,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		super.onResume();
 		if(local_activity_delete)
 		{
-			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
 			if(FileSelectorActivity.SHOW_HIDDEN_FILE)
@@ -242,10 +235,8 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 		{
-			//cache_cleared=false;
 			modification_observed=false;
 			local_activity_delete=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
 				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.isFinished.setValue(false);
@@ -282,7 +273,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		adapter=new FileSelectorAdapter();
 		set_adapter();
 		progress_bar.setVisibility(View.GONE);
-
 
 	}
 

@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -83,8 +82,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public MainActivity mainActivity;
 	private Context context;
 	public boolean archive_view;
-
-	private AsyncTaskStatus asynctask_status;
 	public FileObjectType fileObjectType;
 	public int file_list_size;
 	boolean is_toolbar_visible=true;
@@ -122,7 +119,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		asynctask_status=AsyncTaskStatus.NOT_YET_STARTED;
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
 		fileclickselected=getTag();
@@ -181,8 +177,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 			}
 		}
-
-
 
 	}
 	
@@ -275,7 +269,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
 			{
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
@@ -393,7 +386,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			modification_observed=false;
 			local_activity_delete=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED && fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				cancelableProgressBarDialog.show(mainActivity.fm,"");
@@ -426,24 +419,21 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			mainActivity.actionmode_finish(this,fileclickselected);
 			modification_observed=false;
 			local_activity_delete=false;
-			if(asynctask_status!=AsyncTaskStatus.STARTED)
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-				{
-					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-					cancelableProgressBarDialog.show(mainActivity.fm,"");
-					viewModel.isFinished.setValue(false);
-					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-				}
-				else
-				{
-					progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isFinished.setValue(false);
-					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
-				}
-
+				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+				cancelableProgressBarDialog.set_title(getString(R.string.searching));
+				cancelableProgressBarDialog.show(mainActivity.fm,"");
+				viewModel.isFinished.setValue(false);
+				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
+			else
+			{
+				progress_bar.setVisibility(View.VISIBLE);
+				viewModel.isFinished.setValue(false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
+			}
+
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

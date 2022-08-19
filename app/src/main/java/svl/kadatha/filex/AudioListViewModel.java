@@ -22,9 +22,9 @@ public class AudioListViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4,future5,future6;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
-    public MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
-    public MutableLiveData<Boolean> isSavingAudioFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isSavingAudioFinished=new MutableLiveData<>();
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 
     public List<AudioPOJO> audio_selected_array=new ArrayList<>();

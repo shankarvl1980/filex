@@ -49,7 +49,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 	private NotifManager nm;
 	private final int notification_id=890;
 	String size_of_files_archived;
-	public MutableLiveData<Integer>mutable_count_no_files=new MutableLiveData<>();
+	public final MutableLiveData<Integer>mutable_count_no_files=new MutableLiveData<>();
 	private int counter_no_files;
 	private long counter_size_files;
 	String copied_file_name;
@@ -88,7 +88,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 
 	private String source_other_file_permission,dest_other_file_permission;
 	private boolean storage_analyser_delete;
-	List<String> overwritten_file_path_list=new ArrayList<>();
+	final List<String> overwritten_file_path_list=new ArrayList<>();
 
 	@Override
 	public void onCreate()

@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 
 public class FileDuplicationViewModel extends ViewModel {
 
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
 

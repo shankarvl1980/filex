@@ -26,7 +26,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public List<AppSelectorDialog.AppPOJO> appPOJOList;
     public String file_path,mime_type,file_type,app_package_name;
     public String package_name, app_name, version, installed_version;
