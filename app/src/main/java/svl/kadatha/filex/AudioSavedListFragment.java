@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +15,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,13 +41,13 @@ public class AudioSavedListFragment extends Fragment
 	private Button all_select_btn;
 	private TextView file_number_view;
 	private Toolbar bottom_toolbar;
-	private AudioSavedListDetailsDialog audioSavedListDetailsDialog;
 	private AudioSelectListener audioSelectListener;
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
 	private int num_all_audio_list;
 	public AudioListViewModel audioListViewModel;
 	public FrameLayout progress_bar;
+	private static final String AUDIO_SELECT_REQUEST_CODE="audio_saved_list_audio_select_request_code";
 
 	@Override
 	public void onAttach(Context context)
@@ -57,10 +60,12 @@ public class AudioSavedListFragment extends Fragment
 
 			@Override
 			public void onAudioCompletion() {
+				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) ((AudioPlayerActivity)context).getSupportFragmentManager().findFragmentByTag("audioSavedlistDetailsDialog");
 				if(audioSavedListDetailsDialog!=null)
 				{
 					audioSavedListDetailsDialog.onAudioChange();
 				}
+
 			}
 
 		});
@@ -167,6 +172,25 @@ public class AudioSavedListFragment extends Fragment
 				}
 			}
 		});
+
+		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
+				{
+					AudioPOJO audio=result.getParcelable("audio");
+					int id=audio.getId();
+					Uri uri= MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+					Uri data=Uri.withAppendedPath(uri,String.valueOf(id));
+					if(audioSelectListener!=null)
+					{
+						audioSelectListener.onAudioSelect(data,audio);
+					}
+				}
+			}
+		});
+
+
 
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
@@ -335,26 +359,8 @@ public class AudioSavedListFragment extends Fragment
 							}
 							else
 							{
-								Bundle bundle=new Bundle();
-								bundle.putInt("pos",pos);
-								bundle.putString("list_name",saved_audio_list.get(pos));
-								audioSavedListDetailsDialog=new AudioSavedListDetailsDialog();
-								audioSavedListDetailsDialog.setAudioSelectListener(new AudioSavedListDetailsDialog.AudioSelectListener()
-									{
-
-										public void onAudioSelect(Uri data, AudioPOJO audio)
-										{
-
-											if(audioSelectListener!=null)
-											{
-												audioSelectListener.onAudioSelect(data,audio);
-											}
-
-										}
-
-									});
-								audioSavedListDetailsDialog.setArguments(bundle);
-								audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).fm,"");
+								AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,pos,saved_audio_list.get(pos));
+								audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).fm,"audioSavedlistDetailsDialog");
 							}
 						}
 

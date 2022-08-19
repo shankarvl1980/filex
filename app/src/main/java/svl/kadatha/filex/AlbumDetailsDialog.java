@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -66,21 +67,20 @@ public class AlbumDetailsDialog extends DialogFragment
 	private int scroll_distance;
 	private PopupWindow listPopWindow;
 	private String albumID,album_name;
-	private AudioSelectListener audioSelectListener;
 	private int num_all_audio;
-	private boolean whether_audios_set_to_current_list;
 	private ConstraintLayout search_toolbar;
 	private EditText search_edittext;
 	private boolean search_toolbar_visible;
 	private AudioListViewModel audioListViewModel;
 	private FrameLayout progress_bar;
-
+	private String request_code;
+	private Bundle bundle;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override
@@ -89,11 +89,12 @@ public class AlbumDetailsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		Bundle bundle=getArguments();
+		bundle=getArguments();
 		if(bundle!=null)
 		{
 			albumID=bundle.getString("albumID");
 			album_name=bundle.getString("album_name");
+			request_code=bundle.getString("request_code");
 		}
 		
 		list_popupwindowpojos=new ArrayList<>();
@@ -347,7 +348,6 @@ public class AlbumDetailsDialog extends DialogFragment
 
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, AudioPlayerActivity.ACTIVITY_NAME);
 					}
 					clear_selection();
 					progress_bar.setVisibility(View.GONE);
@@ -395,11 +395,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					progress_bar.setVisibility(View.VISIBLE);
 					Uri tree_uri=result.getParcelable("tree_uri");
 					String tree_uri_path=result.getString("tree_uri_path");
-					String source_folder=result.getString("source_folder");
-
-
 					deleteAudioViewModel.deleteAudioPOJO(true,audioListViewModel.audios_selected_for_delete,tree_uri,tree_uri_path);
-
 				}
 
 			}
@@ -408,6 +404,16 @@ public class AlbumDetailsDialog extends DialogFragment
 		return v;
 	}
 	
+	public static AlbumDetailsDialog getInstance(String request_code,String albumID,String album_name)
+	{
+		AlbumDetailsDialog albumDetailsDialog=new AlbumDetailsDialog();
+		Bundle bundle=new Bundle();
+		bundle.putString("request_code",request_code);
+		bundle.putString("albumID",albumID);
+		bundle.putString("album_name",album_name);
+		albumDetailsDialog.setArguments(bundle);
+		return albumDetailsDialog;
+	}
 
 	public void clear_selection()
 	{
@@ -494,15 +500,6 @@ public class AlbumDetailsDialog extends DialogFragment
 		}
 	}
 
-	public void setAudioSelectListener(AudioSelectListener listener)
-	{
-		audioSelectListener=listener;
-	}
-
-	interface AudioSelectListener
-	{
-		void onAudioSelect(Uri data, AudioPOJO audio);
-	}
 
 	private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
 	{
@@ -654,23 +651,23 @@ public class AlbumDetailsDialog extends DialogFragment
 				{
 
 					AudioPOJO audio=audio_list.get(pos);
-					int id=audio.getId();
-					Uri uri=MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-					Uri data=Uri.withAppendedPath(uri,String.valueOf(id));
-
-					if(!whether_audios_set_to_current_list)
+					File f=new File(audio.getData());
+					if(f.exists())
 					{
-						AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
-						AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
-						whether_audios_set_to_current_list=true;
-					}
-					AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
 
-					if(audioSelectListener!=null)
-					{
-						audioSelectListener.onAudioSelect(data,audio);
+
+						if(!audioListViewModel.whether_audios_set_to_current_list)
+						{
+							AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
+							audioListViewModel.whether_audios_set_to_current_list=true;
+						}
+						AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
+						bundle.putParcelable("audio",audio);
+						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+						((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+
 					}
-					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+
 
 				}
 
@@ -775,14 +772,18 @@ public class AlbumDetailsDialog extends DialogFragment
 
 			} else if (id == R.id.toolbar_btn_2) {
 				AudioPlayerService.AUDIO_QUEUED_ARRAY = audioListViewModel.audio_selected_array;
-				if (audioSelectListener != null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
+				if (AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
-					Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-					Uri data = Uri.withAppendedPath(uri, String.valueOf(audio.getId()));
-					audioSelectListener.onAudioSelect(data, audio);
+					File f=new File(audio.getData());
+					if(f.exists())
+					{
+						bundle.putParcelable("audio",audio);
+						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+					}
 
 				}
+
 				((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_3) {

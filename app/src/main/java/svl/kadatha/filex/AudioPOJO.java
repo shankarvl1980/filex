@@ -1,6 +1,9 @@
 package svl.kadatha.filex;
 
-public class AudioPOJO
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class AudioPOJO implements Parcelable
 {
 	private int id;
 	private String data;
@@ -9,7 +12,7 @@ public class AudioPOJO
 	private String album;
 	private String artist;
 	private String duration;
-	private final FileObjectType fileObjectType;
+	private FileObjectType fileObjectType;
 
 	public AudioPOJO(int id,  String data, String title,String album, String artist, String duration,FileObjectType fileObjectType)
 	{
@@ -22,6 +25,29 @@ public class AudioPOJO
 		this.duration=duration;
 		this.fileObjectType=fileObjectType;
 	}
+
+	protected AudioPOJO(Parcel in) {
+		id = in.readInt();
+		data = in.readString();
+		title = in.readString();
+		lower_title = in.readString();
+		album = in.readString();
+		artist = in.readString();
+		duration = in.readString();
+	}
+
+	public static final Creator<AudioPOJO> CREATOR = new Creator<AudioPOJO>() {
+		@Override
+		public AudioPOJO createFromParcel(Parcel in) {
+			return new AudioPOJO(in);
+		}
+
+		@Override
+		public AudioPOJO[] newArray(int size) {
+			return new AudioPOJO[size];
+		}
+	};
+
 	public int getId()
 	{
 		return id;
@@ -92,5 +118,21 @@ public class AudioPOJO
 	public FileObjectType getFileObjectType()
 	{
 		return this.fileObjectType;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeInt(id);
+		parcel.writeString(data);
+		parcel.writeString(title);
+		parcel.writeString(lower_title);
+		parcel.writeString(album);
+		parcel.writeString(artist);
+		parcel.writeString(duration);
 	}
 }

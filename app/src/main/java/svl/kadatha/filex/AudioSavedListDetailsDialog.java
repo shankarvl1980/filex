@@ -59,7 +59,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private Button play_btn;
 	private Button overflow_btn;
 	public List<AudioPOJO> clicked_audio_list,total_audio_list;
-	private AudioSelectListener audioSelectListener;
 	private String audio_list_clicked_name;
 	private boolean whether_saved_play_list;
 	private int number_button=3;
@@ -75,6 +74,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private int listview_height;
 	private AudioListViewModel audioListViewModel;
 	private FrameLayout progress_bar;
+	private String request_code;
+	private Bundle bundle;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -89,9 +90,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 
-		Bundle bundle=getArguments();
+		bundle=getArguments();
 		if(bundle!=null)
 		{
+			request_code=bundle.getString("request_code");
 			int saved_audio_clicked_pos=bundle.getInt("pos");
 			if(saved_audio_clicked_pos!=0)
 			{
@@ -111,6 +113,17 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		theme.resolveAttribute(R.attr.recycler_text_color,typedValue,true);
 		rest_audio_text_color=typedValue.data;
 
+	}
+
+	public static AudioSavedListDetailsDialog getInstance(String request_code, int pos, String list_name)
+	{
+		AudioSavedListDetailsDialog audioSavedListDetailsDialog=new AudioSavedListDetailsDialog();
+		Bundle bundle=new Bundle();
+		bundle.putString("request_code",request_code);
+		bundle.putInt("pos",pos);
+		bundle.putString("list_name",list_name);
+		audioSavedListDetailsDialog.setArguments(bundle);
+		return audioSavedListDetailsDialog;
 	}
 
 	@Override
@@ -529,13 +542,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
 					Uri data = null;
 					File f = new File(audio.getData());
-					if (f.exists()) {
-						data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
-					}
-
-
-					if (audioSelectListener != null) {
-						audioSelectListener.onAudioSelect(data, audio);
+					if(f.exists())
+					{
+						bundle.putParcelable("audio",audio);
+						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
 					}
 				}
 				clear_selection();
@@ -632,30 +642,25 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				else 
 				{
 					AudioPOJO audio=clicked_audio_list.get(pos);
-					Uri data;
 					File f=new File(audio.getData());
 					if(f.exists())
 					{
-						data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
-					}
-					else
-					{
-						data=null;
-					}
-	
 
-					if(whether_saved_play_list && !audioListViewModel.whether_audios_set_to_current_list)
-					{
-						AudioPlayerService.AUDIO_QUEUED_ARRAY=clicked_audio_list;
-						audioListViewModel.whether_audios_set_to_current_list=true;
+						if(whether_saved_play_list && !audioListViewModel.whether_audios_set_to_current_list)
+						{
+							AudioPlayerService.AUDIO_QUEUED_ARRAY=clicked_audio_list;
+							audioListViewModel.whether_audios_set_to_current_list=true;
+						}
+						AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
+						currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
+						bundle.putParcelable("audio",audio);
+						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+						((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+
 					}
-					AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
-					currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
-					if(audioSelectListener!=null)
-					{
-						audioSelectListener.onAudioSelect(data,audio);
-					}
-					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+
+
+
 				}
 			}
 
@@ -807,17 +812,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		}
 
 	}
-
-
-	 interface AudioSelectListener
-	 {
-	 	void onAudioSelect(Uri data, AudioPOJO audio);
-	 }
-
-	 public void setAudioSelectListener(AudioSelectListener listener)
-	 {
-	 	audioSelectListener=listener;
-	 }
 
 
 }

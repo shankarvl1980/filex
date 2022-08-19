@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -51,15 +52,13 @@ public class AlbumListFragment extends Fragment
 
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
-	private AsyncTaskStatus asyncTaskStatus;
 	private FrameLayout progress_bar;
 	private TextView empty_tv;
 	private int num_all_album;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
 	public AudioListViewModel audioListViewModel;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="album_list_save_audio_request_code";
-	private List<AudioPOJO> audio_selected_list_copy;
-
+	private static final String AUDIO_SELECT_REQUEST_CODE="album_details_audio_select_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -72,7 +71,6 @@ public class AlbumListFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 	}
 
 	@Override
@@ -133,7 +131,6 @@ public class AlbumListFragment extends Fragment
 		empty_tv=v.findViewById(R.id.album_list_empty);
 		progress_bar=v.findViewById(R.id.album_list_progressbar);
 
-		asyncTaskStatus=AsyncTaskStatus.STARTED;
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.listAlbum();
 		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -155,7 +152,6 @@ public class AlbumListFragment extends Fragment
 
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
 					progress_bar.setVisibility(View.GONE);
-					asyncTaskStatus=AsyncTaskStatus.COMPLETED;
 				}
 			}
 		});
@@ -187,6 +183,23 @@ public class AlbumListFragment extends Fragment
 
 						}
 					});
+				}
+			}
+		});
+
+		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
+				{
+					AudioPOJO audio=result.getParcelable("audio");
+					int id=audio.getId();
+					Uri uri= MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+					Uri data=Uri.withAppendedPath(uri,String.valueOf(id));
+					if(audioSelectListener!=null)
+					{
+						audioSelectListener.onAudioSelect(data,audio);
+					}
 				}
 			}
 		});
@@ -268,8 +281,6 @@ public class AlbumListFragment extends Fragment
 				}
 
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
-
-
 				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
 
 			} else if (id == R.id.toolbar_btn_4) {
@@ -338,23 +349,7 @@ public class AlbumListFragment extends Fragment
 				else 
 				{
 					AlbumPOJO album=album_list.get(pos);
-					Bundle bundle=new Bundle();
-					bundle.putString("albumID",album.getId());
-					bundle.putString("album_name",album.getAlbumName());
-				
-					AlbumDetailsDialog albumDetailsDialog=new AlbumDetailsDialog();
-					albumDetailsDialog.setAudioSelectListener(new AlbumDetailsDialog.AudioSelectListener()
-						{
-							public void onAudioSelect(Uri data, AudioPOJO audio)
-							{
-								if(audioSelectListener!=null)
-								{
-									audioSelectListener.onAudioSelect(data,audio);
-								}
-							}
-						});
-					
-					albumDetailsDialog.setArguments(bundle);
+					AlbumDetailsDialog albumDetailsDialog=AlbumDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE, album.getId(), album.getAlbumName());
 					albumDetailsDialog.show(((AudioPlayerActivity)context).fm,"");
 					
 				}
