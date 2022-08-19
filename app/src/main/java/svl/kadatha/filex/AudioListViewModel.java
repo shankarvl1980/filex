@@ -37,6 +37,7 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public boolean audio_list_created;
     public List<AudioPOJO> audios_selected_for_delete;
+    public boolean whether_audios_set_to_current_list;
 
 
     public AudioListViewModel(@NonNull Application application) {

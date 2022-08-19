@@ -66,7 +66,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private boolean toolbar_visible;
 	private int scroll_distance;
 	private int num_all_audio;
-	private boolean whether_audios_set_to_current_list;
 	private ConstraintLayout search_toolbar;
 	private EditText search_edittext;
 	private boolean search_toolbar_visible;
@@ -369,9 +368,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 	private void remove_and_save(String list_name,List<AudioPOJO> audio_list_to_be_removed, SparseBooleanArray index)
 	{
-		
-		ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		pbf.show(((AudioPlayerActivity)context).fm,"");
+		progress_bar.setVisibility(View.VISIBLE);
 		if(!whether_saved_play_list)
 		{
 			AudioPlayerService.AUDIO_QUEUED_ARRAY.removeAll(audio_list_to_be_removed);
@@ -405,7 +402,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		{
 			((AudioPlayerActivity)context).audioDatabaseHelper.delete(list_name,audio_list_to_be_removed);
 		}
-		pbf.dismissAllowingStateLoss();
+		progress_bar.setVisibility(View.GONE);
 	}
 	
 	public void onAudioChange()
@@ -519,7 +516,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				Global.print(context,getString(R.string.removed_the_selected_audios));
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_2) {
-				AudioPlayerService.AUDIO_QUEUED_ARRAY = new ArrayList<>();
 				AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_selected_array;
 				if(!whether_saved_play_list)
 				{
@@ -570,7 +566,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
 		{
 			// TODO: Implement this method
-			final Bundle bundle=new Bundle();
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 
 			switch(p3)
@@ -649,11 +644,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 	
 
-					if(whether_saved_play_list && !whether_audios_set_to_current_list)
+					if(whether_saved_play_list && !audioListViewModel.whether_audios_set_to_current_list)
 					{
-						AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
 						AudioPlayerService.AUDIO_QUEUED_ARRAY=clicked_audio_list;
-						whether_audios_set_to_current_list=true;
+						audioListViewModel.whether_audios_set_to_current_list=true;
 					}
 					AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
 					currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
