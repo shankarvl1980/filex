@@ -63,7 +63,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private Uri tree_uri;
 	EditText filetext_container_edittext;
 	private Button edit_button,undo_button,redo_button,save_button,up_button,down_button;
-    public boolean edit_mode;
 	static boolean NOT_WRAP=true;
 	static final int EOL_N = 0;
 	static final int EOL_R = 1;
@@ -363,7 +362,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				viewModel.updated=false;
 				redo_button.setEnabled(false);
 				redo_button.setAlpha(Global.DISABLE_ALFA);
-
+				Log.d(Global.TAG,"text change observed");
 			}
 		});
 
@@ -607,7 +606,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
-		//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
 
@@ -828,7 +826,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 				}
 			} else if (id == R.id.toolbar_btn_4) {
-				edit_mode = false;
+				viewModel.edit_mode = false;
 				start_file_save_service();
 			} else if (id == R.id.toolbar_btn_5) {
 				if (!viewModel.updated) {
@@ -882,7 +880,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		// TODO: Implement this method
 		super.onSaveInstanceState(outState);
-		outState.putBoolean("edit_mode",edit_button.isSelected());
 		outState.putString("file_name",file_name.getText().toString());
 		outState.putBoolean("clear_cache",clear_cache);
 
@@ -893,7 +890,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		// TODO: Implement this method
 		super.onRestoreInstanceState(savedInstanceState);
-		edit_mode=savedInstanceState.getBoolean("edit_mode");
 		file_name.setText(savedInstanceState.getString("file_name"));
 		onClick_edit_button();
 		if(viewModel.file_start)
@@ -918,7 +914,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			return;
 		}
 
-		if(edit_mode)
+		if(viewModel.edit_mode)
 		{
 			if(viewModel.textViewUndoRedo.getCanUndo())
 			{
@@ -950,20 +946,15 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 			viewModel.textViewUndoRedo.stopListening();
 		}
-		edit_button.setSelected(edit_mode);
+		edit_button.setSelected(viewModel.edit_mode);
 		setAlfaFileEditMenuItem();
-		if(!viewModel.updated)
-		{
-			save_button.setEnabled(true);
-			save_button.setAlpha(Global.ENABLE_ALFA);
-		}
-		edit_mode=!edit_mode;
-		filetext_container_edittext.setLongClickable(!edit_mode);
+		viewModel.edit_mode=!viewModel.edit_mode;
+		filetext_container_edittext.setLongClickable(!viewModel.edit_mode);
 		filetext_container_edittext.setOnTouchListener(new View.OnTouchListener()
 		{
 			public boolean onTouch(View v, MotionEvent me)
 			{
-				return edit_mode;
+				return viewModel.edit_mode;
 			}
 		});
 

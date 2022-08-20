@@ -20,26 +20,6 @@ class FileIntentDispatch
 
 	public static void openFile(Context context,String file_path, String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
 	{
-		open_file(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType);
-	}
-
-	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
-	{
-		open_uri(context,file_path,mime_type,clear_top,fromArchiveView,fileObjectType,tree_uri,tree_uri_path);
-	}
-	
-	public static void sendFile(Context context, ArrayList<File> file_list)
-	{
-		send_file(context,file_list);
-	}
-
-	public static void sendUri(Context context, ArrayList<Uri> uri_list)
-	{
-		send_uri(context,uri_list);
-	}
-	
-    private static void open_file(Context context, String file_path,String mime_type,boolean clear_top,  boolean fromArchiveView,FileObjectType fileObjectType)
-	{
 		String file_extn=""; Uri uri;
 		int file_extn_idx=file_path.lastIndexOf(".");
 		if(file_extn_idx!=-1)
@@ -53,7 +33,7 @@ class FileIntentDispatch
 
 	}
 
-	private static void open_uri(Context context, String file_path,String mime_type,boolean clear_top, boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
 	{
 		String file_extn="";
 		int file_extn_idx=file_path.lastIndexOf(".");
@@ -63,6 +43,45 @@ class FileIntentDispatch
 		}
 		Uri uri=FileUtil.getDocumentUri(file_path,tree_uri,tree_uri_path);
 		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType);
+	}
+	
+	public static void sendFile(Context context, ArrayList<File> file_list)
+	{
+		ArrayList<Uri> uri_list=new ArrayList<>();
+		for(File f:file_list)
+		{
+			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
+		}
+
+		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
+		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
+		intent.putExtra(Intent.EXTRA_SUBJECT,file_list.get(0).getName());
+		intent.setType("*/*");
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent chooser=Intent.createChooser(intent,"Select app");
+		if(intent.resolveActivity(context.getPackageManager())!=null)
+		{
+			context.startActivity(chooser);
+		}
+	}
+
+	public static void sendUri(Context context, ArrayList<Uri> uri_list)
+	{
+		String extra=new File(uri_list.get(0).getPath()).getName();
+		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
+		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
+		intent.putExtra(Intent.EXTRA_SUBJECT,extra);
+		intent.setType("*/*");
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent chooser=Intent.createChooser(intent,"Select app");
+		if(intent.resolveActivity(context.getPackageManager())!=null)
+		{
+			context.startActivity(chooser);
+		}
 	}
 
 	private static void despatch_intent(final Context context,Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, boolean fromArchiveView, FileObjectType fileObjectType)
@@ -141,45 +160,7 @@ class FileIntentDispatch
 		appSelectorDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 	}
 
-	private static void send_file(Context context, ArrayList<File> file_list)
-	{
-		ArrayList<Uri> uri_list=new ArrayList<>();
-		for(File f:file_list)
-		{
-			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
-		}
 
-		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
-		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
-		intent.putExtra(Intent.EXTRA_SUBJECT,file_list.get(0).getName());
-		intent.setType("*/*");
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Intent chooser=Intent.createChooser(intent,"Select app");
-		if(intent.resolveActivity(context.getPackageManager())!=null)
-		{
-			context.startActivity(chooser);
-		}
-	}
-	
-	private static void send_uri(Context context, ArrayList<Uri> uri_list)
-	{
-		String extra=new File(uri_list.get(0).getPath()).getName();
-		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);
-		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uri_list);
-		intent.putExtra(Intent.EXTRA_SUBJECT,extra);
-		intent.setType("*/*");
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Intent chooser=Intent.createChooser(intent,"Select app");
-		if(intent.resolveActivity(context.getPackageManager())!=null)
-		{
-			context.startActivity(chooser);
-		}
-	}
-	
 
 	public static String SET_INTENT_FOR_VIEW(Intent intent,String mime_type,String file_path ,String file_extn,FileObjectType fileObjectType, boolean fromArchiveView,
 	boolean clear_top, Uri uri)

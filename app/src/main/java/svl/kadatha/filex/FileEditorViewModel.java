@@ -38,6 +38,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public boolean fileRead;
     public StringBuilder stringBuilder;
     private boolean isCancelled;
+    public boolean edit_mode;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);

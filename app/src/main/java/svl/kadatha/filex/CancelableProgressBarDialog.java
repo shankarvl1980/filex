@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 
 public class CancelableProgressBarDialog extends DialogFragment
@@ -24,6 +26,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 	private String title_string="";
 	private Bundle bundle;
 	private String request_code;
+	public static final String CPBD_CANCEL_REQUEST_CODE="cpdb_cancel_request_code";
 
 
 	@Override
@@ -41,6 +44,8 @@ public class CancelableProgressBarDialog extends DialogFragment
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");
 	}
+
+
 
 	public static CancelableProgressBarDialog getInstance(String request_code)
 	{
@@ -71,7 +76,18 @@ public class CancelableProgressBarDialog extends DialogFragment
 			}
 			
 		});
-		
+
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(CPBD_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				Log.d(Global.TAG,"request code - "+requestKey+" and the code here - "+CPBD_CANCEL_REQUEST_CODE);
+				if(requestKey.equals(CPBD_CANCEL_REQUEST_CODE))
+				{
+					Log.d(Global.TAG,"called before dismissing");
+					dismissAllowingStateLoss();
+				}
+			}
+		});
 		return v;
 	}
 

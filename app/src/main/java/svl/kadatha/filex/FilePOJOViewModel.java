@@ -268,7 +268,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     }
                     if (application.getString(R.string.document).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.java|\\.xml|\\.rtf|\\.cpp|\\.c|\\.h)$";
+                        what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.java|\\.xml|\\.rtf|\\.cpp|\\.c|\\.h|\\.log)$";
                         media_category="Documents";
                     } else if (application.getString(R.string.image).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp)$";
@@ -372,7 +372,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
 
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h"},null);
+                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h","%.log"},null);
 
                 break;
             case "Images":

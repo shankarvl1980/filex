@@ -199,7 +199,6 @@ public class AllAudioListFragment extends Fragment
 					{
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-						//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,AudioPlayerActivity.ACTIVITY_NAME);
 					}
 					progress_bar.setVisibility(View.GONE);
 					deleteAudioViewModel.isFinished.setValue(false);

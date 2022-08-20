@@ -75,7 +75,7 @@ public class Global
 	static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
 
 	
-	static final String TEXT_REGEX="(?i)txt|java|xml|cpp|c|h";
+	static final String TEXT_REGEX="(?i)txt|java|xml|cpp|c|h|log";
 	static final String RTF_REGEX="(?i)rtf";
 	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp";
 	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus";
@@ -175,7 +175,6 @@ public class Global
 
 	static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION=FILEX_PACKAGE+".FILE_DELETE";
 	static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION=FILEX_PACKAGE+".MODIFICATION_OBSERVED";
-	//static public final String LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION=FILEX_PACKAGE+".FILE_POJO_CACHE_CLEAR";
 
 
 	static public int NAVIGATION_BAR_HEIGHT;

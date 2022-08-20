@@ -505,7 +505,7 @@ public class PdfViewFragment_single_view extends Fragment
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progress_bar.setVisibility(View.VISIBLE);
+            //progress_bar.setVisibility(View.VISIBLE);
 
         }
 
@@ -551,7 +551,7 @@ public class PdfViewFragment_single_view extends Fragment
                 GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
                 view.setTag("loaded");
             }
-            progress_bar.setVisibility(View.GONE);
+            //progress_bar.setVisibility(View.GONE);
         }
     }
 

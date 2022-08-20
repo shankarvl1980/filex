@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -272,12 +274,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
-
 					if(mainActivity==null)
 					{
 						context=getContext();
 						mainActivity=(MainActivity)context;
-
 					}
 					search_file_name=mainActivity.search_file_name;
 					search_in_dir=mainActivity.search_in_dir;
@@ -296,19 +296,16 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				else
 				{
 					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
-
 				}
 			}
 
 		}
 		else
 		{
-
 			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
 			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
 			filled_filePOJOs=true;
 			after_filledFilePojos_procedure();
-
 		}
 
 		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -316,6 +313,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
 				{
+					Log.d(Global.TAG,"is finished observed");
 					after_filledFilePojos_procedure();
 				}
 			}
@@ -351,10 +349,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
 				{
 					viewModel.cancel(true);
-					if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
-					{
-						after_filledFilePojos_procedure();
-					}
+					after_filledFilePojos_procedure();
 				}
 			}
 		});
@@ -366,11 +361,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					tree_uri=result.getParcelable("tree_uri");
 					tree_uri_path=result.getString("tree_uri_path");
-
 				}
-
 			}
 		});
+
 		return v;
 	}
 
@@ -463,13 +457,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 		adapter=new DetailRecyclerViewAdapter(context,archive_view);
 		set_adapter();
-
+		Log.d(Global.TAG,"after filled procedure called");
 		progress_bar.setVisibility(View.GONE);
 		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
 		{
 			cancelableProgressBarDialog.dismissAllowingStateLoss();
 		}
-
 		if(TO_BE_MOVED_TO_FILE_POJO!=null)
 		{
 			int idx=filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);

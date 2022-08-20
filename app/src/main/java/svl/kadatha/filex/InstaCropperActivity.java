@@ -116,7 +116,7 @@ public class InstaCropperActivity extends AppCompatActivity {
         mInstaCropper = findViewById(R.id.instacropper);
         progress_bar=findViewById(R.id.instacropper_activity_progressbar);
         progress_bar.setVisibility(View.GONE);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        //LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         Intent intent = getIntent();
 
         Uri uri = intent.getData();
