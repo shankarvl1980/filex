@@ -860,9 +860,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 		}
+		else if(progress_bar.getVisibility()==View.VISIBLE)
+		{
+			Global.print(context,getString(R.string.please_wait));
+		}
 		else if(!viewModel.updated)
 		{
-
 			saveConfirmationAlertDialog=SaveFileConfirmationDialog.getInstance(true);
 			saveConfirmationAlertDialog.show(fm,"saveconfirmationalert_dialog");
 		}
@@ -949,6 +952,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		edit_button.setSelected(edit_mode);
 		setAlfaFileEditMenuItem();
+		if(!viewModel.updated)
+		{
+			save_button.setEnabled(true);
+			save_button.setAlpha(Global.ENABLE_ALFA);
+		}
 		edit_mode=!edit_mode;
 		filetext_container_edittext.setLongClickable(!edit_mode);
 		filetext_container_edittext.setOnTouchListener(new View.OnTouchListener()

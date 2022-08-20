@@ -56,7 +56,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
 		fromArchiveView=fileEditorActivity.fromArchiveView;

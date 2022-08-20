@@ -138,17 +138,16 @@ public class FileSaveService1 extends Service
 				break;
 		}
 
-
-		if(!eol_string.equals("\n"))
-		{
-			content=content.replaceAll("\n",eol_string);
-		}
-
-		ExecutorService executorService=MyExecutorService.getExecutorService();
 		String finalEol_string = eol_string;
+		ExecutorService executorService=MyExecutorService.getExecutorService();
 		Future future = executorService.submit(new Runnable() {
 			@Override
 			public void run() {
+				if(!finalEol_string.equals("\n"))
+				{
+					content=content.replaceAll("\n",finalEol_string);
+				}
+
 				boolean result;
 				FileOutputStream fileOutputStream;
 				if (isWritable) {
