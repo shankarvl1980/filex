@@ -386,17 +386,6 @@ public class ViewDialog extends DialogFragment
 	}
 	
 
-/*
-	@Override
-	public void onDestroyView() {
-		if (getDialog() != null && getRetainInstance()) {
-			getDialog().setDismissMessage(null);
-		}
-		super.onDestroyView();
-	}
-
- */
-	
 	private class SortButtonClickListener implements View.OnClickListener
 	{
 

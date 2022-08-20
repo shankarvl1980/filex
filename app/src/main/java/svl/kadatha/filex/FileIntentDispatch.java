@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -18,7 +19,7 @@ class FileIntentDispatch
 	static final String EXTRA_FILE_OBJECT_TYPE="fileObjectType";
 	static final String EXTRA_FILE_PATH="file_path";
 
-	public static void openFile(Context context,String file_path, String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
+	public static void openFile(Context context,String file_path, String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, boolean select_app)
 	{
 		String file_extn=""; Uri uri;
 		int file_extn_idx=file_path.lastIndexOf(".");
@@ -29,11 +30,11 @@ class FileIntentDispatch
 
 		File file=new File(file_path);
 		uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
-		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType);
+		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType,select_app);
 
 	}
 
-	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+	public static void openUri(Context context,String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path, boolean select_app)
 	{
 		String file_extn="";
 		int file_extn_idx=file_path.lastIndexOf(".");
@@ -42,7 +43,7 @@ class FileIntentDispatch
 			file_extn=file_path.substring(file_extn_idx+1);
 		}
 		Uri uri=FileUtil.getDocumentUri(file_path,tree_uri,tree_uri_path);
-		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType);
+		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fromArchiveView,fileObjectType,select_app);
 	}
 	
 	public static void sendFile(Context context, ArrayList<File> file_list)
@@ -84,7 +85,7 @@ class FileIntentDispatch
 		}
 	}
 
-	private static void despatch_intent(final Context context,Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, boolean fromArchiveView, FileObjectType fileObjectType)
+	private static void despatch_intent(final Context context,Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, boolean fromArchiveView, FileObjectType fileObjectType,boolean select_app)
 	{
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,fromArchiveView,clear_top,uri);
@@ -92,7 +93,7 @@ class FileIntentDispatch
 
 		DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
 		final String package_name=defaultAppDatabaseHelper.getPackageName(mime_type);
-		if(package_name==null)
+		if(package_name==null || select_app)
 		{
 			launch_app_selector_dialog(context,uri,file_path,mime_type, clear_top, fromArchiveView,fileObjectType);
 		}

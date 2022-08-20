@@ -352,9 +352,11 @@
 	<string name="copied_apk_file">Copied APK file</string>
     <string name="exception_thrown_colon_could_not_extract_entries">Exception thrown: could not extract entries</string>
     <string name="enter_name_or_size_parameters">Enter name or size parameters</string>
+    <string name="open_with">Open with</string>
+	<string name="select_only_a_file">Select only a file</string>
 
 
-    <string-array name="library_categories">
+	<string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

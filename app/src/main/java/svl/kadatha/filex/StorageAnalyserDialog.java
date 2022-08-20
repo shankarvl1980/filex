@@ -448,7 +448,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     }
                     else
                     {
-                        file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+                        file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false);
                     }
                     FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO,FileSelectorRecentDialog.STORAGE_ANALYSER);
                 }
@@ -565,7 +565,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode()== Activity.RESULT_OK)
             {
-                if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+                if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false);
                 clicked_filepojo=null;
             }
             else
@@ -576,7 +576,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     });
 
 
-    private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
+    private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app)
     {
         int idx=file_name.lastIndexOf(".");
         String file_ext="";
@@ -594,7 +594,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
-            FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path);
+            FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path,select_app);
             fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
         else
@@ -616,12 +616,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path);
+                    FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path,select_app);
                 }
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType);
+                FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,select_app);
             }
         }
     }

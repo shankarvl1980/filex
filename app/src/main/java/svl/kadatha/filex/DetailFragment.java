@@ -313,7 +313,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			public void onChanged(Boolean aBoolean) {
 				if(aBoolean)
 				{
-					Log.d(Global.TAG,"is finished observed");
 					after_filledFilePojos_procedure();
 				}
 			}
@@ -334,7 +333,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					if(extractZipFileViewModel.isZipExtracted)
 					{
-						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName());
+						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false);
 						extractZipFileViewModel.isZipExtracted=false;
 					}
 					progress_bar.setVisibility(View.GONE);
@@ -457,7 +456,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 		adapter=new DetailRecyclerViewAdapter(context,archive_view);
 		set_adapter();
-		Log.d(Global.TAG,"after filled procedure called");
 		progress_bar.setVisibility(View.GONE);
 		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
 		{
@@ -546,7 +544,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onActivityResult(ActivityResult result) {
 		if (result.getResultCode()== Activity.RESULT_OK)
 		{
-			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false);
 			clicked_filepojo=null;
 		}
 		else
@@ -557,7 +555,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 });
 
 
-	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
+	public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app)
 	{
 		int idx=file_name.lastIndexOf(".");
 		String file_ext="";
@@ -568,8 +566,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path);
-			fileTypeSelectFragment.show(mainActivity.fm,"");
+			FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app);
+			fileTypeSelectDialog.show(mainActivity.fm,"");
 		}
 		else
 		 {
@@ -589,12 +587,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
-					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path);
+					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path,select_app);
 				 }
 			 }
 			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			 {
-				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType);
+				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType,select_app);
 			 }
 		 }
 	}
@@ -668,7 +666,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						}
 						else
 						{
-							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false);
 						}
 
 					}

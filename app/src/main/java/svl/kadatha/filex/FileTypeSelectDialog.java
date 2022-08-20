@@ -26,7 +26,7 @@ public class FileTypeSelectDialog extends DialogFragment
 	private String mime_type,file_path,tree_uri_path;
 	private Uri tree_uri;
 	private FileObjectType fileObjectType;
-	private boolean archive_view;
+	private boolean archive_view,select_app;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -47,9 +47,10 @@ public class FileTypeSelectDialog extends DialogFragment
 		archive_view= bundle.getBoolean("archive_view");
 		tree_uri= bundle.getParcelable("tree_uri");
 		tree_uri_path= bundle.getString("tree_uri_path");
+		select_app=bundle.getBoolean("select_app");
 	}
 
-	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path,boolean select_app)
 	{
 		FileTypeSelectDialog fileTypeSelectDialog=new FileTypeSelectDialog();
 		Bundle bundle=new Bundle();
@@ -58,6 +59,7 @@ public class FileTypeSelectDialog extends DialogFragment
 		bundle.putSerializable("fileObjectType",fileObjectType);
 		bundle.putParcelable("tree_uri",tree_uri);
 		bundle.putString("tree_uri_path",tree_uri_path);
+		bundle.putBoolean("select_app",select_app);
 		fileTypeSelectDialog.setArguments(bundle);
 		return fileTypeSelectDialog;
 	}
@@ -161,12 +163,12 @@ public class FileTypeSelectDialog extends DialogFragment
 						{
 							//if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 							{
-								FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path);
+								FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app);
 							}
 						}
 						else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 						{
-							FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType);
+							FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType,select_app);
 						}
 						dismissAllowingStateLoss();
 					}

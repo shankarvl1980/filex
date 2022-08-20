@@ -124,7 +124,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		LINE_NUMBER_SIZE=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,getResources().getDisplayMetrics());
-		fileEditorSettingsDialog=new FileEditorSettingsDialog();
+
 
 		scrollview=findViewById(R.id.file_editor_scrollview);
 		keyBoardUtil=new KeyBoardUtil(scrollview);
@@ -238,6 +238,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						break;
 
 					case 3:
+						fileEditorSettingsDialog=FileEditorSettingsDialog.getInstance(viewModel.eol);
 						fileEditorSettingsDialog.show(fm,"file_editor_overflow");
 						break;
 					default:
@@ -362,7 +363,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				viewModel.updated=false;
 				redo_button.setEnabled(false);
 				redo_button.setAlpha(Global.DISABLE_ALFA);
-				Log.d(Global.TAG,"text change observed");
 			}
 		});
 
@@ -990,7 +990,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		bundle.putInt("eol",viewModel.eol);
 		bundle.putInt("altered_eol",viewModel.altered_eol);
-		Log.d(Global.TAG,"while being saved eol-"+viewModel.eol+"  and altered eol-"+viewModel.altered_eol);
 		bundle.putLong("prev_page_end_point",prev_page_end_point);
 		bundle.putLong("current_page_end_point",viewModel.current_page_end_point);
 		bundle.putSerializable("page_pointer_hashmap",viewModel.page_pointer_hashmap);

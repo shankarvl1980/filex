@@ -195,7 +195,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		IntentFilter localBroadcastIntentFilter=new IntentFilter();
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
-		//localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 		usbReceiver=new USBReceiver();
@@ -386,6 +385,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.extract_icon,getString(R.string.extract)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.cut_icon,getString(R.string.move_to)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to)));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.open_with_icon,getString(R.string.open_with)));
 
 
 		listPopWindow=new PopupWindow(context);
@@ -1000,17 +1000,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
-		//Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
 	}
 
 	public void clearCache(String file_path, FileObjectType fileObjectType)
 	{
 		FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
-	}
-
-	public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
-	{
-	    //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
 	}
 
 
@@ -1744,7 +1738,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									ArchiveSetUpDialog unarchiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
 									unarchiveSetUpDialog.show(fm, "zip_dialog");
-									//actionmode_finish(df,df.fileclickselected);
 								} else {
 									Global.print(context,getString(R.string.select_only_a_zip_file));
 								}
@@ -1754,6 +1747,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								break;
 							case 5:
 								MoveToCopyToProcedure(df,false);
+								break;
+							case 6:
+								if (df.viewModel.mselecteditemsFilePath.size() != 1) {
+									Global.print(context,getString(R.string.select_only_a_file));
+									break;
+								}
+								FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0));
+								df.file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true);
 								break;
 							default:
 								break;

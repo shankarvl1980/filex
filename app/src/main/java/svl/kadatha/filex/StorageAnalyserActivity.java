@@ -67,7 +67,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         IntentFilter localBroadcastIntentFilter=new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
-        //localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         fm=getSupportFragmentManager();
@@ -264,17 +263,11 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
-        //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME);
     }
 
     public void clearCache(String file_path, FileObjectType fileObjectType)
     {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
-    }
-
-    public void broadcast_file_pojo_cache_removal(String file_path,FileObjectType fileObjectType)
-    {
-        //Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION,localBroadcastManager,ACTIVITY_NAME,file_path,fileObjectType);
     }
 
 

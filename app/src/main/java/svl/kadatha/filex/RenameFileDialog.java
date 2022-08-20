@@ -66,7 +66,6 @@ public class RenameFileDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		//this.setRetainInstance(true);
 		setCancelable(false);
 		Bundle bundle=getArguments();
 		if(bundle!=null)

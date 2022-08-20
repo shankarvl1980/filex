@@ -48,7 +48,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        //this.setRetainInstance(true);
         setCancelable(false);
         bundle=getArguments();
         if(bundle!=null)

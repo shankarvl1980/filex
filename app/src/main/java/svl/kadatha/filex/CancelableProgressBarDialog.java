@@ -80,10 +80,8 @@ public class CancelableProgressBarDialog extends DialogFragment
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(CPBD_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				Log.d(Global.TAG,"request code - "+requestKey+" and the code here - "+CPBD_CANCEL_REQUEST_CODE);
 				if(requestKey.equals(CPBD_CANCEL_REQUEST_CODE))
 				{
-					Log.d(Global.TAG,"called before dismissing");
 					dismissAllowingStateLoss();
 				}
 			}

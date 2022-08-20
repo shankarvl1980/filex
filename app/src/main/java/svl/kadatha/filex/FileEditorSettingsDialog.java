@@ -29,13 +29,12 @@ public class FileEditorSettingsDialog extends DialogFragment
 	private ImageButton text_size_decrease_btn,text_size_increase_btn;
 	private boolean not_wrap;
 	private int selected_eol;
-	private float selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
+	private float selected_text_size;
 	private EditText sample_edittext;
 	private TextView text_size_tv;
 	private Context context;
 	final static int MIN_TEXT_SIZE=10, MAX_TEXT_SIZE=20;
 	private EOL_ChangeListener eol_changeListener;
-	private boolean fromThirdPartyApp,fromArchiveView,isFileBig;
 	FileEditorActivity fileEditorActivity;
 
 
@@ -50,6 +49,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 
 	}
 
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -58,22 +58,27 @@ public class FileEditorSettingsDialog extends DialogFragment
 		setCancelable(false);
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
-		fromArchiveView=fileEditorActivity.fromArchiveView;
-		fromThirdPartyApp=fileEditorActivity.fromThirdPartyApp;
-		isFileBig=fileEditorActivity.isFileBig;
+		Bundle bundle=getArguments();
+		selected_eol=bundle.getInt("selected_eol");
 		if(savedInstanceState!=null)
 		{
 			selected_text_size=savedInstanceState.getFloat("selected_text_size");
 			not_wrap=savedInstanceState.getBoolean("not_wrap");
 			selected_eol=savedInstanceState.getInt("selected_eol");
 		}
-		else
-		{
-			selected_eol=fileEditorActivity.viewModel.eol; //placing at the beginning crashing the dialog
-		}
 	}
 
-	
+	public static FileEditorSettingsDialog getInstance(int selected_eol)
+	{
+		FileEditorSettingsDialog fileEditorSettingsDialog=new FileEditorSettingsDialog();
+		Bundle bundle=new Bundle();
+		bundle.putInt("selected_eol",selected_eol);
+		fileEditorSettingsDialog.setArguments(bundle);
+		return fileEditorSettingsDialog;
+	}
+
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -84,7 +89,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		{
 			public void onCheckedChanged(RadioGroup rg, int p1)
 			{
-				if(!fromThirdPartyApp && !fromArchiveView && !isFileBig)
+				if(!fileEditorActivity.fromThirdPartyApp && !fileEditorActivity.fromArchiveView && !fileEditorActivity.isFileBig)
 				{
 					if(unix_rb.isChecked())
 					{
@@ -207,7 +212,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 				{
 					eol_changeListener.onEOLchanged(selected_eol);
 				}
-				Log.d(Global.TAG,"while being closed form settings eol-"+fileEditorActivity.viewModel.eol+"  and altered eol-"+fileEditorActivity.viewModel.altered_eol);
 				dismissAllowingStateLoss();
 			}
 		});
