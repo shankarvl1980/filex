@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		selected_eol=fileEditorActivity.viewModel.eol;
+
 		not_wrap=FileEditorActivity.NOT_WRAP;
 		selected_text_size=FileEditorActivity.FILE_EDITOR_TEXT_SIZE;
 		fromArchiveView=fileEditorActivity.fromArchiveView;
@@ -66,6 +67,10 @@ public class FileEditorSettingsDialog extends DialogFragment
 			selected_text_size=savedInstanceState.getFloat("selected_text_size");
 			not_wrap=savedInstanceState.getBoolean("not_wrap");
 			selected_eol=savedInstanceState.getInt("selected_eol");
+		}
+		else
+		{
+			selected_eol=fileEditorActivity.viewModel.eol; //placing at the beginning crashing the dialog
 		}
 	}
 
@@ -203,6 +208,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 				{
 					eol_changeListener.onEOLchanged(selected_eol);
 				}
+				Log.d(Global.TAG,"while being closed form settings eol-"+fileEditorActivity.viewModel.eol+"  and altered eol-"+fileEditorActivity.viewModel.altered_eol);
 				dismissAllowingStateLoss();
 			}
 		});

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -116,7 +117,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		viewModel=new ViewModelProvider(this).get(FileEditorViewModel.class);
 
-		viewModel.eol=viewModel.altered_eol=EOL_N;
 		FILE_EDITOR_TEXT_SIZE=tinyDB.getFloat("file_editor_text_size");
 		if(FILE_EDITOR_TEXT_SIZE<=0 || FILE_EDITOR_TEXT_SIZE> FileEditorSettingsDialog.MAX_TEXT_SIZE)
 		{
@@ -991,6 +991,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		bundle.putInt("eol",viewModel.eol);
 		bundle.putInt("altered_eol",viewModel.altered_eol);
+		Log.d(Global.TAG,"while being saved eol-"+viewModel.eol+"  and altered eol-"+viewModel.altered_eol);
 		bundle.putLong("prev_page_end_point",prev_page_end_point);
 		bundle.putLong("current_page_end_point",viewModel.current_page_end_point);
 		bundle.putSerializable("page_pointer_hashmap",viewModel.page_pointer_hashmap);
