@@ -1754,6 +1754,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									break;
 								}
 								FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0));
+								if(filePOJO.getIsDirectory())
+								{
+									Global.print(context,getString(R.string.select_only_a_file));
+									break;
+								}
 								df.file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true);
 								break;
 							default:
