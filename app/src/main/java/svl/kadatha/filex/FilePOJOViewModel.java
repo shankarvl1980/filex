@@ -370,6 +370,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
 
                         new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h","%.log"},null);
