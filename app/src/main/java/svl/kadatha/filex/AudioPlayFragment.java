@@ -610,7 +610,9 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
-
+		handler.removeCallbacksAndMessages(null);
+		handler_for_art.removeCallbacksAndMessages(null);
+		onserviceconnection_handler.removeCallbacksAndMessages(null);
 		super.onDestroy();
 	}
 	

@@ -740,6 +740,8 @@ private String convertSecondsToHMmSs(int milliseconds)
 		super.onDestroy();
 		videoViewClickListener=null;
 		videoPositionListener=null;
+		handler.removeCallbacksAndMessages(null);
+		handler_seekbar_updation.removeCallbacksAndMessages(null);
 	}
 
 	interface VideoViewClickListener

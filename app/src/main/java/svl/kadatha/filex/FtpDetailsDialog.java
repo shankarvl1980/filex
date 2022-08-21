@@ -273,6 +273,11 @@ public class FtpDetailsDialog extends DialogFragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
 
     public void clear_selection()
     {

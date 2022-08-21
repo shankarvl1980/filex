@@ -105,7 +105,6 @@ public class PdfViewFragment_single_view extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        handler=new Handler();
         View v=inflater.inflate(R.layout.fragment_image_view,container,false);
         toolbar_visible=true;
         handler=new Handler();
@@ -393,7 +392,11 @@ public class PdfViewFragment_single_view extends Fragment
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
 
     private void image_view_on_click_procedure()
     {

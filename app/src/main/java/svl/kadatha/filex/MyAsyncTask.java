@@ -41,6 +41,7 @@ public abstract class MyAsyncTask {
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
         onCancelled(success);
+        handler.removeCallbacksAndMessages(null);
     }
 
     public boolean isCancelled()
@@ -64,6 +65,7 @@ public abstract class MyAsyncTask {
                         onPostExecute(success);
                     }
                 });
+                handler.removeCallbacksAndMessages(null);
             }
         });
     }

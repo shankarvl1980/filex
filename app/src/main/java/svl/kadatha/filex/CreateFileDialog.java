@@ -208,6 +208,11 @@ public class CreateFileDialog extends DialogFragment
 		return v;
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		handler.removeCallbacksAndMessages(null);
+	}
 
 	private class CreateFileTask
 	{

@@ -282,7 +282,12 @@ public class RenameFileDialog extends DialogFragment
 		outState.putString("new_file_path",new_file_path);
 		outState.putBoolean("overwriting",overwriting);
 		outState.putBoolean("isWritable",isWritable);
+	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		handler.removeCallbacksAndMessages(null);
 	}
 
 	public static RenameFileDialog getInstance(String parent_file_path, String existing_name, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath)

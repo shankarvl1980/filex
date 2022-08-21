@@ -112,6 +112,7 @@ public class FileSaveService1 extends Service
 	{
 		// TODO: Implement this method
 		super.onDestroy();
+		handler.removeCallbacksAndMessages(null);
 		SERVICE_COMPLETED=true;
 	}
 	

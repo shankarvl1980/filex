@@ -353,6 +353,12 @@ public class VideoViewContainerFragment extends Fragment
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		handler.removeCallbacksAndMessages(null);
+	}
+
 	private class VideoViewPagerAdapter extends FragmentStatePagerAdapter
 	{
 		final IndexedLinkedHashMap<FilePOJO,Integer> list;

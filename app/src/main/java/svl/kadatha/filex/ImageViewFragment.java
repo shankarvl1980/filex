@@ -426,6 +426,12 @@ public class ImageViewFragment extends Fragment
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		handler.removeCallbacksAndMessages(null);
+	}
+
 	public static ImageViewFragment getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
 	{
 		ImageViewFragment frag=new ImageViewFragment();
