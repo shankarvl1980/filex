@@ -68,7 +68,6 @@ public class VideoViewContainerFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		videoViewActivity=((VideoViewActivity)context);
 	}
 
@@ -273,10 +272,6 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				public void onPageSelected(int p)
 				{
-//					if(onPageSelectListener!=null)
-//					{
-//						onPageSelectListener.onPageSelect(p);
-//					}
 					((VideoViewActivity)context).current_page_idx=p;
 				}
 
@@ -305,10 +300,6 @@ public class VideoViewContainerFragment extends Fragment
 					floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
 					//frag.toolbar.animate().translationY(toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=false;
-//					if(toolBarVisibleListener!=null)
-//					{
-//						toolBarVisibleListener.onToolbarVisible(toolbar_visible);
-//					}
 				}
 			}
 		};
@@ -414,10 +405,7 @@ public class VideoViewContainerFragment extends Fragment
 							toolbar_visible=true;
 							handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 						}
-//						if(toolBarVisibleListener!=null)
-//						{
-//							toolBarVisibleListener.onToolbarVisible(toolbar_visible);
-//						}
+
 					}
 				});
 
