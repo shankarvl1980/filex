@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -86,7 +87,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private InputMethodManager imm;
 	public static final String ACTIVITY_NAME="FILE_EDITOR_ACTIVITY";
 	public boolean clear_cache;
-	private static final String CANCEL_PROGRESS_REQUEST_CODE="file_editor_cancel_progress_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="text_file_delete_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_editor_saf_permission_request_code";
 	private FrameLayout progress_bar;
@@ -129,7 +129,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		keyBoardUtil=new KeyBoardUtil(scrollview);
 
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        //Toolbar top_toolbar = findViewById(R.id.file_editor_top_toolbar);
+
 		progress_bar=findViewById(R.id.file_editor_progressbar);
         FloatingActionButton floating_back_button = findViewById(R.id.file_editor_floating_action_button_back);
 		floating_back_button.setOnClickListener(new View.OnClickListener()
@@ -251,64 +251,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		});
 
-		fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
-			@Override
-			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
-				{
-					viewModel.cancel(true);
-				}
-			}
-		});
-
-		viewModel.isReadingFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
-			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
-				{
-					if(!viewModel.fileRead)
-					{
-						viewModel.file_start=viewModel.file_end=true;
-						Global.print(context,getString(R.string.file_could_not_be_opened));
-					}
-					viewModel.file_format_supported=viewModel.fileRead;
-					viewModel.textViewUndoRedo.stopListening();
-					viewModel.textViewUndoRedo.clearHistory();
-					undo_button.setEnabled(false);
-					undo_button.setAlpha(Global.DISABLE_ALFA);
-					redo_button.setEnabled(false);
-					redo_button.setAlpha(Global.DISABLE_ALFA);
-
-					if(viewModel.file_start)
-					{
-						up_button.setEnabled(false);
-						up_button.setAlpha(Global.DISABLE_ALFA);
-
-					}
-					else
-					{
-						up_button.setEnabled(true);
-						up_button.setAlpha(Global.ENABLE_ALFA);
-					}
-
-					if(viewModel.file_end)
-					{
-						down_button.setEnabled(false);
-						down_button.setAlpha(Global.DISABLE_ALFA);
-					}
-					else
-					{
-						down_button.setEnabled(true);
-						down_button.setAlpha(Global.ENABLE_ALFA);
-					}
-					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
-					scrollview.smoothScrollTo(0,0);
-
-					viewModel.textViewUndoRedo.startListening();
-					progress_bar.setVisibility(View.GONE);
-				}
-			}
-		});
 
 
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
@@ -365,6 +307,57 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
+
+		viewModel.isReadingFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(!viewModel.fileRead)
+					{
+						viewModel.file_start=viewModel.file_end=true;
+						Global.print(context,getString(R.string.file_could_not_be_opened));
+					}
+					viewModel.file_format_supported=viewModel.fileRead;
+					viewModel.textViewUndoRedo.stopListening();
+					undo_button.setEnabled(false);
+					undo_button.setAlpha(Global.DISABLE_ALFA);
+					redo_button.setEnabled(false);
+					redo_button.setAlpha(Global.DISABLE_ALFA);
+
+					if(viewModel.file_start)
+					{
+						up_button.setEnabled(false);
+						up_button.setAlpha(Global.DISABLE_ALFA);
+
+					}
+					else
+					{
+						up_button.setEnabled(true);
+						up_button.setAlpha(Global.ENABLE_ALFA);
+					}
+
+					if(viewModel.file_end)
+					{
+						down_button.setEnabled(false);
+						down_button.setAlpha(Global.DISABLE_ALFA);
+					}
+					else
+					{
+						down_button.setEnabled(true);
+						down_button.setAlpha(Global.ENABLE_ALFA);
+					}
+					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
+					scrollview.smoothScrollTo(0,0);
+
+					viewModel.textViewUndoRedo.startListening();
+					progress_bar.setVisibility(View.GONE);
+				}
+			}
+		});
+
+
+
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
 			@Override
@@ -383,11 +376,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
-		Intent intent=getIntent();
-		on_intent(intent, savedInstanceState);
-
-
-		onClick_edit_button();
 
 		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -419,6 +407,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
+
+		Intent intent=getIntent();
+		on_intent(intent, savedInstanceState);
+		onClick_edit_button();
 	}
 
 	private void on_intent(Intent intent, @Nullable Bundle savedInstanceState)
@@ -571,18 +563,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
-
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		viewModel.textViewUndoRedo.connect();
-//	}
-//
-//	@Override
-//	protected void onPause() {
-//		super.onPause();
-//		viewModel.textViewUndoRedo.disconnect();
-//	}
 
 	@Override
 	protected void onStop()
@@ -786,7 +766,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					Global.print(context,getString(R.string.file_is_big) + ", " + getString(R.string.cant_edit_this_file));
 					return;
 				}
-
+				viewModel.edit_mode=!viewModel.edit_mode;
 				onClick_edit_button();
 			} else if (id == R.id.toolbar_btn_2) {
 				if (viewModel.textViewUndoRedo.getCanUndo()) {
@@ -947,13 +927,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		edit_button.setSelected(viewModel.edit_mode);
 		setAlfaFileEditMenuItem();
-		viewModel.edit_mode=!viewModel.edit_mode;
-		filetext_container_edittext.setLongClickable(!viewModel.edit_mode);
+		filetext_container_edittext.setLongClickable(viewModel.edit_mode);
 		filetext_container_edittext.setOnTouchListener(new View.OnTouchListener()
 		{
 			public boolean onTouch(View v, MotionEvent me)
 			{
-				return viewModel.edit_mode;
+				return !viewModel.edit_mode;
 			}
 		});
 

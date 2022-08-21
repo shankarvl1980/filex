@@ -84,7 +84,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     {
         if(Boolean.TRUE.equals(isFinished.getValue())) return;
         firststart=true;
-        this.file_path=file_path;
         source_folder=new File(file_path).getParent();
         ExecutorService executorService=MyExecutorService.getExecutorService();
         String finalSource_folder = source_folder;

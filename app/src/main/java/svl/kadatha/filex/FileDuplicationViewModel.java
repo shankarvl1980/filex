@@ -58,11 +58,9 @@ public class FileDuplicationViewModel extends ViewModel {
         this.destFileObjectType=destFileObjectType;
         this.cut=cut;
         this.files_selected_array=files_selected_array;
-
         duplicate_file_path_array=new ArrayList<>();
         not_to_be_replaced_files_path_array=new ArrayList<>();
         overwritten_file_path_list=new ArrayList<>();
-
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override

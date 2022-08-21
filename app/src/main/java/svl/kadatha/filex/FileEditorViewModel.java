@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -66,6 +67,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public synchronized void openFile(File file, FileInputStream fileInputStream, long f_pointer, boolean go_back)
     {
         if(Boolean.TRUE.equals(isReadingFinished.getValue())) return;
+
         fileRead=false;
         this.file_pointer=f_pointer;
         stringBuilder=new StringBuilder();
@@ -74,6 +76,7 @@ public class FileEditorViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 //file_loading_started=true;
+                textViewUndoRedo.clearHistory();
                 file_start= file_pointer == 0L;
                 try
                 {

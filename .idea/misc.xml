@@ -11,6 +11,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/archive_file_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/audio_file_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/copy_icon.xml" value="0.26927083333333335" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/cut_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/dark_apk_file_icon.xml" value="0.2475" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/dark_play_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/down_arrow_drawer_icon.xml" value="0.25" />
@@ -27,6 +28,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_download_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_image_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/lib_video_icon.xml" value="0.26927083333333335" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/open_with_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/overflow_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/overflow_recycler_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/pdf_water_icon.xml" value="0.25" />
