@@ -393,7 +393,7 @@ public class FileSaveService1 extends Service
 		void onServiceCompletion(boolean result);
 	}
 	
-	public void setServiceCompletionListener(FileSaveServiceCompletionListener listener)
+	public void setFileSaveServiceCompletionListener(FileSaveServiceCompletionListener listener)
 	{
 		fileSaveServiceCompletionListener=listener;
 	}

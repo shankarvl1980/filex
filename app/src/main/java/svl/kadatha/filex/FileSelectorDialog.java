@@ -289,6 +289,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	{
 		super.onDestroyView();
 		fileModifyObserver.stopWatching();
+		fileModifyObserver.setFileObserverListener(null);
 	}
 
 	@Override

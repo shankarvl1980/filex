@@ -735,7 +735,12 @@ private String convertSecondsToHMmSs(int milliseconds)
 		return false;
 	}
 
-
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		videoViewClickListener=null;
+		videoPositionListener=null;
+	}
 
 	interface VideoViewClickListener
 {

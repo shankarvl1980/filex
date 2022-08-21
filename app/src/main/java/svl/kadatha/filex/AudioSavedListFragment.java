@@ -48,6 +48,8 @@ public class AudioSavedListFragment extends Fragment
 	public AudioListViewModel audioListViewModel;
 	public FrameLayout progress_bar;
 	private static final String AUDIO_SELECT_REQUEST_CODE="audio_saved_list_audio_select_request_code";
+	private AudioPlayerActivity.AudioCompletionListener audioCompletionListener;
+
 
 	@Override
 	public void onAttach(Context context)
@@ -55,9 +57,7 @@ public class AudioSavedListFragment extends Fragment
 		// TODO: Implement this method
 		super.onAttach(context);
 		this.context=context;
-		((AudioPlayerActivity)context).addAudioCompletionListener(new AudioPlayerActivity.AudioCompletionListener()
-		{
-
+		audioCompletionListener=new AudioPlayerActivity.AudioCompletionListener() {
 			@Override
 			public void onAudioCompletion() {
 				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) ((AudioPlayerActivity)context).getSupportFragmentManager().findFragmentByTag("audioSavedlistDetailsDialog");
@@ -67,8 +67,15 @@ public class AudioSavedListFragment extends Fragment
 				}
 
 			}
+		};
+		((AudioPlayerActivity)context).addAudioCompletionListener(audioCompletionListener);
 
-		});
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		((AudioPlayerActivity)context).removeAudioCompletionListener(audioCompletionListener);
 	}
 
 	@Override

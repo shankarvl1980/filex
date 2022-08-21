@@ -56,7 +56,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         super.onCreate(savedInstanceState);
         context=this;
         mediaMountReceiver=new MediaMountReceiver();
-        mediaMountReceiver.setMediaMountListener(this);
+        mediaMountReceiver.addMediaMountListener(this);
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
@@ -279,6 +279,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mediaMountReceiver.removeMediaMountListener(this);
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
         context.unregisterReceiver(mediaMountReceiver);
     }

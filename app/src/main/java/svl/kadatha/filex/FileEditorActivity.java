@@ -583,10 +583,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	}
 
 
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(null);
+		scrollview.setScrollViewListener(null);
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
@@ -1002,8 +1003,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private class FileSaveServiceConnection implements ServiceConnection
 	{
-
-		final Class service;
+		Class service;
 		FileSaveServiceConnection(Class service)
 		{
 			this.service=service;
@@ -1019,7 +1019,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					final FileSaveService1 fileSaveService1=((FileSaveService1.FileSaveServiceBinder)binder).getService();
 					if(fileSaveService1!=null)
 					{
-						fileSaveService1.setServiceCompletionListener(new FileSaveService1.FileSaveServiceCompletionListener()
+						fileSaveService1.setFileSaveServiceCompletionListener(new FileSaveService1.FileSaveServiceCompletionListener()
 						{
 								public void onServiceCompletion(boolean result)
 								{
@@ -1066,7 +1066,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					final FileSaveService2 fileSaveService2=((FileSaveService2.FileSaveServiceBinder)binder).getService();
 					if(fileSaveService2!=null)
 					{
-						fileSaveService2.setServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener()
+						fileSaveService2.setFileSaveServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener()
 							{
 								public void onServiceCompletion(boolean result)
 								{
@@ -1115,6 +1115,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		public void onServiceDisconnected(ComponentName p1)
 		{
 			// TODO: Implement this method
+			if(service!=null)service=null;
 		}
 
 	}

@@ -19,7 +19,6 @@ public class VideoViewActivity extends BaseActivity
 	public FragmentManager fm;
 	private Context context;
 	TinyDB tinyDB;
-	private final List<OnPageSelectListener> onPageSelectListeners=new ArrayList<>();
 	public int current_page_idx;
 	public boolean toolbar_visible,fromArchiveView;
 	public FileObjectType fileObjectType;
@@ -119,14 +118,5 @@ public class VideoViewActivity extends BaseActivity
 		super.onBackPressed();
 	}
 
-	interface OnPageSelectListener
-	{
-		void onPageSelect(int x);
-	}
-
-	public void addOnPageSelectListener(OnPageSelectListener listener)
-	{
-		onPageSelectListeners.add(listener);
-	}
 
 }

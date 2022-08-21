@@ -486,6 +486,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onDestroyView() {
 		super.onDestroyView();
 		fileModifyObserver.stopWatching();
+		fileModifyObserver.setFileObserverListener(null);
+		adapter.setCardViewClickListener(null);
 	}
 
 	@Override

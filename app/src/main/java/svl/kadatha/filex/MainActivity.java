@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		localBroadcastManager=LocalBroadcastManager.getInstance(context);
 
 		mediaMountReceiver=new MediaMountReceiver();
-		mediaMountReceiver.setMediaMountListener(this);
+		mediaMountReceiver.addMediaMountListener(this);
 		IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
 		intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
 		intentFilter.addDataScheme("file");
@@ -519,7 +519,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		workingDirListRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
 		working_dir_arraylist=tinyDB.getListString("working_dir_arraylist");
 		workingDirRecyclerAdapter=new WorkingDirRecyclerAdapter(context,working_dir_arraylist);
-		workingDirRecyclerAdapter.setOnItemClickListener(new WorkingDirRecyclerAdapter.ItemClickListener()
+		workingDirRecyclerAdapter.setOnItemClickListenerForWorkingDirAdapter(new WorkingDirRecyclerAdapter.ItemClickListener()
 		{
 			public void onItemClick(int pos,String item_name)
 			{
@@ -1316,6 +1316,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		// TODO: Implement this method
 		super.onDestroy();
+		workingDirRecyclerAdapter.setOnItemClickListenerForWorkingDirAdapter(null);
+		mediaMountReceiver.removeMediaMountListener(this);
 		localBroadcastManager.unregisterReceiver(usbReceiver);
 		localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
 		context.unregisterReceiver(mediaMountReceiver);
@@ -2261,7 +2263,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
 		void setUsbFileRootNull();
-
 	}
 
 	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)

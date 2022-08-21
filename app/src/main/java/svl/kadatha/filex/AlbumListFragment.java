@@ -511,8 +511,6 @@ public class AlbumListFragment extends Fragment
 	{
 		audioSelectListener=listener;
 	}
-	
-
 
 		
 	private static class AlbumListRecyclerViewItem extends ViewGroup

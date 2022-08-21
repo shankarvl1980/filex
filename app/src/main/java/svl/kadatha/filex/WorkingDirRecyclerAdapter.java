@@ -144,7 +144,7 @@ public class WorkingDirRecyclerAdapter extends RecyclerView.Adapter<WorkingDirRe
 		notifyDataSetChanged();
 	}
 	
-	public void setOnItemClickListener(ItemClickListener listener)
+	public void setOnItemClickListenerForWorkingDirAdapter(ItemClickListener listener)
 	{
 		itemClickListener=listener;
 	}

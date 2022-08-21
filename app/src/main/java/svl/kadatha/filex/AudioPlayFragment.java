@@ -229,6 +229,8 @@ public class AudioPlayFragment extends Fragment
 			
 			public void onServiceDisconnected(ComponentName component_nane)
 			{
+				audio_player_service.setMediaPlayerPrepareListener(null);
+				audio_player_service.setAudioPlayerServiceBroadcastListener(null);
 				audio_player_service=null;
 				service_bound=false;
 			}

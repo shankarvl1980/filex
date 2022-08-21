@@ -592,6 +592,13 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		aalf.setAudioSelectListener(null);
+		albumlf.setAudioSelectListener(null);
+		aslf.setAudioSelectListener(null);
+	}
 
 	interface AudioCompletionListener
 	{
@@ -603,7 +610,7 @@ public class AudioPlayerActivity extends BaseActivity
 		audioCompletionListeners.add(listener);
 	}
 
-	public void removeListener(AudioCompletionListener listener)
+	public void removeAudioCompletionListener(AudioCompletionListener listener)
 	{
 		audioCompletionListeners.remove(listener);
 	}

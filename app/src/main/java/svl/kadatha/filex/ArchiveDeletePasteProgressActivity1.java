@@ -144,6 +144,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 
 			public void onServiceDisconnected(ComponentName componentName)
 			{
+				archiveDeletePasteFileService.setServiceCompletionListener(null);
 				archiveDeletePasteFileService=null;
 			}
 

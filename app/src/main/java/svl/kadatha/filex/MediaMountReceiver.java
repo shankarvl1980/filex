@@ -4,15 +4,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MediaMountReceiver extends BroadcastReceiver {
 
-    private MediaMountListener mediaMountListener;
+    private final List<MediaMountListener> mediaMountListeners=new ArrayList<>();
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(mediaMountListener!=null)
+        if(mediaMountListeners!=null)
         {
-            mediaMountListener.onMediaMount(intent.getAction());
+            for(MediaMountListener mediaMountListener:mediaMountListeners)
+            {
+                mediaMountListener.onMediaMount(intent.getAction());
+            }
         }
     }
 
@@ -21,8 +27,13 @@ public class MediaMountReceiver extends BroadcastReceiver {
         void onMediaMount(String action);
     }
 
-    public void setMediaMountListener(MediaMountListener listener)
+    public void addMediaMountListener(MediaMountListener listener)
     {
-        mediaMountListener=listener;
+        mediaMountListeners.add(listener);
+    }
+
+    public void removeMediaMountListener(MediaMountListener listener)
+    {
+        mediaMountListeners.remove(listener);
     }
 }
