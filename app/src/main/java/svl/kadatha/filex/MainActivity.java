@@ -430,9 +430,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						{
 							FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 						}
-						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-						df.progress_bar.setVisibility(View.GONE);
+
 					}
+					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+					df.progress_bar.setVisibility(View.GONE);
 					viewModel.isExtractionCompleted.setValue(false);
 				}
 			}

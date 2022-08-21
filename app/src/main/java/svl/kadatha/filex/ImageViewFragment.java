@@ -355,7 +355,6 @@ public class ImageViewFragment extends Fragment
 					recyclerview.setAdapter(picture_selector_adapter);
 					lm.scrollToPositionWithOffset(viewModel.file_selected_idx,-preview_image_offset);
 					progress_bar.setVisibility(View.GONE);
-
 				}
 			}
 		});
@@ -403,11 +402,20 @@ public class ImageViewFragment extends Fragment
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
 					deleteFileOtherActivityViewModel.deleteFilePOJO(viewModel.source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
-
 				}
 			}
 		});
 
+		viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					progress_bar.setVisibility(View.GONE);
+					viewModel.hasWallPaperSet.setValue(false);
+				}
+			}
+		});
 
 		return v;
 	}
@@ -439,15 +447,6 @@ public class ImageViewFragment extends Fragment
 				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.hasWallPaperSet.setValue(false);
 				viewModel.setWallPaper(result,((ImageViewActivity)context).CacheDir);
-				viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-					@Override
-					public void onChanged(Boolean aBoolean) {
-						if(aBoolean)
-						{
-							progress_bar.setVisibility(View.GONE);
-						}
-					}
-				});
 			}
 			else
 			{

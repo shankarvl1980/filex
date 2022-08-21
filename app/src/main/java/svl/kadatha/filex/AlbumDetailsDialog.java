@@ -311,6 +311,19 @@ public class AlbumDetailsDialog extends DialogFragment
 			}
 		});
 
+		audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					clear_selection();
+					progress_bar.setVisibility(View.GONE);
+					audioListViewModel.isSavingAudioFinished.setValue(false);
+				}
+			}
+		});
 
 
 		int size=audioListViewModel.mselecteditems.size();
@@ -364,19 +377,6 @@ public class AlbumDetailsDialog extends DialogFragment
 					String list_name=result.getString("list_name");
 					audioListViewModel.isSavingAudioFinished.setValue(false);
 					audioListViewModel.save_audio(list_name.equals("") ? "q" : "s",list_name);
-
-					audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								progress_bar.setVisibility(View.GONE);
-								((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-								((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-								clear_selection();
-							}
-						}
-					});
 
 				}
 			}

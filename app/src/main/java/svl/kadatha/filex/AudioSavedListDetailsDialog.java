@@ -335,7 +335,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.fetch_saved_audio_list(audio_list_clicked_name,whether_saved_play_list);
-
 		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
 			@Override
 			public void onChanged(Boolean aBoolean) {

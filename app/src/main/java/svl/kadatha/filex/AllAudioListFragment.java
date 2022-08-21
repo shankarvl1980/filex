@@ -206,6 +206,20 @@ public class AllAudioListFragment extends Fragment
 			}
 		});
 
+		audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+
+					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					clear_selection();
+					audioListViewModel.isSavingAudioFinished.setValue(false);
+					progress_bar.setVisibility(View.GONE);
+				}
+			}
+		});
 
 
 		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
@@ -217,20 +231,6 @@ public class AllAudioListFragment extends Fragment
 					String list_name=result.getString("list_name");
 					audioListViewModel.isSavingAudioFinished.setValue(false);
 					audioListViewModel.save_audio(list_name.equals("") ? "q" : "s",list_name);
-					audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								progress_bar.setVisibility(View.GONE);
-								((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-								((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-								clear_selection();
-							}
-						}
-					});
-
-
 				}
 			}
 		});

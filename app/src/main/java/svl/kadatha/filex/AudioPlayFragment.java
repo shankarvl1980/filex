@@ -428,9 +428,7 @@ public class AudioPlayFragment extends Fragment
 					String source_folder=result.getString("source_folder");
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
-
 					deleteFileOtherActivityViewModel.deleteAudioPOJO(source_folder,files_selected_for_delete,audioPlayViewModel.fileObjectType,tree_uri,tree_uri_path);
-
 				}
 			}
 		});

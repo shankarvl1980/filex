@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -173,12 +174,17 @@ public class AlbumListFragment extends Fragment
 						clear_selection();
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 					}
+					else if(audioListViewModel.action.equals("q") || audioListViewModel.action.equals("s"))
+					{
+						((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
+						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						clear_selection();
+					}
 					progress_bar.setVisibility(View.GONE);
 					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 				}
 			}
 		});
-
 
 
 		int size=audioListViewModel.mselecteditems.size();
@@ -194,19 +200,6 @@ public class AlbumListFragment extends Fragment
 					progress_bar.setVisibility(View.VISIBLE);
 					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 					audioListViewModel.listAudio(audioListViewModel.album_selected_array,list_name.equals("") ? "q" : "s",list_name);
-					audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-						@Override
-						public void onChanged(Boolean aBoolean) {
-							if(aBoolean)
-							{
-								progress_bar.setVisibility(View.GONE);
-								((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-								((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
-								clear_selection();
-							}
-
-						}
-					});
 				}
 			}
 		});
