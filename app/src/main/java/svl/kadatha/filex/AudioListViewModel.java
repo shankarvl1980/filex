@@ -39,6 +39,8 @@ public class AudioListViewModel extends AndroidViewModel {
     public List<AudioPOJO> audios_selected_for_delete;
     public boolean whether_audios_set_to_current_list;
 
+    public String action="p";
+
 
     public AudioListViewModel(@NonNull Application application) {
         super(application);
@@ -124,6 +126,7 @@ public class AudioListViewModel extends AndroidViewModel {
     public synchronized void listAudio(List<AlbumPOJO> album_list, String action, String list_name)
     {
         if(Boolean.TRUE.equals(isAudioFetchingFromAlbumFinished.getValue())) return;
+        this.action=action;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override

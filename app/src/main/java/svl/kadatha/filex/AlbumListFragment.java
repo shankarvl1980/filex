@@ -156,6 +156,30 @@ public class AlbumListFragment extends Fragment
 			}
 		});
 
+		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					if(audioListViewModel.action.equals("p"))
+					{
+						if (audioSelectListener != null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
+							AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
+							AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
+							Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+							Uri data = Uri.withAppendedPath(uri, String.valueOf(audio.getId()));
+							audioSelectListener.onAudioSelect(data, audio);
+						}
+						clear_selection();
+						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					}
+					progress_bar.setVisibility(View.GONE);
+					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
+				}
+			}
+		});
+
+
 
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
