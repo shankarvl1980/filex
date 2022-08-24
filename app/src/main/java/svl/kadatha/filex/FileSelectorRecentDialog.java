@@ -65,6 +65,19 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(activity instanceof StorageAnalyserActivity)
+        {
+            ((StorageAnalyserActivity)context).recentDialogListener=null;
+        }
+        else if(activity instanceof FileSelectorActivity)
+        {
+            ((FileSelectorActivity)context).recentDialogListener=null;
+        }
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)

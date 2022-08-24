@@ -48,6 +48,11 @@ public class FileEditorSettingsDialog extends DialogFragment
 
 	}
 
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		eol_changeListener=null;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)

@@ -125,7 +125,6 @@ public class AudioPlayFragment extends Fragment
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		onserviceconnection_handler=new Handler();
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
@@ -171,6 +170,8 @@ public class AudioPlayFragment extends Fragment
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_current_play,container,false);
 		handler=new Handler();
+		onserviceconnection_handler=new Handler();
+		handler_for_art=new Handler();
 		service_connection=new ServiceConnection()
 		{
 			public void onServiceConnected(ComponentName component_name, IBinder binder)
@@ -215,7 +216,6 @@ public class AudioPlayFragment extends Fragment
 							case AudioPlayerService.STOP:
 								setTitleArt("",null);
 								total_time_tv.setText("00.00");
-								AudioPlayerActivity.AUDIO_FILE=null;
 								break;
 							default:
 								break;
@@ -602,6 +602,9 @@ public class AudioPlayFragment extends Fragment
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+		handler.removeCallbacksAndMessages(null);
+		handler_for_art.removeCallbacksAndMessages(null);
+		onserviceconnection_handler.removeCallbacksAndMessages(null);
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
@@ -609,11 +612,9 @@ public class AudioPlayFragment extends Fragment
 	public void onDestroy()
 	{
 		// TODO: Implement this method
-		audio_player_service.removeAudioPlayerServiceBroadcastListener();
-		if(handler!=null)handler.removeCallbacksAndMessages(null);
-		if(handler_for_art!=null)handler_for_art.removeCallbacksAndMessages(null);
-		if(onserviceconnection_handler!=null)onserviceconnection_handler.removeCallbacksAndMessages(null);
 		super.onDestroy();
+		audio_player_service.removeAudioPlayerServiceBroadcastListener();
+
 	}
 	
 	public void setTitleArt(String audiofilename,final String audiofilepath)
@@ -625,7 +626,6 @@ public class AudioPlayFragment extends Fragment
 		}
 		else
 		{
-			handler_for_art=new Handler();
 			handler_for_art.post(new Runnable()
 			{
 				public void run()

@@ -341,13 +341,8 @@ public class VideoViewContainerFragment extends Fragment
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		listPopWindow.dismiss(); // to avoid memory leak on orientation change
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 		handler.removeCallbacksAndMessages(null);
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 	}
 
 	private class VideoViewPagerAdapter extends FragmentStatePagerAdapter

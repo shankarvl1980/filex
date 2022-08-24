@@ -389,14 +389,10 @@ public class PdfViewFragment_single_view extends Fragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        handler.removeCallbacksAndMessages(null);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
-    }
 
     private void image_view_on_click_procedure()
     {

@@ -65,6 +65,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	}
 
 	@Override
+	public void onDetach() {
+		super.onDetach();
+		((MainActivity)context).recentDialogListener=null;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method

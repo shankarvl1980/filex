@@ -251,8 +251,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		});
 
-
-
 		scrollview.setScrollViewListener(new ObservableScrollView.ScrollViewListener()
 		{
 			boolean visible=true;
@@ -1004,6 +1002,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private class FileSaveServiceConnection implements ServiceConnection
 	{
 		Class service;
+		FileSaveService1 fileSaveService1;
+		FileSaveService2 fileSaveService2;
 		FileSaveServiceConnection(Class service)
 		{
 			this.service=service;
@@ -1016,7 +1016,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			switch(service.getName())
 			{
 				case "svl.kadatha.filex.FileSaveService1":
-					final FileSaveService1 fileSaveService1=((FileSaveService1.FileSaveServiceBinder)binder).getService();
+					fileSaveService1=((FileSaveService1.FileSaveServiceBinder)binder).getService();
 					if(fileSaveService1!=null)
 					{
 						fileSaveService1.setFileSaveServiceCompletionListener(new FileSaveService1.FileSaveServiceCompletionListener()
@@ -1116,6 +1116,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			// TODO: Implement this method
 			if(service!=null)service=null;
+			if(fileSaveService1!=null)fileSaveService1.setFileSaveServiceCompletionListener(null);
+			if(fileSaveService2!=null)fileSaveService2.setFileSaveServiceCompletionListener(null);
+
 		}
 
 	}

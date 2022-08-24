@@ -49,6 +49,11 @@ public class DeleteFileAlertDialog extends DialogFragment
 		okButtonClickListener= (OKButtonClickListener) context;
 	}
 
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		okButtonClickListener=null;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)

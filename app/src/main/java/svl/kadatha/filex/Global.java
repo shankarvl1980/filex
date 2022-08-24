@@ -932,9 +932,9 @@ public class Global
 			@Override
 			public void run() {
 				Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+				handler.removeCallbacksAndMessages(null);
 			}
 		});
-		handler.removeCallbacksAndMessages(null);
 	}
 
 

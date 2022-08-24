@@ -37,8 +37,6 @@ public class VideoViewActivity extends BaseActivity
 		fm=getSupportFragmentManager();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
 		toolbar_visible=true;

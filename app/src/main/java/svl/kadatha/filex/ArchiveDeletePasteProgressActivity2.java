@@ -328,7 +328,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	{
 		// TODO: Implement this method
 		super.onPause();
-		unbindService(serviceConnection);
+		if(serviceConnection!=null)unbindService(serviceConnection);
 		PROGRESS_ACTIVITY_SHOWN=false;
 	}
 

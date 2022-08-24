@@ -155,7 +155,6 @@ public class FtpDetailsDialog extends DialogFragment {
         delete_btn.setOnClickListener(bottomToolbarClickListener);
         rename_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
-        Handler handler=new Handler();
         handler.post(new Runnable() {
             @Override
             public void run() {

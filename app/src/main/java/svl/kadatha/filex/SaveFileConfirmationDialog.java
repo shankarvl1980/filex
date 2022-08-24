@@ -30,6 +30,12 @@ public class SaveFileConfirmationDialog extends DialogFragment
 	}
 
 	@Override
+	public void onDetach() {
+		super.onDetach();
+		saveFileListener=null;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
