@@ -34,7 +34,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
-        Handler handler_remove = new Handler();
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
@@ -287,79 +286,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 	
-/*
-	public void remove_item(final String source_folder, final List<String> deleted_files_list)
-	{
-
-		final int size=deleted_files_list.size();
-		final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-		pbf.show(mainActivity.fm, "");
-		handler_remove.post(new Runnable() {
-			@Override
-			public void run() {
-				if(df.filled_filePOJOs)
-				{
-					String name;
-					for(int i=0;i<size;++i)
-					{
-						name=deleted_files_list.get(i);
-						boolean removed=false;
-						int idx=0;
-						Iterator<FilePOJO> iterator=df.filePOJO_list.iterator();
-						while(iterator.hasNext())
-						{
-							if(iterator.next().getName().equals(name))
-							{
-
-								iterator.remove();
-								removed=true;
-								break;
-							}
-							++idx;
-						}
-						if(removed)
-						{
-							notifyItemRemoved(idx);
-						}
-						remove_from_FilePOJO(name,df.totalFilePOJO_list);
-					}
-
-					df.file_list_size=df.totalFilePOJO_list.size();
-					mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
-					if(df.filePOJO_list!=null && df.filePOJO_list.size()==0)
-					{
-						df.recyclerView.setVisibility(View.GONE);
-						df.folder_empty.setVisibility(View.VISIBLE);
-
-					}
-					Global.WORKOUT_AVAILABLE_SPACE();
-					pbf.dismissAllowingStateLoss();
-					handler_remove.removeCallbacks(this);
-				}
-				else
-				{
-					handler_remove.postDelayed(this,50);
-				}
-			}
-		});
-	}
-
-
-
-	private void remove_from_FilePOJO(String name, List<FilePOJO> list)
-	{
-		Iterator<FilePOJO> iterator=list.iterator();
-		while(iterator.hasNext())
-		{
-			if(iterator.next().getName().equals(name))
-			{
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
- */
 
 	public void selectAll()
 	{
