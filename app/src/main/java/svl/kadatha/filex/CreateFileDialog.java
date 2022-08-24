@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -114,42 +116,40 @@ public class CreateFileDialog extends DialogFragment
 			file_label_textview.setText(R.string.folder_name_colon);
 		}
 
-		/*
 		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
-		MutableLiveData<FilePOJO> createdFilePOJO=viewModel.createdFilePOJO;
-		createdFilePOJO.observe(CreateFileDialog.this, new Observer<FilePOJO>() {
-			final String new_name=new_file_name_edittext.getText().toString().trim();
-			@Override
-			public void onChanged(FilePOJO filePOJO) {
-				if(filePOJO!=null)
-				{
-					Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-					df.clearSelectionAndNotifyDataSetChanged();
-					int idx=df.filePOJO_list.indexOf(filePOJO);
-					if(df.llm!=null)
-					{
-						df.llm.scrollToPositionWithOffset(idx,0);
-					}
-					else if(df.glm!=null)
-					{
-						df.glm.scrollToPositionWithOffset(idx,0);
-					}
+		viewModel.isFinished.observe(this, new Observer<Boolean>() {
 
-					Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
-				}
-				else
+			@Override
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
 				{
-					Global.print(context,getString(R.string.could_not_create));
+					final String new_name=new_file_name_edittext.getText().toString().trim();
+					if(viewModel.filePOJO!=null)
+					{
+						Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+						df.clearSelectionAndNotifyDataSetChanged();
+						int idx=df.filePOJO_list.indexOf(viewModel.filePOJO);
+						if(df.llm!=null)
+						{
+							df.llm.scrollToPositionWithOffset(idx,0);
+						}
+						else if(df.glm!=null)
+						{
+							df.glm.scrollToPositionWithOffset(idx,0);
+						}
+
+						Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
+					}
+					else
+					{
+						Global.print(context,getString(R.string.could_not_create));
+					}
+					Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
+					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
+					dismissAllowingStateLoss();
 				}
-				Global.SET_OTHER_FILE_PERMISSION(other_file_permission,parent_folder);
-				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
-				dismissAllowingStateLoss();
 			}
 		});
-
-		 */
-
-
 
 		okbutton.setOnClickListener(new View.OnClickListener()
 		{
@@ -177,8 +177,8 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 
-				//viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
-				new CreateFileTask(file,isWritable).createFile();
+				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
+				//new CreateFileTask(file,isWritable).createFile();
 			}	
 				
 

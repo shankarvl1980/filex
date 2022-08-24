@@ -19,13 +19,13 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class ViewModelCreateRename extends AndroidViewModel {
 
     private final Application application;
-    public final MutableLiveData<FilePOJO> createdFilePOJO=new MutableLiveData<>();
-    public final MutableLiveData<FilePOJO> renamedFilePOJO=new MutableLiveData<>();
+    public FilePOJO filePOJO;
     public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);
         this.application=application;
+        isFinished.setValue(false);
     }
 
     public void createFile(File file, FileObjectType fileObjectType, boolean isWritable, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri)
@@ -37,10 +37,9 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
-            boolean file_created;
             @Override
             public void run() {
-
+                boolean file_created = false;
                 if(file_type==0)
                 {
                     if(isWritable)
@@ -127,8 +126,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                 }
                 if(file_created)
                 {
-                    FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
-                    createdFilePOJO.postValue(filePOJO);
+                    filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
                 }
                 isFinished.postValue(true);
             }
@@ -143,9 +141,9 @@ public class ViewModelCreateRename extends AndroidViewModel {
         File existing_file=new File(parent_file_path,existing_name);
         File new_file=new File(new_file_path);
         executorService.execute(new Runnable() {
-            boolean fileNameChanged;
             @Override
             public void run() {
+                boolean fileNameChanged = false;
                 if(fileObjectType==FileObjectType.FILE_TYPE)
                 {
                     if(isWritable)
@@ -209,14 +207,13 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     }
                     else
                     {
-                        //print(getString(R.string.ftp_server_is_not_connected));
+                        Global.print_background_thread(application,application.getString(R.string.ftp_server_is_not_connected));
                     }
 
 
                 }
                 if(fileNameChanged)
                 {
-                    FilePOJO filePOJO;
                     if(dfFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
                     {
                         if(overwriting)
@@ -234,7 +231,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
                         filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
                     }
-                    renamedFilePOJO.postValue(filePOJO);
                 }
                 isFinished.postValue(true);
             }

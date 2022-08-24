@@ -23,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,18 +124,17 @@ public class RenameFileDialog extends DialogFragment
 		df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		/*
-		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
-		MutableLiveData<FilePOJO> renamedFilePOJO=viewModel.renamedFilePOJO;
-		renamedFilePOJO.observe(RenameFileDialog.this, new Observer<FilePOJO>() {
+
+		ViewModelCreateRename viewModel=new ViewModelProvider(this).get(ViewModelCreateRename.class);
+		viewModel.isFinished.observe(this, new Observer<Boolean>() {
 			@Override
-			public void onChanged(FilePOJO filePOJO) {
-				onRenameResult(true,new_name,filePOJO);
+			public void onChanged(Boolean aBoolean) {
+				if(aBoolean)
+				{
+					onRenameResult(viewModel.filePOJO != null,new_name,viewModel.filePOJO);
+				}
 			}
 		});
-
-		 */
-
 
 		fragmentManager.setFragmentResultListener(REPLACEMENT_CONFIRMATION, RenameFileDialog.this, new FragmentResultListener() {
 			@Override
@@ -144,9 +145,8 @@ public class RenameFileDialog extends DialogFragment
 					//new_file_path =(parent_file_path.endsWith(File.separator)) ? parent_file_path+new_name : parent_file_path+File.separator+new_name;
 					//overwriting= whether_file_already_exists(new_file_path, fileObjectType);
 					//isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
-					//new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-					//viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-					new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
+					viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+					//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 				}
 			}
 		});
@@ -219,9 +219,8 @@ public class RenameFileDialog extends DialogFragment
 							{
 								if(check_SAF_permission(parent_file_path,fileObjectType))
 								{
-									//new RenameFileAsyncTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).executeOnExecutor(svl.kadatha.filex.AsyncTask.THREAD_POOL_EXECUTOR);
-									//viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-									new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
+									viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+									//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 								}
 
 							}
@@ -246,15 +245,13 @@ public class RenameFileDialog extends DialogFragment
 				else if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable)
 				{
 					if (check_SAF_permission(parent_file_path, fileObjectType)) {
-						//new RenameFileAsyncTask(parent_file_path, existing_name, new_file_path, new_name,overwriting).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-						//viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-						new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
+						viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+						//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 					}
 				} else
 				{
-					//new RenameFileAsyncTask(parent_file_path, existing_name, new_file_path, new_name,overwriting).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					//viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-					new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
+					viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+					//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 				}
 				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			}
