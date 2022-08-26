@@ -21,7 +21,8 @@ public class ViewModelCreateRename extends AndroidViewModel {
     private final Application application;
     public FilePOJO filePOJO;
     public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>();
-    public boolean file_created = false;
+    public boolean file_created;
+    public boolean fileNameChanged;
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);
@@ -39,7 +40,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-
                 if(file_type==0)
                 {
                     if(isWritable)
@@ -144,7 +144,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                boolean fileNameChanged = false;
                 if(fileObjectType==FileObjectType.FILE_TYPE)
                 {
                     if(isWritable)
