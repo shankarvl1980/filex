@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,7 +52,7 @@ public class CreateFileDialog extends DialogFragment
 	private List<FilePOJO> destFilePOJOs;
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
-
+	private FrameLayout progress_bar;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -97,6 +98,8 @@ public class CreateFileDialog extends DialogFragment
         TextView files_size_textview = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
 		no_of_files_textview.setVisibility(View.GONE);
 		files_size_textview.setVisibility(View.GONE);
+		progress_bar=v.findViewById(R.id.fragment_create_rename_delete_progressbar);
+		progress_bar.setVisibility(View.VISIBLE);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_rename_delete_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 		okbutton= buttons_layout.findViewById(R.id.first_button);
@@ -117,11 +120,14 @@ public class CreateFileDialog extends DialogFragment
 		}
 
 		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
-		viewModel.isFinished.observe(this, new Observer<Boolean>() {
-
+		viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					final String new_name=new_file_name_edittext.getText().toString().trim();
 					if(viewModel.filePOJO!=null)
@@ -150,6 +156,7 @@ public class CreateFileDialog extends DialogFragment
 				}
 			}
 		});
+
 
 		okbutton.setOnClickListener(new View.OnClickListener()
 		{

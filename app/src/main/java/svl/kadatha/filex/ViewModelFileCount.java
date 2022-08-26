@@ -16,7 +16,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class ViewModelFileCount extends ViewModel {
 
     final MutableLiveData<Integer> total_no_of_files=new MutableLiveData<>();
-    private long total_size_of_files;
+    public long total_size_of_files;
     private int cumulative_no_of_files;
     final MutableLiveData<String> size_of_files_formatted=new MutableLiveData<>();
     private Future<?> future;

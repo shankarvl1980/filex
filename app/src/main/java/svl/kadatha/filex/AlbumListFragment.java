@@ -692,7 +692,7 @@ public class AlbumListFragment extends Fragment
 
 		public void setData(String album,String duration,String artist, boolean item_selected)
 		{
-			albumimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
+			albumimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_album_icon));
 			albumtextview.setText(album);
 			album_select_indicator.setVisibility(item_selected  ? VISIBLE : INVISIBLE);
 			no_of_songs_textview.setText(duration);

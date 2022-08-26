@@ -20,26 +20,26 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
     private final Application application;
     public FilePOJO filePOJO;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>();
+    public boolean file_created = false;
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);
         this.application=application;
-        isFinished.setValue(false);
+        asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
     }
 
     public void createFile(File file, FileObjectType fileObjectType, boolean isWritable, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri)
     {
-
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         final String new_file_path=file.getAbsolutePath();
         final String new_name=file.getName();
-
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                boolean file_created = false;
+
                 if(file_type==0)
                 {
                     if(isWritable)
@@ -128,7 +128,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                 {
                     filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name),fileObjectType,null);
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -136,7 +136,8 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
     public void renameFile(String parent_file_path, String existing_file_path, String existing_name,String new_file_path, String new_name, boolean isWritable, FileObjectType fileObjectType, boolean isDirectory, boolean overwriting,String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         File existing_file=new File(parent_file_path,existing_name);
         File new_file=new File(new_file_path);
@@ -232,7 +233,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType, Collections.singletonList(existing_file_path));
                     }
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
