@@ -454,13 +454,21 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
-		fileDuplicationViewModel.isFinished.observe(MainActivity.this, new Observer<Boolean>() {
+		fileDuplicationViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
 				{
-					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 					df.progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
 					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
@@ -474,13 +482,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array,fileDuplicationViewModel.cut);
 						fileReplaceConfirmationDialog.show(fm, "paste_dialog");
 					}
-					fileDuplicationViewModel.isFinished.setValue(false);
+					fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 
 				}
-
 			}
 		});
-
 
 		SHOW_HIDDEN_FILE=tinyDB.getBoolean("show_hidden_file");
 
@@ -1074,7 +1080,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 					df.progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.isFinished.setValue(false);
 					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,false);
 				}
 			}
@@ -1857,7 +1862,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				} else  {
 					files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
 					df.progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.isFinished.setValue(false);
 					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false);
 				}
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();

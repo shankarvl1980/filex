@@ -26,13 +26,13 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class AppManagerListViewModel extends AndroidViewModel {
 
-    private boolean alreadyRun;
     private Future<?> future1,future2, future3;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    //public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public final MutableLiveData<Boolean> isBackedUp=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
 
@@ -63,8 +63,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     public void populate(String app_type)
     {
-        if(alreadyRun)return;
-        alreadyRun=true;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -122,7 +122,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     }
 
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
 
         });
@@ -132,6 +132,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,List<String> new_name_list,Uri tree_uri,String tree_uri_path)
     {
+        if(isBackedUp.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         this.destFileObjectType=destFileObjectType;
         List<String>dest_file_names=new ArrayList<>();
 
@@ -179,7 +180,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 {
                     if(destFileObjectType==FileObjectType.USB_TYPE)
                     {
-                        isBackedUp.postValue(true);
+                        isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
                         return;
                     }
 
@@ -196,7 +197,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 overwritten_copied_file_name_list=new ArrayList<>(dest_file_names);
                 for (File file : src_file_list) {
                     if (isCancelled() || file == null) {
-                        isBackedUp.postValue(true);
+                        isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
                         return;
                     }
 
@@ -239,7 +240,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     copied_files_name.clear();
                 }
 
-                isBackedUp.postValue(true);
+                isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

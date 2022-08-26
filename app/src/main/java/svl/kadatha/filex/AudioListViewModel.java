@@ -22,9 +22,9 @@ public class AudioListViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4,future5,future6;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
-    public final MutableLiveData<Boolean> isAudioFetchingFromAlbumFinished=new MutableLiveData<>();
-    public final MutableLiveData<Boolean> isSavingAudioFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isAudioFetchingFromAlbumFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isSavingAudioFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
 
     public List<AudioPOJO> audio_selected_array=new ArrayList<>();
@@ -71,7 +71,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public synchronized void listAudio()
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -117,7 +118,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     cursor.close();
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -125,7 +126,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public synchronized void listAudio(List<AlbumPOJO> album_list, String action, String list_name)
     {
-        if(Boolean.TRUE.equals(isAudioFetchingFromAlbumFinished.getValue())) return;
+        if(isAudioFetchingFromAlbumFinished.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        isAudioFetchingFromAlbumFinished.setValue(AsyncTaskStatus.STARTED);
         this.action=action;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
@@ -204,14 +206,15 @@ public class AudioListViewModel extends AndroidViewModel {
                     }
                 }
 
-                isAudioFetchingFromAlbumFinished.postValue(true);
+                isAudioFetchingFromAlbumFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
     public synchronized void save_audio(String action, String list_name)
     {
-        if(Boolean.TRUE.equals(isSavingAudioFinished.getValue())) return;
+        if(isSavingAudioFinished.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        isSavingAudioFinished.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future3=executorService.submit(new Runnable() {
             @Override
@@ -255,7 +258,7 @@ public class AudioListViewModel extends AndroidViewModel {
                             break;
                     }
                 }
-                isSavingAudioFinished.postValue(true);
+                isSavingAudioFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
 
@@ -263,7 +266,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public synchronized void listAlbum()
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
             @Override
@@ -286,7 +290,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     cursor.close();
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -294,7 +298,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public synchronized void fetch_saved_audio_list(String list_name, boolean whether_saved_play_list)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future5=executorService.submit(new Runnable() {
             @Override
@@ -326,7 +331,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     }
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -334,7 +339,8 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public synchronized void fetch_saved_audio_list(List<String> audio_selected_list)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future6=executorService.submit(new Runnable() {
             @Override
@@ -344,7 +350,7 @@ public class AudioListViewModel extends AndroidViewModel {
                 {
                     audio_list.addAll(fetch_audio_list(list_name));
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

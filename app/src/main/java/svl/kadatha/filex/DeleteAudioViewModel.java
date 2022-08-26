@@ -19,7 +19,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isFromInternal;
     public ArrayList<AudioPOJO> deleted_audio_files;
     public List<String> deleted_file_name_list;
@@ -53,7 +53,8 @@ public class DeleteAudioViewModel extends AndroidViewModel {
 
     public synchronized void deleteAudioPOJO(boolean whetherFromAlbum, List<AudioPOJO> src_audio_file_list,Uri tree_uri, String tree_uri_path)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -98,7 +99,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                     Global.print_background_thread(application,application.getString(R.string.selected_audios_could_not_be_deleted));
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

@@ -26,7 +26,8 @@ public class AppSelectorViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
     public List<AppSelectorDialog.AppPOJO> appPOJOList;
     public String file_path,mime_type,file_type,app_package_name;
     public String package_name, app_name, version, installed_version;
@@ -56,7 +57,8 @@ public class AppSelectorViewModel extends AndroidViewModel {
 
     public void populateAppList(Intent intent)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -110,14 +112,15 @@ public class AppSelectorViewModel extends AndroidViewModel {
                     }
                     appPOJOList.add(new AppSelectorDialog.AppPOJO(app_name, app_package_name));
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
     public void getApkArchiveInfo(String file_path)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override
@@ -159,8 +162,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
                     }
 
                 }
-
-                isFinished.postValue(true);
+               asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

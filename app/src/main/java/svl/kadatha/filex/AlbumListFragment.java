@@ -134,10 +134,14 @@ public class AlbumListFragment extends Fragment
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.listAlbum();
-		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		audioListViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					album_list=audioListViewModel.album_list;
 					total_album_list=audioListViewModel.album_list;
@@ -152,15 +156,24 @@ public class AlbumListFragment extends Fragment
 					}
 
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_album);
-					progress_bar.setVisibility(View.GONE);
 				}
 			}
 		});
 
-		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+
+		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(audioListViewModel.action.equals("p"))
 					{
@@ -180,12 +193,11 @@ public class AlbumListFragment extends Fragment
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 						clear_selection();
 					}
-					progress_bar.setVisibility(View.GONE);
-					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
+
+					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
-
 
 		int size=audioListViewModel.mselecteditems.size();
 		enable_disable_buttons(size != 0);
@@ -198,7 +210,6 @@ public class AlbumListFragment extends Fragment
 				{
 					String list_name=result.getString("list_name");
 					progress_bar.setVisibility(View.VISIBLE);
-					audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 					audioListViewModel.listAudio(audioListViewModel.album_selected_array,list_name.equals("") ? "q" : "s",list_name);
 				}
 			}
@@ -288,7 +299,6 @@ public class AlbumListFragment extends Fragment
 					return;
 				}
 				progress_bar.setVisibility(View.VISIBLE);
-				audioListViewModel.isAudioFetchingFromAlbumFinished.setValue(false);
 				audioListViewModel.listAudio(audioListViewModel.album_selected_array,"p","");
 
 			} else if (id == R.id.toolbar_btn_3) {

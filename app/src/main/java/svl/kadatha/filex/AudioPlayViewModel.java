@@ -13,7 +13,7 @@ public class AudioPlayViewModel extends ViewModel {
 
     private boolean isCancelled;
     private Future<?> future1,future2;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
     public boolean fromArchiveView;
     public FileObjectType fileObjectType;
@@ -41,7 +41,8 @@ public class AudioPlayViewModel extends ViewModel {
 
     public synchronized void albumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp, boolean fromArchiveView)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -118,7 +119,7 @@ public class AudioPlayViewModel extends ViewModel {
 
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
 

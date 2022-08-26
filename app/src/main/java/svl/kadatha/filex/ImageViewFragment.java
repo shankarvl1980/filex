@@ -360,10 +360,18 @@ public class ImageViewFragment extends Fragment
 		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
-		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
 					{
@@ -375,10 +383,8 @@ public class ImageViewFragment extends Fragment
 						{
 							((ImageViewActivity)context).finish();
 						}
-
 					}
-					progress_bar.setVisibility(View.GONE);
-					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 
@@ -57,6 +58,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
+        Log.d(Global.TAG,"cleared");
     }
 
     public void cancel(boolean mayInterruptRunning){
@@ -337,11 +339,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         search_file(filePOJOS,filePOJOS_filtered);
                     }
                 }
-                if(!isCancelled)
-                {
-                    Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
-                    Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
-                }
+                Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
+                Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
                 isFinished.postValue(true);
             }
         });

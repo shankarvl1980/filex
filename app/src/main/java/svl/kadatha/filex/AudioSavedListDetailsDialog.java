@@ -335,10 +335,14 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		audioListViewModel.fetch_saved_audio_list(audio_list_clicked_name,whether_saved_play_list);
-		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		audioListViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					clicked_audio_list=audioListViewModel.audio_list;
 					total_audio_list=audioListViewModel.audio_list;
@@ -352,9 +356,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 					if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
-					progress_bar.setVisibility(View.GONE);
 				}
-
 			}
 		});
 

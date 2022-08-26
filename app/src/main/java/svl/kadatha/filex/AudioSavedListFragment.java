@@ -152,10 +152,19 @@ public class AudioSavedListFragment extends Fragment
 		num_all_audio_list=saved_audio_list.size();
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
-		audioListViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		audioListViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_list;
 					if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
@@ -173,9 +182,8 @@ public class AudioSavedListFragment extends Fragment
 
 					}
 					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
-					progress_bar.setVisibility(View.GONE);
-					audioListViewModel.isFinished.setValue(false);
 					clear_selection();
+					audioListViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -253,7 +261,6 @@ public class AudioSavedListFragment extends Fragment
 				if (audioListViewModel.audio_list_selected_array.size() >= 1) {
 					{
 						progress_bar.setVisibility(View.VISIBLE);
-						audioListViewModel.isFinished.setValue(false);
 						audioListViewModel.fetch_saved_audio_list(audioListViewModel.audio_list_selected_array);
 
 					}

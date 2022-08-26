@@ -96,10 +96,19 @@ public class AudioPlayFragment extends Fragment
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		activity=((AudioPlayerActivity)context);
 		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
-		audioPlayViewModel.isFinished.observe(this, new Observer<Boolean>() {
+		audioPlayViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					if(progress_bar!=null)progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
+				}
+				else
+				{
+					if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE);  //because on_intent is called before inflation of view
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
@@ -111,10 +120,9 @@ public class AudioPlayFragment extends Fragment
 					{
 						context.startService(service_intent);
 					}
-					if(progress_bar!=null)progress_bar.setVisibility(View.GONE); //because on_intent is called before inflation of view
-					audioPlayViewModel.isFinished.setValue(false);
-				}
 
+					audioPlayViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
 			}
 		});
 
@@ -148,7 +156,6 @@ public class AudioPlayFragment extends Fragment
 	public void initiate_audio()
 	{
 		data=activity.data;
-
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
@@ -398,10 +405,19 @@ public class AudioPlayFragment extends Fragment
 		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AudioPlayFragment.this).get(DeleteFileOtherActivityViewModel.class);
-		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
 					{
@@ -412,8 +428,8 @@ public class AudioPlayFragment extends Fragment
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
 						AudioPlayerActivity.AUDIO_FILE=null;
 					}
-					progress_bar.setVisibility(View.GONE);
-					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+
+					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});

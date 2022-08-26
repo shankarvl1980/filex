@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -538,8 +539,23 @@ public class FilePOJOUtil {
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
         if(filePOJOs==null)
         {
+            UsbFile currentUsbFile=null;
+            if(fileObjectType==FileObjectType.USB_TYPE)
+            {
+                if(MainActivity.usbFileRoot!=null)
+                {
+                    try {
+                        currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(source_folder));
 
-            return;
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),fileObjectType,source_folder,currentUsbFile,false);
+            filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
+            filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
+            if(filePOJOs==null)return;
         }
 
         String name;
@@ -596,7 +612,23 @@ public class FilePOJOUtil {
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
         if(filePOJOs==null)
         {
-            return null;
+            UsbFile currentUsbFile=null;
+            if(fileObjectType==FileObjectType.USB_TYPE)
+            {
+                if(MainActivity.usbFileRoot!=null)
+                {
+                    try {
+                        currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
+
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),fileObjectType,dest_folder,currentUsbFile,false);
+            filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+dest_folder);
+            filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
+            if(filePOJOs==null)return null;
         }
 
         if(overwritten_file_path_list!=null) // while creating new file, overwritten_file_path_list is null
@@ -714,25 +746,11 @@ public class FilePOJOUtil {
     public static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(List<String> file_path_list, FileObjectType fileObjectType)
     {
         if(file_path_list==null) return;
-
-        DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
-
-        if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
-
         int size=file_path_list.size();
         for(int i=0;i<size;++i)
         {
             String file_path=file_path_list.get(i);
-
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path,fileObjectType);
-
-//            if(df!=null) df.mainActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
-//            if(fileSelectorDialog!=null) fileSelectorDialog.fileSelectorActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
-//            if(storageAnalyserDialog!=null) storageAnalyserDialog.storageAnalyserActivity.broadcast_file_pojo_cache_removal(file_path,fileObjectType);
         }
         if(size>0) SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0),fileObjectType);
     }

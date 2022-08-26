@@ -127,10 +127,14 @@ public class AppInstallAlertDialog extends DialogFragment
 
 
         viewModel.getApkArchiveInfo(file_path);
-        viewModel.isFinished.observe(this, new Observer<Boolean>() {
+        viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                }
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+viewModel.package_name+".png";
                     GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon_image_view);
@@ -147,12 +151,10 @@ public class AppInstallAlertDialog extends DialogFragment
                     {
                         message_tv.setText(R.string.do_you_want_update_the_app);
                     }
-                    progress_bar.setVisibility(View.GONE);
                 }
-
             }
         });
-
+        
         return v;
     }
 

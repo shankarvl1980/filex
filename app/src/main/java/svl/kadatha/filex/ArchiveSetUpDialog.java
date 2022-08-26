@@ -155,13 +155,21 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 
 		viewModel=new ViewModelProvider(this).get(ArchiveSetUpViewModel.class);
-		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<Boolean>() {
+		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.GONE);
-					viewModel.isRecursiveFilesRemoved.setValue(false);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					viewModel.isRecursiveFilesRemoved.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 					if(viewModel.files_selected_array.size()==0)
 					{
 						Global.print(context,getString(R.string.could_not_perform_action));
@@ -247,7 +255,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						dismissAllowingStateLoss();
 					}
 				}
-
 			}
 		});
 
@@ -372,7 +379,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						progress_bar.setVisibility(View.VISIBLE);
 						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-						viewModel.isRecursiveFilesRemoved.setValue(false);
 						viewModel.removeRecursiveFiles(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 					}
 

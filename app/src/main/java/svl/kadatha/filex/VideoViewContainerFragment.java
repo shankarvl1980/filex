@@ -230,10 +230,18 @@ public class VideoViewContainerFragment extends Fragment
 		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(VideoViewContainerFragment.this).get(DeleteFileOtherActivityViewModel.class);
-		deleteFileOtherActivityViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
 					{
@@ -250,7 +258,6 @@ public class VideoViewContainerFragment extends Fragment
 									break;
 								}
 							}
-
 						}
 
 						adapter.notifyDataSetChanged();
@@ -258,15 +265,11 @@ public class VideoViewContainerFragment extends Fragment
 						{
 							((VideoViewActivity)context).finish();
 						}
-
 					}
-					progress_bar.setVisibility(View.GONE);
-					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
-
-
 
 		viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
 			{
@@ -282,11 +285,9 @@ public class VideoViewContainerFragment extends Fragment
 
 				public void onPageScrolled(int p1, float p2, int p3)
 				{
-
 					viewModel.file_selected_idx=p1;
 					viewModel.currently_shown_file=viewModel.video_list.getKeyAtIndex(p1);
 					title.setText(viewModel.currently_shown_file.getName());
-
 				}
 			});
 

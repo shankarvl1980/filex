@@ -20,7 +20,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isFromInternal;
     public List<FilePOJO> deleted_files;
     public List<String> deleted_file_name_list;
@@ -55,7 +55,8 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteFilePOJO(String source_folder,List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder=source_folder;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
@@ -82,7 +83,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -166,7 +167,8 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteAudioPOJO(String source_folder,List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder=source_folder;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
@@ -194,7 +196,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

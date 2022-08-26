@@ -184,10 +184,15 @@ public class AppManagerListFragment extends Fragment {
 
         viewModel= new ViewModelProvider(this).get(AppManagerListViewModel.class);
         viewModel.populate(app_type);
-        viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     appPOJOList=viewModel.appPOJOList;
                     total_appPOJO_list=appPOJOList;
@@ -201,9 +206,7 @@ public class AppManagerListFragment extends Fragment {
                         recyclerView.setVisibility(View.GONE);
                         empty_tv.setVisibility(View.VISIBLE);
                     }
-                    progressBar.setVisibility(View.GONE);
                 }
-
             }
         });
 
@@ -295,16 +298,23 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
-        viewModel.isBackedUp.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.isBackedUp.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
                 {
                     progressBar.setVisibility(View.GONE);
-                    viewModel.isBackedUp.setValue(false);
-                    Global.print(context,getString(R.string.copied_apk_file));
+                }
+                else
+                {
+                    progressBar.setVisibility(View.VISIBLE);
                 }
 
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    viewModel.isBackedUp.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    Global.print(context,getString(R.string.copied_apk_file));
+                }
             }
         });
 

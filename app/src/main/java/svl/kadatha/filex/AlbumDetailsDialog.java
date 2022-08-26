@@ -289,10 +289,15 @@ public class AlbumDetailsDialog extends DialogFragment
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
 		AlbumPOJO albumPOJO=new AlbumPOJO(albumID,"",null,null,null);
 		audioListViewModel.listAudio(Collections.singletonList(albumPOJO),null,null);
-		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(this, new Observer<Boolean>() {
+		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					audio_list=audioListViewModel.audio_list;
 					total_audio_list=audioListViewModel.audio_list;
@@ -306,21 +311,28 @@ public class AlbumDetailsDialog extends DialogFragment
 						empty_audio_list_tv.setVisibility(View.VISIBLE);
 					}
 					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
-					progress_bar.setVisibility(View.GONE);
 				}
 			}
 		});
 
-		audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		audioListViewModel.isSavingAudioFinished.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
 					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 					clear_selection();
-					progress_bar.setVisibility(View.GONE);
-					audioListViewModel.isSavingAudioFinished.setValue(false);
+					audioListViewModel.isSavingAudioFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -343,10 +355,20 @@ public class AlbumDetailsDialog extends DialogFragment
 		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 
 		DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AlbumDetailsDialog.this).get(DeleteAudioViewModel.class);
-		deleteAudioViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		deleteAudioViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean) {
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
 					if (deleteAudioViewModel.deleted_audio_files.size() > 0) {
 						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
@@ -360,8 +382,7 @@ public class AlbumDetailsDialog extends DialogFragment
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 					}
 					clear_selection();
-					progress_bar.setVisibility(View.GONE);
-					deleteAudioViewModel.isFinished.setValue(false);
+					deleteAudioViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -375,9 +396,7 @@ public class AlbumDetailsDialog extends DialogFragment
 				{
 					progress_bar.setVisibility(View.VISIBLE);
 					String list_name=result.getString("list_name");
-					audioListViewModel.isSavingAudioFinished.setValue(false);
 					audioListViewModel.save_audio(list_name.equals("") ? "q" : "s",list_name);
-
 				}
 			}
 		});

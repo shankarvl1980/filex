@@ -354,10 +354,18 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
-		deleteFileOtherActivityViewModel.isFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
 					{
@@ -365,12 +373,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						clear_cache=false;
 						finish();
 					}
-					progress_bar.setVisibility(View.GONE);
-					deleteFileOtherActivityViewModel.isFinished.setValue(false);
+					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
-
 
 		fm.setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override

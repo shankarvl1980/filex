@@ -132,15 +132,18 @@ public class AppSelectorDialog extends DialogFragment
 
         viewModel=new ViewModelProvider(this).get(AppSelectorViewModel.class);
         viewModel.populateAppList(intent);
-        viewModel.isFinished.observe(this, new Observer<Boolean>() {
+        viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                }
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(viewModel.appPOJOList);
                     app_recycler_view.setAdapter(appRecyclerAdapter);
                     app_recycler_view.setLayoutManager(new LinearLayoutManager(context));
-                    progress_bar.setVisibility(View.GONE);
                 }
             }
         });

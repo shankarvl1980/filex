@@ -14,7 +14,8 @@ import java.util.concurrent.Future;
 
 public class FileDuplicationViewModel extends ViewModel {
 
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    //public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
 
@@ -27,7 +28,6 @@ public class FileDuplicationViewModel extends ViewModel {
     public FileObjectType sourceFileObjectType,destFileObjectType;
     boolean cut;
     public ArrayList<String>files_selected_array;
-
 
 
     @Override
@@ -51,7 +51,8 @@ public class FileDuplicationViewModel extends ViewModel {
 
     public void checkForExistingFileWithSameName(String source_folder,FileObjectType sourceFileObjectType, String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array, boolean cut ,boolean findAllDuplicates)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder=source_folder;
         this.sourceFileObjectType=sourceFileObjectType;
         this.dest_folder=dest_folder;
@@ -107,8 +108,7 @@ public class FileDuplicationViewModel extends ViewModel {
                     }
                     if(stop_loop)break;
                 }
-
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
