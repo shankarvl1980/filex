@@ -198,7 +198,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				{
 					tree_uri=result.getParcelable("tree_uri");
 					tree_uri_path=result.getString("tree_uri_path");
-
 				}
 
 			}

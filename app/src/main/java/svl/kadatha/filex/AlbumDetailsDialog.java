@@ -392,7 +392,6 @@ public class AlbumDetailsDialog extends DialogFragment
 		});
 
 
-
 		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -404,7 +403,6 @@ public class AlbumDetailsDialog extends DialogFragment
 				}
 			}
 		});
-
 
 
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {

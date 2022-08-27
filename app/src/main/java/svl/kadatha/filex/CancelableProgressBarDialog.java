@@ -97,7 +97,12 @@ public class CancelableProgressBarDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		title.setText(title_string);
 	}
-	
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+	}
 
 	public void set_title(String heading)
 	{

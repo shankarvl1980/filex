@@ -354,7 +354,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
 					scrollview.smoothScrollTo(0,0);
-
 					viewModel.textViewUndoRedo.startListening();
 				}
 			}

@@ -39,7 +39,6 @@ import java.util.List;
 
 public class AllAudioListFragment extends Fragment
 {
-
 	private Context context;
 	private List<AudioPOJO> audio_list,total_audio_list;
 	private AudioListRecyclerViewAdapter audioListRecyclerViewAdapter;

@@ -125,7 +125,6 @@ public class AppInstallAlertDialog extends DialogFragment
             }
         });
 
-
         viewModel.getApkArchiveInfo(file_path);
         viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override

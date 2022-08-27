@@ -39,7 +39,6 @@ import java.util.List;
 
 public class AlbumListFragment extends Fragment
 {
-
 	private Context context;
 	private List<AlbumPOJO> album_list, total_album_list;
 	private Button play_btn;

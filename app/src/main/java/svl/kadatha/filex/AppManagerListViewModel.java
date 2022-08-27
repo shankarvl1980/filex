@@ -27,7 +27,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class AppManagerListViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2, future3;
-    //public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
@@ -133,6 +132,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,List<String> new_name_list,Uri tree_uri,String tree_uri_path)
     {
         if(isBackedUp.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        isBackedUp.setValue(AsyncTaskStatus.STARTED);
         this.destFileObjectType=destFileObjectType;
         List<String>dest_file_names=new ArrayList<>();
 

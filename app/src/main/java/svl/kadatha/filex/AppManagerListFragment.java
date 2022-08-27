@@ -599,7 +599,6 @@ public class AppManagerListFragment extends Fragment {
             progress_bar.setVisibility(View.VISIBLE);
             viewModel.back_up(new ArrayList<>(Collections.singletonList(app_path)),dest_folder,destFileObjectType,Collections.singletonList(new_name),tree_uri,tree_uri_path);
         }
-
     }
 
     private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType,Bundle bundle)

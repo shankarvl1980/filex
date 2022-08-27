@@ -92,7 +92,6 @@ public class AudioPlayFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		activity=((AudioPlayerActivity)context);
 		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
@@ -120,7 +119,6 @@ public class AudioPlayFragment extends Fragment
 					{
 						context.startService(service_intent);
 					}
-
 					audioPlayViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
@@ -477,7 +475,6 @@ public class AudioPlayFragment extends Fragment
 
 			});
 	}
-	
 	
 
 	private String convertSecondsToHMmSs(int milliseconds)

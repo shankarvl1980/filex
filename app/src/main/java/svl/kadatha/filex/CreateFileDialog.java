@@ -100,7 +100,6 @@ public class CreateFileDialog extends DialogFragment
 		no_of_files_textview.setVisibility(View.GONE);
 		files_size_textview.setVisibility(View.GONE);
 		progress_bar=v.findViewById(R.id.fragment_create_rename_delete_progressbar);
-		progress_bar.setVisibility(View.VISIBLE);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_rename_delete_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
 		okbutton= buttons_layout.findViewById(R.id.first_button);

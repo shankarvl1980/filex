@@ -25,13 +25,11 @@ public class ApkBackUpNameDialog extends DialogFragment
     private InputMethodManager imm;
     private Bundle bundle;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
         imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
     }
 
     @Override

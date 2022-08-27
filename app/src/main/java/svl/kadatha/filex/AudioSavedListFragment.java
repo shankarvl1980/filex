@@ -34,7 +34,6 @@ public class AudioSavedListFragment extends Fragment
 {
 
 	private Context context;
-
 	private AudioSavedListRecyclerAdapter audio_saved_list_adapter;
 	private List<String> saved_audio_list;
 	private Button play_btn,remove_btn;

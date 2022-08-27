@@ -14,7 +14,6 @@ import java.util.concurrent.Future;
 
 public class FileDuplicationViewModel extends ViewModel {
 
-    //public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
     public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private Future<?> future1,future2,future3;

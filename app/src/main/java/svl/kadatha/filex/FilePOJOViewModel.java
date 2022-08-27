@@ -57,7 +57,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
-        Log.d(Global.TAG,"cleared");
     }
 
     public void cancel(boolean mayInterruptRunning){

@@ -317,7 +317,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -367,7 +366,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(requestKey.equals(CANCEL_PROGRESS_REQUEST_CODE))
 				{
 					viewModel.cancel(true);
-					after_filledFilePojos_procedure();
 				}
 			}
 		});
@@ -509,6 +507,23 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver.stopWatching();
 		fileModifyObserver.setFileObserverListener(null);
 		if(adapter!=null)adapter.setCardViewClickListener(null);
+		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
+		{
+			Log.d(Global.TAG,"cancelable progres bar is dismissed");
+			cancelableProgressBarDialog.dismissAllowingStateLoss();
+		}
+		if(cancelableProgressBarDialog!=null)// && )
+		{
+			if(cancelableProgressBarDialog.getDialog()!=null)
+			{
+				Log.d(Global.TAG,"cancelable progress bar dialog is detected");
+			}
+			else
+			{
+				Log.d(Global.TAG,"cancelable progress bar dialog is not detected");
+			}
+
+		}
 	}
 
 	@Override

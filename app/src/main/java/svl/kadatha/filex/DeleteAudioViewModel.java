@@ -23,7 +23,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
     private boolean isFromInternal;
     public ArrayList<AudioPOJO> deleted_audio_files;
     public List<String> deleted_file_name_list;
-    List<String> deleted_file_path_list;
+    public List<String> deleted_file_path_list;
     public boolean success;
 
     public DeleteAudioViewModel(@NonNull Application application) {
