@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.View;

@@ -27,7 +27,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class AppManagerListViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2, future3;
-    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<AppManagerListFragment.AppPOJO> appPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();

@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;

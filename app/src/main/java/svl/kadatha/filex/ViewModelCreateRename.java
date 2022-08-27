@@ -20,7 +20,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
     private final Application application;
     public FilePOJO filePOJO;
-    public MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean file_created;
     public boolean fileNameChanged;
 

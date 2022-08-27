@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -401,6 +402,7 @@ public class AppManagerListFragment extends Fragment {
         {
             if(a.getPackage_name().equals(package_name))
             {
+                viewModel.appPOJOList.remove(a);
                 appPOJOList.remove(a);
                 total_appPOJO_list.remove(a);
                 break;

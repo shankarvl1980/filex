@@ -7,10 +7,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VideoViewActivity extends BaseActivity
 {

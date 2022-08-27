@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 

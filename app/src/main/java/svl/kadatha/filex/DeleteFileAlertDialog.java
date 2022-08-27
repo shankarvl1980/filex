@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +41,7 @@ public class DeleteFileAlertDialog extends DialogFragment
     private OKButtonClickListener okButtonClickListener;
 	private String source_folder;
 	private final static String SAF_PERMISSION_REQUEST_CODE="delete_file_saf_permission_request_code";
-	private ViewModelFileCount viewModel;
+
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -114,7 +113,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 		dialog_heading_textview.setText(R.string.delete);
 		new_file_name_edittext.setVisibility(View.GONE);
 
-		viewModel=new ViewModelProvider(this).get(ViewModelFileCount.class);
+		ViewModelFileCount viewModel = new ViewModelProvider(this).get(ViewModelFileCount.class);
 		viewModel.count(source_folder,sourceFileObjectType,files_selected_array,size,true);
 
 		viewModel.total_no_of_files.observe(this, new Observer<Integer>() {

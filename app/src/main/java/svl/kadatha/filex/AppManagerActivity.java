@@ -17,7 +17,6 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,7 +49,6 @@ public class AppManagerActivity extends BaseActivity{
         context=this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         fm=getSupportFragmentManager();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);
         keyBoardUtil=new KeyBoardUtil(containerLayout);
         search_toolbar=findViewById(R.id.app_manager_search_toolbar);
@@ -176,7 +174,7 @@ public class AppManagerActivity extends BaseActivity{
     }
 
 
-    private class AppManagementFragmentAdapter extends FragmentPagerAdapter
+    private static class AppManagementFragmentAdapter extends FragmentPagerAdapter
     {
 
         public AppManagementFragmentAdapter(@NonNull FragmentManager fm) {
@@ -191,9 +189,9 @@ public class AppManagerActivity extends BaseActivity{
                 case 1:
                     Bundle bundle=new Bundle();
                     bundle.putString(SYSTEM_APPS,SYSTEM_APPS);
-                    systemAppListFragment=new AppManagerListFragment();
-                    systemAppListFragment.setArguments(bundle);
-                    return systemAppListFragment;
+                    AppManagerListFragment appManagerListFragment=new AppManagerListFragment();
+                    appManagerListFragment.setArguments(bundle);
+                    return appManagerListFragment;
                 default:
                     return new AppManagerListFragment();
             }
