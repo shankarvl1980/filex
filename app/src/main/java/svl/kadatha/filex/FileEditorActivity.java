@@ -305,10 +305,19 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 		});
 
-		viewModel.isReadingFinished.observe(FileEditorActivity.this, new Observer<Boolean>() {
+		viewModel.isReadingFinished.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(!viewModel.fileRead)
 					{
@@ -326,7 +335,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					{
 						up_button.setEnabled(false);
 						up_button.setAlpha(Global.DISABLE_ALFA);
-
 					}
 					else
 					{
@@ -348,7 +356,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					scrollview.smoothScrollTo(0,0);
 
 					viewModel.textViewUndoRedo.startListening();
-					progress_bar.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -668,7 +675,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			FileDescriptor fd=pfd.getFileDescriptor();
 
 			progress_bar.setVisibility(View.VISIBLE);
-			viewModel.isReadingFinished.setValue(false);
+			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(file,new FileInputStream(fd),pointer, false);
 			return true;
 		}

@@ -22,7 +22,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 	private boolean isCancelled;
 	private Future<?> future1,future2,future3, future4;
-	public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+	public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 	public boolean isZipExtracted;
 	public FilePOJO filePOJO;
 
@@ -51,7 +51,8 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 	public synchronized void extractZip(FilePOJO filePOJO,ZipFile finalZipfile, ZipEntry zip_entry)
 	{
-		if(Boolean.TRUE.equals(isFinished.getValue()))return;
+		if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+		asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
 		isZipExtracted=false;
 		this.filePOJO=filePOJO;
 		ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -59,7 +60,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 			@Override
 			public void run() {
 				isZipExtracted=EXTRACT_ZIP(finalZipfile,zip_entry,Global.ARCHIVE_EXTRACT_DIR);
-				isFinished.postValue(true);
+				asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
 			}
 		});
 	}
@@ -71,14 +72,12 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 
 		try
 		{
-
 			inStream=zipfile.getInputStream(zipEntry);
 			BufferedInputStream bufferedinStream=new BufferedInputStream(inStream);
 			File dir=new File(Global.CONCATENATE_PARENT_CHILD_PATH(ZipDestFolder.getAbsolutePath(),zipEntry.getName()));
 			if(zipEntry.isDirectory() && !dir.exists())
 			{
 				return FileUtil.mkdirsNative(dir);
-
 			}
 			else if(zipEntry.isDirectory() && dir.exists())
 			{
@@ -92,14 +91,9 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 					FileUtil.mkdirsNative(parent_dir);
 				}
 				OutputStream outStream;
-
 				outStream=new FileOutputStream(dir);
-
-
-
 				if(outStream!=null)
 				{
-
 					BufferedOutputStream bufferedoutStream=new BufferedOutputStream(outStream);
 					byte[] b=new byte[8192];
 					int bytesread;
@@ -112,10 +106,7 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 					bufferedinStream.close();
 					return true;
 				}
-
 			}
-
-
 		}
 
 		catch(IOException e)
@@ -127,23 +118,17 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 		{
 			try
 			{
-
 				if(inStream!=null)
 				{
 					inStream.close();
-
 				}
-
 			}
 			catch(Exception e)
 			{
 				return false;
 			}
-
 		}
-
 		return false;
 	}
-
 }
 

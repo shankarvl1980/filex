@@ -413,10 +413,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		
 */
 		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
-		viewModel.isExtractionCompleted.observe(this, new Observer<Boolean>() {
+		viewModel.isExtractionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					df.progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					archive_view=viewModel.zipFileExtracted;
 					if(viewModel.zipFileExtracted)
@@ -432,26 +441,30 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 
 					}
-					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-					df.progress_bar.setVisibility(View.GONE);
-					viewModel.isExtractionCompleted.setValue(false);
+
+					viewModel.isExtractionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
 
-		viewModel.isDeletionCompleted.observe(this, new Observer<Boolean>() {
+		viewModel.isDeletionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
 				{
-					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 					df.progress_bar.setVisibility(View.GONE);
-					viewModel.isDeletionCompleted.setValue(false);
+				}
+				else
+				{
+					df.progress_bar.setVisibility(View.VISIBLE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					viewModel.isDeletionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
-
-
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
 		fileDuplicationViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -1286,13 +1299,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						if(getCacheDir().exists())
 						{
 							df.progress_bar.setVisibility(View.VISIBLE);
-							viewModel.isDeletionCompleted.setValue(false);
 							viewModel.deleteDirectory(getCacheDir());
 						}
 						if(Global.ARCHIVE_EXTRACT_DIR.exists())
 						{
 							df.progress_bar.setVisibility(View.VISIBLE);
-							viewModel.isDeletionCompleted.setValue(false);
 							viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 						}
 						finish();
@@ -1618,14 +1629,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if(getCacheDir().exists())
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(getCacheDir());
 				}
 
 				if(Global.ARCHIVE_EXTRACT_DIR.exists())
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				}
 
@@ -1912,13 +1921,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if(getCacheDir().exists())
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(getCacheDir());
 				}
 				if(Global.ARCHIVE_EXTRACT_DIR.exists())
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.isDeletionCompleted.setValue(false);
 					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				}
 				finish();

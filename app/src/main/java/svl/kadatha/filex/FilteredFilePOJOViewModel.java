@@ -30,8 +30,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4, future5;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
-    public final MutableLiveData<Boolean> hasWallPaperSet=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> hasWallPaperSet=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isPdfBitmapFetched=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
     public final IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
     public int total_images;
@@ -42,7 +43,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public int total_pages;
     public Bitmap bitmap;
     public boolean out_of_memory_exception_thrown;
-    public final MutableLiveData<Boolean> isPdfBitmapFetched=new MutableLiveData<>();
+
     public int image_selected_idx=0,previously_selected_image_idx=0,pdf_current_position;
     public String source_folder;
     public FilePOJO currently_shown_file;
@@ -82,7 +83,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void getAlbumFromCurrentFolder(String regex, boolean whetherVideo )
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         firststart=true;
         source_folder=new File(file_path).getParent();
         ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -218,14 +220,15 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     total_images=album_file_pojo_list.size();
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
     public void setWallPaper(ActivityResult result,File temporaryDir)
     {
-        if(Boolean.TRUE.equals(hasWallPaperSet.getValue())) return;
+        if(hasWallPaperSet.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        hasWallPaperSet.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -262,7 +265,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
                     }
                 }
-                hasWallPaperSet.postValue(true);
+                hasWallPaperSet.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -270,7 +273,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
     public void initializePdfRenderer(FileObjectType fileObjectType,String file_path,Uri data,boolean fromThirdPartyApp)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.file_path=file_path;
         source_folder=new File(file_path).getParent();
         ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -344,7 +348,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     Global.print_background_thread(application,application.getString(R.string.file_not_in_PDF_format_or_corrupted));
                 }
 
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
 
@@ -352,7 +356,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void fetchBitmapFromPDF(int position)
     {
-        if(Boolean.TRUE.equals(isPdfBitmapFetched.getValue())) return;
+        if(isPdfBitmapFetched.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        isPdfBitmapFetched.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=Executors.newSingleThreadExecutor();//MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
             @Override
@@ -377,7 +382,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         Global.print_background_thread(application,application.getString(R.string.exception_thrown));
 
                     }
-                    isPdfBitmapFetched.postValue(true);
+                    isPdfBitmapFetched.postValue(AsyncTaskStatus.COMPLETED);
                 }
             }
         });

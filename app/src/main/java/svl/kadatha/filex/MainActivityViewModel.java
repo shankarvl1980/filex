@@ -17,9 +17,9 @@ public class MainActivityViewModel extends ViewModel {
 
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
-    public final MutableLiveData<Boolean> isExtractionCompleted=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean zipFileExtracted;
-    public final MutableLiveData<Boolean> isDeletionCompleted=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean checkedSAFPermissionPasteSetUp;
 
     @Override
@@ -42,7 +42,8 @@ public class MainActivityViewModel extends ViewModel {
 
     public synchronized void extractArchive(ZipFile zipfile)
     {
-        if(Boolean.TRUE.equals(isExtractionCompleted.getValue())) return;
+        if(isExtractionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        isExtractionCompleted.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -78,20 +79,21 @@ public class MainActivityViewModel extends ViewModel {
                         }
                     }
                 }
-                isExtractionCompleted.postValue(true);
+                isExtractionCompleted.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
     public void deleteDirectory(File dir)
     {
-        if(Boolean.TRUE.equals(isDeletionCompleted.getValue()))return;
+        if(isDeletionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        isDeletionCompleted.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 FileUtil.deleteNativeDirectory(dir);
-                isDeletionCompleted.postValue(true);
+                isDeletionCompleted.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

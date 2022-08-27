@@ -31,13 +31,12 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3, future4;
-    public final MutableLiveData<Boolean> isFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
     private int total_no_of_files;
     private long total_size_of_files;
-
 
 
     private String what_to_find=null;
@@ -76,7 +75,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
             @Override
@@ -99,9 +99,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         final long final_storage_space = storage_space;
                         fill_file_size(filePOJOS,final_storage_space);
                     }
-
                 }
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
         });
@@ -109,7 +108,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void fill_file_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override
@@ -126,8 +126,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
                 final long final_storage_space = storage_space;
                 fill_file_size(filePOJOS,final_storage_space);
-                isFinished.postValue(true);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -199,7 +199,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     public synchronized void populateLibrarySearchFilePOJO(FileObjectType fileObjectType, Set<FilePOJO> search_in_dir,String library_or_search,String fileclickselected,String search_file_name,String search_file_type,boolean search_whole_word,boolean search_case_sensitive,boolean search_regex,long search_lower_limit_size,long search_upper_limit_size)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue())) return;
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         count=0;
         mutable_file_count.postValue(count);
         ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -224,7 +225,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     filePOJOS_filtered=filePOJOS;
                     mutable_file_count.postValue(filePOJOS.size());
-                    isFinished.postValue(true);
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                     return;
                 }
 
@@ -341,7 +342,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
                 Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
                 Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
-                isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
 

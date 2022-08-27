@@ -212,10 +212,14 @@ public class VideoViewContainerFragment extends Fragment
 
 
 		viewModel.getAlbumFromCurrentFolder(Global.VIDEO_REGEX,true);
-		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					adapter=new VideoViewPagerAdapter(((VideoViewActivity)context).fm,viewModel.video_list);
 					viewpager.setAdapter(adapter);
@@ -224,7 +228,7 @@ public class VideoViewContainerFragment extends Fragment
 					{
 						((VideoViewActivity)context).current_page_idx=0;
 					}
-					progress_bar.setVisibility(View.GONE);
+
 				}
 			}
 		});

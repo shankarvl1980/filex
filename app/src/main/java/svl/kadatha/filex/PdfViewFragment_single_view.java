@@ -301,10 +301,14 @@ public class PdfViewFragment_single_view extends Fragment
         }
 
         viewModel.initializePdfRenderer(viewModel.fileObjectType,viewModel.file_path,data,viewModel.fromThirdPartyApp);
-        viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                }
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     pdf_view_adapter=new PdfViewPagerAdapter();
                     view_pager.setAdapter(pdf_view_adapter);
@@ -316,10 +320,11 @@ public class PdfViewFragment_single_view extends Fragment
                     recyclerview.setAdapter(picture_selector_adapter);
                     lm.scrollToPositionWithOffset(viewModel.image_selected_idx,-preview_image_offset);
                     current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
-                    progress_bar.setVisibility(View.GONE);
+
                 }
             }
         });
+
 
         DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment_single_view.this).get(DeleteFileOtherActivityViewModel.class);
         deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {

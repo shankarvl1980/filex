@@ -166,10 +166,14 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			after_filledFilePojos_procedure();
 		}
 
-		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.NOT_YET_STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					after_filledFilePojos_procedure();
 				}
@@ -239,7 +243,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			local_activity_delete=false;
 			{
 				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.isFinished.setValue(false);
+				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 			}
 

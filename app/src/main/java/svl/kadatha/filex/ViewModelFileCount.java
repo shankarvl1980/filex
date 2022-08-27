@@ -21,7 +21,7 @@ public class ViewModelFileCount extends ViewModel {
     final MutableLiveData<String> size_of_files_formatted=new MutableLiveData<>();
     private Future<?> future;
     private boolean isCancelled;
-    public final MutableLiveData<Boolean>isFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus>asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -40,11 +40,14 @@ public class ViewModelFileCount extends ViewModel {
 
     public synchronized void count(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
     {
-        if(Boolean.TRUE.equals(isFinished.getValue()))return;
+       if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+       asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future=executorService.submit(new Runnable() {
+        future=executorService.submit(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
 
                 Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
                 String file_path=source_list_files.get(0);
@@ -93,7 +96,7 @@ public class ViewModelFileCount extends ViewModel {
                     populate(f_array,include_folder,source_folder);
 
                 }
-            isFinished.postValue(true);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

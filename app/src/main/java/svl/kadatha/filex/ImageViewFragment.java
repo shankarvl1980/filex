@@ -339,10 +339,14 @@ public class ImageViewFragment extends Fragment
 		}
 
 		viewModel.getAlbumFromCurrentFolder(Global.IMAGE_REGEX,false);
-		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					image_view_adapter=new ImageViewPagerAdapter(viewModel.album_file_pojo_list);
 					view_pager.setAdapter(image_view_adapter);
@@ -354,10 +358,11 @@ public class ImageViewFragment extends Fragment
 					recyclerview.setLayoutManager(lm);
 					recyclerview.setAdapter(picture_selector_adapter);
 					lm.scrollToPositionWithOffset(viewModel.file_selected_idx,-preview_image_offset);
-					progress_bar.setVisibility(View.GONE);
+
 				}
 			}
 		});
+
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(ImageViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -412,13 +417,21 @@ public class ImageViewFragment extends Fragment
 			}
 		});
 
-		viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.GONE);
-					viewModel.hasWallPaperSet.setValue(false);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					viewModel.hasWallPaperSet.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -453,7 +466,6 @@ public class ImageViewFragment extends Fragment
 			if(result.getResultCode()== Activity.RESULT_OK)
 			{
 				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.hasWallPaperSet.setValue(false);
 				viewModel.setWallPaper(result,((ImageViewActivity)context).CacheDir);
 			}
 			else

@@ -203,7 +203,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
             if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
             {
-                viewModel.isFinished.setValue(false);
+                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 viewModel.fill_file_size(fileObjectType,fileclickselected,currentUsbFile,false);
             }
             else
@@ -214,10 +214,15 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         }
 
-        viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean)
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                }
+
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     after_filledFilePojos_procedure();
                 }
@@ -284,7 +289,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             modification_observed=false;
             local_activity_delete=false;
             progress_bar.setVisibility(View.VISIBLE);
-            viewModel.isFinished.setValue(false);
+            viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
 
             new Thread(new Runnable() {

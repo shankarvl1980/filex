@@ -306,10 +306,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			after_filledFilePojos_procedure();
 		}
 
-		viewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					after_filledFilePojos_procedure();
 				}
@@ -324,19 +329,29 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		});
 
 		extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
-		extractZipFileViewModel.isFinished.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+		extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
-			public void onChanged(Boolean aBoolean) {
-				if(aBoolean)
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				else
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(extractZipFileViewModel.isZipExtracted)
 					{
 						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false);
-						extractZipFileViewModel.isZipExtracted=false;
+
 					}
-					progress_bar.setVisibility(View.GONE);
-					extractZipFileViewModel.isFinished.setValue(false);
+					extractZipFileViewModel.isZipExtracted=false;
+					extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.COMPLETED);
 				}
+
 			}
 		});
 
@@ -381,7 +396,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				cancelableProgressBarDialog.show(mainActivity.fm,"");
-				viewModel.isFinished.setValue(false);
+				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
 			else
@@ -415,13 +430,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				cancelableProgressBarDialog.show(mainActivity.fm,"");
-				viewModel.isFinished.setValue(false);
+				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
 			else
 			{
 				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.isFinished.setValue(false);
+				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
 			}
 

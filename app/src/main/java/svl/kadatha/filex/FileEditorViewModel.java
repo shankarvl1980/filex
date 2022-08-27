@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 public class FileEditorViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2,future3;
-    public final MutableLiveData<Boolean> isReadingFinished=new MutableLiveData<>();
+    public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public int eol,altered_eol;
     public LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;
@@ -66,8 +66,8 @@ public class FileEditorViewModel extends AndroidViewModel {
 
     public synchronized void openFile(File file, FileInputStream fileInputStream, long f_pointer, boolean go_back)
     {
-        if(Boolean.TRUE.equals(isReadingFinished.getValue())) return;
-
+        if(isReadingFinished.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        isReadingFinished.setValue(AsyncTaskStatus.STARTED);
         fileRead=false;
         this.file_pointer=f_pointer;
         stringBuilder=new StringBuilder();
@@ -183,7 +183,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                     catch(IOException e){}
                 }
 
-                isReadingFinished.postValue(true);
+                isReadingFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
