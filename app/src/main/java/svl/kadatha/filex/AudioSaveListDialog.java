@@ -32,7 +32,6 @@ public class AudioSaveListDialog extends DialogFragment
 	private Bundle bundle;
 	private FragmentManager fragmentManager;
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);

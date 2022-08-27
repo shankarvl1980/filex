@@ -308,13 +308,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		viewModel.isReadingFinished.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -364,13 +364,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{

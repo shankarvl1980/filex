@@ -88,7 +88,6 @@ public class DefaultAppsDialog extends DialogFragment
 
             if(i==-1)
             {
-
                 mime_type.setTextColor(top_row_color);
                 app_name.setTextColor(top_row_color);
                 mime_type.setText(R.string.file_type);
@@ -97,7 +96,6 @@ public class DefaultAppsDialog extends DialogFragment
             }
             else
             {
-
                 mime_type.setTextColor(detail_row_color);
                 app_name.setTextColor(detail_row_color);
                 final DefaultAppPOJO defaultAppPOJO=defaultAppPOJOS.get(i);
@@ -125,7 +123,6 @@ public class DefaultAppsDialog extends DialogFragment
 
             }
             tableLayout.addView(itemView);
-
         }
 
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_default_app_button_layout);

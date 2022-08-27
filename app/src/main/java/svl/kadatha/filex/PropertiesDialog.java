@@ -36,8 +36,6 @@ public class PropertiesDialog extends DialogFragment
 	private TextView no_files_textview;
 	private TextView size_files_textview;
 	private String filename_str,file_path_str,file_type_str,file_no_str,file_size_str,file_date_str,file_permissions_str,symbolic_link_str,readable_str,writable_str,hidden_str;
-//    private int total_no_of_files;
-//	private String size_of_files_format;
 	private ArrayList<String> files_selected_array=new ArrayList<>();
 
 	private FileObjectType fileObjectType;

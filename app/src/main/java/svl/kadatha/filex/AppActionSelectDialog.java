@@ -122,12 +122,10 @@ public class AppActionSelectDialog extends DialogFragment
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
             window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
-
         }
         else
         {
             window.setLayout(Global.DIALOG_WIDTH,Math.min(height,Global.DIALOG_HEIGHT));
-
         }
 
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

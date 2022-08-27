@@ -104,8 +104,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 			String s=new File(parent_file_path).getName();
 			parent_file_name =s.equals("0") ? first_file_name : s;
 		}
-
-
 	}
 
 	public static ArchiveSetUpDialog getInstance(ArrayList<String>files_selected_array,ArrayList<String>zipentry_selected_array,FileObjectType sourceFileObjectType, String archive_action)
@@ -158,13 +156,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -352,7 +350,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 			}
 		});
-
 
 
 		switch(archive_action)

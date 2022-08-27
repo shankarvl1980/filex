@@ -62,7 +62,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -96,7 +95,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			isPlaying=savedInstanceState.getBoolean("isPlaying");
 			orientation=savedInstanceState.getInt("orientation");
 		}
-
 	}
 
 
@@ -109,7 +107,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		outState.putBoolean("isPlaying",isPlaying);
 		outState.putInt("orientation",orientation);
 	}
-
 
 
 	@Override

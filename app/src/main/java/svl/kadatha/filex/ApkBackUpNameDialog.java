@@ -41,7 +41,6 @@ public class ApkBackUpNameDialog extends DialogFragment
         super.onCreate(savedInstanceState);
         setCancelable(false);
         bundle=getArguments();
-
     }
 
 
@@ -49,7 +48,6 @@ public class ApkBackUpNameDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-
         View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView file_label_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -70,8 +68,6 @@ public class ApkBackUpNameDialog extends DialogFragment
         cancelbutton.setText(R.string.cancel);
         dialog_heading_textview.setText(R.string.enter_name);
         file_label_textview.setText(R.string.file_name_colon);
-
-
 
         okbutton.setOnClickListener(new View.OnClickListener()
         {
@@ -95,8 +91,6 @@ public class ApkBackUpNameDialog extends DialogFragment
                 imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
             }
-
-
         });
 
         cancelbutton.setOnClickListener(new View.OnClickListener()
@@ -106,10 +100,7 @@ public class ApkBackUpNameDialog extends DialogFragment
                 imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
             }
-
-
         });
-
 
         return v;
     }

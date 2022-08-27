@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentManager;
 
 public class StorageAnalyserSortDialog extends DialogFragment
 {
-
     private TinyDB tinyDB;
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private Context context;

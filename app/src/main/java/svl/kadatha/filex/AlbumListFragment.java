@@ -102,7 +102,6 @@ public class AlbumListFragment extends Fragment
 		recyclerview.setLayoutManager(new LinearLayoutManager(context));
 		recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 			{
-		
 				final int threshold=5;
 				public void onScrolled(RecyclerView rv, int dx, int dy)
 				{
@@ -115,7 +114,6 @@ public class AlbumListFragment extends Fragment
 					}
 					else if(scroll_distance<-threshold && !toolbar_visible)
 					{
-
 						bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 						toolbar_visible=true;
 						scroll_distance=0;
@@ -125,9 +123,7 @@ public class AlbumListFragment extends Fragment
 					{
 						scroll_distance+=dy;
 					}
-
 				}
-
 			});
 		empty_tv=v.findViewById(R.id.album_list_empty);
 		progress_bar=v.findViewById(R.id.album_list_progressbar);
@@ -137,7 +133,11 @@ public class AlbumListFragment extends Fragment
 		audioListViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
 				}
@@ -164,13 +164,13 @@ public class AlbumListFragment extends Fragment
 		audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)

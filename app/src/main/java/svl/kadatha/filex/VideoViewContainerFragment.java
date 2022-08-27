@@ -118,9 +118,7 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
 				{
-					final Bundle bundle=new Bundle();
 					final ArrayList<String> files_selected_array=new ArrayList<>();
-
 					switch(p1)
 					{
 						case 0:
@@ -215,7 +213,11 @@ public class VideoViewContainerFragment extends Fragment
 		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
 				}
@@ -237,13 +239,13 @@ public class VideoViewContainerFragment extends Fragment
 		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{

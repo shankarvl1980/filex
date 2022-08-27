@@ -75,9 +75,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 		okbutton.setText(R.string.ok);
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
-
-
-	
 		dialog_heading_textview.setText(R.string.enter_name);
 		file_label_textview.setText(R.string.list_name_colon);
 		

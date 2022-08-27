@@ -61,7 +61,7 @@ public class AppManagerListFragment extends Fragment {
     private Context context;
     private String app_type="";
     private RecyclerView recyclerView;
-    public FrameLayout progressBar;
+    public FrameLayout progress_bar;
     private TextView app_count_textview;
     private Toolbar bottom_toolbar;
     private boolean toolbar_visible=true;
@@ -76,7 +76,6 @@ public class AppManagerListFragment extends Fragment {
     private TextView empty_tv;
     private String tree_uri_path="";
     private Uri tree_uri;
-    private List<FilePOJO> destFilePOJOs;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     public static String BACKUP;
@@ -165,7 +164,7 @@ public class AppManagerListFragment extends Fragment {
         });
 
         empty_tv=v.findViewById(R.id.fragment_app_list_empty);
-        progressBar=v.findViewById(R.id.fragment_app_list_progressbar);
+        progress_bar=v.findViewById(R.id.fragment_app_list_progressbar);
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
@@ -187,9 +186,13 @@ public class AppManagerListFragment extends Fragment {
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED)
                 {
-                    progressBar.setVisibility(View.GONE);
+                    progress_bar.setVisibility(View.VISIBLE);
+                }
+                else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    progress_bar.setVisibility(View.GONE);
                 }
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -301,13 +304,13 @@ public class AppManagerListFragment extends Fragment {
         viewModel.isBackedUp.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED)
                 {
-                    progressBar.setVisibility(View.GONE);
+                    progress_bar.setVisibility(View.VISIBLE);
                 }
-                else
+                else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    progressBar.setVisibility(View.VISIBLE);
+                    progress_bar.setVisibility(View.GONE);
                 }
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -593,7 +596,7 @@ public class AppManagerListFragment extends Fragment {
         bundle.putSerializable("fileObjectType",destFileObjectType);
         if(is_file_writable(dest_folder,destFileObjectType,bundle))
         {
-            progressBar.setVisibility(View.VISIBLE);
+            progress_bar.setVisibility(View.VISIBLE);
             viewModel.back_up(new ArrayList<>(Collections.singletonList(app_path)),dest_folder,destFileObjectType,Collections.singletonList(new_name),tree_uri,tree_uri_path);
         }
 

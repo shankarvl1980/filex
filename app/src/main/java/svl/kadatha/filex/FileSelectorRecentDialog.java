@@ -45,7 +45,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private AppCompatActivity activity;
 
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

@@ -107,7 +107,5 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		
 	}
-
 }

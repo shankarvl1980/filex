@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -417,14 +418,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					df.progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
 				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					df.progress_bar.setVisibility(View.GONE);
+
+				}
+
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					archive_view=viewModel.zipFileExtracted;
@@ -451,14 +454,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					df.progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
 				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					df.progress_bar.setVisibility(View.GONE);
+				}
+
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					viewModel.isDeletionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -471,15 +475,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					df.progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
 				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					df.progress_bar.setVisibility(View.GONE);
+				}
+
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)

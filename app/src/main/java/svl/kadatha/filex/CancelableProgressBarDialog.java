@@ -45,7 +45,6 @@ public class CancelableProgressBarDialog extends DialogFragment
 	}
 
 
-
 	public static CancelableProgressBarDialog getInstance(String request_code)
 	{
 		CancelableProgressBarDialog cancelableProgressBarDialog=new CancelableProgressBarDialog();
@@ -69,7 +68,6 @@ public class CancelableProgressBarDialog extends DialogFragment
 		{
 			public void onClick(View p)
 			{
-
 				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
 				dismissAllowingStateLoss();
 			}
@@ -87,7 +85,6 @@ public class CancelableProgressBarDialog extends DialogFragment
 		});
 		return v;
 	}
-
 
 
 	@Override

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -309,9 +310,14 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
+
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -332,13 +338,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus!=AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-				else
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -502,7 +508,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onDestroyView();
 		fileModifyObserver.stopWatching();
 		fileModifyObserver.setFileObserverListener(null);
-		adapter.setCardViewClickListener(null);
+		if(adapter!=null)adapter.setCardViewClickListener(null);
 	}
 
 	@Override

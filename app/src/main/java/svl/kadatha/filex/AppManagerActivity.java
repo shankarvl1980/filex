@@ -142,7 +142,7 @@ public class AppManagerActivity extends BaseActivity{
 
     public void set_visibility_searchbar(boolean visible)
     {
-        if(userAppListFragment.adapter==null || userAppListFragment.progressBar.getVisibility()==View.VISIBLE || systemAppListFragment.adapter==null || systemAppListFragment.progressBar.getVisibility()==View.VISIBLE)
+        if(userAppListFragment.adapter==null || userAppListFragment.progress_bar.getVisibility()==View.VISIBLE || systemAppListFragment.adapter==null || systemAppListFragment.progress_bar.getVisibility()==View.VISIBLE)
         {
             Global.print(context,getString(R.string.please_wait));
             return;
@@ -257,9 +257,6 @@ public class AppManagerActivity extends BaseActivity{
         Global.HASHMAP_FILE_POJO.clear();
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
     }
-
-
-
 
     @Override
     public void onBackPressed() {
