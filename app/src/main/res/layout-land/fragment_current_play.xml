@@ -60,14 +60,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:adjustViewBounds="true"
-
         android:scaleType="fitCenter"
         android:paddingTop="@dimen/layout_margin"
-
-        app:layout_constraintBottom_toTopOf="@+id/current_play_volume_text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
+        app:layout_constraintEnd_toStartOf="@id/current_play_volume_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
+        app:layout_constraintWidth_percent="0.5"
+        />
 
     <TextView
         android:id="@+id/current_play_volume_text"
@@ -77,14 +77,15 @@
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         android:text="@string/volume_colon"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
         app:layout_constraintBottom_toTopOf="@+id/current_play_volume_seekbar"
         />
     <SeekBar
         android:id="@+id/current_play_volume_seekbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/current_play_album"
         android:layout_marginBottom="@dimen/layout_margin"
         android:elevation="6dp"
@@ -104,7 +105,8 @@
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintBottom_toTopOf="@+id/current_play_artists"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
+        />
 
     <TextView
         android:id="@+id/current_play_artists"
@@ -117,7 +119,8 @@
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintBottom_toTopOf="@+id/current_play_next_audio_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
+        />
 
     <TextView
         android:id="@+id/current_play_next_audio_title"
@@ -131,7 +134,8 @@
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toTopOf="@+id/audio_player_current_progress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
+        />
 
 
     <TextView
@@ -144,7 +148,7 @@
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
         app:layout_constraintTop_toTopOf="@+id/audio_player_seekbar" />
 
     <SeekBar

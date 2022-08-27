@@ -311,10 +311,7 @@ public class AudioPlayFragment extends Fragment
 		play_pause_btn= bottom_toolbar.findViewById(R.id.toolbar_img_btn_3);
 		ImageButton forward_btn = bottom_toolbar.findViewById(R.id.toolbar_img_btn_4);
 		next_btn= bottom_toolbar.findViewById(R.id.toolbar_img_btn_5);
-		
-		
 		album_art_imageview=v.findViewById(R.id.fragment_current_play_albumart);
-
 		total_time_tv=v.findViewById(R.id.audio_player_total_time);
 		current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
 		seekbar=v.findViewById(R.id.audio_player_seekbar);
@@ -567,7 +564,6 @@ public class AudioPlayFragment extends Fragment
 		else
 		{
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
-
 		}
 		
 	}
@@ -643,7 +639,6 @@ public class AudioPlayFragment extends Fragment
 		// TODO: Implement this method
 		super.onDestroy();
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
-
 	}
 
 	public void setTitleArt(String audiofilename,final String audiofilepath)
@@ -857,7 +852,5 @@ public class AudioPlayFragment extends Fragment
 
 		Global.print(context,getString(R.string.ringtone_set));
 	}
-
-
 
 }

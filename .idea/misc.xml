@@ -38,6 +38,8 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/search_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/settings_drawer_icon.xml" value="0.2495" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/woofer_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout-land/fragment_current_play.xml" value="0.21516754850088182" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout-port/fragment_current_play.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_app_manager.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_blank_view.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_editor.xml" value="0.25416666666666665" />
