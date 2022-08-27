@@ -79,8 +79,6 @@ public class AudioPlayFragment extends Fragment
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private List<AudioPOJO> files_selected_for_delete;
-	public String audio_file_name="";
-	public Bitmap album_art;
 	private boolean isDurationMoreThanHour;
 	private Uri data;
 	private AudioManager audioManager;
@@ -400,6 +398,26 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
+		audioPlayViewModel.isAlbumArtFetched.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+			@Override
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
+				}
+				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					audio_name_tv.setText(audioPlayViewModel.audio_file_name);
+					GlideApp.with(context).load(audioPlayViewModel.album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
+					audioPlayViewModel.isAlbumArtFetched.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+			}
+		});
+
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(AudioPlayFragment.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
@@ -627,47 +645,50 @@ public class AudioPlayFragment extends Fragment
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
 
 	}
-	
+
 	public void setTitleArt(String audiofilename,final String audiofilepath)
 	{
-		audio_file_name=audiofilename;
-		if(audio_name_tv!=null && album_art_imageview!=null)
-		{
-			set_title_art(audiofilepath);
-		}
-		else
-		{
-			handler_for_art.post(new Runnable()
-			{
-				public void run()
-				{
-					if(audio_name_tv!=null && album_art_imageview!=null)
-					{
-						set_title_art(audiofilepath);
-						handler_for_art.removeCallbacks(this);
-					}
-					else
-					{
-						handler_for_art.postDelayed(this,100);
-					}
-				}
-			});
-		}
-	
+		audioPlayViewModel.fetchAlbumArt(audiofilename,audiofilepath);
 	}
+//	public void setTitleArt(String audiofilename,final String audiofilepath)
+//	{
+//
+//		audio_file_name=audiofilename;
+//		if(audio_name_tv!=null && album_art_imageview!=null)
+//		{
+//			set_title_art(audiofilepath);
+//		}
+//		else
+//		{
+//			handler_for_art.post(new Runnable()
+//			{
+//				public void run()
+//				{
+//					if(audio_name_tv!=null && album_art_imageview!=null)
+//					{
+//						set_title_art(audiofilepath);
+//						handler_for_art.removeCallbacks(this);
+//					}
+//					else
+//					{
+//						handler_for_art.postDelayed(this,100);
+//					}
+//				}
+//			});
+//		}
+//
+//	}
 	
-	private void set_title_art(String audiofilepath)
-	{
-		audio_name_tv.setText(audio_file_name);
-		album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
-		if(album_art==null)
-		{
-			album_art=BitmapFactory.decodeResource(context.getResources(),R.drawable.woofer_icon);
-
-		}
-		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
-
-	}
+//	private void set_title_art(String audiofilepath)
+//	{
+//		audio_name_tv.setText(audio_file_name);
+//		album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
+//		if(album_art==null)
+//		{
+//			album_art= BitmapFactory.decodeResource(application.getResources(),R.drawable.woofer_icon);
+//		}
+//		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
+//	}
 
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class CancelableProgressBarDialog extends DialogFragment
 	private Bundle bundle;
 	private String request_code;
 	public static final String CPBD_CANCEL_REQUEST_CODE="cpdb_cancel_request_code";
+	public final static String TAG="cancelablepbd";
 
 
 	@Override
@@ -98,11 +100,6 @@ public class CancelableProgressBarDialog extends DialogFragment
 		title.setText(title_string);
 	}
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-
-	}
 
 	public void set_title(String heading)
 	{

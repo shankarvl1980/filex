@@ -1,5 +1,11 @@
 package svl.kadatha.filex;
 
+import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -9,17 +15,25 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class AudioPlayViewModel extends ViewModel {
+public class AudioPlayViewModel extends AndroidViewModel {
 
+    private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isAlbumArtFetched=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
     public boolean fromArchiveView;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public String file_path;
+    public Bitmap album_art;
+    public String audio_file_name="";
 
+    public AudioPlayViewModel(@NonNull Application application) {
+        super(application);
+        this.application=application;
+    }
 
 
     @Override
@@ -122,8 +136,25 @@ public class AudioPlayViewModel extends ViewModel {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
 
-
+    public void fetchAlbumArt(String audiofilename,String audiofilepath)
+    {
+        if(isAlbumArtFetched.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        this.audio_file_name=audiofilename;
+        isAlbumArtFetched.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future2=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
+                if(album_art==null)
+                {
+                    album_art= BitmapFactory.decodeResource(application.getResources(),R.drawable.woofer_icon);
+                }
+                isAlbumArtFetched.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
     }
 
 }

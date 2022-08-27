@@ -657,7 +657,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						Intent intent=new Intent(context,AudioPlayerActivity.class);
 						startActivity(intent);
 						pbf.dismissAllowingStateLoss();
-
 					}
 				},500);
 
@@ -672,7 +671,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
-
 				Handler h=new Handler();
 				h.postDelayed(new Runnable() {
 					@Override
@@ -682,7 +680,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						Intent intent=new Intent(context,StorageAnalyserActivity.class);
 						startActivity(intent);
 						pbf.dismissAllowingStateLoss();
-
 					}
 				},500);
 			}
@@ -697,7 +694,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
-
 				Handler h=new Handler();
 				h.postDelayed(new Runnable() {
 					@Override
@@ -719,7 +715,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
-
 				Handler h=new Handler();
 				h.postDelayed(new Runnable() {
 					@Override
@@ -729,7 +724,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						SearchDialog searchDialog=new SearchDialog();
 						searchDialog.show(fm,"search_dialog");
 						pbf.dismissAllowingStateLoss();
-
 					}
 				},500);
 
@@ -743,18 +737,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
-
 				Handler h=new Handler();
 				h.postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 						actionmode_finish(df,df.fileclickselected);
-
 						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
 						ftpDetailsDialog.show(fm,"");
 						pbf.dismissAllowingStateLoss();
-
 					}
 				},500);
 
@@ -1937,7 +1928,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
 				pbf.show(fm, "");
 				drawerLayout.closeDrawer(drawer);
-
 				Handler h = new Handler();
 				h.postDelayed(new Runnable() {
 					@Override
@@ -1945,7 +1935,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						PreferencesDialog preferencesDialog = new PreferencesDialog();
 						preferencesDialog.show(fm, "preferences_dialog");
 						pbf.dismissAllowingStateLoss();
-
 					}
 				}, 500);
 			}

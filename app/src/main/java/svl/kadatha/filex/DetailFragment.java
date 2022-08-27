@@ -286,9 +286,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					search_regex=mainActivity.search_regex;
 					search_lower_limit_size=mainActivity.search_lower_limit_size;
 					search_upper_limit_size=mainActivity.search_upper_limit_size;
+					removeCancelableFragment();
 					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-					cancelableProgressBarDialog.show(mainActivity.fm,"");
+					cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 
 				}
@@ -384,10 +385,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		return v;
 	}
 
-	@Override
-	public void onSaveInstanceState(@NonNull Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
 
 	@Override
 	public void onResume() {
@@ -398,8 +395,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
+				removeCancelableFragment();
+				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				cancelableProgressBarDialog.show(mainActivity.fm,"");
+				cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
@@ -431,9 +430,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			local_activity_delete=false;
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
+				removeCancelableFragment();
 				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				cancelableProgressBarDialog.show(mainActivity.fm,"");
+				cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 			}
@@ -494,6 +494,15 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
+	private void removeCancelableFragment()
+	{
+		cancelableProgressBarDialog= (CancelableProgressBarDialog) mainActivity.fm.findFragmentByTag(CancelableProgressBarDialog.TAG);
+		if(cancelableProgressBarDialog!=null)
+		{
+			mainActivity.fm.beginTransaction().remove(cancelableProgressBarDialog).commit();
+		}
+	}
+
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -507,23 +516,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver.stopWatching();
 		fileModifyObserver.setFileObserverListener(null);
 		if(adapter!=null)adapter.setCardViewClickListener(null);
-		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
-		{
-			Log.d(Global.TAG,"cancelable progres bar is dismissed");
-			cancelableProgressBarDialog.dismissAllowingStateLoss();
-		}
-		if(cancelableProgressBarDialog!=null)// && )
-		{
-			if(cancelableProgressBarDialog.getDialog()!=null)
-			{
-				Log.d(Global.TAG,"cancelable progress bar dialog is detected");
-			}
-			else
-			{
-				Log.d(Global.TAG,"cancelable progress bar dialog is not detected");
-			}
-
-		}
 	}
 
 	@Override
@@ -609,7 +601,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		 {
 		 	if(file_ext.matches("(?i)apk"))
 		 	{
-
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					if (!mainActivity.getPackageManager().canRequestPackageInstalls()) {
 						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
