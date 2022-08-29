@@ -28,7 +28,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2, future3;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public List<AppManagerListFragment.AppPOJO> appPOJOList;
+    public List<AppManagerListFragment.AppPOJO> systemAppPOJOList,userAppPOJOList;
     private final Application application;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -60,7 +60,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public void populate(String app_type)
+    public void populate()
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -72,53 +72,49 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         PackageManager.GET_SHARED_LIBRARY_FILES |
                         PackageManager.GET_UNINSTALLED_PACKAGES;
 
-                appPOJOList=new ArrayList<>();
+                userAppPOJOList=new ArrayList<>();
+                systemAppPOJOList=new ArrayList<>();
                 final PackageManager packageManager = application.getPackageManager();
                 List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
                 for (PackageInfo packageInfo : packageInfos)
                 {
-                    if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
+                    if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
                     {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
+                        String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
+                        String package_name=packageInfo.packageName;
+                        String version=packageInfo.versionName;
+                        String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                        if(publicsourcedir==null)
                         {
-                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                            String package_name=packageInfo.packageName;
-                            String version=packageInfo.versionName;
-                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                            if(publicsourcedir==null)
-                            {
-                                continue;
-                            }
-                            File file = new File(publicsourcedir);
-                            String path=file.getAbsolutePath();
-                            long size=file.length();
-                            long date=file.lastModified();
-                            AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
-
+                            continue;
                         }
+                        File file = new File(publicsourcedir);
+                        String path=file.getAbsolutePath();
+                        long size=file.length();
+                        long date=file.lastModified();
+                        AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
+                        systemAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+
                     }
-                    else
+                    else if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
                     {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
+                        String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
+                        String package_name=packageInfo.packageName;
+                        String version=packageInfo.versionName;
+                        String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                        if(publicsourcedir==null)
                         {
-                            String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                            String package_name=packageInfo.packageName;
-                            String version=packageInfo.versionName;
-                            String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                            if(publicsourcedir==null)
-                            {
-                                continue;
-                            }
-                            File file = new File(publicsourcedir);
-                            String path=file.getAbsolutePath();
-                            long size=file.length();
-                            long date=file.lastModified();
-                            AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-                            appPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
-
+                            continue;
                         }
+                        File file = new File(publicsourcedir);
+                        String path=file.getAbsolutePath();
+                        long size=file.length();
+                        long date=file.lastModified();
+                        AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
+                        userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+
                     }
+
 
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

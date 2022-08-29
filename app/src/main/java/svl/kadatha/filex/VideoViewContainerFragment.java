@@ -222,7 +222,7 @@ public class VideoViewContainerFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					adapter=new VideoViewPagerAdapter(((VideoViewActivity)context).fm,viewModel.video_list);
+					adapter=new VideoViewPagerAdapter(getChildFragmentManager(),viewModel.video_list);
 					viewpager.setAdapter(adapter);
 					viewpager.setCurrentItem(viewModel.file_selected_idx);
 					if(viewModel.file_selected_idx==0)

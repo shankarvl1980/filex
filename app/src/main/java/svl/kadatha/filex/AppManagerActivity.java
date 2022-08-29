@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -121,7 +122,8 @@ public class AppManagerActivity extends BaseActivity{
             }
         });
 
-
+        AppManagerListViewModel viewModel=new ViewModelProvider(this).get(AppManagerListViewModel.class);
+        viewModel.populate();
         adapter.startUpdate(viewPager);
         userAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,0);
         systemAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,1);

@@ -182,8 +182,7 @@ public class AppManagerListFragment extends Fragment {
         search_btn.setOnClickListener(toolBarClickListener);
         sort_btn.setOnClickListener(toolBarClickListener);
 
-        viewModel= new ViewModelProvider(this).get(AppManagerListViewModel.class);
-        viewModel.populate(app_type);
+        viewModel= new ViewModelProvider(requireActivity()).get(AppManagerListViewModel.class);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -198,7 +197,14 @@ public class AppManagerListFragment extends Fragment {
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    appPOJOList=viewModel.appPOJOList;
+                    if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
+                    {
+                        appPOJOList=viewModel.systemAppPOJOList;
+                    }
+                    else
+                    {
+                        appPOJOList=viewModel.userAppPOJOList;
+                    }
                     total_appPOJO_list=appPOJOList;
                     Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
                     adapter=new AppListAdapter();
@@ -402,7 +408,6 @@ public class AppManagerListFragment extends Fragment {
         {
             if(a.getPackage_name().equals(package_name))
             {
-                viewModel.appPOJOList.remove(a);
                 appPOJOList.remove(a);
                 total_appPOJO_list.remove(a);
                 break;
@@ -555,7 +560,6 @@ public class AppManagerListFragment extends Fragment {
                 remove_app(package_clicked_for_delete);
                 Global.print(context,getString(R.string.uninstalled));
             }
-
             package_clicked_for_delete="";
         }
     });
