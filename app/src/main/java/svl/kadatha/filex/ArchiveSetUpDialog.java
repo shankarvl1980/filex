@@ -190,7 +190,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 					String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 					destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);   //(archivedestfolder.endsWith(File.separator)) ? archivedestfolder+zip_folder_name : archivedestfolder+File.separator+zip_folder_name;
+					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);
 
 					if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
 					{
@@ -419,7 +419,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 								return;
 							}
-							zip_folder_path=unarchivedestfolder.endsWith(File.separator) ? unarchivedestfolder+zip_output_folder : unarchivedestfolder+File.separator+zip_output_folder;
+							zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(unarchivedestfolder,zip_output_folder);
 						}
 						else
 						{

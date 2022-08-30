@@ -716,7 +716,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			//OutputStream outStream=null;
 
 			try (FileInputStream fileInStream = new FileInputStream(source)) {
-				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);//target_file_path.equals(File.separator) ? target_file_path + name : target_file_path + File.separator + name;
+				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 				success = MainActivity.FTP_CLIENT.storeFile(file_path, fileInStream);
 
 				if (success && cut) {
@@ -991,7 +991,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 							FTPFile tmpF = list[i];
 							String name=tmpF.getName();
-							String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);//(file_path.endsWith(File.separator)) ? file_path+name : file_path+File.separator+name;
+							String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);
 							success=deleteFtpDirectory(path);
 
 						}
@@ -1231,7 +1231,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		{
 			boolean success=false;
 
-			target_file_path=target_file_path+File.separator+name;
+			target_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 
 			String target_uri_path_copy="";
 			int offset;
@@ -1248,7 +1248,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			String [] file_path_substring=target_file_path.substring(offset).split("/");
 			for (int i=0; i< file_path_substring.length;++i)
 			{
-				if(!FileUtil.exists(context,target_uri_path_copy+File.separator+file_path_substring[i],tree_uri,tree_uri_path))
+				if(!FileUtil.exists(context,Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]),tree_uri,tree_uri_path))
 				{
 
 					if(target_uri_path_copy.equals(""))
@@ -1266,7 +1266,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 					}
 
 				}
-				target_uri_path_copy=target_uri_path_copy+File.separator+file_path_substring[i];
+				target_uri_path_copy=Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]);
 
 			}
 			return success;
@@ -1458,7 +1458,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			{
 				for (String extSdPath : extSdPaths) 
 				{
-					//if ((file.getCanonicalPath()+File.separator).startsWith(extSdPath+File.separator))
 					if (Global.IS_CHILD_FILE(file.getCanonicalPath(),extSdPath))
 					{
 						return extSdPath;

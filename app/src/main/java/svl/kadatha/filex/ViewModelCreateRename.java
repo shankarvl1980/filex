@@ -160,14 +160,14 @@ public class ViewModelCreateRename extends AndroidViewModel {
                             {
                                 if(FileUtil.deleteSAFDirectory(application,new_file_path,tree_uri,tree_uri_path))
                                 {
-                                    fileNameChanged=FileUtil.renameSAFFile(application,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+                                    fileNameChanged=FileUtil.renameSAFFile(application,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
                                 }
                             }
 
                         }
                         else
                         {
-                            fileNameChanged=FileUtil.renameSAFFile(application,parent_file_path+File.separator+existing_name,new_name,tree_uri,tree_uri_path);
+                            fileNameChanged=FileUtil.renameSAFFile(application,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
                         }
                     }
                 }

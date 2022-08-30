@@ -28,9 +28,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2, future3;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public List<AppManagerListFragment.AppPOJO> systemAppPOJOList,userAppPOJOList;
+    public List<AppManagerListFragment.AppPOJO> systemAppPOJOList, userAppPOJOList;
     private final Application application;
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
@@ -72,8 +71,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         PackageManager.GET_SHARED_LIBRARY_FILES |
                         PackageManager.GET_UNINSTALLED_PACKAGES;
 
-                userAppPOJOList=new ArrayList<>();
                 systemAppPOJOList=new ArrayList<>();
+                userAppPOJOList=new ArrayList<>();
                 final PackageManager packageManager = application.getPackageManager();
                 List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
                 for (PackageInfo packageInfo : packageInfos)
@@ -112,9 +111,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         long date=file.lastModified();
                         AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
                         userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
-
                     }
-
 
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -198,7 +195,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     }
 
                     current_file_name = new_name_list.get(count);
-                    String dest_file_path = dest_folder + File.separator + current_file_name;
+                    String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,current_file_name);
 
                     if (isWritable) {
                         copy_result = Copy_File_File(file, dest_file_path, cut);
@@ -228,7 +225,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     overwritten_copied_file_name_list.retainAll(copied_files_name);
                     for(String name:overwritten_copied_file_name_list)
                     {
-                        overwritten_copied_file_path_list.add(dest_folder.equals(File.separator) ? dest_folder+name : dest_folder+File.separator+name);
+                        overwritten_copied_file_path_list.add(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,name));
                     }
 
                     FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_copied_file_path_list);
@@ -281,7 +278,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
                 File srcFile = new File(source, inner_file_name);
-                String inner_dest_file_path=dest_file_path+File.separator+inner_file_name;
+                String inner_dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,inner_file_name);
                 success=Copy_File_File(srcFile,inner_dest_file_path,cut);
             }
 
@@ -327,11 +324,12 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
 
             }
-				/*
+
+            /*
 				//for other SAF
 				else
 				{
-					Uri dest_uri=FileUtil.getDocumentUri(context,dest_file_path+File.separator+name,uri,uri_path);
+					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
 					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
@@ -359,7 +357,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
                 File srcFile = new File(source, inner_file_name);
-                String inner_dest_file=dest_file_path+File.separator+name;
+                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
                 success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
             }
 
@@ -387,7 +385,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 return false;
             }
 
-            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
             UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
             if(dest_usbFile==null) // || !dest_usbFile.isDirectory())
             {
@@ -443,7 +441,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 return false;
             }
 
-            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
             FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
             if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
             {
@@ -499,7 +497,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 return false;
             }
 
-            String file_path=dest_file_path.equals(File.separator) ? dest_file_path+name : dest_file_path+File.separator+name;
+            String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
             UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
             if(dest_usbFile==null)// || !dest_usbFile.isDirectory())
             {
@@ -587,7 +585,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
 
-                String inner_dest_file=parent_file_path+File.separator+name;
+                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
                 success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
             }
 
@@ -635,7 +633,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 				//for other SAF
 				else
 				{
-					Uri dest_uri=FileUtil.getDocumentUri(context,dest_file_path+File.separator+name,uri,uri_path);
+					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
 					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
@@ -664,7 +662,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
 
-                String inner_dest_file=dest_file_path+File.separator+name;
+                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
                 success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut);
             }
 
@@ -724,8 +722,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
 
-                String inner_dest_file=parent_file_path+File.separator+name;
-                String inner_source_file=(src_file_path.endsWith(File.separator)) ? src_file_path+inner_ftpfile_name : src_file_path+File.separator+inner_ftpfile_name;
+                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
+                String inner_source_file=Global.CONCATENATE_PARENT_CHILD_PATH(src_file_path,inner_ftpfile_name);
                 success=Copy_FtpFile_File(inner_source_file,inner_dest_file, inner_ftpfile_name,cut);
             }
 
@@ -789,8 +787,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
 
-                String inner_dest_file=dest_file_path+File.separator+name;
-                String inner_source_file=(src_file_path.endsWith(File.separator)) ? src_file_path+inner_ftpfile_name : src_file_path+File.separator+inner_ftpfile_name;
+                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
+                String inner_source_file=Global.CONCATENATE_PARENT_CHILD_PATH(src_file_path,inner_ftpfile_name);
                 success=Copy_FtpFile_SAFFile(context,inner_source_file,inner_dest_file,inner_ftpfile_name,uri,uri_path,cut);
             }
 

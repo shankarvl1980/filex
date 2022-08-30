@@ -51,7 +51,7 @@ public class ListFiles
 				boolean isDirectory=false;
 				//if(permission.startsWith("^[^d].+"))
 
-				String p=Global.CONCATENATE_PARENT_CHILD_PATH(file_name,line_name);//file_name+File.separator+ line_name;
+				String p=Global.CONCATENATE_PARENT_CHILD_PATH(file_name,line_name);
 				File f=new File(p);
 				//String d=DetailFragment.getFileSize(f,archive_view);
 				//DetailFragment.SizeClass sizeClass =DetailFragment.getFileSize(f,isDirectory,archive_view);

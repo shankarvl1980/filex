@@ -189,7 +189,7 @@ public class ViewModelFileCount extends ViewModel {
             {
                 try {
                     String name=f.getName();
-                    path=(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+                    path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
                     populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
                 } catch (IOException e) {
 
@@ -237,7 +237,7 @@ public class ViewModelFileCount extends ViewModel {
 
                         String docID=cursor.getString(0);
                         String displayName=cursor.getString(1);
-                        inner_source_list_files.add(parent_file_path+File.separator+displayName);
+                        inner_source_list_files.add(Global.CONCATE(parent_file_path,displayName);
 
                     }
                     cursor.close();

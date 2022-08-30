@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ public class AppManagerActivity extends BaseActivity{
     public FragmentManager fm;
     public ViewPager viewPager;
     private AppManagerListFragment userAppListFragment,systemAppListFragment;
+    public static final String APP_TYPE="app_type";
     public static final String USER_INSTALLED_APPS="user_installed_apps";
     public static final String SYSTEM_APPS="system_apps";
     public boolean search_toolbar_visible;
@@ -41,7 +43,7 @@ public class AppManagerActivity extends BaseActivity{
     private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
     public boolean clear_cache;
     public static final String ACTIVITY_NAME="APP_MANAGER_ACTIVITY";
-
+    private AppManagementFragmentAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,7 +95,7 @@ public class AppManagerActivity extends BaseActivity{
 
         TabLayout tabLayout = findViewById(R.id.activity_app_manager_tab_layout);
         viewPager=findViewById(R.id.activity_app_manager_viewpager);
-        AppManagementFragmentAdapter adapter = new AppManagementFragmentAdapter(fm);
+        adapter = new AppManagementFragmentAdapter(fm);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -122,13 +124,14 @@ public class AppManagerActivity extends BaseActivity{
             }
         });
 
-        AppManagerListViewModel viewModel=new ViewModelProvider(this).get(AppManagerListViewModel.class);
-        viewModel.populate();
+
         adapter.startUpdate(viewPager);
         userAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,0);
         systemAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,1);
         adapter.finishUpdate(viewPager);
 
+        AppManagerListViewModel viewModel=new ViewModelProvider(this).get(AppManagerListViewModel.class);
+        viewModel.populate();
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);
 
@@ -179,8 +182,23 @@ public class AppManagerActivity extends BaseActivity{
     private static class AppManagementFragmentAdapter extends FragmentPagerAdapter
     {
 
+        private AppManagerListFragment mCurrentFragment;
         public AppManagementFragmentAdapter(@NonNull FragmentManager fm) {
             super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        }
+
+        public AppManagerListFragment getCurrentFragment()
+        {
+            return mCurrentFragment;
+        }
+
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            if(getCurrentFragment()!=object)
+            {
+                mCurrentFragment= (AppManagerListFragment) object;
+            }
+            super.setPrimaryItem(container, position, object);
         }
 
         @NonNull
@@ -190,12 +208,16 @@ public class AppManagerActivity extends BaseActivity{
             {
                 case 1:
                     Bundle bundle=new Bundle();
-                    bundle.putString(SYSTEM_APPS,SYSTEM_APPS);
+                    bundle.putString(APP_TYPE,SYSTEM_APPS);
                     AppManagerListFragment appManagerListFragment=new AppManagerListFragment();
                     appManagerListFragment.setArguments(bundle);
                     return appManagerListFragment;
                 default:
-                    return new AppManagerListFragment();
+                    Bundle bundle1=new Bundle();
+                    bundle1.putString(APP_TYPE,USER_INSTALLED_APPS);
+                    AppManagerListFragment appManagerListFragment1=new AppManagerListFragment();
+                    appManagerListFragment1.setArguments(bundle1);
+                    return appManagerListFragment1;
             }
         }
 
@@ -258,6 +280,16 @@ public class AppManagerActivity extends BaseActivity{
         Global.HASHMAP_FILE_POJO_FILTERED.clear();
     }
 
+    public void refresh_fragment_on_uninstall()
+    {
+        AppManagerListFragment appManagerListFragment=adapter.getCurrentFragment();
+        if(appManagerListFragment!=null)
+        {
+            appManagerListFragment.num_all_app--;
+            appManagerListFragment.clear_selection();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if(keyBoardUtil.getKeyBoardVisibility())
@@ -278,6 +310,7 @@ public class AppManagerActivity extends BaseActivity{
     }
 
 
+
     interface SearchFilterListener
     {
         void onSearchFilter(String constraint);
@@ -292,5 +325,6 @@ public class AppManagerActivity extends BaseActivity{
     {
         searchFilterListeners.remove(listener);
     }
+
 
 }

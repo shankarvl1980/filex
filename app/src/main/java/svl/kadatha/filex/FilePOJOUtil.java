@@ -302,7 +302,7 @@ public class FilePOJOUtil {
 
         }
 
-        path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);//(parent_file_path.endsWith(File.separator) ? parent_file_path+name : parent_file_path+File.separator+name);
+        path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
 
         String si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
 
@@ -564,7 +564,7 @@ public class FilePOJOUtil {
             name=deleted_files_name_list.get(i);
             remove_from_FilePOJO(name,filePOJOs);
             remove_from_FilePOJO(name,filePOJOs_filtered);
-            String folder_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);//(source_folder.endsWith(File.separator) ? source_folder+name : source_folder+File.separator+name);
+            String folder_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(folder_to_be_removed),fileObjectType);
 
         }
@@ -649,7 +649,7 @@ public class FilePOJOUtil {
         for(int i=0;i<size;++i)
         {
 
-            file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));//dest_folder.equals(File.separator) ? dest_folder+added_file_name_list.get(i) : dest_folder+File.separator+added_file_name_list.get(i);
+            file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
             filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             if(filePOJO==null) break;
             filePOJOs.add(filePOJO);
@@ -700,7 +700,7 @@ public class FilePOJOUtil {
             filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, file_name_list,fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
             if(filePOJO==null)
             {
-                file_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);//parent_file_path.equals(File.separator) ? parent_file_path+name : parent_file_path+File.separator+name;
+                file_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
                 filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             }
             filePOJOs.add(filePOJO);
@@ -922,7 +922,7 @@ public class FilePOJOUtil {
                     {
                         FTPFile f=file_array[i];
                         String name=f.getName();
-                        String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);//(fileclickselected.endsWith(File.separator) ? fileclickselected+name : fileclickselected+File.separator+name);
+                        String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
                         FilePOJO filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,path);
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);

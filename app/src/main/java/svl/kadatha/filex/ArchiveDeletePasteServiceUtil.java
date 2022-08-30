@@ -425,7 +425,7 @@ public class ArchiveDeletePasteServiceUtil {
 
     ) throws IOException {
         String zip_entry_name=zipEntry.getName();
-        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);//zip_dest_path+File.separator+zip_entry_name;
+        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);
         File dest_file=new File(dest_file_path);
 
         if(zipEntry.isDirectory())
@@ -734,7 +734,7 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     try {
                         String name=f.getName();
-                        path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);//(path.endsWith(File.separator)) ? path+name : path+File.separator+name;
+                        path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
                         populate(MainActivity.FTP_CLIENT.listFiles(path),include_folder,path);
                     } catch (IOException e) {
 
@@ -778,7 +778,7 @@ public class ArchiveDeletePasteServiceUtil {
                         while(cursor.moveToNext())
                         {
                             String displayName=cursor.getString(0);
-                            inner_source_list_files.add(parent_file_path+File.separator+displayName);
+                            inner_source_list_files.add(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,displayName));
                         }
                         cursor.close();
                         populate(inner_source_list_files,include_folder);

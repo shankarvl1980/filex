@@ -41,6 +41,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -53,6 +54,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -60,20 +62,19 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class AppManagerListFragment extends Fragment {
 
     private Context context;
-    private String app_type="";
-    private RecyclerView recyclerView;
+    private String app_type;
+    public RecyclerView recyclerView;
     public FrameLayout progress_bar;
     private TextView app_count_textview;
     private Toolbar bottom_toolbar;
     private boolean toolbar_visible=true;
     private int scroll_distance;
     public AsyncTaskStatus asyncTaskStatus;
-    private List<AppPOJO> appPOJOList,total_appPOJO_list;
+    public List<AppPOJO> appPOJOList,total_appPOJO_list;
     public AppListAdapter adapter;
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public List<AppPOJO> app_selected_array=new ArrayList<>();
+
     private AppManagerActivity.SearchFilterListener searchFilterListener;
-    private int num_all_app;
+    public int num_all_app;
     private TextView empty_tv;
     private String tree_uri_path="";
     private Uri tree_uri;
@@ -85,7 +86,8 @@ public class AppManagerListFragment extends Fragment {
     public static String PLAY_STORE;
     public static String SHARE;
     private String package_clicked_for_delete="";
-    AppManagerListViewModel viewModel;
+    private AppManagerListViewModel viewModel;
+    private AppManagerListFragmentViewModel appManagerListFragmentViewModel;
     public static final String APP_ACTION_REQUEST_CODE="app_action_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE="back_up_apk_saf_permission_request_code";
     private final static String APK_REPLACEMENT_REQUEST_CODE="apk_replace_request_code";
@@ -102,7 +104,7 @@ public class AppManagerListFragment extends Fragment {
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
-            app_type=bundle.getString(AppManagerActivity.SYSTEM_APPS);
+            app_type=bundle.getString(AppManagerActivity.APP_TYPE);
         }
         BACKUP=getString(R.string.backup);
         UNINSTALL=getString(R.string.uninstall);
@@ -201,10 +203,11 @@ public class AppManagerListFragment extends Fragment {
                     {
                         appPOJOList=viewModel.systemAppPOJOList;
                     }
-                    else
+                    else if(app_type.equals(AppManagerActivity.USER_INSTALLED_APPS))
                     {
                         appPOJOList=viewModel.userAppPOJOList;
                     }
+
                     total_appPOJO_list=appPOJOList;
                     Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
                     adapter=new AppListAdapter();
@@ -220,6 +223,7 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
+        appManagerListFragmentViewModel=new ViewModelProvider(this).get(AppManagerListFragmentViewModel.class);
 
         listPopWindow=new PopupWindow(context);
         ListView listView=new ListView(context);
@@ -404,25 +408,40 @@ public class AppManagerListFragment extends Fragment {
 
     public void remove_app(String package_name)
     {
-        for(AppPOJO a:appPOJOList)
+        Iterator<AppPOJO> iterator=viewModel.userAppPOJOList.iterator();
+        while (iterator.hasNext())
         {
-            if(a.getPackage_name().equals(package_name))
+            AppPOJO appPOJO=iterator.next();
+            if(appPOJO.package_name.equals(package_name))
             {
-                appPOJOList.remove(a);
-                total_appPOJO_list.remove(a);
+                iterator.remove();
                 break;
             }
         }
-        num_all_app=total_appPOJO_list.size();
-        clear_selection();
+
+        Iterator<AppPOJO> iterator1=viewModel.systemAppPOJOList.iterator();
+        while (iterator1.hasNext())
+        {
+            AppPOJO appPOJO=iterator1.next();
+            if(appPOJO.package_name.equals(package_name))
+            {
+                iterator1.remove();
+                break;
+            }
+        }
+        ((AppManagerActivity)context).refresh_fragment_on_uninstall();
     }
 
 
     public void clear_selection()
     {
-        app_selected_array=new ArrayList<>();
-        mselecteditems=new SparseBooleanArray();
-        if (adapter!=null) adapter.notifyDataSetChanged();
+        appManagerListFragmentViewModel.app_selected_array=new ArrayList<>();
+        appManagerListFragmentViewModel.mselecteditems=new SparseBooleanArray();
+        if (adapter!=null)
+        {
+            adapter.notifyDataSetChanged();
+        }
+
         if(num_all_app<=0)
         {
             recyclerView.setVisibility(View.GONE);
@@ -443,7 +462,7 @@ public class AppManagerListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             AppPOJO appPOJO=appPOJOList.get(position);
-            boolean selected=mselecteditems.get(position,false);
+            boolean selected=appManagerListFragmentViewModel.mselecteditems.get(position,false);
             holder.v.setData(appPOJO,selected);
             holder.v.setSelected(selected);
 
@@ -484,7 +503,7 @@ public class AppManagerListFragment extends Fragment {
                 protected void publishResults(CharSequence constraint, FilterResults results) {
 
                     int t=appPOJOList.size();
-                    if(mselecteditems.size()>0)
+                    if(appManagerListFragmentViewModel.mselecteditems.size()>0)
                     {
                         clear_selection();
                     }
@@ -508,12 +527,12 @@ public class AppManagerListFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         pos=getBindingAdapterPosition();
-                        if(mselecteditems.size()>0)
+                        if(appManagerListFragmentViewModel.mselecteditems.size()>0)
                         {
-                            if (!mselecteditems.get(pos, false)) {
+                            if (!appManagerListFragmentViewModel.mselecteditems.get(pos, false)) {
                                 clear_selection();
-                                mselecteditems.put(pos,true);
-                                app_selected_array.add(appPOJOList.get(pos));
+                                appManagerListFragmentViewModel.mselecteditems.put(pos,true);
+                                appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
                                 //show_app_action_select_dialog(appPOJOList.get(pos));
                             }
@@ -524,8 +543,8 @@ public class AppManagerListFragment extends Fragment {
                         }
                         else
                         {
-                            mselecteditems.put(pos,true);
-                            app_selected_array.add(appPOJOList.get(pos));
+                            appManagerListFragmentViewModel.mselecteditems.put(pos,true);
+                            appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
                             //show_app_action_select_dialog(appPOJOList.get(pos));
                         }
@@ -564,11 +583,13 @@ public class AppManagerListFragment extends Fragment {
         }
     });
 
+
     private final ActivityResultLauncher<Intent>activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK)
             {
+                Log.d(Global.TAG,app_type);
                 Bundle bundle = result.getData().getBundleExtra("bundle");
                 String dest_folder=bundle.getString("dest_folder");
                 FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
@@ -747,7 +768,7 @@ public class AppManagerListFragment extends Fragment {
             // TODO: Implement this method
             final Bundle bundle=new Bundle();
             final ArrayList<String> files_selected_array=new ArrayList<>();
-            if (app_selected_array.size() < 1) {
+            if (appManagerListFragmentViewModel.app_selected_array.size() < 1) {
                 return;
             }
 
@@ -760,7 +781,7 @@ public class AppManagerListFragment extends Fragment {
                     break;
 
                 case 2:
-                    for(AppPOJO app:app_selected_array)
+                    for(AppPOJO app:appManagerListFragmentViewModel.app_selected_array)
                     {
                         files_selected_array.add(app.getPath());
                     }

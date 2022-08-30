@@ -414,7 +414,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					totalFilePOJO_list=viewModel.filePOJOS_filtered;
 				}
 				totalFilePOJO_list_Size=totalFilePOJO_list.size();
-				file_list_size=totalFilePOJO_list_Size;//filePOJO_list.size();
+				file_list_size=totalFilePOJO_list_Size;
 				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
 				Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 				adapter.notifyDataSetChanged();
