@@ -37,7 +37,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private int total_no_of_files;
     private long total_size_of_files;
 
-
     private String what_to_find=null;
     private String media_category=null;
     final List<FilePOJO> path=new ArrayList<>();
