@@ -175,7 +175,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						return;
 					}
 
-
 					String zip_folder_name=zip_file_edittext.getText().toString().trim();
 					if(zip_folder_name.equals(""))
 					{

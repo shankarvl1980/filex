@@ -354,7 +354,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 					}
 					extractZipFileViewModel.isZipExtracted=false;
-					extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.COMPLETED);
+					extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 
 			}
