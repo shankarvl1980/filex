@@ -41,7 +41,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -589,7 +588,6 @@ public class AppManagerListFragment extends Fragment {
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK)
             {
-                Log.d(Global.TAG,app_type);
                 Bundle bundle = result.getData().getBundleExtra("bundle");
                 String dest_folder=bundle.getString("dest_folder");
                 FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
