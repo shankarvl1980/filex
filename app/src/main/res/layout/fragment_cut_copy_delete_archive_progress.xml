@@ -12,8 +12,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?attr/dialog_title"
-
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		android:textSize="18sp"
 
 		app:layout_constraintEnd_toEndOf="parent"
@@ -46,8 +48,7 @@
 		android:id="@+id/fragment_cut_copy_delete_tablelayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:padding="@dimen/eight_dp"
 
 		android:layout_marginTop="4dp"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -126,9 +127,8 @@
 
 		android:text="@string/current_file_colon"
 		android:textSize="16sp"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
 
@@ -140,8 +140,8 @@
 		android:ellipsize="end"
 		android:enabled="false"
 		android:focusable="false"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 		android:singleLine="true"
 		android:textColor="?attr/edit_text_color"
 		android:textSize="16sp"
@@ -161,8 +161,8 @@
 		android:singleLine="true"
 		android:textColor="?attr/edit_text_color"
 		android:textSize="16sp"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
@@ -173,7 +173,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="start"
-		android:paddingStart="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
 
@@ -183,7 +183,7 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:gravity="start"
-			android:paddingEnd="@dimen/layout_margin"
+			android:paddingEnd="@dimen/eight_dp"
 			app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
 			app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_size_files"
 			app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
@@ -194,7 +194,7 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:gravity="end"
-		android:paddingStart="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
 		app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_total_no_files"
 			app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_size_files"
 		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
@@ -204,7 +204,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="end"
-			android:paddingEnd="@dimen/layout_margin"
+			android:paddingEnd="@dimen/eight_dp"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_size_files"
 			app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
@@ -218,8 +218,8 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_no_files"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 		/>
 
 	<ProgressBar
@@ -231,8 +231,8 @@
 		android:maxHeight="20dip"
 		android:minHeight="20dip"
 
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"

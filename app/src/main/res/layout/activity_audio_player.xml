@@ -3,7 +3,6 @@
 	android:layout_width="match_parent"
 	android:id="@+id/activity_audio_container_layout"
 	android:layout_height="match_parent"
-
 	>
 
 	<com.google.android.material.tabs.TabLayout
@@ -30,15 +29,6 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"/>
 
-	<!--androidx.viewpager.widget.ViewPager
-		android:id="@+id/activity_audio_player_viewpager"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:paddingTop="48dp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/-->
-
 
 
 	<androidx.constraintlayout.widget.Group
@@ -56,7 +46,8 @@
 		android:layout_height="48dp"
 		android:layout_gravity="center_vertical"
 		android:background="@drawable/search_edittext_background"
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
 		android:singleLine="true"
 		android:textColor="?attr/toolbar_text_color"
 		android:textSize="16sp"

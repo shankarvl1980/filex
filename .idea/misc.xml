@@ -41,6 +41,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout-land/fragment_current_play.xml" value="0.21516754850088182" />
         <entry key="..\:/FileXManager/app/src/main/res/layout-port/fragment_current_play.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_app_manager.xml" value="0.23233695652173914" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/activity_audio_player.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_blank_view.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_editor.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_file_editor_horizontal_scroll.xml" value="0.25416666666666665" />
@@ -48,9 +49,13 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_instacropper.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/activity_storage_analyser.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/app_manager_recycler_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/audio_notification_view.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/audio_save_list_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/audiolist_recyclerview_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/default_app_itemview_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/dialog_buttons_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/filedetail_recyclerview_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/filepath_recyclerview_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_details.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_album_list.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_all_audio_list.xml" value="0.25416666666666665" />
@@ -66,17 +71,22 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_create_rename_delete.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_current_play.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_cut_copy_delete_archive_progress.xml" value="0.23278985507246377" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_default_app.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_detail.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_editor_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_selector.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.253125" />
-        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.1" />
-        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_image_view.xml" value="0.1" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.2" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_image_view.xml" value="0.264" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_container.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_single.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_permissions.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_preferences.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_progressbar.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_properties.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_recent.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_replace_confirmation.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_saf_permission_helper.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_search_parameters.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_select_file_type.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_storage_analyser_sort.xml" value="0.25416666666666665" />
@@ -87,8 +97,10 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/main.xml" value="0.253125" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/pdf_viewpager_layout.xml" value="0.23233695652173914" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/search_bar_layout.xml" value="0.11302083333333333" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/storage_dir_recyclerview_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/toobar_img_buttons_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/toolbar_buttons_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/working_dir_recyclerview_layout.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

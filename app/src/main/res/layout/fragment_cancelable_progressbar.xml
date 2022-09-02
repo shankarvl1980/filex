@@ -9,7 +9,10 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:background="?attr/dialog_title"
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		android:textSize="18sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +35,10 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@id/progress_bar_background"
 		app:layout_constraintBottom_toBottomOf="@+id/progress_bar_background"/>
@@ -45,7 +51,10 @@
 
 
 		android:gravity="center_vertical"
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/wait_till_the_process_completes"
 		android:textSize="16sp"
 		app:layout_constraintBottom_toBottomOf="@+id/progress_bar_background"

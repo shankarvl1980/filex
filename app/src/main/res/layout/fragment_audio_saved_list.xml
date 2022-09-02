@@ -16,6 +16,7 @@
 		android:scrollbarThumbVertical="@drawable/scrollbar"
 		android:paddingBottom="?attr/actionBarSize"
 		android:clipToPadding="false"
+		android:padding="@dimen/layout_margin"
 		
 		/>
 	<TextView

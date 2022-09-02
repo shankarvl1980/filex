@@ -13,7 +13,6 @@
 		android:background="?attr/dialog_title"
 		android:gravity="center"
 		android:padding="@dimen/layout_margin"
-
 		android:text="@string/add_to_list"
 		android:textSize="18sp"
 
@@ -42,10 +41,10 @@
 		android:layout_marginTop="@dimen/layout_margin"
 		android:background="?attr/dialog_title"
 		android:gravity="start"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
-
 
 		android:text="@string/saved_lists"
 		android:textSize="18sp"
@@ -80,10 +79,6 @@
 		app:layout_constraintTop_toBottomOf="@id/audio_save_list_savedlist_recyclerview"
 		app:layout_constraintStart_toStartOf="parent"
 
-
-
 		/>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

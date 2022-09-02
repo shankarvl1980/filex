@@ -16,6 +16,8 @@
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
+		android:layout_marginStart="@dimen/layout_margin"
+		android:layout_marginEnd="@dimen/layout_margin"
 
 		/>
 

@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/dialog_background"
-        android:padding="@dimen/layout_margin"
+        android:padding="@dimen/eight_dp"
         android:text="@string/remember_the_choice"
         android:textSize="18sp"
         android:minHeight="36dp"

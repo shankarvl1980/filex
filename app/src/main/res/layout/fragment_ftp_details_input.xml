@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/new_ftp_server"
-        android:padding="@dimen/layout_margin"
+        android:paddingStart="@dimen/eight_dp"
+        android:paddingEnd="@dimen/eight_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
         android:textSize="18sp"
         android:layout_gravity="top"/>
@@ -39,7 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingTop="@dimen/eight_dp"
+                android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/server"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/ftp_details_server"
@@ -57,6 +63,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
                 android:inputType="text"
                 android:maxLines="1"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/eight_dp"
                 />
 
             <TextView
@@ -64,7 +72,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingTop="@dimen/four_dp"
+                android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/port"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +93,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_port_label"
                 android:inputType="text"
                 android:maxLines="1"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/eight_dp"
                 />
 
             <TextView
@@ -94,7 +107,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
                 app:layout_constraintEnd_toStartOf="@id/ftp_details_mode_rg"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/eight_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
 
@@ -142,7 +158,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_mode_rg"
                 app:layout_constraintEnd_toStartOf="@id/ftp_details_user_name"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
             <EditText
@@ -154,6 +173,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:inputType="text"
                 android:maxLines="1"
+                android:paddingStart="@dimen/four_dp"
+                android:paddingEnd="@dimen/eight_dp"
 
                 />
             <TextView
@@ -166,7 +187,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_user_name_label"
                 app:layout_constraintEnd_toStartOf="@id/ftp_details_pword"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
             <EditText
@@ -178,6 +202,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
                 android:inputType="text"
                 android:maxLines="1"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/eight_dp"
                 />
             <RadioButton
                 android:layout_width="wrap_content"
@@ -186,6 +212,8 @@
                 android:text="@string/anonymous"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/eight_dp"
                 />
             <TextView
                 android:id="@+id/ftp_details_encoding_label"
@@ -196,7 +224,10 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_radio_btn"
-                android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/eight_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
@@ -210,7 +241,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label"
             app:layout_constraintEnd_toStartOf="@id/ftp_details_display"
-            android:padding="@dimen/layout_margin"
+                android:paddingStart="@dimen/eight_dp"
+                android:paddingEnd="@dimen/eight_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
             />
@@ -223,6 +257,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
                 android:inputType="text"
                 android:maxLines="1"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/eight_dp"
                 />
 
             <FrameLayout

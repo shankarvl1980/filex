@@ -4,7 +4,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-
 		<TextView
 			android:id="@+id/file_selector_current_folder_label"
 			android:layout_width="match_parent"
@@ -12,7 +11,10 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
-			android:padding="@dimen/layout_margin"
+			android:paddingStart="@dimen/eight_dp"
+			android:paddingEnd="@dimen/eight_dp"
+			android:paddingTop="@dimen/layout_margin"
+			android:paddingBottom="@dimen/layout_margin"
 
 			/>
 
@@ -22,8 +24,8 @@
 			android:id="@+id/file_selector_folder_selected"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingStart="@dimen/layout_margin"
-			android:paddingEnd="@dimen/layout_margin"
+			android:paddingStart="@dimen/eight_dp"
+			android:paddingEnd="@dimen/eight_dp"
 			android:focusable="false"
 			android:cursorVisible="false"
 			android:textColor="?attr/edit_text_color"

@@ -3,7 +3,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-
     >
 
 
@@ -12,7 +11,10 @@
         android:layout_height="wrap_content"
 
         android:text="@string/app_action"
-        android:padding="@dimen/layout_margin"
+        android:paddingStart="@dimen/eight_dp"
+        android:paddingEnd="@dimen/eight_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
         android:textSize="18sp"
         android:layout_gravity="top"
@@ -41,9 +43,7 @@
                 android:layout_height="@dimen/image_preview_dimen"
                 app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingStart="@dimen/layout_margin"
+                android:layout_margin="@dimen/eight_dp"
 
                 />
 
@@ -55,7 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_name"
                 android:textSize="18sp"
-                android:padding="@dimen/layout_margin"
+                android:layout_margin="@dimen/eight_dp"
                 android:maxLines="2"
                 />
             <TextView
@@ -66,8 +66,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_package_name"
                 android:textSize="14sp"
-                android:paddingStart="@dimen/layout_margin"
-                android:paddingEnd="@dimen/layout_margin"
                 android:maxLines="2"
 
                 />
@@ -79,8 +77,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_size"
                 android:textSize="14sp"
-                android:paddingStart="@dimen/layout_margin"
-                android:paddingEnd="@dimen/layout_margin"
                 android:maxLines="1"
                 />
             <TextView
@@ -91,9 +87,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_version"
                 android:textSize="14sp"
-                android:paddingStart="@dimen/layout_margin"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
+                android:layout_marginBottom="@dimen/eight_dp"
                 android:maxLines="1"
                 />
             <View

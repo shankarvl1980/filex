@@ -68,7 +68,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/remove_default_apps"
-            android:padding="@dimen/layout_margin"
+            android:paddingStart="@dimen/eight_dp"
+            android:paddingEnd="@dimen/eight_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingBottom="@dimen/layout_margin"
             android:background="?attr/dialog_title"
             android:textSize="18sp"
             android:layout_gravity="top"
@@ -86,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?attr/dialog_background"
-            android:padding="@dimen/layout_margin"
+            android:padding="@dimen/eight_dp"
 
             android:layout_marginBottom="50dp"
             >
@@ -101,8 +104,6 @@
 
         </ScrollView>
 
-
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,11 +112,6 @@
                 android:layout_gravity="bottom"
                 />
 
-
-
-
-
         </FrameLayout>
-
 
     </LinearLayout>

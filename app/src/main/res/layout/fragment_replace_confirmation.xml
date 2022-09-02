@@ -10,7 +10,10 @@
 		android:layout_height="wrap_content"
 
 		android:background="?attr/dialog_title"
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/replace_file"
 
 		android:textSize="18sp"
@@ -25,7 +28,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginTop="4dp"
 		android:background="?attr/dialog_background"
-		android:padding="@dimen/layout_margin"
+		android:padding="@dimen/eight_dp"
 
 		android:textSize="16sp"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +41,7 @@
 		android:layout_height="wrap_content"
 		android:background="?attr/dialog_background"
 
-		android:padding="@dimen/layout_margin"
+		android:padding="@dimen/eight_dp"
 		android:text="@string/apply_to_all_similarly_named_files"
 
 		app:layout_constraintEnd_toEndOf="parent"
