@@ -139,7 +139,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 				{
 					bind_data();
 				}
-
+				if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)finish();
 			}
 
 			public void onServiceDisconnected(ComponentName componentName)
@@ -229,7 +229,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		PROGRESS_ACTIVITY_SHOWN=true;
 		Intent service_intent=new Intent(this,ArchiveDeletePasteFileService2.class);
 		bindService(service_intent,serviceConnection,Context.BIND_AUTO_CREATE);
-
 	}
 
 	private void bind_data()

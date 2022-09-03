@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sort"
-        android:padding="@dimen/layout_margin"
+        android:paddingStart="@dimen/eight_dp"
+        android:paddingEnd="@dimen/eight_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
         android:textSize="18sp"
         android:layout_gravity="top"
@@ -34,10 +37,10 @@
                 android:id="@+id/storage_analyser_sort_table_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/layout_margin"
+                android:padding="@dimen/eight_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/storage_analyser_sort_heading"
+                app:layout_constraintTop_toTopOf="@id/storage_analyser_sort_layout_background"
 
                 >
 

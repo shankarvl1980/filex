@@ -116,7 +116,7 @@
 				android:gravity="start"
 				android:paddingStart="@dimen/eight_dp"
 				android:paddingEnd="@dimen/eight_dp"
-				android:paddingTop="@dimen/layout_margin"
+				android:paddingTop="@dimen/eight_dp"
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/type_colon"
 				android:textSize="16sp"
@@ -180,22 +180,6 @@
 				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
 				/>
 
-			<!--TextView
-
-				android:id="@+id/dialog_fragment_search_filesize_label"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="?attr/dialog_background"
-
-				android:gravity="start"
-				android:padding="@dimen/layout_margin"
-				android:text="@string/size_colon"
-				android:textSize="16sp"
-				app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_size_rg"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
-
-				/-->
 
 			<RadioGroup
 
@@ -258,7 +242,7 @@
 				android:paddingEnd="@dimen/layout_margin"
 				android:paddingTop="@dimen/layout_margin"
 				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/lower_bound_colon"
+				android:text="@string/greater_than"
 				android:textSize="14sp"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg"
@@ -269,6 +253,7 @@
 				android:layout_height="wrap_content"
 				android:textSize="14sp"
 				android:digits="0123456789"
+				android:gravity="end"
 				android:maxLines="1"
 				android:maxLength="4"
 				app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_filesize_lower_label"
@@ -290,7 +275,7 @@
 				android:paddingEnd="@dimen/layout_margin"
 				android:paddingTop="@dimen/layout_margin"
 				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/upper_bound_colon"
+				android:text="@string/lesser_than"
 				android:textSize="14sp"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_filesize_lower_label"
@@ -303,6 +288,7 @@
 				android:layout_height="wrap_content"
 				android:textSize="14sp"
 				android:digits="0123456789"
+				android:gravity="end"
 				android:maxLines="1"
 				android:maxLength="4"
 				app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_filesize_upper_label"
@@ -319,7 +305,7 @@
 				android:background="?attr/dialog_background"
 				android:paddingStart="@dimen/eight_dp"
 				android:paddingEnd="@dimen/eight_dp"
-				android:paddingTop="@dimen/layout_margin"
+				android:paddingTop="@dimen/eight_dp"
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/search_in_colon"
 				android:textSize="16sp"

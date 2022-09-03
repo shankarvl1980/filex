@@ -341,8 +341,8 @@
 	<string name="press_again_to_close_activity">press again to close the activity</string>
 	<string name="volume_colon">Volume</string>
     <string name="cannot_open_here">cannot open here</string>
-    <string name="lower_bound_colon">Lower bound</string>
-	<string name="upper_bound_colon">Upper bound</string>
+    <string name="greater_than">Greater than</string>
+	<string name="lesser_than">Lesser than</string>
 	<string name="deleted_audio_file">Deleted the audio file</string>
 	<string name="deleted_file">Deleted the file</string>
     <string name="name_contains_space">name contains space</string>

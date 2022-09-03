@@ -9,7 +9,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/view"
-		android:padding="@dimen/layout_margin"
+		android:paddingStart="@dimen/eight_dp"
+		android:paddingEnd="@dimen/eight_dp"
+		android:paddingTop="@dimen/layout_margin"
+		android:paddingBottom="@dimen/layout_margin"
 		android:background="?attr/dialog_title"
 		android:textSize="18sp"
 		android:layout_gravity="top"/>
@@ -35,7 +38,10 @@
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="parent"
 					android:background="?attr/dialog_background"
-					android:padding="@dimen/layout_margin"
+					android:paddingStart="@dimen/eight_dp"
+					android:paddingEnd="@dimen/eight_dp"
+					android:paddingTop="@dimen/eight_dp"
+					android:paddingBottom="@dimen/layout_margin"
 
 					/>
 
@@ -91,7 +97,10 @@
 						android:layout_height="wrap_content"
 						android:text="@string/font_size_colon"
 						android:textSize="16sp"
-						android:padding="@dimen/layout_margin"
+						android:paddingStart="@dimen/eight_dp"
+						android:paddingEnd="@dimen/eight_dp"
+						android:paddingTop="@dimen/layout_margin"
+						android:paddingBottom="@dimen/layout_margin"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintTop_toTopOf="@id/seekbar_layout"
@@ -104,8 +113,8 @@
 				android:elevation="6dp"
 
 				android:max="2"
-				android:paddingStart="34dp"
-				android:paddingEnd="34dp"
+				android:paddingStart="38dp"
+				android:paddingEnd="38dp"
 				android:progressDrawable="@drawable/seek_bar"
 				android:progressTint="@null"
 				android:thumb="@drawable/seek_thumb"
@@ -118,7 +127,10 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="15dp"
-				android:padding="@dimen/layout_margin"
+				android:paddingStart="@dimen/eight_dp"
+				android:paddingEnd="@dimen/eight_dp"
+				android:paddingTop="@dimen/layout_margin"
+				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/small"
 				app:layout_constraintEnd_toStartOf="@id/font_medium_label"
 				app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +157,10 @@
 				android:layout_height="wrap_content"
 				android:layout_marginEnd="15dp"
 				android:gravity="end"
-				android:padding="@dimen/layout_margin"
+				android:paddingStart="@dimen/eight_dp"
+				android:paddingEnd="@dimen/eight_dp"
+				android:paddingTop="@dimen/layout_margin"
+				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/large"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toEndOf="@id/font_medium_label"
@@ -175,7 +190,10 @@
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
 					android:id="@+id/sort_label"
-					android:padding="@dimen/layout_margin"
+					android:paddingStart="@dimen/eight_dp"
+					android:paddingEnd="@dimen/eight_dp"
+					android:paddingTop="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
 					/>
 
 
@@ -192,8 +210,6 @@
 				<TableRow
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
-
-
 					>
 
 					<TextView
@@ -315,7 +331,10 @@
 				android:theme="@style/MyLightSwitchCompat"
 				app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
 				android:background="?attr/dialog_background"
-				android:padding="@dimen/layout_margin"
+				android:paddingStart="@dimen/eight_dp"
+				android:paddingEnd="@dimen/eight_dp"
+				android:paddingTop="@dimen/layout_margin"
+				android:paddingBottom="@dimen/eight_dp"
 				android:minHeight="44dp"
 
 				/>

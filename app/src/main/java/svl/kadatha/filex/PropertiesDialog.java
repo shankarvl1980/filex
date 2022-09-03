@@ -37,7 +37,6 @@ public class PropertiesDialog extends DialogFragment
 	private TextView size_files_textview;
 	private String filename_str,file_path_str,file_type_str,file_no_str,file_size_str,file_date_str,file_permissions_str,symbolic_link_str,readable_str,writable_str,hidden_str;
 	private ArrayList<String> files_selected_array=new ArrayList<>();
-
 	private FileObjectType fileObjectType;
 	private String source_folder;
 	private int size;
@@ -137,19 +136,16 @@ public class PropertiesDialog extends DialogFragment
 				case 1:
 					label.setText(R.string.path);
 					property.setText(file_path_str);
-					if(files_selected_array.size()==1)
-					{
-						property.setPaintFlags(property.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-						property.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								ClipboardManager clipboardManager= (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-								ClipData clipData=ClipData.newPlainText("Path copied",property.getText());
-								clipboardManager.setPrimaryClip(clipData);
-								Global.print(context,getString(R.string.path_copied));
-							}
-						});
-					}
+					property.setPaintFlags(property.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+					property.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							ClipboardManager clipboardManager= (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+							ClipData clipData=ClipData.newPlainText("Path copied",property.getText());
+							clipboardManager.setPrimaryClip(clipData);
+							Global.print(context,getString(R.string.path_copied));
+						}
+					});
 					break;
 
 				case 2:
@@ -200,6 +196,7 @@ public class PropertiesDialog extends DialogFragment
 				case 3:
 					label.setText(R.string.permissions);
 					property.setText(file_permissions_str);
+					property.setPaintFlags(property.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 					property.setOnClickListener(new View.OnClickListener()
 					{
 						public void onClick(View v)
@@ -230,7 +227,7 @@ public class PropertiesDialog extends DialogFragment
 		viewModel.total_no_of_files.observe(this, new androidx.lifecycle.Observer<Integer>() {
 			@Override
 			public void onChanged(Integer integer) {
-				no_files_textview.setText(getString(R.string.total_files_colon)+" "+integer);
+				no_files_textview.setText(" "+integer);
 			}
 		});
 
@@ -238,7 +235,7 @@ public class PropertiesDialog extends DialogFragment
 			@Override
 			public void onChanged(String s) {
 
-				size_files_textview.setText(getString(R.string.size_colon)+" "+s);
+				size_files_textview.setText(" "+s);
 			}
 		});
 

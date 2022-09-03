@@ -10,7 +10,7 @@
         android:padding="@dimen/layout_margin"
         android:textSize="16sp"
 
-        android:background="@drawable/select_detail_grid_recyclerview"
+
 
         />
 
@@ -21,7 +21,7 @@
         android:padding="@dimen/layout_margin"
         android:textSize="16sp"
         android:layout_weight="1"
-        android:background="@drawable/select_detail_grid_recyclerview"
+
         />
 
 

@@ -47,7 +47,7 @@
 			android:id="@+id/fragment_properties_rwh_tablelayout"
 			android:background="?attr/dialog_background"
 			android:layout_marginTop="@dimen/layout_margin"
-			android:padding="@dimen/layout_margin"
+			android:padding="@dimen/eight_dp"
 			android:visibility="gone"
 		>
 

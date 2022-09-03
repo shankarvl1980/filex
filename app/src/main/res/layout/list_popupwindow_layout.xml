@@ -4,7 +4,10 @@
         android:layout_height="match_parent"
         android:background="@drawable/select_list_popupwindow"
         android:orientation="horizontal"
-        android:padding="@dimen/layout_margin"
+        android:paddingStart="@dimen/eight_dp"
+        android:paddingEnd="@dimen/eight_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
     android:elevation="6dp"
 
         >
