@@ -113,7 +113,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	{
 
 		int iconheight,maxHeight=0;
-		int usedWidth=Global.TEN_DP;
+		int usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
 
 
 		measureChildWithMargins(audio_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
@@ -121,17 +121,17 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		usedWidth+=imageview_dimension;
 		iconheight=imageview_dimension;
 
-		measureChildWithMargins(titletextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+		measureChildWithMargins(titletextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 		maxHeight+=titletextview.getMeasuredHeight();
 
-		measureChildWithMargins(albumtextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+		measureChildWithMargins(albumtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 		maxHeight+=albumtextview.getMeasuredHeight();
 
-		measureChildWithMargins(durationtextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+		measureChildWithMargins(durationtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 		maxHeight+=durationtextview.getMeasuredHeight();
 		
 		
-		measureChildWithMargins(artisttextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+		measureChildWithMargins(artisttextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 		maxHeight+=artisttextview.getMeasuredHeight();
 
 		maxHeight=Math.max(iconheight,maxHeight);
@@ -145,7 +145,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	protected void onLayout(boolean p1, int l, int t, int r, int b)
 	{
 		// TODO: Implement this method
-		int x=Global.TEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
+		int x=Global.FOURTEEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 		View v=audioimageview;
 		int d=(itemHeight-imageview_dimension)/2;

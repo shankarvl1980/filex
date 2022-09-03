@@ -121,7 +121,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         int iconheight,maxHeight=0;
         int usedWidth;
 
-        usedWidth=Global.TEN_DP;
+        usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
         measureChildWithMargins(fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
         measureChildWithMargins(overlay_fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
@@ -164,7 +164,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         // TODO: Implement this method
         int x,y=0;
 
-        x=Global.TEN_DP;
+        x=Global.FOURTEEN_DP;//Global.TEN_DP;
         View v=fileimageview;
         int top_for_icon=(itemHeight-imageview_dimension)/2;
         v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
@@ -183,7 +183,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         v=file_select_indicator;
         int a=(itemWidth-imageview_dimension)/2;
-        a+=a/2-(v.getMeasuredWidth()/2)+imageview_dimension;
+        a+=a/2-(v.getMeasuredWidth()/2)+imageview_dimension-Global.FOUR_DP;
         int file_select_indicator_height=v.getMeasuredHeight();
         int c=(itemHeight-file_select_indicator_height)/2;
         v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);

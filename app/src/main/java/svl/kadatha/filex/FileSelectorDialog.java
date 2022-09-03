@@ -141,9 +141,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		if(FileSelectorActivity.FILE_GRID_LAYOUT)
 		{
 			GridLayoutManager glm = new GridLayoutManager(context, FileSelectorActivity.GRID_COUNT);
-			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
+			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.TWO_DP);
 			recycler_view.addItemDecoration(spacesItemDecoration);
 			recycler_view.setLayoutManager(glm);
+			int top_padding=recycler_view.getPaddingTop();
+			int bottom_padding=recycler_view.getPaddingBottom();
+			recycler_view.setPadding(Global.FOUR_DP,top_padding,Global.FOUR_DP,bottom_padding);
 		}
 		else
 		{

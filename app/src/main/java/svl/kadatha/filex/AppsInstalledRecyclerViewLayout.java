@@ -62,7 +62,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
         if(Global.FILE_GRID_LAYOUT)
         {
-            setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_grid_recyclerview));
+            //setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_grid_recyclerview));
             if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
             {
                 first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
@@ -175,7 +175,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         }
         else
         {
-            usedWidth=Global.TEN_DP;
+            usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
             measureChildWithMargins(appimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
             usedWidth+=imageview_dimension;
@@ -187,20 +187,20 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
              */
 
-            measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
 
-            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            measureChildWithMargins(apppackagenametextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
             maxHeight+=apppackagenametextview.getMeasuredHeight();
 
-            measureChildWithMargins(appversiontextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            measureChildWithMargins(appversiontextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
             maxHeight+=appversiontextview.getMeasuredHeight();
 
-            measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
             usedWidth+=appsizetextview.getMeasuredWidth()+Global.TEN_DP*2;
             maxHeight+=appsizetextview.getMeasuredHeight();
 
-            measureChildWithMargins(appdatetextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+            measureChildWithMargins(appdatetextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 
             maxHeight=Math.max(iconheight,maxHeight);
 
@@ -223,7 +223,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         {
             int grid_count=Global.GRID_COUNT;
             int grid_width=itemWidth/grid_count;
-            x+=(grid_width-imageview_dimension)/2;
+            x+=(grid_width-imageview_dimension-Global.EIGHT_DP)/2;  //Deducting eight dp because, recyclerview is added start and end padding of four dp
 
             View v;
 
@@ -254,7 +254,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         }
         else
         {
-            x=Global.TEN_DP;
+            x=Global.FOURTEEN_DP;//Global.TEN_DP;
             int margin_offset_icon, max_height_second_line;
             View v=appimageview;
             y=Global.RECYCLERVIEW_ITEM_SPACING;
@@ -289,7 +289,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             v.layout(x,y,x+v.getMeasuredWidth()+Global.TEN_DP,y+v.getMeasuredHeight());
 
             v=appdatetextview;
-            x=itemWidth-select_indicator_offset_linear-v.getMeasuredWidth()-Global.TEN_DP;
+            x=itemWidth-select_indicator_offset_linear-v.getMeasuredWidth()-Global.FOURTEEN_DP;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
         }

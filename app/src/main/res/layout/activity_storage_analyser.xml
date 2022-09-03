@@ -100,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:gravity="start"
+            android:layout_marginStart="@dimen/layout_margin"
             android:paddingStart="@dimen/layout_margin"
             android:paddingEnd="@dimen/layout_margin"
             android:text="@string/size"/>

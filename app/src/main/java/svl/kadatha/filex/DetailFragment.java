@@ -199,9 +199,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		if(Global.FILE_GRID_LAYOUT)
 		{
 			glm=new GridLayoutManager(context,Global.GRID_COUNT);
-			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.ONE_DP);
+			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.TWO_DP);
 			recyclerView.addItemDecoration(spacesItemDecoration);
 			recyclerView.setLayoutManager(glm);
+			int top_padding=recyclerView.getPaddingTop();
+			int bottom_padding=recyclerView.getPaddingBottom();
+			recyclerView.setPadding(Global.FOUR_DP,top_padding,Global.FOUR_DP,bottom_padding);
 		}
 		else
 		{

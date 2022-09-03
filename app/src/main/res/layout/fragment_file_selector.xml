@@ -54,6 +54,7 @@
 				android:clipToPadding="false"
 				style="@style/my_scrollbar"
 
+
 				/>
 
 			<TextView

@@ -608,7 +608,7 @@ public class AlbumListFragment extends Fragment
 		{
 
 			int iconheight,maxHeight=0;
-			int usedWidth=Global.TEN_DP;
+			int usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
 
 			measureChildWithMargins(album_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(albumimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
@@ -616,14 +616,14 @@ public class AlbumListFragment extends Fragment
 			iconheight=imageview_dimension;
 
 
-			measureChildWithMargins(albumtextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+			measureChildWithMargins(albumtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 			maxHeight+=albumtextview.getMeasuredHeight();
 
-			measureChildWithMargins(no_of_songs_textview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+			measureChildWithMargins(no_of_songs_textview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 			maxHeight+=no_of_songs_textview.getMeasuredHeight();
 
 
-			measureChildWithMargins(artisttextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+			measureChildWithMargins(artisttextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 			maxHeight+=artisttextview.getMeasuredHeight();
 
 			maxHeight=Math.max(iconheight,maxHeight);
@@ -637,7 +637,7 @@ public class AlbumListFragment extends Fragment
 		protected void onLayout(boolean p1, int l, int t, int r, int b)
 		{
 			// TODO: Implement this method
-			int x=Global.TEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
+			int x=Global.FOURTEEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 			View v=albumimageview;
 			int d=(itemHeight-imageview_dimension)/2;
