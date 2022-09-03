@@ -385,7 +385,7 @@ public class AllAudioListFragment extends Fragment
 					return;
 				}
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP+Global.NAVIGATION_BAR_HEIGHT);
+				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,  (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
 
 
 			} else if (id == R.id.toolbar_btn_5) {

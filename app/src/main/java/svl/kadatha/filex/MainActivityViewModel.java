@@ -22,6 +22,10 @@ public class MainActivityViewModel extends ViewModel {
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean checkedSAFPermissionPasteSetUp;
 
+    public boolean archive_view,working_dir_open,library_or_search_shown;
+    public String toolbar_shown="bottom";
+    public String toolbar_shown_prior_archive="";
+
     @Override
     protected void onCleared() {
         super.onCleared();

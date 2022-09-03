@@ -525,9 +525,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
 		{
 			// TODO: Implement this method
-			//final Bundle bundle=new Bundle();
 			final ArrayList<String> files_selected_array=new ArrayList<>();
-
 			switch(p3)
 			{
 				case 0:

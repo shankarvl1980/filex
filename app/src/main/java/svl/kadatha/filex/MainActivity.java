@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -77,8 +78,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
 {
-	public boolean archive_view;
-	private boolean working_dir_open,library_or_search_shown;
+
 	DrawerLayout drawerLayout;
     public Button rename,working_dir_add_btn,working_dir_remove_btn;
     public ImageButton parent_dir_image_button,all_select;
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	private Group working_dir_button_layout;
 	static boolean SHOW_HIDDEN_FILE;
-	public String toolbar_shown="bottom";
+
 	static FilePOJO DRAWER_STORAGE_FILEPOJO_SELECTED;
 	static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
 
@@ -121,7 +121,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public FragmentManager fm;
 	public static FragmentManager FM;
-	private String toolbar_shown_prior_archive="";
+
     private EditText search_view;
 	public boolean search_toolbar_visible;
 	private KeyBoardUtil keyBoardUtil;
@@ -147,8 +147,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public Set<FilePOJO>search_in_dir;
 	public String search_file_type;
 	public boolean search_whole_word,search_case_sensitive,search_regex;
-	private MainActivityViewModel viewModel;
-	FileDuplicationViewModel fileDuplicationViewModel;
+	public MainActivityViewModel viewModel;
+	private FileDuplicationViewModel fileDuplicationViewModel;
 
 
 	@Override
@@ -178,6 +178,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		tinyDB=new TinyDB(context);
 
 		setContentView(R.layout.main);
+		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
 		fm=getSupportFragmentManager();
 		FM=fm;
 		pm=getPackageManager();
@@ -202,7 +203,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
-		
+
 		drawerLayout=findViewById(R.id.drawer_layout);
 		drawer=findViewById(R.id.drawer_navigation_layout);
 		keyBoardUtil=new KeyBoardUtil(drawerLayout);
@@ -412,7 +413,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewPager.setAdapter(viewPagerAdapter);
 		
 */
-		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
+
 		viewModel.isExtractionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -429,10 +430,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					archive_view=viewModel.zipFileExtracted;
+					viewModel.archive_view=viewModel.zipFileExtracted;
 					if(viewModel.zipFileExtracted)
 					{
-						toolbar_shown_prior_archive=toolbar_shown;
+						viewModel.toolbar_shown_prior_archive=viewModel.toolbar_shown;
 						createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
 					}
 					else
@@ -523,7 +524,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					working_dir_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 					workingDirListRecyclerView.setVisibility(View.VISIBLE);
 					working_dir_button_layout.setVisibility(View.VISIBLE);
-					working_dir_open=true;
+					viewModel.working_dir_open=true;
 
 				}
 				else
@@ -531,7 +532,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					working_dir_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.down_arrow_drawer_icon));
 					workingDirListRecyclerView.setVisibility(View.GONE);
 					working_dir_button_layout.setVisibility(View.GONE);
-					working_dir_open=false;
+					viewModel.working_dir_open=false;
 				}
 			}
 		});
@@ -590,13 +591,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 					libraryRecyclerView.setVisibility(View.VISIBLE);
-					library_or_search_shown=true;
+					viewModel.library_or_search_shown=true;
 				}
 				else
 				{
 					library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.down_arrow_drawer_icon));
 					libraryRecyclerView.setVisibility(View.GONE);
-					library_or_search_shown=false;
+					viewModel.library_or_search_shown=false;
 				}
 			}
 		});
@@ -1099,11 +1100,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		// TODO: Implement this method
 		super.onSaveInstanceState(outState);
-		outState.putString("toolbar_shown",toolbar_shown);
-		outState.putString("toolbar_shown_prior_archive",toolbar_shown_prior_archive);
-		outState.putBoolean("archive_view",archive_view);
-		outState.putBoolean("working_dir_open",working_dir_open);
-		outState.putBoolean("library_or_search_shown",library_or_search_shown);
 		outState.putSerializable("custom_dir_selected_hash_map",workingDirRecyclerAdapter.custom_dir_selected_hash_map);
 		outState.putStringArrayList("custom_dir_selected_array",workingDirRecyclerAdapter.custom_dir_selected_array);
 		outState.putBoolean("clear_cache",clear_cache);
@@ -1115,8 +1111,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		// TODO: Implement this method
 		super.onRestoreInstanceState(savedInstanceState);
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-		toolbar_shown=savedInstanceState.getString("toolbar_shown");
-		switch (toolbar_shown) {
+		switch (viewModel.toolbar_shown) {
 			case "actionmode":
 				actionmode_toolbar.setVisibility(View.VISIBLE);
 				bottom_toolbar.setVisibility(View.GONE);
@@ -1134,15 +1129,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				bottom_toolbar.setVisibility(View.GONE);
 				break;
 		}
-		toolbar_shown_prior_archive=savedInstanceState.getString("toolbar_shown_prior_archive");
-		archive_view=savedInstanceState.getBoolean("archive_view");
+
 		if(df.viewModel.mselecteditems.size()>1)
 		{
 			rename.setEnabled(false);
 			rename.setAlpha(Global.DISABLE_ALFA);
 		}
 
-		if(working_dir_open=savedInstanceState.getBoolean("working_dir_open"))
+		if(viewModel.working_dir_open)
 		{
 			working_dir_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 			workingDirListRecyclerView.setVisibility(View.VISIBLE);
@@ -1152,7 +1146,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		workingDirRecyclerAdapter.custom_dir_selected_hash_map= (HashMap<Integer, Boolean>) savedInstanceState.getSerializable("custom_dir_selected_hash_map");
 		workingDirRecyclerAdapter.custom_dir_selected_array=savedInstanceState.getStringArrayList("custom_dir_selected_array");
 
-		if(library_or_search_shown=savedInstanceState.getBoolean("library_or_search_shown"))
+		if(viewModel.library_or_search_shown)
 		{
 			library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 			libraryRecyclerView.setVisibility(View.VISIBLE);
@@ -1223,14 +1217,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
-			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
+			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
 			{
 				archive_exit();
 			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)
 			{
-				switch (toolbar_shown)
+				switch (viewModel.toolbar_shown)
 				{
 					case "bottom":
 						bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -1259,7 +1253,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df_tag = df.getTag();
 				}
 
-				if(df_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && archive_view)
+				if(df_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
 				{
 					parent_dir_image_button.setEnabled(false);
 					parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
@@ -1337,13 +1331,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)
 	{
 		listPopWindow.dismiss();
-		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  archive_view)
+		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  viewModel.archive_view)
 		{
 			extract_toolbar.setVisibility(View.VISIBLE);
 			extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			paste_toolbar.setVisibility(View.GONE);
 			bottom_toolbar.setVisibility(View.GONE);
-			toolbar_shown="extract";
+			viewModel.toolbar_shown="extract";
 			if(detailfrag_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 			{
 				parent_dir_image_button.setEnabled(false);
@@ -1353,7 +1347,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
 		{
-			if(archive_view)
+			if(viewModel.archive_view)
 			{
 				archive_exit();   //experimental
 			}
@@ -1361,7 +1355,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			bottom_toolbar.setVisibility(View.GONE);
 			extract_toolbar.setVisibility(View.GONE);
-			toolbar_shown="paste";
+			viewModel.toolbar_shown="paste";
 			parent_dir_image_button.setEnabled(true);
 			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 		}
@@ -1409,25 +1403,25 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		}
 
-		if(toolbar_shown_prior_archive.equals("paste"))
+		if(viewModel.toolbar_shown_prior_archive.equals("paste"))
 		{
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-			toolbar_shown=toolbar_shown_prior_archive;
-			toolbar_shown_prior_archive="";
+			viewModel.toolbar_shown=viewModel.toolbar_shown_prior_archive;
+			viewModel.toolbar_shown_prior_archive="";
 			bottom_toolbar.setVisibility(View.GONE);
 		}
 		else
 		{
 			bottom_toolbar.setVisibility(View.VISIBLE);
 			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-			toolbar_shown="bottom";
+			viewModel.toolbar_shown="bottom";
 			paste_toolbar.setVisibility(View.GONE);
 		}
 
 		actionmode_toolbar.setVisibility(View.GONE);
 		extract_toolbar.setVisibility(View.GONE);
-		archive_view=false;
+		viewModel.archive_view=false;
 	}
 
 
@@ -1444,7 +1438,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(df.fileObjectType== FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
 		{
 			File file=new File(file_path);
-			if(file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !archive_view)
+			if(file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !viewModel.archive_view)
 			{
 				int i=workingDirRecyclerAdapter.insert(file_path);
 				workingDirListRecyclerView.scrollToPosition(i);
@@ -1782,7 +1776,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				});
 
 				//listPopWindow.showAsDropDown(v,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP+Global.NAVIGATION_BAR_HEIGHT);
+				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0, (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
 
 			}
 		}
@@ -1901,7 +1895,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		paste_toolbar.setVisibility(View.GONE);
 		actionmode_toolbar.setVisibility(View.GONE);
 		extract_toolbar.setVisibility(View.GONE);
-		toolbar_shown="bottom";
+		viewModel.toolbar_shown="bottom";
 		df.is_toolbar_visible=true;
 	}
 

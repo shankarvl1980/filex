@@ -9,6 +9,8 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,11 +20,13 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -178,7 +182,7 @@ public class Global
 	static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION=FILEX_PACKAGE+".MODIFICATION_OBSERVED";
 
 
-	static public int NAVIGATION_BAR_HEIGHT;
+	static public int NAVIGATION_STATUS_BAR_HEIGHT;
 
 	static final LinkedHashMap<String,SpacePOJO> SPACE_ARRAY=new LinkedHashMap<>();
 
@@ -573,6 +577,7 @@ public class Global
 			WORKOUT_AVAILABLE_SPACE();
 		}
 	}
+
 	public static boolean HAS_NAVBAR(WindowManager windowManager){
 		Display d = windowManager.getDefaultDisplay();
 
@@ -591,7 +596,7 @@ public class Global
 		return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
 	}
 
-
+/*
 	public static void GET_NAVIGATION_BAR_HEIGHT(Context context){
 
 		Resources resources = context.getResources();
@@ -615,6 +620,83 @@ public class Global
 	}
 
 
+ */
+	/*
+	public static double GET_NAVIGATION_BAR_HEIGHT(Context context) {
+		try {
+			WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+			Display display = windowManager.getDefaultDisplay();
+			DisplayMetrics displayMetrics = new DisplayMetrics();
+			DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+			display.getMetrics(displayMetrics);
+			display.getRealMetrics(realDisplayMetrics);
+			Resources resources = context.getResources();
+			if(displayMetrics.heightPixels != realDisplayMetrics.heightPixels) {
+
+				int resourceID = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+				if (resourceID > 0 && ViewConfiguration.get(context).hasPermanentMenuKey())
+					return NAVIGATION_BAR_HEIGHT=(resources.getDimensionPixelSize(resourceID) / displayMetrics.density);
+				return NAVIGATION_BAR_HEIGHT=0;
+			}
+		}
+		catch (Exception e){
+			return NAVIGATION_BAR_HEIGHT=0;
+		}
+		return NAVIGATION_BAR_HEIGHT=0;
+	}
+
+
+	 */
+
+
+	public static int GET_NAVIGATION_STATUS_BAR_HEIGHT(Context context) {
+		Point appUsableSize = getAppUsableScreenSize(context);
+		Point realScreenSize = getRealScreenSize(context);
+		Point point;
+		// navigation bar on the side
+//		if (appUsableSize.x < realScreenSize.x) {
+//			return new Point(realScreenSize.x - appUsableSize.x, appUsableSize.y);
+//		}
+
+		// navigation bar at the bottom
+		if (appUsableSize.y < realScreenSize.y) {
+			point=new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
+			return NAVIGATION_STATUS_BAR_HEIGHT=(int)point.y;
+
+		}
+
+		// navigation bar is not present
+		return NAVIGATION_STATUS_BAR_HEIGHT=0;
+	}
+
+	public static Point getAppUsableScreenSize(Context context) {
+		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		return size;
+	}
+
+	public static Point getRealScreenSize(Context context) {
+		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+
+		display.getRealSize(size);
+
+		return size;
+	}
+
+	public static int GET_STATUS_BAR_HEIGHT(Context context)
+	{
+		Rect rectangle = new Rect();
+		Window window = ((AppCompatActivity)context).getWindow();
+		window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+		int statusBarHeight = rectangle.top;
+		int contentViewTop =
+				window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		return contentViewTop - statusBarHeight;
+	}
 
 	public static String GET_FILE_PERMISSION(String file_path)
 	{

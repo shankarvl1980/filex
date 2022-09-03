@@ -311,12 +311,12 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		}
 		mainActivity.file_number_view.setText(s+"/"+size);
 		notifyDataSetChanged();
-		if(!mainActivity.toolbar_shown.equals("paste") && !mainActivity.toolbar_shown.equals("extract"))
+		if(!mainActivity.viewModel.toolbar_shown.equals("paste") && !mainActivity.viewModel.toolbar_shown.equals("extract"))
 		{
 			mainActivity.actionmode_toolbar.setVisibility(View.VISIBLE);
 			mainActivity.paste_toolbar.setVisibility(View.GONE);
 			mainActivity.bottom_toolbar.setVisibility(View.GONE);
-			mainActivity.toolbar_shown ="actionmode";
+			mainActivity.viewModel.toolbar_shown ="actionmode";
 		}
 	}
 	

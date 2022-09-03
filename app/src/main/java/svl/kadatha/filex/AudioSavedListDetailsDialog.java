@@ -70,7 +70,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private PopupWindow listPopWindow;
 	private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
 	private int playing_audio_text_color,rest_audio_text_color;
-	private int listview_height;
 	private AudioListViewModel audioListViewModel;
 	private FrameLayout progress_bar;
 	private String request_code;
@@ -329,7 +328,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-		listview_height=Global.GET_HEIGHT_LIST_VIEW(listView);
+		int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
 
@@ -566,7 +565,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				}
 			} else if (id == R.id.toolbar_btn_4) {
 
-				listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height));
+				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height));
+				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
 			}
 
 			((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
@@ -581,7 +581,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		{
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
-
 			switch(p3)
 			{
 				case 0:

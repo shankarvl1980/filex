@@ -163,7 +163,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 
 		if(Global.ARCHIVE_EXTRACT_DIR==null) Global.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.archive_view;
+
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
@@ -222,7 +222,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				super.onScrolled(rv,dx,dy);
 				if(scroll_distance>threshold && is_toolbar_visible)
 				{
-					switch (mainActivity.toolbar_shown) {
+					switch (mainActivity.viewModel.toolbar_shown) {
 						case "bottom":
 							mainActivity.bottom_toolbar.animate().translationY(mainActivity.bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
 							break;
@@ -242,7 +242,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 				else if(scroll_distance<-threshold && !is_toolbar_visible)
 				{
-					switch (mainActivity.toolbar_shown) {
+					switch (mainActivity.viewModel.toolbar_shown) {
 						case "bottom":
 							mainActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 							break;
@@ -269,7 +269,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		folder_empty=v.findViewById(R.id.empty_folder);
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
-
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
 			{
@@ -704,19 +704,19 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 				public void onLongClick(FilePOJO filePOJO)
 				{
-					if(!mainActivity.toolbar_shown.equals("paste") && !mainActivity.toolbar_shown.equals("extract"))
+					if(!mainActivity.viewModel.toolbar_shown.equals("paste") && !mainActivity.viewModel.toolbar_shown.equals("extract"))
 					{
 						mainActivity.actionmode_toolbar.setVisibility(View.VISIBLE);
 						mainActivity.paste_toolbar.setVisibility(View.GONE);
 						mainActivity.bottom_toolbar.setVisibility(View.GONE);
-						mainActivity.toolbar_shown ="actionmode";
+						mainActivity.viewModel.toolbar_shown ="actionmode";
 						mainActivity.actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					}
-					else if(mainActivity.toolbar_shown.equals("paste"))
+					else if(mainActivity.viewModel.toolbar_shown.equals("paste"))
 					{
 						mainActivity.paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					}
-					else if(mainActivity.toolbar_shown.equals("extract"))
+					else if(mainActivity.viewModel.toolbar_shown.equals("extract"))
 					{
 						mainActivity.extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					}
