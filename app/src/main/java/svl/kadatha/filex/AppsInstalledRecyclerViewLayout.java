@@ -62,7 +62,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
         if(Global.FILE_GRID_LAYOUT)
         {
-            //setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_grid_recyclerview));
             if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
             {
                 first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
@@ -170,8 +169,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             measureChildWithMargins(appsizetextview,widthMeasureSpec,0,heightMeasureSpec,0);
             maxHeight+=appsizetextview.getMeasuredHeight();
 
-
-            maxHeight+=Global.FOUR_DP*2;
         }
         else
         {
@@ -204,10 +201,10 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             maxHeight=Math.max(iconheight,maxHeight);
 
-            maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2; //providing top and bottom margin of six dp
+
 
         }
-
+        maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2; //providing top and bottom margin of six dp
         itemHeight=maxHeight;
         setMeasuredDimension(widthMeasureSpec,maxHeight);
 
@@ -217,7 +214,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     protected void onLayout(boolean p1, int l, int t, int r, int b)
     {
         // TODO: Implement this method
-        int x=0,y=Global.FOUR_DP;
+        int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
         if(Global.FILE_GRID_LAYOUT)
         {
@@ -257,7 +254,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             x=Global.FOURTEEN_DP;//Global.TEN_DP;
             int margin_offset_icon, max_height_second_line;
             View v=appimageview;
-            y=Global.RECYCLERVIEW_ITEM_SPACING;
             int d=(itemHeight-imageview_dimension)/2;
             v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
             x+=v.getMeasuredWidth()+Global.TEN_DP;

@@ -127,8 +127,6 @@ public class AppManagerListFragment extends Fragment {
         if(Global.FILE_GRID_LAYOUT)
         {
             GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
-            SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.TWO_DP);
-            recyclerView.addItemDecoration(spacesItemDecoration);
             recyclerView.setLayoutManager(glm);
             int top_padding=recyclerView.getPaddingTop();
             int bottom_padding=recyclerView.getPaddingBottom();

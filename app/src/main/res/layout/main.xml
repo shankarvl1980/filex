@@ -563,7 +563,7 @@
 					android:layout_gravity="center_vertical"
 					android:layout_marginEnd="10dp"
 					android:scaleType="fitXY"
-					android:src="@drawable/android_os_outlined_icon"
+					android:src="@drawable/android_os_outlined_drawer_icon"
 					app:layout_constraintBottom_toBottomOf="@id/app_manager_label"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/app_manager_label"

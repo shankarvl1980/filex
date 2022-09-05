@@ -362,6 +362,8 @@
 		<item>@string/image</item>
 		<item>@string/audio</item>
 		<item>@string/video</item>
+		<item>@string/archive</item>
+		<item>@string/apk</item>
 	</string-array>
 
 

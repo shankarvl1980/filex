@@ -199,8 +199,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		if(Global.FILE_GRID_LAYOUT)
 		{
 			glm=new GridLayoutManager(context,Global.GRID_COUNT);
-			SpacesItemDecoration spacesItemDecoration=new SpacesItemDecoration(Global.TWO_DP);
-			recyclerView.addItemDecoration(spacesItemDecoration);
 			recyclerView.setLayoutManager(glm);
 			int top_padding=recyclerView.getPaddingTop();
 			int bottom_padding=recyclerView.getPaddingBottom();
@@ -292,6 +290,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 					cancelableProgressBarDialog.set_title(getString(R.string.searching));
 					cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+					viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 
 				}

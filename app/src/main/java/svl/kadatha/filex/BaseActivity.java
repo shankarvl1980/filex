@@ -41,13 +41,4 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Global.GET_SCREEN_DIMENSIONS(context);
-        Global.GET_ACTION_BAR_HEIGHT(context);
-        Global.GET_NAVIGATION_STATUS_BAR_HEIGHT(context);
-
-    }
-
 }

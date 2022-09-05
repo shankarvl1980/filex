@@ -281,8 +281,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         media_category="Video";
                     } else if (application.getString(R.string.archive).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip)$";
+                        media_category="Archive";
                     } else if (application.getString(R.string.apk).equals(library_or_search)) {
                         what_to_find = ".*(?i)\\.apk$";
+                        media_category="APK";
                     } else if(application.getString(R.string.download).equals(library_or_search)){
                         what_to_find=".*";
                         media_category="Download";
@@ -348,6 +350,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     private void search_file(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered)
     {
+        if(media_category==null)return;
         Cursor cursor=null;
         switch (media_category)
         {
@@ -355,7 +358,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 search_download(f_pojos,f_pojos_filtered);
                 break;
             case "Documents":
-
                 cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
                         MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
@@ -373,6 +375,22 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h","%.log"},null);
 
                 break;
+            case "Archive":
+                cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
+                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
+                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.tar","%.gzip","%.gz","%.zip","%.rar"},null);
+                break;
+            case "APK":
+                    cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
+                            MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
+                                    MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
+                            new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.apk"},null);
+                    break;
             case "Images":
                 cursor=application.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
                 break;
@@ -382,11 +400,14 @@ public class FilePOJOViewModel extends AndroidViewModel {
             case "Video":
                 cursor=application.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Video.Media.DATA},null,null,null);
                 break;
+            default:
+                break;
         }
 
 
         if(cursor!=null && cursor.getCount()>0)
         {
+            boolean extract_icon= media_category != null && media_category.equals("APK");
             while(cursor.moveToNext())
             {
                 if(isCancelled())
@@ -395,9 +416,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
                 String data=cursor.getString(0);
                 File f=new File(data);
-                if(f.exists())
+               // if(f.exists())
                 {
-                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
                     f_pojos.add(filePOJO);
                     f_pojos_filtered.add(filePOJO);
                     count++;
@@ -437,6 +458,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         File[] list=new File(search_dir).listFiles();
         if(list==null) return;
         int size=list.length;
+        boolean extract_icon= media_category != null && media_category.equals("APK");
         for(int i=0;i<size;++i)
         {
             File f=list[i];
@@ -450,7 +472,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 {
                     if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -461,7 +483,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 {
                     if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -483,6 +505,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         File[] list=new File(search_dir).listFiles();
         if(list==null) return;
         int size=list.length;
+        boolean extract_icon= media_category != null && media_category.equals("APK");
         for(int i=0;i<size;++i)
         {
             File f=list[i];
@@ -496,7 +519,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 {
                     if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -509,7 +532,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     long length=f.length();
                     if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,true,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;

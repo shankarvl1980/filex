@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -382,7 +381,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.compress_icon,getString(R.string.compress)));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.compress_popup_list_icon,getString(R.string.compress)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.extract_icon,getString(R.string.extract)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.cut_icon,getString(R.string.move_to)));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to)));
@@ -607,7 +606,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		libraryRecyclerView=findViewById(R.id.library_recyclerview);
 		libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon};
+		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon};
 		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES,icon_image_array));
 
 

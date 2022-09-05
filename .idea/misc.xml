@@ -36,6 +36,8 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/scrollbar.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/search_drawer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/search_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/select_detail_grid_recyclerview.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/select_detail_recyclerview.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/settings_drawer_icon.xml" value="0.2495" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/woofer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/layout-land/fragment_current_play.xml" value="0.21516754850088182" />
