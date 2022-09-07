@@ -94,8 +94,9 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         fileimageview.getLayoutParams().width=imageview_dimension;
         fileimageview.getLayoutParams().height=imageview_dimension;
 
-        overlay_fileimageview.getLayoutParams().width=imageview_dimension;
-        overlay_fileimageview.getLayoutParams().height=imageview_dimension;
+        int overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
+        overlay_fileimageview.getLayoutParams().width=overlay_image_dimension;
+        overlay_fileimageview.getLayoutParams().height=overlay_image_dimension;
 
         filenametextview.setTextSize(first_line_font_size);
         filesizetextview.setTextSize(second_line_font_size);
@@ -121,7 +122,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         int iconheight,maxHeight=0;
         int usedWidth;
 
-        usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
+        usedWidth=Global.FOURTEEN_DP;
         measureChildWithMargins(fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
         measureChildWithMargins(overlay_fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
@@ -162,15 +163,15 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
     protected void onLayout(boolean p1, int l, int t, int r, int b)
     {
         // TODO: Implement this method
-        int x,y=0;
+        int x=Global.FOURTEEN_DP,y=0;
 
-        x=Global.FOURTEEN_DP;//Global.TEN_DP;
-        View v=fileimageview;
         int top_for_icon=(itemHeight-imageview_dimension)/2;
+
+        View v=overlay_fileimageview;
+        //v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.EIGHT_DP,top_for_icon+imageview_dimension-v.getMeasuredHeight()-Global.EIGHT_DP,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
         v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
 
-
-        v=overlay_fileimageview;
+        v=fileimageview;
         v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
         x+=v.getMeasuredWidth()+Global.TEN_DP;
 

@@ -3,8 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/dialog_recyclerview_background"
-    android:minHeight="36dp"
-
     android:padding="@dimen/layout_margin">
 
     <ImageView
@@ -27,7 +25,7 @@
         android:layout_centerVertical="true"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-
+        android:minHeight="36dp"
 
         android:textColor="?attr/recycler_main_text_color"
         android:textSize="16sp"
@@ -46,7 +44,7 @@
         android:layout_centerVertical="true"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-
+        android:minHeight="36dp"
 
         android:textColor="?attr/recycler_text_color"
         android:textSize="14sp"

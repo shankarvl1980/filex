@@ -115,6 +115,7 @@ public class Global
 	static int TEN_DP;
 	static int FOURTEEN_DP;
 	static int RECYCLERVIEW_ITEM_SPACING;
+	static int OVERLAY_IMAGE_PADDING;
 	//static int DRAWER_WIDTH;
 
 	static final float DISABLE_ALFA= (float) 0.4;
@@ -357,6 +358,7 @@ public class Global
 			FOURTEEN_DP=TEN_DP+FOUR_DP;
 			SELECTOR_ICON_DIMENSION=TEN_DP+TEN_DP+SIX_DP;
 			RECYCLERVIEW_ITEM_SPACING=list_g;
+
 
 			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
 			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
@@ -661,7 +663,7 @@ public class Global
 		// navigation bar at the bottom
 		if (appUsableSize.y < realScreenSize.y) {
 			point=new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
-			return NAVIGATION_STATUS_BAR_HEIGHT=(int)point.y;
+			return NAVIGATION_STATUS_BAR_HEIGHT= point.y;
 
 		}
 

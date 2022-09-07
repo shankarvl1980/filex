@@ -3,8 +3,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="?attr/dialog_recyclerview_background"
-	android:minHeight="36dp"
-
 	android:padding="@dimen/layout_margin">
 
 	<ImageView
@@ -20,8 +18,7 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
+		android:layout_margin="@dimen/layout_margin"
 		android:minHeight="36dp"
 
 

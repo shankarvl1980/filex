@@ -90,6 +90,7 @@ public class RecyclerViewLayout extends ViewGroup
 
         int second_line_font_size;
         int first_line_font_size;
+		int overlay_image_dimension;
 
 		if(whether_file_selector_activity)
 		{
@@ -129,6 +130,7 @@ public class RecyclerViewLayout extends ViewGroup
 				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
 
 				filesubfilecounttextview.setGravity(Gravity.CENTER);
+				overlay_image_dimension=imageview_dimension/2-Global.FOURTEEN_DP;
 
 			}
 			else
@@ -152,6 +154,7 @@ public class RecyclerViewLayout extends ViewGroup
 					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
 					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 				}
+				overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
 
 			}
 
@@ -194,6 +197,7 @@ public class RecyclerViewLayout extends ViewGroup
 				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
 
 				filesubfilecounttextview.setGravity(Gravity.CENTER);
+				overlay_image_dimension=imageview_dimension/2-Global.FOURTEEN_DP;
 
 			}
 			else
@@ -217,7 +221,7 @@ public class RecyclerViewLayout extends ViewGroup
 					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
 					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 				}
-
+				overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
 			}
 
 		}
@@ -227,8 +231,8 @@ public class RecyclerViewLayout extends ViewGroup
 		fileimageview.getLayoutParams().width=imageview_dimension;
 		fileimageview.getLayoutParams().height=imageview_dimension;
 
-		overlay_fileimageview.getLayoutParams().width=imageview_dimension;
-		overlay_fileimageview.getLayoutParams().height=imageview_dimension;
+		overlay_fileimageview.getLayoutParams().width=overlay_image_dimension;
+		overlay_fileimageview.getLayoutParams().height=overlay_image_dimension;
 
 		filenametextview.setTextSize(first_line_font_size);
 		filesubfilecounttextview.setTextSize(second_line_font_size);
@@ -274,7 +278,7 @@ public class RecyclerViewLayout extends ViewGroup
 		}
 		else
 		{
-			usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
+			usedWidth=Global.FOURTEEN_DP;
 			measureChildWithMargins(fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 			measureChildWithMargins(overlay_fileimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
@@ -314,11 +318,10 @@ public class RecyclerViewLayout extends ViewGroup
 	protected void onLayout(boolean p1, int l, int t, int r, int b)
 	{
 		// TODO: Implement this method
-		int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;//Global.FOUR_DP;
+		int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 		if(file_grid_layout)
 		{
-			//int grid_count=;
 			int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
 			x+=(grid_width-imageview_dimension)/2;
 
@@ -327,10 +330,11 @@ public class RecyclerViewLayout extends ViewGroup
 			int a=grid_width-((grid_width-imageview_dimension)/2)-Global.SELECTOR_ICON_DIMENSION;
 			v.layout(a,y,a+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
-			v=fileimageview;
+			v=overlay_fileimageview;
+			//v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.FOUR_DP,y+imageview_dimension-v.getMeasuredHeight()-Global.FOUR_DP,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 
-			v=overlay_fileimageview;
+			v=fileimageview;
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			y+=v.getMeasuredHeight();
 
@@ -348,14 +352,16 @@ public class RecyclerViewLayout extends ViewGroup
 		}
 		else
 		{
-			x=Global.FOURTEEN_DP;//Global.TEN_DP;
+			x=Global.FOURTEEN_DP;
 			int margin_offset_icon, max_height_second_line;
-			View v=fileimageview;
+
 			int d=(itemHeight-imageview_dimension)/2;
+
+			View v=overlay_fileimageview;
+			//v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.FOUR_DP,d+imageview_dimension-v.getMeasuredHeight()-Global.FOUR_DP,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 
-
-			v=overlay_fileimageview;
+			v=fileimageview;
 			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
 			x+=v.getMeasuredWidth()+Global.TEN_DP;
 			margin_offset_icon=x;

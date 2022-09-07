@@ -18,7 +18,6 @@
         android:layout_width="30dp"
 
         android:background="@null"
-        android:padding="14dp"
         android:src="@drawable/play_overlay_icon"
         android:visibility="invisible"
 
