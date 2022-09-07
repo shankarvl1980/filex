@@ -29,7 +29,7 @@
 		android:layout_height="30dp"
 		android:layout_width="30dp"
 		android:background="@null"
-		android:padding="10dp"
+		android:padding="5dp"
 		android:src="@drawable/play_overlay_icon"
 		android:visibility="invisible"
 		app:layout_constraintStart_toStartOf="parent"

@@ -154,7 +154,7 @@ public class RecyclerViewLayout extends ViewGroup
 					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
 					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 				}
-				overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
+				overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
 
 			}
 
@@ -221,7 +221,7 @@ public class RecyclerViewLayout extends ViewGroup
 					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
 					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 				}
-				overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
+				overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
 			}
 
 		}

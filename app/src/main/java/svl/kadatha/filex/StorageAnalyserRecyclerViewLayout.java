@@ -94,7 +94,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         fileimageview.getLayoutParams().width=imageview_dimension;
         fileimageview.getLayoutParams().height=imageview_dimension;
 
-        int overlay_image_dimension=imageview_dimension/2-Global.FOUR_DP;
+        int overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
         overlay_fileimageview.getLayoutParams().width=overlay_image_dimension;
         overlay_fileimageview.getLayoutParams().height=overlay_image_dimension;
 
