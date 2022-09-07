@@ -219,8 +219,8 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         if(Global.FILE_GRID_LAYOUT)
         {
             int grid_count=Global.GRID_COUNT;
-            int grid_width=itemWidth/grid_count;
-            x+=(grid_width-imageview_dimension-Global.EIGHT_DP)/2;  //Deducting eight dp because, recyclerview is added start and end padding of four dp
+            int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
+            x+=(grid_width-imageview_dimension)/2;
 
             View v;
 

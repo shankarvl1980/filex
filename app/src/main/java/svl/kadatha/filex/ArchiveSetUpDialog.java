@@ -357,7 +357,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			{
 				create_folder_checkbox.setVisibility(View.GONE);
 				dialog_heading.setText(R.string.archive);
-				outputfilename.setText(R.string.output_file_colon);
+				outputfilename.setText(R.string.output_file);
 				if(files_selected_array.size()==1)
 				{
 					zip_file_edittext.setText(first_file_name);

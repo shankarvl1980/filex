@@ -119,7 +119,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 		viewModel.total_no_of_files.observe(this, new Observer<Integer>() {
 			@Override
 			public void onChanged(Integer integer) {
-				no_files_textview.setText(getString(R.string.total_files_colon)+" "+integer);
+				no_files_textview.setText(getString(R.string.total_files)+" "+integer);
 			}
 		});
 
@@ -127,7 +127,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 			@Override
 			public void onChanged(String s) {
 
-				size_files_textview.setText(getString(R.string.size_colon)+" "+s);
+				size_files_textview.setText(getString(R.string.size)+" "+s);
 			}
 		});
 

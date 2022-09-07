@@ -11,8 +11,8 @@
 			android:id="@+id/fragment_create_file_title"
 			android:text="@string/create_file"
 
-			android:paddingStart="@dimen/eight_dp"
-			android:paddingEnd="@dimen/eight_dp"
+			android:paddingStart="@dimen/ten_dp"
+			android:paddingEnd="@dimen/ten_dp"
 			android:paddingTop="@dimen/layout_margin"
 			android:paddingBottom="@dimen/layout_margin"
 			android:background="?attr/dialog_title"

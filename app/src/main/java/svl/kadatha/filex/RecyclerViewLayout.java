@@ -319,8 +319,8 @@ public class RecyclerViewLayout extends ViewGroup
 		if(file_grid_layout)
 		{
 			//int grid_count=;
-			int grid_width=itemWidth/grid_count;
-			x+=(grid_width-imageview_dimension-Global.EIGHT_DP)/2;  //Deducting eight dp because, recyclerview is added start and end padding of four dp
+			int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
+			x+=(grid_width-imageview_dimension)/2;
 
 			View v=file_select_indicator;
 
@@ -445,7 +445,7 @@ public class RecyclerViewLayout extends ViewGroup
 		filenametextview.setText(filePOJO.getName());
 		filesubfilecounttextview.setText(filePOJO.getSize());
 		filemoddatetextview.setText(filePOJO.getDate());
-		filepathtextview.setText(context.getString(R.string.path_colon)+" "+filePOJO.getPath());
+		filepathtextview.setText(context.getString(R.string.path)+" "+filePOJO.getPath());
 	}
 
 	public void set_selected(boolean item_selected)

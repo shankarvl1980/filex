@@ -110,12 +110,12 @@ public class CreateFileDialog extends DialogFragment
 		if(file_type==0)
 		{
 			dialog_heading_textview.setText(R.string.enter_file_name);
-			file_label_textview.setText(R.string.file_name_colon);
+			file_label_textview.setText(R.string.file_name);
 		}
 		else
 		{
 			dialog_heading_textview.setText(R.string.enter_folder_name);
-			file_label_textview.setText(R.string.folder_name_colon);
+			file_label_textview.setText(R.string.folder_name);
 		}
 
 		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);

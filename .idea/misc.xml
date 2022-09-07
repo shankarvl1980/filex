@@ -11,6 +11,8 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/archive_file_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/audio_album_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/audio_file_icon.xml" value="0.26927083333333335" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/compress_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/compress_icon_popup_list.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/copy_icon.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/cut_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/dark_apk_file_icon.xml" value="0.2475" />

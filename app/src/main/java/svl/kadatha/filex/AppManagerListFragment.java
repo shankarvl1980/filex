@@ -130,7 +130,7 @@ public class AppManagerListFragment extends Fragment {
             recyclerView.setLayoutManager(glm);
             int top_padding=recyclerView.getPaddingTop();
             int bottom_padding=recyclerView.getPaddingBottom();
-            recyclerView.setPadding(Global.FOUR_DP,top_padding,Global.FOUR_DP,bottom_padding);
+            recyclerView.setPadding(Global.RECYCLERVIEW_ITEM_SPACING,top_padding,Global.RECYCLERVIEW_ITEM_SPACING,bottom_padding);
         }
         else
         {

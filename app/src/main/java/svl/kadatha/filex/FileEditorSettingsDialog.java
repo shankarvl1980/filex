@@ -150,7 +150,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		text_size_decrease_btn=v.findViewById(R.id.file_editor_text_size_decrease);
 		text_size_increase_btn=v.findViewById(R.id.file_editor_text_size_increase);
 		text_size_tv=v.findViewById(R.id.file_editor_settings_text_size);
-		text_size_tv.setText(getString(R.string.text_size_colon)+" "+(int)selected_text_size);
+		text_size_tv.setText(getString(R.string.text_size)+" "+(int)selected_text_size);
 		
 		text_size_decrease_btn.setOnTouchListener(new RepeatListener(400,101,new View.OnClickListener()
 		{
@@ -159,7 +159,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 				if(selected_text_size>MIN_TEXT_SIZE)
 				{
 					selected_text_size--;
-					text_size_tv.setText(getString(R.string.text_size_colon)+" "+(int)selected_text_size);
+					text_size_tv.setText(getString(R.string.text_size)+" "+(int)selected_text_size);
 					sample_edittext.setTextSize(selected_text_size);
 					enable_disable_btns();
 				}
@@ -175,7 +175,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 				if(selected_text_size<MAX_TEXT_SIZE)
 				{
 					selected_text_size++;
-					text_size_tv.setText(getString(R.string.text_size_colon)+" "+(int)selected_text_size);
+					text_size_tv.setText(getString(R.string.text_size)+" "+(int)selected_text_size);
 					sample_edittext.setTextSize(selected_text_size);
 					enable_disable_btns();
 				}

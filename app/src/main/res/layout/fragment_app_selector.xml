@@ -30,13 +30,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_app_label" />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/dialog_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
+        />
     <CheckBox
         android:id="@+id/select_app_remember_choice_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/dialog_background"
-        android:padding="@dimen/eight_dp"
+        android:padding="@dimen/ten_dp"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
         android:text="@string/remember_the_choice"
         android:textSize="18sp"
         android:minHeight="36dp"

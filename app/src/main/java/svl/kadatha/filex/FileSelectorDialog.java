@@ -127,12 +127,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View v=inflater.inflate(R.layout.fragment_file_selector,container,false);
-
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 
 		TextView current_folder_label=v.findViewById(R.id.file_selector_current_folder_label);
-		current_folder_label.setText(R.string.current_folder_colon);
+		current_folder_label.setText(R.string.current_folder);
         folder_selected_textview = v.findViewById(R.id.file_selector_folder_selected);
 		recycler_view=v.findViewById(R.id.file_selectorRecyclerView);
 		folder_empty_textview=v.findViewById(R.id.file_selector_folder_empty);
@@ -144,7 +143,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			recycler_view.setLayoutManager(glm);
 			int top_padding=recycler_view.getPaddingTop();
 			int bottom_padding=recycler_view.getPaddingBottom();
-			recycler_view.setPadding(Global.FOUR_DP,top_padding,Global.FOUR_DP,bottom_padding);
+			recycler_view.setPadding(Global.RECYCLERVIEW_ITEM_SPACING,top_padding,Global.RECYCLERVIEW_ITEM_SPACING,bottom_padding);
 		}
 		else
 		{

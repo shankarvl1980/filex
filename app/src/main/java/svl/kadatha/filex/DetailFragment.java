@@ -47,7 +47,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
-	
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
 	public RecyclerView filepath_recyclerview;
@@ -59,7 +58,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FilePathRecyclerViewAdapter filepath_adapter;
 	public String fileclickselected="";
 	public String file_click_selected_name="";
-
 	public UsbFile currentUsbFile;
 	public static final String USB_FILE_PREFIX="usb:";
 	public static final String FTP_FILE_PREFIX="ftp:";
@@ -202,7 +200,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			recyclerView.setLayoutManager(glm);
 			int top_padding=recyclerView.getPaddingTop();
 			int bottom_padding=recyclerView.getPaddingBottom();
-			recyclerView.setPadding(Global.FOUR_DP,top_padding,Global.FOUR_DP,bottom_padding);
+			recyclerView.setPadding(Global.RECYCLERVIEW_ITEM_SPACING,top_padding,Global.RECYCLERVIEW_ITEM_SPACING,bottom_padding);
 		}
 		else
 		{

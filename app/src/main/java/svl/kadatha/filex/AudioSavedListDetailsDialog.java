@@ -739,7 +739,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			long duration=0L;
 			String duration_string=audio.getDuration();
 			if(duration_string!=null) duration=Long.parseLong(duration_string);
-			String duration_str=getString(R.string.duration_colon)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
+			String duration_str=getString(R.string.duration)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
 			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
 

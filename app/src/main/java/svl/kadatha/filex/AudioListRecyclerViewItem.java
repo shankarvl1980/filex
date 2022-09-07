@@ -55,8 +55,6 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		durationtextview= view.findViewById(R.id.audio_file_duration);
 		artisttextview= view.findViewById(R.id.audio_file_artist);
 
-
-
         int second_line_font_size;
         int first_line_font_size;
         if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)

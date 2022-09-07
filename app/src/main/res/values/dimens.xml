@@ -3,7 +3,8 @@
 
 	<dimen name="layout_margin">4dp</dimen>
 	<dimen name="four_dp">4dp</dimen>
-	<dimen name="eight_dp">8dp</dimen>
+	<dimen name="ten_dp">10dp</dimen>
+	<dimen name="twenty_dp">20dp</dimen>
 	<dimen name="image_preview_dimen">60dp</dimen>
 	<dimen name="list_popupwindow_width">160dp</dimen>
 

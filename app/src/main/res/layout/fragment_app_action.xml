@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
 
         android:text="@string/app_action"
-        android:paddingStart="@dimen/eight_dp"
-        android:paddingEnd="@dimen/eight_dp"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
@@ -43,7 +43,7 @@
                 android:layout_height="@dimen/image_preview_dimen"
                 app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
-                android:layout_margin="@dimen/eight_dp"
+                android:layout_margin="@dimen/ten_dp"
 
                 />
 
@@ -55,7 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_name"
                 android:textSize="18sp"
-                android:layout_margin="@dimen/eight_dp"
+                android:layout_margin="@dimen/ten_dp"
                 android:maxLines="2"
                 />
             <TextView
@@ -67,7 +67,7 @@
                 android:id="@+id/fragment_app_action_package_name"
                 android:textSize="14sp"
                 android:maxLines="2"
-
+                android:layout_marginEnd="@dimen/ten_dp"
                 />
             <TextView
                 android:layout_width="0dp"
@@ -78,6 +78,7 @@
                 android:id="@+id/fragment_app_action_app_size"
                 android:textSize="14sp"
                 android:maxLines="1"
+                android:layout_marginEnd="@dimen/ten_dp"
                 />
             <TextView
                 android:layout_width="0dp"
@@ -87,8 +88,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/fragment_app_action_app_version"
                 android:textSize="14sp"
-                android:layout_marginBottom="@dimen/eight_dp"
                 android:maxLines="1"
+                android:layout_marginEnd="@dimen/ten_dp"
                 />
             <View
                 android:id="@+id/fragment_app_action_divider"
@@ -96,6 +97,7 @@
                 android:layout_height="2dp"
                 android:background="@android:color/black"
                 android:alpha="0.5"
+                android:layout_marginTop="@dimen/ten_dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version"
                 />

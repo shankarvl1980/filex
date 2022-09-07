@@ -13,9 +13,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 
 public class ApkBackUpNameDialog extends DialogFragment
@@ -50,6 +52,9 @@ public class ApkBackUpNameDialog extends DialogFragment
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView file_label_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
         new_file_name_edittext=v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);
+//        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//        layoutParams.setMargins(R.dimen.ten_dp,0,0,0);
+//        new_file_name_edittext.setLayoutParams(layoutParams);
         String app_name=bundle.getString("app_name")+"_"+bundle.getString("version");
         new_file_name_edittext.setText(app_name);
         TextView file_name_suffix=v.findViewById(R.id.dialog_fragment_rename_delete_filename_suffix);
@@ -65,7 +70,7 @@ public class ApkBackUpNameDialog extends DialogFragment
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
         cancelbutton.setText(R.string.cancel);
         dialog_heading_textview.setText(R.string.enter_name);
-        file_label_textview.setText(R.string.file_name_colon);
+        file_label_textview.setText(R.string.file_name);
 
         okbutton.setOnClickListener(new View.OnClickListener()
         {

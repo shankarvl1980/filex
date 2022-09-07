@@ -12,8 +12,8 @@
 		android:background="?attr/dialog_title"
 		android:text="@string/properties"
 		android:textSize="18sp"
-		android:paddingStart="@dimen/eight_dp"
-		android:paddingEnd="@dimen/eight_dp"
+		android:paddingStart="@dimen/ten_dp"
+		android:paddingEnd="@dimen/ten_dp"
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 
@@ -35,7 +35,7 @@
 			android:layout_height="wrap_content"
 			android:background="?attr/dialog_background"
 			android:layout_marginTop="@dimen/layout_margin"
-			android:padding="@dimen/eight_dp"
+			android:padding="@dimen/ten_dp"
 			
 			>
 
@@ -47,7 +47,7 @@
 			android:id="@+id/fragment_properties_rwh_tablelayout"
 			android:background="?attr/dialog_background"
 			android:layout_marginTop="@dimen/layout_margin"
-			android:padding="@dimen/eight_dp"
+			android:padding="@dimen/ten_dp"
 			android:visibility="gone"
 		>
 

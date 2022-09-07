@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/eight_dp"
-        android:paddingEnd="@dimen/eight_dp"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:textSize="18sp"
@@ -33,7 +33,7 @@
         android:id="@+id/fragment_apk_install_icon_imageview"
         android:layout_width="@dimen/image_preview_dimen"
         android:layout_height="@dimen/image_preview_dimen"
-        android:layout_margin="@dimen/eight_dp"
+        android:layout_margin="@dimen/ten_dp"
         app:layout_constraintTop_toTopOf="@id/fragment_apk_install_dialog_background"
         app:layout_constraintStart_toStartOf="@id/fragment_apk_install_dialog_background"
 
@@ -47,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fragment_apk_install_icon_imageview"
         app:layout_constraintTop_toTopOf="@id/fragment_apk_install_dialog_background"
-        android:layout_margin="@dimen/eight_dp"
+        android:layout_margin="@dimen/ten_dp"
         android:maxLines="2"
         />
     <TextView
@@ -137,7 +137,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_button_barrier"
         android:background="?attr/dialog_background"
-        android:padding="@dimen/eight_dp"
+        android:padding="@dimen/ten_dp"
         android:textSize="16sp"
         />
     <FrameLayout

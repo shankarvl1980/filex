@@ -451,7 +451,7 @@ public class AlbumListFragment extends Fragment
 		{
 			AlbumPOJO album=album_list.get(p2);
 			String album_name=album.getAlbumName();
-			String no_of_songs=getString(R.string.tracks_colon)+" "+album.getNoOfSongs();
+			String no_of_songs=getString(R.string.tracks)+" "+album.getNoOfSongs();
 			String artist=getString(R.string.artists_colon)+" "+album.getArtist();
 			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
 			p1.view.setData(album_name,no_of_songs,artist,item_selected);
@@ -561,7 +561,6 @@ public class AlbumListFragment extends Fragment
 			albumtextview= view.findViewById(R.id.audio_file_title);
 			no_of_songs_textview= view.findViewById(R.id.audio_file_duration);
 			artisttextview= view.findViewById(R.id.audio_file_artist);
-
 
 			int second_line_font_size;
 			int first_line_font_size;

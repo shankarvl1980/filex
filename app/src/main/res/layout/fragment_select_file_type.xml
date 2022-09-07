@@ -68,8 +68,8 @@
             android:layout_height="wrap_content"
 
             android:text="@string/open_as"
-            android:paddingStart="@dimen/eight_dp"
-            android:paddingEnd="@dimen/eight_dp"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingEnd="@dimen/ten_dp"
             android:paddingTop="@dimen/layout_margin"
             android:paddingBottom="@dimen/layout_margin"
             android:background="?attr/dialog_title"
