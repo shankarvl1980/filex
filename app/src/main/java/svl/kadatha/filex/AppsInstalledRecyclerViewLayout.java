@@ -100,8 +100,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         }
         else
         {
-
-            setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_recyclerview));
             if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
             {
                 first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
@@ -123,6 +121,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             }
         }
 
+        setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_recyclerview));
 
         appimageview.getLayoutParams().width=imageview_dimension;
         appimageview.getLayoutParams().height=imageview_dimension;
@@ -251,7 +250,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         }
         else
         {
-            x=Global.FOURTEEN_DP;//Global.TEN_DP;
+            x=Global.FOURTEEN_DP;
             int margin_offset_icon, max_height_second_line;
             View v=appimageview;
             int d=(itemHeight-imageview_dimension)/2;

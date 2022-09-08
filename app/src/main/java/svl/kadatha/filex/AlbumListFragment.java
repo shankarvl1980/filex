@@ -607,7 +607,7 @@ public class AlbumListFragment extends Fragment
 		{
 
 			int iconheight,maxHeight=0;
-			int usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
+			int usedWidth=Global.FOURTEEN_DP;
 
 			measureChildWithMargins(album_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(albumimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);

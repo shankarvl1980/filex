@@ -111,7 +111,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	{
 
 		int iconheight,maxHeight=0;
-		int usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
+		int usedWidth=Global.FOURTEEN_DP;
 
 
 		measureChildWithMargins(audio_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);

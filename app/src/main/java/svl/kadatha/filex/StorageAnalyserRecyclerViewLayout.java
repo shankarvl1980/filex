@@ -50,7 +50,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
     }
 
 
-
     private void init()
     {
 
@@ -149,7 +148,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         maxHeight=Math.max(iconheight,maxHeight);
 
-        maxHeight+=Global.FOUR_DP*2; //providing top and bottom margin of six dp
+        maxHeight+=Global.FOUR_DP*2; //providing top and bottom margin of four dp
 
         itemHeight=maxHeight;
         setMeasuredDimension(widthMeasureSpec,maxHeight);
