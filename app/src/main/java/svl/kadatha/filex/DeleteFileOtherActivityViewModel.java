@@ -174,8 +174,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-
-
                 deleted_audio_files=new ArrayList<>();
                 deleted_file_name_list=new ArrayList<>();
                 if(fileObjectType==FileObjectType.FILE_TYPE)

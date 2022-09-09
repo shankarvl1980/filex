@@ -842,7 +842,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 		}
-		else if(progress_bar.getVisibility()==View.VISIBLE)
+		else if(!FileSaveService1.SERVICE_COMPLETED || !FileSaveService2.SERVICE_COMPLETED || !FileSaveService3.SERVICE_COMPLETED)
 		{
 			Global.print(context,getString(R.string.please_wait));
 		}

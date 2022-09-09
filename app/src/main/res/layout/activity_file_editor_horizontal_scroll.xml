@@ -108,7 +108,7 @@
 		android:clickable="true"
 		android:src="@drawable/back_icon"
 		app:backgroundTint="?attr/toolbar_background"
-		app:elevation="6dp"
+		app:elevation="7dp"
 		app:layout_anchorGravity="end"
 		android:focusable="true" />
 

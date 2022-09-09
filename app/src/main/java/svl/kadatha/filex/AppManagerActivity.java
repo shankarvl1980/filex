@@ -131,7 +131,7 @@ public class AppManagerActivity extends BaseActivity{
         adapter.finishUpdate(viewPager);
 
         AppManagerListViewModel viewModel=new ViewModelProvider(this).get(AppManagerListViewModel.class);
-        viewModel.populate();
+        viewModel.populateApps();
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);
 

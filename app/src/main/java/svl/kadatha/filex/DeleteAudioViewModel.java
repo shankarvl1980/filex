@@ -183,7 +183,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
     }
 
 
-    public boolean deleteNativeDirectory(final File folder)
+    private boolean deleteNativeDirectory(final File folder)
     {
         boolean success=false;
 
@@ -213,7 +213,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
         return success;
     }
 
-    public boolean deleteSAFDirectory(final File folder, Uri tree_uri, String tree_uri_path)
+    private boolean deleteSAFDirectory(final File folder, Uri tree_uri, String tree_uri_path)
     {
         boolean success=true;
         if (folder.isDirectory())            //Check if folder file is a real folder

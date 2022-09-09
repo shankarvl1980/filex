@@ -94,6 +94,11 @@ public class AppInstallAlertDialog extends DialogFragment
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
                 final DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
 
                 if (Global.FILEX_PACKAGE.equals(viewModel.app_package_name)) {

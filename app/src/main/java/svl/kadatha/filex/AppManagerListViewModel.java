@@ -58,7 +58,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public void populate()
+    public void populateApps()
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -240,7 +240,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_File_File(File source, String dest_file_path,boolean cut)
+    private boolean Copy_File_File(File source, String dest_file_path,boolean cut)
     {
         boolean success=false;
         File destination=new File(dest_file_path);
@@ -296,7 +296,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut)
+    private boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut)
     {
         boolean success=false;
 
@@ -373,7 +373,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return success;
     }
 
-    public boolean Copy_File_UsbFile(File source, String dest_file_path,String name,boolean cut)
+    private boolean Copy_File_UsbFile(File source, String dest_file_path,String name,boolean cut)
     {
         boolean success=false;
 
@@ -429,7 +429,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return success;
     }
 
-    public boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut)
+    private boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut)
     {
         boolean success=false;
 
@@ -486,7 +486,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     @SuppressWarnings("null")
 
-    public boolean Copy_UsbFile_UsbFile(UsbFile src_usbfile, String dest_file_path, String name,boolean cut)
+    private boolean Copy_UsbFile_UsbFile(UsbFile src_usbfile, String dest_file_path, String name,boolean cut)
     {
         boolean success=false;
         if (src_usbfile.isDirectory())
@@ -545,7 +545,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
+    private boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
     {
         boolean success=false;
         File destination=new File(parent_file_path,name);
@@ -602,7 +602,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_UsbFile_SAFFile(Context context, UsbFile source, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
+    private boolean Copy_UsbFile_SAFFile(Context context, UsbFile source, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
     {
         boolean success=false;
 
@@ -681,7 +681,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_FtpFile_File(String src_file_path, String parent_file_path, String name,boolean cut)
+    private boolean Copy_FtpFile_File(String src_file_path, String parent_file_path, String name,boolean cut)
     {
         boolean success=false;
         File destination=new File(parent_file_path,name);
@@ -742,7 +742,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    public boolean Copy_FtpFile_SAFFile(Context context, String src_file_path, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
+    private boolean Copy_FtpFile_SAFFile(Context context, String src_file_path, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
     {
         boolean success=false;
         FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
