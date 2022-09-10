@@ -11,9 +11,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableRow.LayoutParams;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -46,6 +48,10 @@ public class StorageAnalyserSortDialog extends DialogFragment
         // TODO: Implement this method
 
         View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
+        TextView lable=v.findViewById(R.id.storage_analyser_sort_heading);
+        lable.setText(getString(R.string.sort));
+        Group layout_group=v.findViewById(R.id.storage_analyser_layout_group);
+        layout_group.setVisibility(View.GONE);
         name_asc_btn=v.findViewById(R.id.storage_analyser_name_asc);
         name_desc_btn=v.findViewById(R.id.storage_analyser_name_desc);
         date_asc_btn=v.findViewById(R.id.storage_analyser_date_asc);

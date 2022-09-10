@@ -90,19 +90,9 @@ public class FileEditorViewModel extends AndroidViewModel {
                         boolean to_break=false;
                         while((bytes_read=fc.read(buf))!=-1)
                         {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                             buf.flip();
                             for(int i=0;i<bytes_read;++i)
                             {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                                 char m=(char)buf.get(i);
                                 char n=0;
                                 if(i+1<bytes_read)

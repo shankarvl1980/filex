@@ -230,74 +230,92 @@
 
 
 			</RadioGroup>
-
-			<TextView
-				android:id="@+id/dialog_fragment_search_filesize_lower_label"
-				android:layout_width="wrap_content"
+			<TableLayout
+				android:id="@+id/dialog_fragment_search_greater_less_than_table"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="?attr/dialog_background"
-
-				android:gravity="start"
-				android:paddingStart="14dp"
-				android:paddingEnd="@dimen/layout_margin"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/greater_than"
-				android:textSize="14sp"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg"
-				/>
-			<EditText
-				android:id="@+id/dialog_fragment_search_lower_bound"
-				android:layout_width="60sp"
-				android:layout_height="wrap_content"
-				android:textSize="14sp"
-				android:digits="0123456789"
-				android:gravity="end"
-				android:maxLines="1"
-				android:maxLength="4"
-				app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_filesize_lower_label"
-				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg"
-				android:layout_marginStart="@dimen/layout_margin"
-				android:layout_marginEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				/>
-			<TextView
+				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg">
+				<TableRow>
 
-				android:id="@+id/dialog_fragment_search_filesize_upper_label"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="?attr/dialog_background"
+					<TextView
+						android:id="@+id/dialog_fragment_search_filesize_lower_label"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:background="?attr/dialog_background"
+						android:paddingStart="14dp"
+						android:paddingEnd="@dimen/layout_margin"
+						android:paddingTop="@dimen/layout_margin"
+						android:paddingBottom="@dimen/layout_margin"
+						android:text="@string/greater_than"
+						android:textSize="14sp"
+						/>
+					<TextView
 
-				android:gravity="start"
-				android:paddingStart="14dp"
-				android:paddingEnd="@dimen/layout_margin"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/lesser_than"
-				android:textSize="14sp"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_filesize_lower_label"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingTop="@dimen/layout_margin"
+						android:paddingBottom="@dimen/layout_margin"
+						android:text=": "
+						/>
+					<EditText
+						android:id="@+id/dialog_fragment_search_lower_bound"
+						android:layout_width="60sp"
+						android:layout_height="wrap_content"
+						android:textSize="14sp"
+						android:inputType="number"
+						android:digits="0123456789"
+						android:gravity="end"
+						android:maxLines="1"
+						android:maxLength="4"
+						android:layout_marginStart="@dimen/layout_margin"
+						android:layout_marginEnd="@dimen/ten_dp"
+						android:paddingTop="0dp"
+						android:paddingBottom="0dp"
+						/>
+				</TableRow>
+				<TableRow>
+					<TextView
 
-				/>
+						android:id="@+id/dialog_fragment_search_filesize_upper_label"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:background="?attr/dialog_background"
+						android:paddingStart="14dp"
+						android:paddingEnd="@dimen/layout_margin"
+						android:paddingTop="@dimen/layout_margin"
+						android:paddingBottom="@dimen/layout_margin"
+						android:text="@string/lesser_than"
+						android:textSize="14sp"
+						/>
 
-			<EditText
-				android:id="@+id/dialog_fragment_search_upper_bound"
-				android:layout_width="60sp"
-				android:layout_height="wrap_content"
-				android:textSize="14sp"
-				android:digits="0123456789"
-				android:gravity="end"
-				android:maxLines="1"
-				android:maxLength="4"
-				app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_filesize_upper_label"
-				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_filesize_lower_label"
-				android:layout_marginStart="@dimen/layout_margin"
-				android:layout_marginEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				/>
+					<TextView
+
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingTop="@dimen/layout_margin"
+						android:paddingBottom="@dimen/layout_margin"
+						android:text=": "
+						/>
+					<EditText
+						android:id="@+id/dialog_fragment_search_upper_bound"
+						android:layout_width="60sp"
+						android:layout_height="wrap_content"
+						android:textSize="14sp"
+						android:inputType="number"
+						android:digits="0123456789"
+						android:gravity="end"
+						android:maxLines="1"
+						android:maxLength="4"
+						android:layout_marginStart="@dimen/layout_margin"
+						android:layout_marginEnd="@dimen/ten_dp"
+						android:paddingTop="0dp"
+						android:paddingBottom="0dp"
+						/>
+				</TableRow>
+			</TableLayout>
+
+
 			<TextView
 				android:id="@+id/search_in_label"
 				android:layout_width="match_parent"
@@ -311,7 +329,7 @@
 				android:textSize="16sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_upper_bound"
+				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table"
 				/>
 
 			<androidx.recyclerview.widget.RecyclerView

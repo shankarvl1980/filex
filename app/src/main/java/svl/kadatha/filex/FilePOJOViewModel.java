@@ -178,7 +178,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 get_size(new File(filePOJO.getPath()),true);
                 filePOJO.setTotalFiles(total_no_of_files);
                 filePOJO.setTotalSizeLong(total_size_of_files);
-                filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+                filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files));
                 double percentage = total_size_of_files * 100.0/ volume_storage_size;
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");

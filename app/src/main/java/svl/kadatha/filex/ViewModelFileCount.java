@@ -38,7 +38,7 @@ public class ViewModelFileCount extends ViewModel {
         return isCancelled;
     }
 
-    public synchronized void count(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
+    public synchronized void countFile(String source_folder, FileObjectType sourceFileObjectType, ArrayList<String> source_list_files , int size, boolean include_folder)
     {
        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -133,7 +133,7 @@ public class ViewModelFileCount extends ViewModel {
             cumulative_no_of_files+=no_of_files;
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
-            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
     }
 
@@ -169,7 +169,7 @@ public class ViewModelFileCount extends ViewModel {
             cumulative_no_of_files+=no_of_files;
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
-            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
     }
 
@@ -207,7 +207,7 @@ public class ViewModelFileCount extends ViewModel {
             cumulative_no_of_files+=no_of_files;
             total_no_of_files.postValue(cumulative_no_of_files);
             total_size_of_files+=size_of_files;
-            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
     }
 

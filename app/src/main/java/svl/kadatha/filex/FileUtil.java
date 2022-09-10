@@ -1377,12 +1377,12 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 
-	public static String humanReadableByteCount(long bytes, boolean si) 
+	public static String humanReadableByteCount(long bytes)
 	{
-		int unit = 1024;//si ? 1000 : 1024;
+		int unit = 1024;
 		if (bytes < unit) return bytes + " B";
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		char pre = ("KMGTPE").charAt(exp-1);// + (si ? "" : "i");
+		char pre = ("KMGTPE").charAt(exp-1);
 		//return (long)(bytes/Math.pow(unit,exp)*100+0.5)/100.0 + " "+pre+"B";
 		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
 	}

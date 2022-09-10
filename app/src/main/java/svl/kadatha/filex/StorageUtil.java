@@ -198,7 +198,7 @@ public class StorageUtil
 					overlay_visible=View.VISIBLE;
 				}
 			}
-			si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+			si=FileUtil.humanReadableByteCount(sizeLong);
 
 		}
 		else

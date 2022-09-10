@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TableRow.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 
@@ -23,6 +26,8 @@ public class AppManagerSortDialog extends DialogFragment
     private TinyDB tinyDB;
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private Context context;
+    private RadioButton list_rb, grid_rb;
+    private FragmentManager fragmentManager;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -43,8 +48,38 @@ public class AppManagerSortDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-
         View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
+        fragmentManager=((AppManagerActivity)context).getSupportFragmentManager();
+        RadioGroup rg = v.findViewById(R.id.storage_analyser_dialog_view_layout_rg);
+        list_rb=v.findViewById(R.id.storage_analyser_view_rb_list);
+        grid_rb=v.findViewById(R.id.storage_analyser_dialog_rb_grid);
+        if(AppManagerActivity.FILE_GRID_LAYOUT)
+        {
+            grid_rb.setChecked(true);
+        }
+        else
+        {
+            list_rb.setChecked(true);
+        }
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                if(list_rb.isChecked())
+                {
+                    AppManagerActivity.FILE_GRID_LAYOUT=false;
+                }
+                else if(grid_rb.isChecked())
+                {
+                    AppManagerActivity.FILE_GRID_LAYOUT=true;
+                }
+
+                ViewPager viewPager=((AppManagerActivity)context).viewPager;
+                viewPager.getAdapter().notifyDataSetChanged();
+                tinyDB.putBoolean("app_manager_file_grid_layout",AppManagerActivity.FILE_GRID_LAYOUT);
+            }
+        });
+
         name_asc_btn=v.findViewById(R.id.storage_analyser_name_asc);
         name_desc_btn=v.findViewById(R.id.storage_analyser_name_desc);
         date_asc_btn=v.findViewById(R.id.storage_analyser_date_asc);

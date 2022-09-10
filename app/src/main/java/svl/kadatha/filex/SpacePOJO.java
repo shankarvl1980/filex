@@ -18,15 +18,15 @@ public class SpacePOJO
 		this.available_space=available_space;
 		this.used_space=this.total_space-this.available_space;
 		
-		this.total_space_readable=FileUtil.humanReadableByteCount(this.total_space,Global.BYTE_COUNT_BLOCK_1000);
-		this.used_space_readable=FileUtil.humanReadableByteCount(this.used_space,Global.BYTE_COUNT_BLOCK_1000);
+		this.total_space_readable=FileUtil.humanReadableByteCount(this.total_space);
+		this.used_space_readable=FileUtil.humanReadableByteCount(this.used_space);
 	}
 	
 	public void putAvailableSpace(long space)
 	{
 		this.available_space=space;
 		this.used_space=this.total_space-this.available_space;
-		this.used_space_readable=FileUtil.humanReadableByteCount(this.used_space,Global.BYTE_COUNT_BLOCK_1000);
+		this.used_space_readable=FileUtil.humanReadableByteCount(this.used_space);
 	}
 	
 	public String getTotalSpaceReadable()

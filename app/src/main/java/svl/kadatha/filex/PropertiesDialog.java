@@ -222,7 +222,7 @@ public class PropertiesDialog extends DialogFragment
 		}
 
 		ViewModelFileCount viewModel=new ViewModelProvider(this).get(ViewModelFileCount.class);
-		viewModel.count(source_folder,fileObjectType,files_selected_array,size,true);
+		viewModel.countFile(source_folder,fileObjectType,files_selected_array,size,true);
 
 		viewModel.total_no_of_files.observe(this, new androidx.lifecycle.Observer<Integer>() {
 			@Override

@@ -27,7 +27,6 @@
 			android:layout_height="wrap_content"
 			>
 
-
 				<TextView
 					android:id="@+id/layout_lable"
 					android:layout_width="match_parent"
@@ -58,7 +57,6 @@
 					android:paddingEnd="20dp"
 					android:minHeight="36dp"
 					>
-
 
 					<RadioButton
 						android:id="@+id/dialog_view_rb_list"
@@ -99,7 +97,7 @@
 						android:textSize="16sp"
 						android:paddingStart="@dimen/ten_dp"
 						android:paddingEnd="@dimen/ten_dp"
-						android:paddingTop="@dimen/layout_margin"
+						android:paddingTop="@dimen/ten_dp"
 						android:paddingBottom="@dimen/layout_margin"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintEnd_toEndOf="parent"
@@ -192,7 +190,7 @@
 					android:id="@+id/sort_label"
 					android:paddingStart="@dimen/ten_dp"
 					android:paddingEnd="@dimen/ten_dp"
-					android:paddingTop="@dimen/layout_margin"
+					android:paddingTop="@dimen/ten_dp"
 					android:paddingBottom="@dimen/layout_margin"
 					/>
 
@@ -201,9 +199,10 @@
 				android:id="@+id/sort_table_layout"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:paddingTop="@dimen/ten_dp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/sort_label"
+				app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
 
 				>
 
@@ -333,7 +332,7 @@
 				android:background="?attr/dialog_background"
 				android:paddingStart="@dimen/ten_dp"
 				android:paddingEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
+				android:paddingTop="@dimen/ten_dp"
 				android:paddingBottom="@dimen/ten_dp"
 				android:minHeight="44dp"
 

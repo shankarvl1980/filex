@@ -124,7 +124,7 @@ public class AppManagerListFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_app_manager,container,false);
         app_count_textview=v.findViewById(R.id.fragment_app_list_number);
         recyclerView=v.findViewById(R.id.fragment_app_list_recyclerview);
-        if(Global.FILE_GRID_LAYOUT)
+        if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
             GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
             recyclerView.setLayoutManager(glm);
@@ -170,18 +170,18 @@ public class AppManagerListFragment extends Fragment {
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.sort_icon};
-        String [] titles={getString(R.string.search),getString(R.string.sort)};
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.view_icon};
+        String [] titles={getString(R.string.search),getString(R.string.view)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar.addView(tb_layout);
 
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        Button sort_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button view_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
 
         ToolBarClickListener toolBarClickListener = new ToolBarClickListener();
 
         search_btn.setOnClickListener(toolBarClickListener);
-        sort_btn.setOnClickListener(toolBarClickListener);
+        view_btn.setOnClickListener(toolBarClickListener);
 
         viewModel= new ViewModelProvider(requireActivity()).get(AppManagerListViewModel.class);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -847,7 +847,7 @@ public class AppManagerListFragment extends Fragment {
             this.package_name=app_package;
             this.path=app_path;
             this.sizeLong=app_size_long;
-            this.size=FileUtil.humanReadableByteCount(app_size_long,Global.BYTE_COUNT_BLOCK_1000);
+            this.size=FileUtil.humanReadableByteCount(app_size_long);
             this.dateLong=app_date_long;
             this.date=Global.SDF.format(dateLong);
             this.version=version;

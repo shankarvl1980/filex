@@ -44,6 +44,7 @@ public class AppManagerActivity extends BaseActivity{
     public boolean clear_cache;
     public static final String ACTIVITY_NAME="APP_MANAGER_ACTIVITY";
     private AppManagementFragmentAdapter adapter;
+    public static boolean FILE_GRID_LAYOUT;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

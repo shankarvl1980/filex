@@ -60,7 +60,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         int second_line_font_size;
         int first_line_font_size;
 
-        if(Global.FILE_GRID_LAYOUT)
+        if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
             if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
             {
@@ -154,7 +154,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         int maxHeight=0;
         int usedWidth;
 
-        if(Global.FILE_GRID_LAYOUT)
+        if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
 
             //measureChildWithMargins(appselect_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
@@ -171,7 +171,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         }
         else
         {
-            usedWidth=Global.FOURTEEN_DP;//Global.TEN_DP;
+            usedWidth=Global.FOURTEEN_DP;
             measureChildWithMargins(appimageview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 
             usedWidth+=imageview_dimension;
@@ -215,7 +215,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         // TODO: Implement this method
         int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
-        if(Global.FILE_GRID_LAYOUT)
+        if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
             int grid_count=Global.GRID_COUNT;
             int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp

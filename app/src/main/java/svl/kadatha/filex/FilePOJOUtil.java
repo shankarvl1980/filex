@@ -71,7 +71,7 @@ public class FilePOJOUtil {
             {
                 sizeLong=f.length();
             }
-            si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+            si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
         {
@@ -126,7 +126,7 @@ public class FilePOJOUtil {
                 }
             }
             sizeLong=f.getLength();
-            si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+            si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
         {
@@ -184,7 +184,7 @@ public class FilePOJOUtil {
             }
 
             sizeLong=f.getSize();
-            si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+            si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
         {
@@ -304,7 +304,7 @@ public class FilePOJOUtil {
 
         path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
 
-        String si=FileUtil.humanReadableByteCount(sizeLong,Global.BYTE_COUNT_BLOCK_1000);
+        String si=FileUtil.humanReadableByteCount(sizeLong);
 
         String file_ext="";
         int overlay_visible= View.INVISIBLE;

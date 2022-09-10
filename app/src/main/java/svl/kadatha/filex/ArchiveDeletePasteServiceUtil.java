@@ -678,7 +678,7 @@ public class ArchiveDeletePasteServiceUtil {
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
 
-                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
             }
         }
 
@@ -713,7 +713,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
             }
         }
 
@@ -751,7 +751,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
             }
         }
 
@@ -796,7 +796,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
-                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files,Global.BYTE_COUNT_BLOCK_1000));
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
 
             }
         }

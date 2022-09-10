@@ -450,6 +450,8 @@ public class Global
 		FileSelectorActivity.FILE_GRID_LAYOUT=tinyDB.getBoolean("file_selector_file_grid_layout");
 		//
 
+		AppManagerActivity.FILE_GRID_LAYOUT=tinyDB.getBoolean("app_manager_file_grid_layout");
+		//
 		DETAILED_SEARCH_LIBRARY=tinyDB.getBoolean("detailed_search_library");
 		//
 

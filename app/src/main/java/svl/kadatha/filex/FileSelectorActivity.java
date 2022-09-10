@@ -454,7 +454,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             search_edittext.setText("");
             search_edittext.clearFocus();
             fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
-            fileSelectorDialog.adapter.getFilter().filter(null);
+            if(fileSelectorDialog.adapter!=null)fileSelectorDialog.adapter.getFilter().filter(null);
         }
 
     }
