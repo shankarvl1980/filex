@@ -176,7 +176,7 @@
 				android:layout_height="wrap_content"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:constraint_referenced_ids="dialog_fragment_search_filesize_lower_label,dialog_fragment_search_filesize_upper_label,dialog_fragment_search_lower_bound,dialog_fragment_search_upper_bound,dialog_fragment_search_size_rg"
+				app:constraint_referenced_ids="dialog_fragment_search_size_rg,dialog_fragment_search_greater_less_than_table"
 				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
 				/>
 

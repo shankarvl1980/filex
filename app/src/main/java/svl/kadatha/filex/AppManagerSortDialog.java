@@ -61,6 +61,9 @@ public class AppManagerSortDialog extends DialogFragment
         {
             list_rb.setChecked(true);
         }
+
+        ViewPager viewPager=((AppManagerActivity)context).viewPager;
+
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -74,7 +77,6 @@ public class AppManagerSortDialog extends DialogFragment
                     AppManagerActivity.FILE_GRID_LAYOUT=true;
                 }
 
-                ViewPager viewPager=((AppManagerActivity)context).viewPager;
                 viewPager.getAdapter().notifyDataSetChanged();
                 tinyDB.putBoolean("app_manager_file_grid_layout",AppManagerActivity.FILE_GRID_LAYOUT);
             }
