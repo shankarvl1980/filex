@@ -255,6 +255,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     Global.print(context,getString(R.string.please_wait));
                     return;
                 }
+
                 switch (action_sought_request_code) {
                     case FOLDER_SELECT_REQUEST_CODE:
                         if (fileSelectorDialog.fileclickselected == null) {
@@ -456,10 +457,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             if(fileSelectorDialog.adapter!=null)fileSelectorDialog.adapter.getFilter().filter(null);
         }
-
     }
-
-
 
 
     public void clearCache()

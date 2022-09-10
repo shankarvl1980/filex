@@ -9,13 +9,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private Context context;
     TinyDB tinyDB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=this;
+        Context context = this;
         tinyDB = new TinyDB(context);
 
         Global.GET_SCREEN_DIMENSIONS(context);

@@ -163,7 +163,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					Global.print(context,getString(R.string.please_wait));
 					return;
 				}
-				listPopWindow.showAsDropDown(p1,0,Global.SIX_DP);
+				listPopWindow.showAsDropDown(p1,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
 			}
 		});
 

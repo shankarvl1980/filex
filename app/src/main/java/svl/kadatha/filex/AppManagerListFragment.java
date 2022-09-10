@@ -725,6 +725,7 @@ public class AppManagerListFragment extends Fragment {
 
     private void MoveToCopyToProcedure(String file_path, Bundle bundle)
     {
+        ((AppManagerActivity)context).clear_cache=false;
         ArrayList<String>files_selected_array=new ArrayList<>();
         files_selected_array.add(file_path);
         bundle.putString("source_folder", new File(file_path).getParent());

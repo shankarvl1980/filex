@@ -100,7 +100,7 @@ public class VideoViewContainerFragment extends Fragment
 				public void onClick(View v)
 				{
 					is_menu_opened=true;
-					listPopWindow.showAsDropDown(v,0,Global.SIX_DP);
+					listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
 				}
 			});
 

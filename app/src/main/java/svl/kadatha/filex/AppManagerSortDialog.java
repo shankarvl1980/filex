@@ -27,7 +27,6 @@ public class AppManagerSortDialog extends DialogFragment
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private Context context;
     private RadioButton list_rb, grid_rb;
-    private FragmentManager fragmentManager;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -49,7 +48,7 @@ public class AppManagerSortDialog extends DialogFragment
     {
         // TODO: Implement this method
         View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
-        fragmentManager=((AppManagerActivity)context).getSupportFragmentManager();
+        FragmentManager fragmentManager = ((AppManagerActivity) context).getSupportFragmentManager();
         RadioGroup rg = v.findViewById(R.id.storage_analyser_dialog_view_layout_rg);
         list_rb=v.findViewById(R.id.storage_analyser_view_rb_list);
         grid_rb=v.findViewById(R.id.storage_analyser_dialog_rb_grid);

@@ -536,7 +536,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 	{
 		if(prepared)
 		{
-			mp.pause();
+			if(mp.isPlaying())mp.pause();
 			playmode=false;
 			play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon1));
 			bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));

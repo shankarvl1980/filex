@@ -91,38 +91,31 @@
 				android:layout_height="0dp"
 				android:minHeight="44dp"
 				android:background="?attr/dialog_background"
-				app:layout_constraintBottom_toTopOf="@id/barrier2"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/eol_rg" />
+				app:layout_constraintTop_toBottomOf="@id/eol_rg"
+				app:layout_constraintBottom_toBottomOf="@id/file_editor_settings_wrap_checkbox"
+				/>
 
 
 			<CheckBox
 				android:id="@+id/file_editor_settings_wrap_checkbox"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginStart="@dimen/ten_dp"
+				android:paddingStart="@dimen/ten_dp"
+				android:paddingEnd="@dimen/ten_dp"
 				android:button="@null"
 				android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
 				android:paddingTop="@dimen/layout_margin"
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/wrap_text"
 				android:textSize="16sp"
-				app:layout_constraintBottom_toBottomOf="@+id/wrap_label_background"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="@+id/wrap_label_background"
+				app:layout_constraintTop_toBottomOf="@id/eol_rg"
+				android:background="?attr/dialog_background"
 
 				/>
 
-			<androidx.constraintlayout.widget.Barrier
-				android:id="@+id/barrier2"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				app:barrierDirection="bottom"
-				app:constraint_referenced_ids="wrap_text_label,file_editor_settings_wrap_checkbox"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				 />
 
 			<TextView
 				android:id="@+id/file_editor_settings_text_size"
@@ -139,7 +132,7 @@
 				android:textSize="16sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/wrap_label_background" />
+				app:layout_constraintTop_toBottomOf="@id/file_editor_settings_wrap_checkbox" />
 
 			<View
 
