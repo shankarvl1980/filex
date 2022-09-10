@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="svl.kadatha.filex"
-    android:versionCode="10811"
-    android:versionName="1.8.11"
+    android:versionCode="10812"
+    android:versionName="1.8.12"
     >
 
 
