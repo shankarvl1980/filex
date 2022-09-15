@@ -213,7 +213,7 @@
 					android:id="@+id/dialog_search_rb_size_kb"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:paddingEnd="10dp"
+					android:paddingEnd="15dp"
 					android:text="KB"
 
 					/>
@@ -223,11 +223,20 @@
 					android:id="@+id/dialog_search_rb_size_mb"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:paddingEnd="10dp"
+					android:paddingEnd="15dp"
 					android:text="MB"
 
 					/>
 
+				<RadioButton
+
+					android:id="@+id/dialog_search_rb_size_gb"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingEnd="15dp"
+					android:text="GB"
+
+					/>
 
 			</RadioGroup>
 			<TableLayout

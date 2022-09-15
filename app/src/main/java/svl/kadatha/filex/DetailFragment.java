@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -95,7 +96,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private CancelableProgressBarDialog cancelableProgressBarDialog;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
-	ExtractZipFileViewModel extractZipFileViewModel;
+	private ExtractZipFileViewModel extractZipFileViewModel;
+	private static final List<String> LIBRARY_CATEGORIES=new ArrayList<>(Arrays.asList("Download","Document","Image","Audio","Video", "Archive","APK"));
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -126,7 +128,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;
 			}
-
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
@@ -287,10 +288,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					removeCancelableFragment();
 					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-					cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+					//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 					viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-
+					if(LIBRARY_CATEGORIES.contains(fileclickselected))
+					{
+						viewModel.getLibraryList(fileclickselected);
+						mainActivity.createLibraryCache();
+					}
+					else
+					{
+						viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+					}
 				}
 				else
 				{
@@ -397,9 +405,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				removeCancelableFragment();
 				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+				if(LIBRARY_CATEGORIES.contains(fileclickselected))
+				{
+					viewModel.getLibraryList(fileclickselected);
+					mainActivity.createLibraryCache();
+				}
+				else
+				{
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+				}
 			}
 			else
 			{
@@ -432,9 +448,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				removeCancelableFragment();
 				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+				if(LIBRARY_CATEGORIES.contains(fileclickselected))
+				{
+					viewModel.getLibraryList(fileclickselected);
+					mainActivity.createLibraryCache();
+				}
+				else
+				{
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+				}
 			}
 			else
 			{

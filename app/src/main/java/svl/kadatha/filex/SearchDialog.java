@@ -152,11 +152,17 @@ public class SearchDialog extends DialogFragment
 					size_multiplying_factor=1024*1024;
 					file_size_unit="mb";
 				}
+				else if(i==R.id.dialog_search_rb_size_gb)
+				{
+					size_multiplying_factor=1024*1024*1024;
+					file_size_unit="gb";
+				}
 			}
 		});
 
 		RadioButton kb_radio_button=v.findViewById(R.id.dialog_search_rb_size_kb);
 		RadioButton mb_radio_button=v.findViewById(R.id.dialog_search_rb_size_mb);
+		RadioButton gb_radio_button=v.findViewById(R.id.dialog_search_rb_size_gb);
 
 		if(file_size_unit!=null)
 		{
@@ -166,6 +172,9 @@ public class SearchDialog extends DialogFragment
 					mb_radio_button.setChecked(true);
 					size_multiplying_factor=1024*1024;
 					break;
+				case "gb":
+					gb_radio_button.setChecked(true);
+					size_multiplying_factor=1024*1024*1024;
 				default:
 					kb_radio_button.setChecked(true);
 					size_multiplying_factor=1024;

@@ -67,6 +67,8 @@ public class Global
 	static final HashMap<String, List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
 	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
 
+	static final HashMap<String, List<AppManagerListFragment.AppPOJO>> APP_POJO_HASHMAP=new HashMap<>();
+
 
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;
@@ -82,7 +84,7 @@ public class Global
 	static final String TEXT_REGEX="(?i)txt|java|xml|cpp|c|h|log";
 	static final String RTF_REGEX="(?i)rtf";
 	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp";
-	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus";
+	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4a";
 	static final String VIDEO_REGEX="(?i)3gp|mp4|avi|mov|flv|wmv|webm";
 	static final String ZIP_REGEX="(?i)zip|rar";
 	static final String UNIX_ARCHIVE_REGEX="(?i)tar|gzip|gz";

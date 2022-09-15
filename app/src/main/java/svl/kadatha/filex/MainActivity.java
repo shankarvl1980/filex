@@ -796,7 +796,29 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 
+		createLibraryCache();
+		viewModel.getAppList(new ArrayList<>(),new ArrayList<>());
 		discoverDevice();
+	}
+
+	public void createLibraryCache()
+	{
+//		viewModel.getDownloadList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getDocumentList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getImageList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getAudioList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getVideoList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getArchiveList(new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getApkList(new ArrayList<>(),new ArrayList<>(),false);
+
+		viewModel.getLibraryList("Download",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("Document",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("Image",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("Audio",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("Video",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("Archive",new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getLibraryList("APK",new ArrayList<>(),new ArrayList<>(),false);
+
 	}
 
 	public void set_visibility_searchbar(boolean visible)

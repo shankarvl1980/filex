@@ -28,7 +28,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
-    private boolean isCancelled;
+    private boolean isCancelled=false;
     private Future<?> future1,future2,future3, future4;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
@@ -69,6 +69,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     {
         return isCancelled;
     }
+
 
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
     {
@@ -137,7 +138,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(isCancelled()) return;
         if(f.isDirectory())
         {
-
             File[] files_array=f.listFiles();
             if(files_array!=null && files_array.length!=0)
             {
@@ -193,6 +193,24 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
         return true;
     }
+
+    public synchronized void getLibraryList(String media_category)
+    {
+        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future4=executorService.submit(new Runnable() {
+        @Override
+        public void run() {
+            filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
+            RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+            repositoryClass.getLibraryList(media_category,filePOJOS,filePOJOS_filtered,isCancelled);
+            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+
+    }
+
 
     public synchronized void populateLibrarySearchFilePOJO(FileObjectType fileObjectType, Set<FilePOJO> search_in_dir,String library_or_search,String fileclickselected,String search_file_name,String search_file_type,boolean search_whole_word,boolean search_case_sensitive,boolean search_regex,long search_lower_limit_size,long search_upper_limit_size)
     {
@@ -269,12 +287,12 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                     if (application.getString(R.string.document).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.java|\\.xml|\\.rtf|\\.cpp|\\.c|\\.h|\\.log)$";
-                        media_category="Documents";
+                        media_category="Document";
                     } else if (application.getString(R.string.image).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp)$";
-                        media_category="Images";
+                        media_category="Image";
                     } else if (application.getString(R.string.audio).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus)$";
+                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus||.m4a)$";
                         media_category="Audio";
                     } else if (application.getString(R.string.video).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.3gp|\\.mp4|\\.avi|\\.mov|\\.flv|\\.wmv|\\.webm)$";
@@ -357,7 +375,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             case "Download":
                 search_download(f_pojos,f_pojos_filtered);
                 break;
-            case "Documents":
+            case "Document":
                 cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
                         MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
                                 MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
@@ -391,7 +409,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                                     MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
                             new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.apk"},null);
                     break;
-            case "Images":
+            case "Image":
                 cursor=application.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
                 break;
             case "Audio":
@@ -450,7 +468,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 mutable_file_count.postValue(count);
             }
         }
-
     }
 
     private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException
@@ -523,7 +540,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
-
                     }
                     search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered, lower_limit_size, upper_limit_size);
                 }
