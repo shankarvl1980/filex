@@ -796,12 +796,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 
-		createLibraryCache();
-		viewModel.getAppList(new ArrayList<>(),new ArrayList<>());
+
 		discoverDevice();
 	}
 
-	public void createLibraryCache()
+
+
+	private void createLibraryCache()
 	{
 //		viewModel.getDownloadList(new ArrayList<>(),new ArrayList<>(),false);
 //		viewModel.getDocumentList(new ArrayList<>(),new ArrayList<>(),false);
@@ -819,7 +820,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewModel.getLibraryList("Archive",new ArrayList<>(),new ArrayList<>(),false);
 		viewModel.getLibraryList("APK",new ArrayList<>(),new ArrayList<>(),false);
 
+		viewModel.getAppList(new ArrayList<>(),new ArrayList<>());
+
 	}
+
 
 	public void set_visibility_searchbar(boolean visible)
 	{
@@ -1015,7 +1019,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		super.onStart();
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
-
+		createLibraryCache();
 	}
 
 	@Override
@@ -1034,8 +1038,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void clearCache()
 	{
-		Global.HASHMAP_FILE_POJO.clear();
-		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+		Global.CLEAR_CACHE();
 	}
 
 	public void clearCache(String file_path, FileObjectType fileObjectType)

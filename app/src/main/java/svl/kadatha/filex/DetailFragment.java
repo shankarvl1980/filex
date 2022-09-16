@@ -293,7 +293,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					if(LIBRARY_CATEGORIES.contains(fileclickselected))
 					{
 						viewModel.getLibraryList(fileclickselected);
-						mainActivity.createLibraryCache();
+						//mainActivity.createLibraryCache();
 					}
 					else
 					{
@@ -410,7 +410,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
-					mainActivity.createLibraryCache();
+					//mainActivity.createLibraryCache();
 				}
 				else
 				{
@@ -453,7 +453,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
-					mainActivity.createLibraryCache();
+					//mainActivity.createLibraryCache();
 				}
 				else
 				{

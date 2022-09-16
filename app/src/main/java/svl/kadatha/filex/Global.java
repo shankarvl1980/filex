@@ -1073,5 +1073,13 @@ public class Global
 		if(parent_file_path==null)parent_file_path="";
 		return parent_file_path.endsWith(File.separator) ? parent_file_path + child_file_name : parent_file_path + File.separator + child_file_name;
 	}
+
+	public static void CLEAR_CACHE()
+	{
+		Global.HASHMAP_FILE_POJO.clear();
+		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+
+		Global.APP_POJO_HASHMAP.clear();
+	}
 }
 

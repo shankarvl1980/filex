@@ -102,8 +102,7 @@ public class VideoViewActivity extends BaseActivity
 
 	public void clearCache()
 	{
-		Global.HASHMAP_FILE_POJO.clear();
-		Global.HASHMAP_FILE_POJO_FILTERED.clear();
+		Global.CLEAR_CACHE();
 	}
 
 	@Override

@@ -116,6 +116,7 @@ public class AppInstallAlertDialog extends DialogFragment
                     defaultAppDatabaseHelper.insert_row(viewModel.mime_type, viewModel.file_type, viewModel.app_name, viewModel.app_package_name);
                 }
                 defaultAppDatabaseHelper.close();
+                Global.APP_POJO_HASHMAP.clear();
                 dismissAllowingStateLoss();
 
             }

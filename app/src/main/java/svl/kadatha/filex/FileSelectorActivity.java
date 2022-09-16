@@ -462,8 +462,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     public void clearCache()
     {
-        Global.HASHMAP_FILE_POJO.clear();
-        Global.HASHMAP_FILE_POJO_FILTERED.clear();
+        Global.CLEAR_CACHE();
     }
 
     public void clearCache(String file_path, FileObjectType fileObjectType)
