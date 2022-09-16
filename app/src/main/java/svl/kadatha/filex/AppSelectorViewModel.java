@@ -28,7 +28,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
     private Future<?> future1,future2,future3;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
-    public List<AppSelectorDialog.AppPOJO> appPOJOList;
+    public List<AppSelectorDialog.AvailableAppPOJO> appPOJOList;
     public String file_path,mime_type,file_type,app_package_name;
     public String package_name, app_name, version, installed_version;
 
@@ -110,7 +110,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
                         }
 
                     }
-                    appPOJOList.add(new AppSelectorDialog.AppPOJO(app_name, app_package_name));
+                    appPOJOList.add(new AppSelectorDialog.AvailableAppPOJO(app_name, app_package_name));
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

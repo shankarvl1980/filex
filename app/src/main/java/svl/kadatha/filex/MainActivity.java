@@ -822,6 +822,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		viewModel.getAppList(new ArrayList<>(),new ArrayList<>());
 
+		viewModel.getAudioList(new ArrayList<>(),false);
+		viewModel.getAlbumList(new ArrayList<>(),false);
+
 	}
 
 

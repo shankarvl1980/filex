@@ -42,12 +42,7 @@ public class RepositoryClass {
 
     public synchronized void getLibraryList(String media_category,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,Boolean isCancelled)
     {
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
-        {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            return;
-        }
+        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
@@ -308,7 +303,72 @@ public class RepositoryClass {
         }
         Global.APP_POJO_HASHMAP.put("user",userAppPOJOList);
         Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
+    }
 
+    public synchronized void getAudioList(List<AudioPOJO> audio_list, boolean isCancelled)
+    {
+        if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
+        AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
+        Cursor audio_cursor;
+        Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+        if(cursor!=null && cursor.getCount()>0)
+        {
+            while(cursor.moveToNext())
+            {
+                if(isCancelled)break;
+                String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+                String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+
+                String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
+                audio_cursor=context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
+                if(audio_cursor!=null && audio_cursor.getCount()>0)
+                {
+                    while(audio_cursor.moveToNext())
+                    {
+                        if(isCancelled)break;
+                        int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                        String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                        String title=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                        String album=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                        String artist=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                        String duration=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+
+                        if(new File(data).exists())
+                        {
+                            audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
+                            AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
+                        }
+                    }
+
+                    audio_cursor.close();
+                }
+
+            }
+            Global.AUDIO_POJO_HASHMAP.put("audio",audio_list);
+            cursor.close();
+        }
+
+    }
+
+    public synchronized void getAlumbList(List<AlbumPOJO>album_list, boolean isCancelled)
+    {
+        if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
+        Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+        if(cursor!=null && cursor.getCount()>0)
+        {
+            while(cursor.moveToNext())
+            {
+                if(isCancelled)break;
+                String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+                String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
+                String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
+                String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
+                String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
+            }
+            Global.ALBUM_POJO_HASHMAP.put("album",album_list);
+            cursor.close();
+        }
     }
 
 }

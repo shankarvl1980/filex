@@ -69,6 +69,60 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
+//    public synchronized void listAudio()
+//    {
+//        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+//        ExecutorService executorService=MyExecutorService.getExecutorService();
+//        future1=executorService.submit(new Runnable() {
+//            @Override
+//            public void run() {
+//                audio_list=new ArrayList<>();
+//                AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
+//                Cursor audio_cursor;
+//                Cursor cursor=application.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+//                if(cursor!=null && cursor.getCount()>0)
+//                {
+//                    while(cursor.moveToNext())
+//                    {
+//                        if(isCancelled)break;
+//                        String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+//                        String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+//
+//                        String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
+//                        audio_cursor=application.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
+//                        if(audio_cursor!=null && audio_cursor.getCount()>0)
+//                        {
+//                            while(audio_cursor.moveToNext())
+//                            {
+//                                if(isCancelled)break;
+//                                int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+//                                String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+//                                String title=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+//                                String album=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+//                                String artist=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+//                                String duration=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+//
+//                                if(new File(data).exists())
+//                                {
+//                                    audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
+//                                    AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
+//                                }
+//                            }
+//
+//                            audio_cursor.close();
+//                        }
+//
+//                    }
+//
+//                    cursor.close();
+//                }
+//
+//                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+//            }
+//        });
+//    }
+
     public synchronized void listAudio()
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
@@ -78,46 +132,9 @@ public class AudioListViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 audio_list=new ArrayList<>();
-                AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
-                Cursor audio_cursor;
-                Cursor cursor=application.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
-                if(cursor!=null && cursor.getCount()>0)
-                {
-                    while(cursor.moveToNext())
-                    {
-                        if(isCancelled)break;
-                        String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
-                        String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-
-                        String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
-                        audio_cursor=application.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
-                        if(audio_cursor!=null && audio_cursor.getCount()>0)
-                        {
-                            while(audio_cursor.moveToNext())
-                            {
-                                if(isCancelled)break;
-                                int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                                String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                                String title=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                                String album=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                                String artist=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                                String duration=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-
-                                if(new File(data).exists())
-                                {
-                                    audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
-                                    AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
-                                }
-                            }
-
-                            audio_cursor.close();
-                        }
-
-                    }
-
-                    cursor.close();
-                }
-
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                repositoryClass.getAudioList(audio_list,false);
+                audio_list=Global.AUDIO_POJO_HASHMAP.get("audio");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -273,23 +290,9 @@ public class AudioListViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 album_list=new ArrayList<>();
-                Cursor cursor=application.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
-                if(cursor!=null && cursor.getCount()>0)
-                {
-                    while(cursor.moveToNext())
-                    {
-                        if(isCancelled)break;
-                        String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
-                        String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-                        String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
-                        String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
-                        String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-                        album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
-                    }
-
-                    cursor.close();
-                }
-
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                repositoryClass.getAlumbList(album_list, false);
+                album_list=Global.ALBUM_POJO_HASHMAP.get("album");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

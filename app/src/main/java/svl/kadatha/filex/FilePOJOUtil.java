@@ -571,6 +571,9 @@ public class FilePOJOUtil {
 
         Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
+
+        Global.AUDIO_POJO_HASHMAP.clear();
+        Global.ALBUM_POJO_HASHMAP.clear();
     }
 
 

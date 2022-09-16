@@ -181,9 +181,9 @@ public class AppSelectorDialog extends DialogFragment
 
     private class AppRecyclerAdapter extends RecyclerView.Adapter<AppSelectorDialog.AppRecyclerAdapter.ViewHolder>
     {
-        final List<AppPOJO> appPOJOList;
+        final List<AvailableAppPOJO> appPOJOList;
         final DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
-        AppRecyclerAdapter(List<AppPOJO> appPOJOList)
+        AppRecyclerAdapter(List<AvailableAppPOJO> appPOJOList)
         {
             this.appPOJOList=appPOJOList;
         }
@@ -206,7 +206,7 @@ public class AppSelectorDialog extends DialogFragment
                     public void onClick(View p)
                     {
                         int pos=getBindingAdapterPosition();
-                        AppPOJO appPOJO=appPOJOList.get(pos);
+                        AvailableAppPOJO appPOJO=appPOJOList.get(pos);
                         final String app_name=appPOJO.app_name;
                         final String app_package_name=appPOJO.app_package_name;
                         if(file_type.equals("APK"))
@@ -261,7 +261,7 @@ public class AppSelectorDialog extends DialogFragment
         public void onBindViewHolder(AppRecyclerAdapter.ViewHolder p1, int p2)
         {
             // TODO: Implement this method
-            AppPOJO appPOJO=appPOJOList.get(p2);
+            AvailableAppPOJO appPOJO=appPOJOList.get(p2);
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.app_icon_image_view);
             p1.app_name_text_view.setText(appPOJO.app_name);
 
@@ -277,12 +277,12 @@ public class AppSelectorDialog extends DialogFragment
 
 
 
-    public static class AppPOJO
+    public static class AvailableAppPOJO
     {
         final String app_name;
         final String app_package_name;
 
-        AppPOJO(String app_name,String app_package_name)
+        AvailableAppPOJO(String app_name,String app_package_name)
         {
             this.app_name=app_name;
             this.app_package_name=app_package_name;

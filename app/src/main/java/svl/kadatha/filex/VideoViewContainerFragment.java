@@ -324,7 +324,7 @@ public class VideoViewContainerFragment extends Fragment
 					String source_folder=result.getString("source_folder");
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-					deleteFileOtherActivityViewModel.deleteFilePOJO(source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path,"Video");
 				}
 			}
 		});

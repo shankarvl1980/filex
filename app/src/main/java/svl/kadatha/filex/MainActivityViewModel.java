@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -131,6 +132,30 @@ public class MainActivityViewModel extends AndroidViewModel {
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
                 repositoryClass.populateAppsList(userAppList,systemAppList);
+            }
+        });
+    }
+
+    public void getAudioList(List<AudioPOJO> audio_list, boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                repositoryClass.getAudioList(audio_list,isCancelled);
+            }
+        });
+    }
+
+    public void getAlbumList(List<AlbumPOJO> album_list, boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                repositoryClass.getAlumbList(album_list, isCancelled);
             }
         });
     }

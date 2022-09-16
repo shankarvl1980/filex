@@ -64,10 +64,14 @@ public class Global
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
 
-	static final HashMap<String, List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
+	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
 	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
 
-	static final HashMap<String, List<AppManagerListFragment.AppPOJO>> APP_POJO_HASHMAP=new HashMap<>();
+	static final HashMap<String,List<AppManagerListFragment.AppPOJO>> APP_POJO_HASHMAP=new HashMap<>();
+
+	static final HashMap<String,List<AudioPOJO>> AUDIO_POJO_HASHMAP=new HashMap<>();
+	static final HashMap<String,List<AlbumPOJO>> ALBUM_POJO_HASHMAP=new HashMap<>();
+
 
 
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
@@ -1080,6 +1084,9 @@ public class Global
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
 
 		Global.APP_POJO_HASHMAP.clear();
+
+		Global.AUDIO_POJO_HASHMAP.clear();
+		Global.ALBUM_POJO_HASHMAP.clear();
 	}
 }
 

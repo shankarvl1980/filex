@@ -416,7 +416,7 @@ public class ImageViewFragment extends Fragment
 					String tree_uri_path=result.getString("tree_uri_path");
 					files_selected_for_delete=new ArrayList<>();
 					files_selected_for_delete.add(viewModel.currently_shown_file);
-					deleteFileOtherActivityViewModel.deleteFilePOJO(viewModel.source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path);
+					deleteFileOtherActivityViewModel.deleteFilePOJO(viewModel.source_folder,files_selected_for_delete,viewModel.fileObjectType,tree_uri,tree_uri_path,"Image");
 				}
 			}
 		});
