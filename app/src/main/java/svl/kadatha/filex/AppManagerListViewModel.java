@@ -2,9 +2,6 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -131,7 +128,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 systemAppPOJOList=new ArrayList<>();
                 userAppPOJOList=new ArrayList<>();
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.populateAppsList(userAppPOJOList,systemAppPOJOList);
+                repositoryClass.populateAppsList(application,userAppPOJOList,systemAppPOJOList);
                 userAppPOJOList=Global.APP_POJO_HASHMAP.get("user");
                 systemAppPOJOList=Global.APP_POJO_HASHMAP.get("system");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

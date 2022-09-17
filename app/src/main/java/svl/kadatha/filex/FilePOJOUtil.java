@@ -525,6 +525,8 @@ public class FilePOJOUtil {
             remove_from_FilePOJO_comparing_file_path(deleted_file_path,filePOJOs_filtered);
 
             REMOVE_FROM_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(deleted_file_name),fileObjectType);
+            REMOVE_FROM_AUDIO_CACHE(fileObjectType,deleted_file_path);
+
         }
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
@@ -567,13 +569,30 @@ public class FilePOJOUtil {
             String folder_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(folder_to_be_removed),fileObjectType);
 
+            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Download"))
+            {
+                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Document"))
+                {
+                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Image"))
+                    {
+                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Audio"))
+                        {
+                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Video"))
+                            {
+                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Archive"))
+                                {
+                                    REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed, "APK");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            REMOVE_FROM_AUDIO_CACHE(fileObjectType,folder_to_be_removed);
         }
 
         Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
-
-        Global.AUDIO_POJO_HASHMAP.clear();
-        Global.ALBUM_POJO_HASHMAP.clear();
     }
 
 
@@ -604,6 +623,50 @@ public class FilePOJOUtil {
                 break;
             }
         }
+    }
+
+    private static boolean REMOVE_FROM_LIBRARY_CACHE(FileObjectType fileObjectType,String file_path, String media_category)
+    {
+        if(fileObjectType!=FileObjectType.FILE_TYPE)return false;
+        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+        if(filePOJOs!=null)
+        {
+            Iterator<FilePOJO> iterator=filePOJOs.iterator();
+            while (iterator.hasNext())
+            {
+                FilePOJO filePOJO= iterator.next();
+                if(file_path.equals(filePOJO.getPath()))
+                {
+                    if(filePOJOs_filtered!=null)filePOJOs_filtered.remove(filePOJO);
+                    iterator.remove();
+                    return true;
+                }
+
+            }
+
+        }
+        return false;
+    }
+
+    private static void REMOVE_FROM_AUDIO_CACHE(FileObjectType fileObjectType,String file_path_to_be_removed)
+    {
+        if(fileObjectType!=FileObjectType.FILE_TYPE)return;
+        List<AudioPOJO> audioPOJOS=Global.AUDIO_POJO_HASHMAP.get("audio");
+        if(audioPOJOS!=null)
+        {
+            Iterator<AudioPOJO> iterator= audioPOJOS.iterator();
+            while (iterator.hasNext())
+            {
+                AudioPOJO audioPOJO=iterator.next();
+                if(audioPOJO.getData().equals(file_path_to_be_removed))
+                {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+
     }
 
     public static FilePOJO ADD_TO_HASHMAP_FILE_POJO(final String dest_folder, final List<String> added_file_name_list, FileObjectType fileObjectType, List<String> overwritten_file_path_list)
@@ -654,7 +717,7 @@ public class FilePOJOUtil {
 
             file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
             filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
-            if(filePOJO==null) break;
+            if(filePOJO==null) continue;
             filePOJOs.add(filePOJO);
             if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
             {
@@ -703,7 +766,6 @@ public class FilePOJOUtil {
             filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, file_name_list,fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
             if(filePOJO==null)
             {
-                file_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
                 filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             }
             filePOJOs.add(filePOJO);

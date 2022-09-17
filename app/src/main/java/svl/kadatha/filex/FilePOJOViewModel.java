@@ -204,7 +204,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         public void run() {
             filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-            repositoryClass.getLibraryList(media_category,filePOJOS,filePOJOS_filtered,isCancelled);
+            repositoryClass.getLibraryList(application,media_category,filePOJOS,filePOJOS_filtered,isCancelled);
             filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

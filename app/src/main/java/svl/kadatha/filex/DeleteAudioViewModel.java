@@ -11,7 +11,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -77,37 +76,10 @@ public class DeleteAudioViewModel extends AndroidViewModel {
 
                 if(deleted_audio_files.size()>0)
                 {
-//                    String media_category="Audio";
-//                    List<FilePOJO> filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-//                    List<FilePOJO> filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                     if(whetherFromAlbum)
                     {
                         String parent_dir=new File(deleted_file_path_list.get(0)).getParent();
                         FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(parent_dir,deleted_file_name_list,FileObjectType.FILE_TYPE);
-//                        if(filePOJOS!=null)
-//                        {
-//                            Iterator<FilePOJO> iterator=filePOJOS.iterator();
-//                            while (iterator.hasNext())
-//                            {
-//                                FilePOJO filePOJO= iterator.next();
-//                                Iterator<String>delete_audio_path_iterator=deleted_file_path_list.iterator();
-//                                while (delete_audio_path_iterator.hasNext())
-//                                {
-//                                    String path=delete_audio_path_iterator.next();
-//                                    if(path.equals(filePOJO.getPath()))
-//                                    {
-//                                        delete_audio_path_iterator.remove();
-//                                        if(filePOJOS_filtered!=null)filePOJOS_filtered.remove(filePOJO);
-//                                        iterator.remove();
-//                                        break;
-//                                    }
-//
-//                                }
-//
-//                            }
-//
-//                        }
-
                     }
                     else
                     {
@@ -116,32 +88,6 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                             String parent_dir=new File(file_path).getParent();
                             String file_name=new File(file_path).getName();
                             FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(parent_dir, Collections.singletonList(file_name),FileObjectType.FILE_TYPE);
-
-
-//                            if(filePOJOS!=null)
-//                            {
-//                                Iterator<FilePOJO> iterator=filePOJOS.iterator();
-//                                while (iterator.hasNext())
-//                                {
-//                                    FilePOJO filePOJO= iterator.next();
-//                                    Iterator<String>delete_audio_path_iterator=deleted_file_path_list.iterator();
-//                                    while (delete_audio_path_iterator.hasNext())
-//                                    {
-//                                        String path=delete_audio_path_iterator.next();
-//                                        if(path.equals(filePOJO.getPath()))
-//                                        {
-//                                            delete_audio_path_iterator.remove();
-//                                            if(filePOJOS_filtered!=null)filePOJOS_filtered.remove(filePOJO);
-//                                            iterator.remove();
-//                                            break;
-//                                        }
-//
-//                                    }
-//
-//                                }
-//
-//                            }
-
                         }
                     }
 

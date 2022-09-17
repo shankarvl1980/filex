@@ -13,11 +13,10 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public class RepositoryClass {
 
-    private static RepositoryClass repositoryClass;
+    private static volatile RepositoryClass repositoryClass;
     int download_count,document_count,image_count,audio_count,video_count,archive_count,apk_count;
     MutableLiveData<Integer> download_mutable_count=new MutableLiveData<>();
     MutableLiveData<Integer> document_mutable_count=new MutableLiveData<>();
@@ -26,21 +25,26 @@ public class RepositoryClass {
     MutableLiveData<Integer> video_mutable_count=new MutableLiveData<>();
     MutableLiveData<Integer> archive_mutable_count=new MutableLiveData<>();
     MutableLiveData<Integer> apk_mutable_count=new MutableLiveData<>();
-    private final Context context;
 
-
-    private RepositoryClass(Context context){this.context=context;}
+    private RepositoryClass(){}
 
     public static RepositoryClass getRepositoryClass(Context context)
     {
         if(repositoryClass==null)
         {
-            repositoryClass=new RepositoryClass(context);
+            synchronized (RepositoryClass.class)
+            {
+                if(repositoryClass==null)
+                {
+                    repositoryClass=new RepositoryClass();
+                }
+            }
+
         }
         return repositoryClass;
     }
 
-    public synchronized void getLibraryList(String media_category,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,Boolean isCancelled)
+    public synchronized void getLibraryList(Context context,String media_category,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,Boolean isCancelled)
     {
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
@@ -48,7 +52,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getDownLoadList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getDownLoadList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Download";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -63,7 +67,7 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void getDocumentList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getDocumentList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Document";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -77,7 +81,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getImageList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getImageList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Image";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -91,7 +95,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getAudioList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getAudioList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Audio";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -105,7 +109,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getVideoList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getVideoList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Video";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -119,7 +123,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getArchiveList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getArchiveList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="Archive";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -133,7 +137,7 @@ public class RepositoryClass {
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getApkList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getApkList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
     {
         String media_category="APK";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
@@ -254,7 +258,7 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void populateAppsList(List<AppManagerListFragment.AppPOJO> userAppPOJOList, List<AppManagerListFragment.AppPOJO> systemAppPOJOList)
+    public synchronized void populateAppsList(Context context,List<AppManagerListFragment.AppPOJO> userAppPOJOList, List<AppManagerListFragment.AppPOJO> systemAppPOJOList)
     {
         if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
 
@@ -305,7 +309,7 @@ public class RepositoryClass {
         Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
     }
 
-    public synchronized void getAudioList(List<AudioPOJO> audio_list, boolean isCancelled)
+    public synchronized void getAudioList(Context context,List<AudioPOJO> audio_list, boolean isCancelled)
     {
         if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
         AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
@@ -350,7 +354,7 @@ public class RepositoryClass {
 
     }
 
-    public synchronized void getAlumbList(List<AlbumPOJO>album_list, boolean isCancelled)
+    public synchronized void getAlumbList(Context context,List<AlbumPOJO>album_list, boolean isCancelled)
     {
         if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
         Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);

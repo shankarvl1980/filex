@@ -10,7 +10,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -85,33 +84,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
-
-
-//                    List<FilePOJO> filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-//                    List<FilePOJO> filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-//                    if(filePOJOS!=null)
-//                    {
-//                        Iterator<FilePOJO> iterator=filePOJOS.iterator();
-//                        while (iterator.hasNext())
-//                        {
-//                            FilePOJO filePOJO= iterator.next();
-//                            Iterator<String>delete_audio_path_iterator=deleted_file_path_list.iterator();
-//                            while (delete_audio_path_iterator.hasNext())
-//                            {
-//                                String path=delete_audio_path_iterator.next();
-//                                if(path.equals(filePOJO.getPath()))
-//                                {
-//                                    delete_audio_path_iterator.remove();
-//                                    if(filePOJOS_filtered!=null)filePOJOS_filtered.remove(filePOJO);
-//                                    iterator.remove();
-//                                    break;
-//                                }
-//
-//                            }
-//
-//                        }
-//
-//                    }
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
@@ -227,34 +199,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
-
-
-//                    String media_category="Audio";
-//                    List<FilePOJO> filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-//                    List<FilePOJO> filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-//                    if(filePOJOS!=null)
-//                    {
-//                        Iterator<FilePOJO> iterator=filePOJOS.iterator();
-//                        while (iterator.hasNext())
-//                        {
-//                            FilePOJO filePOJO= iterator.next();
-//                            Iterator<String>delete_audio_path_iterator=deleted_file_path_list.iterator();
-//                            while (delete_audio_path_iterator.hasNext())
-//                            {
-//                                String path=delete_audio_path_iterator.next();
-//                                if(path.equals(filePOJO.getPath()))
-//                                {
-//                                    delete_audio_path_iterator.remove();
-//                                    if(filePOJOS_filtered!=null)filePOJOS_filtered.remove(filePOJO);
-//                                    iterator.remove();
-//                                    break;
-//                                }
-//
-//                            }
-//
-//                        }
-//
-//                    }
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

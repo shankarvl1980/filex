@@ -5,11 +5,9 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -131,7 +129,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.populateAppsList(userAppList,systemAppList);
+                repositoryClass.populateAppsList(application,userAppList,systemAppList);
             }
         });
     }
@@ -143,7 +141,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getAudioList(audio_list,isCancelled);
+                repositoryClass.getAudioList(application,audio_list,isCancelled);
             }
         });
     }
@@ -155,7 +153,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getAlumbList(album_list, isCancelled);
+                repositoryClass.getAlumbList(application,album_list, isCancelled);
             }
         });
     }
@@ -167,7 +165,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getLibraryList(media_category,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getLibraryList(application,media_category,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -181,7 +179,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getDownLoadList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getDownLoadList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -194,7 +192,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getDocumentList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getDocumentList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -207,7 +205,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getImageList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getImageList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -220,7 +218,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getAudioList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getAudioList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -233,7 +231,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getVideoList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getVideoList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -246,7 +244,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getArchiveList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getArchiveList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
 
@@ -259,7 +257,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
-                repositoryClass.getApkList(filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getApkList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
     }
