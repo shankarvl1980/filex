@@ -420,29 +420,10 @@ public class AllAudioListFragment extends Fragment
 	
 	}
 
-	
-	public void remove_audio(ArrayList<AudioPOJO> list)
-	{
-		for(AudioPOJO audio: list)
-		{
-			String data=audio.getData();
-			for(AudioPOJO a:audio_list)
-			{
-				if(a.getData().equals(data))
-				{
-					audio_list.remove(a);
-					total_audio_list.remove(a);
-					break;
-				}
-			}
-		}
-		num_all_audio=total_audio_list.size();
-		clear_selection();
-	}
-	
 
 	public void clear_selection()
 	{
+		num_all_audio=total_audio_list.size();
 		audioListViewModel.audio_selected_array=new ArrayList<>();
 		audioListViewModel.mselecteditems=new SparseBooleanArray();
 		if (audioListRecyclerViewAdapter!=null) audioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -454,7 +435,6 @@ public class AllAudioListFragment extends Fragment
 		}
 		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
-
 	}
 
 	

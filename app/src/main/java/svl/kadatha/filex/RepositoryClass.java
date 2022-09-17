@@ -28,7 +28,7 @@ public class RepositoryClass {
 
     private RepositoryClass(){}
 
-    public static RepositoryClass getRepositoryClass(Context context)
+    public static RepositoryClass getRepositoryClass()
     {
         if(repositoryClass==null)
         {

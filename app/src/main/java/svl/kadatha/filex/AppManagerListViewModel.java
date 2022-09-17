@@ -127,7 +127,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             public void run() {
                 systemAppPOJOList=new ArrayList<>();
                 userAppPOJOList=new ArrayList<>();
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.populateAppsList(application,userAppPOJOList,systemAppPOJOList);
                 userAppPOJOList=Global.APP_POJO_HASHMAP.get("user");
                 systemAppPOJOList=Global.APP_POJO_HASHMAP.get("system");

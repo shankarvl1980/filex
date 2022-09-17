@@ -128,7 +128,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.populateAppsList(application,userAppList,systemAppList);
             }
         });
@@ -140,7 +140,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getAudioList(application,audio_list,isCancelled);
             }
         });
@@ -152,7 +152,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getAlumbList(application,album_list, isCancelled);
             }
         });
@@ -164,7 +164,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getLibraryList(application,media_category,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -178,7 +178,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getDownLoadList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -191,7 +191,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getDocumentList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -204,7 +204,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getImageList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -217,7 +217,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future5=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getAudioList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -230,7 +230,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getVideoList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -243,7 +243,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future7=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getArchiveList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });
@@ -256,7 +256,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         future8=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass(application);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.getApkList(application,filePOJOS,filePOJOS_filtered,isCancelled);
             }
         });

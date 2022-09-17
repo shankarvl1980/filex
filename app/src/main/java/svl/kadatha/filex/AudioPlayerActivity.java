@@ -644,7 +644,7 @@ public class AudioPlayerActivity extends BaseActivity
 	
 	public void update_all_audio_list_and_audio_queued_array_and_current_play_number(ArrayList<AudioPOJO> list)
 	{
-		aalf.remove_audio(list);
+		aalf.clear_selection();
 		int size=list.size();
 		for(int i=0;i<size;++i)
 		{
