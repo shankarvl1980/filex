@@ -118,7 +118,8 @@ public class CreateFileDialog extends DialogFragment
 			file_label_textview.setText(R.string.folder_name);
 		}
 
-		ViewModelCreateRename viewModel=new ViewModelProvider.AndroidViewModelFactory(this.getActivity().getApplication()).create(ViewModelCreateRename.class);
+
+		ViewModelCreateRename viewModel=new ViewModelProvider(this).get(ViewModelCreateRename.class);
 		viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -190,7 +191,6 @@ public class CreateFileDialog extends DialogFragment
 				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
 				//new CreateFileTask(file,isWritable).createFile();
 			}	
-				
 
 		});
 			

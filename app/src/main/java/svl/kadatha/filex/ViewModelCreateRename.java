@@ -27,7 +27,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);
         this.application=application;
-        asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
     }
 
     public void createFile(File file, FileObjectType fileObjectType, boolean isWritable, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri)
@@ -103,9 +102,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
                         {
                             file_created=FileUtil.mkdirNative(file);
-
                         }
-
                     }
                     else if(fileObjectType==FileObjectType.FTP_TYPE)
                     {
@@ -120,9 +117,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         {
                             file_created=false;
                         }
-
                     }
-
                 }
                 if(file_created)
                 {
@@ -186,8 +181,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         {
                             fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
                         }
-
-
                     }
                     else
                     {
@@ -209,8 +202,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     {
                         Global.print_background_thread(application,application.getString(R.string.ftp_server_is_not_connected));
                     }
-
-
                 }
                 if(fileNameChanged)
                 {

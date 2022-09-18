@@ -182,7 +182,7 @@ public class ArchiveDeletePasteServiceUtil {
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -264,7 +264,7 @@ public class ArchiveDeletePasteServiceUtil {
 
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
-                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
                 fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
             }
         }

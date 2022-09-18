@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -80,7 +81,7 @@ public class RepositoryClass {
         }
         else
         {
-            if (Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) return;
+            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) return;
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);

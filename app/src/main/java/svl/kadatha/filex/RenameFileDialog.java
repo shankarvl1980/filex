@@ -206,14 +206,12 @@ public class RenameFileDialog extends DialogFragment
 
 				if(overwriting)
 				{
-
 					if(fileObjectType==FileObjectType.FILE_TYPE)
 					{
 						if(isWritable)
 						{
 							RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
 							renameReplaceConfirmationDialog.show(fragmentManager,"");
-
 						}
 						else
 						{
@@ -269,11 +267,8 @@ public class RenameFileDialog extends DialogFragment
 			{
 				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 				dismissAllowingStateLoss();
-				
 			}
-			
 		});
-
 
 		return v;
 	}
