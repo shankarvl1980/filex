@@ -155,17 +155,17 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		folder_selected_textview.setText(fileclickselected);
 
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
-		{
-			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
-		}
-		else
-		{
-			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-			after_filledFilePojos_procedure();
-		}
-
+//		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+//		{
+//			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
+//		}
+//		else
+//		{
+//			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+//			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+//			after_filledFilePojos_procedure();
+//		}
+		viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {

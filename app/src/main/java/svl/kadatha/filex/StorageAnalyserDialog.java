@@ -53,7 +53,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public TextView folder_selected_textview;
     private FileModifyObserver fileModifyObserver;
     public boolean local_activity_delete,modification_observed;
-    public boolean filled_filePOJOs;
+    //public boolean filled_filePOJOs;
     private Uri tree_uri;
     private String tree_uri_path="";
     public int file_list_size;
@@ -193,27 +193,27 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         });
 
         viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-        if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
-        {
-            viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
-        }
-        else
-        {
-            viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-            viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
-            {
-                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                viewModel.fill_file_size(fileObjectType,fileclickselected,currentUsbFile,false);
-            }
-            else
-            {
-                after_filledFilePojos_procedure();
-            }
-            filled_filePOJOs=true;
-
-        }
-
+//        if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+//        {
+//            viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
+//        }
+//        else
+//        {
+//            viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+//            viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+//            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
+//            {
+//                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+//                viewModel.fill_file_size(fileObjectType,fileclickselected,currentUsbFile,false);
+//            }
+//            else
+//            {
+//                after_filledFilePojos_procedure();
+//            }
+//            //filled_filePOJOs=true;
+//
+//        }
+        viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {

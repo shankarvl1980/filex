@@ -34,8 +34,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
-    private int total_no_of_files;
-    private long total_size_of_files;
+    //private int total_no_of_files;
+    //private long total_size_of_files;
 
     private String what_to_find=null;
     private String media_category=null;
@@ -80,24 +80,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
-                FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-                if(fill_file_size_also)
-                {
-                    {
-                        long storage_space=0L;
-                        String key=fileObjectType+fileclickselected;
-                        for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
-                        {
-                            if(Global.IS_CHILD_FILE(key,entry.getKey()))
-                            {
-                                storage_space=entry.getValue().getTotalSpace();
-                                break;
-                            }
-                        }
-                        final long final_storage_space = storage_space;
-                        fill_file_size(filePOJOS,final_storage_space);
-                    }
-                }
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,fill_file_size_also);
+                filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+                filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
@@ -112,86 +98,12 @@ public class FilePOJOViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                long storage_space=0L;
-                String key=fileObjectType+fileclickselected;
-                for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
-                {
-                    if(Global.IS_CHILD_FILE(key,entry.getKey()))
-                    {
-                        storage_space=entry.getValue().getTotalSpace();
-                        break;
-                    }
-                }
-                final long final_storage_space = storage_space;
-                fill_file_size(filePOJOS,final_storage_space);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.fill_file_size(fileObjectType,fileclickselected,filePOJOS);
                 mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-    }
-
-
-    private void get_size(File f, boolean include_folder)
-    {
-        int no_of_files=0;
-        long size_of_files=0L;
-        if(isCancelled()) return;
-        if(f.isDirectory())
-        {
-            File[] files_array=f.listFiles();
-            if(files_array!=null && files_array.length!=0)
-            {
-                for(File file:files_array)
-                {
-                    get_size(file,include_folder);
-                }
-                if(include_folder)
-                {
-                    no_of_files++;
-                }
-            }
-
-        }
-        else
-        {
-            no_of_files++;
-            size_of_files+=f.length();
-        }
-
-        total_no_of_files+=no_of_files;
-        total_size_of_files+=size_of_files;
-    }
-
-
-    private boolean fill_file_size(List<FilePOJO> filePOJOS,long volume_storage_size)
-    {
-        if(filePOJOS==null) return true;
-        int size=filePOJOS.size();
-        for(int i=0;i<size;++i)
-        {
-            if(isCancelled()) return true;
-            FilePOJO filePOJO=filePOJOS.get(i);
-            total_no_of_files=0; total_size_of_files=0;
-            if(filePOJO.getTotalSizePercentage()!=null) continue;
-            if(filePOJO.getIsDirectory())
-            {
-                get_size(new File(filePOJO.getPath()),true);
-                filePOJO.setTotalFiles(total_no_of_files);
-                filePOJO.setTotalSizeLong(total_size_of_files);
-                filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files));
-                double percentage = total_size_of_files * 100.0/ volume_storage_size;
-                filePOJO.setTotalSizePercentageDouble(percentage);
-                filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
-            }
-            else
-            {
-                double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
-                filePOJO.setTotalSizePercentageDouble(percentage);
-                filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
-            }
-
-        }
-        return true;
     }
 
     public synchronized void getLibraryList(String media_category)
@@ -210,7 +122,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-
     }
 
 

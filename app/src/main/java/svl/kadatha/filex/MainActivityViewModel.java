@@ -122,7 +122,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         checkedSAFPermissionPasteSetUp=true;
     }
 
-    public void getAppList(List<AppManagerListFragment.AppPOJO> userAppList, List<AppManagerListFragment.AppPOJO> systemAppList)
+    public void getAppList()
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
@@ -185,7 +185,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getDocumentList(boolean isCancelled)
+    public void getDocumentList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future3=executorService.submit(new Runnable() {
@@ -198,7 +198,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getImageList(boolean isCancelled)
+    public void getImageList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
@@ -211,7 +211,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getAudioList(boolean isCancelled)
+    public void getAudioList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future5=executorService.submit(new Runnable() {
@@ -224,7 +224,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getVideoList(boolean isCancelled)
+    public void getVideoList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future6=executorService.submit(new Runnable() {
@@ -237,7 +237,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getArchiveList(boolean isCancelled)
+    public void getArchiveList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future7=executorService.submit(new Runnable() {
@@ -250,7 +250,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void getApkList(boolean isCancelled)
+    public void getApkList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future8=executorService.submit(new Runnable() {
