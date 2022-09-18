@@ -44,108 +44,113 @@ public class RepositoryClass {
         return repositoryClass;
     }
 
-    public synchronized void getLibraryList(Context context,String media_category,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,Boolean isCancelled)
+
+
+
+    public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
     {
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getDownLoadList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getDownLoadList(Context context,boolean isCancelled)
     {
         String media_category="Download";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
 
-    public synchronized void getDocumentList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getDocumentList(Context context,boolean isCancelled)
     {
         String media_category="Document";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,document_count=0,document_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getImageList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getImageList(Context context,boolean isCancelled)
     {
         String media_category="Image";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,image_count=0,image_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getAudioList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getAudioList(Context context,boolean isCancelled)
     {
         String media_category="Audio";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,audio_count=0,audio_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getVideoList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getVideoList(Context context,boolean isCancelled)
     {
         String media_category="Video";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,video_count=0,video_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getArchiveList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getArchiveList(Context context,boolean isCancelled)
     {
         String media_category="Archive";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,archive_count=0,archive_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getApkList(Context context,List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getApkList(Context context,boolean isCancelled)
     {
         String media_category="APK";
         if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
         {
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
             return;
         }
+        List<FilePOJO>filePOJOS=new ArrayList<>();
+        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
         search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,apk_count=0,apk_mutable_count);
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
@@ -258,9 +263,11 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void populateAppsList(Context context,List<AppManagerListFragment.AppPOJO> userAppPOJOList, List<AppManagerListFragment.AppPOJO> systemAppPOJOList)
+    public synchronized void populateAppsList(Context context)
     {
         if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
+        List<AppManagerListFragment.AppPOJO> userAppPOJOList=new ArrayList<>();
+        List<AppManagerListFragment.AppPOJO> systemAppPOJOList=new ArrayList<>();
 
         int flags = PackageManager.GET_META_DATA |
                 PackageManager.GET_SHARED_LIBRARY_FILES |
@@ -309,9 +316,10 @@ public class RepositoryClass {
         Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
     }
 
-    public synchronized void getAudioList(Context context,List<AudioPOJO> audio_list, boolean isCancelled)
+    public synchronized void getAudioPOJOList(Context context, boolean isCancelled)
     {
         if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
+        List<AudioPOJO> audio_list=new ArrayList<>();
         AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
         Cursor audio_cursor;
         Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
@@ -354,9 +362,10 @@ public class RepositoryClass {
 
     }
 
-    public synchronized void getAlumbList(Context context,List<AlbumPOJO>album_list, boolean isCancelled)
+    public synchronized void getAlbumList(Context context, boolean isCancelled)
     {
         if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
+        List<AlbumPOJO>album_list=new ArrayList<>();
         Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
         if(cursor!=null && cursor.getCount()>0)
         {

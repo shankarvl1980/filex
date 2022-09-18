@@ -129,135 +129,135 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.populateAppsList(application,userAppList,systemAppList);
+                repositoryClass.populateAppsList(application);
             }
         });
     }
 
-    public void getAudioList(List<AudioPOJO> audio_list, boolean isCancelled)
+    public void getAudioPOJOList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioList(application,audio_list,isCancelled);
+                repositoryClass.getAudioPOJOList(application,isCancelled);
             }
         });
     }
 
-    public void getAlbumList(List<AlbumPOJO> album_list, boolean isCancelled)
+    public void getAlbumList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAlumbList(application,album_list, isCancelled);
+                repositoryClass.getAlbumList(application,isCancelled);
             }
         });
     }
 
-    public void getLibraryList(String media_category,List<FilePOJO> filePOJOS, List<FilePOJO>filePOJOS_filtered, boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getLibraryList(application,media_category,filePOJOS,filePOJOS_filtered,isCancelled);
-            }
-        });
+//    public void getLibraryList(String media_category, boolean isCancelled)
+//    {
+//        ExecutorService executorService=MyExecutorService.getExecutorService();
+//        executorService.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+//                repositoryClass.getLibraryList(application,media_category,isCancelled);
+//            }
+//        });
+//
+//    }
 
-    }
 
-
-    public void getDownloadList(List<FilePOJO> filePOJOS, List<FilePOJO>filePOJOS_filtered, boolean isCancelled)
+    public void getDownloadList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getDownLoadList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getDownLoadList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getDocumentList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getDocumentList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getDocumentList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getDocumentList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getImageList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getImageList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getImageList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getImageList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getAudioList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getAudioList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future5=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getAudioList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getVideoList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getVideoList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getVideoList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getVideoList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getArchiveList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getArchiveList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future7=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getArchiveList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getArchiveList(application,isCancelled);
             }
         });
 
     }
 
-    public synchronized void getApkList(List<FilePOJO>filePOJOS, List<FilePOJO>filePOJOS_filtered,boolean isCancelled)
+    public synchronized void getApkList(boolean isCancelled)
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future8=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getApkList(application,filePOJOS,filePOJOS_filtered,isCancelled);
+                repositoryClass.getApkList(application,isCancelled);
             }
         });
     }

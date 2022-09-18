@@ -133,7 +133,7 @@ public class AudioListViewModel extends AndroidViewModel {
             public void run() {
                 audio_list=new ArrayList<>();
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioList(application,audio_list,false);
+                repositoryClass.getAudioPOJOList(application,false);
                 audio_list=Global.AUDIO_POJO_HASHMAP.get("audio");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
@@ -291,7 +291,7 @@ public class AudioListViewModel extends AndroidViewModel {
             public void run() {
                 album_list=new ArrayList<>();
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAlumbList(application,album_list, false);
+                repositoryClass.getAlbumList(application, false);
                 album_list=Global.ALBUM_POJO_HASHMAP.get("album");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

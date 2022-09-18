@@ -804,26 +804,26 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	private void createLibraryCache()
 	{
-//		viewModel.getDownloadList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getDocumentList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getImageList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getAudioList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getVideoList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getArchiveList(new ArrayList<>(),new ArrayList<>(),false);
-//		viewModel.getApkList(new ArrayList<>(),new ArrayList<>(),false);
+		viewModel.getDownloadList(false);
+		viewModel.getDocumentList(false);
+		viewModel.getImageList(false);
+		viewModel.getAudioList(false);
+		viewModel.getVideoList(false);
+		viewModel.getArchiveList(false);
+		viewModel.getApkList(false);
 
-		viewModel.getLibraryList("Download",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("Document",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("Image",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("Audio",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("Video",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("Archive",new ArrayList<>(),new ArrayList<>(),false);
-		viewModel.getLibraryList("APK",new ArrayList<>(),new ArrayList<>(),false);
+//		viewModel.getLibraryList("Download", false);
+//		viewModel.getLibraryList("Document", false);
+//		viewModel.getLibraryList("Image", false);
+//		viewModel.getLibraryList("Audio", false);
+//		viewModel.getLibraryList("Video", false);
+//		viewModel.getLibraryList("Archive", false);
+//		viewModel.getLibraryList("APK", false);
 
 		viewModel.getAppList(new ArrayList<>(),new ArrayList<>());
 
-		viewModel.getAudioList(new ArrayList<>(),false);
-		viewModel.getAlbumList(new ArrayList<>(),false);
+		viewModel.getAudioPOJOList(false);
+		viewModel.getAlbumList(false);
 
 	}
 
