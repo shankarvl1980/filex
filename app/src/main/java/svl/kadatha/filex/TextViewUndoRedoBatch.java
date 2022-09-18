@@ -27,7 +27,7 @@ public class TextViewUndoRedoBatch
 
     // =================================================================== //
 
-    public TextViewUndoRedoBatch(TextView textView, Context context) {
+    public TextViewUndoRedoBatch(TextView textView) {
         mTextView = textView;
         mEditHistory = new EditHistory();
         mChangeListener = new EditTextChangeListener();

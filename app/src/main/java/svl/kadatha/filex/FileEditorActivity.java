@@ -290,7 +290,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		filetext_container_edittext=findViewById(R.id.textfile_edittext);
 		filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
-		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext,context);
+		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext);
 		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
 			@Override
 			public void onEditTextChange() {

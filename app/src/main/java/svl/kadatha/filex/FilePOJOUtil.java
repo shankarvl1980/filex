@@ -717,11 +717,13 @@ public class FilePOJOUtil {
 
             file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
             filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
-            if(filePOJO==null) continue;
-            filePOJOs.add(filePOJO);
-            if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+            if(filePOJO!=null)
             {
-                filePOJOs_filtered.add(filePOJO);
+                filePOJOs.add(filePOJO);
+                if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+                {
+                    filePOJOs_filtered.add(filePOJO);
+                }
             }
         }
         Global.HASHMAP_FILE_POJO.put(fileObjectType+dest_folder,filePOJOs);

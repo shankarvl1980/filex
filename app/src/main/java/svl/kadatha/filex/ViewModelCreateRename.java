@@ -144,7 +144,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     if(isWritable)
                     {
                         fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-
                     }
                     else
                     {
