@@ -1631,7 +1631,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 	
 	public static void fastChannelCopy(final ReadableByteChannel src, final WritableByteChannel dest, boolean fromUsbFile) throws IOException
 	{
-		//Log.d("shankar", "fastChannelcopy : chunk-size - "+USB_CHUNK_SIZE);
 		final ByteBuffer buffer = (fromUsbFile) ? ByteBuffer.allocate(USB_CHUNK_SIZE) : ByteBuffer.allocateDirect(16384);
 		while (src.read(buffer) != -1)
 		{
@@ -1662,7 +1661,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile)
 	{
-		//Log.d("shankar", "bufferedcopy : chunk-size - "+USB_CHUNK_SIZE);
 		byte[] buffer=(fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
 		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream); BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {

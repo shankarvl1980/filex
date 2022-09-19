@@ -804,21 +804,21 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	private void createLibraryCache()
 	{
-		viewModel.getDownloadList(false);
-		viewModel.getDocumentList(false);
-		viewModel.getImageList(false);
-		viewModel.getAudioList(false);
-		viewModel.getVideoList(false);
-		viewModel.getArchiveList(false);
-		viewModel.getApkList(false);
+//		viewModel.getDownloadList(false);
+//		viewModel.getDocumentList(false);
+//		viewModel.getImageList(false);
+//		viewModel.getAudioList(false);
+//		viewModel.getVideoList(false);
+//		viewModel.getArchiveList(false);
+//		viewModel.getApkList(false);
 
-//		viewModel.getLibraryList("Download", false);
-//		viewModel.getLibraryList("Document", false);
-//		viewModel.getLibraryList("Image", false);
-//		viewModel.getLibraryList("Audio", false);
-//		viewModel.getLibraryList("Video", false);
-//		viewModel.getLibraryList("Archive", false);
-//		viewModel.getLibraryList("APK", false);
+		viewModel.getLibraryList("Download", false);
+		viewModel.getLibraryList("Document", false);
+		viewModel.getLibraryList("Image", false);
+		viewModel.getLibraryList("Audio", false);
+		viewModel.getLibraryList("Video", false);
+		viewModel.getLibraryList("Archive", false);
+		viewModel.getLibraryList("APK", false);
 
 		viewModel.getAppList();
 

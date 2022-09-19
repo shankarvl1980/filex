@@ -268,87 +268,41 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-//		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-//			{
-//				if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-//				{
-//					if(mainActivity==null)
-//					{
-//						context=getContext();
-//						mainActivity=(MainActivity)context;
-//					}
-//					search_file_name=mainActivity.search_file_name;
-//					search_in_dir=mainActivity.search_in_dir;
-//					search_file_type=mainActivity.search_file_type;
-//					search_whole_word=mainActivity.search_whole_word;
-//					search_case_sensitive=mainActivity.search_case_sensitive;
-//					search_regex=mainActivity.search_regex;
-//					search_lower_limit_size=mainActivity.search_lower_limit_size;
-//					search_upper_limit_size=mainActivity.search_upper_limit_size;
-//					removeCancelableFragment();
-//					cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-//					cancelableProgressBarDialog.set_title(getString(R.string.searching));
-//					//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
-//					viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-//					if(LIBRARY_CATEGORIES.contains(fileclickselected))
-//					{
-//						viewModel.getLibraryList(fileclickselected);
-//						//mainActivity.createLibraryCache();
-//					}
-//					else
-//					{
-//						viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-//					}
-//				}
-//				else
-//				{
-//					viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
-//				}
-//			}
-//
-//		}
-//		else
-//		{
-//			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-//			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-//			//filled_filePOJOs=true;
-//			after_filledFilePojos_procedure();
-//		}
-
-		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			if(mainActivity==null)
-			{
-				context=getContext();
-				mainActivity=(MainActivity)context;
-			}
-			search_file_name=mainActivity.search_file_name;
-			search_in_dir=mainActivity.search_in_dir;
-			search_file_type=mainActivity.search_file_type;
-			search_whole_word=mainActivity.search_whole_word;
-			search_case_sensitive=mainActivity.search_case_sensitive;
-			search_regex=mainActivity.search_regex;
-			search_lower_limit_size=mainActivity.search_lower_limit_size;
-			search_upper_limit_size=mainActivity.search_upper_limit_size;
-			removeCancelableFragment();
-			cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-			cancelableProgressBarDialog.set_title(getString(R.string.searching));
-			//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
-			viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-			if(LIBRARY_CATEGORIES.contains(fileclickselected))
-			{
-				viewModel.getLibraryList(fileclickselected);
-				//mainActivity.createLibraryCache();
-			}
-			else
-			{
-				viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
+		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
+			if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+				if (mainActivity == null) {
+					context = getContext();
+					mainActivity = (MainActivity) context;
+				}
+				search_file_name = mainActivity.search_file_name;
+				search_in_dir = mainActivity.search_in_dir;
+				search_file_type = mainActivity.search_file_type;
+				search_whole_word = mainActivity.search_whole_word;
+				search_case_sensitive = mainActivity.search_case_sensitive;
+				search_regex = mainActivity.search_regex;
+				search_lower_limit_size = mainActivity.search_lower_limit_size;
+				search_upper_limit_size = mainActivity.search_upper_limit_size;
+				removeCancelableFragment();
+				cancelableProgressBarDialog = CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
+				cancelableProgressBarDialog.set_title(getString(R.string.searching));
+				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				if (LIBRARY_CATEGORIES.contains(fileclickselected)) {
+					viewModel.getLibraryList(fileclickselected);
+				} else {
+					viewModel.populateLibrarySearchFilePOJO(fileObjectType, search_in_dir, file_click_selected_name, fileclickselected, search_file_name, search_file_type, search_whole_word, search_case_sensitive, search_regex, search_lower_limit_size, search_upper_limit_size);
+				}
+			} else {
+				viewModel.populateFilePOJO(fileObjectType, fileclickselected, currentUsbFile, archive_view, false);
 			}
 		}
 		else
 		{
-			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
+			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+			after_filledFilePojos_procedure();
 		}
+
 
 		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
@@ -445,7 +399,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
-					//mainActivity.createLibraryCache();
 				}
 				else
 				{
@@ -488,7 +441,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
-					//mainActivity.createLibraryCache();
 				}
 				else
 				{

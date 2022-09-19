@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
@@ -158,18 +157,18 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-//    public void getLibraryList(String media_category, boolean isCancelled)
-//    {
-//        ExecutorService executorService=MyExecutorService.getExecutorService();
-//        executorService.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-//                repositoryClass.getLibraryList(application,media_category,isCancelled);
-//            }
-//        });
-//
-//    }
+    public void getLibraryList(String media_category, boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getLibraryList(application,media_category,isCancelled);
+            }
+        });
+
+    }
 
 
     public void getDownloadList(boolean isCancelled)

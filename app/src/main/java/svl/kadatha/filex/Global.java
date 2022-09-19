@@ -42,7 +42,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,7 +88,7 @@ public class Global
 	static final String TEXT_REGEX="(?i)txt|java|xml|cpp|c|h|log";
 	static final String RTF_REGEX="(?i)rtf";
 	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp";
-	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4a";
+	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4r";
 	static final String VIDEO_REGEX="(?i)3gp|mp4|avi|mov|flv|wmv|webm";
 	static final String ZIP_REGEX="(?i)zip|rar";
 	static final String UNIX_ARCHIVE_REGEX="(?i)tar|gzip|gz";

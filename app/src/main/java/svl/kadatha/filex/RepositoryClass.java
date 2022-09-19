@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -20,7 +19,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class RepositoryClass {
 
-    private static volatile RepositoryClass repositoryClass;
     int download_count,document_count,image_count,audio_count,video_count,archive_count,apk_count;
     MutableLiveData<Integer> download_mutable_count=new MutableLiveData<>();
     MutableLiveData<Integer> document_mutable_count=new MutableLiveData<>();
@@ -32,129 +30,59 @@ public class RepositoryClass {
 
     private RepositoryClass(){}
 
+    private static final class RepositoryClassHolder {
+        static final RepositoryClass repositoryClass = new RepositoryClass();
+    }
+
     public static RepositoryClass getRepositoryClass()
     {
-        if(repositoryClass==null)
-        {
-            synchronized (RepositoryClass.class)
-            {
-                if(repositoryClass==null)
-                {
-                    repositoryClass=new RepositoryClass();
-                }
-            }
-
-        }
-        return repositoryClass;
+        return RepositoryClassHolder.repositoryClass;
     }
 
-    public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
-    {
-        if(fill_file_size_also)
-        {
-            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
-            {
-                List<FilePOJO>filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-                if(filePOJOS.get(0).getTotalSizePercentage()==null)
-                {
-                    fill_file_size(fileObjectType,fileclickselected,filePOJOS);
-                }
-            }
-            else
-            {
-                List<FilePOJO>filePOJOS=new ArrayList<>();
-                List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-                FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-                fill_file_size(fileObjectType,fileclickselected,filePOJOS);
-            }
-        }
-        else
-        {
-            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) return;
-            List<FilePOJO>filePOJOS=new ArrayList<>();
-            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-            FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-        }
-    }
-
-    public void fill_file_size(FileObjectType fileObjectType, String fileclickselected, List<FilePOJO>filePOJOS)
-    {
-        long storage_space=0L;
-        String key=fileObjectType+fileclickselected;
-        for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
-        {
-            if(Global.IS_CHILD_FILE(key,entry.getKey()))
-            {
-                storage_space=entry.getValue().getTotalSpace();
-                break;
-            }
-        }
-        final long final_storage_space = storage_space;
-        fill_file_size(filePOJOS,final_storage_space);
-    }
-
-    private void get_size(File f, int[]total_no_of_files,long[]total_size_of_files,boolean include_folder)
-    {
-        int no_of_files=0;
-        long size_of_files=0L;
-        //if(isCancelled()) return;
-        if(f.isDirectory())
-        {
-            File[] files_array=f.listFiles();
-            if(files_array!=null && files_array.length!=0)
-            {
-                for(File file:files_array)
-                {
-                    get_size(file,total_no_of_files,total_size_of_files,include_folder);
-                }
-                if(include_folder)
-                {
-                    no_of_files++;
-                }
-            }
-        }
-        else
-        {
-            no_of_files++;
-            size_of_files+=f.length();
-        }
-
-        total_no_of_files[0]+=no_of_files;
-        total_size_of_files[0]+=size_of_files;
-    }
-
-
-    private boolean fill_file_size(List<FilePOJO> filePOJOS,long volume_storage_size)
-    {
-        if(filePOJOS==null) return true;
-        int[] total_no_of_files=new int[1];long[] total_size_of_files=new long[1];
-        int size=filePOJOS.size();
-        for(int i=0;i<size;++i)
-        {
-            //if(isCancelled()) return true;
-            FilePOJO filePOJO=filePOJOS.get(i);
-            total_no_of_files[0]=0; total_size_of_files[0]=0;
-            if(filePOJO.getTotalSizePercentage()!=null) continue;
-            if(filePOJO.getIsDirectory())
-            {
-                get_size(new File(filePOJO.getPath()),total_no_of_files,total_size_of_files,true);
-                filePOJO.setTotalFiles(total_no_of_files[0]);
-                filePOJO.setTotalSizeLong(total_size_of_files[0]);
-                filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files[0]));
-                double percentage = total_size_of_files[0] * 100.0/ volume_storage_size;
-                filePOJO.setTotalSizePercentageDouble(percentage);
-                filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
-            }
-            else
-            {
-                double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
-                filePOJO.setTotalSizePercentageDouble(percentage);
-                filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
-            }
-
-        }
-        return true;
-    }
+//    public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
+//    {
+//        if(fill_file_size_also)
+//        {
+//            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+//            {
+//                List<FilePOJO>filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
+//                if(filePOJOS.get(0).getTotalSizePercentage()==null)
+//                {
+//                    fill_file_size(fileObjectType,fileclickselected,filePOJOS);
+//                }
+//            }
+//            else
+//            {
+//                List<FilePOJO>filePOJOS=new ArrayList<>();
+//                List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+//                FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
+//                fill_file_size(fileObjectType,fileclickselected,filePOJOS);
+//            }
+//        }
+//        else
+//        {
+//            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) return;
+//            List<FilePOJO>filePOJOS=new ArrayList<>();
+//            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+//            FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
+//        }
+//    }
+//
+//    public void fill_file_size(FileObjectType fileObjectType, String fileclickselected, List<FilePOJO>filePOJOS)
+//    {
+//        long storage_space=0L;
+//        String key=fileObjectType+fileclickselected;
+//        for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
+//        {
+//            if(Global.IS_CHILD_FILE(key,entry.getKey()))
+//            {
+//                storage_space=entry.getValue().getTotalSpace();
+//                break;
+//            }
+//        }
+//        final long final_storage_space = storage_space;
+//        fill_file_size(filePOJOS,final_storage_space);
+//    }
 
 
     public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
@@ -326,7 +254,8 @@ public class RepositoryClass {
 
         if(cursor!=null && cursor.getCount()>0)
         {
-            boolean extract_icon= media_category != null && media_category.equals("APK");
+            boolean extract_icon= media_category.equals("APK");
+
             while(cursor.moveToNext())
             {
                 if(isCancelled)
