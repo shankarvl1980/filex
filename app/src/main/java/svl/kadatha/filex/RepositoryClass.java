@@ -65,18 +65,7 @@ public class RepositoryClass {
                 List<FilePOJO>filePOJOS=new ArrayList<>();
                 List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
                 FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-                long storage_space=0L;
-                String key=fileObjectType+fileclickselected;
-                for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
-                {
-                    if(Global.IS_CHILD_FILE(key,entry.getKey()))
-                    {
-                        storage_space=entry.getValue().getTotalSpace();
-                        break;
-                    }
-                }
-                final long final_storage_space = storage_space;
-                fill_file_size(filePOJOS,final_storage_space);
+                fill_file_size(fileObjectType,fileclickselected,filePOJOS);
             }
         }
         else
@@ -123,7 +112,6 @@ public class RepositoryClass {
                     no_of_files++;
                 }
             }
-
         }
         else
         {

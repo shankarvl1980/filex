@@ -453,6 +453,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		}
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss();
+	}
 
 	public void clear_selection()
 	{

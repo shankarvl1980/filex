@@ -590,7 +590,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		Global.CLEAR_CACHE();
 	}
 
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

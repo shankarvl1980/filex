@@ -518,6 +518,11 @@ public class AlbumDetailsDialog extends DialogFragment
 		}
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+	}
 
 	private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
 	{
