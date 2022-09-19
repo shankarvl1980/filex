@@ -39,51 +39,6 @@ public class RepositoryClass {
         return RepositoryClassHolder.repositoryClass;
     }
 
-//    public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
-//    {
-//        if(fill_file_size_also)
-//        {
-//            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
-//            {
-//                List<FilePOJO>filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-//                if(filePOJOS.get(0).getTotalSizePercentage()==null)
-//                {
-//                    fill_file_size(fileObjectType,fileclickselected,filePOJOS);
-//                }
-//            }
-//            else
-//            {
-//                List<FilePOJO>filePOJOS=new ArrayList<>();
-//                List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-//                FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-//                fill_file_size(fileObjectType,fileclickselected,filePOJOS);
-//            }
-//        }
-//        else
-//        {
-//            if(Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) return;
-//            List<FilePOJO>filePOJOS=new ArrayList<>();
-//            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-//            FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
-//        }
-//    }
-//
-//    public void fill_file_size(FileObjectType fileObjectType, String fileclickselected, List<FilePOJO>filePOJOS)
-//    {
-//        long storage_space=0L;
-//        String key=fileObjectType+fileclickselected;
-//        for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
-//        {
-//            if(Global.IS_CHILD_FILE(key,entry.getKey()))
-//            {
-//                storage_space=entry.getValue().getTotalSpace();
-//                break;
-//            }
-//        }
-//        final long final_storage_space = storage_space;
-//        fill_file_size(filePOJOS,final_storage_space);
-//    }
-
 
     public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
     {
