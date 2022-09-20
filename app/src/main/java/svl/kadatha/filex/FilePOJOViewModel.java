@@ -29,7 +29,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled=false;
-    private Future<?> future1,future2,future3, future4;
+    private Future<?> future1,future2,future3, future4, future5, future6, future7, future8,future9,future10,future11;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
@@ -60,6 +60,13 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
         if(future4!=null) future4.cancel(mayInterruptRunning);
+        if(future5!=null) future5.cancel(mayInterruptRunning);
+        if(future6!=null) future6.cancel(mayInterruptRunning);
+        if(future7!=null) future7.cancel(mayInterruptRunning);
+        if(future8!=null) future8.cancel(mayInterruptRunning);
+        if(future9!=null) future9.cancel(mayInterruptRunning);
+        if(future10!=null) future10.cancel(mayInterruptRunning);
+        if(future11!=null) future11.cancel(mayInterruptRunning);
         isCancelled=true;
     }
 
@@ -190,23 +197,115 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void getLibraryList(String media_category)
+//    public synchronized void getLibraryList(String media_category)
+//    {
+//        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+//        ExecutorService executorService=MyExecutorService.getExecutorService();
+//        future3=executorService.submit(new Runnable() {
+//        @Override
+//        public void run() {
+//            filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
+//            RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+//            repositoryClass.getLibraryList(application,media_category,isCancelled);
+//            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+//            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+//            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+//            }
+//        });
+//    }
+
+
+    public void getDownloadList(boolean isCancelled)
     {
-        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
-        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
-        @Override
-        public void run() {
-            filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
-            RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-            repositoryClass.getLibraryList(application,media_category,isCancelled);
-            filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getDownLoadList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getDocumentList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future5=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getDocumentList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getImageList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future6=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getImageList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getAudioList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future7=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getAudioList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getVideoList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future8=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getVideoList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getArchiveList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future9=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getArchiveList(application,isCancelled);
+            }
+        });
+
+    }
+
+    public void getApkList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future10=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getApkList(application,isCancelled);
             }
         });
     }
+
 
 
     public synchronized void populateLibrarySearchFilePOJO(FileObjectType fileObjectType, Set<FilePOJO> search_in_dir,String library_or_search,String fileclickselected,String search_file_name,String search_file_type,boolean search_whole_word,boolean search_case_sensitive,boolean search_regex,long search_lower_limit_size,long search_upper_limit_size)
@@ -216,7 +315,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         count=0;
         mutable_file_count.postValue(count);
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future3=executorService.submit(new Runnable() {
+        future11=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 if(filePOJOS!=null)

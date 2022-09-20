@@ -566,29 +566,30 @@ public class FilePOJOUtil {
             name=deleted_files_name_list.get(i);
             remove_from_FilePOJO(name,filePOJOs);
             remove_from_FilePOJO(name,filePOJOs_filtered);
-            String folder_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
-            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(folder_to_be_removed),fileObjectType);
+            String file_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
+            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_to_be_removed),fileObjectType);
 
-            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Download"))
+            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Download"))
             {
-                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Document"))
+                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Document"))
                 {
-                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Image"))
+                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Image"))
                     {
-                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Audio"))
+                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Audio"))
                         {
-                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Video"))
+                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Video"))
                             {
-                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed,"Archive"))
+                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Archive"))
                                 {
-                                    REMOVE_FROM_LIBRARY_CACHE(fileObjectType,folder_to_be_removed, "APK");
+                                    REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "APK");
                                 }
                             }
                         }
                     }
                 }
             }
-            REMOVE_FROM_AUDIO_CACHE(fileObjectType,folder_to_be_removed);
+
+            REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
 
         Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
@@ -642,9 +643,7 @@ public class FilePOJOUtil {
                     iterator.remove();
                     return true;
                 }
-
             }
-
         }
         return false;
     }

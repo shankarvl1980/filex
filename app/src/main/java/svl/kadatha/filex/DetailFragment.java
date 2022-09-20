@@ -268,9 +268,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected)) {
-			if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
-				if (mainActivity == null) {
+		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+		{
+			if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE)
+			{
+				if (mainActivity == null)
+				{
 					context = getContext();
 					mainActivity = (MainActivity) context;
 				}
@@ -287,12 +290,17 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				if (LIBRARY_CATEGORIES.contains(fileclickselected)) {
-					viewModel.getLibraryList(fileclickselected);
-				} else {
+				if (LIBRARY_CATEGORIES.contains(fileclickselected))
+				{
+					getLibraryList(fileclickselected);
+				}
+				else
+				{
 					viewModel.populateLibrarySearchFilePOJO(fileObjectType, search_in_dir, file_click_selected_name, fileclickselected, search_file_name, search_file_type, search_whole_word, search_case_sensitive, search_regex, search_lower_limit_size, search_upper_limit_size);
 				}
-			} else {
+			}
+			else
+			{
 				viewModel.populateFilePOJO(fileObjectType, fileclickselected, currentUsbFile, archive_view, false);
 			}
 		}
@@ -302,7 +310,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
 			after_filledFilePojos_procedure();
 		}
-
 
 		viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
@@ -389,41 +396,21 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			modification_observed=false;
 			local_activity_delete=false;
-			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+			if(MainActivity.SHOW_HIDDEN_FILE)
 			{
-				removeCancelableFragment();
-				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
-				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				if(LIBRARY_CATEGORIES.contains(fileclickselected))
-				{
-					viewModel.getLibraryList(fileclickselected);
-				}
-				else
-				{
-					viewModel.populateLibrarySearchFilePOJO(fileObjectType,search_in_dir,file_click_selected_name,fileclickselected,search_file_name,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
-				}
+				filePOJO_list=viewModel.filePOJOS;
+				totalFilePOJO_list=viewModel.filePOJOS;
 			}
 			else
 			{
-				if(MainActivity.SHOW_HIDDEN_FILE)
-				{
-					filePOJO_list=viewModel.filePOJOS;
-					totalFilePOJO_list=viewModel.filePOJOS;
-				}
-				else
-				{
-					filePOJO_list=viewModel.filePOJOS_filtered;
-					totalFilePOJO_list=viewModel.filePOJOS_filtered;
-				}
-				totalFilePOJO_list_Size=totalFilePOJO_list.size();
-				file_list_size=totalFilePOJO_list_Size;
-				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
-				Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
-				adapter.notifyDataSetChanged();
+				filePOJO_list=viewModel.filePOJOS_filtered;
+				totalFilePOJO_list=viewModel.filePOJOS_filtered;
 			}
-
+			totalFilePOJO_list_Size=totalFilePOJO_list.size();
+			file_list_size=totalFilePOJO_list_Size;
+			mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+			adapter.notifyDataSetChanged();
 		}
 
 		else if(modification_observed)
@@ -440,7 +427,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
-					viewModel.getLibraryList(fileclickselected);
+					getLibraryList(fileclickselected);
 				}
 				else
 				{
@@ -501,6 +488,34 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 
 			TO_BE_MOVED_TO_FILE_POJO=null;
+		}
+	}
+
+	private void getLibraryList(String media_category)
+	{
+		switch (media_category)
+		{
+			case "Download":
+				viewModel.getDownloadList(false);
+				break;
+			case "Document":
+				viewModel.getDocumentList(false);
+				break;
+			case "Image":
+				viewModel.getImageList(false);
+				break;
+			case "Audio":
+				viewModel.getAudioList(false);
+				break;
+			case "Video":
+				viewModel.getVideoList(false);
+				break;
+			case "Archive":
+				viewModel.getArchiveList(false);
+				break;
+			case "APK":
+				viewModel.getApkList(false);
+				break;
 		}
 	}
 

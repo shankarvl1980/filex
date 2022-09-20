@@ -40,15 +40,15 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
-    {
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
-    }
+//    public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
+//    {
+//        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
+//        List<FilePOJO>filePOJOS=new ArrayList<>();
+//        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+//        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
+//        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+//        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+//    }
 
     public synchronized void getDownLoadList(Context context,boolean isCancelled)
     {

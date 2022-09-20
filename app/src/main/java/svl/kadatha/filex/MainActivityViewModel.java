@@ -157,19 +157,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-    public void getLibraryList(String media_category, boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getLibraryList(application,media_category,isCancelled);
-            }
-        });
-
-    }
-
 
     public void getDownloadList(boolean isCancelled)
     {
