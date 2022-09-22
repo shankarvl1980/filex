@@ -29,7 +29,7 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (mime_type TEXT,file_type TEXT, app_name TEXT, app_package_name TEXT)");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (mime_type TEXT PRIMARY KEY,file_type TEXT, app_name TEXT, app_package_name TEXT)");
     }
 
     @Override
@@ -147,7 +147,7 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper
         contentValues.put("file_type",file_type);
         contentValues.put("app_name",app_name);
         contentValues.put("app_package_name",app_package_name);
-        return db.insert(TABLE,null,contentValues);
+        return db.insertWithOnConflict(TABLE,null,contentValues,SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public void deleteTable()
