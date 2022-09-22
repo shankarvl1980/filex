@@ -118,6 +118,7 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
+            if(df!=null)df.local_activity_delete=true; //to avoid modification observed which causes re-populate of filepojos
         }
 
     }
@@ -293,12 +294,12 @@ public class ArchiveDeletePasteServiceUtil {
         if(counter_no_files>0)
         {
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder,sourceFileObjectType);
-            notification_content=context.getString(R.string.deleted_selected_files)+" "+source_folder;
+            notification_content=sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.deleted_selected_files) : context.getString(R.string.deleted_selected_files)+" "+source_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
         }
         else
         {
-            notification_content=context.getString(R.string.could_not_delete_selected_files)+" "+source_folder;
+            notification_content=sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.could_not_delete_selected_files) : context.getString(R.string.could_not_delete_selected_files)+" "+source_folder;
         }
 
         return notification_content;

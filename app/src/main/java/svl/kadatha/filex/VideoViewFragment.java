@@ -42,7 +42,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private Integer idx;
 	private boolean firststart;
 	private boolean wasPlaying,isPlaying;
-	private VideoViewClickListener videoViewClickListener;
 	private VideoPositionListener videoPositionListener;
 	private AudioManager audio_manager;
 	private Handler handler, handler_seekbar_updation;
@@ -61,11 +60,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private int toolbar_height;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
+	private VideoViewActivity videoViewActivity;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		videoViewActivity=(VideoViewActivity)context;
 		audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
@@ -141,22 +142,10 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 					}
 					play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-					if(((VideoViewActivity)context).toolbar_visible!=bottom_butt_visible)
-					{
-						if(videoViewClickListener!=null)
-						{
-							videoViewClickListener.onVideoViewClick();
-						}
-					}
 
 				}
-				else
-				{
-					if(videoViewClickListener!=null)
-					{
-						videoViewClickListener.onVideoViewClick();
-					}
-				}
+
+				videoViewActivity.onClickFragment();
 
 			}
 		});
@@ -742,20 +731,9 @@ private String convertSecondsToHMmSs(int milliseconds)
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		videoViewClickListener=null;
 		videoPositionListener=null;
-
 	}
 
-	interface VideoViewClickListener
-{
-	void onVideoViewClick();
-}
-
-public void setVideoViewClickListener(VideoViewClickListener listener)
-{
-	videoViewClickListener=listener;
-}
 
 interface VideoPositionListener
 {

@@ -77,9 +77,9 @@ public class AllAudioListFragment extends Fragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		list_popupwindowpojos=new ArrayList<>();
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
 
 	}
 
@@ -114,7 +114,7 @@ public class AllAudioListFragment extends Fragment
 
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
-		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
+		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
 		listPopWindow.setContentView(listView);
 		listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);

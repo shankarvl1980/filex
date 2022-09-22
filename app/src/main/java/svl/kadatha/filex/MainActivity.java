@@ -148,7 +148,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public boolean search_whole_word,search_case_sensitive,search_regex;
 	public MainActivityViewModel viewModel;
 	private FileDuplicationViewModel fileDuplicationViewModel;
-
+	private ListPopupWindowPOJO extract_listPopupWindowPOJO,open_listPopupWindowPOJO;
+	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -378,19 +379,22 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         Button delete = actionmode_toolbar.findViewById(R.id.toolbar_btn_4);
         Button overflow = actionmode_toolbar.findViewById(R.id.toolbar_btn_5);
 		
-		
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.compress_popup_list_icon,getString(R.string.compress)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.extract_icon,getString(R.string.extract)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.cut_icon,getString(R.string.move_to)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.open_with_icon,getString(R.string.open_with)));
+		extract_listPopupWindowPOJO=new ListPopupWindowPOJO(R.drawable.extract_icon,getString(R.string.extract),6);
+		open_listPopupWindowPOJO=new ListPopupWindowPOJO(R.drawable.open_with_icon,getString(R.string.open_with),7);
+
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),1));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),2));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.cut_icon,getString(R.string.move_to),3));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),4));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.compress_popup_list_icon,getString(R.string.compress),5));
+		list_popupwindowpojos.add(extract_listPopupWindowPOJO);
+		list_popupwindowpojos.add(open_listPopupWindowPOJO);
 
 
 		listPopWindow=new PopupWindow(context);
 		listView=new ListView(context);
-		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
+		popupWindowAdapter=new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos);
+		listView.setAdapter(popupWindowAdapter);
 		listPopWindow.setContentView(listView);
 		listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -424,7 +428,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					df.progress_bar.setVisibility(View.GONE);
-
 				}
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -441,7 +444,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						{
 							FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
 						}
-
 					}
 
 					viewModel.isExtractionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -796,7 +798,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 
-
 		discoverDevice();
 	}
 
@@ -812,19 +813,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewModel.getArchiveList(false);
 		viewModel.getApkList(false);
 
-//		viewModel.getLibraryList("Download", false);
-//		viewModel.getLibraryList("Document", false);
-//		viewModel.getLibraryList("Image", false);
-//		viewModel.getLibraryList("Audio", false);
-//		viewModel.getLibraryList("Video", false);
-//		viewModel.getLibraryList("Archive", false);
-//		viewModel.getLibraryList("APK", false);
-
 		viewModel.getAppList();
 
 		viewModel.getAudioPOJOList(false);
 		viewModel.getAlbumList(false);
-
 	}
 
 
@@ -1722,8 +1714,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 					public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
 						int size;
-						switch (p3) {
-							case 0:
+						Object idd=listView.getItemAtPosition(p3);
+						int item_id=((ListPopupWindowPOJO)idd).id;
+
+						switch (item_id) {
+							case 1:
 								if ((df.fileObjectType == FileObjectType.FILE_TYPE) || (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE)) {
 									ArrayList<File> file_list_excluding_dir;
 									file_list_excluding_dir = iterate_to_attach_file(df.viewModel.mselecteditemsFilePath);
@@ -1734,7 +1729,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
 								break;
-							case 1:
+							case 2:
 								size = df.viewModel.mselecteditemsFilePath.size();
 								for (int i = 0; i < size; ++i) {
 									files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
@@ -1743,7 +1738,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								PropertiesDialog propertiesDialog = PropertiesDialog.getInstance(files_selected_array,df.fileObjectType);
 								propertiesDialog.show(fm, "properties_dialog");
 								break;
-							case 2:
+
+							case 3:
+								MoveToCopyToProcedure(df,true);
+								break;
+							case 4:
+								MoveToCopyToProcedure(df,false);
+								break;
+							case 5:
 								size = df.viewModel.mselecteditemsFilePath.size();
 								for (int i = 0; i < size; ++i) {
 									files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
@@ -1751,7 +1753,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								ArchiveSetUpDialog archiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
 								archiveSetUpDialog.show(fm, "zip_dialog");
 								break;
-							case 3:
+							case 6:
 								if (df.viewModel.mselecteditemsFilePath.size() != 1) {
 									Global.print(context,getString(R.string.select_only_a_zip_file));
 									break;
@@ -1774,13 +1776,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									Global.print(context,getString(R.string.select_only_a_zip_file));
 								}
 								break;
-							case 4:
-								MoveToCopyToProcedure(df,true);
-								break;
-							case 5:
-								MoveToCopyToProcedure(df,false);
-								break;
-							case 6:
+							case 7:
 								if (df.viewModel.mselecteditemsFilePath.size() != 1) {
 									Global.print(context,getString(R.string.select_only_a_file));
 									break;
@@ -1801,6 +1797,39 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						listPopWindow.dismiss();
 					}
 				});
+
+				if(!list_popupwindowpojos.contains(extract_listPopupWindowPOJO))
+				{
+					list_popupwindowpojos.add(extract_listPopupWindowPOJO);
+				}
+				if(!list_popupwindowpojos.contains(open_listPopupWindowPOJO))
+				{
+					list_popupwindowpojos.add(open_listPopupWindowPOJO);
+				}
+
+				if (df.viewModel.mselecteditemsFilePath.size() != 1) {
+					list_popupwindowpojos.remove(extract_listPopupWindowPOJO);
+					list_popupwindowpojos.remove(open_listPopupWindowPOJO);
+				}
+				else if(df.viewModel.mselecteditemsFilePath.size()==1)
+				{
+					FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0));
+					if(filePOJO.getIsDirectory())
+					{
+						list_popupwindowpojos.remove(extract_listPopupWindowPOJO);
+						list_popupwindowpojos.remove(open_listPopupWindowPOJO);
+					}
+					else
+					{
+						String file_ext = filePOJO.getExt();
+
+						if (file_ext!=null && !file_ext.matches(("(?i)zip"))) {
+							list_popupwindowpojos.remove(extract_listPopupWindowPOJO);
+						}
+					}
+
+				}
+				popupWindowAdapter.notifyDataSetChanged();
 
 				//listPopWindow.showAsDropDown(v,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
 				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0, (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));

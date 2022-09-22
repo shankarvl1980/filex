@@ -240,15 +240,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 			adapter.notifyDataSetChanged();
 		}
-		else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+		else if(modification_observed)
 		{
 			modification_observed=false;
 			local_activity_delete=false;
-			{
-				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
-			}
+			progress_bar.setVisibility(View.VISIBLE);
+			viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 
 			new Thread(new Runnable() {
 				@Override

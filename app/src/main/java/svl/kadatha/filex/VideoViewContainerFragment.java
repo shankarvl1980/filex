@@ -77,9 +77,9 @@ public class VideoViewContainerFragment extends Fragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		list_popupwindowpojos=new ArrayList<>();
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
 		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,context.getResources().getDisplayMetrics());
 	}
 
@@ -107,7 +107,7 @@ public class VideoViewContainerFragment extends Fragment
 
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
-		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
+		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
 		listPopWindow.setContentView(listView);
 		listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -344,6 +344,29 @@ public class VideoViewContainerFragment extends Fragment
 		return frag;
 	}
 
+	public void onVideoViewClick()
+	{
+		//if(toolbar.getGlobalVisibleRect(new Rect()))
+		if(toolbar_visible)
+		{
+			//disappear
+			toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+			floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+			//frag.toolbar.animate().translationY(frag.toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
+			is_menu_opened=false;
+			toolbar_visible=false;
+			handler.removeCallbacks(runnable);
+		}
+		else
+		{
+			//appear
+			toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+			floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+			//frag.toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+			toolbar_visible=true;
+			handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+		}
+	}
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -381,34 +404,6 @@ public class VideoViewContainerFragment extends Fragment
 			int position=viewModel.video_list.get(filePOJO);
 			frag=VideoViewFragment.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
 			viewModel.firststart=false;
-
-			frag.setVideoViewClickListener(new VideoViewFragment.VideoViewClickListener()
-				{
-					public void onVideoViewClick()
-					{
-						//if(toolbar.getGlobalVisibleRect(new Rect()))
-						if(toolbar_visible)
-						{
-							//disappear
-							toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-							floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-							//frag.toolbar.animate().translationY(frag.toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
-							is_menu_opened=false;
-							toolbar_visible=false;
-							handler.removeCallbacks(runnable);
-						}
-						else
-						{
-							//appear
-							toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1)); 
-							floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-							//frag.toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-							toolbar_visible=true;
-							handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-						}
-
-					}
-				});
 
 			frag.setVideoPositionListener(new VideoViewFragment.VideoPositionListener()
 			{

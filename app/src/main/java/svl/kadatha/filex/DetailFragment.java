@@ -289,10 +289,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				cancelableProgressBarDialog = CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
 				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
-				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				if (LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
-					getLibraryList(fileclickselected);
+					viewModel.getLibraryList(fileclickselected);
 				}
 				else
 				{
@@ -418,6 +417,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			mainActivity.actionmode_finish(this,fileclickselected);
 			modification_observed=false;
 			local_activity_delete=false;
+			progress_bar.setVisibility(View.VISIBLE);
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				removeCancelableFragment();
@@ -427,7 +427,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
-					getLibraryList(fileclickselected);
+					viewModel.getLibraryList(fileclickselected);
 				}
 				else
 				{
@@ -436,7 +436,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
 			}
@@ -491,33 +490,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	private void getLibraryList(String media_category)
-	{
-		switch (media_category)
-		{
-			case "Download":
-				viewModel.getDownloadList(false);
-				break;
-			case "Document":
-				viewModel.getDocumentList(false);
-				break;
-			case "Image":
-				viewModel.getImageList(false);
-				break;
-			case "Audio":
-				viewModel.getAudioList(false);
-				break;
-			case "Video":
-				viewModel.getVideoList(false);
-				break;
-			case "Archive":
-				viewModel.getArchiveList(false);
-				break;
-			case "APK":
-				viewModel.getApkList(false);
-				break;
-		}
-	}
 
 	private void removeCancelableFragment()
 	{

@@ -18,18 +18,20 @@ public class ListPopupWindowPOJO
 {
 	final int resource_id;
 	final String menu_name;
+	final int id;
 	
-	ListPopupWindowPOJO(int resource_id, String menu_name)
+	ListPopupWindowPOJO(int resource_id, String menu_name, int id)
 	{
 		this.resource_id=resource_id;
 		this.menu_name=menu_name;
+		this.id=id;
 	}
 
-	public static class PopupWindowAdapater extends ArrayAdapter<ListPopupWindowPOJO>
+	public static class PopupWindowAdapter extends ArrayAdapter<ListPopupWindowPOJO>
 	{
 		final Context context;
 		final List<ListPopupWindowPOJO> list;
-		PopupWindowAdapater(Context context, List<ListPopupWindowPOJO> list)
+		PopupWindowAdapter(Context context, List<ListPopupWindowPOJO> list)
 		{
 			super(context,R.layout.list_popupwindow_layout,list);
 			this.context=context;

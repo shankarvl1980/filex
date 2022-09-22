@@ -40,16 +40,6 @@ public class RepositoryClass {
     }
 
 
-//    public synchronized void getLibraryList(Context context,String media_category,Boolean isCancelled)
-//    {
-//        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category)) return;
-//        List<FilePOJO>filePOJOS=new ArrayList<>();
-//        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-//        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
-//        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-//        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
-//    }
-
     public synchronized void getDownLoadList(Context context,boolean isCancelled)
     {
         String media_category="Download";
@@ -316,7 +306,13 @@ public class RepositoryClass {
         List<AudioPOJO> audio_list=new ArrayList<>();
         AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
         Cursor audio_cursor;
-        Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+        Cursor cursor = null;
+        try
+        {
+            cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);    
+        }
+        catch(SecurityException e){}
+        
         if(cursor!=null && cursor.getCount()>0)
         {
             while(cursor.moveToNext())
@@ -360,7 +356,13 @@ public class RepositoryClass {
     {
         if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
         List<AlbumPOJO>album_list=new ArrayList<>();
-        Cursor cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+        Cursor cursor = null;
+        try
+        {
+            cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+        }
+        catch (SecurityException e){}
+
         if(cursor!=null && cursor.getCount()>0)
         {
             while(cursor.moveToNext())

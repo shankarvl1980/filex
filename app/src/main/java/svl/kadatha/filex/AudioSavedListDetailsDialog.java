@@ -103,8 +103,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		
 
 		list_popupwindowpojos=new ArrayList<>();
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon, getString(R.string.send)));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties)));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon, getString(R.string.send),1));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),2));
 		playing_audio_text_color=getResources().getColor(R.color.light_item_select_text_color);
 		TypedValue typedValue=new TypedValue();
 		Resources.Theme theme=context.getTheme();
@@ -322,7 +322,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
-		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapater(context,list_popupwindowpojos));
+		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
 		listPopWindow.setContentView(listView);
 		listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);

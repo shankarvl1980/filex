@@ -282,7 +282,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
             adapter.notifyDataSetChanged();
         }
-        else if(modification_observed)// && ArchiveDeletePasteFileService1.SERVICE_COMPLETED && ArchiveDeletePasteFileService2.SERVICE_COMPLETED && ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+        else if(modification_observed)
         {
             storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
             modification_observed=false;
@@ -637,21 +637,31 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
-            adapter.notifyDataSetChanged();
-            file_list_size=filePOJO_list.size();
-            storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
-            totalFilePOJO_list_Size=totalFilePOJO_list.size();
-
-            if(file_list_size==0)
+            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
             {
-                recycler_view.setVisibility(View.GONE);
-                folder_empty_textview.setVisibility(View.VISIBLE);
+                progress_bar.setVisibility(View.VISIBLE);
+                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile,false);
             }
             else
             {
-                recycler_view.setVisibility(View.VISIBLE);
-                folder_empty_textview.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
+                file_list_size=filePOJO_list.size();
+                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+                totalFilePOJO_list_Size=totalFilePOJO_list.size();
+
+                if(file_list_size==0)
+                {
+                    recycler_view.setVisibility(View.GONE);
+                    folder_empty_textview.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    recycler_view.setVisibility(View.VISIBLE);
+                    folder_empty_textview.setVisibility(View.GONE);
+                }
             }
+
         }
 
     }

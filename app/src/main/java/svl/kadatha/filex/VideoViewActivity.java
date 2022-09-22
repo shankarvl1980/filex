@@ -16,12 +16,13 @@ public class VideoViewActivity extends BaseActivity
 	private Context context;
 	TinyDB tinyDB;
 	public int current_page_idx;
-	public boolean toolbar_visible,fromArchiveView;
+	public boolean fromArchiveView;
 	public FileObjectType fileObjectType;
 	public boolean fromThirdPartyApp;
 	public String source_folder;
 	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
 	public boolean clear_cache;
+	private VideoViewContainerFragment videoViewContainerFragment;
 
 
     @Override
@@ -35,7 +36,6 @@ public class VideoViewActivity extends BaseActivity
 		tinyDB=new TinyDB(context);
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
-		toolbar_visible=true;
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)
@@ -47,9 +47,10 @@ public class VideoViewActivity extends BaseActivity
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 			if(file_path ==null) file_path =PathUtil.getPath(context,data);
+
 			if (savedInstanceState==null)
 			{
-				fm.beginTransaction().replace(R.id.activity_blank_view_container, VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType),"").commit();
+				fm.beginTransaction().replace(R.id.activity_blank_view_container,VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType),"").commit();
 			}
 
 		}
@@ -76,6 +77,7 @@ public class VideoViewActivity extends BaseActivity
 		// TODO: Implement this method
 		super.onStart();
 		clear_cache=true;
+		videoViewContainerFragment=(VideoViewContainerFragment)fm.findFragmentById(R.id.activity_blank_view_container);
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 
@@ -111,5 +113,12 @@ public class VideoViewActivity extends BaseActivity
 		super.onBackPressed();
 	}
 
+	public void onClickFragment()
+	{
+		if(videoViewContainerFragment!=null)
+		{
+			videoViewContainerFragment.onVideoViewClick();
+		}
+	}
 
 }
