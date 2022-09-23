@@ -329,12 +329,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 
-		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-			@Override
-			public void onChanged(Integer integer) {
-				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+integer);
-			}
-		});
+//		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+//			@Override
+//			public void onChanged(Integer integer) {
+//				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+integer);
+//			}
+//		});
 
 		extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
 		extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -464,7 +464,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		totalFilePOJO_list_Size=totalFilePOJO_list.size();
 		file_list_size=totalFilePOJO_list_Size;
-		mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
 
 		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 		adapter=new DetailRecyclerViewAdapter(context,archive_view);
@@ -488,6 +487,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 			TO_BE_MOVED_TO_FILE_POJO=null;
 		}
+		mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
 	}
 
 

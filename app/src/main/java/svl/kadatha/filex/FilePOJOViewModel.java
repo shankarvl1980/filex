@@ -40,7 +40,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
     private int count=0;
-    public final MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
+    //public final MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
 
 
     public FilePOJOViewModel(@NonNull Application application) {
@@ -102,7 +102,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     fill_file_size(filePOJOS,final_storage_space);
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-                mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
         });
     }
@@ -127,7 +127,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
                 final long final_storage_space = storage_space;
                 fill_file_size(filePOJOS,final_storage_space);
-                mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -234,7 +234,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-                mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
         });
 
@@ -245,7 +245,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         count=0;
-        mutable_file_count.postValue(count);
+        //mutable_file_count.postValue(count);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future11=executorService.submit(new Runnable() {
             @Override
@@ -267,7 +267,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     filePOJOS_filtered=filePOJOS;
-                    mutable_file_count.postValue(filePOJOS.size());
+          //          mutable_file_count.postValue(filePOJOS.size());
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                     return;
                 }
@@ -468,7 +468,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     f_pojos.add(filePOJO);
                     f_pojos_filtered.add(filePOJO);
                     count++;
-                    mutable_file_count.postValue(count);
+            //        mutable_file_count.postValue(count);
                 }
             }
             cursor.close();
@@ -493,7 +493,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 f_pojos.add(filePOJO);
                 f_pojos_filtered.add(filePOJO);
                 count++;
-                mutable_file_count.postValue(count);
+              //  mutable_file_count.postValue(count);
             }
         }
     }
@@ -535,7 +535,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     }
                 }
-                mutable_file_count.postValue(count);
+                //mutable_file_count.postValue(count);
             }
             catch(final PatternSyntaxException e)
             {
@@ -582,7 +582,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         count++;
                     }
                 }
-                mutable_file_count.postValue(count);
+                //mutable_file_count.postValue(count);
             }
             catch(final PatternSyntaxException e)
             {

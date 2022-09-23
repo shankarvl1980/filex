@@ -184,12 +184,12 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			}
 		});
 
-		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-			@Override
-			public void onChanged(Integer integer) {
-				fileSelectorActivity.file_number.setText(""+integer);
-			}
-		});
+//		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+//			@Override
+//			public void onChanged(Integer integer) {
+//				fileSelectorActivity.file_number.setText(""+integer);
+//			}
+//		});
 
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override

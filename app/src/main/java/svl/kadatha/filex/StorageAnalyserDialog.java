@@ -231,12 +231,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             }
         });
 
-        viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+integer);
-            }
-        });
+//        viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+//            @Override
+//            public void onChanged(Integer integer) {
+//                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+integer);
+//            }
+//        });
 
         ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
