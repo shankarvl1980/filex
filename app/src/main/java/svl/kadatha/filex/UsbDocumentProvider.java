@@ -105,9 +105,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if(CHECKED_TIMES<2)onCreate();
-                Log.d(Global.TAG,"broadcast received here at usbdocument provider");
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    Log.d(Global.TAG,"broadcast received and permission granted");
                     discoverDevice(device);
                 }
             }

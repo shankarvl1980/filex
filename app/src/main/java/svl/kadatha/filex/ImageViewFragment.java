@@ -143,7 +143,7 @@ public class ImageViewFragment extends Fragment
 					{
 						case 0:
 
-							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp)
+							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -160,7 +160,7 @@ public class ImageViewFragment extends Fragment
 								src_uri=data;
 
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE)
+							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -175,7 +175,7 @@ public class ImageViewFragment extends Fragment
 							break;
 							
 						case 2:
-							if(viewModel.fromThirdPartyApp)
+							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -192,7 +192,7 @@ public class ImageViewFragment extends Fragment
 								uri=data;
 
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE)
+							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								uri=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -601,8 +601,6 @@ public class ImageViewFragment extends Fragment
 			// TODO: Implement this method
 			return albumList.get(position).getName();
 		}
-
-
 	}
 
 

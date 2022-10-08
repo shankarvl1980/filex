@@ -467,7 +467,7 @@ public class ArchiveDeletePasteServiceUtil {
             else if(destFileObjectType==FileObjectType.USB_TYPE)
             {
                 UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_dest_file_path);
-                parent_dir_exists= usbFile != null;
+                parent_dir_exists= (usbFile != null);
 
             }
             else
@@ -528,23 +528,23 @@ public class ArchiveDeletePasteServiceUtil {
                 if(usbFile!=null)
                 {
                     String name=dest_file.getName();
-                    FileUtil.createUsbFile(usbFile,name);
-                    UsbFile childUsbFile=FileUtil.getUsbFile(usbFile,name);
+                    UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
+                    if(targetUsbFile!=null) FileUtil.deleteUsbFile(targetUsbFile);
+                    UsbFile childUsbFile=usbFile.createFile(name);
                     if(!childUsbFile.isDirectory()) outStream=new UsbFileOutputStream(childUsbFile);
-
                 }
             }
 
             if(outStream!=null)
             {
-                BufferedOutputStream bufferedoutStream=new BufferedOutputStream(outStream);
+                BufferedOutputStream bufferedOutStream=new BufferedOutputStream(outStream);
                 byte[] b=new byte[FileUtil.BUFFER_SIZE];
                 int bytesread;
                 while((bytesread=zipInputStream.read(b))!=-1)
                 {
-                    bufferedoutStream.write(b,0,bytesread);
+                    bufferedOutStream.write(b,0,bytesread);
                 }
-                bufferedoutStream.close();
+                bufferedOutStream.close();
 
             }
 

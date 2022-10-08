@@ -348,6 +348,7 @@
 	<string name="select_only_a_file">Select only a file</string>
     <string name="eject_usb">Eject Usb</string>
     <string name="recognise_usb_flash_drive">Recognise Usb Flash Drive</string>
+    <string name="file_is_big_copy_to_device_storage">File is big. Copy to device storage</string>
 
 
     <string-array name="library_categories">

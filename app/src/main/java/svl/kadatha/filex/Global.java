@@ -199,6 +199,8 @@ public class Global
 
 	static final String TAG="shankar";
 
+	static final long CACHE_FILE_MAX_LIMIT=1024*1024*15;
+
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
 		List<UriPermission> permission_list=context.getContentResolver().getPersistedUriPermissions();

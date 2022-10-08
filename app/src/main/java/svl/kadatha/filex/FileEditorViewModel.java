@@ -216,11 +216,18 @@ public class FileEditorViewModel extends AndroidViewModel {
                         File cache_file=new File(Global.USB_CACHE_DIR,file_path);
                         if(!cache_file.exists())
                         {
-                            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-                            if(targetUsbFile!=null)
+                            File parent_file=cache_file.getParentFile();
+                            if(parent_file!=null)
                             {
-                                FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                FileUtil.mkdirsNative(parent_file);
+                                FileUtil.createNativeNewFile(cache_file);
+                                UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+                                if(targetUsbFile!=null)
+                                {
+                                    FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                }
                             }
+
                         }
 
                         currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,false,FileObjectType.FILE_TYPE);

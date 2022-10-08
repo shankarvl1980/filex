@@ -1785,7 +1785,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									Global.print(context,getString(R.string.select_only_a_file));
 									break;
 								}
-								df.file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true);
+								df.file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true,filePOJO.getSizeLong());
 								break;
 							default:
 								break;
@@ -2184,14 +2184,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onReceive(Context p1, Intent intent)
 		{
 			// TODO: Implement this method
-			Log.d(Global.TAG,"broadcast received");
 			String action = intent.getAction();
-			Log.d(Global.TAG,action);
 			if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
 				USB_ATTACHED=intent.getBooleanExtra(UsbDocumentProvider.USB_ATTACHED,false);
 				if(USB_ATTACHED)
 				{
-					Log.d(Global.TAG,"usb attached");
 					setupDevice();
 				}
 				else

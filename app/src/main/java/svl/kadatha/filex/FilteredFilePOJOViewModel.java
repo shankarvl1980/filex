@@ -9,11 +9,13 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -102,11 +104,18 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         File cache_file=new File(Global.USB_CACHE_DIR,file_path);
                         if(!cache_file.exists())
                         {
-                            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-                            if(targetUsbFile!=null)
+                            File parent_file=cache_file.getParentFile();
+                            if(parent_file!=null)
                             {
-                                FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                FileUtil.mkdirsNative(parent_file);
+                                FileUtil.createNativeNewFile(cache_file);
+                                UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+                                if(targetUsbFile!=null)
+                                {
+                                    FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                }
                             }
+
                         }
 
                         currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,false,FileObjectType.FILE_TYPE);
@@ -297,11 +306,18 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         File cache_file=new File(Global.USB_CACHE_DIR,file_path);
                         if(!cache_file.exists())
                         {
-                            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-                            if(targetUsbFile!=null)
+                            File parent_file=cache_file.getParentFile();
+                            if(parent_file!=null)
                             {
-                                FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                FileUtil.mkdirsNative(parent_file);
+                                FileUtil.createNativeNewFile(cache_file);
+                                UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+                                if(targetUsbFile!=null)
+                                {
+                                    FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                                }
                             }
+
                         }
 
                         currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,false,FileObjectType.FILE_TYPE);
@@ -331,7 +347,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     }
                     else if(fileObjectType==FileObjectType.USB_TYPE)
                     {
-                        pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(data,"r"));
+                        Uri uri= FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
+                        pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(uri,"r"));
                     }
                     else if(fileObjectType==FileObjectType.ROOT_TYPE)
                     {

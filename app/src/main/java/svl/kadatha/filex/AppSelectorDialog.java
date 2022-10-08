@@ -39,7 +39,8 @@ public class AppSelectorDialog extends DialogFragment
     private CheckBox remember_app_check_box;
     private String mime_type;
     private String file_type;
-
+    private FileObjectType fileObjectType;
+    private long file_size;
     private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
     private Intent intent;
@@ -75,7 +76,8 @@ public class AppSelectorDialog extends DialogFragment
             }
             boolean clear_top = bundle.getBoolean("clear_top");
             boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
-            FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            file_size=bundle.getLong("file_size");
             intent=new Intent(Intent.ACTION_VIEW);
             FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,fromArchiveView,clear_top,data);
         }
@@ -87,7 +89,7 @@ public class AppSelectorDialog extends DialogFragment
 
     }
 
-    public static AppSelectorDialog getInstance(Uri data, String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType)
+    public static AppSelectorDialog getInstance(Uri data, String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType,long file_size)
     {
         AppSelectorDialog appSelectorDialog=new AppSelectorDialog();
         Bundle bundle=new Bundle();
@@ -97,6 +99,7 @@ public class AppSelectorDialog extends DialogFragment
         bundle.putBoolean("clear_top",clear_top);
         bundle.putBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,fromArchiveView);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
+        bundle.putLong("file_size",file_size);
         appSelectorDialog.setArguments(bundle);
         return  appSelectorDialog;
     }
@@ -221,6 +224,14 @@ public class AppSelectorDialog extends DialogFragment
                         }
                         else
                         {
+                            if(fileObjectType.equals(FileObjectType.USB_TYPE) && app_package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
+                            {
+                                Global.print(context,context.getString(R.string.file_is_big_copy_to_device_storage));
+                                defaultAppDatabaseHelper.close();
+                                dismissAllowingStateLoss();
+                                return;
+                            }
+
                             if(Global.FILEX_PACKAGE.equals(app_package_name))
                             {
                                 AppCompatActivity appCompatActivity=(AppCompatActivity)context;

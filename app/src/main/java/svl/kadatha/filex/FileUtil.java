@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -301,14 +302,12 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
 		{
 			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
-
 				bufferedCopy(inStream, outputStream,true,bytes_read);
 				if (cut) {
 					deleteUsbFile(src_usbfile);
 				}
 
 			} catch (Exception e) {
-
 				return false;
 			}
 			// ignore exception
@@ -917,7 +916,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	}
 
-		private static boolean deleteUsbFile(UsbFile usbFile)
+		public static boolean deleteUsbFile(UsbFile usbFile)
 		{
 			try {
 				if(usbFile.getLength()==0)

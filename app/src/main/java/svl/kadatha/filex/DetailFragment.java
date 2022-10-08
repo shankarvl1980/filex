@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -187,7 +188,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
-
+		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));
@@ -266,7 +267,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		folder_empty=v.findViewById(R.id.empty_folder);
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
 		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
 		{
@@ -353,7 +353,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				{
 					if(extractZipFileViewModel.isZipExtracted)
 					{
-						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false);
+						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
 
 					}
 					extractZipFileViewModel.isZipExtracted=false;
@@ -569,7 +569,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public void onActivityResult(ActivityResult result) {
 		if (result.getResultCode()== Activity.RESULT_OK)
 		{
-			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false);
+			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
 			clicked_filepojo=null;
 		}
 		else
@@ -580,7 +580,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 });
 
 
-	public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app)
+	public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app,long file_size)
 	{
 		int idx=file_name.lastIndexOf(".");
 		String file_ext="";
@@ -591,7 +591,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app);
+			FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 			fileTypeSelectDialog.show(mainActivity.fm,"");
 		}
 		else
@@ -611,12 +611,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
-					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path,select_app);
+					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 				 }
 			 }
 			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			 {
-				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType,select_app);
+				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType,select_app,file_size);
 			 }
 		 }
 	}
@@ -675,7 +675,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 							}
 
 
-							if(zip_entry.getSize()>5000000)
+							if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
 							{
 								Global.print(context,getString(R.string.file_is_big_please_extract_to_view));
 								return;
@@ -689,7 +689,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						}
 						else
 						{
-							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false);
+							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
 						}
 
 					}

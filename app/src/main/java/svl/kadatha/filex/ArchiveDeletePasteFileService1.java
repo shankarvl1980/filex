@@ -342,9 +342,15 @@ public class ArchiveDeletePasteFileService1 extends Service
 				parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,dest_folder);
 				if(parentUsbFile!=null)
 				{
-					FileUtil.createUsbFile(parentUsbFile,zip_file_name);
-					zipUsbFile=FileUtil.getUsbFile(parentUsbFile,zip_file_name);
-					outStream=new UsbFileOutputStream(zipUsbFile);
+					UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name));
+					if(targetUsbFile!=null) FileUtil.deleteUsbFile(targetUsbFile);
+					try {
+						zipUsbFile=parentUsbFile.createFile(zip_file_name);
+						outStream=new UsbFileOutputStream(zipUsbFile);
+					} catch (IOException e) {
+
+					}
+
 				}
 			}
 
@@ -716,7 +722,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			File f;
-			Uri zip_uri;
 			BufferedInputStream bufferedInputStream = null;
 			ZipInputStream zipInputStream;
 			try {

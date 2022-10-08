@@ -107,6 +107,7 @@ public class AudioPlayFragment extends Fragment
 					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
 					{
 						activity.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
+						data=activity.data;
 					}
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
@@ -270,7 +271,6 @@ public class AudioPlayFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
-
 					listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
 				}
 			});
@@ -646,46 +646,6 @@ public class AudioPlayFragment extends Fragment
 	{
 		audioPlayViewModel.fetchAlbumArt(audiofilename,audiofilepath);
 	}
-//	public void setTitleArt(String audiofilename,final String audiofilepath)
-//	{
-//
-//		audio_file_name=audiofilename;
-//		if(audio_name_tv!=null && album_art_imageview!=null)
-//		{
-//			set_title_art(audiofilepath);
-//		}
-//		else
-//		{
-//			handler_for_art.post(new Runnable()
-//			{
-//				public void run()
-//				{
-//					if(audio_name_tv!=null && album_art_imageview!=null)
-//					{
-//						set_title_art(audiofilepath);
-//						handler_for_art.removeCallbacks(this);
-//					}
-//					else
-//					{
-//						handler_for_art.postDelayed(this,100);
-//					}
-//				}
-//			});
-//		}
-//
-//	}
-	
-//	private void set_title_art(String audiofilepath)
-//	{
-//		audio_name_tv.setText(audio_file_name);
-//		album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
-//		if(album_art==null)
-//		{
-//			album_art= BitmapFactory.decodeResource(application.getResources(),R.drawable.woofer_icon);
-//		}
-//		GlideApp.with(context).load(album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
-//	}
-
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
@@ -714,7 +674,7 @@ public class AudioPlayFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					if(audioPlayViewModel.fromArchiveView || audioPlayViewModel.fromThirdPartyApp || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+					if(audioPlayViewModel.fromArchiveView || audioPlayViewModel.fromThirdPartyApp || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;
@@ -735,7 +695,7 @@ public class AudioPlayFragment extends Fragment
 						src_uri=data;
 
 					}
-					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE)
+					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
 					{
 						src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
@@ -751,7 +711,7 @@ public class AudioPlayFragment extends Fragment
 
 					break;
 				case 2:
-					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;

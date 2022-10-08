@@ -143,7 +143,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		public void onActivityResult(ActivityResult result) {
 			if (result.getResultCode()== Activity.RESULT_OK)
 			{
-				if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName());
+				if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),clicked_filepojo.getSizeLong());
 				clicked_filepojo=null;
 			}
 			else
@@ -203,7 +203,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name)
+	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,long file_size)
 	{
 		int idx=file_name.lastIndexOf(".");
 		String file_ext="";
@@ -214,7 +214,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path,false);
+			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 			fileTypeSelectFragment.show(fragmentManager,"");
 		}
 
@@ -237,12 +237,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			{
 				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				{
-					FileIntentDispatch.openUri(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path,false);
+					FileIntentDispatch.openUri(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 				}
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			{
-				FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,false);
+				FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,false,file_size);
 			}
 
 		}
@@ -301,7 +301,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 							}
 							else
 							{
-								file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName());
+								file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),filePOJO.getSizeLong());
 							}
 
 							ADD_FILE_POJO_TO_RECENT(filePOJO);

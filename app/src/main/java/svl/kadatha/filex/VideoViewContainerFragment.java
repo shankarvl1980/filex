@@ -121,7 +121,7 @@ public class VideoViewContainerFragment extends Fragment
 					switch(p1)
 					{
 						case 0:
-							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp)
+							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -137,7 +137,7 @@ public class VideoViewContainerFragment extends Fragment
 								src_uri=data;
 
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE)
+							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -152,7 +152,7 @@ public class VideoViewContainerFragment extends Fragment
 
 							break;
 						case 2:
-							if(viewModel.fromThirdPartyApp)
+							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
