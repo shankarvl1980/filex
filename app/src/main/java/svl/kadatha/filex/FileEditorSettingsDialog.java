@@ -93,7 +93,7 @@ public class FileEditorSettingsDialog extends DialogFragment
 		{
 			public void onCheckedChanged(RadioGroup rg, int p1)
 			{
-				if(!fileEditorActivity.fromThirdPartyApp && !fileEditorActivity.fromArchiveView && !fileEditorActivity.isFileBig)
+				if(!fileEditorActivity.viewModel.fromThirdPartyApp && !fileEditorActivity.viewModel.fromArchiveView && !fileEditorActivity.viewModel.isFileBig)
 				{
 					if(unix_rb.isChecked())
 					{

@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -17,10 +18,19 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import me.jahnen.libaums.core.fs.UsbFile;
+
 public class FileEditorViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2,future3;
+    public File file;
+    public String source_folder;
+    public boolean isWritable,isFileBig;
+    public boolean fromArchiveView,fromThirdPartyApp;
+    public Uri data;
+    public FileObjectType fileObjectType;
     public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> initializedSetUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public int eol,altered_eol;
     public LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;
@@ -63,7 +73,7 @@ public class FileEditorViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void openFile(File file, FileInputStream fileInputStream, long f_pointer, boolean go_back)
+    public synchronized void openFile(FileInputStream fileInputStream, long f_pointer)
     {
         if(isReadingFinished.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
         isReadingFinished.setValue(AsyncTaskStatus.STARTED);
@@ -74,7 +84,6 @@ public class FileEditorViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                //file_loading_started=true;
                 textViewUndoRedo.clearHistory();
                 file_start= file_pointer == 0L;
                 try
@@ -183,6 +192,49 @@ public class FileEditorViewModel extends AndroidViewModel {
                 }
 
                 isReadingFinished.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void setUpInitialization(FileObjectType fileObjectType,String file_path)
+    {
+        if (initializedSetUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        initializedSetUp.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future2=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+
+                file=new File(file_path);
+                source_folder=file.getParent();
+                isWritable=FileUtil.isWritable(fileObjectType,file_path);
+
+                if(fileObjectType ==FileObjectType.USB_TYPE)
+                {
+                    if(MainActivity.usbFileRoot!=null)
+                    {
+                        File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+                        if(!cache_file.exists())
+                        {
+                            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+                            if(targetUsbFile!=null)
+                            {
+                                FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                            }
+                        }
+
+                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,false,FileObjectType.FILE_TYPE);
+                    }
+                }
+                else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+                else
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+                initializedSetUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

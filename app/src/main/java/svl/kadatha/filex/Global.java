@@ -60,6 +60,7 @@ public class Global
 	static String USB_STORAGE_PATH;
 
 	static File ARCHIVE_EXTRACT_DIR;
+	static File USB_CACHE_DIR;
 	static File APK_ICON_DIR;
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
@@ -144,6 +145,7 @@ public class Global
 	static boolean FILE_GRID_LAYOUT;
 	static boolean SHOW_FILE_PATH;
 	static boolean IS_TABLET;
+	static boolean RECOGNISE_USB;
 
 	static final Set<String> SORT_CODE_SET=new HashSet<>(Arrays.asList("d_name_asc","d_name_desc","d_date_asc","d_date_desc","d_size_asc","d_size_desc",
 			"f_name_asc","f_name_desc","f_date_asc","f_date_desc","f_size_asc","f_size_desc"));
@@ -386,6 +388,7 @@ public class Global
 
 		//apk cache directory setting
 		ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
+		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		ARCHIVE_CACHE_DIR_LENGTH=Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
@@ -464,6 +467,8 @@ public class Global
 
 		SHOW_FILE_PATH=tinyDB.getBoolean("show_file_path");
 
+		//
+		RECOGNISE_USB=tinyDB.getBoolean("recognise_usb");
 		//
 		RECYCLER_VIEW_FONT_SIZE_FACTOR=tinyDB.getInt("recycler_view_font_size_factor");
 		FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=tinyDB.getInt("file_selector_recycler_view_font_size_factor");

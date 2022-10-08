@@ -211,6 +211,23 @@ public class PreferencesDialog extends DialogFragment
 
             }
         });
+
+
+        SwitchCompat switch_show_usb = v.findViewById(R.id.preferences_switch_show_usb);
+        switch_show_usb.setChecked(Global.RECOGNISE_USB);
+        switch_show_usb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Global.RECOGNISE_USB=b;
+                        tinyDB.putBoolean("recognise_usb",Global.RECOGNISE_USB);
+                    }
+                },500);
+            }
+        });
+
         ViewGroup buttons_layout = v.findViewById(R.id.preferences_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
 

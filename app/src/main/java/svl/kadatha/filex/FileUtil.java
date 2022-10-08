@@ -32,6 +32,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +75,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 
-		@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 		public static Uri getDocumentUri(@NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
 		{
 			String target_uri_id=getDocumentID(target_file_path,tree_uri,tree_uri_path);
@@ -136,6 +136,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 	{
 		return context.getContentResolver().getType(uri);
 	}
+
  	public static boolean isDirectory(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
 	{
 		Uri uri=getDocumentUri(target_file_path,tree_uri, tree_uri_path);
@@ -224,12 +225,13 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 		@SuppressWarnings("null")
-		public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut)
+		public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 		{
 			try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
 				FileChannel inputChannel = fileInStream.getChannel();
 				FileChannel outputChannel = fileOutStream.getChannel();
-				channelCopy(inputChannel, outputChannel);
+				//channelCopy(inputChannel, outputChannel,bytes_read);
+				bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
 				if (cut) {
 					deleteNativeFile(source);
 				}
@@ -246,7 +248,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 		@SuppressWarnings("null")
-		public static boolean copy_SAFFile_File(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, File target_file)
+		public static boolean copy_SAFFile_File(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, File target_file, long[] bytes_read)
 		{
 			FileOutputStream fileOutputStream=null;
 			InputStream inStream=null;
@@ -257,16 +259,15 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				if (uri != null)
 				{
 					inStream = context.getContentResolver().openInputStream(uri);
+					if (inStream != null)
+					{
+						//fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(fileOutputStream),false,bytes_read);
+						bufferedCopy(inStream,fileOutputStream,false,bytes_read);
+					}
 				}
 				else
 				{
 					return false;
-				}
-
-				if (inStream != null)
-				{
-
-					fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(fileOutputStream),false);
 				}
 
 			}
@@ -297,11 +298,11 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 		@SuppressWarnings("null")
-		public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file,boolean cut)
+		public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
 		{
 			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
 
-				bufferedCopy(inStream, outputStream,true);
+				bufferedCopy(inStream, outputStream,true,bytes_read);
 				if (cut) {
 					deleteUsbFile(src_usbfile);
 				}
@@ -340,7 +341,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 		@SuppressWarnings("null")
-		public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path,String name, boolean cut)
+		public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
 		{
 			InputStream inStream = null;
 			OutputStream outStream=null;
@@ -349,25 +350,28 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			{
 				inStream = UsbFileStreamFactory.createBufferedInputStream(source,MainActivity.usbCurrentFs);
 				UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-				UsbFile targeUsbFile;
 				if (parentUsbFile != null)
 				{
-					targeUsbFile = parentUsbFile.createFile(name);
+					UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
+					if(targetUsbFile!=null)deleteUsbFile(targetUsbFile);
+					targetUsbFile = parentUsbFile.createFile(name);
 					long length=source.getLength();
-					if(length>0) targeUsbFile.setLength(length); // causes problem
-					outStream=UsbFileStreamFactory.createBufferedOutputStream(targeUsbFile,MainActivity.usbCurrentFs);
+					if(length>0) targetUsbFile.setLength(length); // causes problem
+					outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
+
+					//fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),true,bytes_read);
+					bufferedCopy(inStream,outStream,true,bytes_read);
+					if(cut)
+					{
+						deleteUsbFile(source);
+					}
 				}
 				else
 				{
 					return false;
 				}
 
-				fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),true);
 
-				if(cut)
-				{
-					deleteUsbFile(source);
-				}
 			}
 			catch (Exception e)
 			{
@@ -400,7 +404,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 		@SuppressWarnings("null")
-	public static boolean copy_SAFFile_SAFFile(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, String target_file_path, String name,Uri tree_uri,String tree_uri_path)
+	public static boolean copy_SAFFile_SAFFile(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, String target_file_path, String name, Uri tree_uri, String tree_uri_path, long[] bytes_read)
 	{
 		InputStream inStream = null;
 		OutputStream outStream=null;
@@ -430,9 +434,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 			if (outStream != null && inStream!=null)
 			{
-
-				fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),false);
-
+				//fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),false,bytes_read);
+				bufferedCopy(inStream,outStream,false,bytes_read);
 			}
 
 		}
@@ -466,9 +469,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 
-
 	@SuppressWarnings("null")
-	public static boolean copy_File_SAFFile(Context context,@NonNull final File source, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut)
+	public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
 	{
 		FileInputStream fileInStream = null;
 		OutputStream outStream=null;
@@ -480,24 +482,22 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			if (uri != null)
 			{
 				outStream = context.getContentResolver().openOutputStream(uri);
+				if (outStream != null)
+				{
+					//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
+					bufferedCopy(fileInStream,outStream,false,bytes_read);
+				}
+
+				if(cut)
+				{
+					deleteNativeFile(source);
+				}
 			}
 			else
 			{
 				return false;
 			}
 
-
-			if (outStream != null) 
-			{
-
-				channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream));
-
-			}
-
-			if(cut)
-			{
-				deleteNativeFile(source);
-			}
 		}
 		catch (Exception e) 
 		{
@@ -530,7 +530,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 	}
 
 		@SuppressWarnings("null")
-		public static boolean copy_UsbFile_SAFFile(Context context,@NonNull final UsbFile source, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut)
+		public static boolean copy_UsbFile_SAFFile(Context context, @NonNull final UsbFile source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
 		{
 			InputStream inStream = null;
 			OutputStream outStream=null;
@@ -543,21 +543,21 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				if (uri != null)
 				{
 					outStream = context.getContentResolver().openOutputStream(uri);
+					if (outStream != null)
+					{
+						//fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),true,bytes_read);
+						bufferedCopy(inStream,outStream,true,bytes_read);
+					}
+
+					if(cut)
+					{
+						deleteUsbFile(source);
+					}
+
 				}
 				else
 				{
 					return false;
-				}
-
-
-				if (outStream != null)
-				{
-					fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),true);
-				}
-
-				if(cut)
-				{
-					deleteUsbFile(source);
 				}
 
 			}
@@ -605,23 +605,20 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				if (uri != null)
 				{
 					outStream = context.getContentResolver().openOutputStream(uri);
+					if (outStream != null)
+					{
+						success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
+						if(success && cut)
+						{
+							deleteFTPFile(source_file_path);
+						}
+					}
+
 				}
 				else
 				{
 					return false;
 				}
-
-
-				if (outStream != null)
-				{
-					success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
-					if(success && cut)
-					{
-						deleteFTPFile(source_file_path);
-					}
-				}
-
-
 
 			}
 			catch(IOException e)
@@ -649,7 +646,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 		@SuppressWarnings("null")
-		public static boolean copy_File_UsbFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
+		public static boolean copy_File_UsbFile(@NonNull final File source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
 		{
 			FileInputStream fileInStream = null;
 			OutputStream outStream=null;
@@ -659,25 +656,28 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				fileInStream = new FileInputStream(source);
 
 				UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-				UsbFile targeUsbFile;
+
 				if (parentUsbFile != null)
 				{
-					targeUsbFile = parentUsbFile.createFile(name);
+					UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
+					if(targetUsbFile!=null)deleteUsbFile(targetUsbFile);
+					targetUsbFile = parentUsbFile.createFile(name);
 					long length=source.length();
-					if(length>0) targeUsbFile.setLength(length); // dont set length causes problems
-					outStream=UsbFileStreamFactory.createBufferedOutputStream(targeUsbFile,MainActivity.usbCurrentFs);
+					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
+					outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
+
+					//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
+					bufferedCopy(fileInStream,outStream,false,bytes_read);
+					if(cut)
+					{
+						deleteNativeFile(source);
+					}
 				}
 				else
 				{
 					return false;
 				}
 
-				channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream));
-
-				if(cut)
-				{
-					deleteNativeFile(source);
-				}
 			}
 			catch (Exception e)
 			{
@@ -733,7 +733,54 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 
-	public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
+		public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
+		{
+			String string="..........";
+			OutputStream outStream=null;
+			try
+			{
+				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
+
+				if (targetUsbFile != null)
+				{
+					long length=string.length();
+					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
+					outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
+					outStream.write(string.getBytes(StandardCharsets.UTF_8));
+				}
+				else
+				{
+					return false;
+				}
+
+				//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
+				//bufferedCopy(fileInStream,outStream,false,new long[]{1});
+
+			}
+			catch (Exception e)
+			{
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			finally
+			{
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			return true;
+		}
+
+
+
+		public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
 	{
 		UsbFile usbFile=null;
 		try
@@ -783,38 +830,35 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 	}
 
-
-
-		public static boolean mkdirUsb(UsbFile parentUsbFile, String name)
-		{
-			try {
-				parentUsbFile.createDirectory(name);
-				return true;
-			} catch (IOException e) {
-				return false;
-			}
+	public static boolean mkdirUsb(UsbFile parentUsbFile, String name)
+	{
+		try {
+			parentUsbFile.createDirectory(name);
+			return true;
+		} catch (IOException e) {
+			return false;
 		}
+	}
 
-		public static boolean mkdirFtp(String file_path)
-		{
-			try {
-				return MainActivity.FTP_CLIENT.makeDirectory(file_path);
-			} catch (IOException e) {
-				return false;
-			}
+	public static boolean mkdirFtp(String file_path)
+	{
+		try {
+			return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+		} catch (IOException e) {
+			return false;
 		}
+	}
 
 
-		public static boolean createUsbFile(UsbFile parentUsbFile,String name)
-		{
-			try {
-				parentUsbFile.createFile(name);
-				return true;
-			} catch (IOException e) {
-				return false;
-			}
+	public static boolean createUsbFile(UsbFile parentUsbFile,String name)
+	{
+		try {
+			parentUsbFile.createFile(name);
+			return true;
+		} catch (IOException e) {
+			return false;
 		}
-
+	}
 
 
 	@SuppressWarnings("null")
@@ -876,11 +920,25 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		private static boolean deleteUsbFile(UsbFile usbFile)
 		{
 			try {
-				usbFile.delete();
-				return true;
+				if(usbFile.getLength()==0)
+				{
+					if(FileUtil.make_UsbFile_non_zero_length(usbFile.getAbsolutePath()))
+					{
+						usbFile.delete();
+						return true;
+					}
+				}
+				else
+				{
+					usbFile.delete();
+					return true;
+				}
+
+
 			} catch (IOException e) {
 				return false;
 			}
+			return false;
 		}
 
 
@@ -968,6 +1026,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				}
 
 			}
+
+
 			success=deleteUsbFile(folder);
 
 			return success;
@@ -1383,7 +1443,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		if (bytes < unit) return bytes + " B";
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
 		char pre = ("KMGTPE").charAt(exp-1);
-		//return (long)(bytes/Math.pow(unit,exp)*100+0.5)/100.0 + " "+pre+"B";
 		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
@@ -1415,8 +1474,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 *
 		 * @return A list of external SD card paths.
 		 */
-		@RequiresApi(Build.VERSION_CODES.KITKAT)
-		public static String[] getExtSdCardPaths(Context context) 
+		public static String[] getExtSdCardPaths(Context context)
 		{
 			List<String> paths = new ArrayList<>();
 			for (File file : context.getExternalFilesDirs("external")) 
@@ -1450,8 +1508,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
 		 * null is returned.
 		 */
-		@RequiresApi(Build.VERSION_CODES.KITKAT)
-		public static String getExtSdCardFolder(@NonNull final File file,Context context) 
+		public static String getExtSdCardFolder(@NonNull final File file,Context context)
 		{
 			String[] extSdPaths = getExtSdCardPaths(context);
 			try 
@@ -1477,8 +1534,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 * @param file The file.
 		 * @return true if on external sd card.
 		 */
-		@RequiresApi(Build.VERSION_CODES.KITKAT)
-		public static boolean isOnExtSdCard(@NonNull final File file,Context context) 
+		public static boolean isOnExtSdCard(@NonNull final File file,Context context)
 		{
 			return getExtSdCardFolder(file,context) != null;
 		}
@@ -1490,7 +1546,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 * @param tree_uri The tree RI.
 		 * @return The path (without trailing file separator).
 		 */
-		@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 		@Nullable
 		public static String getFullPathFromTreeUri(@Nullable final Uri tree_uri,Context context) 
 		{
@@ -1591,8 +1646,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 * @param tree_uri The tree URI.
 		 * @return The volume ID.
 		 */
-		@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-		private static String getVolumeIdFromTreeUri(final Uri tree_uri) 
+		private static String getVolumeIdFromTreeUri(final Uri tree_uri)
 		{
 			final String docId = DocumentsContract.getTreeDocumentId(tree_uri);
 			final String[] split = docId.split(":");
@@ -1613,8 +1667,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		 * @param tree_uri The tree URI.
 		 * @return the document path.
 		 */
-		@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-		private static String getDocumentPathFromTreeUri(final Uri tree_uri) 
+		private static String getDocumentPathFromTreeUri(final Uri tree_uri)
 		{
 			final String docId = DocumentsContract.getTreeDocumentId(tree_uri);
 			final String[] split = docId.split(":");
@@ -1629,11 +1682,12 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 	
-	public static void fastChannelCopy(final ReadableByteChannel src, final WritableByteChannel dest, boolean fromUsbFile) throws IOException
+	public static void fastChannelCopyy(final ReadableByteChannel src, final WritableByteChannel dest, boolean fromUsbFile, long[] bytes_read) throws IOException
 	{
 		final ByteBuffer buffer = (fromUsbFile) ? ByteBuffer.allocate(USB_CHUNK_SIZE) : ByteBuffer.allocateDirect(16384);
 		while (src.read(buffer) != -1)
 		{
+			bytes_read[0]+= buffer.capacity();
 			// prepare the buffer to be drained
 			buffer.flip();
 			// write to the channel, may block
@@ -1652,20 +1706,22 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	}
 
-	public static void channelCopy(final FileChannel src, final WritableByteChannel dest) throws IOException
+	public static void channelCopyy(final FileChannel src, final WritableByteChannel dest, long[] bytes_read) throws IOException
 	{
 		long size=src.size();
 		src.transferTo(0,size,dest);
+		bytes_read[0]+=size;
 		src.close();
 	}
 
-	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile)
+	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read)
 	{
 		byte[] buffer=(fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
 		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream); BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
 			while ((count = bufferedInputStream.read(buffer)) != -1) {
 				bufferedOutputStream.write(buffer, 0, count);
+				bytes_read[0]+=count;
 			}
 		} catch (IOException e) {
 
@@ -1673,12 +1729,13 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	}
 
-	public static void channelCopy(FileChannel srcChannel, FileChannel destChannel)
+	public static void channelCopyY(FileChannel srcChannel, FileChannel destChannel, long[] bytes_read)
 	{
 		try
 		{
 			long size=srcChannel.size();
 			srcChannel.transferTo(0,size,destChannel);
+			bytes_read[0]+=size;
 
 		}
 		catch(IOException e){}

@@ -8,11 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class AudioPlayViewModel extends AndroidViewModel {
 
@@ -22,6 +25,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> isAlbumArtFetched=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
+    public FilePOJO currently_shown_file;
     public boolean fromArchiveView;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
@@ -60,6 +64,33 @@ public class AudioPlayViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                if(fileObjectType ==FileObjectType.USB_TYPE)
+                {
+                    if(MainActivity.usbFileRoot!=null)
+                    {
+                        File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+                        if(!cache_file.exists())
+                        {
+                            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+                            if(targetUsbFile!=null)
+                            {
+                                FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+                            }
+                        }
+
+                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,false,FileObjectType.FILE_TYPE);
+                    }
+                }
+                else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+                else
+                {
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,false,FileObjectType.FILE_TYPE);
+                }
+
+
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
                 if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+source_folder))
                 {

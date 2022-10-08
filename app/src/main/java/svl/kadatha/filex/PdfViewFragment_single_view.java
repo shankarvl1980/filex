@@ -314,6 +314,11 @@ public class PdfViewFragment_single_view extends Fragment
                 }
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
+                    if(viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                    {
+                        ((PdfViewActivity)context).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+                    }
+
                     pdf_view_adapter=new PdfViewPagerAdapter();
                     view_pager.setAdapter(pdf_view_adapter);
                     view_pager.setCurrentItem(viewModel.image_selected_idx);

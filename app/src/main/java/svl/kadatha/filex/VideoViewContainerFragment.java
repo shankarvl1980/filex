@@ -222,6 +222,10 @@ public class VideoViewContainerFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
+					if(viewModel.fileObjectType==FileObjectType.USB_TYPE)
+					{
+						videoViewActivity.data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+					}
 					adapter=new VideoViewPagerAdapter(getChildFragmentManager(),viewModel.video_list);
 					viewpager.setAdapter(adapter);
 					viewpager.setCurrentItem(viewModel.file_selected_idx);

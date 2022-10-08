@@ -156,7 +156,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 	private boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType)
 	{
-		if(fileObjectType==FileObjectType.USB_TYPE && MainActivity.usbFileRoot==null)
+		if(MainActivity.usbFileRoot==null)
 		{
 			return false;
 		}
@@ -422,6 +422,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private void discoverDevice() {
 
 		UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+		int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
 		for (UsbDevice device : usbManager.getDeviceList().values())
 		{
 			for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext()))
@@ -429,7 +430,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				if (device.equals(massStorageDevice.getUsbDevice()))
 				{
 					PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
-							UsbDocumentProvider.ACTION_USB_PERMISSION), 0);
+							UsbDocumentProvider.ACTION_USB_PERMISSION), pending_intent_flag);
 					usbManager.requestPermission(device, permissionIntent);
 					break;
 

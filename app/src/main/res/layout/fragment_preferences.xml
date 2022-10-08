@@ -165,6 +165,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_file_path"
                 />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/preferences_switch_show_usb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/ten_dp"
+                android:textColor="@color/light_recycler_text_color"
+                android:text="@string/recognise_usb_flash_drive"
+                android:textSize="16sp"
+                android:theme="@style/MyLightSwitchCompat"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3" />
+            <View
+                android:id="@+id/fragment_preferences_divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:alpha="0.5"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginBottom="@dimen/layout_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

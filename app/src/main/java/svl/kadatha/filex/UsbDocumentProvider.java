@@ -2,8 +2,10 @@ package svl.kadatha.filex;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.hardware.usb.UsbDevice;
@@ -33,7 +35,7 @@ import me.jahnen.libaums.core.fs.UsbFileInputStream;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 import me.jahnen.libaums.core.partition.Partition;
 
-@TargetApi(Build.VERSION_CODES.KITKAT)
+
 public class UsbDocumentProvider extends DocumentsProvider {
 
     private static final String TAG = UsbDocumentProvider.class.getSimpleName();
@@ -50,6 +52,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
     private static final String ROOT_SEPARATOR = ":";
     public static ArrayList<UsbMassStorageDevice> USB_MASS_STORAGE_DEVICES;
     private LocalBroadcastManager localBroadcastManager;
+    private static int CHECKED_TIMES;
 
     /**
      * Default root projection: everything but Root.COLUMN_MIME_TYPES
@@ -98,11 +101,13 @@ public class UsbDocumentProvider extends DocumentsProvider {
         USB_MASS_STORAGE_DEVICES=new ArrayList<>();
         localBroadcastManager=LocalBroadcastManager.getInstance(context);
 
-        /*
         context.registerReceiver(new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                if(CHECKED_TIMES<2)onCreate();
+                Log.d(Global.TAG,"broadcast received here at usbdocument provider");
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    Log.d(Global.TAG,"broadcast received and permission granted");
                     discoverDevice(device);
                 }
             }
@@ -119,28 +124,29 @@ public class UsbDocumentProvider extends DocumentsProvider {
         context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                CHECKED_TIMES=0;
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 detachDevice(device);
             }
         }, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
+        CHECKED_TIMES++;
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         for (UsbDevice device : usbManager.getDeviceList().values()) {
             discoverDevice(device);
         }
 
-         */
-
         return true;
     }
 
     private void discoverDevice(UsbDevice device) {
+        if(!Global.RECOGNISE_USB)return;
         Log.d(TAG, "discoverDevice() " + device.toString());
-
         Context context = getContext();
         assert context != null;
 
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+
         for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {
             if (device.equals(massStorageDevice.getUsbDevice())) {
                 if (usbManager.hasPermission(device)) {
@@ -153,8 +159,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
                     localBroadcastManager.sendBroadcast(intent);
 
                 } else {
+                    int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
                     PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
-                            ACTION_USB_PERMISSION), 0);
+                            ACTION_USB_PERMISSION), pending_intent_flag);
                     usbManager.requestPermission(device, permissionIntent);
                 }
             }
@@ -163,8 +170,8 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private void detachDevice(UsbDevice usbDevice) {
+        //if(!Global.RECOGNISE_USB)return;
         Log.d(TAG, "detachDevice() " + usbDevice.toString());
-
         for (Map.Entry<String, UsbPartition> root : mRoots.entrySet()) {
             if (root.getValue().device.equals(usbDevice)) {
                 Log.d(TAG, "remove rootId " + root.getKey());
@@ -478,7 +485,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
         Log.d(TAG, "No cache entry for " + documentId);
 
         //UsbPartition usbPartition= (UsbPartition) mRoots.values().toArray()[0];
-       // UsbFile rootUsb=MainActivity.usbFileRoot;
+        //UsbFile rootUsb=MainActivity.usbFileRoot;
         String[] path_segments=documentId.split(ROOT_SEPARATOR);
         if(path_segments.length==1)
         {

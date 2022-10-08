@@ -272,7 +272,7 @@ public class CreateFileDialog extends DialogFragment
 		}
 		else if(fileObjectType== FileObjectType.USB_TYPE)
 		{
-
+			return MainActivity.usbFileRoot != null;
 		}
 		else if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
@@ -288,8 +288,8 @@ public class CreateFileDialog extends DialogFragment
 			return check_SAF_permission(new_file_path,fileObjectType);
 
 		}
-		Global.print(context,getString(R.string.could_not_create));
-		return false;
+		//Global.print(context,getString(R.string.could_not_create));
+		//return false;
 	}
 
 	@Override

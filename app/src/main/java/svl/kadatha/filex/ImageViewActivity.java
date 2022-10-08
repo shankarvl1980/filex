@@ -33,7 +33,7 @@ public class ImageViewActivity extends BaseActivity
 		CacheDir=getExternalCacheDir();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        //LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);

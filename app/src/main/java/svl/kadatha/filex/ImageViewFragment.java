@@ -88,7 +88,7 @@ public class ImageViewFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override
@@ -352,6 +352,10 @@ public class ImageViewFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
+					if(viewModel.fileObjectType==FileObjectType.USB_TYPE)
+					{
+						((ImageViewActivity)context).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+					}
 					image_view_adapter=new ImageViewPagerAdapter(viewModel.album_file_pojo_list);
 					view_pager.setAdapter(image_view_adapter);
 					view_pager.setCurrentItem(viewModel.file_selected_idx);

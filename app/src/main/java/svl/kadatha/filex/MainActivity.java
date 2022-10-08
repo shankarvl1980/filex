@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -131,6 +132,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private InputMethodManager imm;
 	static UsbFile usbFileRoot;
 	static FileSystem usbCurrentFs;
+	public static boolean USB_ATTACHED;
 	private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
 	public boolean clear_cache;
 	public RecentDialogListener recentDialogListener;
@@ -150,6 +152,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private FileDuplicationViewModel fileDuplicationViewModel;
 	private ListPopupWindowPOJO extract_listPopupWindowPOJO,open_listPopupWindowPOJO;
 	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
+	private Group usb_heading;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -201,6 +204,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbReceiver=new USBReceiver();
 		IntentFilter usbIntentFilter=new IntentFilter();
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
+		//usbIntentFilter.addAction(UsbDocumentProvider.ACTION_USB_PERMISSION);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
 
@@ -515,7 +519,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		storageRecyclerAdapter=new StorageRecyclerAdapter(Global.STORAGE_DIR);
 		storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
-        View working_dir_heading_layout = findViewById(R.id.working_dir_layout_background);
+        usb_heading=findViewById(R.id.usb_background);
+		usb_heading.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+
+			}
+		});
+		//usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+		View working_dir_heading_layout = findViewById(R.id.working_dir_layout_background);
 		working_dir_heading_layout.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -1303,16 +1315,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 					else
 					{
-						if(getCacheDir().exists())
-						{
-							df.progress_bar.setVisibility(View.VISIBLE);
-							viewModel.deleteDirectory(getCacheDir());
-						}
-						if(Global.ARCHIVE_EXTRACT_DIR.exists())
-						{
-							df.progress_bar.setVisibility(View.VISIBLE);
-							viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-						}
+						df.progress_bar.setVisibility(View.VISIBLE);
+						viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+						viewModel.deleteDirectory(Global.USB_CACHE_DIR);
+						viewModel.deleteDirectory(getCacheDir());
 						finish();
 					}
 				}
@@ -1633,18 +1639,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					set_visibility_searchbar(false);
 				}
 
-				if(getCacheDir().exists())
-				{
-					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.deleteDirectory(getCacheDir());
-				}
-
-				if(Global.ARCHIVE_EXTRACT_DIR.exists())
-				{
-					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				}
-
+				df.progress_bar.setVisibility(View.VISIBLE);
+				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+				viewModel.deleteDirectory(Global.USB_CACHE_DIR);
+				viewModel.deleteDirectory(getCacheDir());
 				finish();
 			}
 		}
@@ -1962,16 +1960,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
 				final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				if(getCacheDir().exists())
-				{
-					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.deleteDirectory(getCacheDir());
-				}
-				if(Global.ARCHIVE_EXTRACT_DIR.exists())
-				{
-					df.progress_bar.setVisibility(View.VISIBLE);
-					viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				}
+				df.progress_bar.setVisibility(View.VISIBLE);
+				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+				viewModel.deleteDirectory(Global.USB_CACHE_DIR);
+				viewModel.deleteDirectory(getCacheDir());
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
 				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
@@ -2165,7 +2157,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				usb_path_added = true;
 				break;
 			}
-
 		}
 
 		if(!usb_path_added)
@@ -2176,6 +2167,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			Global.WORKOUT_AVAILABLE_SPACE();
 			storageRecyclerAdapter.notifyDataSetChanged();
 		}
+
 	}
 
 	private void discoverDevice()
@@ -2192,11 +2184,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onReceive(Context p1, Intent intent)
 		{
 			// TODO: Implement this method
+			Log.d(Global.TAG,"broadcast received");
 			String action = intent.getAction();
+			Log.d(Global.TAG,action);
 			if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
-
-				if(intent.getBooleanExtra(UsbDocumentProvider.USB_ATTACHED,false))
+				USB_ATTACHED=intent.getBooleanExtra(UsbDocumentProvider.USB_ATTACHED,false);
+				if(USB_ATTACHED)
 				{
+					Log.d(Global.TAG,"usb attached");
 					setupDevice();
 				}
 				else
@@ -2214,6 +2209,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 
 					storageRecyclerAdapter.notifyDataSetChanged();
+
+					FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);
+					DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+					if(df!=null && df.fileObjectType==FileObjectType.USB_TYPE)
+					{
+						df.progress_bar.setVisibility(View.VISIBLE);
+						viewModel.deleteDirectory(Global.USB_CACHE_DIR);
+						onbackpressed(false);
+					}
 
 					int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
 					for(int i=0;i<size;++i)
@@ -2234,13 +2238,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 
-					FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);
+
 				}
+				//usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+
 			}
 			if(recentDialogListener!=null)
 			{
 				recentDialogListener.onMediaAttachedAndRemoved();
 			}
+
 		}
 	}
 

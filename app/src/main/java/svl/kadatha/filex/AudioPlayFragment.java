@@ -104,6 +104,10 @@ public class AudioPlayFragment extends Fragment
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
+					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
+					{
+						activity.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
+					}
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

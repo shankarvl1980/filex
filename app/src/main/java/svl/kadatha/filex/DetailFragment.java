@@ -681,7 +681,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								return;
 							}
 
-
 							ZipFile finalZipfile = zipfile;
 							progress_bar.setVisibility(View.VISIBLE);
 
@@ -748,7 +747,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
-		if(fileObjectType==FileObjectType.USB_TYPE && MainActivity.usbFileRoot==null)
+		if(MainActivity.usbFileRoot==null)
 		{
 			return false;
 		}

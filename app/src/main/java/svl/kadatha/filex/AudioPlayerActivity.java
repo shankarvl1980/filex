@@ -258,9 +258,9 @@ public class AudioPlayerActivity extends BaseActivity
 		}).attach();
 
 		 */
+
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
-
 		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
 	}
 

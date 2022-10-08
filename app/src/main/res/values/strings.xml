@@ -346,9 +346,11 @@
     <string name="enter_name_or_size_parameters">Enter name or size parameters</string>
     <string name="open_with">Open with</string>
 	<string name="select_only_a_file">Select only a file</string>
+    <string name="eject_usb">Eject Usb</string>
+    <string name="recognise_usb_flash_drive">Recognise Usb Flash Drive</string>
 
 
-	<string-array name="library_categories">
+    <string-array name="library_categories">
 		<item>@string/download</item>
 		<item>@string/document</item>
 		<item>@string/image</item>

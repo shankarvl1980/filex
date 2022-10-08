@@ -679,7 +679,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
     private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
     {
-        if(fileObjectType==FileObjectType.USB_TYPE && MainActivity.usbFileRoot==null)
+        if(MainActivity.usbFileRoot==null)
         {
             return false;
         }

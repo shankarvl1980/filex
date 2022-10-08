@@ -29,6 +29,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
+    private final long[] bytes_read=new long[1];
 
     public AppManagerListViewModel(@NonNull Application application) {
         super(application);
@@ -213,12 +214,12 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,current_file_name);
 
                     if (isWritable) {
-                        copy_result = Copy_File_File(file, dest_file_path, cut);
+                        copy_result = Copy_File_File(file, dest_file_path, cut,bytes_read);
                     } else {
                         if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                            copy_result = Copy_File_SAFFile(application, file, dest_folder, current_file_name, tree_uri, tree_uri_path, cut);
+                            copy_result = Copy_File_SAFFile(application, file, dest_folder, current_file_name, tree_uri, tree_uri_path, cut,bytes_read);
                         } else if (destFileObjectType == FileObjectType.USB_TYPE) {
-                            copy_result = Copy_File_UsbFile(file, dest_folder, current_file_name, cut);
+                            copy_result = Copy_File_UsbFile(file, dest_folder, current_file_name, cut,bytes_read);
                         } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
                             copy_result = Copy_File_FtpFile(file, dest_folder, current_file_name, cut);
                         }
@@ -256,7 +257,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    private boolean Copy_File_File(File source, String dest_file_path,boolean cut)
+    private boolean Copy_File_File(File source, String dest_file_path, boolean cut, long[] bytes_read)
     {
         boolean success=false;
         File destination=new File(dest_file_path);
@@ -294,7 +295,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
                 File srcFile = new File(source, inner_file_name);
                 String inner_dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,inner_file_name);
-                success=Copy_File_File(srcFile,inner_dest_file_path,cut);
+                success=Copy_File_File(srcFile,inner_dest_file_path,cut,bytes_read);
             }
 
         }
@@ -304,7 +305,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            success=FileUtil.copy_File_File(source,destination,cut);
+            success=FileUtil.copy_File_File(source,destination,cut,bytes_read);
         }
 
         return success;
@@ -312,7 +313,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    private boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut)
+    private boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut, long[] bytes_read)
     {
         boolean success=false;
 
@@ -373,7 +374,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
                 File srcFile = new File(source, inner_file_name);
                 String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-                success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut);
+                success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut,bytes_read);
             }
 
         }
@@ -383,13 +384,13 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
+            success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut,bytes_read);
         }
 
         return success;
     }
 
-    private boolean Copy_File_UsbFile(File source, String dest_file_path,String name,boolean cut)
+    private boolean Copy_File_UsbFile(File source, String dest_file_path, String name, boolean cut, long[] bytes_read)
     {
         boolean success=false;
 
@@ -429,7 +430,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
                 File srcFile = new File(source, inner_file_name);
-                success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut);
+                success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut,bytes_read);
             }
 
         }
@@ -439,7 +440,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut);
+            success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut,bytes_read);
         }
 
         return success;
@@ -502,7 +503,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     @SuppressWarnings("null")
 
-    private boolean Copy_UsbFile_UsbFile(UsbFile src_usbfile, String dest_file_path, String name,boolean cut)
+    private boolean Copy_UsbFile_UsbFile(UsbFile src_usbfile, String dest_file_path, String name, boolean cut, long[] bytes_read)
     {
         boolean success=false;
         if (src_usbfile.isDirectory())
@@ -543,7 +544,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 {
                     return false;
                 }
-                success=Copy_UsbFile_UsbFile(inner_usbfile, file_path, inner_usbfile.getName(),cut);
+                success=Copy_UsbFile_UsbFile(inner_usbfile, file_path, inner_usbfile.getName(),cut,bytes_read);
             }
         }
         else
@@ -553,7 +554,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 return false;
             }
 
-            success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut);
+            success=FileUtil.copy_UsbFile_UsbFile(src_usbfile,dest_file_path,name,cut,bytes_read);
         }
         return success;
     }
@@ -561,7 +562,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    private boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
+    private boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name, boolean cut, long[] bytes_read)
     {
         boolean success=false;
         File destination=new File(parent_file_path,name);
@@ -601,7 +602,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
 
                 String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
-                success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut);
+                success=Copy_UsbFile_File(inner_usbfile,inner_dest_file, inner_usbfile.getName(),cut,bytes_read);
             }
 
         }
@@ -611,14 +612,14 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut);
+            success=FileUtil.copy_UsbFile_File(src_usbfile,destination,cut,bytes_read);
         }
         return success;
     }
 
 
     @SuppressWarnings("null")
-    private boolean Copy_UsbFile_SAFFile(Context context, UsbFile source, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
+    private boolean Copy_UsbFile_SAFFile(Context context, UsbFile source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut, long[] bytes_read)
     {
         boolean success=false;
 
@@ -678,7 +679,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
 
                 String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-                success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut);
+                success=Copy_UsbFile_SAFFile(context,inner_usbfile,inner_dest_file,inner_usbfile.getName(),uri,uri_path,cut,bytes_read);
             }
 
         }
@@ -689,7 +690,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 return false;
             }
 
-            success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut);
+            success=FileUtil.copy_UsbFile_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut,bytes_read);
         }
 
         return success;
