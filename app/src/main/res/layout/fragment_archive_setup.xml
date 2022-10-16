@@ -96,7 +96,7 @@
 			<TextView
 
 				android:id="@+id/dialog_archive_destination_folder"
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="@dimen/layout_margin"
 				android:gravity="start"
@@ -106,12 +106,28 @@
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/destination_folder"
 				android:textSize="16sp"
-				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintEnd_toStartOf="@id/dialog_archive_destination_file_object_type"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/dialog_archive_checkbox"
 
 				/>
 
+			<TextView
+
+				android:id="@+id/dialog_archive_destination_file_object_type"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/layout_margin"
+				android:gravity="start"
+				android:paddingStart="@dimen/ten_dp"
+				android:paddingEnd="@dimen/ten_dp"
+				android:paddingTop="@dimen/layout_margin"
+				android:paddingBottom="@dimen/layout_margin"
+				android:textSize="12sp"
+				app:layout_constraintStart_toEndOf="@id/dialog_archive_destination_folder"
+				app:layout_constraintTop_toTopOf="@id/dialog_archive_destination_folder"
+
+				/>
 
 			<RadioGroup
 

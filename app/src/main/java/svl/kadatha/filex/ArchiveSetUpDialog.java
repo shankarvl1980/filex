@@ -64,6 +64,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private Class emptyService;
 	private ArchiveSetUpViewModel viewModel;
 	private FrameLayout progress_bar;
+	private TextView destFileObjectType_text_view;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -123,13 +124,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View zipdialogview = inflater.inflate(R.layout.fragment_archive_setup, container, false);
-
 		TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
 		TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
 		TextView zip_name_suffix=zipdialogview.findViewById(R.id.dialog_archive_textview_zip_suffix);
 		if(archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
 		create_folder_checkbox= zipdialogview.findViewById(R.id.dialog_archive_checkbox);
 		zip_file_edittext= zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
+		destFileObjectType_text_view=zipdialogview.findViewById(R.id.dialog_archive_destination_file_object_type);
 		RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
 		rb_current_dir= zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
 		rb_custom_dir= zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
@@ -150,7 +151,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		rb_custom_dir.setText(R.string.choose_directory);
 		rg.check(rb_current_dir.getId());
 		zip_file_path=files_selected_array.get(0);
-
 
 		viewModel=new ViewModelProvider(this).get(ArchiveSetUpViewModel.class);
 		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<AsyncTaskStatus>() {
@@ -196,7 +196,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						Global.print(context,getString(R.string.not_able_to_process));
 						return;
 					}
-
 
 					if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
 						Global.print(context,getString(R.string.directory_not_exist_not_valid));
@@ -287,6 +286,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					customdir_edittext.setVisibility(View.GONE);
 					browsebutton.setVisibility(View.GONE);
 				}
+				destFileObjectType_text_view.setText(getDestFileObjectType());
 			}
 		});
 
@@ -372,9 +372,14 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 					public void onClick(View v)
 					{
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+						if(destFileObjectType==FileObjectType.USB_TYPE)
+						{
+							Global.print(context,getString(R.string.can_not_do_archive_unarchive_here));
+							return;
+						}
 						progress_bar.setVisibility(View.VISIBLE);
 						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 						viewModel.removeRecursiveFiles(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 					}
 
@@ -393,6 +398,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 
 					public void onClick(View v) {
+						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+						if(destFileObjectType==FileObjectType.USB_TYPE)
+						{
+							Global.print(context,getString(R.string.can_not_do_archive_unarchive_here));
+							return;
+						}
 						String zip_output_folder = zip_file_edittext.getText().toString().trim();
 						final Bundle bundle = new Bundle();
 						bundle.putStringArrayList("files_selected_array", files_selected_array);
@@ -405,7 +416,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 						String zip_folder_path;
 						String unarchivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
-						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+
 						bundle.putSerializable("destFileObjectType", destFileObjectType); //put destfileobjecttype after deciding which one to put
 
 						if (create_folder_checkbox.isChecked()) {
@@ -485,15 +496,29 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 
 		});
-
+		destFileObjectType_text_view.setText(getDestFileObjectType());
 		return zipdialogview;
 	}
 
+	private String getDestFileObjectType()
+	{
+		FileObjectType fileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
+		switch (fileObjectType)
+		{
+			case FILE_TYPE:
+				return "(Device)";
+			case USB_TYPE:
+				return "(USB)";
+			case FTP_TYPE:
+				return "(PC)";
+			default:
+				return "";
+		}
+	}
 
 	private String getParentFilePath(String file_path)
 	{
 		return new File(file_path).getParent();
-
 	}
 
 	private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType)
@@ -644,6 +669,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				viewModel.folderclickselected = intent.getStringExtra("folderclickselected");
 				viewModel.custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
 				customdir_edittext.setText(viewModel.folderclickselected);
+				destFileObjectType_text_view.setText(getDestFileObjectType());
 			}
 		}
 	});

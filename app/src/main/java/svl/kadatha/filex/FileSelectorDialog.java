@@ -184,13 +184,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			}
 		});
 
-//		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-//			@Override
-//			public void onChanged(Integer integer) {
-//				fileSelectorActivity.file_number.setText(""+integer);
-//			}
-//		});
-
 		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -321,7 +314,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 
 	@Override
-	public void onSettingUsbFileRootNull() {
+	public void setUsbFileRootNull() {
 		currentUsbFile=null;
 	}
 
@@ -330,8 +323,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	public void onFileModified() {
 		Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),FileSelectorActivity.ACTIVITY_NAME);
 	}
-
-
 
 	private void set_adapter()
 	{
@@ -398,17 +389,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 				protected void publishResults(CharSequence constraint, FilterResults results) {
 
 					int t=filePOJO_list.size();
-					/*
-					if(mselecteditems.size()>0)
-					{
-						deselectAll();
-					}
-					else
-					{
-						notifyDataSetChanged();
-					}
-
-					 */
 					clearSelectionAndNotifyDataSetChanged();
 					if(t>0)
 					{

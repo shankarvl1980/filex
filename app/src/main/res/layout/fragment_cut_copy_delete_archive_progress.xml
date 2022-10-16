@@ -36,7 +36,7 @@
 		android:layout_height="0dp"
 		android:layout_marginTop="@dimen/layout_margin"
 		android:background="?attr/dialog_background"
-		app:layout_constraintBottom_toBottomOf="@+id/progressBar"
+		app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_size_progress"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
@@ -171,12 +171,13 @@
 			style="?android:attr/progressBarStyleHorizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:indeterminate="true"
 			android:maxHeight="20dip"
 			android:minHeight="20dip"
 
 			android:paddingStart="@dimen/ten_dp"
 			android:paddingEnd="@dimen/ten_dp"
+			android:max="100"
+
 
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
@@ -230,6 +231,8 @@
 		android:layout_height="wrap_content"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
+		android:gravity="end"
+		android:textSize="12sp"
 		app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_no_files"
 		android:paddingStart="@dimen/ten_dp"
 		android:paddingEnd="@dimen/ten_dp"

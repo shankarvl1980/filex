@@ -30,19 +30,23 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	private TextView from_textview;
 	private TextView to_textview;
 	private TextView copied_textview;
-	private TextView no_files,size_files,total_no_of_files,total_size_files,size_progress;
+	private TextView no_files;
+	private TextView size_files;
+	private TextView total_no_of_files;
+	private TextView total_size_files;
 	private EditText current_file;
 	private ServiceConnection serviceConnection;
 	private ArchiveDeletePasteFileService2 archiveDeletePasteFileService;
 	static boolean PROGRESS_ACTIVITY_SHOWN;
 	private String intent_action;
 	private FileObjectType sourceFileObjectType;
-	private ProgressBar cancelProgressBar;
+	private ProgressBar progressBar;
 	private boolean clear_cache;
 	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_1";
 	private TextView dialog_title,from_label,to_label;
 	private TableRow to_table_row;
 	private Handler handler;
+	private TextView size_progress_text_view;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -53,7 +57,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
 		setFinishOnTouchOutside(false);
 		handler=new Handler();
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
 		to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
 		from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);
@@ -68,8 +71,8 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		size_files=findViewById(R.id.fragment_cut_copy_delete_archive_size_files);
 		total_no_of_files=findViewById(R.id.fragment_cut_copy_delete_archive_total_no_files);
 		total_size_files=findViewById(R.id.fragment_cut_copy_delete_archive_total_size_files);
-		size_progress=findViewById(R.id.dialog_fragment_size_progress);
-		//cancelProgressBar=findViewById(R.id.fragment_cut_copy_delete_progress_cancel_progress);
+		size_progress_text_view = findViewById(R.id.dialog_fragment_size_progress);
+		progressBar=findViewById(R.id.fragment_cut_copy_delete_archive_progressBar);
 		ViewGroup buttons_layout = findViewById(R.id.fragment_cut_copy_delete_progress_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
 		Button hide_button = buttons_layout.findViewById(R.id.first_button);
@@ -91,8 +94,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 		{
 			public void onClick(View v)
 			{
-
-				cancelProgressBar.setVisibility(View.VISIBLE);
 				if(archiveDeletePasteFileService!=null)
 				{
 					archiveDeletePasteFileService.cancelService();
@@ -241,8 +242,18 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 				{
 					if(archiveDeletePasteFileService!=null)
 					{
-						//size_progress.setText(archiveDeletePasteFileService.total_bytes_read[0]+"");
 						String size_progress=FileUtil.humanReadableByteCount(archiveDeletePasteFileService.total_bytes_read[0]);
+						if(archiveDeletePasteFileService.fileCountSize!=null)
+						{
+							int percentage=(int)(archiveDeletePasteFileService.total_bytes_read[0]*100.0/archiveDeletePasteFileService.fileCountSize.total_size_of_files+0.5);
+							progressBar.setProgress(percentage);
+							size_progress_text_view.setText(percentage+"%");
+						}
+						else
+						{
+							progressBar.setIndeterminate(true);
+						}
+
 						switch(intent_action)
 						{
 							case "archive-zip":
@@ -387,7 +398,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 //
 //			}
 //		});
-//
+
 
 	}
 

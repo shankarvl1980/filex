@@ -8,6 +8,7 @@ import android.provider.DocumentsContract;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -119,7 +120,7 @@ public class Iterate
 						no_of_files++;
 					}
 				}
-				catch (IOException e)
+				catch (IOException | ConcurrentModificationException e)
 				{
 
 				}

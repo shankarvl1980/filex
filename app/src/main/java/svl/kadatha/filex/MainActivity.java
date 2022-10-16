@@ -204,7 +204,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbReceiver=new USBReceiver();
 		IntentFilter usbIntentFilter=new IntentFilter();
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
-		//usbIntentFilter.addAction(UsbDocumentProvider.ACTION_USB_PERMISSION);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
 
@@ -491,7 +490,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.size()==0)
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,
@@ -592,7 +591,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				workingDirRemove();
 			}
 		});
-
 
 
         View library_heading_layout = findViewById(R.id.library_layout_background);
@@ -809,7 +807,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				onNewIntent(intent);
 			}
 		}
-
 		discoverDevice();
 	}
 

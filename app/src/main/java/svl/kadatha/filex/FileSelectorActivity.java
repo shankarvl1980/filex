@@ -45,10 +45,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener
 {
@@ -61,6 +65,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     public boolean clear_cache;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
+    private USBReceiver usbReceiver;
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     private PopupWindow listPopWindow;
@@ -117,6 +122,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
+
+        usbReceiver=new USBReceiver();
+        IntentFilter usbIntentFilter=new IntentFilter();
+        usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
+        localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
+
 
         TinyDB tinyDB = new TinyDB(context);
         fm=getSupportFragmentManager();
@@ -523,6 +534,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         super.onDestroy();
         mediaMountReceiver.removeMediaMountListener(this);
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(usbReceiver);
         context.unregisterReceiver(mediaMountReceiver);
     }
 
@@ -533,7 +545,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     private void onbackpressed(boolean onBackPressed)
     {
-
         if(keyBoardUtil.getKeyBoardVisibility())
         {
             ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
@@ -593,7 +604,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for(FilePOJO filePOJO:Global.STORAGE_DIR)
         {
-            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
+            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE || filePOJO.getFileObjectType()==FileObjectType.USB_TYPE)
             {
                 filePOJOS.add(filePOJO);
             }
@@ -657,6 +668,60 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
+    private class USBReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context p1, Intent intent)
+        {
+            // TODO: Implement this method
+            String action = intent.getAction();
+            if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (!MainActivity.USB_ATTACHED) {
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);
+                    FileSelectorDialog fileSelectorDialog=(FileSelectorDialog)fm.findFragmentById(R.id.file_selector_container);
+                    if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==FileObjectType.USB_TYPE)
+                    {
+                        fileSelectorDialog.progress_bar.setVisibility(View.VISIBLE);
+                        onbackpressed(false);
+                    }
+
+                    int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+                    for(int i=0;i<size;++i)
+                    {
+                        DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
+                        if(listener!=null)
+                        {
+                            listener.setUsbFileRootNull();
+                        }
+                    }
+
+                    Iterator<FilePOJO> iterator1=RECENTS.iterator();
+                    while (iterator1.hasNext())
+                    {
+                        if(iterator1.next().getFileObjectType()==FileObjectType.USB_TYPE)
+                        {
+                            iterator1.remove();
+                        }
+                    }
+
+                }
+                storage_filePOJO_list=getFilePOJO_list();
+                //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+            }
+            if(recentDialogListener!=null)
+            {
+                recentDialogListener.onMediaAttachedAndRemoved();
+            }
+
+        }
+    }
+
 
     @Override
     public void onMediaMount(String action) {
@@ -772,7 +837,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     interface DetailFragmentCommunicationListener
     {
         void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-        void onSettingUsbFileRootNull();
+        void setUsbFileRootNull();
     }
 
     public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)

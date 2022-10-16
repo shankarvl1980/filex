@@ -19,7 +19,8 @@ public class FileDuplicationViewModel extends ViewModel {
     private Future<?> future1,future2,future3;
 
     public List<FilePOJO> filePOJOS;
-    public List<String> duplicate_file_path_array;
+    public List<String> source_duplicate_file_path_array;
+    public List<String> destination_duplicate_file_path_array;
     public ArrayList<String> not_to_be_replaced_files_path_array;
     public ArrayList<String> overwritten_file_path_list;
 
@@ -58,8 +59,9 @@ public class FileDuplicationViewModel extends ViewModel {
         this.destFileObjectType=destFileObjectType;
         this.cut=cut;
         this.files_selected_array=files_selected_array;
-        duplicate_file_path_array=new ArrayList<>();
+        source_duplicate_file_path_array=new ArrayList<>();
         not_to_be_replaced_files_path_array=new ArrayList<>();
+        destination_duplicate_file_path_array=new ArrayList<>();
         overwritten_file_path_list=new ArrayList<>();
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future1=executorService.submit(new Runnable() {
@@ -94,7 +96,8 @@ public class FileDuplicationViewModel extends ViewModel {
                         file_path=files_selected_array.get(j);
                         if(filePOJO.getName().equals(new File(file_path).getName()))
                         {
-                            duplicate_file_path_array.add(file_path);
+                            source_duplicate_file_path_array.add(file_path);
+                            destination_duplicate_file_path_array.add(filePOJO.getPath());
 
                             if(!findAllDuplicates)
                             {

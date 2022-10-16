@@ -26,7 +26,7 @@ import androidx.fragment.app.DialogFragment;
 
 public class SAFPermissionHelperDialog extends DialogFragment
 {
-    private boolean forUSB;
+    //private boolean forUSB;
 	private Context context;
 	private String tree_uri_path="";
 	private Uri tree_uri;
@@ -66,7 +66,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
         ImageView imageView3 = v.findViewById(R.id.fragment_saf_permission_helper_imageview3);
         ImageView imageView4 = v.findViewById(R.id.fragment_saf_permission_helper_imageview4);
         TextView textView = v.findViewById(R.id.fragment_saf_permission_helper_tv);
-		if(forUSB)
+		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
 			imageView1.setVisibility(View.GONE);
 			imageView2.setVisibility(View.GONE);

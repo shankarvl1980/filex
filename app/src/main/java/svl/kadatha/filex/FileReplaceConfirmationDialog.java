@@ -84,7 +84,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				if(apply_all_checkbox.isChecked())
 				{
 					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-					fileDuplicationViewModel.overwritten_file_path_list.addAll(fileDuplicationViewModel.duplicate_file_path_array);
+					fileDuplicationViewModel.overwritten_file_path_list.addAll(fileDuplicationViewModel.destination_duplicate_file_path_array);
 					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
@@ -92,9 +92,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				}
 				else
 				{
-
-					fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.duplicate_file_path_array.remove(0));
-					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
+					fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
+					fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.size()==0)
 					{
 						fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
@@ -104,7 +104,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					}
 					else
 					{
-						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
+						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName()+"'");
 					}
 				}
 
@@ -119,7 +119,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 
 				if(apply_all_checkbox.isChecked())
 				{
-					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.duplicate_file_path_array);
+					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.source_duplicate_file_path_array);
 					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
@@ -127,9 +127,10 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				}
 				else
 				{
-					fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.duplicate_file_path_array.remove(0));
+					fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
 					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-					if(fileDuplicationViewModel.duplicate_file_path_array.size()==0)
+					fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.size()==0)
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
@@ -138,7 +139,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					}
 					else
 					{
-						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
+						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName()+"'");
 					}
 				}
 
@@ -161,9 +162,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(fileDuplicationViewModel.duplicate_file_path_array.size()>0)
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.size()>0)
 					{
-						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.duplicate_file_path_array.get(0)).getName()+"'");
+						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName()+"'");
 					}
 				}
 

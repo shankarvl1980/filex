@@ -88,7 +88,6 @@ public class ImageViewFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override

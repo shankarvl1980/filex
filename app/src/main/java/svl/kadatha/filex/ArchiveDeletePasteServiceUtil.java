@@ -36,11 +36,13 @@ public class ArchiveDeletePasteServiceUtil {
         {
             emptyService=ArchiveDeletePasteProgressActivity1.class;
         }
-        else if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
+        else
+            if(ArchiveDeletePasteFileService2.SERVICE_COMPLETED)
         {
             emptyService=ArchiveDeletePasteProgressActivity2.class;
         }
-        else if(ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
+        else
+            if(ArchiveDeletePasteFileService3.SERVICE_COMPLETED)
 
         {
             emptyService=ArchiveDeletePasteProgressActivity3.class;
@@ -529,7 +531,7 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     String name=dest_file.getName();
                     UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
-                    if(targetUsbFile!=null) FileUtil.deleteUsbFile(targetUsbFile);
+                    if(targetUsbFile!=null && targetUsbFile.getLength()==0) FileUtil.deleteUsbFile(targetUsbFile);
                     UsbFile childUsbFile=usbFile.createFile(name);
                     if(!childUsbFile.isDirectory()) outStream=new UsbFileOutputStream(childUsbFile);
                 }

@@ -40,7 +40,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
     private int count=0;
-    //public final MutableLiveData<Integer> mutable_file_count=new MutableLiveData<>();
+
 
 
     public FilePOJOViewModel(@NonNull Application application) {
@@ -102,7 +102,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     fill_file_size(filePOJOS,final_storage_space);
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
         });
     }

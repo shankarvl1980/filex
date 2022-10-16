@@ -53,41 +53,6 @@ public class PreferencesDialog extends DialogFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View v=inflater.inflate(R.layout.fragment_preferences,container,false);
-//        RadioGroup file_block_rg = v.findViewById(R.id.preferences_file_block_rg);
-//        RadioButton block_1024_rb = v.findViewById(R.id.preferences_rb_1024);
-//        RadioButton block_1000_rb = v.findViewById(R.id.preferences_rb_1000);
-//        file_block_rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                if (checkedId == R.id.preferences_rb_1000) {
-//                    byte_count_block_1000 = true;
-//                } else if (checkedId == R.id.preferences_rb_1024) {
-//                    byte_count_block_1000 = false;
-//                }
-//                if(df==null)
-//                {
-//                    return;
-//                }
-//                if(byte_count_block_1000!=Global.BYTE_COUNT_BLOCK_1000)
-//                {
-//                    Global.BYTE_COUNT_BLOCK_1000=byte_count_block_1000;
-//                    tinyDB.putBoolean("byte_count_block_1000",byte_count_block_1000);
-//                    fragmentManager.beginTransaction().detach(df).commit();
-//                    fragmentManager.beginTransaction().attach(df).commit();
-//                }
-//            }
-//        });
-//
-//        byte_count_block_1000=Global.BYTE_COUNT_BLOCK_1000;
-//        if(byte_count_block_1000)
-//        {
-//            block_1000_rb.setChecked(true);
-//        }
-//        else
-//        {
-//            block_1024_rb.setChecked(true);
-//        }
-
         RadioButton light_rb = v.findViewById(R.id.preferences_rb_light);
         light_rb.setOnClickListener(new View.OnClickListener() {
             @Override

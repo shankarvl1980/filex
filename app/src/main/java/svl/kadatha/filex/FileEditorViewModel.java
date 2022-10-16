@@ -204,7 +204,6 @@ public class FileEditorViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-
                 file=new File(file_path);
                 source_folder=file.getParent();
                 isWritable=FileUtil.isWritable(fileObjectType,file_path);

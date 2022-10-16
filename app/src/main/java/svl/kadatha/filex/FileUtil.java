@@ -35,6 +35,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -352,7 +353,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				if (parentUsbFile != null)
 				{
 					UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
-					if(targetUsbFile!=null)deleteUsbFile(targetUsbFile);
+					if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
 					targetUsbFile = parentUsbFile.createFile(name);
 					long length=source.getLength();
 					if(length>0) targetUsbFile.setLength(length); // causes problem
@@ -659,7 +660,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				if (parentUsbFile != null)
 				{
 					UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
-					if(targetUsbFile!=null)deleteUsbFile(targetUsbFile);
+					if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
 					targetUsbFile = parentUsbFile.createFile(name);
 					long length=source.length();
 					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
@@ -787,9 +788,9 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			usbFile=rootUsbFile.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
 		}
 
-		catch (IOException e)
+		catch (IOException | ConcurrentModificationException e)
 		{
-
+			return usbFile;
 		}
 		return usbFile;
 	}
@@ -919,7 +920,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		public static boolean deleteUsbFile(UsbFile usbFile)
 		{
 			try {
-				if(usbFile.getLength()==0)
+				if(!usbFile.isDirectory() && usbFile.getLength()==0)
 				{
 					if(FileUtil.make_UsbFile_non_zero_length(usbFile.getAbsolutePath()))
 					{

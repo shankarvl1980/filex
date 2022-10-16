@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -62,9 +63,11 @@ public class FilePOJOUtil {
                 try {
                     ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE);
                     ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
-                    sizeLong = zipEntry.getSize();
+                    if(zipEntry!=null) sizeLong = zipEntry.getSize();
 
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
+
                 }
             }
             else
@@ -690,7 +693,7 @@ public class FilePOJOUtil {
                     }
                 }
             }
-            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),fileObjectType,dest_folder,currentUsbFile,false);
+            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,dest_folder,currentUsbFile,false);
             filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+dest_folder);
             filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
             if(filePOJOs==null)return null;
@@ -713,7 +716,6 @@ public class FilePOJOUtil {
         String file_path;
         for(int i=0;i<size;++i)
         {
-
             file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
             filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             if(filePOJO!=null)
@@ -823,13 +825,12 @@ public class FilePOJOUtil {
 
     private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType)
     {
-        Iterator iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+        Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
         while(iterator.hasNext())
         {
-            Map.Entry entry=(Map.Entry)iterator.next();
-            if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
+            Map.Entry<String, List<FilePOJO>> entry= iterator.next();
+            if(Global.IS_CHILD_FILE(entry.getKey(),fileObjectType+file_path))
             {
-                ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
             }
         }
@@ -837,10 +838,9 @@ public class FilePOJOUtil {
         iterator=Global.HASHMAP_FILE_POJO_FILTERED.entrySet().iterator();
         while(iterator.hasNext())
         {
-            Map.Entry entry=(Map.Entry)iterator.next();
-            if(Global.IS_CHILD_FILE((String) entry.getKey(),fileObjectType+file_path))
+            Map.Entry<String, List<FilePOJO>> entry= iterator.next();
+            if(Global.IS_CHILD_FILE(entry.getKey(),fileObjectType+file_path))
             {
-                ((List<FilePOJO>)entry.getValue()).clear();
                 iterator.remove();
             }
         }
