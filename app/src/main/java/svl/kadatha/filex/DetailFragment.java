@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -53,8 +54,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public int totalFilePOJO_list_Size;
 	public RecyclerView filepath_recyclerview;
 	public RecyclerView recyclerView;
+	public ImageView layout_image_view;
 	LinearLayoutManager llm;
 	GridLayoutManager glm;
+	public boolean grid_layout;
+	private TinyDB tinyDB;
 	TextView folder_empty;
 	DetailRecyclerViewAdapter adapter;
 	private FilePathRecyclerViewAdapter filepath_adapter;
@@ -106,6 +110,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		mainActivity.addFragmentCommunicationListener(this);
+		tinyDB=new TinyDB(context);
 	}
 
 	@Override
@@ -187,6 +192,27 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
+		layout_image_view=v.findViewById(R.id.fragment_detail_layout_image);
+		layout_image_view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(file_click_selected_name.equals("Image"))
+				{
+					Global.IMAGE_GRID_LAYOUT=!Global.IMAGE_GRID_LAYOUT;
+					layout_image_view.setImageResource(Global.IMAGE_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+					tinyDB.putBoolean("image_grid_layout",Global.IMAGE_GRID_LAYOUT);
+
+				}
+				else if(file_click_selected_name.equals("Video"))
+				{
+					Global.VIDEO_GRID_LAYOUT=!Global.VIDEO_GRID_LAYOUT;
+					layout_image_view.setImageResource(Global.VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+					tinyDB.putBoolean("video_grid_layout",Global.VIDEO_GRID_LAYOUT);
+				}
+				mainActivity.fm.beginTransaction().detach(DetailFragment.this).commit();
+				mainActivity.fm.beginTransaction().attach(DetailFragment.this).commit();
+			}
+		});
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
@@ -196,7 +222,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		LinearLayoutManager file_path_lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 		filepath_recyclerview.setLayoutManager(file_path_lm);
 
-		if(Global.FILE_GRID_LAYOUT)
+		if(file_click_selected_name.equals("Image"))
+		{
+			grid_layout=Global.IMAGE_GRID_LAYOUT;
+		}
+		else if(file_click_selected_name.equals("Video"))
+		{
+			grid_layout=Global.VIDEO_GRID_LAYOUT;
+		}
+		else
+		{
+			grid_layout=Global.FILE_GRID_LAYOUT;
+		}
+
+		if(grid_layout)
 		{
 			glm=new GridLayoutManager(context,Global.GRID_COUNT);
 			recyclerView.setLayoutManager(glm);
@@ -328,13 +367,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				}
 			}
 		});
-
-//		viewModel.mutable_file_count.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-//			@Override
-//			public void onChanged(Integer integer) {
-//				mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+integer);
-//			}
-//		});
 
 		extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
 		extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -623,6 +655,16 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public void set_adapter()
 	{
+		if(file_click_selected_name.equals("Image"))
+		{
+			layout_image_view.setVisibility(View.VISIBLE);
+			layout_image_view.setImageResource(Global.IMAGE_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+		}
+		else if(file_click_selected_name.equals("Video"))
+		{
+			layout_image_view.setVisibility(View.VISIBLE);
+			layout_image_view.setImageResource(Global.VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+		}
 		filepath_recyclerview.setAdapter(filepath_adapter);
 		filepath_recyclerview.scrollToPosition(filepath_adapter.getItemCount()-1);
 		recyclerView.setAdapter(adapter);

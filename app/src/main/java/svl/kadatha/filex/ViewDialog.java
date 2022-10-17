@@ -63,7 +63,8 @@ public class ViewDialog extends DialogFragment
 		grid_rb=v.findViewById(R.id.dialog_view_rb_grid);
 		if(appCompatActivity instanceof MainActivity)
 		{
-			if(Global.FILE_GRID_LAYOUT)
+			DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+			if(df.grid_layout)
 			{
 				grid_rb.setChecked(true);
 			}
@@ -74,20 +75,54 @@ public class ViewDialog extends DialogFragment
 			rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(RadioGroup group, int checkedId) {
-
 					if(list_rb.isChecked())
 					{
-						Global.FILE_GRID_LAYOUT=false;
+						if(df.file_click_selected_name.equals("Image"))
+						{
+							Global.IMAGE_GRID_LAYOUT=false;
+						}
+						else if(df.file_click_selected_name.equals("Video"))
+						{
+							Global.VIDEO_GRID_LAYOUT=false;
+
+						}
+						else
+						{
+							Global.FILE_GRID_LAYOUT=false;
+						}
 					}
 					else if(grid_rb.isChecked())
 					{
-						Global.FILE_GRID_LAYOUT=true;
+						if(df.file_click_selected_name.equals("Image"))
+						{
+							Global.IMAGE_GRID_LAYOUT=true;
+						}
+						else if(df.file_click_selected_name.equals("Video"))
+						{
+							Global.VIDEO_GRID_LAYOUT=true;
+
+						}
+						else
+						{
+							Global.FILE_GRID_LAYOUT=true;
+						}
 					}
 
 					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 					fragmentManager.beginTransaction().detach(df).commit();
 					fragmentManager.beginTransaction().attach(df).commit();
-					tinyDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
+					if(df.file_click_selected_name.equals("Image"))
+					{
+						tinyDB.putBoolean("image_grid_layout",Global.IMAGE_GRID_LAYOUT);
+					}
+					else if(df.file_click_selected_name.equals("Video"))
+					{
+						tinyDB.putBoolean("video_grid_layout",Global.VIDEO_GRID_LAYOUT);
+					}
+					else
+					{
+						tinyDB.putBoolean("file_grid_layout",Global.FILE_GRID_LAYOUT);
+					}
 				}
 			});
 

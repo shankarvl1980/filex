@@ -85,14 +85,8 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             }
 
-            MarginLayoutParams params= (MarginLayoutParams) appnametextview.getLayoutParams();
-            params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
-
             appnametextview.setMaxLines(2);
             appnametextview.setGravity(Gravity.CENTER);
-
-            params= (MarginLayoutParams) appsizetextview.getLayoutParams();
-            params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
 
             appsizetextview.setGravity(Gravity.CENTER);
 
@@ -161,11 +155,12 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             measureChildWithMargins(appimageview,widthMeasureSpec,0,heightMeasureSpec,0);
 
             maxHeight+=imageview_dimension;
+            usedWidth=Global.FOUR_DP*2;
 
-            measureChildWithMargins(appnametextview,widthMeasureSpec,0,heightMeasureSpec,0);
+            measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
             maxHeight+=appnametextview.getMeasuredHeight();
 
-            measureChildWithMargins(appsizetextview,widthMeasureSpec,0,heightMeasureSpec,0);
+            measureChildWithMargins(appsizetextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
             maxHeight+=appsizetextview.getMeasuredHeight();
 
         }

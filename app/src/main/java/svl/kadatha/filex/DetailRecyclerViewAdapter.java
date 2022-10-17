@@ -26,6 +26,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 	private CardViewClickListener cardViewClickListener;
     private boolean show_file_path;
+    private final boolean grid_layout;
 
 
 	DetailRecyclerViewAdapter(Context context,boolean archiveview)
@@ -33,6 +34,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
+		grid_layout=df.grid_layout;
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
@@ -207,7 +209,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 	{
-		return new ViewHolder(new RecyclerViewLayout(context,show_file_path,false));
+		return new ViewHolder(new RecyclerViewLayout(context,show_file_path,false,grid_layout));
 	}
 
 	@Override

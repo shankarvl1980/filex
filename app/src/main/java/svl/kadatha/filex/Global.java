@@ -143,6 +143,8 @@ public class Global
 	
 	static boolean BYTE_COUNT_BLOCK_1000;
 	static boolean FILE_GRID_LAYOUT;
+	static boolean IMAGE_GRID_LAYOUT;
+	static boolean VIDEO_GRID_LAYOUT;
 	static boolean SHOW_FILE_PATH;
 	static boolean IS_TABLET;
 	static boolean RECOGNISE_USB;
@@ -441,7 +443,6 @@ public class Global
 		}
 
 
-
 		//
 		if(THEME==null)
 		{
@@ -458,6 +459,11 @@ public class Global
 		//
 		FILE_GRID_LAYOUT=tinyDB.getBoolean("file_grid_layout");
 
+		//
+		IMAGE_GRID_LAYOUT=tinyDB.getBoolean("image_grid_layout");
+
+		//
+		VIDEO_GRID_LAYOUT=tinyDB.getBoolean("video_grid_layout");
 		//
 		FileSelectorActivity.FILE_GRID_LAYOUT=tinyDB.getBoolean("file_selector_file_grid_layout");
 		//
@@ -481,6 +487,8 @@ public class Global
 			tinyDB.putBoolean("not_first_run",true);
 			tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+			IMAGE_GRID_LAYOUT=true;
+			VIDEO_GRID_LAYOUT=true;
 		}
 		//
 

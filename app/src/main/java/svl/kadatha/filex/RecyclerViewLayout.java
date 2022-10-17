@@ -25,33 +25,36 @@ public class RecyclerViewLayout extends ViewGroup
 	public int itemWidth, itemHeight;
 	private final boolean show_file_path,whether_file_selector_activity;
 	private int select_indicator_offset_linear;
-	private boolean file_grid_layout;
+	private final boolean grid_layout;
 	private int grid_count;
 
-	RecyclerViewLayout(Context context,boolean show_file_path,boolean whether_file_selector_activity)
+	RecyclerViewLayout(Context context,boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
 	{
 		super(context);
 		this.context=context;
 		this.show_file_path=show_file_path;
 		this.whether_file_selector_activity=whether_file_selector_activity;
+		this.grid_layout=grid_layout;
 		init();
 	}
 	
-	RecyclerViewLayout(Context context, AttributeSet attr, boolean show_file_path,boolean whether_file_selector_activity)
+	RecyclerViewLayout(Context context, AttributeSet attr, boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
 	{
 		super(context,attr);
 		this.context=context;
 		this.show_file_path=show_file_path;
 		this.whether_file_selector_activity=whether_file_selector_activity;
+		this.grid_layout=grid_layout;
 		init();
 	}
 
-	RecyclerViewLayout(Context context, AttributeSet attr, int defStyle, boolean show_file_path,boolean whether_file_selector_activity)
+	RecyclerViewLayout(Context context, AttributeSet attr, int defStyle, boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
 	{
 		super(context,attr,defStyle);
 		this.context=context;
 		this.show_file_path=show_file_path;
 		this.whether_file_selector_activity=whether_file_selector_activity;
+		this.grid_layout=grid_layout;
 		init();
 	}
 	
@@ -92,137 +95,61 @@ public class RecyclerViewLayout extends ViewGroup
         int first_line_font_size;
 		int overlay_image_dimension;
 
-		if(whether_file_selector_activity)
+		grid_count= whether_file_selector_activity ? FileSelectorActivity.GRID_COUNT : Global.GRID_COUNT;
+		if(grid_layout)
 		{
-			file_grid_layout=FileSelectorActivity.FILE_GRID_LAYOUT;
-			grid_count=FileSelectorActivity.GRID_COUNT;
-			if(file_grid_layout)
+			if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
-				if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
+				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
 
-				}
-				else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
-				{
+			}
+			else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+			{
 
-					first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_GRID;
-
-				}
-				else
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
-
-				}
-
-				MarginLayoutParams params= (MarginLayoutParams) filenametextview.getLayoutParams();
-				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
-
-				filenametextview.setMaxLines(2);
-				filenametextview.setGravity(Gravity.CENTER);
-				params= (MarginLayoutParams) filesubfilecounttextview.getLayoutParams();
-				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
-
-				filesubfilecounttextview.setGravity(Gravity.CENTER);
-				overlay_image_dimension=imageview_dimension/2-Global.FOURTEEN_DP;
+				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_GRID;
 
 			}
 			else
 			{
-				if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-
-				}
-				else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
-				{
-					first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
-				}
-				else
-				{
-					first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
-				}
-				overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
+				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
 
 			}
+
+			filenametextview.setMaxLines(2);
+			filenametextview.setGravity(Gravity.CENTER);
+
+			filesubfilecounttextview.setGravity(Gravity.CENTER);
+			overlay_image_dimension=imageview_dimension/2-Global.FOURTEEN_DP;
 
 		}
 		else
 		{
-			file_grid_layout=Global.FILE_GRID_LAYOUT;
-			grid_count=Global.GRID_COUNT;
-			if(file_grid_layout)
+			if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
-				if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
+				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
 
-				}
-				else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
-				{
-
-					first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_GRID;
-
-				}
-				else
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
-
-				}
-
-				MarginLayoutParams params= (MarginLayoutParams) filenametextview.getLayoutParams();
-				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
-
-				filenametextview.setMaxLines(2);
-				filenametextview.setGravity(Gravity.CENTER);
-				params= (MarginLayoutParams) filesubfilecounttextview.getLayoutParams();
-				params.setMargins(Global.FOUR_DP,0,Global.FOUR_DP,0);
-
-				filesubfilecounttextview.setGravity(Gravity.CENTER);
-				overlay_image_dimension=imageview_dimension/2-Global.FOURTEEN_DP;
-
+			}
+			else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+			{
+				first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
 			}
 			else
 			{
-				if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
-				{
-					first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-
-				}
-				else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
-				{
-					first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
-				}
-				else
-				{
-					first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
-					second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
-					imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
-				}
-				overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
+				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
+				second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
+				imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
 			}
+			overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
 
 		}
 
@@ -259,7 +186,7 @@ public class RecyclerViewLayout extends ViewGroup
 		 int maxHeight=0;
 		int usedWidth;
 
-		if(file_grid_layout)
+		if(grid_layout)
 		{
 
 			measureChildWithMargins(file_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
@@ -267,11 +194,12 @@ public class RecyclerViewLayout extends ViewGroup
 			measureChildWithMargins(overlay_fileimageview,widthMeasureSpec,0,heightMeasureSpec,0);
 
 			maxHeight+=imageview_dimension;
+			usedWidth=Global.FOUR_DP*2;
 
-			measureChildWithMargins(filenametextview,widthMeasureSpec,0,heightMeasureSpec,0);
+			measureChildWithMargins(filenametextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 			maxHeight+=filenametextview.getMeasuredHeight();
 
-			measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,0,heightMeasureSpec,0);
+			measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 			maxHeight+=filesubfilecounttextview.getMeasuredHeight();
 
 
@@ -320,7 +248,7 @@ public class RecyclerViewLayout extends ViewGroup
 		// TODO: Implement this method
 		int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
-		if(file_grid_layout)
+		if(grid_layout)
 		{
 			int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
 			x+=(grid_width-imageview_dimension)/2;
