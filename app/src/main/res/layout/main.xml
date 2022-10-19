@@ -50,7 +50,7 @@
 			android:layout_height="?android:attr/actionBarSize"
 			android:paddingStart="10dp"
 			android:paddingEnd="10dp"
-			android:src="@drawable/up_arrow_outlined_icon"
+			android:src="@drawable/up_icon"
 			android:background="@null"
 			app:layout_constraintEnd_toStartOf="@+id/top_toolbar_current_dir_label"
 			app:layout_constraintStart_toEndOf="@+id/top_toolbar_home_button"

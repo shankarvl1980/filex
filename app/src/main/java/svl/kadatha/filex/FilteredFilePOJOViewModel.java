@@ -9,7 +9,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;

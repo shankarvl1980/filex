@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -196,18 +195,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		layout_image_view.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if(file_click_selected_name.equals("Image"))
+				if(file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))
 				{
-					Global.IMAGE_GRID_LAYOUT=!Global.IMAGE_GRID_LAYOUT;
-					layout_image_view.setImageResource(Global.IMAGE_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
-					tinyDB.putBoolean("image_grid_layout",Global.IMAGE_GRID_LAYOUT);
+					Global.IMAGE_VIDEO_GRID_LAYOUT=!Global.IMAGE_VIDEO_GRID_LAYOUT;
+					layout_image_view.setImageResource(Global.IMAGE_VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+					tinyDB.putBoolean("image_video_grid_layout",Global.IMAGE_VIDEO_GRID_LAYOUT);
 
-				}
-				else if(file_click_selected_name.equals("Video"))
-				{
-					Global.VIDEO_GRID_LAYOUT=!Global.VIDEO_GRID_LAYOUT;
-					layout_image_view.setImageResource(Global.VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
-					tinyDB.putBoolean("video_grid_layout",Global.VIDEO_GRID_LAYOUT);
 				}
 				mainActivity.fm.beginTransaction().detach(DetailFragment.this).commit();
 				mainActivity.fm.beginTransaction().attach(DetailFragment.this).commit();
@@ -222,13 +215,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		LinearLayoutManager file_path_lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 		filepath_recyclerview.setLayoutManager(file_path_lm);
 
-		if(file_click_selected_name.equals("Image"))
+		if(file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))
 		{
-			grid_layout=Global.IMAGE_GRID_LAYOUT;
-		}
-		else if(file_click_selected_name.equals("Video"))
-		{
-			grid_layout=Global.VIDEO_GRID_LAYOUT;
+			grid_layout=Global.IMAGE_VIDEO_GRID_LAYOUT;
 		}
 		else
 		{
@@ -655,15 +644,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public void set_adapter()
 	{
-		if(file_click_selected_name.equals("Image"))
+		if(file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))
 		{
 			layout_image_view.setVisibility(View.VISIBLE);
-			layout_image_view.setImageResource(Global.IMAGE_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
-		}
-		else if(file_click_selected_name.equals("Video"))
-		{
-			layout_image_view.setVisibility(View.VISIBLE);
-			layout_image_view.setImageResource(Global.VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+			layout_image_view.setImageResource(Global.IMAGE_VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
 		}
 		filepath_recyclerview.setAdapter(filepath_adapter);
 		filepath_recyclerview.scrollToPosition(filepath_adapter.getItemCount()-1);

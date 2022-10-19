@@ -8,9 +8,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
-
-import androidx.lifecycle.MutableLiveData;
 
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -42,7 +39,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 {
 
 	String dest_folder,zip_file_path, zip_folder_name,archive_action;
-	public static FileObjectType SOURCE_FILE_OBJECT,DEST_FILE_OBJECT;
+	public static FileObjectType SOURCE_FILE_OBJECT=null,DEST_FILE_OBJECT=null;
 	private Context context;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
@@ -202,17 +199,21 @@ public class ArchiveDeletePasteFileService2 extends Service
 			default:
 				stopSelf();
 				SERVICE_COMPLETED=true;
+				SOURCE_FILE_OBJECT=null;
+				DEST_FILE_OBJECT=null;
 				break;
 		}
 
 		SOURCE_FILE_OBJECT=sourceFileObjectType;
 		DEST_FILE_OBJECT=destFileObjectType;
 
-		startForeground(notification_id,nm.buildADPPActivity2(intent_action,notification_content,notification_id));
 		dest_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(dest_folder);
 		source_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(source_folder);
+
+		startForeground(notification_id,nm.buildADPPActivity2(intent_action,notification_content,notification_id));
 		return START_NOT_STICKY;
 	}
+
 
 
 	@Override
@@ -279,6 +280,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 			}
 		}
 		SERVICE_COMPLETED=true;
+		SOURCE_FILE_OBJECT=null;
+		DEST_FILE_OBJECT=null;
 		Global.SET_OTHER_FILE_PERMISSION(dest_other_file_permission,dest_folder);
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
@@ -289,6 +292,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 		// TODO: Implement this method
 		super.onDestroy();
 		SERVICE_COMPLETED=true;
+		SOURCE_FILE_OBJECT=null;
+		DEST_FILE_OBJECT=null;
 		Global.SET_OTHER_FILE_PERMISSION(dest_other_file_permission,dest_folder);
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
@@ -308,6 +313,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 			stopSelf();
 			nm.notify(getString(R.string.could_not_create)+" '"+zip_file_name+"'",notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -558,6 +565,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
 
@@ -599,6 +608,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 			nm.notify(getString(R.string.could_not_extract)+" '"+new File(zip_file_path).getName()+"'",notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -857,6 +868,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
 
@@ -876,6 +889,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 			nm.notify(getString(R.string.could_not_delete_selected_files)+" "+source_folder,notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -1249,6 +1264,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
 
@@ -1275,6 +1292,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 					nm.notify(getString(R.string.could_not_copy_selected_files)+" "+dest_folder,notification_id);
 				}
 				SERVICE_COMPLETED=true;
+				SOURCE_FILE_OBJECT=null;
+				DEST_FILE_OBJECT=null;
 			}
 		}
 
@@ -1841,7 +1860,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 		}
 
 
-
 		@SuppressWarnings("null")
 		public boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
 		{
@@ -2162,6 +2180,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 			}
 
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
 

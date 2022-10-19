@@ -8,9 +8,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
-
-import androidx.lifecycle.MutableLiveData;
 
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -40,9 +37,9 @@ import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 
 public class ArchiveDeletePasteFileService1 extends Service
 {
-	
+
 	String dest_folder,zip_file_path, zip_folder_name,archive_action;
-	public static FileObjectType SOURCE_FILE_OBJECT,DEST_FILE_OBJECT;
+	public static FileObjectType SOURCE_FILE_OBJECT=null,DEST_FILE_OBJECT=null;
 	private Context context;
 	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
@@ -90,7 +87,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	private boolean storage_analyser_delete;
 	final List<String> overwritten_file_path_list=new ArrayList<>();
 
-    @Override
+	@Override
 	public void onCreate()
 	{
 		// TODO: Implement this method
@@ -156,7 +153,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				}
 				break;
-			
+
 			case "delete":
 				if(bundle!=null)
 				{
@@ -166,14 +163,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 					files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					source_folder=bundle.getString("source_folder");
-                    storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
+					storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
 
 				}
 				break;
-				
+
 			case "paste-cut":
 			case "paste-copy":
 				if(bundle!=null)
@@ -198,19 +195,22 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				}
 				break;
-				
+
 			default:
 				stopSelf();
 				SERVICE_COMPLETED=true;
+				SOURCE_FILE_OBJECT=null;
+				DEST_FILE_OBJECT=null;
 				break;
 		}
 
 		SOURCE_FILE_OBJECT=sourceFileObjectType;
 		DEST_FILE_OBJECT=destFileObjectType;
 
-		startForeground(notification_id,nm.buildADPPActivity1(intent_action,notification_content,notification_id));
 		dest_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(dest_folder);
 		source_other_file_permission=Global.GET_OTHER_FILE_PERMISSION(source_folder);
+
+		startForeground(notification_id,nm.buildADPPActivity1(intent_action,notification_content,notification_id));
 		return START_NOT_STICKY;
 	}
 
@@ -225,7 +225,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 		return binder;
 	}
-	
+
 	class ArchiveDeletePasteBinder extends Binder
 	{
 		public ArchiveDeletePasteFileService1 getService()
@@ -233,7 +233,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			return ArchiveDeletePasteFileService1.this;
 		}
 	}
-	
+
 	public void cancelService()
 	{
 		if(intent_action==null)
@@ -279,6 +279,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 			}
 		}
 		SERVICE_COMPLETED=true;
+		SOURCE_FILE_OBJECT=null;
+		DEST_FILE_OBJECT=null;
 		Global.SET_OTHER_FILE_PERMISSION(dest_other_file_permission,dest_folder);
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
@@ -289,6 +291,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 		// TODO: Implement this method
 		super.onDestroy();
 		SERVICE_COMPLETED=true;
+		SOURCE_FILE_OBJECT=null;
+		DEST_FILE_OBJECT=null;
 		Global.SET_OTHER_FILE_PERMISSION(dest_other_file_permission,dest_folder);
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
@@ -308,6 +312,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 			stopSelf();
 			nm.notify(getString(R.string.could_not_create)+" '"+zip_file_name+"'",notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -558,9 +564,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
-	
+
 	public class UnarchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 
@@ -568,8 +576,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 		ZipFile zipfile=null;
 		final List<String> written_file_name_list=new ArrayList<>();
 		final List<String> written_file_path_list=new ArrayList<>();
-        final Set<String> first_part_entry_name_set=new HashSet<>();
-        final Set<String> first_part_entry_path_set=new HashSet<>();
+		final Set<String> first_part_entry_name_set=new HashSet<>();
+		final Set<String> first_part_entry_path_set=new HashSet<>();
 
 		@Override
 		protected void onPreExecute()
@@ -599,6 +607,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 			nm.notify(getString(R.string.could_not_extract)+" '"+new File(zip_file_path).getName()+"'",notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -683,7 +693,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					success=read_zipentry(zipEntry,zip_dest_path,isWritable,tree_uri,tree_uri_path);
 				}
 
-            }
+			}
 			if(zip_folder_name==null)
 			{
 				written_file_name_list.addAll(first_part_entry_name_set);
@@ -713,7 +723,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				//mutable_count_no_files.postValue(counter_no_files);
 				copied_file_name=zip_entry_name;
 
-                int idx=zip_entry_name.indexOf(File.separator);
+				int idx=zip_entry_name.indexOf(File.separator);
 				if(idx!=-1)
 				{
 					String first_part=zip_entry_name.substring(0,idx);
@@ -786,15 +796,15 @@ public class ArchiveDeletePasteFileService1 extends Service
 				ZipEntry zipEntry;
 				while((zipEntry=zipInputStream.getNextEntry())!=null && !isCancelled())
 				{
-				    String zip_entry_name=ArchiveDeletePasteServiceUtil.UNARCHIVE(context,zip_dest_path,zipEntry,isWritable,destFileObjectType,uri,uri_path,zipInputStream);
+					String zip_entry_name=ArchiveDeletePasteServiceUtil.UNARCHIVE(context,zip_dest_path,zipEntry,isWritable,destFileObjectType,uri,uri_path,zipInputStream);
 					counter_no_files++;
 					counter_size_files+=zipEntry.getSize();
 					total_bytes_read[0]=counter_size_files;
 					//size_of_files_archived=FileUtil.humanReadableByteCount(counter_size_files);
 					//mutable_count_no_files.postValue(counter_no_files);
 					copied_file_name=zip_entry_name;
-                    String entry_name=zipEntry.getName();
-                    int idx=entry_name.indexOf(File.separator);
+					String entry_name=zipEntry.getName();
+					int idx=entry_name.indexOf(File.separator);
 					if(idx!=-1)
 					{
 						String first_part=zip_entry_name.substring(0,idx);
@@ -857,9 +867,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
-	
+
 	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		final List<String> deleted_file_names=new ArrayList<>();
@@ -876,6 +888,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 			nm.notify(getString(R.string.could_not_delete_selected_files)+" "+source_folder,notification_id);
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 
 		@Override
@@ -1057,8 +1071,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 
 
-		public boolean deleteNativeDirectory(final File folder) 
-		{     
+		public boolean deleteNativeDirectory(final File folder)
+		{
 			boolean success=true;
 			if (folder.isDirectory())            //Check if folder file is a real folder
 			{
@@ -1249,9 +1263,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 				nm.notify(notification_content,notification_id);
 			}
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
-	
+
 	public class CutCopyAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
 	{
 		FilePOJO filePOJO;
@@ -1275,6 +1291,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 					nm.notify(getString(R.string.could_not_copy_selected_files)+" "+dest_folder,notification_id);
 				}
 				SERVICE_COMPLETED=true;
+				SOURCE_FILE_OBJECT=null;
+				DEST_FILE_OBJECT=null;
 			}
 		}
 
@@ -1841,7 +1859,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 
 
-
 		@SuppressWarnings("null")
 		public boolean Copy_UsbFile_File(UsbFile src_usbfile, String parent_file_path, String name,boolean cut)
 		{
@@ -2162,6 +2179,8 @@ public class ArchiveDeletePasteFileService1 extends Service
 			}
 
 			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
 		}
 	}
 
@@ -2170,7 +2189,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	{
 		void onServiceCompletion(String intent_action, boolean service_result, String target, String dest_folder);
 	}
-	
+
 	public void setServiceCompletionListener(ServiceCompletionListener listener)
 	{
 		serviceCompletionListener=listener;

@@ -45,14 +45,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener
 {

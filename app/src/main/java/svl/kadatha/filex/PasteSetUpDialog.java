@@ -325,6 +325,14 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 			return;
 		}
+
+		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(sourceFileObjectType,destFileObjectType))
+		{
+			Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+			dismissAllowingStateLoss();
+			return;
+		}
+
 		Intent intent=new Intent(context,emptyService);
 		intent.setAction(cut ? "paste-cut" : "paste-copy");
 		bundle.putString("tree_uri_path",tree_uri_path);

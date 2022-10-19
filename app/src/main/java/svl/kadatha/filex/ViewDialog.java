@@ -77,14 +77,9 @@ public class ViewDialog extends DialogFragment
 				public void onCheckedChanged(RadioGroup group, int checkedId) {
 					if(list_rb.isChecked())
 					{
-						if(df.file_click_selected_name.equals("Image"))
+						if(df.file_click_selected_name.equals("Image") || df.file_click_selected_name.equals("Video"))
 						{
-							Global.IMAGE_GRID_LAYOUT=false;
-						}
-						else if(df.file_click_selected_name.equals("Video"))
-						{
-							Global.VIDEO_GRID_LAYOUT=false;
-
+							Global.IMAGE_VIDEO_GRID_LAYOUT=false;
 						}
 						else
 						{
@@ -93,14 +88,9 @@ public class ViewDialog extends DialogFragment
 					}
 					else if(grid_rb.isChecked())
 					{
-						if(df.file_click_selected_name.equals("Image"))
+						if(df.file_click_selected_name.equals("Image") || df.file_click_selected_name.equals("Video"))
 						{
-							Global.IMAGE_GRID_LAYOUT=true;
-						}
-						else if(df.file_click_selected_name.equals("Video"))
-						{
-							Global.VIDEO_GRID_LAYOUT=true;
-
+							Global.IMAGE_VIDEO_GRID_LAYOUT=true;
 						}
 						else
 						{
@@ -111,13 +101,9 @@ public class ViewDialog extends DialogFragment
 					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
 					fragmentManager.beginTransaction().detach(df).commit();
 					fragmentManager.beginTransaction().attach(df).commit();
-					if(df.file_click_selected_name.equals("Image"))
+					if(df.file_click_selected_name.equals("Image") || df.file_click_selected_name.equals("Video"))
 					{
-						tinyDB.putBoolean("image_grid_layout",Global.IMAGE_GRID_LAYOUT);
-					}
-					else if(df.file_click_selected_name.equals("Video"))
-					{
-						tinyDB.putBoolean("video_grid_layout",Global.VIDEO_GRID_LAYOUT);
+						tinyDB.putBoolean("image_video_grid_layout",Global.IMAGE_VIDEO_GRID_LAYOUT);
 					}
 					else
 					{

@@ -3,17 +3,13 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -29,7 +25,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
@@ -735,16 +730,13 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 		public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
 		{
-			String string="..........";
+			String string="abcdefghijklmnopqrstuvwxyz";
 			OutputStream outStream=null;
 			try
 			{
-				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-
+				UsbFile targetUsbFile=  getUsbFile(MainActivity.usbFileRoot,target_file_path);
 				if (targetUsbFile != null)
 				{
-					long length=string.length();
-					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
 					outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
 					outStream.write(string.getBytes(StandardCharsets.UTF_8));
 				}
@@ -922,7 +914,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			try {
 				if(!usbFile.isDirectory() && usbFile.getLength()==0)
 				{
-					if(FileUtil.make_UsbFile_non_zero_length(usbFile.getAbsolutePath()))
+					boolean madeNonZero=FileUtil.make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
+					if(madeNonZero)
 					{
 						usbFile.delete();
 						return true;

@@ -64,6 +64,77 @@ public class ArchiveDeletePasteServiceUtil {
         return emptyService;
     }
 
+
+    private static boolean NO_OPERATION_ON_USB()
+    {
+        boolean noOperation=true;
+        if(noOperation && ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"1 source file object "+noOperation);
+        }
+
+        if(noOperation && ArchiveDeletePasteFileService1.DEST_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService1.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"1 dest file object "+noOperation);
+        }
+
+        if(noOperation && ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"2 source file object "+noOperation);
+        }
+
+        if(noOperation && ArchiveDeletePasteFileService2.DEST_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService2.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"2 dest file object "+noOperation);
+        }
+
+        if(noOperation && ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"3 source file object "+noOperation);
+        }
+
+        if(noOperation && ArchiveDeletePasteFileService3.DEST_FILE_OBJECT!=null)
+        {
+            noOperation=ArchiveDeletePasteFileService3.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            //Log.d(Global.TAG,"3 dest file object "+noOperation);
+        }
+
+        //Log.d(Global.TAG,"finally file object "+noOperation);
+        return noOperation;
+    }
+
+    public static boolean WHETHER_TO_START_SERVICE_AS_NO_USB(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
+    {
+        boolean noOperation=true;
+        if(noOperation && sourceFileObjectType!=null)
+        {
+            if(sourceFileObjectType==FileObjectType.USB_TYPE)
+            {
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
+          //      Log.d(Global.TAG,"whether no operation source file object "+noOperation);
+            }
+        }
+
+        if(noOperation && destFileObjectType!=null)
+        {
+            if(destFileObjectType==FileObjectType.USB_TYPE)
+            {
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
+            //    Log.d(Global.TAG,"whether no operation dest file object "+noOperation);
+            }
+        }
+
+        return noOperation;
+    }
+
+
+
+
     public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
     {
         DetailFragment df = null;

@@ -56,68 +56,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-//    public void populateApps()
-//    {
-//        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-//        ExecutorService executorService=MyExecutorService.getExecutorService();
-//        future1=executorService.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                int flags = PackageManager.GET_META_DATA |
-//                        PackageManager.GET_SHARED_LIBRARY_FILES |
-//                        PackageManager.GET_UNINSTALLED_PACKAGES;
-//
-//                systemAppPOJOList=new ArrayList<>();
-//                userAppPOJOList=new ArrayList<>();
-//                final PackageManager packageManager = application.getPackageManager();
-//                List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
-//                for (PackageInfo packageInfo : packageInfos)
-//                {
-//                    if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
-//                    {
-//                        String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-//                        String package_name=packageInfo.packageName;
-//                        String version=packageInfo.versionName;
-//                        String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-//                        if(publicsourcedir==null)
-//                        {
-//                            continue;
-//                        }
-//                        File file = new File(publicsourcedir);
-//                        String path=file.getAbsolutePath();
-//                        long size=file.length();
-//                        long date=file.lastModified();
-//                        AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-//                        systemAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
-//
-//                    }
-//                    else if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
-//                    {
-//                        String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-//                        String package_name=packageInfo.packageName;
-//                        String version=packageInfo.versionName;
-//                        String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-//                        if(publicsourcedir==null)
-//                        {
-//                            continue;
-//                        }
-//                        File file = new File(publicsourcedir);
-//                        String path=file.getAbsolutePath();
-//                        long size=file.length();
-//                        long date=file.lastModified();
-//                        AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-//                        userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
-//                    }
-//
-//                }
-//                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-//            }
-//
-//        });
-//
-//    }
-
     public synchronized void populateApps()
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
