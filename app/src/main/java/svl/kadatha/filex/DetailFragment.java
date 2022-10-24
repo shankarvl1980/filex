@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -208,6 +209,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		});
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
+		Log.d(Global.TAG,"archive view - "+archive_view+"    & mainactivity viewmodel archive view - "+mainActivity.viewModel.archive_view);
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));
@@ -811,6 +813,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				display_path=display_path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH);
 				display_path="Archive"+display_path;
 				truncated_path=truncated_path.substring(0,Global.ARCHIVE_CACHE_DIR_LENGTH-"Archive/".length());//number added to archive_cache_dir_length is length of "Archive/"
+				Log.d(Global.TAG,"display path - "+display_path);
+				Log.d(Global.TAG,"truncated path - "+truncated_path);
 			}
 
 			if(p.equals(File.separator))

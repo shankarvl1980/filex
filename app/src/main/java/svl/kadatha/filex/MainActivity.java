@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1247,6 +1248,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
 			{
 				archive_exit();
+				Log.d(Global.TAG,"archive exited");
 			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)

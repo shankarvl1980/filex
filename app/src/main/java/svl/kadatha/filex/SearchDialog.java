@@ -86,9 +86,38 @@ public class SearchDialog extends DialogFragment
 		View v=inflater.inflate(R.layout.fragment_search_parameters,container,false);
 		search_file_name_edit_text=v.findViewById(R.id.dialog_fragment_search_file_edittext);
 		wholeword_checkbox=v.findViewById(R.id.dialog_fragment_search_wholeword_checkbox);
-		casesensitive_checkbox=v.findViewById(R.id.dialog_fragment_search_casesensitive_checkbox);
-		regex_checkbox=v.findViewById(R.id.dialog_fragment_search_regex_checkbox);
+		wholeword_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if(b)
+				{
+					regex_checkbox.setChecked(false);
+				}
+			}
+		});
 
+		casesensitive_checkbox=v.findViewById(R.id.dialog_fragment_search_casesensitive_checkbox);
+		casesensitive_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if(b)
+				{
+					regex_checkbox.setChecked(false);
+				}
+			}
+		});
+
+		regex_checkbox=v.findViewById(R.id.dialog_fragment_search_regex_checkbox);
+		regex_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if(b)
+				{
+					wholeword_checkbox.setChecked(false);
+					casesensitive_checkbox.setChecked(false);
+				}
+			}
+		});
 
 		size_group=v.findViewById(R.id.dialog_fragment_search_size_label_group);
 		RadioGroup rg = v.findViewById(R.id.dialog_fragment_search_rg);

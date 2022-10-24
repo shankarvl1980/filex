@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
@@ -104,7 +105,13 @@ public class InstaCropperActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instacropper);
         Toolbar toolbar = findViewById(R.id.crop_toolbar);
-        ImageButton crop_button = findViewById(R.id.crop_imagebutton);
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.wallpaper_icon,R.drawable.no_icon};
+        String [] titles=new String[]{getString(R.string.set_as_wallpaper),getString(R.string.cancel)};
+        tb_layout.setResourceImageDrawables(bottom_drawables,titles);
+
+        toolbar.addView(tb_layout);
+        Button crop_button = toolbar.findViewById(R.id.toolbar_btn_1);
         crop_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,10 +119,18 @@ public class InstaCropperActivity extends AppCompatActivity {
             }
         });
 
+        Button cancel_button=toolbar.findViewById(R.id.toolbar_btn_2);
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         mInstaCropper = findViewById(R.id.instacropper);
         progress_bar=findViewById(R.id.instacropper_activity_progressbar);
         progress_bar.setVisibility(View.GONE);
-        //LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
         Intent intent = getIntent();
 
         Uri uri = intent.getData();

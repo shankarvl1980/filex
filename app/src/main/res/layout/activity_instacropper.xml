@@ -26,19 +26,6 @@
 		app:contentInsetLeft="0dp"
 		app:contentInsetStart="0dp"
 	>
-		<ImageButton
-
-			android:layout_width="30dp"
-			android:layout_height="match_parent"
-			android:src="@drawable/wallpaper_icon"
-			android:id="@+id/crop_imagebutton"
-			android:layout_gravity="center"
-			android:scaleType="fitCenter"
-			android:adjustViewBounds="true"
-			android:background="@null"
-
-		/>
-
 
 	</androidx.appcompat.widget.Toolbar>
 	<FrameLayout
