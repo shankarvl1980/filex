@@ -55,7 +55,6 @@ public class SearchDialog extends DialogFragment
 	private String file_size_unit;
 	private MainActivity mainActivity;
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
