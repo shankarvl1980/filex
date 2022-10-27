@@ -132,6 +132,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 									break;
 									
 								case "paste-copy":
+								case "copy_to":
 									Global.print(context,result ? getString(R.string.copied_selected_files)+" "+dest_folder : getString(R.string.could_not_copy_selected_files)+" "+dest_folder);
 									break;
 							}
@@ -210,6 +211,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 					dialog_title.setText(R.string.moving);
 					break;
 				case "paste-copy":
+				case "copy_to":
 					dialog_title.setText(R.string.copying);
 					break;
 			}
@@ -310,6 +312,18 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 							}
 							break;
 
+
+							case "copy_to":
+							{
+								to_textview.setText(archiveDeletePasteFileService.dest_folder);
+
+								current_file.setText(archiveDeletePasteFileService.current_file_name);
+								copied_textview.setText(archiveDeletePasteFileService.copied_file);
+								no_files.setText(""+archiveDeletePasteFileService.counter_no_files);
+								size_files.setText(size_progress);
+
+							}
+							break;
 						}
 
 					}
@@ -322,7 +336,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 
 	private void bind_data()
 	{
-		if ("archive-zip".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action))
+		if ("archive-zip".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action) || "copy_to".equals(intent_action))
 		{
 			archiveDeletePasteFileService.fileCountSize.mutable_size_of_files_to_be_archived_copied.observe(this, new Observer<String>() {
 				@Override
@@ -332,71 +346,6 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 				}
 			});
 		}
-
-//		archiveDeletePasteFileService.mutable_count_no_files.observe(this, new Observer<Integer>() {
-//			@Override
-//			public void onChanged(Integer integer) {
-//				switch(intent_action)
-//				{
-//					case "archive-zip":
-//
-//					{
-//						current_file.setText(archiveDeletePasteFileService.zip_folder_name);
-//						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
-//
-//						from_textview.setText(archiveDeletePasteFileService.zip_file_path);
-//						to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
-//
-//						no_files.setText(""+integer);
-//						size_files.setText(archiveDeletePasteFileService.size_of_files_archived);
-//					}
-//					break;
-//
-//					case "archive-unzip":
-//
-//					{
-//						from_textview.setText(archiveDeletePasteFileService.zip_file_path);
-//						to_textview.setText(archiveDeletePasteFileService.zip_folder_name!=null ? archiveDeletePasteFileService.dest_folder+File.separator+archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
-//						current_file.setText(archiveDeletePasteFileService.current_file_name);
-//						copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
-//						no_files.setText(getString(R.string.extracted) + ": " + integer + (integer < 2 ? " file" : " files"));
-//						size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_archived);
-//					}
-//					break;
-//
-//					case "delete":
-//					{
-//						from_textview.setText(archiveDeletePasteFileService.source_folder);
-//						current_file.setText(archiveDeletePasteFileService.current_file_name);
-//						copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
-//						if(archiveDeletePasteFileService.isFromInternal)
-//						{
-//							no_files.setText(getString(R.string.deleted) + ": " + integer + (integer < 2 ? " file" : " files"));
-//							size_files.setText(getString(R.string.size) + ": " + archiveDeletePasteFileService.size_of_files_format);
-//						}
-//
-//					}
-//
-//					break;
-//
-//					case "paste-cut":
-//					case "paste-copy":
-//					{
-//						from_textview.setText(archiveDeletePasteFileService.source_folder);
-//						to_textview.setText(archiveDeletePasteFileService.dest_folder);
-//
-//						current_file.setText(archiveDeletePasteFileService.current_file_name);
-//						copied_textview.setText(archiveDeletePasteFileService.copied_file);
-//						no_files.setText(""+integer);
-//						size_files.setText(archiveDeletePasteFileService.size_of_files_copied);
-//
-//					}
-//					break;
-//
-//				}
-//
-//			}
-//		});
 
 
 	}

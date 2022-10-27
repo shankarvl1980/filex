@@ -53,7 +53,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -141,6 +140,7 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
+
         <activity android:name=".InstaCropperActivity" />
 
         <activity
@@ -177,6 +177,20 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".CopyToActivity"
+            android:label="@string/copy_to"
+            android:exported="true"
+            android:theme="@style/MyLightDialog">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
 
         <service
             android:name=".AudioPlayerService"

@@ -27,7 +27,6 @@ import androidx.fragment.app.FragmentManager;
 
 public class ViewDialog extends DialogFragment
 {
-
     private TinyDB tinyDB;
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private RadioButton list_rb, grid_rb;

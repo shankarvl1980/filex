@@ -53,11 +53,14 @@ public class ArchiveDeletePasteServiceUtil {
             if(appCompatActivity instanceof MainActivity)
             {
                 ((MainActivity)context).clear_cache=false;
-
             }
             else if(appCompatActivity instanceof StorageAnalyserActivity)
             {
                 ((StorageAnalyserActivity)context).clear_cache=false;
+            }
+            else if(appCompatActivity instanceof CopyToActivity)
+            {
+                ((CopyToActivity)context).clear_cache=false;
             }
         }
 
@@ -71,40 +74,33 @@ public class ArchiveDeletePasteServiceUtil {
         if(noOperation && ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"1 source file object "+noOperation);
         }
 
         if(noOperation && ArchiveDeletePasteFileService1.DEST_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService1.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"1 dest file object "+noOperation);
         }
 
         if(noOperation && ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"2 source file object "+noOperation);
         }
 
         if(noOperation && ArchiveDeletePasteFileService2.DEST_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService2.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"2 dest file object "+noOperation);
         }
 
         if(noOperation && ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"3 source file object "+noOperation);
         }
 
         if(noOperation && ArchiveDeletePasteFileService3.DEST_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService3.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
-            //Log.d(Global.TAG,"3 dest file object "+noOperation);
         }
 
-        //Log.d(Global.TAG,"finally file object "+noOperation);
         return noOperation;
     }
 
@@ -116,7 +112,6 @@ public class ArchiveDeletePasteServiceUtil {
             if(sourceFileObjectType==FileObjectType.USB_TYPE)
             {
                 noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
-          //      Log.d(Global.TAG,"whether no operation source file object "+noOperation);
             }
         }
 
@@ -125,14 +120,11 @@ public class ArchiveDeletePasteServiceUtil {
             if(destFileObjectType==FileObjectType.USB_TYPE)
             {
                 noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
-            //    Log.d(Global.TAG,"whether no operation dest file object "+noOperation);
             }
         }
 
         return noOperation;
     }
-
-
 
 
     public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
@@ -277,7 +269,6 @@ public class ArchiveDeletePasteServiceUtil {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
         }
-
     }
 
 
@@ -355,6 +346,70 @@ public class ArchiveDeletePasteServiceUtil {
         }
     }
 
+    public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_COPY_TO(String dest_folder, FileObjectType destFileObjectType,FilePOJO filePOJO)
+    {
+        DetailFragment df = null;
+        FileSelectorDialog fileSelectorDialog = null;
+        StorageAnalyserDialog storageAnalyserDialog = null;
+
+        if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
+        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+
+
+        String parent_dest_folder= new File(dest_folder).getParent();
+        if(parent_dest_folder==null) parent_dest_folder=dest_folder;
+
+
+        if(df!=null)
+        {
+            String tag=df.getTag();
+            if(tag.equals(dest_folder) && df.fileObjectType==destFileObjectType)
+            {
+                Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+                df.clearSelectionAndNotifyDataSetChanged();
+                int idx=df.filePOJO_list.indexOf(filePOJO);
+                if(df.llm!=null)
+                {
+                    df.llm.scrollToPositionWithOffset(idx,0);
+                }
+                else if(df.glm!=null)
+                {
+                    df.glm.scrollToPositionWithOffset(idx,0);
+                }
+
+            }
+            else if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && df.fileObjectType==destFileObjectType)
+            {
+                df.clearSelectionAndNotifyDataSetChanged();
+            }
+        }
+
+        if(fileSelectorDialog!=null )
+        {
+            String tag=fileSelectorDialog.getTag();
+
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
+            {
+                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+            }
+        }
+
+        if(storageAnalyserDialog!=null)
+        {
+            String tag=storageAnalyserDialog.getTag();
+
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+            {
+                storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+            }
+
+        }
+
+    }
+
+
+
     public static String ON_DELETE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
                                                       List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled,boolean storage_analyser_delete)
     {
@@ -410,41 +465,48 @@ public class ArchiveDeletePasteServiceUtil {
     public static void ON_ARCHIVE_ASYNCTASK_CANCEL(Context context, String dest_folder, String zip_file_name, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, UsbFile zipUsbFile)
     {
         File f=new File(dest_folder,zip_file_name);
-        if(destFileObjectType==FileObjectType.FILE_TYPE)
-        {
-            if(f.exists())
-            {
-                if (FileUtil.isWritable(destFileObjectType,f.getAbsolutePath()))
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                if(destFileObjectType==FileObjectType.FILE_TYPE)
                 {
-                    FileUtil.deleteNativeDirectory(f);
+                    if(f.exists())
+                    {
+                        if (FileUtil.isWritable(destFileObjectType,f.getAbsolutePath()))
+                        {
+                            FileUtil.deleteNativeDirectory(f);
+                        }
+                        else
+                        {
+                            if (Global.IS_CHILD_FILE(dest_folder,tree_uri_path))
+                            {
+                                FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
+                            }
+
+                        }
+                    }
+                }
+                else if(destFileObjectType==FileObjectType.USB_TYPE)
+                {
+                    if(zipUsbFile!=null)
+                    {
+                        FileUtil.deleteUsbDirectory(zipUsbFile);
+                    }
                 }
                 else
                 {
-                    if (Global.IS_CHILD_FILE(dest_folder,tree_uri_path))
+                    if(FileUtil.exists(context,f.getAbsolutePath(),tree_uri,tree_uri_path))
                     {
                         FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
                     }
-
                 }
-            }
-        }
-        else if(destFileObjectType==FileObjectType.USB_TYPE)
-        {
-            if(zipUsbFile!=null)
-            {
-                FileUtil.deleteUsbDirectory(zipUsbFile);
-            }
-        }
-        else
-        {
-            if(FileUtil.exists(context,f.getAbsolutePath(),tree_uri,tree_uri_path))
-            {
-                FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
-            }
-        }
 
+
+                Global.WORKOUT_AVAILABLE_SPACE();
+            }
+        });
         NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
-        Global.WORKOUT_AVAILABLE_SPACE();
     }
 
     public static String ON_ARCHIVE_ASYNCTASK_COMPLETE(Context context,boolean result,String dest_folder,
@@ -494,6 +556,25 @@ public class ArchiveDeletePasteServiceUtil {
 
     }
 
+    public static String ON_COPY_TO_ASYNCTASK_COMPLETE(Context context,boolean result,String dest_folder,
+                                                       String file_name,FileObjectType destFileObjectType, FilePOJO filePOJO)
+    {
+        String notification_content;
+        if(result)
+        {
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_COPY_TO(dest_folder,destFileObjectType,filePOJO);
+            notification_content=context.getString(R.string.created)+" '"+file_name+"' "+context.getString(R.string.at)+" "+dest_folder;
+            Global.WORKOUT_AVAILABLE_SPACE();
+        }
+        else
+        {
+            notification_content=context.getString(R.string.could_not_create)+" '"+file_name+"'";
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
+        }
+        return notification_content;
+    }
+
+
     public static String UNARCHIVE(Context context, String zip_dest_path, ZipEntry zipEntry, boolean isWritable,
                    FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream
 
@@ -512,7 +593,6 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 else
                 {
-
                     FileUtil.mkdirsSAFFile(context,zip_dest_path,zip_entry_name,uri,uri_path);
                 }
             }
@@ -531,7 +611,6 @@ public class ArchiveDeletePasteServiceUtil {
             File parent_dest_file=dest_file.getParentFile();
             String parent_dest_file_path=parent_dest_file.getAbsolutePath();
 
-
             boolean parent_dir_exists;
             if(destFileObjectType==FileObjectType.FILE_TYPE)
             {
@@ -541,7 +620,6 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_dest_file_path);
                 parent_dir_exists= (usbFile != null);
-
             }
             else
             {
@@ -549,7 +627,6 @@ public class ArchiveDeletePasteServiceUtil {
             }
             if(!parent_dir_exists)
             {
-
                 if(destFileObjectType==FileObjectType.FILE_TYPE)
                 {
                     if(isWritable)
@@ -560,7 +637,6 @@ public class ArchiveDeletePasteServiceUtil {
                     {
                         String zip_entry_parent=new File(zip_entry_name).getParent();
                         FileUtil.mkdirsSAFFile(context,zip_dest_path,zip_entry_parent,uri,uri_path);
-
                     }
                 }
                 else
@@ -575,7 +651,6 @@ public class ArchiveDeletePasteServiceUtil {
                         FileUtil.mkdirsSAFD(context,parent_dest_file_path,null,uri,uri_path);
                     }
                 }
-
             }
 
             OutputStream outStream=null;
@@ -618,24 +693,21 @@ public class ArchiveDeletePasteServiceUtil {
                     bufferedOutStream.write(b,0,bytesread);
                 }
                 bufferedOutStream.close();
-
             }
-
         }
 
         return  zip_entry_name;
     }
 
 
-
     public static class FileCountSize
     {
-        final Context context;
-        final List<String> files_selected_array;
-        final Uri target_uri;
-        final String target_uri_path;
-        final boolean include_folder;
-        final FileObjectType sourceFileObjectType;
+        Context context;
+        List<String> files_selected_array;
+        Uri target_uri;
+        String target_uri_path;
+        boolean include_folder;
+        FileObjectType sourceFileObjectType;
         int total_no_of_files;
         long total_size_of_files;
         final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
@@ -654,7 +726,12 @@ public class ArchiveDeletePasteServiceUtil {
             this.sourceFileObjectType=sourceFileObjectType;
 
         }
+        FileCountSize(int total_no_of_files, long total_size_of_files)
+        {
+            this.total_no_of_files=total_no_of_files;
+            this.total_size_of_files=total_size_of_files;
 
+        }
 
         public void cancel(boolean mayInterruptRunning){
             if(future1!=null) future1.cancel(mayInterruptRunning);
@@ -675,6 +752,12 @@ public class ArchiveDeletePasteServiceUtil {
             future1=executorService.submit(new Runnable() {
                 @Override
                 public void run() {
+                    if(context==null)
+                    {
+                        mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+                        return;
+                    }
+
                     source_folder=new File(files_selected_array.get(0)).getParent();
 
                     int size=files_selected_array.size();

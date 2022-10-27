@@ -1089,6 +1089,7 @@ public class Global
 
 	public static void CLEAR_CACHE()
 	{
+
 		Global.HASHMAP_FILE_POJO.clear();
 		Global.HASHMAP_FILE_POJO_FILTERED.clear();
 

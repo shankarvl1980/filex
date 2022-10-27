@@ -152,9 +152,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
         });
 
-
         return v;
-
     }
 
 

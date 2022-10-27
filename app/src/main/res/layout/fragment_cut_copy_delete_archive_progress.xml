@@ -238,18 +238,6 @@
 		android:paddingEnd="@dimen/ten_dp"
 		/>
 
-
-	<!--ProgressBar
-		android:id="@+id/fragment_cut_copy_delete_progress_cancel_progress"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
-		android:visibility="gone"
-		/-->
-
 	<FrameLayout
 		android:id="@+id/fragment_cut_copy_delete_progress_button_layout"
 		android:layout_width="match_parent"

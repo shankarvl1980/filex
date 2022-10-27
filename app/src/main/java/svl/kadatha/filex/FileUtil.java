@@ -243,6 +243,24 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			return true;
 		}
 
+		@SuppressWarnings("null")
+		public static boolean copy_to_File(Context context,@NonNull final Uri data, @NonNull final File target, boolean cut, long[] bytes_read)
+		{
+			try (InputStream inStream=context.getContentResolver().openInputStream(data); FileOutputStream fileOutStream = new FileOutputStream(target)) {
+
+				bufferedCopy(inStream,fileOutStream,false,bytes_read);
+
+			} catch (Exception e) {
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			// ignore exception
+			// ignore exception
+			return true;
+		}
+
+
 
 		@SuppressWarnings("null")
 		public static boolean copy_SAFFile_File(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, File target_file, long[] bytes_read)
@@ -525,6 +543,64 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 	}
 
 		@SuppressWarnings("null")
+		public static boolean copy_to_SAFFile(Context context, @NonNull final Uri data, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
+		{
+			InputStream inStream = null;
+			OutputStream outStream=null;
+
+			try
+			{
+				inStream = context.getContentResolver().openInputStream(data);
+				Uri uri = createDocumentUri(context,target_file_path,name,false,tree_uri,tree_uri_path);
+				if (uri != null)
+				{
+					outStream = context.getContentResolver().openOutputStream(uri);
+					if (outStream != null)
+					{
+						//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
+						bufferedCopy(inStream,outStream,false,bytes_read);
+					}
+
+
+				}
+				else
+				{
+					return false;
+				}
+
+			}
+			catch (Exception e)
+			{
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			finally
+			{
+				try
+				{
+					inStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			return true;
+		}
+
+
+		@SuppressWarnings("null")
 		public static boolean copy_UsbFile_SAFFile(Context context, @NonNull final UsbFile source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
 		{
 			InputStream inStream = null;
@@ -639,7 +715,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			return true;
 		}
 
-
 		@SuppressWarnings("null")
 		public static boolean copy_File_UsbFile(@NonNull final File source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
 		{
@@ -704,6 +779,70 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			return true;
 		}
 
+
+
+		@SuppressWarnings("null")
+		public static boolean copy_to_UsbFile(Context context,@NonNull final Uri data, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
+		{
+			InputStream inStream = null;
+			OutputStream outStream=null;
+
+			try
+			{
+				inStream = context.getContentResolver().openInputStream(data);
+
+				UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
+
+				if (parentUsbFile != null)
+				{
+					UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
+					if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
+					targetUsbFile = parentUsbFile.createFile(name);
+//					long length=source.length();
+//					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
+					outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
+
+					//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
+					bufferedCopy(inStream,outStream,false,bytes_read);
+
+				}
+				else
+				{
+					return false;
+				}
+
+			}
+			catch (Exception e)
+			{
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			finally
+			{
+				try
+				{
+					inStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			return true;
+		}
+
+
 		@SuppressWarnings("null")
 		public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
 		{
@@ -726,6 +865,28 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 			return success;
 		}
+
+		@SuppressWarnings("null")
+		public static boolean copy_to_FtpFile(Context context,@NonNull final Uri data, @NonNull String target_file_path,String name, boolean cut)
+		{
+			boolean success;
+			//OutputStream outStream=null;
+
+			try (InputStream inStream = context.getContentResolver().openInputStream(data)) {
+				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
+				success = MainActivity.FTP_CLIENT.storeFile(file_path, inStream);
+
+
+			} catch (Exception e) {
+				//Log.e(Application.TAG,
+				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return false;
+			}
+			// ignore exception
+
+			return success;
+		}
+
 
 
 		public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)

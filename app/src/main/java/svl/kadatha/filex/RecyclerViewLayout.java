@@ -98,14 +98,14 @@ public class RecyclerViewLayout extends ViewGroup
 		grid_count= whether_file_selector_activity ? FileSelectorActivity.GRID_COUNT : Global.GRID_COUNT;
 		if(grid_layout)
 		{
-			if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
+			if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
 				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
 
 			}
-			else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+			else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
 			{
 
 				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;

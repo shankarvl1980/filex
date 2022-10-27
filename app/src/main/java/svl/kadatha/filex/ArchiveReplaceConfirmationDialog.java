@@ -20,7 +20,6 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 {
 
     private String zip_folder_name;
-	private final ArrayList<String> files_selected_array=new ArrayList<>();
 	private String archive_action;
 	private Bundle bundle;
 	private String request_code;

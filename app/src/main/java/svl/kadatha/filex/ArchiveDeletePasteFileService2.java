@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -22,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -47,9 +49,9 @@ public class ArchiveDeletePasteFileService2 extends Service
 	private NotifManager nm;
 	private final int notification_id=880;
 	public int counter_no_files;
-	private long counter_size_files;
+	public long counter_size_files;
 	public long[] total_bytes_read =new long[1];
-	String copied_file_name;
+	String copied_file_name, file_name;
 	final List<Integer> total_folderwise_no_of_files=new ArrayList<>();
 	final List<Long> total_folderwise_size_of_files=new ArrayList<>();
 	public ArchiveDeletePasteServiceUtil.FileCountSize fileCountSize;
@@ -72,6 +74,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 	String source_folder;
 	boolean copy_result, cut;
 	private CutCopyAsyncTask cutCopyAsyncTask;
+	private CopyToAsyncTask copyToAsyncTask;
 	boolean permanent_cancel;
 
 	String size_of_files_copied;
@@ -86,6 +89,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 	private String source_other_file_permission,dest_other_file_permission;
 	private boolean storage_analyser_delete;
 	final List<String> overwritten_file_path_list=new ArrayList<>();
+	private Uri data;
 
 	@Override
 	public void onCreate()
@@ -196,6 +200,28 @@ public class ArchiveDeletePasteFileService2 extends Service
 				}
 				break;
 
+			case "copy_to":
+				if(bundle!=null)
+				{
+					data=bundle.getParcelable("data");
+					file_name=bundle.getString("file_name");
+					dest_folder=bundle.getString("dest_folder");
+					destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
+					tree_uri_path=bundle.getString("tree_uri_path");
+					tree_uri=bundle.getParcelable("tree_uri");
+					counter_no_files ++;
+					counter_size_files += getLengthUri(data);
+					size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files);
+
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(1,counter_size_files);
+					fileCountSize.fileCount();
+					copyToAsyncTask=new CopyToAsyncTask();
+					copyToAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					notification_content=(getString(R.string.copying_files)+" "+getString(R.string.to_symbol)+" "+dest_folder);
+
+				}
+				break;
+
 			default:
 				stopSelf();
 				SERVICE_COMPLETED=true;
@@ -213,7 +239,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 		startForeground(notification_id,nm.buildADPPActivity2(intent_action,notification_content,notification_id));
 		return START_NOT_STICKY;
 	}
-
 
 
 	@Override
@@ -273,6 +298,15 @@ public class ArchiveDeletePasteFileService2 extends Service
 						cutCopyAsyncTask.cancel(true);
 					}
 					break;
+
+				case "copy_to":
+					if(copyToAsyncTask!=null)
+					{
+						permanent_cancel=true;
+						copyToAsyncTask.cancel(true);
+					}
+					break;
+
 				default:
 					stopForeground(true);
 					stopSelf();
@@ -2185,6 +2219,175 @@ public class ArchiveDeletePasteFileService2 extends Service
 		}
 	}
 
+
+	public class CopyToAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	{
+		FilePOJO filePOJO;
+
+		@Override
+		protected void onCancelled(Boolean result)
+		{
+			// TODO: Implement this method
+			super.onCancelled(result);
+			if(permanent_cancel)
+			{
+				String notification_content=ArchiveDeletePasteServiceUtil.ON_COPY_TO_ASYNCTASK_COMPLETE(context,result,dest_folder,file_name,destFileObjectType,filePOJO);
+				stopForeground(true);
+				stopSelf();
+				if(cut)
+				{
+					nm.notify(R.string.could_not_move_selected_files+" "+dest_folder,notification_id);
+				}
+				else
+				{
+					nm.notify(getString(R.string.could_not_copy_selected_files)+" "+dest_folder,notification_id);
+				}
+				SERVICE_COMPLETED=true;
+				SOURCE_FILE_OBJECT=null;
+				DEST_FILE_OBJECT=null;
+			}
+		}
+
+		@Override
+		protected Boolean doInBackground(Void[] p1)
+		{
+			// TODO: Implement this method
+			if(destFileObjectType==FileObjectType.ROOT_TYPE)
+			{
+				return false;
+			}
+			if (isCancelled() || data == null) {
+				return false;
+			}
+
+			String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
+			boolean isDestFromInternal = FileUtil.isFromInternal(destFileObjectType, dest_file_path);
+
+			if (destFileObjectType == FileObjectType.FILE_TYPE) {
+				if(isDestFromInternal)
+				{
+					copy_result = Copy_to_File(data, dest_folder, file_name);
+				}
+				else {
+					copy_result = Copy_to_SAFFile(context, data, dest_folder, file_name, tree_uri, tree_uri_path);
+				}
+
+			} else if (destFileObjectType == FileObjectType.USB_TYPE) {
+				copy_result = Copy_to_UsbFile(data, dest_folder,file_name);
+			} else if (destFileObjectType == FileObjectType.FTP_TYPE) {
+				copy_result = Copy_to_FtpFile(data, dest_folder, file_name);
+			}
+
+
+			if (copy_result) {
+				copied_files_name.add(file_name);
+				copied_source_file_path_list.add(dest_file_path);
+
+				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType, Collections.singletonList(dest_file_path));
+
+				copied_files_name.clear();
+				copied_source_file_path_list.clear();
+
+			}
+
+
+			return copy_result;
+		}
+
+
+		@SuppressWarnings("null")
+		public boolean Copy_to_File(Uri data, String dest_file_path, String file_name)
+		{
+			boolean success=false;
+			File destination=new File(dest_file_path,file_name);
+			if(isCancelled())
+			{
+				return false;
+			}
+
+			copied_file=file_name;
+			success=FileUtil.copy_to_File(context,data,destination,cut,total_bytes_read);
+			//mutable_count_no_files.postValue(counter_no_files);
+			return success;
+		}
+
+
+		@SuppressWarnings("null")
+		public boolean Copy_to_SAFFile(Context context, Uri data, String dest_file_path,String name,Uri uri,String uri_path)
+		{
+			boolean success=false;
+
+			if(isCancelled())
+			{
+				return false;
+			}
+			copied_file=file_name;
+			success=FileUtil.copy_to_SAFFile(context,data,dest_file_path,name,uri,uri_path,cut,total_bytes_read);
+			return success;
+		}
+
+		public boolean Copy_to_UsbFile(Uri data, String dest_file_path,String name)
+		{
+			boolean success=false;
+			if(isCancelled())
+			{
+				return false;
+			}
+			copied_file=file_name;
+			success=FileUtil.copy_to_UsbFile(context,data,dest_file_path,name,cut,total_bytes_read);
+			//mutable_count_no_files.postValue(counter_no_files);
+			return success;
+		}
+
+		public boolean Copy_to_FtpFile(Uri data, String dest_file_path,String name)
+		{
+			boolean success=false;
+
+			if(isCancelled())
+			{
+				return false;
+			}
+			copied_file=file_name;
+			success=FileUtil.copy_to_FtpFile(context, data,dest_file_path,name,cut);
+			//mutable_count_no_files.postValue(counter_no_files);
+			return success;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			// TODO: Implement this method
+			super.onPostExecute(result);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_COPY_TO_ASYNCTASK_COMPLETE(context,result,dest_folder,file_name,destFileObjectType,filePOJO);
+			stopForeground(true);
+			stopSelf();
+
+			if(serviceCompletionListener!=null)
+			{
+				serviceCompletionListener.onServiceCompletion(intent_action,counter_no_files>0,null,dest_folder);
+			}
+			else {
+				nm.notify(notification_content,notification_id);
+			}
+
+			SERVICE_COMPLETED=true;
+			SOURCE_FILE_OBJECT=null;
+			DEST_FILE_OBJECT=null;
+		}
+	}
+
+	private long getLengthUri(Uri uri)
+	{
+		long fileSize = 0;
+		try (AssetFileDescriptor fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(uri, "r")) {
+			fileSize = fileDescriptor.getLength();
+		} catch (IOException e) {
+
+		}
+		finally {
+			return fileSize;
+		}
+	}
 
 	interface ServiceCompletionListener
 	{

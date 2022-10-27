@@ -228,7 +228,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
 					bundle.putSerializable("destFileObjectType",destFileObjectType);
 
-					if(whether_file_already_exists(zip_folder_path+".zip",destFileObjectType))
+					if(isFilePathValidExists(zip_folder_path+".zip",destFileObjectType))
 					{
 						if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 						{
@@ -463,7 +463,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putParcelable("tree_uri", tree_uri);
 						bundle.putString("dest_folder", unarchivedestfolder);
 						bundle.putString("zip_folder_name", zip_output_folder);
-						if (create_folder_checkbox.isChecked() && whether_file_already_exists(zip_folder_path, destFileObjectType)) {
+						if (create_folder_checkbox.isChecked() && isFilePathValidExists(zip_folder_path, destFileObjectType)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
@@ -567,7 +567,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 	}
 
-	private boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType)
+	public static boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType)
 	{
 
 		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -584,17 +584,18 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 	}
 
-	private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
+
+	private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType)
 	{
 		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
-			File new_file=new File(new_file_path);
+			File new_file=new File(file_path);
 			return new_file.exists();
 
 		}
 		else if(fileObjectType== FileObjectType.USB_TYPE)
 		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,new_file_path);
+			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 			return usbFile != null;
 
 		}
@@ -602,7 +603,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		{
 			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
 			{
-				return !RootUtils.WHETHER_FILE_EXISTS(new_file_path);
+				return !RootUtils.WHETHER_FILE_EXISTS(file_path);
 			}
 			else
 			{
@@ -613,9 +614,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 		else
 		{
-			if(check_SAF_permission(new_file_path,fileObjectType))
+			if(check_SAF_permission(file_path,fileObjectType))
 			{
-				return FileUtil.exists(context, new_file_path, tree_uri, tree_uri_path);
+				return FileUtil.exists(context, file_path, tree_uri, tree_uri_path);
 			}
 			else
 			{
@@ -623,12 +624,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		}
 
-	}
-
-
-	private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType)
-	{
-		return whether_file_already_exists(file_path,fileObjectType);
 	}
 	
 	@Override
@@ -641,24 +636,24 @@ public class ArchiveSetUpDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode() == Activity.RESULT_OK)
-			{
-				Uri treeUri;
-				treeUri = result.getData().getData();
-				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
-
-				okbutton.callOnClick();
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-
-		}
-	});
+//	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+//		@Override
+//		public void onActivityResult(ActivityResult result) {
+//			if (result.getResultCode() == Activity.RESULT_OK)
+//			{
+//				Uri treeUri;
+//				treeUri = result.getData().getData();
+//				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
+//
+//				okbutton.callOnClick();
+//			}
+//			else
+//			{
+//				Global.print(context,getString(R.string.permission_not_granted));
+//			}
+//
+//		}
+//	});
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override
