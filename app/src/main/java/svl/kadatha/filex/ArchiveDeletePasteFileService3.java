@@ -47,7 +47,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 
 	private NotifManager nm;
-	private final int notification_id=870;
+	private final int notification_id=890;
 	public int counter_no_files;
 	public long counter_size_files;
 	public long[] total_bytes_read =new long[1];
