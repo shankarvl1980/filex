@@ -40,6 +40,10 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             {
                 ((StorageAnalyserActivity)appCompatActivity).clearCache();
             }
+            else if(appCompatActivity instanceof CopyToActivity)
+            {
+                ((CopyToActivity)appCompatActivity).clearCache();
+            }
             appCompatActivity.finish();
             appCompatActivity.startActivity(intent);
         }

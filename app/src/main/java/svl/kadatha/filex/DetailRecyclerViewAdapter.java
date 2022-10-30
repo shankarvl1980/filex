@@ -209,7 +209,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 	{
-		return new ViewHolder(new RecyclerViewLayout(context,show_file_path,false,grid_layout));
+		return new ViewHolder(new RecyclerViewLayout(context,show_file_path,grid_layout));
 	}
 
 	@Override

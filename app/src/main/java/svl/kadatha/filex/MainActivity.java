@@ -1451,9 +1451,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void workingDirAdd()
 	{
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-		if(working_dir_arraylist.size()>10)
+		if(working_dir_arraylist.size()>20)
 		{
-			Global.print(context,getString(R.string.more_than_10_directories_cannot_be_added));
+			Global.print(context,getString(R.string.more_than_20_directories_cannot_be_added));
 			return;
 		}
 

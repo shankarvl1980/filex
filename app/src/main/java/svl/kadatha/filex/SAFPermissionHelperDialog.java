@@ -164,6 +164,10 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		{
 			((AppManagerActivity)appCompatActivity).clear_cache=false;
 		}
+		else if(appCompatActivity instanceof CopyToActivity)
+		{
+			((CopyToActivity)appCompatActivity).clear_cache=false;
+		}
 
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		activityResultLauncher.launch(intent);

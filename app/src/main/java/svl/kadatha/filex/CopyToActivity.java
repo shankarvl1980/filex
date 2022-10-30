@@ -46,7 +46,6 @@ public class CopyToActivity extends BaseActivity{
     private TextView destination_fileObject_text_view;
     private String folderclickselected;
     private Uri data;
-    private List<Uri> data_list=new ArrayList<>();
     private final static String ARCHIVE_REPLACE_REQUEST_CODE="activity_copy_to_replace_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE="activity_copy_to_saf_permission_request_code";
     private final static String COPY_TO_ACTION="copy_to";
@@ -204,7 +203,6 @@ public class CopyToActivity extends BaseActivity{
                     tree_uri_path=result.getString("tree_uri_path");
                     ok_button.callOnClick();
                 }
-
             }
         });
     }
@@ -224,8 +222,8 @@ public class CopyToActivity extends BaseActivity{
             String action=intent.getAction();
             if(action.equals(Intent.ACTION_SEND_MULTIPLE))
             {
-                data_list= (List<Uri>) bundle.get(Intent.EXTRA_STREAM);
-                data=data_list.get(0);
+                List<Uri> data_list = (List<Uri>) bundle.get(Intent.EXTRA_STREAM);
+                data= data_list.get(0);
             }
             else if(action.equals(Intent.ACTION_SEND))
             {
@@ -413,7 +411,6 @@ public class CopyToActivity extends BaseActivity{
                 return false;
             }
         }
-
     }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -429,5 +426,4 @@ public class CopyToActivity extends BaseActivity{
             }
         }
     });
-
 }

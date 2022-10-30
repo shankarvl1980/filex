@@ -23,37 +23,33 @@ public class RecyclerViewLayout extends ViewGroup
 	private TextView filenametextview, filesubfilecounttextview, filepermissionstextView,filemoddatetextview,filepathtextview;
     private int imageview_dimension;
 	public int itemWidth, itemHeight;
-	private final boolean show_file_path,whether_file_selector_activity;
+	private final boolean show_file_path;
 	private int select_indicator_offset_linear;
 	private final boolean grid_layout;
-	private int grid_count;
 
-	RecyclerViewLayout(Context context,boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
+	RecyclerViewLayout(Context context,boolean show_file_path,boolean grid_layout)
 	{
 		super(context);
 		this.context=context;
 		this.show_file_path=show_file_path;
-		this.whether_file_selector_activity=whether_file_selector_activity;
 		this.grid_layout=grid_layout;
 		init();
 	}
 	
-	RecyclerViewLayout(Context context, AttributeSet attr, boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
+	RecyclerViewLayout(Context context, AttributeSet attr, boolean show_file_path,boolean grid_layout)
 	{
 		super(context,attr);
 		this.context=context;
 		this.show_file_path=show_file_path;
-		this.whether_file_selector_activity=whether_file_selector_activity;
 		this.grid_layout=grid_layout;
 		init();
 	}
 
-	RecyclerViewLayout(Context context, AttributeSet attr, int defStyle, boolean show_file_path,boolean whether_file_selector_activity,boolean grid_layout)
+	RecyclerViewLayout(Context context, AttributeSet attr, int defStyle, boolean show_file_path,boolean grid_layout)
 	{
 		super(context,attr,defStyle);
 		this.context=context;
 		this.show_file_path=show_file_path;
-		this.whether_file_selector_activity=whether_file_selector_activity;
 		this.grid_layout=grid_layout;
 		init();
 	}
@@ -95,9 +91,9 @@ public class RecyclerViewLayout extends ViewGroup
         int first_line_font_size;
 		int overlay_image_dimension;
 
-		grid_count= whether_file_selector_activity ? FileSelectorActivity.GRID_COUNT : Global.GRID_COUNT;
 		if(grid_layout)
 		{
+
 			if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
@@ -130,14 +126,14 @@ public class RecyclerViewLayout extends ViewGroup
 		}
 		else
 		{
-			if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
+			if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
 				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
 
 			}
-			else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+			else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
 			{
 				first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
@@ -250,7 +246,7 @@ public class RecyclerViewLayout extends ViewGroup
 
 		if(grid_layout)
 		{
-			int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/grid_count; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
+			int grid_width=(itemWidth-(Global.RECYCLERVIEW_ITEM_SPACING*2))/Global.GRID_COUNT; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
 			x+=(grid_width-imageview_dimension)/2;
 
 			View v=file_select_indicator;
@@ -271,7 +267,6 @@ public class RecyclerViewLayout extends ViewGroup
 			v=filenametextview;
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			y+=v.getMeasuredHeight();
-
 
 
 			v=filesubfilecounttextview;
@@ -317,10 +312,7 @@ public class RecyclerViewLayout extends ViewGroup
 
 			v=filepathtextview;
 			v.layout(margin_offset_icon,y+max_height_second_line,margin_offset_icon+v.getMeasuredWidth(),y+max_height_second_line+v.getMeasuredHeight());
-
 		}
-
-
 	}
 
 	@Override
