@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -283,13 +282,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		String[] titles;
 		if(number_button==4)
 		{
-
 			drawables = new int[]{R.drawable.remove_list_icon, R.drawable.play_icon, R.drawable.add_list_icon,R.drawable.overflow_icon};
 			titles = new String[]{getString(R.string.remove), getString(R.string.play), getString(R.string.list),getString(R.string.more)};
 		}
 		else
 		{
-
 			drawables = new int[]{R.drawable.remove_list_icon, R.drawable.play_icon, R.drawable.overflow_icon};
 			titles = new String[]{getString(R.string.remove), getString(R.string.play), getString(R.string.more)};
 		}
@@ -548,7 +545,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				if (AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
-					Uri data = null;
 					File f = new File(audio.getData());
 					if(f.exists())
 					{
@@ -666,9 +662,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 						((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
 
 					}
-
-
-
 				}
 			}
 

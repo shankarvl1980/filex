@@ -111,7 +111,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                             }
                         }
                     }
-                    FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),destFileObjectType,dest_folder,currentUsbFile,false);
+                    FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),destFileObjectType,dest_folder,currentUsbFile,false);
                     destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
                 }
 

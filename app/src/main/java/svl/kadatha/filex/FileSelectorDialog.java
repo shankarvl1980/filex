@@ -438,7 +438,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 								else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 								{
 									File file=new File(filePOJO.getPath());
-									uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",file);
+									uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
 								}
 
 								if(uri!=null)

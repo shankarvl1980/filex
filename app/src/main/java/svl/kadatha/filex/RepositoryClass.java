@@ -17,13 +17,13 @@ import java.util.List;
 public class RepositoryClass {
 
     int download_count,document_count,image_count,audio_count,video_count,archive_count,apk_count;
-    MutableLiveData<Integer> download_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> document_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> image_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> audio_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> video_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> archive_mutable_count=new MutableLiveData<>();
-    MutableLiveData<Integer> apk_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> download_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> document_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> image_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> audio_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> video_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> archive_mutable_count=new MutableLiveData<>();
+    final MutableLiveData<Integer> apk_mutable_count=new MutableLiveData<>();
 
     private RepositoryClass(){}
 

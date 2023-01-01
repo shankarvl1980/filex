@@ -123,7 +123,6 @@ public class AudioPlayFragment extends Fragment
 				}
 			}
 		});
-
 	}
 
 	@Override
@@ -697,7 +696,7 @@ public class AudioPlayFragment extends Fragment
 					}
 					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
 					{
-						src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
+						src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
 
 					if(src_uri==null)

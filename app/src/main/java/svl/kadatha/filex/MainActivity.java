@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -152,7 +151,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private FileDuplicationViewModel fileDuplicationViewModel;
 	private ListPopupWindowPOJO extract_listPopupWindowPOJO,open_listPopupWindowPOJO;
 	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-	private Group usb_heading;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -518,7 +516,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		storageRecyclerAdapter=new StorageRecyclerAdapter(Global.STORAGE_DIR);
 		storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
-        usb_heading=findViewById(R.id.usb_background);
+		Group usb_heading = findViewById(R.id.usb_background);
 		usb_heading.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -592,7 +590,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
-
         View library_heading_layout = findViewById(R.id.library_layout_background);
 		library_heading_layout.setOnClickListener(new View.OnClickListener()
 		{
@@ -629,7 +626,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			public void onCheckedChanged(CompoundButton cb, final boolean checked)
 			{
-
 				new Handler().postDelayed(new Runnable()
 				{
 					public void run()
@@ -1248,7 +1244,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
 			{
 				archive_exit();
-				Log.d(Global.TAG,"archive exited");
+				//Log.d(Global.TAG,"archive exited");
 			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)
@@ -1396,7 +1392,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			df.is_toolbar_visible=true;
 			all_select.setImageResource(R.drawable.select_icon);
 		}
-
 	}
 
 	public void actionmode_finish(DetailFragment df, String detailgfrag_tag)
@@ -1411,8 +1406,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			df.adapter.getFilter().filter(null);
 		}
-
-
 	}
 
 	public void archive_exit()
@@ -1423,7 +1416,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			df.progress_bar.setVisibility(View.VISIBLE);
 			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
-
 		}
 
 		if(viewModel.toolbar_shown_prior_archive.equals("paste"))

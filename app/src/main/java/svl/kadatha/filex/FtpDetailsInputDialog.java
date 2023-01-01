@@ -145,16 +145,19 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     if(update)
                     {
                         row_number=ftpDatabaseHelper.update(original_server,server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                        bundle.putString("original_server",original_server);
+                        bundle.putString("server",server);
                     }
                     else
                     {
                         row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                        bundle.putString("server",server);
                     }
 
                     if(row_number>0)// && ftpDatabaseModificationListener!=null)
                     {
 
-                        FtpDetailsDialog.FtpPOJO ftpPOJO=new FtpDetailsDialog.FtpPOJO(server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                        //FtpDetailsDialog.FtpPOJO ftpPOJO=new FtpDetailsDialog.FtpPOJO(server,port,mode,user_name,password, anonymous != 0,encoding,display);
                         //ftpDatabaseModificationListener.onInsert(ftpPOJO);
                         ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
                     }

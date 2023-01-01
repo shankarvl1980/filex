@@ -57,7 +57,6 @@
 			app:layout_constraintTop_toTopOf="parent" />
 
 		<TextView
-
 			android:id="@+id/top_toolbar_current_dir_label"
 			style="?android:attr/spinnerStyle"
 			android:layout_width="0dp"
@@ -227,7 +226,6 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				>
-
 
 				<androidx.recyclerview.widget.RecyclerView
 					android:id="@+id/drawer_recyclerview"
@@ -505,8 +503,6 @@
 					app:layout_constraintEnd_toStartOf="@id/audio_player_image_view"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="@id/audio_player_label_background"
-
-
 					/>
 
 				<ImageView
@@ -673,7 +669,8 @@
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/search_label_background"
-					android:visibility="gone"
+
+
 					/>
 
 				<TextView
@@ -685,12 +682,16 @@
 					android:text="@string/ftp"
 					android:textColor="?attr/heading_text_color"
 					android:textSize="16sp"
-					android:padding="@dimen/layout_margin"
+					android:paddingStart="@dimen/ten_dp"
+					android:paddingEnd="@dimen/ten_dp"
+					android:paddingTop="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
+
 
 					app:layout_constraintEnd_toStartOf="@id/ftp_image_view"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="@+id/ftp_label_background"
-					android:visibility="gone"
+
 					/>
 
 				<ImageView
@@ -705,7 +706,7 @@
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/ftp_label"
 					app:layout_constraintTop_toTopOf="@+id/ftp_label"
-					android:visibility="gone"
+
 					/>
 
 

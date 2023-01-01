@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -556,46 +557,49 @@ public class FilePOJOUtil {
                     }
                 }
             }
-            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<FilePOJO>(),new ArrayList<FilePOJO>(),fileObjectType,source_folder,currentUsbFile,false);
+            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,source_folder,currentUsbFile,false);
             filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
             filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
-            if(filePOJOs==null)return;
+            //if(filePOJOs==null)return;
         }
-
-        String name;
-        for(int i=0;i<size;++i)
+        else
         {
-            name=deleted_files_name_list.get(i);
-            remove_from_FilePOJO(name,filePOJOs);
-            remove_from_FilePOJO(name,filePOJOs_filtered);
-            String file_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
-            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_to_be_removed),fileObjectType);
-
-            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Download"))
+            String name;
+            for(int i=0;i<size;++i)
             {
-                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Document"))
+                name=deleted_files_name_list.get(i);
+                remove_from_FilePOJO(name,filePOJOs);
+                remove_from_FilePOJO(name,filePOJOs_filtered);
+                String file_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
+                REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_to_be_removed),fileObjectType);
+
+                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Download"))
                 {
-                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Image"))
+                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Document"))
                     {
-                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Audio"))
+                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Image"))
                         {
-                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Video"))
+                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Audio"))
                             {
-                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Archive"))
+                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Video"))
                                 {
-                                    REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "APK");
+                                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Archive"))
+                                    {
+                                        REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "APK");
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
             }
 
-            REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
+            Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
         }
 
-        Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
     }
 
 
@@ -686,7 +690,6 @@ public class FilePOJOUtil {
                 {
                     try {
                         currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
-
                     } catch (IOException e) {
 
                     }
@@ -697,37 +700,41 @@ public class FilePOJOUtil {
             filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
             if(filePOJOs==null)return null;
         }
-
-        if(overwritten_file_path_list!=null) // while creating new file, overwritten_file_path_list is null
+        else
         {
-            size=overwritten_file_path_list.size();
-            for(int i=0;i<size;++i)
+            if(overwritten_file_path_list!=null) // while creating new file, overwritten_file_path_list is null
             {
-                String overwritten_file_path=overwritten_file_path_list.get(i);
-                String overwritten_file_name=new File(overwritten_file_path).getName();
-                remove_from_FilePOJO(overwritten_file_name,filePOJOs);
-                remove_from_FilePOJO(overwritten_file_name,filePOJOs_filtered);
-            }
-        }
-
-
-        size=added_file_name_list.size();
-        String file_path;
-        for(int i=0;i<size;++i)
-        {
-            file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
-            filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
-            if(filePOJO!=null)
-            {
-                filePOJOs.add(filePOJO);
-                if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+                size=overwritten_file_path_list.size();
+                for(int i=0;i<size;++i)
                 {
-                    filePOJOs_filtered.add(filePOJO);
+                    String overwritten_file_path=overwritten_file_path_list.get(i);
+                    String overwritten_file_name=new File(overwritten_file_path).getName();
+                    remove_from_FilePOJO(overwritten_file_name,filePOJOs);
+                    remove_from_FilePOJO(overwritten_file_name,filePOJOs_filtered);
                 }
             }
+
+
+            size=added_file_name_list.size();
+            String file_path;
+            for(int i=0;i<size;++i)
+            {
+                file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
+                if(filePOJO!=null)
+                {
+                    filePOJOs.add(filePOJO);
+                    if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+                    {
+                        filePOJOs_filtered.add(filePOJO);
+                    }
+                    Log.d(Global.TAG,"added file pojo - "+filePOJO.getName());
+                }
+            }
+            Global.HASHMAP_FILE_POJO.put(fileObjectType+dest_folder,filePOJOs);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+dest_folder,filePOJOs_filtered);
+
         }
-        Global.HASHMAP_FILE_POJO.put(fileObjectType+dest_folder,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+dest_folder,filePOJOs_filtered);
 
         REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(overwritten_file_path_list, fileObjectType);
         return filePOJO;

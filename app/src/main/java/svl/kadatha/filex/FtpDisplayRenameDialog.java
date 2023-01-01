@@ -191,6 +191,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     {
         // TODO: Implement this method
         imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
+        ftpDatabaseHelper.close();
         super.onDismiss(dialog);
     }
 

@@ -194,9 +194,19 @@ public class AudioSavedListFragment extends Fragment
 				{
 					AudioPOJO audio=result.getParcelable("audio");
 					int id=audio.getId();
-					Uri uri= MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-					Uri data=Uri.withAppendedPath(uri,String.valueOf(id));
-					if(audioSelectListener!=null)
+					Uri data;
+					if(id==0)
+					{
+						File file=new File(audio.getData());
+						data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
+					}
+					else
+					{
+						Uri uri= MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+						data=Uri.withAppendedPath(uri,String.valueOf(id));
+					}
+
+					if(audioSelectListener!=null && data !=null)
 					{
 						audioSelectListener.onAudioSelect(data,audio);
 					}

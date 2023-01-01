@@ -136,7 +136,6 @@ public class AudioListViewModel extends AndroidViewModel {
 
                 if(action!=null)
                 {
-
                     switch(action)
                     {
                         case "q":

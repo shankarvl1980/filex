@@ -403,9 +403,7 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
             }
-
         }
-
     }
 
 
@@ -432,8 +430,6 @@ public class ArchiveDeletePasteServiceUtil {
 
         return notification_content;
     }
-
-
 
 
     public static String ON_CUT_COPY_ASYNCTASK_COMPLETE(Context context, int counter_no_files, String source_folder, String dest_folder,
@@ -509,13 +505,12 @@ public class ArchiveDeletePasteServiceUtil {
         NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
     }
 
-    public static String ON_ARCHIVE_ASYNCTASK_COMPLETE(Context context,boolean result,String dest_folder,
+    public static String ON_ARCHIVE_ASYNCTASK_COMPLETE(Context context,boolean result,FilePOJO filePOJO,String dest_folder,
                                                        String zip_file_name,FileObjectType destFileObjectType)
     {
         String notification_content;
         if(result)
         {
-            FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder,destFileObjectType,filePOJO);
             notification_content=context.getString(R.string.created)+" '"+zip_file_name+"' "+context.getString(R.string.at)+" "+dest_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
@@ -528,9 +523,12 @@ public class ArchiveDeletePasteServiceUtil {
         return notification_content;
     }
 
-    public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String dest_folder,
-                                                         List<String> written_file_name_list, FileObjectType destFileObjectType,
-                                                         List<String> written_file_path_list, String zip_file_path, boolean cancelled)
+    //public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String dest_folder,
+                                                         //List<String> written_file_name_list, FileObjectType destFileObjectType,
+                                                         //List<String> written_file_path_list, String zip_file_path, boolean cancelled)
+    public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context, int counter_no_files,FilePOJO filePOJO, String dest_folder,
+                                                         FileObjectType destFileObjectType,
+                                                         String zip_file_path, boolean cancelled)
     {
         String notification_content;
         if(cancelled)
@@ -540,8 +538,6 @@ public class ArchiveDeletePasteServiceUtil {
         }
         if (counter_no_files>0)
         {
-
-            FilePOJO filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,written_file_name_list,destFileObjectType,written_file_path_list);
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder,destFileObjectType,filePOJO);
             notification_content=context.getString(R.string.unzipped)+" '"+new File(zip_file_path).getName()+"' "+context.getString(R.string.at)+" "+dest_folder;
             Global.WORKOUT_AVAILABLE_SPACE();

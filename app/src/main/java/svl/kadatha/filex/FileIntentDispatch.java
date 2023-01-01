@@ -50,7 +50,7 @@ class FileIntentDispatch
 		ArrayList<Uri> uri_list=new ArrayList<>();
 		for(File f:file_list)
 		{
-			uri_list.add(FileProvider.getUriForFile(context,context.getPackageName()+".provider",f));
+			uri_list.add(FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f));
 		}
 
 		Intent intent=new Intent(Intent.ACTION_SEND_MULTIPLE);

@@ -233,7 +233,7 @@ public abstract class AsyncTask<Params, Progress, Result> {
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                 CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>(), sThreadFactory);
+                new SynchronousQueue<>(), sThreadFactory);
         threadPoolExecutor.setRejectedExecutionHandler(sRunOnSerialPolicy);
         THREAD_POOL_EXECUTOR = threadPoolExecutor;
     }

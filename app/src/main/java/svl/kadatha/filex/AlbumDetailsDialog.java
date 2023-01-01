@@ -77,7 +77,6 @@ public class AlbumDetailsDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override
@@ -93,11 +92,9 @@ public class AlbumDetailsDialog extends DialogFragment
 			album_name=bundle.getString("album_name");
 			request_code=bundle.getString("request_code");
 		}
-		
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),1));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),2));
-
 	}
 
 	@Override

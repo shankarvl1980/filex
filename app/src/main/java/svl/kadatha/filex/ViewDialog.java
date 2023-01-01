@@ -302,9 +302,7 @@ public class ViewDialog extends DialogFragment
 							break;
 					}
 				}
-
 			});
-
 		}
 
 		set_selection();

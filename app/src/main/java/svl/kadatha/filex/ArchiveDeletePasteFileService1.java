@@ -50,7 +50,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	private final int notification_id=870;
 	public int counter_no_files;
 	public long counter_size_files;
-	public long[] total_bytes_read =new long[1];
+	public final long[] total_bytes_read =new long[1];
 	String copied_file_name, file_name;
 	final List<Integer> total_folderwise_no_of_files=new ArrayList<>();
 	final List<Long> total_folderwise_size_of_files=new ArrayList<>();
@@ -336,6 +336,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	{
 		final String zip_file_name=zip_folder_name+".zip";
 		UsbFile parentUsbFile,zipUsbFile;
+		FilePOJO filePOJO;
 
 		@Override
 		protected void onCancelled(Boolean result)
@@ -418,6 +419,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 					try
 					{
+						filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
 						return true;
 					}
 
@@ -501,6 +503,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 							//mutable_count_no_files.postValue(counter_no_files);
 
 						}
+						filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
 						return true;
 					}
 
@@ -523,6 +526,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 
 			}
+
 			return false;
 		}
 
@@ -586,7 +590,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		protected void onPostExecute(Boolean result)
 		{
 			// TODO: Implement this method
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_COMPLETE(context,result,dest_folder,zip_file_name,destFileObjectType);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNCTASK_COMPLETE(context,result,filePOJO,dest_folder,zip_file_name,destFileObjectType);
 			stopForeground(true);
 			stopSelf();
 
@@ -609,6 +613,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 		String zip_dest_path;
 		ZipFile zipfile=null;
+		FilePOJO filePOJO;
 		final List<String> written_file_name_list=new ArrayList<>();
 		final List<String> written_file_path_list=new ArrayList<>();
 		final Set<String> first_part_entry_name_set=new HashSet<>();
@@ -636,7 +641,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onCancelled(result);
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNCTASK_COMPLETE(context,counter_no_files,dest_folder,written_file_name_list,destFileObjectType,written_file_path_list, zip_file_path,true);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNCTASK_COMPLETE(context,counter_no_files,filePOJO,dest_folder, destFileObjectType, zip_file_path,true);
 			stopForeground(true);
 			stopSelf();
 
@@ -739,6 +744,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				written_file_name_list.add(zip_folder_name);
 				written_file_path_list.add(zip_dest_path);
 			}
+			if(counter_no_files>0) filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,written_file_name_list,destFileObjectType,written_file_path_list);
 			return success;
 		}
 
@@ -865,6 +871,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 				zipInputStream.close();
 				bufferedInputStream.close();
+				if(counter_no_files>0) filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,written_file_name_list,destFileObjectType,written_file_path_list);
 				return true;
 			}
 
@@ -891,7 +898,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			// TODO: Implement this method
 			super.onPostExecute(result);
-			String notification_content=ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNCTASK_COMPLETE(context,counter_no_files,dest_folder,written_file_name_list,destFileObjectType,written_file_path_list, zip_file_path,!result);
+			String notification_content=ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNCTASK_COMPLETE(context,counter_no_files,filePOJO,dest_folder, destFileObjectType, zip_file_path,!result);
 			stopForeground(true);
 			stopSelf();
 			if(serviceCompletionListener!=null)
