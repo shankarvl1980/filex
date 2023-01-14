@@ -175,7 +175,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			{
 				try {
 					currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-
 				} catch (IOException e) {
 
 				}
@@ -208,7 +207,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		});
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
-		//Log.d(Global.TAG,"archive view - "+archive_view+"    & mainactivity viewmodel archive view - "+mainActivity.viewModel.archive_view);
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));

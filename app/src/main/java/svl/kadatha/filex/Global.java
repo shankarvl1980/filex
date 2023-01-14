@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Global
@@ -1089,14 +1090,15 @@ public class Global
 
 	public static void CLEAR_CACHE()
 	{
-
-		Global.HASHMAP_FILE_POJO.clear();
-		Global.HASHMAP_FILE_POJO_FILTERED.clear();
-
-		Global.APP_POJO_HASHMAP.clear();
-
-		Global.AUDIO_POJO_HASHMAP.clear();
-		Global.ALBUM_POJO_HASHMAP.clear();
+		Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+		while(iterator.hasNext())
+		{
+			Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+			if(!entry.getKey().startsWith(FileObjectType.SEARCH_LIBRARY_TYPE.toString()))
+			{
+				iterator.remove();
+			}
+		}
 	}
 
 }

@@ -67,7 +67,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
@@ -618,6 +620,89 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon};
 		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES,icon_image_array));
 
+
+		View library_scan_heading_layout = findViewById(R.id.library_scan_label_background);
+		library_scan_heading_layout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				//clear_cache=false;
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+				pbf.show(fm,"");
+				drawerLayout.closeDrawer(drawer);
+
+				Handler h=new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						Global.print(context,getString(R.string.scanning_started));
+
+//						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+//						actionmode_finish(df,df.fileclickselected);
+						ExecutorService executorService=MyExecutorService.getExecutorService();
+						executorService.execute(new Runnable() {
+							@Override
+							public void run() {
+								boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
+								Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+								while(iterator.hasNext())
+								{
+									Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+									if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Download"))
+									{
+										iterator.remove();
+										download_removed=true;
+										viewModel.getDownloadList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Document"))
+									{
+										iterator.remove();
+										document_removed=true;
+										viewModel.getDocumentList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Image"))
+									{
+										iterator.remove();
+										image_removed=true;
+										viewModel.getImageList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Audio"))
+									{
+										iterator.remove();
+										audio_removed=true;
+										viewModel.getAudioList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Video"))
+									{
+										iterator.remove();
+										video_removed=true;
+										viewModel.getVideoList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Archive"))
+									{
+										iterator.remove();
+										archive_removed=true;
+										viewModel.getArchiveList(false);
+									}
+									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"APK"))
+									{
+										iterator.remove();
+										apk_removed=true;
+										viewModel.getApkList(false);
+									}
+									if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed)
+									{
+										break;
+									}
+								}
+
+							}
+						});
+						pbf.dismissAllowingStateLoss();
+					}
+				},500);
+
+			}
+		});
 
         SwitchCompat switchHideFile = findViewById(R.id.switch_hide_file);
 		switchHideFile.setChecked(MainActivity.SHOW_HIDDEN_FILE);

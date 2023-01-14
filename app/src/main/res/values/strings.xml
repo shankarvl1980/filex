@@ -351,6 +351,9 @@
     <string name="file_is_big_copy_to_device_storage">File is big. Copy to device storage</string>
     <string name="can_not_do_archive_unarchive_here">cannot do archive/unarchive here</string>
     <string name="wait_till_completion_on_going_operation_on_usb">Wait till completion of ongoing operation on USB drive</string>
+    <string name="rescan_library">Rescan Library</string>
+	<string name="scanning_started">Scanning started</string>
+    <string name="rescan">Rescan</string>
 
 
     <string-array name="library_categories">

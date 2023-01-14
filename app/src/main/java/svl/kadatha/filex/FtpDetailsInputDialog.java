@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private int anonymous;
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
     private RadioButton mode_active_radio_btn;
-    private RadioButton anonymous_radio_btn;
+    private CheckBox anonymous_check_box;
     private boolean update;
     private PermissionsUtil permissionsUtil;
     private String request_code;
@@ -97,7 +98,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         RadioButton mode_passive_radio_btn = v.findViewById(R.id.ftp_details_passive_radio_btn);
         user_name_tv=v.findViewById(R.id.ftp_details_user_name);
         password_tv=v.findViewById(R.id.ftp_details_pword);
-        anonymous_radio_btn=v.findViewById(R.id.ftp_details_anonymous_radio_btn);
+        anonymous_check_box=v.findViewById(R.id.ftp_details_anonymous_check_box);
         //encoding_tv=v.findViewById(R.id.ftp_details_e);
         display_tv=v.findViewById(R.id.ftp_details_display);
 
@@ -113,7 +114,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         }
         user_name_tv.setText(user_name);
         password_tv.setText(password);
-        anonymous_radio_btn.setChecked(anonymous != 0);
+        anonymous_check_box.setChecked(anonymous != 0);
         display_tv.setText(display);
         ViewGroup buttons_layout = v.findViewById(R.id.ftp_details_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -128,8 +129,29 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
                 {
                     Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
+                    return;
                 }
-                else if(!permissionsUtil.isNetworkConnected())
+
+                if(!CheckStringForSpecialCharacters.isStringOnlyAlphabet(server))
+                {
+                    Global.print(context,getString(R.string.name_should_contain_only_alphabets_without_spaces));
+                    return;
+                }
+
+                if(CheckStringForSpecialCharacters.whetherStringContains(server))
+                {
+                    Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+                    return;
+                }
+
+
+                if(!server.matches("\\S+"))
+                {
+                    Global.print(context,getString(R.string.name_contains_space));
+                    return;
+                }
+
+                if(!permissionsUtil.isNetworkConnected())
                 {
                     Global.print(context,getString(R.string.not_connected_to_network));
                 }
@@ -138,7 +160,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     port=Integer.parseInt(port_tv.getText().toString().trim());
                     mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
                     password=password_tv.getText().toString().trim();
-                    anonymous=anonymous_radio_btn.isChecked() ? 1 : 0;
+                    anonymous=anonymous_check_box.isChecked() ? 1 : 0;
                     display=display_tv.getText().toString().trim();
 
                     long row_number;

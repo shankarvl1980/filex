@@ -28,12 +28,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -68,7 +70,6 @@ public class AllAudioListFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class AllAudioListFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
-
+		//list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.refresh_icon,getString(R.string.refresh),4));
 	}
 
 	@Override
@@ -89,6 +90,24 @@ public class AllAudioListFragment extends Fragment
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_all_audio_list,container,false);
 		file_number_view=v.findViewById(R.id.all_audio_file_number);
+		FloatingActionButton refresh_btn = v.findViewById(R.id.floating_action_all_audio_refresh);
+		refresh_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(progress_bar.getVisibility()==View.VISIBLE || !FULLY_POPULATED)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
+
+				progress_bar.setVisibility(View.VISIBLE);
+				clear_selection();
+				Global.AUDIO_POJO_HASHMAP.clear();
+				FULLY_POPULATED=false;
+				audioListViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				audioListViewModel.listAudio();
+			}
+		});
 		bottom_toolbar=v.findViewById(R.id.audio_list_bottom_toolbar);
 
 		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
@@ -360,6 +379,20 @@ public class AllAudioListFragment extends Fragment
 					return;
 				}
 				AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_selected_array;
+				Iterator<AudioPOJO> iterator=AudioPlayerService.AUDIO_QUEUED_ARRAY.iterator();
+				while(iterator.hasNext())
+				{
+					AudioPOJO audioPOJO=iterator.next();
+					if(new File(audioPOJO.getData()).exists())
+					{
+						break;
+					}
+					else
+					{
+						iterator.remove();
+					}
+				}
+				//Log.d(Global.TAG,"qued array size "+AudioPlayerService.AUDIO_QUEUED_ARRAY.size()+"  and viewmodel selcted aray size "+audioListViewModel.audio_selected_array.size());
 				if (audioSelectListener != null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
@@ -376,7 +409,6 @@ public class AllAudioListFragment extends Fragment
 				}
 
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
-
 				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
 
 			} else if (id == R.id.toolbar_btn_4) {
@@ -423,7 +455,11 @@ public class AllAudioListFragment extends Fragment
 
 	public void clear_selection()
 	{
-		num_all_audio=total_audio_list.size();
+		if(total_audio_list!=null)
+		{
+			num_all_audio=total_audio_list.size();
+		}
+
 		audioListViewModel.audio_selected_array=new ArrayList<>();
 		audioListViewModel.mselecteditems=new SparseBooleanArray();
 		if (audioListRecyclerViewAdapter!=null) audioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -448,7 +484,6 @@ public class AllAudioListFragment extends Fragment
 			if (audioListViewModel.audio_selected_array.size() < 1) {
 				return;
 			}
-
 			switch(p3)
 			{
 				case 0:

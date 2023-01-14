@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 
+@SuppressWarnings("Convert2Lambda")
 public class StorageAnalyserSortDialog extends DialogFragment
 {
     private TinyDB tinyDB;

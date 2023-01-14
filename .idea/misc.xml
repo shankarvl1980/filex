@@ -39,16 +39,20 @@
         <entry key="..\:/FileXManager/app/src/main/res/drawable/pdf_file_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/pdf_water_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/play_overlay_icon.xml" value="0.25" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/redo_icon.xml" value="0.249" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/right_private_icon.xml" value="0.249" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/scan_icon.xml" value="0.249" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/scrollbar.xml" value="0.26927083333333335" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/search_drawer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/search_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/select_detail_grid_recyclerview.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/select_detail_recyclerview.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/settings_drawer_icon.xml" value="0.2495" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/speaker_icon.xml" value="0.249" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/text_file_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/up_arrow_icon.xml" value="0.249" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/up_icon.xml" value="0.249" />
+        <entry key="..\:/FileXManager/app/src/main/res/drawable/view_icon.xml" value="0.249" />
         <entry key="..\:/FileXManager/app/src/main/res/drawable/woofer_icon.xml" value="0.25" />
         <entry key="..\:/FileXManager/app/src/main/res/layout-land/fragment_current_play.xml" value="0.21516754850088182" />
         <entry key="..\:/FileXManager/app/src/main/res/layout-port/fragment_current_play.xml" value="0.25416666666666665" />
@@ -88,7 +92,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_detail.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_editor_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_file_selector.xml" value="0.1" />
-        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.253125" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_details_input.xml" value="0.4" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_ftp_list.xml" value="0.2" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_image_view.xml" value="0.264" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_pdf_view_container.xml" value="0.23233695652173914" />
@@ -105,7 +109,7 @@
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_storage_analyser_sort.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_video_view.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_video_view_container.xml" value="0.1" />
-        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_view.xml" value="0.24365942028985507" />
+        <entry key="..\:/FileXManager/app/src/main/res/layout/fragment_view.xml" value="0.1" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/ftp_list_recyclerview_layout.xml" value="0.2128623188405797" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/image_selector_recyclerview_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/FileXManager/app/src/main/res/layout/image_viewpager_layout.xml" value="0.25416666666666665" />

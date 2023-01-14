@@ -245,6 +245,13 @@ public class AppManagerActivity extends BaseActivity{
         }
     }
 
+
+    public void refresh_adapter()
+    {
+        startActivity(getIntent());
+        finish();
+        overridePendingTransition(0, 0);
+    }
     @Override
     protected void onStart()
     {

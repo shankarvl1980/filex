@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
+@SuppressWarnings("ALL")
 public class ViewModelFileCount extends ViewModel {
 
     final MutableLiveData<Integer> total_no_of_files=new MutableLiveData<>();

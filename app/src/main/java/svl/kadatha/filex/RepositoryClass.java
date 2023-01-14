@@ -247,6 +247,7 @@ public class RepositoryClass {
     public synchronized void populateAppsList(Context context)
     {
         if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
+
         List<AppManagerListFragment.AppPOJO> userAppPOJOList=new ArrayList<>();
         List<AppManagerListFragment.AppPOJO> systemAppPOJOList=new ArrayList<>();
 

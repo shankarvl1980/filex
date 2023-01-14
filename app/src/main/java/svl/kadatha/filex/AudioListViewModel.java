@@ -78,8 +78,11 @@ public class AudioListViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 audio_list=new ArrayList<>();
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioPOJOList(application,false);
+                if(!Global.AUDIO_POJO_HASHMAP.containsKey("audio"))
+                {
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    repositoryClass.getAudioPOJOList(application,false);
+                }
                 List<AudioPOJO>temp_audio_pojos=Global.AUDIO_POJO_HASHMAP.get("audio");
                 if(temp_audio_pojos!=null)audio_list=temp_audio_pojos;
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -236,8 +239,11 @@ public class AudioListViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 album_list=new ArrayList<>();
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAlbumList(application, false);
+                if(!Global.ALBUM_POJO_HASHMAP.containsKey("album"))
+                {
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    repositoryClass.getAlbumList(application, false);
+                }
                 List<AlbumPOJO>temp_album_pojos=Global.ALBUM_POJO_HASHMAP.get("album");
                 if(temp_album_pojos!=null)album_list=temp_album_pojos;
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

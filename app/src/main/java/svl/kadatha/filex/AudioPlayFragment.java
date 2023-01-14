@@ -514,6 +514,7 @@ public class AudioPlayFragment extends Fragment
 	{
 		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
 		{
+			//Log.d(Global.TAG,"audio qued array is zero");
 			previous_btn.setEnabled(false);
 			previous_btn.setAlpha(Global.DISABLE_ALFA);
 			next_btn.setEnabled(false);

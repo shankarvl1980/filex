@@ -118,7 +118,6 @@ public class AudioPlayerService extends Service
 		}
 		else
 		{
-
 			int action = intent.getIntExtra("DO",0);
 			if(action!=0)
 			{
@@ -290,6 +289,10 @@ public class AudioPlayerService extends Service
 
 		private void initMediaPlayer(final Uri data, AudioPlayerService audioPlayerService)
 		{
+			if(data==null)
+			{
+				return;
+			}
 			if(mp!=null)
 			{
 				if(prepared)
@@ -298,13 +301,11 @@ public class AudioPlayerService extends Service
 					prepared=false;
 					mp.stop();
 					mp.reset();
-
 				}
 				else
 				{
 					return;
 				}
-
 			}
 
 			mp=new MediaPlayer();
@@ -326,7 +327,6 @@ public class AudioPlayerService extends Service
 				return;
 			}
 			mp.prepareAsync();
-
 		}
 
 
@@ -352,9 +352,7 @@ public class AudioPlayerService extends Service
 						}
 					});
 				}
-
 			}
-
 		}
 
 		private void pause()
@@ -376,6 +374,7 @@ public class AudioPlayerService extends Service
 				});
 			}
 		}
+
 		private void stop_()
 		{
 			stopped=true;
@@ -412,9 +411,7 @@ public class AudioPlayerService extends Service
 			{
 				CURRENT_PLAY_NUMBER=AUDIO_QUEUED_ARRAY.size()-1;
 				return;
-
 			}
-
 
 			current_audio=AUDIO_QUEUED_ARRAY.get(CURRENT_PLAY_NUMBER);
 			AudioPlayerActivity.AUDIO_FILE=current_audio;
@@ -428,15 +425,20 @@ public class AudioPlayerService extends Service
 				}
 			});
 
+
 			Uri data=null;
 			File f=new File(current_audio.getData());
 			if(f.exists())
 			{
 				data= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
+				initMediaPlayer(data,audioPlayerService);
 			}
-
-			initMediaPlayer(data,audioPlayerService);
-
+			else
+			{
+				AUDIO_QUEUED_ARRAY.remove(CURRENT_PLAY_NUMBER);
+				CURRENT_PLAY_NUMBER--;
+				goto_next();
+			}
 
 		}
 
@@ -463,15 +465,20 @@ public class AudioPlayerService extends Service
 				}
 			});
 
+
 			Uri data=null;
 			File f=new File(current_audio.getData());
 			if(f.exists())
 			{
 				data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",f);
+				initMediaPlayer(data,audioPlayerService);
 			}
-
-			initMediaPlayer(data,audioPlayerService);
-
+			else
+			{
+				AUDIO_QUEUED_ARRAY.remove(CURRENT_PLAY_NUMBER);
+				CURRENT_PLAY_NUMBER--;
+				goto_previous();
+			}
 		}
 
 

@@ -169,19 +169,21 @@ public class AppManagerListFragment extends Fragment {
         progress_bar=v.findViewById(R.id.fragment_app_list_progressbar);
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
-        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.view_icon};
-        String [] titles={getString(R.string.search),getString(R.string.view)};
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.view_icon,R.drawable.scan_icon};
+        String [] titles={getString(R.string.search),getString(R.string.view),getString(R.string.rescan)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar.addView(tb_layout);
 
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         Button view_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button refresh_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
 
         ToolBarClickListener toolBarClickListener = new ToolBarClickListener();
 
         search_btn.setOnClickListener(toolBarClickListener);
         view_btn.setOnClickListener(toolBarClickListener);
+        refresh_btn.setOnClickListener(toolBarClickListener);
 
         viewModel= new ViewModelProvider(requireActivity()).get(AppManagerListViewModel.class);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -823,6 +825,27 @@ public class AppManagerListFragment extends Fragment {
                 AppManagerSortDialog appManagerSortDialog=new AppManagerSortDialog();
                 appManagerSortDialog.show(((AppManagerActivity)context).fm,"");
             }
+            else if(id==R.id.toolbar_btn_3)
+            {
+                if(progress_bar.getVisibility()==View.VISIBLE || !Global.APP_POJO_HASHMAP.containsKey("system"))
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
+
+
+
+                Global.APP_POJO_HASHMAP.clear();
+//                //progress_bar.setVisibility(View.VISIBLE);
+//                ViewPager viewPager=((AppManagerActivity)context).viewPager;
+//                viewPager.getAdapter().notifyDataSetChanged();
+//                //progress_bar.setVisibility(View.VISIBLE);
+                ((AppManagerActivity)context).refresh_adapter();
+////                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+////
+////
+////                viewModel.populateApps();
+           }
         }
 
     }

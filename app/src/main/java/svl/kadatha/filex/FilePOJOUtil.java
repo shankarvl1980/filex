@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -728,7 +727,6 @@ public class FilePOJOUtil {
                     {
                         filePOJOs_filtered.add(filePOJO);
                     }
-                    Log.d(Global.TAG,"added file pojo - "+filePOJO.getName());
                 }
             }
             Global.HASHMAP_FILE_POJO.put(fileObjectType+dest_folder,filePOJOs);

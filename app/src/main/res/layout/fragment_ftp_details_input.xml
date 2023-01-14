@@ -91,7 +91,8 @@
                 app:layout_constraintStart_toEndOf="@id/ftp_details_port_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_port_label"
-                android:inputType="text"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:maxLines="1"
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
@@ -117,11 +118,12 @@
 
             <RadioGroup
                 android:id="@+id/ftp_details_mode_rg"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
                 app:layout_constraintStart_toEndOf="@id/ftp_details_mode_label"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:minHeight="36dp"
@@ -205,16 +207,25 @@
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
-            <RadioButton
+
+            <CheckBox
+                android:id="@+id/ftp_details_anonymous_check_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_anonymous_radio_btn"
-                android:text="@string/anonymous"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/ten_dp"
+                android:button="@null"
+                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
+                android:text="@string/anonymous"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
+
+
                 />
+
             <TextView
                 android:id="@+id/ftp_details_encoding_label"
                 android:layout_width="wrap_content"
@@ -223,7 +234,7 @@
                 android:gravity="start"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_radio_btn"
+                app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_check_box"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
@@ -242,9 +253,9 @@
             app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label"
             app:layout_constraintEnd_toStartOf="@id/ftp_details_display"
                 android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
+                android:paddingEnd="@dimen/layout_margin"
                 android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
+                android:paddingBottom="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
             />

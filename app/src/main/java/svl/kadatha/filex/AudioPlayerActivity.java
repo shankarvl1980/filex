@@ -74,7 +74,6 @@ public class AudioPlayerActivity extends BaseActivity
 		setContentView(R.layout.activity_audio_player);
 		context=this;
 		tinyDB=new TinyDB(context);
-		//LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		
 		AUDIO_NOTIFICATION_INTENT_ACTION=getPackageName()+".AUDIO_NOTIFICATION";
