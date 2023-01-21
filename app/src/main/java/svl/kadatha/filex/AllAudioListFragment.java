@@ -392,7 +392,7 @@ public class AllAudioListFragment extends Fragment
 						iterator.remove();
 					}
 				}
-				//Log.d(Global.TAG,"qued array size "+AudioPlayerService.AUDIO_QUEUED_ARRAY.size()+"  and viewmodel selcted aray size "+audioListViewModel.audio_selected_array.size());
+
 				if (audioSelectListener != null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);

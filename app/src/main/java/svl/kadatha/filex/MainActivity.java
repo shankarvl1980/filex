@@ -1332,7 +1332,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
 			{
 				archive_exit();
-				//Log.d(Global.TAG,"archive exited");
 			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)

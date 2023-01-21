@@ -491,7 +491,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			viewModel.fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			viewModel.fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			viewModel.file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-			if(viewModel.file_path==null) viewModel.file_path=RealPathUtil.getRealPath(context,viewModel.data);
+			if(viewModel.file_path==null) viewModel.file_path=RealPathUtil.getLastSegmentPath(viewModel.data);
 
 			if(viewModel.fileObjectType==null || viewModel.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{

@@ -16,7 +16,6 @@ public class ImageViewActivity extends BaseActivity
 	public Uri data;
 	public FileObjectType fileObjectType;
 	public FragmentManager fm;
-	private Context context;
 	TinyDB tinyDB;
 	public File CacheDir;
 	public static final String ACTIVITY_NAME="IMAGE_VIEW_ACTIVITY";
@@ -27,7 +26,7 @@ public class ImageViewActivity extends BaseActivity
 	{
  		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		context=this;
+		Context context = this;
 		fm=getSupportFragmentManager();
 		CacheDir=getExternalCacheDir();
 		setContentView(R.layout.activity_blank_view);
@@ -46,7 +45,7 @@ public class ImageViewActivity extends BaseActivity
 			boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-			if(file_path ==null) file_path =RealPathUtil.getRealPath(context,data);
+			if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);
 			if(savedInstanceState==null)
 			{
 				fm.beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fromArchiveView,fileObjectType),"picture_fragment").commit();

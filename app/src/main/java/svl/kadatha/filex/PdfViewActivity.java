@@ -11,7 +11,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class PdfViewActivity extends BaseActivity {
 
-    private Context context;
     public FragmentManager fm;
     public Uri data;
     public static final String ACTIVITY_NAME="PDF_VIEW_ACTIVITY";
@@ -20,7 +19,7 @@ public class PdfViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=this;
+        Context context = this;
         setContentView(R.layout.activity_blank_view);
         fm=getSupportFragmentManager();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -37,7 +36,7 @@ public class PdfViewActivity extends BaseActivity {
             boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
             FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-            if(file_path ==null) file_path =RealPathUtil.getRealPath(context,data);
+            if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);
             if(savedInstanceState==null)
             {
                 fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fromArchiveView, fileObjectType),"pdf_view_fragment").commit();
