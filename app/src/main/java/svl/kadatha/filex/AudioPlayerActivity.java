@@ -270,7 +270,7 @@ public class AudioPlayerActivity extends BaseActivity
 			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-			if(file_path==null) file_path=PathUtil.getPath(context,data);
+			if(file_path==null) file_path=RealPathUtil.getRealPath(context,data);
 			if(fileObjectType==null || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				fileObjectType=FileObjectType.FILE_TYPE;

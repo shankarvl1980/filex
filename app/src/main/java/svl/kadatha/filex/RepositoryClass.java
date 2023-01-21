@@ -25,6 +25,18 @@ public class RepositoryClass {
     final MutableLiveData<Integer> archive_mutable_count=new MutableLiveData<>();
     final MutableLiveData<Integer> apk_mutable_count=new MutableLiveData<>();
 
+    private final Object download_lock=new Object();
+    private final Object document_lock=new Object();
+    private final Object image_lock=new Object();
+    private final Object audio_lock=new Object();
+    private final Object video_lock=new Object();
+    private final Object archive_lock=new Object();
+    private final Object apk_lock=new Object();
+    private final Object app_lock=new Object();
+    private final Object audio_pojo_lock=new Object();
+    private final Object album_pojo_lock=new Object();
+
+
     private RepositoryClass(){}
 
     private static final class RepositoryClassHolder {
@@ -37,103 +49,126 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void getDownLoadList(Context context,boolean isCancelled)
+    public void getDownLoadList(Context context,boolean isCancelled)
     {
-        String media_category="Download";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (download_lock)
         {
-            return;
+            String media_category="Download";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+
     }
 
 
-    public synchronized void getDocumentList(Context context,boolean isCancelled)
+    public void getDocumentList(Context context,boolean isCancelled)
     {
-        String media_category="Document";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (document_lock)
         {
-            return;
+            String media_category="Document";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,document_count=0,document_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,document_count=0,document_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getImageList(Context context,boolean isCancelled)
+    public void getImageList(Context context,boolean isCancelled)
     {
-        String media_category="Image";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (image_lock)
         {
-            return;
+            String media_category="Image";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,image_count=0,image_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,image_count=0,image_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getAudioList(Context context,boolean isCancelled)
+    public void getAudioList(Context context,boolean isCancelled)
     {
-        String media_category="Audio";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (audio_lock)
         {
-            return;
+            String media_category="Audio";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,audio_count=0,audio_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,audio_count=0,audio_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getVideoList(Context context,boolean isCancelled)
+    public void getVideoList(Context context,boolean isCancelled)
     {
-        String media_category="Video";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (video_lock)
         {
-            return;
+            String media_category="Video";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,video_count=0,video_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,video_count=0,video_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
-    public synchronized void getArchiveList(Context context,boolean isCancelled)
+    public void getArchiveList(Context context,boolean isCancelled)
     {
-        String media_category="Archive";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (archive_lock)
         {
-            return;
+            String media_category="Archive";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,archive_count=0,archive_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,archive_count=0,archive_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+
     }
 
-    public synchronized void getApkList(Context context,boolean isCancelled)
+    public void getApkList(Context context,boolean isCancelled)
     {
-        String media_category="APK";
-        if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+        synchronized (apk_lock)
         {
-            return;
+            String media_category="APK";
+            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,apk_count=0,apk_mutable_count);
+            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-        List<FilePOJO>filePOJOS=new ArrayList<>();
-        List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
-        search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,apk_count=0,apk_mutable_count);
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
     }
 
 
@@ -244,138 +279,150 @@ public class RepositoryClass {
     }
 
 
-    public synchronized void populateAppsList(Context context)
+    public void populateAppsList(Context context)
     {
-        if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
-
-        List<AppManagerListFragment.AppPOJO> userAppPOJOList=new ArrayList<>();
-        List<AppManagerListFragment.AppPOJO> systemAppPOJOList=new ArrayList<>();
-
-        int flags = PackageManager.GET_META_DATA |
-                PackageManager.GET_SHARED_LIBRARY_FILES |
-                PackageManager.GET_UNINSTALLED_PACKAGES;
-        final PackageManager packageManager = context.getPackageManager();
-        List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
-        for (PackageInfo packageInfo : packageInfos)
+        synchronized (app_lock)
         {
-            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
-            {
-                String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                String package_name=packageInfo.packageName;
-                String version=packageInfo.versionName;
-                String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                if(publicsourcedir==null)
-                {
-                    continue;
-                }
-                File file = new File(publicsourcedir);
-                String path=file.getAbsolutePath();
-                long size=file.length();
-                long date=file.lastModified();
-                AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-                systemAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+            if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
 
-            }
-            else if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
+            List<AppManagerListFragment.AppPOJO> userAppPOJOList=new ArrayList<>();
+            List<AppManagerListFragment.AppPOJO> systemAppPOJOList=new ArrayList<>();
+
+            int flags = PackageManager.GET_META_DATA |
+                    PackageManager.GET_SHARED_LIBRARY_FILES |
+                    PackageManager.GET_UNINSTALLED_PACKAGES;
+            final PackageManager packageManager = context.getPackageManager();
+            List<PackageInfo> packageInfos=packageManager.getInstalledPackages(flags);
+            for (PackageInfo packageInfo : packageInfos)
             {
-                String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
-                String package_name=packageInfo.packageName;
-                String version=packageInfo.versionName;
-                String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
-                if(publicsourcedir==null)
+                if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)
                 {
-                    continue;
+                    String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
+                    String package_name=packageInfo.packageName;
+                    String version=packageInfo.versionName;
+                    String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                    if(publicsourcedir==null)
+                    {
+                        continue;
+                    }
+                    File file = new File(publicsourcedir);
+                    String path=file.getAbsolutePath();
+                    long size=file.length();
+                    long date=file.lastModified();
+                    AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
+                    systemAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+
                 }
-                File file = new File(publicsourcedir);
-                String path=file.getAbsolutePath();
-                long size=file.length();
-                long date=file.lastModified();
-                AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
-                userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+                else if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1)
+                {
+                    String name= (String) packageInfo.applicationInfo.loadLabel(packageManager);
+                    String package_name=packageInfo.packageName;
+                    String version=packageInfo.versionName;
+                    String publicsourcedir=packageInfo.applicationInfo.publicSourceDir;
+                    if(publicsourcedir==null)
+                    {
+                        continue;
+                    }
+                    File file = new File(publicsourcedir);
+                    String path=file.getAbsolutePath();
+                    long size=file.length();
+                    long date=file.lastModified();
+                    AppManagerListFragment.extract_icon(package_name+".png",packageManager,packageInfo);
+                    userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
+                }
             }
+            Global.APP_POJO_HASHMAP.put("user",userAppPOJOList);
+            Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
         }
-        Global.APP_POJO_HASHMAP.put("user",userAppPOJOList);
-        Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
+
     }
 
-    public synchronized void getAudioPOJOList(Context context, boolean isCancelled)
+    public void getAudioPOJOList(Context context, boolean isCancelled)
     {
-        if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
-        List<AudioPOJO> audio_list=new ArrayList<>();
-        AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
-        Cursor audio_cursor;
-        Cursor cursor = null;
-        try
+        synchronized (audio_pojo_lock)
         {
-            cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);    
-        }
-        catch(SecurityException e){}
-        
-        if(cursor!=null && cursor.getCount()>0)
-        {
-            while(cursor.moveToNext())
+            if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
+            List<AudioPOJO> audio_list=new ArrayList<>();
+            AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
+            Cursor audio_cursor;
+            Cursor cursor = null;
+            try
             {
-                if(isCancelled)break;
-                String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
-                String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
+            }
+            catch(SecurityException e){}
 
-                String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
-                audio_cursor=context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
-                if(audio_cursor!=null && audio_cursor.getCount()>0)
+            if(cursor!=null && cursor.getCount()>0)
+            {
+                while(cursor.moveToNext())
                 {
-                    while(audio_cursor.moveToNext())
-                    {
-                        if(isCancelled)break;
-                        int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                        String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                        String title=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        String album=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                        String artist=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                        String duration=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    if(isCancelled)break;
+                    String album_id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+                    String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 
-                        if(new File(data).exists())
+                    String where=MediaStore.Audio.Media.ALBUM_ID+"="+album_id;
+                    audio_cursor=context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,where,null,null);
+                    if(audio_cursor!=null && audio_cursor.getCount()>0)
+                    {
+                        while(audio_cursor.moveToNext())
                         {
-                            audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
-                            AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
+                            if(isCancelled)break;
+                            int id=audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                            String data=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                            String title=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            String album=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                            String artist=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String duration=audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+
+                            if(new File(data).exists())
+                            {
+                                audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
+                                AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
+                            }
                         }
+
+                        audio_cursor.close();
                     }
 
-                    audio_cursor.close();
                 }
-
+                Global.AUDIO_POJO_HASHMAP.put("audio",audio_list);
+                cursor.close();
             }
-            Global.AUDIO_POJO_HASHMAP.put("audio",audio_list);
-            cursor.close();
+
         }
 
     }
 
-    public synchronized void getAlbumList(Context context, boolean isCancelled)
+    public void getAlbumList(Context context, boolean isCancelled)
     {
-        if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
-        List<AlbumPOJO>album_list=new ArrayList<>();
-        Cursor cursor = null;
-        try
+        synchronized (album_pojo_lock)
         {
-            cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
-        }
-        catch (SecurityException e){}
-
-        if(cursor!=null && cursor.getCount()>0)
-        {
-            while(cursor.moveToNext())
+            if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
+            List<AlbumPOJO>album_list=new ArrayList<>();
+            Cursor cursor = null;
+            try
             {
-                if(isCancelled)break;
-                String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
-                String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-                String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
-                String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
-                String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-                album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
+                cursor=context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,null,null,null,null);
             }
-            Global.ALBUM_POJO_HASHMAP.put("album",album_list);
-            cursor.close();
+            catch (SecurityException e){}
+
+            if(cursor!=null && cursor.getCount()>0)
+            {
+                while(cursor.moveToNext())
+                {
+                    if(isCancelled)break;
+                    String id=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+                    String album_name=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
+                    String artist=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));
+                    String no_of_songs=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
+                    String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                    album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
+                }
+                Global.ALBUM_POJO_HASHMAP.put("album",album_list);
+                cursor.close();
+            }
         }
+
     }
 
 }

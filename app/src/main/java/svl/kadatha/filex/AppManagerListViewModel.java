@@ -765,8 +765,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             }
             success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut);
         }
-
         return success;
     }
-
 }

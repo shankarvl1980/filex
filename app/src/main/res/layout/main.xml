@@ -435,7 +435,13 @@
 
 					/>
 
-
+                <androidx.constraintlayout.widget.Group
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/library_layout_group"
+                    app:constraint_referenced_ids="library_recyclerview,library_scan_label_background,library_scan_label,library_scan_image_view"
+                    android:visibility="gone"
+                    />
 				<androidx.recyclerview.widget.RecyclerView
 					android:id="@+id/library_recyclerview"
 					android:layout_width="match_parent"
@@ -445,18 +451,17 @@
 					android:paddingStart="@dimen/layout_margin"
 					android:paddingEnd="@dimen/layout_margin"
 					android:paddingBottom="@dimen/layout_margin"
-					android:visibility="gone"
+
 
 					app:layout_constraintEnd_toStartOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@id/library_layout_background" />
 
-				<View
+
+                <View
 					android:id="@+id/library_scan_label_background"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
-					android:layout_marginTop="@dimen/layout_margin"
-
 					android:background="?attr/drawer_title"
 					app:layout_constraintBottom_toBottomOf="@id/library_scan_label"
 					app:layout_constraintEnd_toEndOf="parent"

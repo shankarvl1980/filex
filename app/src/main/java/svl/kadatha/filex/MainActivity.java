@@ -153,6 +153,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private FileDuplicationViewModel fileDuplicationViewModel;
 	private ListPopupWindowPOJO extract_listPopupWindowPOJO,open_listPopupWindowPOJO;
 	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
+	private Group library_layout_group;
+	private Handler h;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -187,6 +189,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		pm=getPackageManager();
 		PM=pm;
 		localBroadcastManager=LocalBroadcastManager.getInstance(context);
+
+		h=new Handler();
 
 		mediaMountReceiver=new MediaMountReceiver();
 		mediaMountReceiver.addMediaMountListener(this);
@@ -592,21 +596,22 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
-        View library_heading_layout = findViewById(R.id.library_layout_background);
+        library_layout_group=findViewById(R.id.library_layout_group);
+		View library_heading_layout = findViewById(R.id.library_layout_background);
 		library_heading_layout.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
 			{
-				if(libraryRecyclerView.getVisibility()==View.GONE)
+				if(library_layout_group.getVisibility()==View.GONE)
 				{
 					library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
-					libraryRecyclerView.setVisibility(View.VISIBLE);
+					library_layout_group.setVisibility(View.VISIBLE);
 					viewModel.library_or_search_shown=true;
 				}
 				else
 				{
 					library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.down_arrow_drawer_icon));
-					libraryRecyclerView.setVisibility(View.GONE);
+					library_layout_group.setVisibility(View.GONE);
 					viewModel.library_or_search_shown=false;
 				}
 			}
@@ -1077,7 +1082,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		Uri uri=intent.getData();
 		if(receivedAction!=null && receivedAction.equals(Intent.ACTION_VIEW) &&  uri !=null)
 		{
-			ZIP_FILE=new File(PathUtil.getPath(context,uri));
+			String path=RealPathUtil.getRealPath(context,uri);
+			ZIP_FILE=new File(path);
 			ZipFile zipfile;
 			try
 			{
@@ -1089,10 +1095,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				return;
 			}
 
-			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			df.progress_bar.setVisibility(View.VISIBLE);
-			viewModel.extractArchive(zipfile);
-
+            viewModel.extractArchive(zipfile);
 		}
 	}
 
@@ -1430,6 +1433,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
 		context.unregisterReceiver(mediaMountReceiver);
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
+		h.removeCallbacksAndMessages(null);
 	}
 
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)

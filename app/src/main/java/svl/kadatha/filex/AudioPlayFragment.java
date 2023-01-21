@@ -484,7 +484,11 @@ public class AudioPlayFragment extends Fragment
 						seekbar.setProgress(0);
 						handler.removeCallbacks(this);
 					}
-					handler.postDelayed(this,1000);
+					else
+					{
+						handler.postDelayed(this,1000);
+					}
+
 
 				}
 
