@@ -753,20 +753,36 @@ public class ArchiveDeletePasteServiceUtil {
                         mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
                         return;
                     }
-
                     source_folder=new File(files_selected_array.get(0)).getParent();
-
                     int size=files_selected_array.size();
-
                     if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
                     {
-                        File[] f_array=new File[size];
-                        for(int i=0;i<size;++i)
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
                         {
-                            File f=new File(files_selected_array.get(i));
-                            f_array[i]=f;
+                            try {
+                                final int[] count = new int[1];
+                                final long[] s = new long[1];
+                                new NioFileIterator(files_selected_array,count, s);
+                                total_no_of_files+=count[0];
+                                total_size_of_files+=s[0];
+
+                                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+
+                            } catch (IOException e) {
+
+                            }
                         }
-                        populate(f_array,include_folder);
+                        else
+                        {
+                            File[] f_array=new File[size];
+                            for(int i=0;i<size;++i)
+                            {
+                                File f=new File(files_selected_array.get(i));
+                                f_array[i]=f;
+                            }
+                            populate(f_array,include_folder);
+                        }
+
                     }
                     else if(sourceFileObjectType== FileObjectType.USB_TYPE)
                     {
@@ -793,8 +809,6 @@ public class ArchiveDeletePasteServiceUtil {
                     {
                         populate(files_selected_array,include_folder);
                     }
-
-
                 }
             });
         }

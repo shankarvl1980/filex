@@ -51,8 +51,8 @@ public class AudioPlayerService extends Service
 	static int CURRENT_PLAY_NUMBER;
 	private final int notification_id=808;
 	public int current_position;
-
-
+	public final static String CHANNEL_ID = "svl.kadatha.filex.audio_player_channel_id";
+	public final static CharSequence CHANNEL_NAME="Audio Player";
 	public AudioPOJO current_audio;
 	private NotificationPanel nPanel;
 	public Handler handler,handler_media_preparation,handler_broadcast;
@@ -773,17 +773,17 @@ public class AudioPlayerService extends Service
 			nManager = (android.app.NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 			{
-
-                NotificationChannel notification_channel = new NotificationChannel("asc", "notification_channel", NotificationManager.IMPORTANCE_LOW);
+				String description = "This is to operate the audio player controls";
+                NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
 				notification_channel.enableLights(true);
-				notification_channel.setDescription("nc");
-				notification_channel.setSound(null,null);
+				notification_channel.setDescription(description);
 				nManager.createNotificationChannel(notification_channel);
 			}
-			nBuilder = new NotificationCompat.Builder(parent,"asc");
+			nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
 			nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
 				.setSmallIcon(R.drawable.app_icon)
 				.setAutoCancel(true)
+				.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 				.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
 
             RemoteViews remoteView = new RemoteViews(parent.getPackageName(), R.layout.audio_notification_view);

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class FtpDisplayRenameDialog extends DialogFragment {
@@ -34,7 +35,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         super.onAttach(context);
         this.context=context;
         ftpDatabaseHelper=new FtpDatabaseHelper(context);
-
     }
 
     @Override
@@ -129,7 +129,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                 if(i>0)// && ftpRenameListener!=null)
                 {
                     bundle.putString("new_name",new_name);
-                    ((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+                    ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
 
                     //ftpRenameListener.onRenameFtp(new_name);
                 }
@@ -144,12 +144,8 @@ public class FtpDisplayRenameDialog extends DialogFragment {
             {
                 imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
-
             }
-
         });
-
-
         return v;
     }
 

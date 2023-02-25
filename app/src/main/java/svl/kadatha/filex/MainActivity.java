@@ -79,11 +79,10 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
 {
-
 	DrawerLayout drawerLayout;
     public Button rename,working_dir_add_btn,working_dir_remove_btn;
     public ImageButton parent_dir_image_button,all_select;
-	private ImageView working_dir_expand_indicator,library_expand_indicator;
+	private ImageView working_dir_expand_indicator,library_expand_indicator,network_expand_indicator;
 	TextView file_number_view;
 	public static final String ACTIVITY_NAME="MAIN_ACTIVITY";
 
@@ -91,23 +90,23 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	ConstraintLayout search_toolbar;
 	ViewGroup drawer;
     private RecyclerView workingDirListRecyclerView;
-    private RecyclerView libraryRecyclerView;
+    private RecyclerView libraryRecyclerView,networkRecyclerView;
 	TextView current_dir_textview;
     Context context=this;
 	private int countBackPressed=0;
 	ViewPager viewPager;
 	public TinyDB tinyDB;
+	private static final boolean[] alreadyNotificationWarned=new boolean[1];
 
 	static File ZIP_FILE;
 	static List<String> LIBRARY_CATEGORIES=new ArrayList<>();
-
+	static List<String> NETWORK_TYPES=new ArrayList<>();
 	private Group working_dir_button_layout;
 	static boolean SHOW_HIDDEN_FILE;
 
 	static FilePOJO DRAWER_STORAGE_FILEPOJO_SELECTED;
 	static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
 
-	
 	public StorageRecyclerAdapter storageRecyclerAdapter;
 	private WorkingDirRecyclerAdapter workingDirRecyclerAdapter;
 
@@ -153,7 +152,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private FileDuplicationViewModel fileDuplicationViewModel;
 	private ListPopupWindowPOJO extract_listPopupWindowPOJO,open_listPopupWindowPOJO;
 	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-	private Group library_layout_group;
+	private Group library_layout_group,network_layout_group;
 	private Handler h;
 
 	@Override
@@ -179,9 +178,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		PermissionsUtil permissionUtil=new PermissionsUtil(context,MainActivity.this);
 		permissionUtil.check_permission();
-		//permissionUtil.check_read_phone_state();
 		tinyDB=new TinyDB(context);
-
 		setContentView(R.layout.main);
 		viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
 		fm=getSupportFragmentManager();
@@ -423,6 +420,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewPager.setAdapter(viewPagerAdapter);
 		
 */
+		Global.WARN_NOTIFICATIONS_DISABLED(context,NotifManager.CHANNEL_ID,alreadyNotificationWarned);
 
 		viewModel.isExtractionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
@@ -630,7 +628,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		library_scan_heading_layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				//clear_cache=false;
+
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
@@ -639,69 +637,26 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				h.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						Global.print(context,getString(R.string.scanning_started));
-
-//						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-//						actionmode_finish(df,df.fileclickselected);
-						ExecutorService executorService=MyExecutorService.getExecutorService();
-						executorService.execute(new Runnable() {
-							@Override
-							public void run() {
-								boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
-								Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
-								while(iterator.hasNext())
-								{
-									Map.Entry<String,List<FilePOJO>> entry=iterator.next();
-									if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Download"))
-									{
-										iterator.remove();
-										download_removed=true;
-										viewModel.getDownloadList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Document"))
-									{
-										iterator.remove();
-										document_removed=true;
-										viewModel.getDocumentList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Image"))
-									{
-										iterator.remove();
-										image_removed=true;
-										viewModel.getImageList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Audio"))
-									{
-										iterator.remove();
-										audio_removed=true;
-										viewModel.getAudioList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Video"))
-									{
-										iterator.remove();
-										video_removed=true;
-										viewModel.getVideoList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Archive"))
-									{
-										iterator.remove();
-										archive_removed=true;
-										viewModel.getArchiveList(false);
-									}
-									else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"APK"))
-									{
-										iterator.remove();
-										apk_removed=true;
-										viewModel.getApkList(false);
-									}
-									if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed)
-									{
-										break;
-									}
-								}
-
+						boolean currentDFSearchLibrary=false;
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+						{
+							if(df.progress_bar.getVisibility()==View.VISIBLE)
+							{
+								Global.print(context, getString(R.string.please_wait));
 							}
-						});
+							else
+							{
+								currentDFSearchLibrary=true;
+								actionmode_finish(df,df.fileclickselected);
+								rescan_library(df);
+							}
+						}
+						else
+						{
+							rescan_library(df);
+						}
+
 						pbf.dismissAllowingStateLoss();
 					}
 				},500);
@@ -711,7 +666,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         SwitchCompat switchHideFile = findViewById(R.id.switch_hide_file);
 		switchHideFile.setChecked(MainActivity.SHOW_HIDDEN_FILE);
-
 		switchHideFile.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 		{
 			public void onCheckedChanged(CompoundButton cb, final boolean checked)
@@ -827,27 +781,59 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
-		View ftp_details_heading_layout=findViewById(R.id.ftp_label_background);
-		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-				pbf.show(fm,"");
-				drawerLayout.closeDrawer(drawer);
-				Handler h=new Handler();
-				h.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-						actionmode_finish(df,df.fileclickselected);
-						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
-						ftpDetailsDialog.show(fm,"");
-						pbf.dismissAllowingStateLoss();
-					}
-				},500);
 
+		network_layout_group=findViewById(R.id.network_layout_group);
+		View network_heading_layout = findViewById(R.id.network_layout_background);
+		network_heading_layout.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if(network_layout_group.getVisibility()==View.GONE)
+				{
+					network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
+					network_layout_group.setVisibility(View.VISIBLE);
+					viewModel.network_shown=true;
+				}
+				else
+				{
+					network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.down_arrow_drawer_icon));
+					network_layout_group.setVisibility(View.GONE);
+					viewModel.network_shown=false;
+				}
 			}
 		});
+
+		network_expand_indicator=findViewById(R.id.network_expand_indicator);
+		NETWORK_TYPES=Arrays.asList(getResources().getStringArray(R.array.network_types));
+		networkRecyclerView=findViewById(R.id.network_recyclerview);
+		networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+		networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
+		int[]network_icon_image_array={R.drawable.ftp_server_icon};
+		networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES,network_icon_image_array));
+
+
+
+//		View ftp_details_heading_layout=findViewById(R.id.ftp_label_background);
+//		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+//				pbf.show(fm,"");
+//				drawerLayout.closeDrawer(drawer);
+//				Handler h=new Handler();
+//				h.postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+//						actionmode_finish(df,df.fileclickselected);
+//						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
+//						ftpDetailsDialog.show(fm,"");
+//						pbf.dismissAllowingStateLoss();
+//					}
+//				},500);
+//
+//			}
+//		});
 
 		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);
@@ -896,7 +882,73 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		discoverDevice();
 	}
 
+	private void rescan_library(DetailFragment df)
+	{
+		Global.print(context,getString(R.string.scanning_started));
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
+				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+				while(iterator.hasNext())
+				{
+					Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+					if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Download"))
+					{
+						iterator.remove();
+						download_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Document"))
+					{
+						iterator.remove();
+						document_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Image"))
+					{
+						iterator.remove();
+						image_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Audio"))
+					{
+						iterator.remove();
+						audio_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Video"))
+					{
+						iterator.remove();
+						video_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Archive"))
+					{
+						iterator.remove();
+						archive_removed=true;
+					}
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"APK"))
+					{
+						iterator.remove();
+						apk_removed=true;
+					}
+					if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed)
+					{
+						break;
+					}
+				}
+				//get methods kept below instead of in if block above to avoid likely concurrent modification exception
+				viewModel.getDownloadList(false);
+				viewModel.getDocumentList(false);
+				viewModel.getImageList(false);
+				viewModel.getAudioList(false);
+				viewModel.getVideoList(false);
+				viewModel.getArchiveList(false);
+				viewModel.getApkList(false);
 
+				fm.beginTransaction().detach(df).commit();
+				fm.beginTransaction().attach(df).commit();
+			}
+		});
+
+	}
 
 	private void createLibraryCache()
 	{
@@ -1049,6 +1101,30 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								});
 							}
 
+						}
+						break;
+
+					case Manifest.permission.POST_NOTIFICATIONS:
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+							if(shouldShowRequestPermissionRationale(permission))
+							{
+								showDialogOK(getString(R.string.permission_rationale_for_notification),new DialogInterface.OnClickListener()
+								{
+									@Override
+									public void onClick(DialogInterface dialog, int which)
+									{
+										switch (which)
+										{
+											case DialogInterface.BUTTON_POSITIVE:
+												new PermissionsUtil(context,MainActivity.this).check_permission();
+												break;
+											case DialogInterface.BUTTON_NEGATIVE:
+												Global.print(context,getString(R.string.permission_not_granted));
+												break;
+										}
+									}
+								});
+							}
 						}
 				}
 
@@ -2146,12 +2222,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	private class LibraryRecyclerAdapter extends RecyclerView.Adapter<LibraryRecyclerAdapter.ViewHolder>
 	{
-		final List<String> storage_dir_arraylist;
+		final List<String> library_arraylist;
 		final int[] icon_image_list;
 
 		LibraryRecyclerAdapter(List<String> storage_dir_arraylist,int[] icon_image_list)
 		{
-			this.storage_dir_arraylist=storage_dir_arraylist;
+			this.library_arraylist=storage_dir_arraylist;
 			this.icon_image_list=icon_image_list;
 		}
 
@@ -2160,7 +2236,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			final View v;
 			final ImageView imageview;
 			final ImageView overlay_imageview;
-			final TextView textView_recent_dir;
+			final TextView textView_library;
 
 			ViewHolder(View v)
 			{
@@ -2168,14 +2244,39 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				this.v=v;
 				imageview=v.findViewById(R.id.image_storage_dir);
 				overlay_imageview=v.findViewById(R.id.overlay_image_storage_dir);
-				textView_recent_dir=v.findViewById(R.id.text_storage_dir_name);
+				textView_library=v.findViewById(R.id.text_storage_dir_name);
 				overlay_imageview.setVisibility(View.GONE);
+				final int[] position = new int[1];
 				v.setOnClickListener(new View.OnClickListener()
 					{
-
 						public void onClick(View p)
 						{
-							String name=storage_dir_arraylist.get(getBindingAdapterPosition());
+							position[0]=getBindingAdapterPosition();
+							String name="Download";
+							switch (position[0])
+							{
+								case 0:
+									name="Download";
+									break;
+								case 1:
+									name="Document";
+									break;
+								case 2:
+									name="Image";
+									break;
+								case 3:
+									name="Audio";
+									break;
+								case 4:
+									name="Video";
+									break;
+								case 5:
+									name="Archive";
+									break;
+								case 6:
+									name="APK";
+									break;
+							}
 							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
 							drawerLayout.closeDrawer(drawer);
 						}
@@ -2195,7 +2296,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onBindViewHolder(LibraryRecyclerAdapter.ViewHolder p1, int p2)
 		{
 			// TODO: Implement this method
-			p1.textView_recent_dir.setText(storage_dir_arraylist.get(p2));
+			p1.textView_library.setText(library_arraylist.get(p2));
 			p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,icon_image_list[p2]));
 		}
 
@@ -2203,7 +2304,91 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public int getItemCount()
 		{
 			// TODO: Implement this method
-			return storage_dir_arraylist.size();
+			return library_arraylist.size();
+		}
+
+	}
+
+	private class NetworkRecyclerAdapter extends RecyclerView.Adapter<NetworkRecyclerAdapter.ViewHolder>
+	{
+		final List<String> network_arraylist;
+		final int[] icon_image_list;
+
+		NetworkRecyclerAdapter(List<String> network_arraylist,int[] icon_image_list)
+		{
+			this.network_arraylist=network_arraylist;
+			this.icon_image_list=icon_image_list;
+		}
+
+		class ViewHolder extends RecyclerView.ViewHolder
+		{
+			final View v;
+			final ImageView imageview;
+			final ImageView overlay_imageview;
+			final TextView textView_network;
+
+			ViewHolder(View v)
+			{
+				super(v);
+				this.v=v;
+				imageview=v.findViewById(R.id.image_storage_dir);
+				overlay_imageview=v.findViewById(R.id.overlay_image_storage_dir);
+				textView_network=v.findViewById(R.id.text_storage_dir_name);
+				overlay_imageview.setVisibility(View.GONE);
+				final int[] position = new int[1];
+				v.setOnClickListener(new View.OnClickListener()
+				{
+					public void onClick(View p)
+					{
+						position[0] =getBindingAdapterPosition();
+						final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+						pbf.show(fm,"");
+						drawerLayout.closeDrawer(drawer);
+						Handler h=new Handler();
+						h.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+							DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+							actionmode_finish(df,df.fileclickselected);
+							if(position[0]==0)
+							{
+								Intent intent=new Intent(context, FtpServerActivity.class);
+								startActivity(intent);
+							}
+							else if(position[0]==1)
+							{
+								FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
+								ftpDetailsDialog.show(fm,"");
+							}
+							pbf.dismissAllowingStateLoss();
+							}
+						},500);
+					}
+				});
+			}
+		}
+
+		@Override
+		public NetworkRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
+		{
+			// TODO: Implement this method
+			View v=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
+			return new ViewHolder(v);
+		}
+
+		@Override
+		public void onBindViewHolder(NetworkRecyclerAdapter.ViewHolder p1, int p2)
+		{
+			// TODO: Implement this method
+			p1.textView_network.setText(network_arraylist.get(p2));
+			p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,icon_image_list[p2]));
+		}
+
+		@Override
+		public int getItemCount()
+		{
+			// TODO: Implement this method
+			return network_arraylist.size();
 		}
 
 	}
@@ -2239,7 +2424,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		if(!usb_path_added)
 		{
-
 			Global.USB_STORAGE_PATH=usbFileRoot.getAbsolutePath();
 			Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(usbFileRoot,false));
 			Global.WORKOUT_AVAILABLE_SPACE();

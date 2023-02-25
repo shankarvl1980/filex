@@ -650,6 +650,7 @@ public class AlbumListFragment extends Fragment
 			v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
 
 			v=albumtextview;
+			y=(itemHeight-v.getMeasuredHeight()-no_of_songs_textview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			y+=v.getMeasuredHeight();
 

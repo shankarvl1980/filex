@@ -49,19 +49,34 @@ public class ViewModelFileCount extends ViewModel {
             @Override
             public void run()
             {
-
                 Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
-                String file_path=source_list_files.get(0);
+
                 if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
                 {
-                    File[] f_array=new File[size];
-                    for(int i=0;i<size;++i)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
                     {
-                        File f=new File(source_list_files.get(i));
-                        f_array[i]=f;
-                    }
-                    populate(f_array,include_folder);
+                        try {
+                            final int[] count = new int[1];
+                            final long[] size = new long[1];
+                            new NioFileIterator(source_list_files,count, size);
+                            cumulative_no_of_files+=count[0];
+                            total_no_of_files.postValue(cumulative_no_of_files);
+                            total_size_of_files+=size[0];
+                            size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+                        } catch (IOException e) {
 
+                        }
+                    }
+                    else
+                    {
+                        File[] f_array=new File[size];
+                        for(int i=0;i<size;++i)
+                        {
+                            File f=new File(source_list_files.get(i));
+                            f_array[i]=f;
+                        }
+                        populate(f_array,include_folder);
+                    }
                 }
                 else if(sourceFileObjectType== FileObjectType.USB_TYPE)
                 {
@@ -89,10 +104,8 @@ public class ViewModelFileCount extends ViewModel {
                     FTPFile[] f_array=new FTPFile[size];
                     for(int i=0;i<size;++i)
                     {
-
                         FTPFile f = FileUtil.getFTPFile(source_list_files.get(i));//MainActivity.FTP_CLIENT.mlistFile(source_list_files.get(i));
                         f_array[i]=f;
-
                     }
                     populate(f_array,include_folder,source_folder);
 

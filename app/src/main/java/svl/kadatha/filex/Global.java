@@ -1,8 +1,12 @@
 package svl.kadatha.filex;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -12,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.DocumentsContract;
@@ -26,7 +31,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -39,6 +46,9 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +84,8 @@ public class Global
 	static final HashMap<String,List<AudioPOJO>> AUDIO_POJO_HASHMAP=new HashMap<>();
 	static final HashMap<String,List<AlbumPOJO>> ALBUM_POJO_HASHMAP=new HashMap<>();
 
+	static final HashMap<String,Set<String>> LIBRARY_FILTER_HASHMAP=new HashMap<>();
+
 	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;
 	static int SCREEN_WIDTH,SCREEN_HEIGHT,DIALOG_WIDTH,DIALOG_HEIGHT,WIDTH;
@@ -85,12 +97,12 @@ public class Global
 	static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
 
 	
-	static final String TEXT_REGEX="(?i)txt|java|xml|cpp|c|h|log";
+	static final String TEXT_REGEX="(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
 	static final String RTF_REGEX="(?i)rtf";
-	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp";
-	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4r";
+	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
+	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a";
 	static final String VIDEO_REGEX="(?i)3gp|mp4|avi|mov|flv|wmv|webm";
-	static final String ZIP_REGEX="(?i)zip|rar";
+	static final String ZIP_REGEX="(?i)zip|rar|jar";
 	static final String UNIX_ARCHIVE_REGEX="(?i)tar|gzip|gz";
 	static final String APK_REGEX="(?i)apk";
 	static final String PDF_REGEX="(?i)pdf";
@@ -116,9 +128,11 @@ public class Global
 	static int SELECTOR_ICON_DIMENSION;
 	static int ONE_SP;
 	static int FOUR_DP;
+	static int FIVE_DP;
 	static int SIX_DP;
 	static int EIGHT_DP;
 	static int TEN_DP;
+	static int TWELVE_DP;
 	static int FOURTEEN_DP;
 	static int RECYCLERVIEW_ITEM_SPACING;
 	static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
@@ -197,7 +211,7 @@ public class Global
 
 	static DividerItemDecoration DIVIDERITEMDECORATION;
 
-	static final String TAG="shankar";
+	static public final String TAG="shankar";
 
 	static final long CACHE_FILE_MAX_LIMIT=1024*1024*10;
 
@@ -277,7 +291,6 @@ public class Global
 						parent_uri_exists=true;
 						break;
 					}
-
 				}
 			}
 			if(!parent_uri_exists)
@@ -323,15 +336,12 @@ public class Global
 			SCREEN_WIDTH=context.getResources().getDisplayMetrics().heightPixels;
 			SCREEN_HEIGHT=context.getResources().getDisplayMetrics().widthPixels;
 			WIDTH=SCREEN_HEIGHT;
-
-
 		}
 		else
 		{
 			SCREEN_WIDTH=context.getResources().getDisplayMetrics().widthPixels;
 			SCREEN_HEIGHT=context.getResources().getDisplayMetrics().heightPixels;
 			WIDTH=SCREEN_WIDTH;
-
 		}
 
 		DIALOG_WIDTH=SCREEN_WIDTH*90/100;
@@ -339,7 +349,6 @@ public class Global
 
 		SCREEN_RATIO=(float) SCREEN_WIDTH/(float) SCREEN_HEIGHT;
 		IS_TABLET=context.getResources().getBoolean(R.bool.isTablet);
-
 	}
 	
 	
@@ -353,12 +362,14 @@ public class Global
 			ONE_SP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
 
 			FOUR_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
+			FIVE_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,displayMetrics);
 			SIX_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,displayMetrics);
 			EIGHT_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,displayMetrics);
 			TEN_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,displayMetrics);
+			TWELVE_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,12,displayMetrics);
 
-			int list_s= FOUR_DP;
-			int list_g=IS_TABLET ? TEN_DP : EIGHT_DP;
+			int list_s=FIVE_DP;
+			int list_g=IS_TABLET ? TWELVE_DP : TEN_DP;
 
 
 			ONE_DP=FOUR_DP/4;
@@ -367,7 +378,7 @@ public class Global
 			THIRTY_SIX_DP=FOUR_DP*9;
 			FOURTEEN_DP=TEN_DP+FOUR_DP;
 			SELECTOR_ICON_DIMENSION=TEN_DP+TEN_DP+SIX_DP;
-			RECYCLERVIEW_ITEM_SPACING=list_g;
+			RECYCLERVIEW_ITEM_SPACING=IS_TABLET ? TEN_DP : SIX_DP;
 			LIST_POPUP_WINDOW_DROP_DOWN_OFFSET=IS_TABLET ? TEN_DP : SIX_DP;
 
 
@@ -558,16 +569,6 @@ public class Global
 		localBroadcastManager.sendBroadcast(intent);
 	}
 
-	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name, String file_path, FileObjectType fileObjectType)
-	{
-		Intent intent=new Intent();
-		intent.setAction(action);
-		intent.putExtra("activity_name",activity_name);
-		intent.putExtra("file_path",file_path);
-		intent.putExtra("fileObjectType",fileObjectType);
-		localBroadcastManager.sendBroadcast(intent);
-	}
-
 	static final FilenameFilter File_NAME_FILTER=new FilenameFilter()
 	{
 		@Override
@@ -575,6 +576,19 @@ public class Global
 			return !s.startsWith(".");
 		}
 	};
+
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	static DirectoryStream.Filter<Path> GET_NIO_FILE_NAME_FILTER()
+	{
+		return new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path path) throws IOException {
+				return !Files.isHidden(path);
+			}
+		};
+	}
+
 
 
 	static FilePOJO GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR()
@@ -920,7 +934,6 @@ public class Global
 		}
 		else
 		{
-
 			//try {
 				//MainActivity.FTP_CLIENT.disconnect();
 				Iterator<FilePOJO> iterator=STORAGE_DIR.iterator();
@@ -991,8 +1004,7 @@ public class Global
 		Runtime runtime=Runtime.getRuntime();
 		long usedMemInMB=(runtime.totalMemory()-runtime.freeMemory())/1048576L;
 		long maxHeapSizeInMB=runtime.maxMemory()/1048576L;
-		long availableHeapSizeMB=maxHeapSizeInMB-usedMemInMB;
-		return availableHeapSizeMB;
+		return maxHeapSizeInMB-usedMemInMB;
 	}
 
 	public static long GET_URI_FILE_SIZE(Uri fileUri,Context context) {
@@ -1097,6 +1109,62 @@ public class Global
 			if(!entry.getKey().startsWith(FileObjectType.SEARCH_LIBRARY_TYPE.toString()))
 			{
 				iterator.remove();
+			}
+		}
+	}
+
+	public static void WARN_NOTIFICATIONS_DISABLED(Context context,String channelId, boolean[] alreadyWarned) {
+		if(alreadyWarned[0])return;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			if (Build.VERSION.SDK_INT >= 33){
+				if(context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+				{
+					Global.print(context, context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+					alreadyWarned[0] = true;
+					return;
+				}
+			}
+			else
+			{
+				NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+				if (!manager.areNotificationsEnabled()) {
+					Global.print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+					alreadyWarned[0]=true;
+					return;
+				}
+			}
+
+			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+			List<NotificationChannel> channels = null;
+			channels = manager.getNotificationChannels();
+			for (NotificationChannel channel : channels)
+			{
+				if (channel.getId().equals(channelId) && channel.getImportance() == NotificationManager.IMPORTANCE_NONE)
+				{
+					String message=context.getString(R.string.enable_specified_notification_channel_for_better_control);
+					switch (channelId)
+					{
+						case NotifManager.CHANNEL_ID:
+							Global.print(context,NotifManager.CHANNEL_NAME+" - "+message);
+							break;
+						case AudioPlayerService.CHANNEL_ID:
+							Global.print(context,AudioPlayerService.CHANNEL_NAME+" - "+message);
+							break;
+						case FsNotification.CHANNEL_ID:
+							Global.print(context,FsNotification.CHANNEL_NAME+" - "+message);
+							break;
+					}
+					alreadyWarned[0]=true;
+					break;
+				}
+			}
+		}
+		else
+		{
+			if(!NotificationManagerCompat.from(context).areNotificationsEnabled())
+			{
+				Global.print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+				alreadyWarned[0]=true;
 			}
 		}
 	}

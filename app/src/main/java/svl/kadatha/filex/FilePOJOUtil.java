@@ -6,7 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
+
+import androidx.annotation.RequiresApi;
 
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -15,6 +18,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -41,21 +49,23 @@ public class FilePOJOUtil {
         int overlay_visible= View.INVISIBLE;
         float alfa=Global.ENABLE_ALFA;
         String package_name = null;
+        int type=R.drawable.folder_icon;
 
         if(!isDirectory)
         {
+            type=R.drawable.unknown_file_icon;
             int idx=name.lastIndexOf(".");
             if(idx!=-1)
             {
                 file_ext=name.substring(idx+1);
-                if(extracticon)
-                {
-                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
-                }
-
-                if(file_ext.matches(Global.VIDEO_REGEX))
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
                 {
                     overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
             if(archive_view) {
@@ -77,13 +87,11 @@ public class FilePOJOUtil {
         }
         else
         {
-
             String sub_file_count=null;
             String [] file_list;
             if((file_list=f.list(Global.File_NAME_FILTER))!=null)
             {
                 sub_file_count="("+file_list.length+")";
-
             }
             si=sub_file_count;
         }
@@ -93,9 +101,97 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        int type=GET_FILE_TYPE(isDirectory,file_ext);
         return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    static FilePOJO MAKE_FilePOJO(Path p, boolean extracticon, boolean archive_view, FileObjectType fileObjectType)
+    {
+        String name=p.getFileName().toString();
+        String path=p.toAbsolutePath().toString();
+        boolean isDirectory;
+        long dateLong=0;
+        long sizeLong=0L;
+        try {
+            BasicFileAttributes basicFileAttributes=Files.readAttributes(p,BasicFileAttributes.class);
+            isDirectory=basicFileAttributes.isDirectory();
+            dateLong=basicFileAttributes.lastModifiedTime().toMillis();
+            if(!isDirectory) sizeLong=basicFileAttributes.size();
+        } catch (IOException e) {
+            isDirectory=Files.isDirectory(p);
+            try {
+                dateLong = Files.getLastModifiedTime(p).toMillis();
+            } catch (IOException ioe) {
+
+            }
+        }
+
+        String date=Global.SDF.format(dateLong);
+
+        String si;
+
+        String file_ext="";
+        int overlay_visible= View.INVISIBLE;
+        float alfa=Global.ENABLE_ALFA;
+        String package_name = null;
+        int type=R.drawable.folder_icon;
+
+        if(!isDirectory)
+        {
+            type=R.drawable.unknown_file_icon;
+            int idx=name.lastIndexOf(".");
+            if(idx!=-1)
+            {
+                file_ext=name.substring(idx+1);
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
+                {
+                    overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
+                }
+            }
+            try
+            {
+                if(archive_view)
+                {
+                    ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE);
+                    ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
+                    if(zipEntry!=null) sizeLong = zipEntry.getSize();
+                }
+
+            }
+            catch (IOException e){}
+            si=FileUtil.humanReadableByteCount(sizeLong);
+        }
+        else
+        {
+
+            String sub_file_count=null;
+            try(DirectoryStream<Path> directoryStream=Files.newDirectoryStream(Paths.get(path),Global.GET_NIO_FILE_NAME_FILTER()))
+            {
+                int count = 0;
+                for(Path pa : directoryStream)
+                {
+                    ++count;
+                }
+                sub_file_count="("+count+")";
+            } catch (IOException e) {
+
+            }
+            si=sub_file_count;
+        }
+
+        if(p.startsWith("."))
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+    }
+
 
     static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extracticon)
     {
@@ -110,21 +206,23 @@ public class FilePOJOUtil {
         int overlay_visible=View.INVISIBLE;
         float alfa=Global.ENABLE_ALFA;
         String package_name=null;
+        int type=R.drawable.folder_icon;
 
         if(!isDirectory)
         {
-
+            type=R.drawable.unknown_file_icon;
             int idx=name.lastIndexOf(".");
             if(idx!=-1)
             {
                 file_ext=name.substring(idx+1);
-                if(extracticon)
-                {
-                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
-                }
-                if(file_ext.matches(Global.VIDEO_REGEX))
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
                 {
                     overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
             sizeLong=f.getLength();
@@ -144,7 +242,6 @@ public class FilePOJOUtil {
             si=sub_file_count;
         }
 
-        int type=GET_FILE_TYPE(isDirectory,file_ext);
         return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
@@ -168,20 +265,23 @@ public class FilePOJOUtil {
         int overlay_visible= View.INVISIBLE;
         float alfa=Global.ENABLE_ALFA;
         String package_name = null;
+        int type=R.drawable.folder_icon;
 
         if(!isDirectory)
         {
+            type=R.drawable.unknown_file_icon;
             int idx=name.lastIndexOf(".");
             if(idx!=-1)
             {
                 file_ext=name.substring(idx+1);
-                if(extracticon)
-                {
-                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
-                }
-                if(file_ext.matches(Global.VIDEO_REGEX))
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
                 {
                     overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
 
@@ -208,10 +308,9 @@ public class FilePOJOUtil {
             }
 
         }
-        int type=GET_FILE_TYPE(isDirectory,file_ext);
+
         return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
-
 
 
     static FilePOJO MAKE_FilePOJO_ROOT(String file_path)
@@ -232,6 +331,7 @@ public class FilePOJOUtil {
         catch(Exception e){return  null;}
         return null;
     }
+
     static FilePOJO PARSE_MAKE_FilePOJO_ROOT(String line, String parent_file_path)
     {
 
@@ -311,14 +411,17 @@ public class FilePOJOUtil {
         String file_ext="";
         int overlay_visible= View.INVISIBLE;
         float alfa=Global.ENABLE_ALFA;
+        int type=R.drawable.folder_icon;
 
         if(!isDirectory)
         {
+            type=R.drawable.unknown_file_icon;
             int idx=name.lastIndexOf(".");
             if(idx!=-1)
             {
                 file_ext=name.substring(idx+1);
-                if(file_ext.matches(Global.VIDEO_REGEX))
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
                 {
                     overlay_visible=View.VISIBLE;
                 }
@@ -349,7 +452,7 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        int type=GET_FILE_TYPE(isDirectory,file_ext);
+
         return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
@@ -471,7 +574,7 @@ public class FilePOJOUtil {
         }
         else if(file_ext.matches(Global.APK_REGEX))
         {
-            return -1;
+            return 0;
         }
         else if(file_ext.matches(Global.ZIP_REGEX) || file_ext.matches(Global.UNIX_ARCHIVE_REGEX))
         {
@@ -479,11 +582,11 @@ public class FilePOJOUtil {
         }
         else if(file_ext.matches(Global.IMAGE_REGEX))
         {
-            return 0;
+            return -1;
         }
         else if(file_ext.matches(Global.VIDEO_REGEX))
         {
-            return 0;
+            return -2;
         }
         else if(file_ext.matches(Global.TEXT_REGEX) || file_ext.matches( Global.RTF_REGEX))
         {
@@ -559,7 +662,6 @@ public class FilePOJOUtil {
             FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,source_folder,currentUsbFile,false);
             filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
             filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
-            //if(filePOJOs==null)return;
         }
         else
         {
@@ -877,7 +979,6 @@ public class FilePOJOUtil {
 
     public static void SET_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
     {
-
         for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
             if ((fileObjectType + file_path).equals(entry.getKey())) {
                 List<FilePOJO> filePOJOS = entry.getValue();
@@ -923,26 +1024,30 @@ public class FilePOJOUtil {
  */
         if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            File[] file_array;
-            if((file_array=file.listFiles())!=null)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
             {
-
-                int size=file_array.length;
-                for(int i=0;i<size;++i)
+                try(DirectoryStream<Path> directoryStream= Files.newDirectoryStream(Paths.get(fileclickselected)))
                 {
-                    File f=file_array[i];
-                    FilePOJO filePOJO =MAKE_FilePOJO(f,true,archive_view,fileObjectType);
-                    if(!filePOJO.getName().startsWith("."))
+                    for(Path path : directoryStream)
                     {
+                        FilePOJO filePOJO =MAKE_FilePOJO(path,true,archive_view,fileObjectType);
+                        if(!filePOJO.getName().startsWith("."))
+                        {
+                            filePOJOS_filtered.add(filePOJO);
+                        }
+                        filePOJOS.add(filePOJO);
 
-                        filePOJOS_filtered.add(filePOJO);
                     }
-
-                    filePOJOS.add(filePOJO);
+                } catch (IOException e) {
 
                 }
 
             }
+            else
+            {
+                file_type_fill_filePOJO(file,archive_view,fileObjectType,filePOJOS,filePOJOS_filtered);
+            }
+
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
         {
@@ -1050,4 +1155,23 @@ public class FilePOJOUtil {
         return true;
     }
 
+    private static void file_type_fill_filePOJO(File file, boolean archive_view, FileObjectType fileObjectType,List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered)
+    {
+        File[] file_array;
+        if((file_array=file.listFiles())!=null)
+        {
+            int size=file_array.length;
+            for(int i=0;i<size;++i)
+            {
+                File f=file_array[i];
+                FilePOJO filePOJO =MAKE_FilePOJO(f,true,archive_view,fileObjectType);
+                if(!filePOJO.getName().startsWith("."))
+                {
+                    filePOJOS_filtered.add(filePOJO);
+                }
+                filePOJOS.add(filePOJO);
+            }
+
+        }
+    }
 }

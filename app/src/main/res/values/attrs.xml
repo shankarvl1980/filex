@@ -26,6 +26,8 @@
     <attr name="seek_bar_thumb" format="reference"/>
 
     <attr name="select_detail_recyclerview_pressed" format="reference"/>
+    <attr name="select_dialog_button_pressed" format="reference"/>
+    <attr name="select_rectangle_shape" format="reference"/>
 
     <attr name="select_color_picture_recyclerview" format="reference" />
     <attr name="video_play_overlay_background" format="reference"/>
@@ -35,5 +37,7 @@
     <attr name="select_indicator_fill_color" format="reference"/>
 
     <attr name="water_color" format="reference"/>
+
+    <attr name="storage_analyser_item_background" format="reference"/>
 
 </resources>

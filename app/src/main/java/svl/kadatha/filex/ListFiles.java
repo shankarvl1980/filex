@@ -61,17 +61,24 @@ public class ListFiles
 				int alfa=225;
 				String file_ext="";
 				String package_name = null;
+				int type=R.drawable.folder_icon;
 
 				if(!isDirectory)
 				{
+					type=R.drawable.unknown_file_icon;
 					int idx=line_name.lastIndexOf(".");
 					if(idx!=-1)
 					{
 						file_ext=line_name.substring(idx+1);
-						package_name=FilePOJOUtil.EXTRACT_ICON(MainActivity.PM,p,file_ext);
-						if(file_ext.matches(Global.VIDEO_REGEX))
+						type=FilePOJOUtil.GET_FILE_TYPE(f.isDirectory(),file_ext);
+
+						if(type==-2)
 						{
 							overlay_visible=View.VISIBLE;
+						}
+						else if(extract_icon && type==0)
+						{
+							package_name=FilePOJOUtil.EXTRACT_ICON(MainActivity.PM,p,file_ext);
 						}
 					}
 					si=FileUtil.humanReadableByteCount(sizeLong);
@@ -87,8 +94,8 @@ public class ListFiles
 				{
 					alfa=100;
 				}
-				int t=FilePOJOUtil.GET_FILE_TYPE(f.isDirectory(),file_ext);
-				list.add(new FilePOJO(null, line_name,package_name,p,isDirectory,0L,si,sizeLong,si,t,file_ext,alfa,overlay_visible,0,0L,null,0,null));
+
+				list.add(new FilePOJO(null, line_name,package_name,p,isDirectory,0L,si,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null));
 				
 			}
 			

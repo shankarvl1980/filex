@@ -194,13 +194,15 @@ public class DefaultAppsDialog extends DialogFragment
         final String file_type;
         final String app_name;
         final String app_package_name;
+        final String app_component_name;
 
-        DefaultAppPOJO(String mime_type,String file_type,String app_name,String app_package_name)
+        DefaultAppPOJO(String mime_type,String file_type,String app_name,String app_package_name, String app_component_name)
         {
             this.mime_type=mime_type;
             this.file_type=file_type;
             this.app_name=app_name;
             this.app_package_name=app_package_name;
+            this.app_component_name=app_component_name;
         }
 
     }

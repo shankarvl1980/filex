@@ -225,8 +225,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 		{
 			try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
-				FileChannel inputChannel = fileInStream.getChannel();
-				FileChannel outputChannel = fileOutStream.getChannel();
+				//FileChannel inputChannel = fileInStream.getChannel();
+				//FileChannel outputChannel = fileOutStream.getChannel();
 				//channelCopy(inputChannel, outputChannel,bytes_read);
 				bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
 				if (cut) {
@@ -1593,11 +1593,9 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	public static String humanReadableByteCount(long bytes)
 	{
-		int unit = 1024;
-		if (bytes < unit) return bytes + " B";
-		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		char pre = ("KMGTPE").charAt(exp-1);
-		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
+		if (bytes < 1024) return bytes + " B";
+		int z = (63 - Long.numberOfLeadingZeros(bytes)) / 10;
+		return String.format("%.1f %sB", (double)bytes / (1L << (z*10)), " KMGTPE".charAt(z));
 	}
 
 

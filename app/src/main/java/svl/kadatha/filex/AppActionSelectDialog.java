@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -9,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -116,18 +115,7 @@ public class AppActionSelectDialog extends DialogFragment
         // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
-
-        WindowManager.LayoutParams params=window.getAttributes();
-        int height=params.height;
-        if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-        {
-            window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
-        }
-        else
-        {
-            window.setLayout(Global.DIALOG_WIDTH,Math.min(height,Global.DIALOG_HEIGHT));
-        }
-
+        window.setLayout(Global.DIALOG_WIDTH, GridLayout.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 

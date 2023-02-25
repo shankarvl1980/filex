@@ -26,7 +26,6 @@ public class Iterate
 		int size=source_list_files.length;
 		for(int i=0;i<size;++i)
 		{
-
 			int no_of_files=0;
 			long size_of_files=0L;
 			File f=source_list_files[i];

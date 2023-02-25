@@ -13,7 +13,7 @@
     <color name="light_heading_text_color">#ff292929</color>
     <color name="light_edit_text_color">@color/light_recycler_main_text_color</color>
     <color name="light_activity_background">#ff292929</color>
-    <color name="light_filepath_recyclerview_background">#739DB1</color>
+    <color name="light_filepath_recyclerview_background">#467287</color>
     <color name="light_drawer_title">#76C6BD</color>
     <color name="light_dialog_title">#739DB1</color>
     <color name="light_dialog_background">#ff4A4A43</color>
@@ -28,10 +28,14 @@
     <color name="light_seek_bar_progress">@color/light_icon_color</color>
     <color name="light_seek_bar_thumb">@color/light_icon_color</color>
     <color name="light_select_detail_recyclerview_pressed">#80000000</color>
+    <color name="light_select_dialog_button_pressed">#77776C</color>
+    <color name="light_select_rectangle_shape">@android:color/background_light</color>
     <color name="light_select_indicator_border_color">@color/light_icon_color</color>
     <color name="light_select_indicator_fill_color">#ff000000</color>
     <color name="light_drawer_icon_color">@color/light_heading_text_color</color>
 
     <color name="light_water_color">#494848</color>
+
+    <color name="light_storage_analyser_item_background">#80000000</color>
 
 </resources>

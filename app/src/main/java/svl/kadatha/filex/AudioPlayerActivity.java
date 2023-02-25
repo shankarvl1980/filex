@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class AudioPlayerActivity extends BaseActivity
     private ViewPager view_pager;
 	private final List<AudioCompletionListener> audioCompletionListeners=new ArrayList<>();
 	private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
+	private static final boolean[] alreadyNotificationWarned=new boolean[1];
     TinyDB tinyDB;
 	static AudioPOJO AUDIO_FILE;
 	public FragmentManager fm;
@@ -77,7 +79,7 @@ public class AudioPlayerActivity extends BaseActivity
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		
 		AUDIO_NOTIFICATION_INTENT_ACTION=getPackageName()+".AUDIO_NOTIFICATION";
-
+		Global.WARN_NOTIFICATIONS_DISABLED(context,AudioPlayerService.CHANNEL_ID,alreadyNotificationWarned);
 		IntentFilter intent_filter=new IntentFilter();
 		intent_filter.addAction(AUDIO_NOTIFICATION_INTENT_ACTION);
 
@@ -440,7 +442,10 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 			finally
 			{
-				mmr.release();
+				try {
+					mmr.release();
+				} catch (IOException e) {
+				}
 				return albumart;
 			}
 		}

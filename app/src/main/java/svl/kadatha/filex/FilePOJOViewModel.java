@@ -3,7 +3,6 @@ package svl.kadatha.filex;
 import android.app.Application;
 import android.database.Cursor;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -14,6 +13,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +47,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
     private int count=0;
+
+    public String library_filter_path;
+    public boolean library_time_desc=false;
 
 
 
@@ -154,7 +164,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
         else
         {
-            no_of_files++;
+            ++no_of_files;
             size_of_files+=f.length();
         }
 
@@ -176,7 +186,19 @@ public class FilePOJOViewModel extends AndroidViewModel {
             if(filePOJO.getTotalSizePercentage()!=null) continue;
             if(filePOJO.getIsDirectory())
             {
-                get_size(new File(filePOJO.getPath()),total_no_of_files,total_size_of_files,true);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                {
+                    try {
+                        new NioFileIterator(filePOJO.getPath(),total_no_of_files,total_size_of_files);
+                    } catch (IOException e) {
+
+                    }
+                }
+                else
+                {
+                    get_size(new File(filePOJO.getPath()),total_no_of_files,total_size_of_files,true);
+                }
+
                 filePOJO.setTotalFiles(total_no_of_files[0]);
                 filePOJO.setTotalSizeLong(total_size_of_files[0]);
                 filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files[0]));
@@ -190,7 +212,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
             }
-
         }
         return true;
     }
@@ -233,7 +254,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
             }
         });
 
@@ -244,7 +264,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         count=0;
-        //mutable_file_count.postValue(count);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future11=executorService.submit(new Runnable() {
             @Override
@@ -266,7 +285,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     filePOJOS_filtered=filePOJOS;
-          //          mutable_file_count.postValue(filePOJOS.size());
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                     return;
                 }
@@ -313,19 +331,19 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     }
                     if (application.getString(R.string.document).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.java|\\.xml|\\.rtf|\\.cpp|\\.c|\\.h|\\.log)$";
+                        what_to_find = ".*((?i)\\.doc|\\.docx|\\.txt|\\.pdf|\\.html|\\.htm|\\.rtf|\\.ppt|\\.pptx|\\.xls|\\.xlsx)$";
                         media_category="Document";
                     } else if (application.getString(R.string.image).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp)$";
+                        what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp|\\.avif)$";
                         media_category="Image";
                     } else if (application.getString(R.string.audio).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus||.m4r)$";
+                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus|\\.m4r|\\.m4a)$";
                         media_category="Audio";
                     } else if (application.getString(R.string.video).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.3gp|\\.mp4|\\.avi|\\.mov|\\.flv|\\.wmv|\\.webm)$";
                         media_category="Video";
                     } else if (application.getString(R.string.archive).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip)$";
+                        what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip|\\.jar)$";
                         media_category="Archive";
                     } else if (application.getString(R.string.apk).equals(library_or_search)) {
                         what_to_find = ".*(?i)\\.apk$";
@@ -335,7 +353,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         media_category="Download";
                     }
                 }
-
 
                 if(Global.DETAILED_SEARCH_LIBRARY)
                 {
@@ -389,7 +406,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-
     }
 
 
@@ -404,38 +420,38 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 break;
             case "Document":
                 cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
+                        "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
 
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h","%.log"},null);
-
+                        new String[]{"%.doc","%.docx","%.txt","%.pdf","%.html","%.htm","%.rtf","%.ppt","%.pptx","%.xls","%.xlsx"},null);
                 break;
             case "Archive":
                 cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.tar","%.gzip","%.gz","%.zip","%.rar"},null);
+                        "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
+                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar"},null);
                 break;
             case "APK":
-                    cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                            MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                    MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-                            new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.apk"},null);
-                    break;
+                cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
+                        "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
+                        new String[]{"%.apk"},null);
+                break;
             case "Image":
                 cursor=application.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
                 break;
@@ -453,142 +469,289 @@ public class FilePOJOViewModel extends AndroidViewModel {
         if(cursor!=null && cursor.getCount()>0)
         {
             boolean extract_icon= media_category != null && media_category.equals("APK");
-            while(cursor.moveToNext())
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
             {
-                if(isCancelled())
+                while(cursor.moveToNext())
                 {
-                    return;
-                }
-                String data=cursor.getString(0);
-                File f=new File(data);
-               // if(f.exists())
-                {
-                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                    f_pojos.add(filePOJO);
-                    f_pojos_filtered.add(filePOJO);
-                    count++;
-            //        mutable_file_count.postValue(count);
+                    if(isCancelled)
+                    {
+                        return;
+                    }
+
+                    String data=cursor.getString(0);
+                    Path path= Paths.get(data);
+                    //if(Files.exists(path))
+                    {
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                        //mutable_file_count.postValue(count);
+                    }
                 }
             }
+            else
+            {
+                while(cursor.moveToNext())
+                {
+                    if(isCancelled())
+                    {
+                        return;
+                    }
+                    String data=cursor.getString(0);
+                    File f=new File(data);
+                    // if(f.exists())
+                    {
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                        //        mutable_file_count.postValue(count);
+                    }
+                }
+            }
+
             cursor.close();
         }
     }
 
     private void search_download(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered)
     {
-        File f=new File("/storage/emulated/0/Download");
-        if(f.exists())
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
         {
-            File[] file_list=f.listFiles();
-            int size=file_list.length;
-            for(int i=0;i<size;++i)
+            Path path=Paths.get("/storage/emulated/0/Download");
+            if(Files.exists(path))
             {
-                if(isCancelled())
+                try(DirectoryStream<Path> directoryStream=Files.newDirectoryStream(path))
                 {
-                    return;
+                    for(Path p : directoryStream)
+                    {
+                        if(isCancelled)
+                        {
+                            return;
+                        }
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(p,true,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                        //mutable_file_count.postValue(count);
+                    }
                 }
-                File file=file_list[i];
-                FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
-                f_pojos.add(filePOJO);
-                f_pojos_filtered.add(filePOJO);
-                count++;
-              //  mutable_file_count.postValue(count);
+                catch (IOException e)
+                {
+
+                }
             }
         }
+        else
+        {
+            File f=new File("/storage/emulated/0/Download");
+            if(f.exists())
+            {
+                File[] file_list=f.listFiles();
+                int size=file_list.length;
+                for(int i=0;i<size;++i)
+                {
+                    if(isCancelled())
+                    {
+                        return;
+                    }
+                    File file=file_list[i];
+                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
+                    f_pojos.add(filePOJO);
+                    f_pojos_filtered.add(filePOJO);
+                    count++;
+                    //  mutable_file_count.postValue(count);
+                }
+            }
+        }
+
     }
 
     private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException
     {
-        File[] list=new File(search_dir).listFiles();
-        if(list==null) return;
-        int size=list.length;
         boolean extract_icon= media_category != null && media_category.equals("APK");
-        for(int i=0;i<size;++i)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
         {
-            File f=list[i];
-            if(isCancelled())
-            {
-                return;
-            }
-            try
-            {
-                if(f.isDirectory())
-                {
-                    if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-                    {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                        f_pojos.add(filePOJO);
-                        f_pojos_filtered.add(filePOJO);
-                        count++;
+            try {
+                Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                        if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                    search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
-                }
-                else
-                {
-                    if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-                    {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                        f_pojos.add(filePOJO);
-                        f_pojos_filtered.add(filePOJO);
-                        count++;
 
+                    @Override
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                        if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                }
-                //mutable_file_count.postValue(count);
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                });
             }
             catch(final PatternSyntaxException e)
             {
                 Global.print_background_thread(application,e.getMessage());
             }
+            catch (IOException e) {
 
+            }
         }
+        else
+        {
+            File[] list=new File(search_dir).listFiles();
+            if(list==null) return;
+            int size=list.length;
+            for(int i=0;i<size;++i)
+            {
+                File f=list[i];
+                if(isCancelled())
+                {
+                    return;
+                }
+                try
+                {
+                    if(f.isDirectory())
+                    {
+                        if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered);
+                    }
+                    else
+                    {
+                        if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                    }
+                    //mutable_file_count.postValue(count);
+                }
+                catch(final PatternSyntaxException e)
+                {
+                    Global.print_background_thread(application,e.getMessage());
+                }
+
+            }
+        }
+
     }
 
     private void search_file(String search_name,String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, long lower_limit_size, long upper_limit_size) throws PatternSyntaxException
     {
-        File[] list=new File(search_dir).listFiles();
-        if(list==null) return;
-        int size=list.length;
         boolean extract_icon= media_category != null && media_category.equals("APK");
-        for(int i=0;i<size;++i)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
         {
-            File f=list[i];
-            if(isCancelled())
-            {
-                return;
-            }
-            try
-            {
-                if(f.isDirectory())
-                {
-                    if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
-                    {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                        f_pojos.add(filePOJO);
-                        f_pojos_filtered.add(filePOJO);
-                        count++;
+            try {
+                Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                        if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                    search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered, lower_limit_size, upper_limit_size);
-                }
-                else
-                {
-                    long length=f.length();
-                    if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
-                    {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                        f_pojos.add(filePOJO);
-                        f_pojos_filtered.add(filePOJO);
-                        count++;
+
+                    @Override
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                        long length=basicFileAttributes.size();
+                        if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                }
-                //mutable_file_count.postValue(count);
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
             }
             catch(final PatternSyntaxException e)
             {
                 Global.print_background_thread(application,e.getMessage());
             }
+            catch (IOException e) {
 
+            }
         }
+        else
+        {
+            File[] list=new File(search_dir).listFiles();
+            if(list==null) return;
+            int size=list.length;
+            for(int i=0;i<size;++i)
+            {
+                File f=list[i];
+                if(isCancelled())
+                {
+                    return;
+                }
+                try
+                {
+                    if(f.isDirectory())
+                    {
+                        if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                        search_file(search_name,file_type,f.getPath(),f_pojos,f_pojos_filtered, lower_limit_size, upper_limit_size);
+                    }
+                    else
+                    {
+                        long length=f.length();
+                        if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
+                        {
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            f_pojos.add(filePOJO);
+                            f_pojos_filtered.add(filePOJO);
+                            count++;
+                        }
+                    }
+                    //mutable_file_count.postValue(count);
+                }
+                catch(final PatternSyntaxException e)
+                {
+                    Global.print_background_thread(application,e.getMessage());
+                }
+            }
+        }
+
     }
 
 

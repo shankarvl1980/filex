@@ -157,6 +157,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
 
 		v=titletextview;
+		y=(itemHeight-v.getMeasuredHeight()-albumtextview.getMeasuredHeight()-durationtextview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
 		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 		y+=v.getMeasuredHeight();
 

@@ -58,12 +58,12 @@ public class RecyclerViewLayout extends ViewGroup
 	public static void setIcon(Context context,FilePOJO filePOJO,ImageView fileimageview,ImageView overlay_fileimageview)
 	{
 		overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
-		if(filePOJO.getType()==-1)
+		if(filePOJO.getType()==0)
 		{
 			GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
 		}
-		else if(filePOJO.getType()==0)
+		else if(filePOJO.getType()<0)
 		{
 			GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 		}
@@ -93,28 +93,23 @@ public class RecyclerViewLayout extends ViewGroup
 
 		if(grid_layout)
 		{
-
 			if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
 				imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_GRID;
-
 			}
 			else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
 			{
-
 				first_line_font_size =Global.FONT_SIZE_MEDIUM_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
 				imageview_dimension=Global.IMAGEVIEW_DIMENSION_LARGE_GRID;
-
 			}
 			else
 			{
 				first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
 				second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
 				imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
-
 			}
 
 			filenametextview.setMaxLines(2);
@@ -184,7 +179,6 @@ public class RecyclerViewLayout extends ViewGroup
 
 		if(grid_layout)
 		{
-
 			measureChildWithMargins(file_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(fileimageview,widthMeasureSpec,0,heightMeasureSpec,0);
 			measureChildWithMargins(overlay_fileimageview,widthMeasureSpec,0,heightMeasureSpec,0);
@@ -197,8 +191,6 @@ public class RecyclerViewLayout extends ViewGroup
 
 			measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
 			maxHeight+=filesubfilecounttextview.getMeasuredHeight();
-
-
 		}
 		else
 		{
@@ -212,11 +204,12 @@ public class RecyclerViewLayout extends ViewGroup
 			measureChildWithMargins(file_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 
 			measureChildWithMargins(filenametextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
-			measureChildWithMargins(filepathtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
+
 			maxHeight+=filenametextview.getMeasuredHeight();
 			if(show_file_path)
 			{
 				filepathtextview.setVisibility(VISIBLE);
+				measureChildWithMargins(filepathtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
 				maxHeight+=filepathtextview.getMeasuredHeight();
 			}
 
@@ -232,10 +225,9 @@ public class RecyclerViewLayout extends ViewGroup
 
 		}
 
-		maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
+		maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2;//providing top and bottom margin of six dp
 		itemHeight=maxHeight;
 		setMeasuredDimension(widthMeasureSpec,maxHeight);
-
 	}
 	
 	@Override
@@ -296,6 +288,7 @@ public class RecyclerViewLayout extends ViewGroup
 			v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
 
 			v=filenametextview;
+			y=(itemHeight-v.getMeasuredHeight()-filesubfilecounttextview.getMeasuredHeight()-filepathtextview.getMeasuredHeight())/2;
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			y+=v.getMeasuredHeight();
 
@@ -306,7 +299,7 @@ public class RecyclerViewLayout extends ViewGroup
 			max_height_second_line=v.getMeasuredHeight();
 
 			v=filemoddatetextview;
-			x=Math.max(x,itemWidth/2);
+			x=itemWidth-v.getMeasuredWidth()-Global.TEN_DP-Global.FOUR_DP;//Math.max(x,itemWidth/2);
 			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
 			max_height_second_line=Math.max(max_height_second_line,v.getMeasuredHeight());
 
@@ -353,12 +346,12 @@ public class RecyclerViewLayout extends ViewGroup
 		overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
 		fileimageview.setAlpha(filePOJO.getAlfa());
 		file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-		if(filePOJO.getType()==-1)
+		if(filePOJO.getType()==0)
 		{
 			GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
 		}
-		else if(filePOJO.getType()==0)
+		else if(filePOJO.getType()<0)
 		{
 			GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 		}

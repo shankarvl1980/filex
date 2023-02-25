@@ -189,9 +189,8 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
 
 
-
-
         v=filenametextview;
+        y=(itemHeight-v.getMeasuredHeight()-filesubfilecounttextview.getMeasuredHeight())/2;
         v.layout(x,y,itemWidth-Global.TEN_DP,y+v.getMeasuredHeight());
         y+=v.getMeasuredHeight();
 
@@ -208,8 +207,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         v=filesubfilecounttextview;
         x=itemWidth-v.getMeasuredWidth()-Global.TEN_DP;
         v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-
-
 
     }
 
@@ -250,12 +247,12 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-        if(filePOJO.getType()==-1)
+        if(filePOJO.getType()==0)
         {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
         }
-        else if(filePOJO.getType()==0)
+        else if(filePOJO.getType()<0)
         {
             GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
         }

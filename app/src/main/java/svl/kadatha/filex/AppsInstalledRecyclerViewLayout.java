@@ -195,8 +195,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
             maxHeight=Math.max(iconheight,maxHeight);
 
-
-
         }
         maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2; //providing top and bottom margin of six dp
         itemHeight=maxHeight;
@@ -263,6 +261,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
              */
 
             v=appnametextview;
+            y=(itemHeight-v.getMeasuredHeight()-apppackagenametextview.getMeasuredHeight()-appversiontextview.getMeasuredHeight()-appsizetextview.getMeasuredHeight())/2;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
             y+=v.getMeasuredHeight();
 

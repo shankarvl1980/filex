@@ -18,6 +18,7 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -364,20 +365,22 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			final boolean[] result_came = new boolean[1];
 			final FTPFile[] ftpFile = new FTPFile[1];
-			new Thread(new Runnable() {
+
+			ExecutorService executorService=MyExecutorService.getExecutorService();
+			executorService.execute(new Runnable() {
 				@Override
 				public void run() {
 					ftpFile[0] =FileUtil.getFTPFile(new_file_path);
 					result_came[0] =true;
 				}
-			}).start();
+			});
+
 			while(!result_came[0])
 			{
 				if(ftpFile[0]!=null)
 				{
 					return true;
 				}
-
 			}
 		}
 		else

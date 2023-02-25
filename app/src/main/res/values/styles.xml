@@ -34,12 +34,15 @@
         <item name="video_play_overlay_background">@color/light_video_play_overlay_background</item>
         <item name="select_color_picture_recyclerview">@color/light_select_color_picture_recyclerview</item>
         <item name="select_detail_recyclerview_pressed">@color/light_select_detail_recyclerview_pressed</item>
-
+        <item name="select_dialog_button_pressed">@color/light_select_dialog_button_pressed</item>
+        <item name="select_rectangle_shape">@color/light_select_rectangle_shape</item>
         <item name="drawer_icon_color">@color/light_drawer_icon_color</item>
         <item name="select_indicator_border_color">@color/light_select_indicator_border_color</item>
         <item name="select_indicator_fill_color">@color/light_select_indicator_fill_color</item>
 
         <item name="water_color">@color/light_water_color</item>
+
+        <item name="storage_analyser_item_background">@color/light_storage_analyser_item_background</item>
 
     </style>
 

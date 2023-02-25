@@ -16,26 +16,29 @@ public class NotifManager
     private final NotificationManager nm;
 	private final Context context;
 	final int pending_intent_flag;
-
+	public final static String CHANNEL_ID = "svl.kadatha.filex.file_activities_channel_id";
+	public final static CharSequence CHANNEL_NAME="File Management";
 	NotifManager(Context context)
 	{
 		
 		this.context=context;
 		nm=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        String channel_id = "nc";
-        notification_builder=new NotificationCompat.Builder(context, channel_id);
+        notification_builder=new NotificationCompat.Builder(context, CHANNEL_ID);
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 		{
-            NotificationChannel notification_channel = new NotificationChannel(channel_id, "notification_channel", NotificationManager.IMPORTANCE_LOW);
+			String description = "This notification indicates long running file activities";
+			NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
 			notification_channel.enableLights(true);
-			notification_channel.setDescription("notification_channel");
+			notification_channel.setDescription(description);
 			notification_channel.setSound(null,null);
 			nm.createNotificationChannel(notification_channel);
 
 		}
 		notification_builder
 			.setSmallIcon(R.drawable.app_icon)
-			.setAutoCancel(true);
+			.setAutoCancel(true)
+			.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+			.setCategory(NotificationCompat.CATEGORY_SERVICE);
 
 		pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
 		
@@ -84,6 +87,4 @@ public class NotifManager
 		notification_builder.setContentText(notification_content_line);
 		return notification_builder.build();
 	}
-		
-	
 }

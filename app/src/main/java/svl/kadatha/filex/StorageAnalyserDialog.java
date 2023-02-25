@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -285,12 +286,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
 
-            new Thread(new Runnable() {
+            ExecutorService executorService=MyExecutorService.getExecutorService();
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
                 }
-            }).start();
+            });
         }
 
     }
@@ -328,7 +330,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         super.onDestroyView();
         fileModifyObserver.stopWatching();
         fileModifyObserver.setFileObserverListener(null);
-
     }
 
     @Override
@@ -631,7 +632,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
-            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
+            if(viewModel.filePOJOS.size()>0 && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
             {
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);

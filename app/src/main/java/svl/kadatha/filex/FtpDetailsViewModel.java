@@ -28,6 +28,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> ftpConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> removeFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> changeFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJOList;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
@@ -187,6 +188,32 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 }
                 ftpPOJOList.add(ftpPOJO);
                 removeFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void changeFtpPojoDisplay(String server, String new_name)
+    {
+        if(changeFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future5=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                ftpDatabaseHelper.change_display(server,new_name);
+                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server);
+                Iterator<FtpDetailsDialog.FtpPOJO> iterator=ftpPOJOList.iterator();
+                while(iterator.hasNext())
+                {
+                    String srvr=iterator.next().server;
+                    if(srvr.equals(server))
+                    {
+                        iterator.remove();
+                        break;
+                    }
+                }
+                ftpPOJOList.add(ftpPOJO);
+                changeFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

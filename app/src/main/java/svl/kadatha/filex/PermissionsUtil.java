@@ -41,14 +41,19 @@ public class PermissionsUtil {
 			} else {
 				i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 				if (i != PackageManager.PERMISSION_GRANTED) {
-					permissions_not_granted_list.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+					permissions_not_granted_list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+				}
+			}
+
+			if (Build.VERSION.SDK_INT >= 33) {
+				i=ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
+				if (i != PackageManager.PERMISSION_GRANTED) {
+					permissions_not_granted_list.add(Manifest.permission.POST_NOTIFICATIONS);
 				}
 			}
 
 			if (!permissions_not_granted_list.isEmpty()) {
-
 				activity.requestPermissions(permissions_not_granted_list.toArray(new String[0]), PERMISSIONS_REQUEST_CODE);
-
 			}
 		}
 	}

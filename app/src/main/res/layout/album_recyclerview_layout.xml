@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/select_storage_list"
+    android:padding="@dimen/layout_margin"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/album_name"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginEnd="@dimen/layout_margin"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:textColor="?attr/recycler_main_text_color"
+        />
+    <TextView
+        android:id="@+id/album_path"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textSize="14sp"
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginEnd="@dimen/layout_margin"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color"
+        />
+</LinearLayout>

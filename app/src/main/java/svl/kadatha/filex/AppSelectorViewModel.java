@@ -29,7 +29,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
     public List<AppSelectorDialog.AvailableAppPOJO> appPOJOList;
-    public String file_path,mime_type,file_type,app_package_name;
+    public String file_path,mime_type,file_type,app_package_name,app_component_name;
     public String package_name, app_name, version, installed_version;
 
     public AppSelectorViewModel(@NonNull Application application) {
@@ -72,8 +72,8 @@ public class AppSelectorViewModel extends AndroidViewModel {
                 {
                     ResolveInfo resolveInfo=resolveInfoList.get(i);
                     String app_package_name=resolveInfo.activityInfo.packageName;
+                    String app_component_name=resolveInfo.activityInfo.name;
                     String app_name=resolveInfo.loadLabel(packageManager).toString();
-
                     String file_with_package_name=app_package_name+".png";
                     if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
                     {
@@ -110,7 +110,7 @@ public class AppSelectorViewModel extends AndroidViewModel {
                         }
 
                     }
-                    appPOJOList.add(new AppSelectorDialog.AvailableAppPOJO(app_name, app_package_name));
+                    appPOJOList.add(new AppSelectorDialog.AvailableAppPOJO(app_name, app_package_name,app_component_name));
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

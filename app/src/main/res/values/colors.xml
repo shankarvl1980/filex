@@ -27,11 +27,15 @@
 	<color name="light_seek_bar_secondary_progress">#3399CC</color>
 	<color name="light_seek_bar_progress">@color/light_icon_color</color>
 	<color name="light_seek_bar_thumb">@color/light_icon_color</color>
-	<color name="light_select_detail_recyclerview_pressed">#80FFFFFF</color>
+	<color name="light_select_detail_recyclerview_pressed">#80DCD6D6</color>
+	<color name="light_select_dialog_button_pressed">#D5D4D4</color>
+	<color name="light_select_rectangle_shape">@android:color/background_dark</color>
 	<color name="light_select_indicator_border_color">@color/light_icon_color</color>
 	<color name="light_select_indicator_fill_color">#ffffffff</color>
 	<color name="light_drawer_icon_color">@color/light_heading_text_color</color>
 
 	<color name="light_water_color">#DFDEDE</color>
+
+	<color name="light_storage_analyser_item_background">#80ffffff</color>
 
 </resources>

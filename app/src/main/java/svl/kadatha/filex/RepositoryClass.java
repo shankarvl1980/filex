@@ -5,14 +5,20 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RepositoryClass {
 
@@ -183,37 +189,36 @@ public class RepositoryClass {
                 break;
             case "Document":
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.doc","%.docx","%.txt","%.pdf","%.java","%.xml","%.rtf","%.cpp","%.c","%.h","%.log"},null);
-
+                                "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
+                        new String[]{"%.doc","%.docx","%.txt","%.pdf","%.html","%.htm","%.rtf","%.ppt","%.pptx","%.xls","%.xlsx"},null);
                 break;
             case "Archive":
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+" OR "+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.tar","%.gzip","%.gz","%.zip","%.rar"},null);
+                                 "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
+                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar"},null);
                 break;
             case "APK":
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
-                        MediaStore.Files.FileColumns.MIME_TYPE+"!=?" +" AND ("+
-                                MediaStore.Files.FileColumns.DISPLAY_NAME+" LIKE ?"+")",
-                        new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"%.apk"},null);
+                                 "("+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
+                        new String[]{"%.apk"},null);
                 break;
             case "Image":
                 cursor=context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
@@ -232,50 +237,108 @@ public class RepositoryClass {
         if(cursor!=null && cursor.getCount()>0)
         {
             boolean extract_icon= media_category.equals("APK");
-
-            while(cursor.moveToNext())
+            Set<String> parent_directory=new LinkedHashSet<>();
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
             {
-                if(isCancelled)
+                while(cursor.moveToNext())
                 {
-                    return;
-                }
+                    if(isCancelled)
+                    {
+                        return;
+                    }
 
-                String data=cursor.getString(0);
-                File f=new File(data);
-                if(f.exists())
-                {
-                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
-                    f_pojos.add(filePOJO);
-                    f_pojos_filtered.add(filePOJO);
-                    count++;
-                    mutable_file_count.postValue(count);
+                    String data=cursor.getString(0);
+                    Path path= Paths.get(data);
+                    if(Files.exists(path))
+                    {
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        parent_directory.add(path.getParent().toString());
+                        count++;
+                        mutable_file_count.postValue(count);
+                    }
                 }
             }
+            else
+            {
+                while(cursor.moveToNext())
+                {
+                    if(isCancelled)
+                    {
+                        return;
+                    }
+
+                    String data=cursor.getString(0);
+                    File f=new File(data);
+                    if(f.exists())
+                    {
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        parent_directory.add(f.getParent());
+                        count++;
+                        mutable_file_count.postValue(count);
+                    }
+                }
+            }
+
+            Global.LIBRARY_FILTER_HASHMAP.put(media_category,parent_directory);
             cursor.close();
         }
     }
 
     private void search_download(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered,Boolean isCancelled,int count, MutableLiveData<Integer>mutable_file_count)
     {
-        File f=new File("/storage/emulated/0/Download");
-        if(f.exists())
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
         {
-            File[] file_list=f.listFiles();
-            int size=file_list.length;
-            for(int i=0;i<size;++i)
+            Path path=Paths.get("/storage/emulated/0/Download");
+            if(Files.exists(path))
             {
-                if(isCancelled)
+                try(DirectoryStream<Path> directoryStream=Files.newDirectoryStream(path))
                 {
-                    return;
+                    for(Path p : directoryStream)
+                    {
+                        if(isCancelled)
+                        {
+                            return;
+                        }
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(p,true,false,FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                        mutable_file_count.postValue(count);
+                    }
                 }
-                File file=file_list[i];
-                FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
-                f_pojos.add(filePOJO);
-                f_pojos_filtered.add(filePOJO);
-                count++;
-                mutable_file_count.postValue(count);
+                catch (IOException e)
+                {
+
+                }
             }
         }
+        else
+        {
+            File f=new File("/storage/emulated/0/Download");
+            if(f.exists())
+            {
+                File[] file_list=f.listFiles();
+                int size=file_list.length;
+                for(int i=0;i<size;++i)
+                {
+                    if(isCancelled)
+                    {
+                        return;
+                    }
+                    File file=file_list[i];
+                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
+                    f_pojos.add(filePOJO);
+                    f_pojos_filtered.add(filePOJO);
+                    count++;
+                    mutable_file_count.postValue(count);
+                }
+            }
+        }
+
     }
 
 

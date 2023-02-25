@@ -186,7 +186,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				switch(p1)
 				{
 					case 0:
-
 						if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));

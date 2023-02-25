@@ -58,12 +58,12 @@ public class FileSelectorRecyclerViewLayout extends ViewGroup
     public static void setIcon(Context context,FilePOJO filePOJO,ImageView fileimageview,ImageView overlay_fileimageview)
     {
         overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
-        if(filePOJO.getType()==-1)
+        if(filePOJO.getType()==0)
         {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
         }
-        else if(filePOJO.getType()==0)
+        else if(filePOJO.getType()<0)
         {
             GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
         }
@@ -296,6 +296,7 @@ public class FileSelectorRecyclerViewLayout extends ViewGroup
             v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
 
             v=filenametextview;
+            y=(itemHeight-v.getMeasuredHeight()-filesubfilecounttextview.getMeasuredHeight())/2;
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
             y+=v.getMeasuredHeight();
 
@@ -306,7 +307,7 @@ public class FileSelectorRecyclerViewLayout extends ViewGroup
             max_height_second_line=v.getMeasuredHeight();
 
             v=filemoddatetextview;
-            x=Math.max(x,itemWidth/2);
+            x=itemWidth-v.getMeasuredWidth()-Global.TEN_DP-Global.FOUR_DP;//Math.max(x,itemWidth/2);
             v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
             max_height_second_line=Math.max(max_height_second_line,v.getMeasuredHeight());
 
@@ -353,12 +354,12 @@ public class FileSelectorRecyclerViewLayout extends ViewGroup
         overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
         fileimageview.setAlpha(filePOJO.getAlfa());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-        if(filePOJO.getType()==-1)
+        if(filePOJO.getType()==0)
         {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
 
         }
-        else if(filePOJO.getType()==0)
+        else if(filePOJO.getType()<0)
         {
             GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
         }

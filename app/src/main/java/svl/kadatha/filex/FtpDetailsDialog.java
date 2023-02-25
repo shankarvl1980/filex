@@ -28,6 +28,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private Button delete_btn,rename_btn,edit_btn, exit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
+    private FloatingActionButton floatingActionButton;
     private FtpDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
     private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NULL="ftp_input_details_request_code_null";
@@ -113,9 +116,17 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
-        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.rename_icon,R.drawable.edit_icon,R.drawable.exit_icon};
-        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.rename),getString(R.string.edit),getString(R.string.exit)};
+        floatingActionButton=v.findViewById(R.id.floating_action_ftp_list);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissAllowingStateLoss();
+            }
+        });
+
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.rename_icon,R.drawable.edit_icon};
+        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.rename),getString(R.string.edit)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar=v.findViewById(R.id.fragment_ftp_toolbar);
         bottom_toolbar.addView(tb_layout);
@@ -131,7 +142,6 @@ public class FtpDetailsDialog extends DialogFragment {
         rename_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
         exit_btn.setOnClickListener(bottomToolbarClickListener);
-
 
         viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
         viewModel.fetchFtpPojoList();
@@ -208,6 +218,23 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
+        viewModel.changeFtpDisplayAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.VISIBLE);
+                }
+                else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                    ftpListAdapter.notifyDataSetChanged();
+                    viewModel.changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                }
+            }
+        });
+
+
 
         fragmentManager.setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
@@ -255,9 +282,9 @@ public class FtpDetailsDialog extends DialogFragment {
                 if(requestKey.equals(FTP_RENAME_REQUEST_CODE))
                 {
                     progress_bar.setVisibility(View.VISIBLE);
-                    //String new_name=result.getString("new_name");
+                    String new_name=result.getString("new_name");
                     String server=result.getString("server");
-                    viewModel.removeFtpPojoList(server,"");
+                    if(new_name!=null)viewModel.changeFtpPojoDisplay(server,new_name);
                 }
             }
         });

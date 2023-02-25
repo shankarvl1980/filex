@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -10,14 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FileTypeSelectDialog extends DialogFragment
@@ -29,6 +31,7 @@ public class FileTypeSelectDialog extends DialogFragment
 	private FileObjectType fileObjectType;
 	private boolean archive_view,select_app;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_type_selector_dialog_saf_permission_request_code";
+	private List<MimePOJO> mimePOJOList;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -51,6 +54,9 @@ public class FileTypeSelectDialog extends DialogFragment
 		tree_uri_path= bundle.getString("tree_uri_path");
 		select_app=bundle.getBoolean("select_app");
 		file_size=bundle.getLong("file_size");
+
+		mimePOJOList=new ArrayList<>(Global.SUPPORTED_MIME_POJOS);
+		mimePOJOList.add(new MimePOJO("Other","*/*",""));
 	}
 
 	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path,boolean select_app,long file_size)
@@ -73,6 +79,8 @@ public class FileTypeSelectDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_select_file_type,container,false);
+		FrameLayout progress_bar = v.findViewById(R.id.fragment_file_type_select_progressbar);
+		progress_bar.setVisibility(View.GONE);
         RecyclerView file_type_recyclerview = v.findViewById(R.id.fragment_file_type_RecyclerView);
 		file_type_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
 		file_type_recyclerview.setLayoutManager(new LinearLayoutManager(context));
@@ -100,27 +108,13 @@ public class FileTypeSelectDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
-
-		WindowManager.LayoutParams params=window.getAttributes();
-		int height=params.height;
-		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
-
-		}
-		else
-		{
-			window.setLayout(Global.DIALOG_WIDTH,Math.min(height,Global.DIALOG_HEIGHT));
-		
-		}
-
+		window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
 
 	private class FileTypeRecyclerViewAdapter extends RecyclerView.Adapter<FileTypeRecyclerViewAdapter.VH>
 	{
-
 		@Override
 		public FileTypeSelectDialog.FileTypeRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2)
 		{
@@ -133,14 +127,14 @@ public class FileTypeSelectDialog extends DialogFragment
 		public void onBindViewHolder(FileTypeSelectDialog.FileTypeRecyclerViewAdapter.VH p1, int p2)
 		{
 			// TODO: Implement this method
-			p1.file_type_tv.setText(Global.SUPPORTED_MIME_POJOS.get(p2).getFile_type());
+			p1.file_type_tv.setText(mimePOJOList.get(p2).getFile_type());
 		}
 
 		@Override
 		public int getItemCount()
 		{
 			// TODO: Implement this method
-			return Global.SUPPORTED_MIME_POJOS.size();
+			return mimePOJOList.size();
 		}
 
 		
@@ -160,7 +154,7 @@ public class FileTypeSelectDialog extends DialogFragment
 					public void onClick(View p1)
 					{
 						pos=getBindingAdapterPosition();
-						MimePOJO mimePOJO=Global.SUPPORTED_MIME_POJOS.get(pos);
+						MimePOJO mimePOJO=mimePOJOList.get(pos);
 						mime_type=mimePOJO.getMime_type();
 
 						if(fileObjectType==FileObjectType.USB_TYPE)

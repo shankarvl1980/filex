@@ -1,5 +1,7 @@
 package svl.kadatha.filex;
 
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -74,6 +76,10 @@ public class AppSelectorDialog extends DialogFragment
                     break;
                 }
             }
+            if(file_type==null) //in case of selection of 'Other' in FileTypeSelectDialog
+            {
+                file_type="Other";
+            }
             boolean clear_top = bundle.getBoolean("clear_top");
             boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
@@ -119,6 +125,10 @@ public class AppSelectorDialog extends DialogFragment
             }
         });
 
+        if(mime_type.equals("*/*"))
+        {
+            remember_app_check_box.setVisibility(View.GONE);
+        }
         progress_bar=v.findViewById(R.id.fragment_app_selector_progressbar);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_app_selector_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -212,15 +222,21 @@ public class AppSelectorDialog extends DialogFragment
                         AvailableAppPOJO appPOJO=appPOJOList.get(pos);
                         final String app_name=appPOJO.app_name;
                         final String app_package_name=appPOJO.app_package_name;
+                        final String app_component_name=appPOJO.app_component_name;
                         if(file_type.equals("APK"))
                         {
                             bundle.putString("app_package_name",app_package_name);
+                            bundle.putString("app_component_name",app_component_name);
                             bundle.putBoolean("remember_app_check_box",remember_app_check_box.isChecked());
                             AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
                             appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
+                            if(remember_app_check_box.isChecked())
+                            {
+                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name,app_component_name);
+                            }
+                            defaultAppDatabaseHelper.close();
                             dismissAllowingStateLoss();
-
                         }
                         else
                         {
@@ -244,12 +260,19 @@ public class AppSelectorDialog extends DialogFragment
                                     ((StorageAnalyserActivity)context).clear_cache=false;
                                 }
                             }
-                            intent.setPackage(app_package_name);
-                            context.startActivity(intent);
+
+                            intent.setComponent(new ComponentName(app_package_name,app_component_name));
+                            try {
+                                context.startActivity(intent);
+                            }
+                            catch (ActivityNotFoundException e){
+                                Global.print(context,getString(R.string.exception_thrown));
+                            }
+
 
                             if(remember_app_check_box.isChecked())
                             {
-                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name);
+                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name,app_component_name);
                             }
                             defaultAppDatabaseHelper.close();
                             dismissAllowingStateLoss();
@@ -292,11 +315,13 @@ public class AppSelectorDialog extends DialogFragment
     {
         final String app_name;
         final String app_package_name;
+        final String app_component_name;
 
-        AvailableAppPOJO(String app_name,String app_package_name)
+        AvailableAppPOJO(String app_name,String app_package_name,String app_component_name)
         {
             this.app_name=app_name;
             this.app_package_name=app_package_name;
+            this.app_component_name=app_component_name;
         }
     }
 

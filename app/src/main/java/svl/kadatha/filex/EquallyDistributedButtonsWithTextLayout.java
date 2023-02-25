@@ -169,7 +169,4 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup
 		return new MarginLayoutParams(context,attrs);
 	}
 
-
-
-
 }

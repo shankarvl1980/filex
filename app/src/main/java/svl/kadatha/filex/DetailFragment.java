@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -53,7 +54,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public int totalFilePOJO_list_Size;
 	public RecyclerView filepath_recyclerview;
 	public RecyclerView recyclerView;
-	public ImageView layout_image_view;
+	public ImageView layout_image_view,filter_image_view,time_image_view;
 	LinearLayoutManager llm;
 	GridLayoutManager glm;
 	public boolean grid_layout;
@@ -90,7 +91,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	boolean is_toolbar_visible=true;
 	private Uri tree_uri;
 	private String tree_uri_path="";
-	//public boolean filled_filePOJOs;
 	public boolean local_activity_delete,modification_observed;
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
@@ -100,8 +100,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private CancelableProgressBarDialog cancelableProgressBarDialog;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
+	private final static String ALBUM_SELECT_REQUEST_CODE="detail_fragment_album_select_request_code";
 	private ExtractZipFileViewModel extractZipFileViewModel;
 	private static final List<String> LIBRARY_CATEGORIES=new ArrayList<>(Arrays.asList("Download","Document","Image","Audio","Video", "Archive","APK"));
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -190,6 +192,43 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		fileModifyObserver=FileModifyObserver.getInstance(fileclickselected);
 		fileModifyObserver.setFileObserverListener(this);
 		filepath_recyclerview=v.findViewById(R.id.fragment_detail_filepath_container);
+		time_image_view=v.findViewById(R.id.fragment_detail_time_image);
+		time_image_view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(viewModel.library_time_desc)
+				{
+					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+					viewModel.library_time_desc=false;
+				}
+				else
+				{
+					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate("f_date_desc",false));
+					viewModel.library_time_desc=true;
+				}
+				time_image_view.setSelected(viewModel.library_time_desc);
+				adapter.notifyDataSetChanged();
+			}
+		});
+		filter_image_view=v.findViewById(R.id.fragment_detail_filter_image);
+		filter_image_view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(viewModel.filePOJOS.size()==0)
+				{
+					//Global.print(context,"No files to filter");
+					return;
+				}
+				//if(file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image") || file_click_selected_name.equals("Audio")|| file_click_selected_name.equals("Video"))
+				{
+					mainActivity.set_visibility_searchbar(false);
+					LibraryAlbumSelectDialog libraryAlbumSelectDialog=LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE,file_click_selected_name);
+					libraryAlbumSelectDialog.show(mainActivity.fm,"");
+				}
+
+			}
+		});
+
 		layout_image_view=v.findViewById(R.id.fragment_detail_layout_image);
 		layout_image_view.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -315,7 +354,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				removeCancelableFragment();
 				cancelableProgressBarDialog = CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
 				if (LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
@@ -378,7 +416,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					extractZipFileViewModel.isZipExtracted=false;
 					extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
-
 			}
 		});
 
@@ -403,6 +440,31 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 
+		mainActivity.fm.setFragmentResultListener(ALBUM_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(ALBUM_SELECT_REQUEST_CODE))
+				{
+					if(progress_bar.getVisibility()!=View.VISIBLE && result.getString("library_type").equals(fileclickselected))
+					{
+						String parent_file_name=result.getString("parent_file_name");
+						if(parent_file_name!=null)
+						{
+							filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected+File.separator+result.getString("parent_file_name"));
+
+						}
+						else
+						{
+							filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
+						}
+						filepath_recyclerview.setAdapter(filepath_adapter);
+						viewModel.library_filter_path=result.getString("parent_file_path");
+						adapter.getFilter().filter(null);
+
+					}
+				}
+			}
+		});
 		return v;
 	}
 
@@ -427,7 +489,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
 			file_list_size=totalFilePOJO_list_Size;
 			mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
-			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+			Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
+			time_image_view.setSelected(viewModel.library_time_desc);
 			adapter.notifyDataSetChanged();
 		}
 
@@ -442,7 +505,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				removeCancelableFragment();
 				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
 				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-				//cancelableProgressBarDialog.show(mainActivity.fm,CancelableProgressBarDialog.TAG);
+
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
@@ -459,13 +522,13 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
 			}
 
-			new Thread(new Runnable() {
+			ExecutorService executorService=MyExecutorService.getExecutorService();
+			executorService.execute(new Runnable() {
 				@Override
 				public void run() {
 					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
 				}
-			}).start();
-
+			});
 		}
 	}
 
@@ -483,8 +546,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 		totalFilePOJO_list_Size=totalFilePOJO_list.size();
 		file_list_size=totalFilePOJO_list_Size;
-
-		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+		Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
 		adapter=new DetailRecyclerViewAdapter(context,archive_view);
 		set_adapter();
 		progress_bar.setVisibility(View.GONE);
@@ -642,11 +704,26 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public void set_adapter()
 	{
-		if(file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))
+		if(file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
+				|| file_click_selected_name.equals("Audio")|| file_click_selected_name.equals("Video")
+		)
 		{
-			layout_image_view.setVisibility(View.VISIBLE);
-			layout_image_view.setImageResource(Global.IMAGE_VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+			filter_image_view.setVisibility(View.VISIBLE);
+
+			time_image_view.setVisibility(View.VISIBLE);
+			time_image_view.setSelected(viewModel.library_time_desc);
+			if(viewModel.library_filter_path!=null)
+			{
+				adapter.getFilter().filter(null);
+				filepath_adapter=new FilePathRecyclerViewAdapter(file_click_selected_name+File.separator+new File(viewModel.library_filter_path).getName());
+			}
+			if(file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))
+			{
+				layout_image_view.setVisibility(View.VISIBLE);
+				layout_image_view.setImageResource(Global.IMAGE_VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
+			}
 		}
+
 		filepath_recyclerview.setAdapter(filepath_adapter);
 		filepath_recyclerview.scrollToPosition(filepath_adapter.getItemCount()-1);
 		recyclerView.setAdapter(adapter);
@@ -867,6 +944,20 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								mainActivity.createFragmentTransaction(fp,fileObjectType);
 							}
 						}
+						else if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+						{
+							if(p2==0)
+							{
+								if(progress_bar.getVisibility()!=View.VISIBLE && viewModel.library_filter_path!=null)
+								{
+									viewModel.library_filter_path=null;
+									filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
+									filepath_recyclerview.setAdapter(filepath_adapter);
+									adapter.getFilter().filter(null);
+
+								}
+							}
+						}
 						else if(fileObjectType==FileObjectType.USB_TYPE)
 						{
 							if(MainActivity.usbFileRoot==null)
@@ -888,6 +979,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
                             String fp=file_path.toString();
                             mainActivity.createFragmentTransaction(fp,fileObjectType);
                         }
+
 
 					}
 				});

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -241,12 +242,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 
-			new Thread(new Runnable() {
+			ExecutorService executorService=MyExecutorService.getExecutorService();
+			executorService.execute(new Runnable() {
 				@Override
 				public void run() {
 					FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected,fileObjectType);
 				}
-			}).start();
+			});
 
 		}
 	}

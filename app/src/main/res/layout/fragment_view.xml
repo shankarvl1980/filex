@@ -27,57 +27,57 @@
 			android:layout_height="wrap_content"
 			>
 
-				<TextView
-					android:id="@+id/layout_lable"
+			<TextView
+				android:id="@+id/layout_lable"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/layout"
+				android:gravity="start"
+				android:textSize="16sp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				android:background="?attr/dialog_background"
+				android:paddingStart="@dimen/ten_dp"
+				android:paddingEnd="@dimen/ten_dp"
+				android:paddingTop="@dimen/ten_dp"
+				android:paddingBottom="@dimen/layout_margin"
+
+				/>
+
+			<RadioGroup
+
+				android:id="@+id/dialog_view_layout_rg"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				app:layout_constraintTop_toBottomOf="@id/layout_lable"
+				app:layout_constraintStart_toStartOf="parent"
+				android:background="?attr/dialog_background"
+				android:paddingStart="20dp"
+				android:paddingEnd="20dp"
+				android:minHeight="36dp"
+				>
+
+				<RadioButton
+					android:id="@+id/dialog_view_rb_list"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:text="@string/layout"
-					android:gravity="start"
-					android:textSize="16sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent"
-					android:background="?attr/dialog_background"
-					android:paddingStart="@dimen/ten_dp"
-					android:paddingEnd="@dimen/ten_dp"
-					android:paddingTop="@dimen/ten_dp"
-					android:paddingBottom="@dimen/layout_margin"
+					android:text="@string/list"
+					android:layout_weight="1"
 
 					/>
 
-				<RadioGroup
+				<RadioButton
 
-					android:id="@+id/dialog_view_layout_rg"
+					android:id="@+id/dialog_view_rb_grid"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:orientation="horizontal"
-					app:layout_constraintTop_toBottomOf="@id/layout_lable"
-					app:layout_constraintStart_toStartOf="parent"
-					android:background="?attr/dialog_background"
-					android:paddingStart="20dp"
-					android:paddingEnd="20dp"
-					android:minHeight="36dp"
-					>
+					android:text="@string/grid"
+					android:layout_weight="1"
 
-					<RadioButton
-						android:id="@+id/dialog_view_rb_list"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:text="@string/list"
-						android:layout_weight="1"
+					/>
 
-						/>
-
-					<RadioButton
-
-						android:id="@+id/dialog_view_rb_grid"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:text="@string/grid"
-						android:layout_weight="1"
-
-						/>
-
-				</RadioGroup>
+			</RadioGroup>
 
 
 			<View
@@ -89,20 +89,20 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
-					<TextView
-						android:id="@+id/seekbar_heading"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:text="@string/font_size"
-						android:textSize="16sp"
-						android:paddingStart="@dimen/ten_dp"
-						android:paddingEnd="@dimen/ten_dp"
-						android:paddingTop="@dimen/ten_dp"
-						android:paddingBottom="@dimen/layout_margin"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintTop_toTopOf="@id/seekbar_layout"
-						/>
+			<TextView
+				android:id="@+id/seekbar_heading"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/font_size"
+				android:textSize="16sp"
+				android:paddingStart="@dimen/ten_dp"
+				android:paddingEnd="@dimen/ten_dp"
+				android:paddingTop="@dimen/ten_dp"
+				android:paddingBottom="@dimen/layout_margin"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/seekbar_layout"
+				/>
 
 			<SeekBar
 				android:id="@+id/seekbar_fontsize"
@@ -168,31 +168,31 @@
 
 
 
-				<View
-					android:layout_width="match_parent"
-					android:layout_height="0dp"
-					android:id="@+id/sort_layout_backgroundd"
-					android:background="?attr/dialog_background"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/seekbar_layout"
-					app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
-					/>
-				<TextView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/sort"
-					android:textSize="16sp"
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:id="@+id/sort_layout_backgroundd"
+				android:background="?attr/dialog_background"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/seekbar_layout"
+				app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
+				/>
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/sort"
+				android:textSize="16sp"
 
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
-					android:id="@+id/sort_label"
-					android:paddingStart="@dimen/ten_dp"
-					android:paddingEnd="@dimen/ten_dp"
-					android:paddingTop="@dimen/ten_dp"
-					android:paddingBottom="@dimen/layout_margin"
-					/>
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
+				android:id="@+id/sort_label"
+				android:paddingStart="@dimen/ten_dp"
+				android:paddingEnd="@dimen/ten_dp"
+				android:paddingTop="@dimen/ten_dp"
+				android:paddingBottom="@dimen/layout_margin"
+				/>
 
 
 			<TableLayout

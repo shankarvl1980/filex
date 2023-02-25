@@ -1,4 +1,6 @@
 package svl.kadatha.filex;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -92,6 +94,7 @@ class FileIntentDispatch
 
 		DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
 		final String package_name=defaultAppDatabaseHelper.getPackageName(mime_type);
+		final String app_component_name= defaultAppDatabaseHelper.getComponentName(mime_type);
 		if(package_name==null || select_app)
 		{
 			launch_app_selector_dialog(context,uri,file_path,mime_type, clear_top, fromArchiveView,fileObjectType,file_size);
@@ -118,7 +121,8 @@ class FileIntentDispatch
 					{
 						Bundle bundle=new Bundle();
 						bundle.putParcelable("data",uri);
-						bundle.putString("app_check_name",package_name);
+						bundle.putString("app_package_name",package_name);
+						bundle.putString("app_component_name",app_component_name);
 						bundle.putString("file_path",file_path);
 						bundle.putString("mime_type",mime_type);
 						bundle.putBoolean("clear_top",clear_top);
@@ -141,8 +145,14 @@ class FileIntentDispatch
 								((StorageAnalyserActivity)context).clear_cache=false;
 							}
 						}
-						intent.setPackage(package_name);
-						context.startActivity(intent);
+
+						intent.setComponent(new ComponentName(package_name,app_component_name));
+						try {
+							context.startActivity(intent);
+						}
+						catch (ActivityNotFoundException e){
+							Global.print(context,context.getString(R.string.exception_thrown));
+						}
 					}
 
 					package_found=true;

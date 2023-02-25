@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.core.content.ContextCompat;
+
 public class EquallyDistributedDialogButtonsLayout extends ViewGroup
 {
 	private final Context context;
@@ -108,6 +110,7 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup
 			View v=getChildAt(i);
 			v.layout(x,y,x+v.getMeasuredWidth(),v.getMeasuredHeight());
 			x+=v.getMeasuredWidth()+margin;
+			v.setBackground(ContextCompat.getDrawable(context,R.drawable.select_dialog_button));
 		}
 		
 	}

@@ -1,5 +1,7 @@
 package svl.kadatha.filex;
 
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -56,6 +58,7 @@ public class AppInstallAlertDialog extends DialogFragment
         {
             Uri data = bundle.getParcelable("data");
             viewModel.app_package_name=bundle.getString("app_package_name");
+            viewModel.app_component_name=bundle.getString("app_component_name");
             remember_app_check_box=bundle.getBoolean("remember_app_check_box",false);
             file_path=bundle.getString("file_path");
             viewModel.mime_type=bundle.getString("mime_type");
@@ -99,7 +102,6 @@ public class AppInstallAlertDialog extends DialogFragment
                     Global.print(context,getString(R.string.please_wait));
                     return;
                 }
-                final DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
 
                 if (Global.FILEX_PACKAGE.equals(viewModel.app_package_name)) {
                     AppCompatActivity appCompatActivity = (AppCompatActivity) context;
@@ -109,13 +111,16 @@ public class AppInstallAlertDialog extends DialogFragment
                         ((StorageAnalyserActivity) context).clear_cache = false;
                     }
                 }
-                intent.setPackage(viewModel.app_package_name);
-                context.startActivity(intent);
 
-                if (remember_app_check_box) {
-                    defaultAppDatabaseHelper.insert_row(viewModel.mime_type, viewModel.file_type, viewModel.app_name, viewModel.app_package_name);
+                intent.setComponent(new ComponentName(viewModel.app_package_name,viewModel.app_component_name));
+                try {
+                    context.startActivity(intent);
                 }
-                defaultAppDatabaseHelper.close();
+                catch (ActivityNotFoundException e){
+                    Global.print(context,getString(R.string.exception_thrown));
+                }
+
+
                 Global.APP_POJO_HASHMAP.clear();
                 dismissAllowingStateLoss();
 

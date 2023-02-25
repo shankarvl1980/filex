@@ -83,14 +83,13 @@
 
 
 		<TextView
-			android:id="@+id/filepath_recyclerview_width"
+			android:id="@+id/filepath_recyclerview_height"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textSize="16sp"
 			android:background="@null"
-			android:minWidth="50dp"
+			android:minHeight="34dp"
 			android:gravity="center"
-			android:padding="@dimen/layout_margin"
 			android:visibility="invisible"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/top_toolbar_background"
@@ -105,7 +104,7 @@
 			android:padding="@dimen/layout_margin"
 			android:textColor="?attr/recycler_text_color"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/filepath_recyclerview_width"
+			app:layout_constraintTop_toBottomOf="@id/filepath_recyclerview_height"
 
 			/>
 
@@ -710,7 +709,74 @@
 					app:layout_constraintTop_toTopOf="@+id/search_label"
 					/>
 
+
 				<View
+					android:id="@+id/network_layout_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+					android:background="?attr/drawer_title"
+					app:layout_constraintBottom_toBottomOf="@id/network_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/search_label_background"
+
+					/>
+
+				<TextView
+					android:id="@+id/network_heading"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="44dp"
+					android:text="@string/network"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="16sp"
+					android:paddingStart="@dimen/ten_dp"
+					android:paddingEnd="@dimen/ten_dp"
+					android:paddingTop="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
+					app:layout_constraintEnd_toStartOf="@id/network_expand_indicator"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/network_layout_background" />
+
+				<ImageView
+					android:id="@+id/network_expand_indicator"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/down_arrow_drawer_icon"
+					app:layout_constraintBottom_toBottomOf="@id/network_heading"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@id/network_heading"
+					app:layout_constraintTop_toTopOf="@id/network_heading"
+
+					/>
+
+				<androidx.constraintlayout.widget.Group
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/network_layout_group"
+					app:constraint_referenced_ids="network_recyclerview"
+					android:visibility="gone"
+					/>
+				<androidx.recyclerview.widget.RecyclerView
+					android:id="@+id/network_recyclerview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?attr/drawer_title"
+					android:choiceMode="singleChoice"
+					android:paddingStart="@dimen/layout_margin"
+					android:paddingEnd="@dimen/layout_margin"
+					android:paddingBottom="@dimen/layout_margin"
+					app:layout_constraintEnd_toStartOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/network_layout_background" />
+
+
+				<!--View
 					android:id="@+id/ftp_label_background"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
@@ -759,7 +825,7 @@
 					app:layout_constraintStart_toEndOf="@+id/ftp_label"
 					app:layout_constraintTop_toTopOf="@+id/ftp_label"
 					android:visibility="gone"
-					/>
+					/-->
 
 
 				<Space
@@ -767,7 +833,7 @@
 					android:layout_height="?attr/actionBarSize"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/ftp_label_background"
+					app:layout_constraintTop_toBottomOf="@+id/network_recyclerview"
 
 					/>
 
