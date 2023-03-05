@@ -42,8 +42,9 @@
                 android:layout_width="@dimen/image_preview_dimen"
                 android:layout_height="@dimen/image_preview_dimen"
                 app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
-                app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
-                android:layout_margin="14dp"
+                app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
+                android:layout_margin="10dp"
 
                 />
 

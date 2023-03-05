@@ -722,7 +722,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				}
 
 				if (viewModel.isFileBig) {
-					Global.print(context,getString(R.string.file_is_big) + ", " + getString(R.string.cant_edit_this_file));
+					Global.print(context,getString(R.string.file_is_large) + ", " + getString(R.string.cant_edit_this_file));
 					return;
 				}
 				viewModel.edit_mode=!viewModel.edit_mode;

@@ -778,7 +778,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 							if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
 							{
-								Global.print(context,getString(R.string.file_is_big_please_extract_to_view));
+								Global.print(context,getString(R.string.file_is_large_please_extract_to_view));
 								return;
 							}
 

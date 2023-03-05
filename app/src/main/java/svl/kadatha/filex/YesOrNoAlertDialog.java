@@ -14,10 +14,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-public class FtpServerCloseAlertDialog extends DialogFragment
+public class YesOrNoAlertDialog extends DialogFragment
 {
     private Bundle bundle;
     private String request_code;
+    private int message;
 
 
     @Override
@@ -28,12 +29,14 @@ public class FtpServerCloseAlertDialog extends DialogFragment
         setCancelable(false);
         bundle=getArguments();
         request_code=bundle.getString("request_code");
+        message=bundle.getInt("message");
     }
 
-    public static FtpServerCloseAlertDialog getInstance(String request_code,Bundle bundle)
+    public static YesOrNoAlertDialog getInstance(String request_code, int message, Bundle bundle)
     {
-        FtpServerCloseAlertDialog ftpServerCloseAlertDialog=new FtpServerCloseAlertDialog();
+        YesOrNoAlertDialog ftpServerCloseAlertDialog=new YesOrNoAlertDialog();
         bundle.putString("request_code",request_code);
+        bundle.putInt("message",message);
         ftpServerCloseAlertDialog.setArguments(bundle);
         return ftpServerCloseAlertDialog;
     }
@@ -51,7 +54,7 @@ public class FtpServerCloseAlertDialog extends DialogFragment
         yes_button.setText(R.string.yes);
         Button no_button = buttons_layout.findViewById(R.id.second_button);
         no_button.setText(R.string.no);
-        confirmation_message_textview.setText("Want to stop the FTP Server service?");
+        confirmation_message_textview.setText(message);
 
         yes_button.setOnClickListener(new View.OnClickListener()
         {

@@ -187,7 +187,7 @@ public class RenameFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.could_not_be_renamed));
 					return;
 				}
-				if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
+				if(CheckString.whetherStringContainsSpecialCharacters(new_name))
 				{
 					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;

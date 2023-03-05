@@ -166,7 +166,7 @@ public class CreateFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.enter_file_name));
 					return;
 				}
-				if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
+				if(CheckString.whetherStringContainsSpecialCharacters(new_name))
 				{
 					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;

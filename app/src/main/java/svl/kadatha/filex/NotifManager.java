@@ -24,11 +24,11 @@ public class NotifManager
 		this.context=context;
 		nm=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notification_builder=new NotificationCompat.Builder(context, CHANNEL_ID);
+		int priority = Notification.PRIORITY_LOW;
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 		{
 			String description = "This notification indicates long running file activities";
-			NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-			notification_channel.enableLights(true);
+			NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
 			notification_channel.setDescription(description);
 			notification_channel.setSound(null,null);
 			nm.createNotificationChannel(notification_channel);
@@ -37,6 +37,7 @@ public class NotifManager
 		notification_builder
 			.setSmallIcon(R.drawable.app_icon)
 			.setAutoCancel(true)
+			.setPriority(priority)
 			.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 			.setCategory(NotificationCompat.CATEGORY_SERVICE);
 

@@ -12,6 +12,7 @@ public class FtpServerViewModel extends AndroidViewModel {
     public String user_name,password,chroot;
     public static int PORT;
     public static FtpUser FTP_USER;
+    public static boolean ALLOW_ANONYMOUS;
 
     public FtpServerViewModel(@NonNull Application application) {
         super(application);

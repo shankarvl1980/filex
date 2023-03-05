@@ -1,8 +1,8 @@
 package svl.kadatha.filex;
 
-public class CheckStringForSpecialCharacters
+public class CheckString
 {
-	public static boolean whetherStringContains(String string)
+	public static boolean whetherStringContainsSpecialCharacters(String string)
 	{
 		char[] c_array=string.toCharArray();
 		for(char c: c_array)
@@ -40,6 +40,11 @@ public class CheckStringForSpecialCharacters
 		}
 
 		// String is only alphabetic
+		return true;
+	}
+
+	public static boolean isStringWithoutSpaces(String str)
+	{
 		return true;
 	}
 }

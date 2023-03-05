@@ -23,18 +23,20 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future1,future2,future3,future4,future5;
+    private Future<?> future1,future2,future3,future4,future5,future6;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> ftpConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> removeFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> changeFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> checkDuplicateFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJOList;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
     public boolean loggedInStatus;
     private final FtpDatabaseHelper ftpDatabaseHelper;
     public String path;
+    public boolean ftpPOJOAlreadyExists;
 
     public FtpDetailsViewModel(@NonNull Application application) {
         super(application);
@@ -90,7 +92,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 for(int i=0;i<size;++i)
                 {
                     FtpDetailsDialog.FtpPOJO ftpPOJO=ftpPOJOS_for_delete.get(i);
-                    int j=ftpDatabaseHelper.delete(ftpPOJO.server);
+                    int j=ftpDatabaseHelper.delete(ftpPOJO.server,ftpPOJO.user_name);
                     if(j>0)
                     {
                         ftpPOJOList.remove(ftpPOJO);
@@ -165,34 +167,25 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void removeFtpPojoList(String server, String original_server)
+    public synchronized void replaceFtpPojoList(String server, String user_name,String original_server,String original_user_name)
     {
-        if(removeFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        removeFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(replaceFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        replaceFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         if(original_server==null)original_server="";
+        if(original_user_name==null)original_user_name="";
         ExecutorService executorService=MyExecutorService.getExecutorService();
         String finalOriginal_server = original_server;
+        String finalOriginal_user_name = original_user_name;
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server);
-                Iterator<FtpDetailsDialog.FtpPOJO> iterator=ftpPOJOList.iterator();
-                while(iterator.hasNext())
-                {
-                    String srvr=iterator.next().server;
-                    if(srvr.equals(server) || srvr.equals(finalOriginal_server))
-                    {
-                        iterator.remove();
-                        break;
-                    }
-                }
-                ftpPOJOList.add(ftpPOJO);
-                removeFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+                replaceFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    public synchronized void changeFtpPojoDisplay(String server, String new_name)
+    public synchronized void changeFtpPojoDisplay(String server,String user_name, String new_name)
     {
         if(changeFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -200,20 +193,25 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future5=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ftpDatabaseHelper.change_display(server,new_name);
-                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server);
-                Iterator<FtpDetailsDialog.FtpPOJO> iterator=ftpPOJOList.iterator();
-                while(iterator.hasNext())
-                {
-                    String srvr=iterator.next().server;
-                    if(srvr.equals(server))
-                    {
-                        iterator.remove();
-                        break;
-                    }
-                }
-                ftpPOJOList.add(ftpPOJO);
+                ftpDatabaseHelper.change_display(server,user_name,new_name);
+                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
                 changeFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void checkWhetherFtpPojoAlreadyExists(String server,String user_name)
+    {
+        if(checkDuplicateFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        checkDuplicateFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future6=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                ftpPOJOAlreadyExists=false;
+                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
+                ftpPOJOAlreadyExists= ftpPOJO != null;
+                checkDuplicateFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

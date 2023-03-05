@@ -211,8 +211,9 @@ public class RepositoryClass {
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
-                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar"},null);
+                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar","%.7z"},null);
                 break;
             case "APK":
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},

@@ -17,6 +17,7 @@
 		android:paddingBottom="?attr/actionBarSize"
 		android:clipToPadding="false"
 		android:padding="@dimen/layout_margin"
+		android:background="?attr/dialog_background"
 		
 		/>
 	<TextView

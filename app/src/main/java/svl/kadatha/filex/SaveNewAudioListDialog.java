@@ -89,13 +89,13 @@ public class SaveNewAudioListDialog extends DialogFragment
 						return;
 					}
 
-					if(!CheckStringForSpecialCharacters.isStringOnlyAlphabet(new_name))
+					if(!CheckString.isStringOnlyAlphabet(new_name))
 					{
 						Global.print(context,getString(R.string.name_should_contain_only_alphabets_without_spaces));
 						return;
 					}
 
-					if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
+					if(CheckString.whetherStringContainsSpecialCharacters(new_name))
 					{
 						Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 						return;

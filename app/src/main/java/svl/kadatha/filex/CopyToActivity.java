@@ -96,7 +96,7 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
-                if(CheckStringForSpecialCharacters.whetherStringContains(file_name))
+                if(CheckString.whetherStringContainsSpecialCharacters(file_name))
                 {
                     Global.print(context,getString(R.string.avoid_name_involving_special_characters));
                     return;

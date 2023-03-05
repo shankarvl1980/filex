@@ -18,29 +18,31 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 public class FtpDetailsInputDialog extends DialogFragment {
 
     private Context context;
     private FtpDatabaseHelper ftpDatabaseHelper;
-    private String original_server="",server="",mode="",user_name="",password="",encoding,display="";
+    private String original_server="",original_user_name="",server="",mode="",user_name="",password="",encoding="",display="";
     private int port;
     private int anonymous;
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
     private RadioButton mode_active_radio_btn;
     private CheckBox anonymous_check_box;
-    private boolean update;
+    private boolean update,replace;
     private PermissionsUtil permissionsUtil;
     private String request_code;
-    Bundle bundle;
+    private Bundle bundle;
+    private static final String FTP_REPLACE_REQUEST_CODE="ftp_replace_request_code";
 
-
-    public static FtpDetailsInputDialog getInstance(String request_code,String server)
+    public static FtpDetailsInputDialog getInstance(String request_code,String server,String user_name)
     {
         FtpDetailsInputDialog ftpDetailsInputDialog=new FtpDetailsInputDialog();
         Bundle bundle=new Bundle();
         bundle.putString("request_code",request_code);
         bundle.putString("server",server);
+        bundle.putString("user_name",user_name);
         ftpDetailsInputDialog.setArguments(bundle);
         return ftpDetailsInputDialog;
     }
@@ -68,16 +70,24 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             request_code=bundle.getString("request_code");
             original_server=bundle.getString("server");
-            server=bundle.getString("server");
+            original_user_name=bundle.getString("user_name");
+            if(original_server==null)
+            {
+                server="ftp://";
+            }
+            else
+            {
+                server=bundle.getString("server");
+            }
+            user_name=bundle.getString("user_name");
             if(original_server!=null && !original_server.equals(""))
             {
                 update=true;
-                FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(server);
+                FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(original_server,original_user_name);
                 if(ftpPOJO!=null)
                 {
                     port=ftpPOJO.port;
                     mode=ftpPOJO.mode;
-                    user_name=ftpPOJO.user_name;
                     password=ftpPOJO.password;
                     anonymous=ftpPOJO.anonymous ? 1 : 0;
                     encoding=ftpPOJO.encoding;
@@ -99,7 +109,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         user_name_tv=v.findViewById(R.id.ftp_details_user_name);
         password_tv=v.findViewById(R.id.ftp_details_pword);
         anonymous_check_box=v.findViewById(R.id.ftp_details_anonymous_check_box);
-        //encoding_tv=v.findViewById(R.id.ftp_details_e);
+        //encoding_tv=v.findViewById(R.id.ftp_details_en);
         display_tv=v.findViewById(R.id.ftp_details_display);
 
         server_tv.setText(server);
@@ -112,10 +122,13 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             mode_passive_radio_btn.setChecked(true);
         }
+
         user_name_tv.setText(user_name);
         password_tv.setText(password);
         anonymous_check_box.setChecked(anonymous != 0);
         display_tv.setText(display);
+
+
         ViewGroup buttons_layout = v.findViewById(R.id.ftp_details_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button ok_button = buttons_layout.findViewById(R.id.first_button);
@@ -132,22 +145,10 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     return;
                 }
 
-                if(!CheckStringForSpecialCharacters.isStringOnlyAlphabet(server))
-                {
-                    Global.print(context,getString(R.string.name_should_contain_only_alphabets_without_spaces));
-                    return;
-                }
-
-                if(CheckStringForSpecialCharacters.whetherStringContains(server))
-                {
-                    Global.print(context,getString(R.string.avoid_name_involving_special_characters));
-                    return;
-                }
-
 
                 if(!server.matches("\\S+"))
                 {
-                    Global.print(context,getString(R.string.name_contains_space));
+                    Global.print(context,getString(R.string.server_address_should_not_contain_spaces));
                     return;
                 }
 
@@ -163,28 +164,37 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     anonymous=anonymous_check_box.isChecked() ? 1 : 0;
                     display=display_tv.getText().toString().trim();
 
-                    long row_number;
-                    if(update)
+                    if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
                     {
-                        row_number=ftpDatabaseHelper.update(original_server,server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                        bundle.putString("original_server",original_server);
-                        bundle.putString("server",server);
+                        YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_settings_already_exists_want_to_replace_it,new Bundle());
+                        ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
                     }
                     else
                     {
-                        row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                        bundle.putString("server",server);
+                        long row_number;
+                        if(update)
+                        {
+                            row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                            bundle.putString("original_server",original_server);
+                            bundle.putString("original_user_name",original_user_name);
+                            bundle.putString("server",server);
+                            bundle.putString("user_name",user_name);
+                        }
+                        else
+                        {
+                            row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
+                            bundle.putString("server",server);
+                            bundle.putString("user_name",user_name);
+                        }
+
+                        if(row_number>0)
+                        {
+                            ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+                        }
+
+                        dismissAllowingStateLoss();
                     }
 
-                    if(row_number>0)// && ftpDatabaseModificationListener!=null)
-                    {
-
-                        //FtpDetailsDialog.FtpPOJO ftpPOJO=new FtpDetailsDialog.FtpPOJO(server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                        //ftpDatabaseModificationListener.onInsert(ftpPOJO);
-                        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-                    }
-
-                    dismissAllowingStateLoss();
                 }
 
 
@@ -200,9 +210,25 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
+
+        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(FTP_REPLACE_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(FTP_REPLACE_REQUEST_CODE))
+                {
+                    replace=true;
+                    ok_button.callOnClick();
+                }
+            }
+        });
         return v;
     }
 
+    private boolean whetherFtpPOJOAlreadyExists(String server,String user_name)
+    {
+        FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
+        return ftpPOJO != null;
+    }
     @Override
     public void onResume()
     {

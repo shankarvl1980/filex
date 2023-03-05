@@ -22,7 +22,7 @@ import androidx.fragment.app.DialogFragment;
 public class FtpDisplayRenameDialog extends DialogFragment {
 
     private Context context;
-    private String server, display;
+    private String server,user_name, display;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
     private FtpDatabaseHelper ftpDatabaseHelper;
@@ -54,6 +54,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         {
             request_code=bundle.getString("request_code");
             server=bundle.getString("server");
+            user_name=bundle.getString("user_name");
             display=bundle.getString("display");
         }
 
@@ -125,13 +126,11 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     Global.print(context,getString(R.string.enter_file_name));
                     return;
                 }
-                int i=ftpDatabaseHelper.change_display(server,new_name);
-                if(i>0)// && ftpRenameListener!=null)
+                int i=ftpDatabaseHelper.change_display(server,user_name,new_name);
+                if(i>0)
                 {
                     bundle.putString("new_name",new_name);
                     ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-
-                    //ftpRenameListener.onRenameFtp(new_name);
                 }
                 imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
@@ -149,12 +148,13 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         return v;
     }
 
-    public static FtpDisplayRenameDialog getInstance(String request_code,String server, String display)
+    public static FtpDisplayRenameDialog getInstance(String request_code,String server,String user_name, String display)
     {
         FtpDisplayRenameDialog ftpDisplayRenameDialog=new FtpDisplayRenameDialog();
         Bundle bundle=new Bundle();
         bundle.putString("request_code",request_code);
         bundle.putString("server",server);
+        bundle.putString("user_name",user_name);
         bundle.putString("display",display);
         ftpDisplayRenameDialog.setArguments(bundle);
         return ftpDisplayRenameDialog;

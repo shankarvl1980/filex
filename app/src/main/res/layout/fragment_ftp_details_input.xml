@@ -64,7 +64,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
                 android:inputType="text"
                 android:maxLines="1"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
 
@@ -96,7 +95,6 @@
                 android:inputType="number"
                 android:digits="0123456789"
                 android:maxLines="1"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
 
@@ -178,7 +176,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:inputType="text"
                 android:maxLines="1"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
 
                 />
@@ -208,7 +205,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
                 android:inputType="text"
                 android:maxLines="1"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
 
@@ -246,35 +242,49 @@
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/layout_margin"
                 />
+
             <TextView
-            android:id="@+id/ftp_details_display_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/display"
-            android:gravity="start"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label"
-            app:layout_constraintEnd_toStartOf="@id/ftp_details_display"
+                android:id="@+id/ftp_details_display_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:gravity="start"
                 android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/ten_dp"
+                android:layout_marginBottom="@dimen/ten_dp"
+                android:text="@string/display"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/ftp_details_display_optional_label"
+                app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label" />
+            <TextView
+                android:id="@+id/ftp_details_display_optional_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/optional_in_bracket"
+                android:gravity="start"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_display_label"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingTop="@dimen/layout_margin"
                 android:paddingBottom="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/layout_margin"
-                android:layout_marginBottom="@dimen/layout_margin"
-            />
+
+                />
+
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ftp_details_display"
                 android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_display_label"
+                app:layout_constraintStart_toEndOf="@id/ftp_details_display_optional_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
                 android:inputType="text"
                 android:maxLines="1"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
+
                 />
 
             <FrameLayout

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -108,7 +109,7 @@ public class FileTypeSelectDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
-		window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
+		window.setLayout(Global.DIALOG_WIDTH, GridLayout.LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 

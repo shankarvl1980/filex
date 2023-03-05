@@ -1,6 +1,5 @@
 package svl.kadatha.filex;
 
-import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -102,7 +101,7 @@ public class Global
 	static final String IMAGE_REGEX="(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
 	static final String AUDIO_REGEX="(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a";
 	static final String VIDEO_REGEX="(?i)3gp|mp4|avi|mov|flv|wmv|webm";
-	static final String ZIP_REGEX="(?i)zip|rar|jar";
+	static final String ZIP_REGEX="(?i)zip|rar|jar|7z";
 	static final String UNIX_ARCHIVE_REGEX="(?i)tar|gzip|gz";
 	static final String APK_REGEX="(?i)apk";
 	static final String PDF_REGEX="(?i)pdf";

@@ -343,7 +343,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         what_to_find = ".*((?i)\\.3gp|\\.mp4|\\.avi|\\.mov|\\.flv|\\.wmv|\\.webm)$";
                         media_category="Video";
                     } else if (application.getString(R.string.archive).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip|\\.jar)$";
+                        what_to_find = ".*((?i)\\.zip|\\.rar|\\.tar|\\.gz|\\.gzip|\\.jar|\\.7z)$";
                         media_category="Archive";
                     } else if (application.getString(R.string.apk).equals(library_or_search)) {
                         what_to_find = ".*(?i)\\.apk$";
@@ -443,8 +443,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
+                                MediaStore.Files.FileColumns.DATA+" LIKE ?"+" OR "+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
-                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar"},null);
+                        new String[]{"%.tar","%.gzip","%.gz","%.zip","%.rar","%.jar","%.7z"},null);
                 break;
             case "APK":
                 cursor=application.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
@@ -576,7 +577,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             try {
                 Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
                             FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
@@ -588,7 +589,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
                             FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
@@ -600,7 +601,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+                    public FileVisitResult visitFileFailed(Path path, IOException e) {
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -669,7 +670,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             try {
                 Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
                             FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
@@ -681,7 +682,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
                         long length=basicFileAttributes.size();
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
                         {
@@ -694,7 +695,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
 
                     @Override
-                    public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+                    public FileVisitResult visitFileFailed(Path path, IOException e) {
                         return FileVisitResult.CONTINUE;
                     }
                 });

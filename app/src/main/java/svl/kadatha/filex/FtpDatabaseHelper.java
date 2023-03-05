@@ -21,7 +21,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT PRIMARY KEY, port INTEGER, mode TEXT, user_name TEXT, password TEXT, anonymous INTEGER,encoding TEXT,display TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT, port INTEGER, mode TEXT, user_name TEXT, password TEXT, anonymous INTEGER,encoding TEXT,display TEXT)");
     }
 
     @Override
@@ -61,7 +61,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        sqLiteDatabase.delete(TABLE,"server=?",new String[]{server});
+        sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -74,11 +74,11 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insert(TABLE,null,contentValues);
     }
 
-    public long update(String original_server, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    public long update(String original_server,String original_user_name, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        sqLiteDatabase.delete(TABLE,"server=?",new String[]{server});
+        //sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -88,12 +88,11 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("anonymous",anonymous ? 1 : 0);
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
-        Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?",new String[]{original_server},null,null,null);
+        Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?",new String[]{original_server,original_user_name},null,null,null);
         if(cursor!=null && cursor.getCount()>0)
         {
             cursor.close();
-            return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{original_server});
-
+            return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?",new String[]{original_server,original_user_name});
         }
         else
         {
@@ -102,24 +101,24 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public int delete(String server)
+    public int delete(String server, String user_name)
     {
-        return getWritableDatabase().delete(TABLE,"server=?",new String[]{server});
+        return getWritableDatabase().delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
     }
 
-    public int change_display(String server, String new_name)
+    public int change_display(String server,String user_name, String new_name)
     {
         SQLiteDatabase sqLiteDatabase=getReadableDatabase();
         ContentValues contentValues=new ContentValues();
         contentValues.put("display",new_name);
-        return sqLiteDatabase.update(TABLE,contentValues,"server=?",new String[]{server});
+        return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
     }
 
-    public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string)
+    public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string, String user_name_string)
     {
         FtpDetailsDialog.FtpPOJO ftpPOJO = null;
         SQLiteDatabase sqLiteDatabase=getReadableDatabase();
-       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?",new String[]{server_string},null,null,null);
+       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?",new String[]{server_string,user_name_string},null,null,null);
        if(cursor!=null && cursor.moveToFirst())
        {
            String server = cursor.getString(0);

@@ -65,15 +65,15 @@ public class LibraryAlbumSelectDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        View v=inflater.inflate(R.layout.fragment_select_file_type,container,false);
-        progress_bar=v.findViewById(R.id.fragment_file_type_select_progressbar);
-        label_text_view=v.findViewById(R.id.open_as_label);
+        View v=inflater.inflate(R.layout.fragment_library_filter,container,false);
+        progress_bar=v.findViewById(R.id.fragment_library_filter_progressbar);
+        label_text_view=v.findViewById(R.id.fragment_library_filter_label);
         label_text_view.setText(R.string.select_album);
-        RecyclerView library_recyclerview = v.findViewById(R.id.fragment_file_type_RecyclerView);
+        RecyclerView library_recyclerview = v.findViewById(R.id.fragment_library_filter_RecyclerView);
         library_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
         library_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 
-        ViewGroup button_layout = v.findViewById(R.id.fragment_file_type_button_layout);
+        ViewGroup button_layout = v.findViewById(R.id.fragment_library_filter_button_layout);
         button_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button cancel = button_layout.findViewById(R.id.first_button);
         cancel.setText(R.string.cancel);

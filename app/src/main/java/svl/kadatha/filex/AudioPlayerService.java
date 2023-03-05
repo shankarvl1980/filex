@@ -771,18 +771,20 @@ public class AudioPlayerService extends Service
 			// TODO Auto-generated constructor stub
 			this.parent = parent;
 			nManager = (android.app.NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
+			int priority = Notification.PRIORITY_LOW;
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 			{
 				String description = "This is to operate the audio player controls";
-                NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-				notification_channel.enableLights(true);
+                NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
 				notification_channel.setDescription(description);
+				notification_channel.setSound(null,null);
 				nManager.createNotificationChannel(notification_channel);
 			}
 			nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
 			nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
 				.setSmallIcon(R.drawable.app_icon)
 				.setAutoCancel(true)
+				.setPriority(priority)
 				.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 				.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
 

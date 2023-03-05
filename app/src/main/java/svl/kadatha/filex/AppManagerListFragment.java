@@ -759,8 +759,6 @@ public class AppManagerListFragment extends Fragment {
     }
 
 
-
-
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
     {
         @Override

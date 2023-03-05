@@ -1010,7 +1010,6 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 			}
 		}
 	}
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static class CompatScroller {
 		Scroller scroller;
 		final OverScroller overScroller;
@@ -1063,7 +1062,6 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 			}
 		}
 	}
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	private void compatPostOnAnimation(Runnable runnable) {
 		postOnAnimation(runnable);
 	}

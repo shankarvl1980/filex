@@ -181,7 +181,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						Global.print(context,getString(R.string.enter_zip_file_name));
 						return;
 					}
-					if(CheckStringForSpecialCharacters.whetherStringContains(zip_folder_name))
+					if(CheckString.whetherStringContainsSpecialCharacters(zip_folder_name))
 					{
 						Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 						return;
@@ -425,7 +425,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								return;
 							}
 
-							if (CheckStringForSpecialCharacters.whetherStringContains(zip_output_folder)) {
+							if (CheckString.whetherStringContainsSpecialCharacters(zip_output_folder)) {
 								Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 								return;
 							}

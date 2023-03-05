@@ -242,7 +242,7 @@ public class AppSelectorDialog extends DialogFragment
                         {
                             if(fileObjectType.equals(FileObjectType.USB_TYPE) && app_package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
                             {
-                                Global.print(context,context.getString(R.string.file_is_big_copy_to_device_storage));
+                                Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
                                 defaultAppDatabaseHelper.close();
                                 dismissAllowingStateLoss();
                                 return;
