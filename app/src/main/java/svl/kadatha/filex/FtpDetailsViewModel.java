@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
+import android.os.Bundle;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
@@ -119,14 +120,16 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
                     if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
                     {
+
                         loggedInStatus=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
                         if(loggedInStatus)
                         {
-                            MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
                             //if(ftpPOJO.mode.equals("passive"))
                             {
                                 MainActivity.FTP_CLIENT.enterLocalPassiveMode();
                             }
+                            MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
+
                             path=MainActivity.FTP_CLIENT.printWorkingDirectory();
 
                             Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
@@ -167,18 +170,37 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void replaceFtpPojoList(String server, String user_name,String original_server,String original_user_name)
+    public synchronized void replaceFtpPojoList(Bundle bundle)
     {
         if(replaceFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         replaceFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        if(original_server==null)original_server="";
-        if(original_user_name==null)original_user_name="";
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        String finalOriginal_server = original_server;
-        String finalOriginal_user_name = original_user_name;
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                long row_number;
+                String original_server=bundle.getString("original_server");
+                String original_user_name=bundle.getString("original_user_name");
+                String server=bundle.getString("server");
+                int port=bundle.getInt("port");
+                String mode=bundle.getString("mode");
+                String user_name=bundle.getString("user_name");
+                String password=bundle.getString("password");
+                boolean anonymous=bundle.getBoolean("anonymous");
+                String encoding=bundle.getString("encoding");
+                String display=bundle.getString("display");
+                boolean update=bundle.getBoolean("update");
+                if(original_server==null)original_server="";
+                if(original_user_name==null)original_user_name="";
+                if(update)
+                {
+                    row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous,encoding,display);
+                }
+                else
+                {
+                    row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous,encoding,display);
+                }
+
                 ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
                 replaceFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

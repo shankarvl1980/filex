@@ -224,11 +224,16 @@ public class FtpDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if(viewModel.loggedInStatus)
                     {
+                        viewModel.loggedInStatus=false;
+                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
                         ((MainActivity)context).createFragmentTransaction(viewModel.path,FileObjectType.FTP_TYPE);
+                        dismissAllowingStateLoss();
                     }
-                    viewModel.loggedInStatus=false;
-                    viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    else {
+                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    }
+
                 }
             }
         });
@@ -296,9 +301,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NULL))
                 {
                     progress_bar.setVisibility(View.VISIBLE);
-                    String server=result.getString("server");
-                    String user_name=result.getString("user_name");
-                    viewModel.replaceFtpPojoList(server,user_name,"","");
+                    viewModel.replaceFtpPojoList(result);
                 }
             }
         });
@@ -309,11 +312,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL))
                 {
                     progress_bar.setVisibility(View.VISIBLE);
-                    String server=result.getString("server");
-                    String user_name=result.getString("user_name");
-                    String original_server=result.getString("original_server");
-                    String original_user_name=result.getString("original_user_name");
-                    viewModel.replaceFtpPojoList(server,user_name,original_server,original_user_name);
+                    viewModel.replaceFtpPojoList(result);
                 }
             }
         });

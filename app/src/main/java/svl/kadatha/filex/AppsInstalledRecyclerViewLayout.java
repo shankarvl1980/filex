@@ -24,6 +24,7 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     private int imageview_dimension;
     public int itemWidth, itemHeight;
     private int select_indicator_offset_linear;
+    private int measuredWidth,measuredHeight;
 
     AppsInstalledRecyclerViewLayout(Context context)
     {
@@ -218,26 +219,33 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
 
         /*
             v=appselect_indicator;
-
+            measuredHeight=v.getMeasuredHeight();
+		    measuredWidth=v.getMeasuredWidth();
             int a=grid_width-((grid_width-imageview_dimension)/2)-Global.SELECTOR_ICON_DIMENSION;
-            v.layout(a,y,a+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+            v.layout(a,y,a+measuredWidth,y+measuredHeight);
 
          */
 
             v=appimageview;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            y+=v.getMeasuredHeight();
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            y+=measuredHeight;
 
 
             x=Global.FOUR_DP;
             v=appnametextview;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            y+=v.getMeasuredHeight();
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            y+=measuredHeight;
 
 
 
             v=appsizetextview;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
 
         }
@@ -246,40 +254,54 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             x=Global.FOURTEEN_DP;
             int margin_offset_icon, max_height_second_line;
             View v=appimageview;
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
             int d=(itemHeight-imageview_dimension)/2;
-            v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
-            x+=v.getMeasuredWidth()+Global.TEN_DP;
+            v.layout(x,d,x+measuredWidth,d+measuredHeight);
+            x+=measuredWidth+Global.TEN_DP;
             margin_offset_icon=x;
 
             /*
             v=appselect_indicator;
+            measuredHeight=v.getMeasuredHeight();
+		    measuredWidth=v.getMeasuredWidth();
             int a=itemWidth-select_indicator_offset_linear;
-            int file_select_indicator_height=v.getMeasuredHeight();
+            int file_select_indicator_height=measuredHeight;
             int c=(itemHeight-file_select_indicator_height)/2;
-            v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
+            v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
 
              */
 
             v=appnametextview;
-            y=(itemHeight-v.getMeasuredHeight()-apppackagenametextview.getMeasuredHeight()-appversiontextview.getMeasuredHeight()-appsizetextview.getMeasuredHeight())/2;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            y+=v.getMeasuredHeight();
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            y=(itemHeight-measuredHeight-apppackagenametextview.getMeasuredHeight()-appversiontextview.getMeasuredHeight()-appsizetextview.getMeasuredHeight())/2;
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            y+=measuredHeight;
 
 
             v=apppackagenametextview;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            y+=v.getMeasuredHeight();
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            y+=measuredHeight;
 
             v=appversiontextview;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-            y+=v.getMeasuredHeight();
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            y+=measuredHeight;
 
             v=appsizetextview;
-            v.layout(x,y,x+v.getMeasuredWidth()+Global.TEN_DP,y+v.getMeasuredHeight());
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            v.layout(x,y,x+measuredWidth+Global.TEN_DP,y+measuredHeight);
 
             v=appdatetextview;
-            x=itemWidth-select_indicator_offset_linear-v.getMeasuredWidth()-Global.FOURTEEN_DP;
-            v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+            measuredHeight=v.getMeasuredHeight();
+            measuredWidth=v.getMeasuredWidth();
+            x=itemWidth-select_indicator_offset_linear-measuredWidth-Global.FOURTEEN_DP;
+            v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
         }
 

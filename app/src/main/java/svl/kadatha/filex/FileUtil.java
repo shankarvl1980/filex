@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -331,14 +332,14 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 		@SuppressWarnings("null")
-		public static boolean copy_FtpFile_File(String src_file_path, File target_file,boolean cut)
+		public static boolean copy_FtpFile_File(String src_file_path, File target_file,boolean cut,long[] bytes_read)
 		{
 			boolean success;
-			try {
+			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
 
-				OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(target_file));
 				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
-				if (cut && success) {
+				//bufferedCopy(inputStream, outputStream, false, bytes_read);
+				if (cut) {
 					deleteFTPFile(src_file_path);
 				}
 
@@ -349,8 +350,34 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			// ignore exception
 
 			// ignore exception
-			return true;
+
+			return success;
 		}
+
+		public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,boolean cut,long[] bytes_read)
+		{
+			boolean success;
+			try (OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(target_file_path)) {
+
+				Log.d(Global.TAG,"being copied");
+				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+				//bufferedCopy(inputStream, outputStream, false, bytes_read);
+				if (cut) {
+					deleteFTPFile(src_file_path);
+				}
+
+			} catch (Exception e) {
+
+				return false;
+			}
+			// ignore exception
+
+			// ignore exception
+
+			return success;
+		}
+
+
 
 
 		@SuppressWarnings("null")
@@ -664,9 +691,10 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 
 		@SuppressWarnings("null")
-		public static boolean copy_FtpFile_SAFFile(Context context,@NonNull final String source_file_path, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut)
+		public static boolean copy_FtpFile_SAFFile(Context context,@NonNull final String source_file_path, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut,long[] bytes_read)
 		{
-			boolean success;
+			boolean success = false;
+			InputStream inStream=null;
 			OutputStream outStream=null;
 
 			try
@@ -679,7 +707,9 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 					if (outStream != null)
 					{
 						success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
-						if(success && cut)
+//						inStream=MainActivity.FTP_CLIENT.retrieveFileStream(source_file_path);
+//						bufferedCopy(inStream,outStream,false,bytes_read);
+						if(cut)
 						{
 							deleteFTPFile(source_file_path);
 						}
@@ -701,6 +731,14 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 			finally
 			{
+				try
+				{
+					if(inStream!=null)inStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
 
 				try
 				{
@@ -710,9 +748,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				{
 					// ignore exception
 				}
-
 			}
-			return true;
+			return success;
 		}
 
 		@SuppressWarnings("null")
@@ -844,16 +881,17 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 		@SuppressWarnings("null")
-		public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut)
+		public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut,long[] bytes_read)
 		{
 			boolean success;
-			//OutputStream outStream=null;
+			OutputStream outStream=null;
 
 			try (FileInputStream fileInStream = new FileInputStream(source)) {
 				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 				success = MainActivity.FTP_CLIENT.storeFile(file_path, fileInStream);
-
-				if (success && cut) {
+//				outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
+//				bufferedCopy(fileInStream,outStream,false,bytes_read);
+				if (cut) {
 					deleteNativeFile(source);
 				}
 			} catch (Exception e) {
@@ -861,6 +899,13 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
+//			finally {
+//				try {
+//					outStream.close();
+//				} catch (IOException e) {
+//
+//				}
+//			}
 			// ignore exception
 
 			return success;
@@ -948,6 +993,24 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		return usbFile;
 	}
 
+	public static boolean isFtpPathDirectory(String file_path)
+	{
+		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		{
+			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(file_path))
+			{
+				return inputStream == null;
+			} catch (IOException e) {
+				Log.d(Global.TAG,"exception thrown while ascertaining the path is directory - "+e.getMessage());
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+
+	}
+
 	public static FTPFile getFTPFile(String file_path)
 	{
 		FTPFile ftpFile = null;
@@ -962,14 +1025,15 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				ftpFile=ftpFiles_array[i];
 				if(ftpFile.getName().equals(name))
 				{
-					break;
+					return ftpFile;
 				}
 			}
 		} catch (IOException e) {
+			Log.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
 			return null;
 		}
 
-		return ftpFile;
+		return null;
 	}
 
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
@@ -1190,23 +1254,25 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		public static boolean deleteFtpDirectory(final String file_path)
 		{
 			boolean success=true;
-			FTPFile folder;
+//			FTPFile folder;
 			try {
-				folder = FileUtil.getFTPFile(file_path); //MainActivity.FTP_CLIENT.mlistFile(file_path);
-				if (folder.isDirectory())            //Check if folder file is a real folder
+//				folder = FileUtil.getFTPFile(file_path); //MainActivity.FTP_CLIENT.mlistFile(file_path);
+//				if(folder==null) return false;
+//                if (folder.isDirectory())            //Check if folder file is a real folder
+				if(FileUtil.isFtpPathDirectory(file_path))
 				{
 
-					FTPFile[] list = MainActivity.FTP_CLIENT.listFiles(file_path); //Storing all file name within array
+					String[] list = MainActivity.FTP_CLIENT.listNames(file_path); //Storing all file name within array
 					if(list!=null)
 					{
 						int size=list.length;
 						for (int i = 0; i < size; ++i)
 						{
 
-							FTPFile tmpF = list[i];
-							String name=tmpF.getName();
-							String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);
-							success=deleteFtpDirectory(path);
+							//FTPFile tmpF = list[i];
+							//String name=tmpF.getName();
+							//String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);
+							success=deleteFtpDirectory(list[i]);
 
 						}
 					}
@@ -1214,7 +1280,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 				}
 
-				if(folder.isDirectory())
+				//if(folder.isDirectory())
+				if(FileUtil.isFtpPathDirectory(file_path))
 				{
 					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
 				}
@@ -1228,7 +1295,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 			return success;
 		}
-
 
 
 
@@ -1291,14 +1357,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			return false;
 		}
 
-	/**
-	 * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
-	 *
-	 * @param source The source folder.
-	 * @param target The target folder.
-	 * @return true if the renaming was successful.
-	 (@NonNull final File source, @NonNull final File target,Context context,String uri_string,String baseFolder)
-	 */
+
 	public static boolean renameSAFFile(Context context, String target_file_path, String new_name, Uri tree_uri, String tree_uri_path)
 	{
 	

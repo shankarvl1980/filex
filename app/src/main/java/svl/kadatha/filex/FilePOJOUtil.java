@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
@@ -247,6 +248,7 @@ public class FilePOJOUtil {
 
     static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, boolean archive_view, FileObjectType fileObjectType,String file_path)
     {
+        String h;
         String name=f.getName();
         String path=file_path;
         boolean isDirectory=f.isDirectory();
@@ -495,7 +497,11 @@ public class FilePOJOUtil {
             else
             {
                 FTPFile f=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-                filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+                if(f!=null)
+                {
+                    filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+                }
+
             }
 
         }
@@ -704,20 +710,23 @@ public class FilePOJOUtil {
     }
 
 
-    private static int remove_from_FilePOJO(String name, List<FilePOJO>list)
+    private static FilePOJO remove_from_FilePOJO(String name, List<FilePOJO>list)
     {
+        FilePOJO deleted_filePOJO = null;
         Iterator<FilePOJO> iterator=list.iterator();
-        int i = 0;
         while(iterator.hasNext())
         {
-            if(iterator.next().getName().equals(name))
+            FilePOJO filePOJO=iterator.next();
+            if(filePOJO.getName().equals(name))
             {
+                deleted_filePOJO=filePOJO;
                 iterator.remove();
-                return i;
+        //        Log.d(Global.TAG,"still available, you see - "+deleted_filePOJO.getPath());
+                return deleted_filePOJO;
             }
-            ++i;
         }
-        return i;
+
+        return deleted_filePOJO;
     }
 
     private static void remove_from_FilePOJO_comparing_file_path(String file_path, List<FilePOJO>list)
@@ -877,12 +886,14 @@ public class FilePOJOUtil {
             {
                 filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             }
-            filePOJOs.add(filePOJO);
-            if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+            if(filePOJO!=null)
             {
-                filePOJOs_filtered.add(filePOJO);
+                filePOJOs.add(filePOJO);
+                if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+                {
+                    filePOJOs_filtered.add(filePOJO);
+                }
             }
-
         }
         Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
@@ -902,18 +913,21 @@ public class FilePOJOUtil {
             return;
         }
         String name=new File(dest_folder).getName();
-        int i=remove_from_FilePOJO(name,filePOJOs);
-        int j=remove_from_FilePOJO(name,filePOJOs_filtered);
+        FilePOJO removed_filePOJO=remove_from_FilePOJO(name,filePOJOs);
+        remove_from_FilePOJO(name,filePOJOs_filtered);
         FilePOJO filePOJO=MAKE_FilePOJO(fileObjectType,dest_folder);
-        filePOJOs.add(i,filePOJO);
-        if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+        if(filePOJO==null)filePOJO=removed_filePOJO;
+        if(filePOJO!=null)
         {
-            filePOJOs_filtered.add(j,filePOJO);
-        }
+            filePOJOs.add(filePOJO);
+            if(filePOJO.getAlfa()==Global.ENABLE_ALFA)
+            {
+                filePOJOs_filtered.add(filePOJO);
+            }
 
+        }
         Global.HASHMAP_FILE_POJO.put(fileObjectType+parent_path_to_dest_folder,filePOJOs);
         Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+parent_path_to_dest_folder,filePOJOs_filtered);
-
     }
 
 

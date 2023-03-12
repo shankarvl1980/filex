@@ -363,25 +363,26 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			final boolean[] result_came = new boolean[1];
-			final FTPFile[] ftpFile = new FTPFile[1];
-
-			ExecutorService executorService=MyExecutorService.getExecutorService();
-			executorService.execute(new Runnable() {
-				@Override
-				public void run() {
-					ftpFile[0] =FileUtil.getFTPFile(new_file_path);
-					result_came[0] =true;
-				}
-			});
-
-			while(!result_came[0])
-			{
-				if(ftpFile[0]!=null)
-				{
-					return true;
-				}
-			}
+			return true;
+//			final boolean[] result_came = new boolean[1];
+//			final FTPFile[] ftpFile = new FTPFile[1];
+//
+//			ExecutorService executorService=MyExecutorService.getExecutorService();
+//			executorService.execute(new Runnable() {
+//				@Override
+//				public void run() {
+//					ftpFile[0] =FileUtil.getFTPFile(new_file_path);
+//					result_came[0] =true;
+//				}
+//			});
+//
+//			while(!result_came[0])
+//			{
+//				if(ftpFile[0]!=null)
+//				{
+//					return true;
+//				}
+//			}
 		}
 		else
 		{
@@ -394,7 +395,6 @@ public class PasteSetUpDialog extends DialogFragment
 				return false;
 			}
 		}
-		return false;
 
 	}
 

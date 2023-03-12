@@ -18,6 +18,7 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	private int itemWidth,itemHeight, imageview_dimension;
 	private final boolean whetherDialog;
 	private final int select_indicator_offset=Global.TEN_DP*4;
+	private int measuredWidth,measuredHeight;
 
     AudioListRecyclerViewItem(Context context, boolean whetherDialog)
 	{
@@ -146,31 +147,43 @@ public class AudioListRecyclerViewItem extends ViewGroup
 		int x=Global.FOURTEEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 		View v=audioimageview;
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
 		int d=(itemHeight-imageview_dimension)/2;
-		v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
-		x+=v.getMeasuredWidth()+Global.TEN_DP;
+		v.layout(x,d,x+measuredWidth,d+measuredHeight);
+		x+=measuredWidth+Global.TEN_DP;
 
 		v=audio_select_indicator;
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
 		int a=itemWidth-select_indicator_offset;
-		int file_select_indicator_height=v.getMeasuredHeight();
+		int file_select_indicator_height=measuredHeight;
 		int c=(itemHeight-file_select_indicator_height)/2;
-		v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
+		v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
 
 		v=titletextview;
-		y=(itemHeight-v.getMeasuredHeight()-albumtextview.getMeasuredHeight()-durationtextview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
-		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-		y+=v.getMeasuredHeight();
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
+		y=(itemHeight-measuredHeight-albumtextview.getMeasuredHeight()-durationtextview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
+		v.layout(x,y,x+measuredWidth,y+measuredHeight);
+		y+=measuredHeight;
 
 		v=albumtextview;
-		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-		y+=v.getMeasuredHeight();
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
+		v.layout(x,y,x+measuredWidth,y+measuredHeight);
+		y+=measuredHeight;
 
 		v=durationtextview;
-		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-		y+=v.getMeasuredHeight();
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
+		v.layout(x,y,x+measuredWidth,y+measuredHeight);
+		y+=measuredHeight;
 		
 		v=artisttextview;
-		v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
+		v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
 	}
 

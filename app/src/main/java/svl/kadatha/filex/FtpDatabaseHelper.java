@@ -78,7 +78,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        //sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
+        sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);

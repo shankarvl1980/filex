@@ -73,7 +73,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
             original_user_name=bundle.getString("user_name");
             if(original_server==null)
             {
-                server="ftp://";
             }
             else
             {
@@ -171,27 +170,18 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     }
                     else
                     {
-                        long row_number;
-                        if(update)
-                        {
-                            row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                            bundle.putString("original_server",original_server);
-                            bundle.putString("original_user_name",original_user_name);
-                            bundle.putString("server",server);
-                            bundle.putString("user_name",user_name);
-                        }
-                        else
-                        {
-                            row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous != 0,encoding,display);
-                            bundle.putString("server",server);
-                            bundle.putString("user_name",user_name);
-                        }
-
-                        if(row_number>0)
-                        {
-                            ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-                        }
-
+                        bundle.putString("original_server",original_server);
+                        bundle.putString("original_user_name",original_user_name);
+                        bundle.putString("server",server);
+                        bundle.putInt("port",port);
+                        bundle.putString("mode",mode);
+                        bundle.putString("user_name",user_name);
+                        bundle.putString("password",password);
+                        bundle.putBoolean("anonymous",anonymous != 0);
+                        bundle.putString("encoding",encoding);
+                        bundle.putString("display",display);
+                        bundle.putBoolean("update",update);
+                        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
                         dismissAllowingStateLoss();
                     }
 

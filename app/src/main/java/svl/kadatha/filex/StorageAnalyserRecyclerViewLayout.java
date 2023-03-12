@@ -24,6 +24,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
     private int itemWidth;
     private int itemHeight;
     private final boolean show_file_path;
+    private int measuredWidth,measuredHeight;
 
     StorageAnalyserRecyclerViewLayout(Context context,boolean show_file_path)
     {
@@ -167,12 +168,15 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         int top_for_icon=(itemHeight-imageview_dimension)/2;
 
         View v=overlay_fileimageview;
-        //v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.EIGHT_DP,top_for_icon+imageview_dimension-v.getMeasuredHeight()-Global.EIGHT_DP,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
-        v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        v.layout(x,top_for_icon,x+measuredWidth,top_for_icon+measuredHeight);
 
         v=fileimageview;
-        v.layout(x,top_for_icon,x+v.getMeasuredWidth(),top_for_icon+v.getMeasuredHeight());
-        x+=v.getMeasuredWidth()+Global.TEN_DP;
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        v.layout(x,top_for_icon,x+measuredWidth,top_for_icon+measuredHeight);
+        x+=measuredWidth+Global.TEN_DP;
 
 
         v=itemlinebackground;
@@ -182,31 +186,41 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         v.layout(x,y,itemWidth-Global.TEN_DP,y+itemHeight);
 
         v=file_select_indicator;
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
         int a=(itemWidth-imageview_dimension)/2;
-        a+=a/2-(v.getMeasuredWidth()/2)+imageview_dimension-Global.FOUR_DP;
-        int file_select_indicator_height=v.getMeasuredHeight();
+        a+=a/2-(measuredWidth/2)+imageview_dimension-Global.FOUR_DP;
+        int file_select_indicator_height=measuredHeight;
         int c=(itemHeight-file_select_indicator_height)/2;
-        v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
+        v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
 
 
         v=filenametextview;
-        y=(itemHeight-v.getMeasuredHeight()-filesubfilecounttextview.getMeasuredHeight())/2;
-        v.layout(x,y,itemWidth-Global.TEN_DP,y+v.getMeasuredHeight());
-        y+=v.getMeasuredHeight();
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        y=(itemHeight-measuredHeight-filesubfilecounttextview.getMeasuredHeight())/2;
+        v.layout(x,y,itemWidth-Global.TEN_DP,y+measuredHeight);
+        y+=measuredHeight;
 
 
         v=filesizetextview;
-        v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-        x+=v.getMeasuredWidth();
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        v.layout(x,y,x+measuredWidth,y+measuredHeight);
+        x+=measuredWidth;
 
         v=filesizepercentagetextview;
-        x=(itemWidth+imageview_dimension+Global.TEN_DP-v.getMeasuredWidth())/2;
-        v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        x=(itemWidth+imageview_dimension+Global.TEN_DP-measuredWidth)/2;
+        v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
 
         v=filesubfilecounttextview;
-        x=itemWidth-v.getMeasuredWidth()-Global.TEN_DP;
-        v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        x=itemWidth-measuredWidth-Global.TEN_DP;
+        v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
     }
 

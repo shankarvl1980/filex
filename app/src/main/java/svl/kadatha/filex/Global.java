@@ -51,6 +51,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -946,6 +947,17 @@ public class Global
 					}
 
 				}
+
+			Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
+			while (iterator1.hasNext())
+			{
+				if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+				{
+					iterator1.remove();
+				}
+			}
+
+			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
 
 				return false;
 			//} catch (IOException e) {

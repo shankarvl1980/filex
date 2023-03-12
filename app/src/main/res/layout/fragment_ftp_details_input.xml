@@ -64,6 +64,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
                 android:inputType="text"
                 android:maxLines="1"
+                android:hint="e.g. 192.168.1.102"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
 

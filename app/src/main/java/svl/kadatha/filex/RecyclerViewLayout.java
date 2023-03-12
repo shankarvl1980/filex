@@ -26,6 +26,7 @@ public class RecyclerViewLayout extends ViewGroup
 	private final boolean show_file_path;
 	private int select_indicator_offset_linear;
 	private final boolean grid_layout;
+	private int measuredWidth,measuredHeight;
 
 	RecyclerViewLayout(Context context,boolean show_file_path,boolean grid_layout)
 	{
@@ -242,27 +243,35 @@ public class RecyclerViewLayout extends ViewGroup
 			x+=(grid_width-imageview_dimension)/2;
 
 			View v=file_select_indicator;
-
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
 			int a=grid_width-((grid_width-imageview_dimension)/2)-Global.SELECTOR_ICON_DIMENSION;
-			v.layout(a,y,a+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			v.layout(a,y,a+measuredWidth,y+measuredHeight);
 
 			v=overlay_fileimageview;
-			//v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.FOUR_DP,y+imageview_dimension-v.getMeasuredHeight()-Global.FOUR_DP,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
 			v=fileimageview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			y+=v.getMeasuredHeight();
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			y+=measuredHeight;
 
 
 			x=Global.FOUR_DP;
 			v=filenametextview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			y+=v.getMeasuredHeight();
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			y+=measuredHeight;
 
 
 			v=filesubfilecounttextview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
 
 		}
 		else
@@ -273,38 +282,51 @@ public class RecyclerViewLayout extends ViewGroup
 			int d=(itemHeight-imageview_dimension)/2;
 
 			View v=overlay_fileimageview;
-			//v.layout(x+imageview_dimension-v.getMeasuredWidth()-Global.FOUR_DP,d+imageview_dimension-v.getMeasuredHeight()-Global.FOUR_DP,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
-			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,d,x+measuredWidth,d+measuredHeight);
 
 			v=fileimageview;
-			v.layout(x,d,x+v.getMeasuredWidth(),d+v.getMeasuredHeight());
-			x+=v.getMeasuredWidth()+Global.TEN_DP;
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,d,x+measuredWidth,d+measuredHeight);
+			x+=measuredWidth+Global.TEN_DP;
 			margin_offset_icon=x;
 
 			v=file_select_indicator;
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
 			int a=itemWidth-select_indicator_offset_linear;
-			int file_select_indicator_height=v.getMeasuredHeight();
+			int file_select_indicator_height=measuredHeight;
 			int c=(itemHeight-file_select_indicator_height)/2;
-			v.layout(a,c,a+v.getMeasuredWidth(),c+file_select_indicator_height);
+			v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
 
 			v=filenametextview;
-			y=(itemHeight-v.getMeasuredHeight()-filesubfilecounttextview.getMeasuredHeight()-filepathtextview.getMeasuredHeight())/2;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			y+=v.getMeasuredHeight();
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			y=(itemHeight-measuredHeight-filesubfilecounttextview.getMeasuredHeight()-filepathtextview.getMeasuredHeight())/2;
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			y+=measuredHeight;
 
 
 			v=filesubfilecounttextview;
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			x+=v.getMeasuredWidth();
-			max_height_second_line=v.getMeasuredHeight();
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			x+=measuredWidth;
+			max_height_second_line=measuredHeight;
 
 			v=filemoddatetextview;
-			x=itemWidth-v.getMeasuredWidth()-Global.TEN_DP-Global.FOUR_DP;//Math.max(x,itemWidth/2);
-			v.layout(x,y,x+v.getMeasuredWidth(),y+v.getMeasuredHeight());
-			max_height_second_line=Math.max(max_height_second_line,v.getMeasuredHeight());
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			x=itemWidth-measuredWidth-Global.TEN_DP-Global.FOUR_DP;//Math.max(x,itemWidth/2);
+			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			max_height_second_line=Math.max(max_height_second_line,measuredHeight);
 
 			v=filepathtextview;
-			v.layout(margin_offset_icon,y+max_height_second_line,margin_offset_icon+v.getMeasuredWidth(),y+max_height_second_line+v.getMeasuredHeight());
+			measuredHeight=v.getMeasuredHeight();
+			measuredWidth=v.getMeasuredWidth();
+			v.layout(margin_offset_icon,y+max_height_second_line,margin_offset_icon+measuredWidth,y+max_height_second_line+measuredHeight);
 		}
 	}
 
