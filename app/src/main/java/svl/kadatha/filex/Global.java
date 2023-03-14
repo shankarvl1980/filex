@@ -79,6 +79,8 @@ public class Global
 	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
 	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
 
+	static HashMap<String, FilePOJOViewModel.FileStoragePOJO> HASHMAP_INTERNAL_DIRECTORY_SIZE=new HashMap<>();
+	static HashMap<String, FilePOJOViewModel.FileStoragePOJO> HASHMAP_EXTERNAL_DIRECTORY_SIZE=new HashMap<>();
 	static final HashMap<String,List<AppManagerListFragment.AppPOJO>> APP_POJO_HASHMAP=new HashMap<>();
 
 	static final HashMap<String,List<AudioPOJO>> AUDIO_POJO_HASHMAP=new HashMap<>();
@@ -901,25 +903,13 @@ public class Global
 	bfOptions.inTempStorage=new byte[32 * 1024];
 
 	File file=new File(path);
-	FileInputStream fs=null;
-	try {
-		fs = new FileInputStream(file);
-	} catch (FileNotFoundException e) {
-		return null;
-	}
 
-	try {
-		if(fs!=null) bitmap=BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
+	try(FileInputStream fs= new FileInputStream(file))
+	{
+		bitmap=BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
+
 	} catch (IOException e) {
 		return null;
-	} finally{
-		if(fs!=null) {
-			try {
-				fs.close();
-			} catch (IOException e) {
-				return null;
-			}
-		}
 	}
 
 	return bitmap;

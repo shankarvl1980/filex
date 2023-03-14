@@ -19,6 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,10 +53,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public static final String ACTIVITY_NAME="STORAGE_ANALYSER_ACTIVITY";
     private int countBackPressed=0;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
+        ViewModel viewModel=new ViewModelProvider(this).get(StorageAnalyserActivityViewModel.class); //required to clear hashmap internal and external storage details on final finish of activity
         mediaMountReceiver=new MediaMountReceiver();
         mediaMountReceiver.addMediaMountListener(this);
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);

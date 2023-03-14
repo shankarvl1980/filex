@@ -360,11 +360,10 @@ public class UsbDocumentProvider extends DocumentsProvider {
             throws FileNotFoundException {
         Log.d(TAG, "renameDocument() " + documentId);
 
-        try {
-            UsbFile file = getFileForDocId(documentId);
+        try(UsbFile file = getFileForDocId(documentId))
+        {
             file.setName(getFileName(getMimeType(file), displayName));
             mFileCache.remove(documentId);
-
             return getDocIdForFile(file);
 
         } catch (IOException e) {
@@ -376,8 +375,8 @@ public class UsbDocumentProvider extends DocumentsProvider {
     public void deleteDocument(String documentId) throws FileNotFoundException {
         Log.d(TAG, "deleteDocument() " + documentId);
 
-        try {
-            UsbFile file = getFileForDocId(documentId);
+        try(UsbFile file = getFileForDocId(documentId))
+        {
             file.delete();
             mFileCache.remove(documentId);
         } catch (IOException e) {

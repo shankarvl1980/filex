@@ -762,31 +762,26 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 								}
 							}
 
-							ZipFile zipfile=null;
-							try
+
+							try (ZipFile zipfile=new ZipFile(MainActivity.ZIP_FILE))
 							{
-								zipfile=new ZipFile(MainActivity.ZIP_FILE);
+								ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
+								if(zip_entry==null)
+								{
+									Global.print(context,getString(R.string.can_not_open_file));
+									return;
+								}
+
+								if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
+								{
+									Global.print(context,getString(R.string.file_is_large_please_extract_to_view));
+									return;
+								}
+
+								progress_bar.setVisibility(View.VISIBLE);
+								extractZipFileViewModel.extractZip(filePOJO, zipfile,zip_entry);
 							}
 							catch(IOException e){}
-							ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
-							if(zip_entry==null)
-							{
-								Global.print(context,getString(R.string.can_not_open_file));
-								return;
-							}
-
-
-							if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
-							{
-								Global.print(context,getString(R.string.file_is_large_please_extract_to_view));
-								return;
-							}
-
-							ZipFile finalZipfile = zipfile;
-							progress_bar.setVisibility(View.VISIBLE);
-
-							extractZipFileViewModel.extractZip(filePOJO,finalZipfile,zip_entry);
-
 						}
 						else
 						{

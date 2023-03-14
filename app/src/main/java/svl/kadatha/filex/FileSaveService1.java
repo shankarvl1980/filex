@@ -222,8 +222,10 @@ FileSaveService1 extends Service
 			
 			if(isWritable)
 			{
-				FileOutputStream outputStream=new FileOutputStream(file,true);
-				source_fc=outputStream.getChannel();
+				try(FileOutputStream outputStream=new FileOutputStream(file,true))
+				{
+					source_fc=outputStream.getChannel();
+				}
 			}
 			else
 			{
@@ -271,13 +273,13 @@ FileSaveService1 extends Service
 			try
 			{
 
-				temp_fc.close();
-				r_fc.close();
+				if(temp_fc!=null)temp_fc.close();
+				if(r_fc!=null)r_fc.close();
 				if(fileOutputStream!=null)
 				{
 					fileOutputStream.close();
 				}
-				source_fc.close();
+				if(source_fc!=null)source_fc.close();
 			}
 			catch(IOException | NullPointerException e)
 			{
@@ -295,12 +297,9 @@ FileSaveService1 extends Service
 		BufferedWriter bufferedWriter=null;
 		FileChannel fc=null;
 
-		try
+		try(FileInputStream fileInputStream=new FileInputStream(file))
 		{
-			FileInputStream fileInputStream=new FileInputStream(file);
 			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-
-
 			bufferedReader.skip(current_page_end_point);
 			File temp_file_2=new File(temporary_file_for_save,file.getName()+"_2");
 			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true), StandardCharsets.UTF_8));
@@ -327,8 +326,6 @@ FileSaveService1 extends Service
 
 			fc.truncate(prev_page_end_point);
 
-			fileInputStream=new FileInputStream(file);
-			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
 
 			File temp_file_1=new File(temporary_file_for_save,file.getName()+"_1");
 			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true), StandardCharsets.UTF_8));
@@ -348,15 +345,15 @@ FileSaveService1 extends Service
 			fc.truncate(0L);
 
 			current_page_end_point=temp_file_1.length();
-			FileChannel first_part_fc=new FileInputStream(temp_file_1).getChannel();
-			fc.transferFrom(first_part_fc,0,current_page_end_point);
+			try(FileChannel first_part_fc=new FileInputStream(temp_file_1).getChannel())
+			{
+				fc.transferFrom(first_part_fc,0,current_page_end_point);
+			}
 
-
-			FileChannel second_part_fc=new FileInputStream(temp_file_2).getChannel();
-			fc.transferFrom(second_part_fc,current_page_end_point,temp_file_2.length());
-
-			first_part_fc.close();
-			second_part_fc.close();
+			try(FileChannel second_part_fc=new FileInputStream(temp_file_2).getChannel())
+			{
+				fc.transferFrom(second_part_fc,current_page_end_point,temp_file_2.length());
+			}
 
 			page_pointer_hashmap.put(current_page,current_page_end_point);
 			temp_file_1.delete();
@@ -370,10 +367,9 @@ FileSaveService1 extends Service
 		{
 			try
 			{
-
-				bufferedWriter.close();
-				bufferedReader.close();
-				fc.close();
+				if(bufferedWriter!=null)bufferedWriter.close();
+				if(bufferedReader!=null)bufferedReader.close();
+				if(fc!=null)fc.close();
 				
 				if(fileOutputStream!=null)
 				{

@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
@@ -70,11 +69,10 @@ public class FilePOJOUtil {
                 }
             }
             if(archive_view) {
-                try {
-                    ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE);
+                try(ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE))
+                {
                     ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                     if(zipEntry!=null) sizeLong = zipEntry.getSize();
-
                 }
                 catch (IOException e) {
 
@@ -154,17 +152,16 @@ public class FilePOJOUtil {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
-            try
+            if(archive_view)
             {
-                if(archive_view)
+                try(ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE))
                 {
-                    ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE);
                     ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                     if(zipEntry!=null) sizeLong = zipEntry.getSize();
                 }
-
+                catch (IOException e){}
             }
-            catch (IOException e){}
+
             si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
@@ -721,7 +718,6 @@ public class FilePOJOUtil {
             {
                 deleted_filePOJO=filePOJO;
                 iterator.remove();
-        //        Log.d(Global.TAG,"still available, you see - "+deleted_filePOJO.getPath());
                 return deleted_filePOJO;
             }
         }
@@ -965,6 +961,25 @@ public class FilePOJOUtil {
             }
         }
 
+        Iterator<Map.Entry<String, FilePOJOViewModel.FileStoragePOJO>> filestorageiterataor=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE.entrySet().iterator();
+        while (filestorageiterataor.hasNext())
+        {
+            Map.Entry<String, FilePOJOViewModel.FileStoragePOJO> entry=filestorageiterataor.next();
+            if(Global.IS_CHILD_FILE(entry.getKey(),file_path))
+            {
+                iterator.remove();
+            }
+        }
+
+        filestorageiterataor=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE.entrySet().iterator();
+        while (filestorageiterataor.hasNext())
+        {
+            Map.Entry<String, FilePOJOViewModel.FileStoragePOJO> entry=filestorageiterataor.next();
+            if(Global.IS_CHILD_FILE(entry.getKey(),file_path))
+            {
+                iterator.remove();
+            }
+        }
     }
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)

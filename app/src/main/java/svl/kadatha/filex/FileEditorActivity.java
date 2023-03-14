@@ -621,11 +621,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private boolean openFile(long pointer)
 	{
-		try
+		try(ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r"))
 		{
-			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
-
 			progress_bar.setVisibility(View.VISIBLE);
 			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(new FileInputStream(fd),pointer);
@@ -636,7 +634,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			Global.print(context,getString(R.string.file_not_found));
 			return false;
 		}
-		catch (IllegalArgumentException e)
+		catch (IllegalArgumentException | IOException e)
 		{
 			Global.print(context,getString(R.string.file_could_not_be_opened));
 			return false;

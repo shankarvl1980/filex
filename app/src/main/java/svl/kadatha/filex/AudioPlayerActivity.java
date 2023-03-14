@@ -412,8 +412,8 @@ public class AudioPlayerActivity extends BaseActivity
 		Bitmap albumart=null;
 		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
 		{
-			MediaMetadataRetriever mmr=new MediaMetadataRetriever();
-			try
+
+			try(MediaMetadataRetriever mmr=new MediaMetadataRetriever())
 			{
 				mmr.setDataSource(data);
 				byte [] art_array=mmr.getEmbeddedPicture();
@@ -434,7 +434,7 @@ public class AudioPlayerActivity extends BaseActivity
 					o2.inSampleSize = scale;
 					albumart = BitmapFactory.decodeByteArray(art_array,0, album_art_length,o2);
 				}
-
+				mmr.release();
 			}
 			catch(Exception e)
 			{
@@ -442,10 +442,6 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 			finally
 			{
-				try {
-					mmr.release();
-				} catch (IOException e) {
-				}
 				return albumart;
 			}
 		}

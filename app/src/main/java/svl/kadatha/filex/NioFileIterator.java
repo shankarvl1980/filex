@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -18,11 +19,12 @@ public class NioFileIterator extends SimpleFileVisitor<Path>
 {
     private final int[] count;
     private final long[] size;
-
-    public NioFileIterator(String file_path, int[]total_no_of_files, long[]total_size_of_files) throws IOException
+    private HashMap<String, FilePOJOViewModel.FileStoragePOJO>storagePOJOHashMap;
+    public NioFileIterator(String file_path, int[]total_no_of_files, long[]total_size_of_files, HashMap<String, FilePOJOViewModel.FileStoragePOJO> storagePOJOHashMap) throws IOException
     {
         count=total_no_of_files;
         size=total_size_of_files;
+        this.storagePOJOHashMap=storagePOJOHashMap;
         Files.walkFileTree(Paths.get(file_path), this);
     }
 
@@ -53,6 +55,13 @@ public class NioFileIterator extends SimpleFileVisitor<Path>
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
+
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        storagePOJOHashMap.put(dir.toAbsolutePath().toString(),new FilePOJOViewModel.FileStoragePOJO(count[0],size[0]));
         return FileVisitResult.CONTINUE;
     }
 

@@ -54,7 +54,6 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     public TextView folder_selected_textview;
     private FileModifyObserver fileModifyObserver;
     public boolean local_activity_delete,modification_observed;
-    //public boolean filled_filePOJOs;
     private Uri tree_uri;
     private String tree_uri_path="";
     public int file_list_size;

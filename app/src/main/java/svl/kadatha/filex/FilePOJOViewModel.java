@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,14 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     }
                     final long final_storage_space = storage_space;
-                    fill_file_size(filePOJOS,final_storage_space);
+                    if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
+                    {
+                        fill_file_size(filePOJOS,final_storage_space, Global.HASHMAP_INTERNAL_DIRECTORY_SIZE,true);
+                    }
+                    else {
+                        fill_file_size(filePOJOS,final_storage_space, Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE,false);
+                    }
+
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
@@ -135,14 +143,21 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                 }
                 final long final_storage_space = storage_space;
-                fill_file_size(filePOJOS,final_storage_space);
+                if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
+                {
+                    fill_file_size(filePOJOS,final_storage_space, Global.HASHMAP_INTERNAL_DIRECTORY_SIZE,true);
+                }
+                else {
+                    fill_file_size(filePOJOS,final_storage_space, Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE,false);
+                }
+
                 //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    private void get_size(File f, int[]total_no_of_files,long[]total_size_of_files,boolean include_folder)
+    private void get_size_non_nio(File f, int[]total_no_of_files, long[]total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap)
     {
         int no_of_files=0;
         long size_of_files=0L;
@@ -154,12 +169,13 @@ public class FilePOJOViewModel extends AndroidViewModel {
             {
                 for(File file:files_array)
                 {
-                    get_size(file,total_no_of_files,total_size_of_files,include_folder);
+                    get_size_non_nio(file,total_no_of_files,total_size_of_files,include_folder,storage_hashmap);
                 }
                 if(include_folder)
                 {
                     no_of_files++;
                 }
+                storage_hashmap.put(f.getAbsolutePath(),new FileStoragePOJO(total_no_of_files[0],total_size_of_files[0]));
             }
         }
         else
@@ -173,32 +189,43 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    private boolean fill_file_size(List<FilePOJO> filePOJOS,long volume_storage_size)
+    private void fill_file_size(List<FilePOJO> filePOJOS, long volume_storage_size, HashMap<String,FileStoragePOJO> storagePOJOHashMap, boolean isInternalStorage)
     {
-        if(filePOJOS==null) return true;
+        if(filePOJOS==null) return;
         int[] total_no_of_files=new int[1];long[] total_size_of_files=new long[1];
         int size=filePOJOS.size();
         for(int i=0;i<size;++i)
         {
-            if(isCancelled()) return true;
+            if(isCancelled()) return;
             FilePOJO filePOJO=filePOJOS.get(i);
             total_no_of_files[0]=0; total_size_of_files[0]=0;
             if(filePOJO.getTotalSizePercentage()!=null) continue;
+            if(isInternalStorage)
+            {
+                FileStoragePOJO fileStoragePOJO=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE.get(filePOJO.getPath());
+                if(fileStoragePOJO!=null)
+                {
+                    total_no_of_files[0]=fileStoragePOJO.number_of_files;
+                    total_size_of_files[0]=fileStoragePOJO.total_size;
+                }
+                else {
+                    actual_fill_method(filePOJO,total_no_of_files,total_size_of_files,storagePOJOHashMap);
+                }
+            }
+            else {
+                FileStoragePOJO fileStoragePOJO=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE.get(filePOJO.getPath());
+                if(fileStoragePOJO!=null)
+                {
+                    total_no_of_files[0]=fileStoragePOJO.number_of_files;
+                    total_size_of_files[0]=fileStoragePOJO.total_size;
+                }
+                else {
+                    actual_fill_method(filePOJO,total_no_of_files,total_size_of_files,storagePOJOHashMap);
+                }
+            }
+
             if(filePOJO.getIsDirectory())
             {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-                {
-                    try {
-                        new NioFileIterator(filePOJO.getPath(),total_no_of_files,total_size_of_files);
-                    } catch (IOException e) {
-
-                    }
-                }
-                else
-                {
-                    get_size(new File(filePOJO.getPath()),total_no_of_files,total_size_of_files,true);
-                }
-
                 filePOJO.setTotalFiles(total_no_of_files[0]);
                 filePOJO.setTotalSizeLong(total_size_of_files[0]);
                 filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files[0]));
@@ -213,9 +240,28 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
             }
         }
-        return true;
     }
 
+    private void actual_fill_method(FilePOJO filePOJO,int[]total_no_of_files,long[]total_size_of_files,HashMap<String,FileStoragePOJO> storagePOJOHashMap)
+    {
+        if(filePOJO.getIsDirectory())
+        {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            {
+                try {
+                    new NioFileIterator(filePOJO.getPath(),total_no_of_files,total_size_of_files,storagePOJOHashMap);
+                } catch (IOException e) {
+
+                }
+            }
+            else
+            {
+                get_size_non_nio(new File(filePOJO.getPath()),total_no_of_files,total_size_of_files,true,storagePOJOHashMap);
+            }
+
+        }
+
+    }
 
     public synchronized void getLibraryList(String media_category)
     {
@@ -755,5 +801,16 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     }
 
+    static class FileStoragePOJO
+    {
+        int number_of_files;
+        long total_size;
+
+        FileStoragePOJO(int number_of_files,long total_size)
+        {
+            this.number_of_files=number_of_files;
+            this.total_size=total_size;
+        }
+    }
 
 }
