@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -511,6 +513,24 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		on_intent(intent, null);
 	}
 
+	private void lockScreen(boolean lock)
+	{
+		if(lock)
+		{
+			if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
+			{
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			}
+			else
+			{
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		}
+		else {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		}
+
+	}
 	@Override
 	protected void onStart()
 	{
@@ -621,8 +641,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private boolean openFile(long pointer)
 	{
-		try(ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r"))
+		try
 		{
+			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
 			progress_bar.setVisibility(View.VISIBLE);
 			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -884,7 +905,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		edit_button.setSelected(viewModel.edit_mode);
 		setAlfaFileEditMenuItem();
-		filetext_container_edittext.setLongClickable(viewModel.edit_mode);
+		lockScreen(viewModel.edit_mode);
 		filetext_container_edittext.setOnTouchListener(new View.OnTouchListener()
 		{
 			public boolean onTouch(View v, MotionEvent me)

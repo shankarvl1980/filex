@@ -29,6 +29,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> ftpConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> replaceFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceAndConnectFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> changeFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> checkDuplicateFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJOList;
@@ -98,9 +99,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     {
                         ftpPOJOList.remove(ftpPOJO);
                     }
-
                 }
-
                 deleteAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -117,47 +116,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 MainActivity.FTP_CLIENT=new FTPClient();
                 loggedInStatus=false;
                 try {
-                    MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
-                    if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
-                    {
-
-                        loggedInStatus=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
-                        if(loggedInStatus)
-                        {
-                            //if(ftpPOJO.mode.equals("passive"))
-                            {
-                                MainActivity.FTP_CLIENT.enterLocalPassiveMode();
-                            }
-                            MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
-
-                            path=MainActivity.FTP_CLIENT.printWorkingDirectory();
-
-                            Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
-                            while(iterator.hasNext())
-                            {
-                                if(iterator.next().getFileObjectType()==FileObjectType.FTP_TYPE)
-                                {
-                                    iterator.remove();
-                                }
-                            }
-                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,path));
-
-                            Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
-                            while (iterator1.hasNext())
-                            {
-                                if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
-                                {
-                                    iterator1.remove();
-                                }
-                            }
-
-                            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
-                        }
-                        else
-                        {
-                            Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
-                        }
-                    }
+                    connect(ftpPOJO);
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
@@ -170,6 +129,78 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
+    private void connect(FtpDetailsDialog.FtpPOJO ftpPOJO) throws IOException {
+        MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
+        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
+        {
+
+            loggedInStatus=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
+            if(loggedInStatus)
+            {
+                //if(ftpPOJO.mode.equals("passive"))
+                {
+                    MainActivity.FTP_CLIENT.enterLocalPassiveMode();
+                }
+                MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
+
+                path=MainActivity.FTP_CLIENT.printWorkingDirectory();
+
+                Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+                while(iterator.hasNext())
+                {
+                    if(iterator.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+                    {
+                        iterator.remove();
+                    }
+                }
+                Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,path));
+
+                Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
+                while (iterator1.hasNext())
+                {
+                    if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+                    {
+                        iterator1.remove();
+                    }
+                }
+
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
+            }
+            else
+            {
+                Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
+            }
+        }
+    }
+
+    private void replaceFtpPojo(Bundle bundle)
+    {
+        long row_number;
+        String original_server=bundle.getString("original_server");
+        String original_user_name=bundle.getString("original_user_name");
+        String server=bundle.getString("server");
+        int port=bundle.getInt("port");
+        String mode=bundle.getString("mode");
+        String user_name=bundle.getString("user_name");
+        String password=bundle.getString("password");
+        boolean anonymous=bundle.getBoolean("anonymous");
+        String encoding=bundle.getString("encoding");
+        String display=bundle.getString("display");
+        boolean update=bundle.getBoolean("update");
+        if(original_server==null)original_server="";
+        if(original_user_name==null)original_user_name="";
+        if(update)
+        {
+            row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous,encoding,display);
+        }
+        else
+        {
+            row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous,encoding,display);
+        }
+
+        ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+    }
+
     public synchronized void replaceFtpPojoList(Bundle bundle)
     {
         if(replaceFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
@@ -178,31 +209,35 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                long row_number;
-                String original_server=bundle.getString("original_server");
-                String original_user_name=bundle.getString("original_user_name");
-                String server=bundle.getString("server");
-                int port=bundle.getInt("port");
-                String mode=bundle.getString("mode");
-                String user_name=bundle.getString("user_name");
-                String password=bundle.getString("password");
-                boolean anonymous=bundle.getBoolean("anonymous");
-                String encoding=bundle.getString("encoding");
-                String display=bundle.getString("display");
-                boolean update=bundle.getBoolean("update");
-                if(original_server==null)original_server="";
-                if(original_user_name==null)original_user_name="";
-                if(update)
-                {
-                    row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous,encoding,display);
-                }
-                else
-                {
-                    row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous,encoding,display);
-                }
-
-                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+                replaceFtpPojo(bundle);
                 replaceFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void replaceAndConnectFtpPojoList(Bundle bundle)
+    {
+        if(replaceAndConnectFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future4=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                replaceFtpPojo(bundle);
+                String server=bundle.getString("server");
+                String user_name=bundle.getString("user_name");
+                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
+                MainActivity.FTP_CLIENT=new FTPClient();
+                loggedInStatus=false;
+                try {
+                    connect(ftpPOJO);
+                }
+                catch (IOException e) {
+                    Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
+                }
+                finally {
+                    replaceAndConnectFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                }
             }
         });
     }

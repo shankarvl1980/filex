@@ -378,7 +378,7 @@
 
 	<string-array name="network_types">
 		<item>@string/ftp_server</item>
-		<item>@string/ftp_client</item>
+		<!--item>@string/ftp_client</item-->
 	</string-array>
 
 
@@ -443,6 +443,8 @@
 	<string name="enable_specified_notification_channel_for_better_control">Enable specified notification channel for better control</string>
 	<string name="server_service_started">Server service started</string>
 	<string name="server_address_should_not_contain_spaces">Server address should not contain spaces</string>
+    <string name="connect">Connect</string>
+    <string name="nothing_found_here">Nothing found here</string>
 
 
 </resources>

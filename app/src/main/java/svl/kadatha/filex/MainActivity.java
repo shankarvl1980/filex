@@ -44,6 +44,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -154,6 +155,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
 	private Group library_layout_group,network_layout_group;
 	private Handler h;
+	private NestedScrollView nestedScrollView;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -211,6 +213,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		drawerLayout=findViewById(R.id.drawer_layout);
 		drawer=findViewById(R.id.drawer_navigation_layout);
 		keyBoardUtil=new KeyBoardUtil(drawerLayout);
+
+		nestedScrollView=findViewById(R.id.drawerScrollView);
 		imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		search_toolbar=findViewById(R.id.search_toolbar);
@@ -604,6 +608,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 					library_layout_group.setVisibility(View.VISIBLE);
+					nestedScrollView.post(new Runnable() {
+						@Override
+						public void run() {
+							nestedScrollView.smoothScrollTo(0,library_expand_indicator.getTop());
+						}
+					});
 					viewModel.library_or_search_shown=true;
 				}
 				else
@@ -792,6 +802,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				{
 					network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
 					network_layout_group.setVisibility(View.VISIBLE);
+					nestedScrollView.post(new Runnable() {
+						@Override
+						public void run() {
+							nestedScrollView.smoothScrollTo(0,networkRecyclerView.getBottom());
+						}
+					});
 					viewModel.network_shown=true;
 				}
 				else
@@ -1159,6 +1175,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(receivedAction!=null && receivedAction.equals(Intent.ACTION_VIEW) &&  uri !=null)
 		{
 			String path=RealPathUtil.getRealPath(context,uri);
+			if(path==null)
+			{
+				Global.print(context,getString(R.string.could_not_open_zipe_file));
+				return;
+			}
 			ZIP_FILE=new File(path);
 			ZipFile zipfile;
 			try
@@ -1337,7 +1358,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(viewModel.library_or_search_shown)
 		{
 			library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
-			libraryRecyclerView.setVisibility(View.VISIBLE);
+			library_layout_group.setVisibility(View.VISIBLE);
+		}
+
+		if(viewModel.network_shown)
+		{
+			network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
+			network_layout_group.setVisibility(View.VISIBLE);
+
 		}
 
 		clear_cache=savedInstanceState.getBoolean("clear_cache");

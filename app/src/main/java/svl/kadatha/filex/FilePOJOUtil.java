@@ -618,7 +618,7 @@ public class FilePOJOUtil {
         final int size=deleted_files_path_list.size();
         List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
-        if(filePOJOs==null)
+        if(filePOJOs==null || filePOJOs_filtered==null)
         {
             return;
         }
@@ -647,7 +647,7 @@ public class FilePOJOUtil {
         UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(source_folder,fileObjectType);
         List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
-        if(filePOJOs==null)
+        if(filePOJOs==null || filePOJOs_filtered==null)
         {
             UsbFile currentUsbFile=null;
             if(fileObjectType==FileObjectType.USB_TYPE)
@@ -850,7 +850,7 @@ public class FilePOJOUtil {
         FilePOJO filePOJO = null;
         List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
-        if(filePOJOs==null)
+        if(filePOJOs==null || filePOJOs_filtered==null)
         {
             return null;
         }
@@ -904,7 +904,7 @@ public class FilePOJOUtil {
         String parent_path_to_dest_folder=new File(dest_folder).getParent();
         List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_path_to_dest_folder);
         List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+parent_path_to_dest_folder);
-        if(filePOJOs==null)
+        if(filePOJOs==null ||filePOJOs_filtered==null)
         {
             return;
         }
@@ -961,25 +961,9 @@ public class FilePOJOUtil {
             }
         }
 
-        Iterator<Map.Entry<String, FilePOJOViewModel.FileStoragePOJO>> filestorageiterataor=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE.entrySet().iterator();
-        while (filestorageiterataor.hasNext())
-        {
-            Map.Entry<String, FilePOJOViewModel.FileStoragePOJO> entry=filestorageiterataor.next();
-            if(Global.IS_CHILD_FILE(entry.getKey(),file_path))
-            {
-                iterator.remove();
-            }
-        }
+        Global.HASHMAP_INTERNAL_DIRECTORY_SIZE.remove(file_path);
+        Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE.remove(file_path);
 
-        filestorageiterataor=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE.entrySet().iterator();
-        while (filestorageiterataor.hasNext())
-        {
-            Map.Entry<String, FilePOJOViewModel.FileStoragePOJO> entry=filestorageiterataor.next();
-            if(Global.IS_CHILD_FILE(entry.getKey(),file_path))
-            {
-                iterator.remove();
-            }
-        }
     }
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)

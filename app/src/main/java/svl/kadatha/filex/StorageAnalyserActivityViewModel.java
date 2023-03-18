@@ -12,6 +12,7 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
 
     public StorageAnalyserActivityViewModel(@NonNull Application application) {
         super(application);
+
     }
 
     @Override

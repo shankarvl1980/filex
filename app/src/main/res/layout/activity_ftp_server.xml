@@ -350,15 +350,6 @@
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
 
-            <Button
-                android:id="@+id/ftp_server_start_stop_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_chroot_label"
-                android:visibility="gone"
-                />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

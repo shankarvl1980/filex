@@ -345,7 +345,6 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			boolean success;
 			try (OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(target_file_path)) {
 
-				Log.d(Global.TAG,"being copied");
 				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
 				//bufferedCopy(inputStream, outputStream, false, bytes_read);
 				if (cut) {
@@ -967,11 +966,8 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			Uri uri = getDocumentUri(target_file_path,tree_uri, tree_uri_path);
 			if (uri != null)
 			{
-				try(ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri,"rw"))
-				{
-					fileOutStream=new FileOutputStream(pfd.getFileDescriptor());
-				}
-
+				ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri,"rw");
+				fileOutStream=new FileOutputStream(pfd.getFileDescriptor());
 			}
 
 			return fileOutStream;

@@ -110,6 +110,13 @@ public class FtpDetailsInputDialog extends DialogFragment {
         anonymous_check_box=v.findViewById(R.id.ftp_details_anonymous_check_box);
         //encoding_tv=v.findViewById(R.id.ftp_details_en);
         display_tv=v.findViewById(R.id.ftp_details_display);
+        Button connect_button = v.findViewById(R.id.ftp_details_connect);
+        connect_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onOkButtonClick(true);
+            }
+        });
 
         server_tv.setText(server);
         port_tv.setText("21");
@@ -127,7 +134,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
         anonymous_check_box.setChecked(anonymous != 0);
         display_tv.setText(display);
 
-
         ViewGroup buttons_layout = v.findViewById(R.id.ftp_details_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button ok_button = buttons_layout.findViewById(R.id.first_button);
@@ -136,58 +142,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
-                server=server_tv.getText().toString().trim();
-                user_name=user_name_tv.getText().toString().trim();
-                if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
-                {
-                    Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
-                    return;
-                }
-
-
-                if(!server.matches("\\S+"))
-                {
-                    Global.print(context,getString(R.string.server_address_should_not_contain_spaces));
-                    return;
-                }
-
-                if(!permissionsUtil.isNetworkConnected())
-                {
-                    Global.print(context,getString(R.string.not_connected_to_network));
-                }
-                else
-                {
-                    port=Integer.parseInt(port_tv.getText().toString().trim());
-                    mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
-                    password=password_tv.getText().toString().trim();
-                    anonymous=anonymous_check_box.isChecked() ? 1 : 0;
-                    display=display_tv.getText().toString().trim();
-
-                    if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
-                    {
-                        YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_settings_already_exists_want_to_replace_it,new Bundle());
-                        ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
-                    }
-                    else
-                    {
-                        bundle.putString("original_server",original_server);
-                        bundle.putString("original_user_name",original_user_name);
-                        bundle.putString("server",server);
-                        bundle.putInt("port",port);
-                        bundle.putString("mode",mode);
-                        bundle.putString("user_name",user_name);
-                        bundle.putString("password",password);
-                        bundle.putBoolean("anonymous",anonymous != 0);
-                        bundle.putString("encoding",encoding);
-                        bundle.putString("display",display);
-                        bundle.putBoolean("update",update);
-                        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-                        dismissAllowingStateLoss();
-                    }
-
-                }
-
-
+                onOkButtonClick(false);
             }
         });
 
@@ -207,13 +162,67 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 if(requestKey.equals(FTP_REPLACE_REQUEST_CODE))
                 {
                     replace=true;
-                    ok_button.callOnClick();
+                    boolean whetherToConnect=result.getBoolean("whetherToConnect");
+                    onOkButtonClick(whetherToConnect);
                 }
             }
         });
         return v;
     }
 
+    private void onOkButtonClick(boolean whetherToConnect)
+    {
+        server=server_tv.getText().toString().trim();
+        user_name=user_name_tv.getText().toString().trim();
+        if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
+        {
+            Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
+            return;
+        }
+
+
+        if(!server.matches("\\S+"))
+        {
+            Global.print(context,getString(R.string.server_address_should_not_contain_spaces));
+            return;
+        }
+
+        if(!permissionsUtil.isNetworkConnected())
+        {
+            Global.print(context,getString(R.string.not_connected_to_network));
+        }
+        else
+        {
+            port=Integer.parseInt(port_tv.getText().toString().trim());
+            mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
+            password=password_tv.getText().toString().trim();
+            anonymous=anonymous_check_box.isChecked() ? 1 : 0;
+            display=display_tv.getText().toString().trim();
+            bundle.putBoolean("whetherToConnect",whetherToConnect);
+            if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
+            {
+                YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_settings_already_exists_want_to_replace_it,bundle);
+                ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
+            }
+            else
+            {
+                bundle.putString("original_server",original_server);
+                bundle.putString("original_user_name",original_user_name);
+                bundle.putString("server",server);
+                bundle.putInt("port",port);
+                bundle.putString("mode",mode);
+                bundle.putString("user_name",user_name);
+                bundle.putString("password",password);
+                bundle.putBoolean("anonymous",anonymous != 0);
+                bundle.putString("encoding",encoding);
+                bundle.putString("display",display);
+                bundle.putBoolean("update",update);
+
+                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+                dismissAllowingStateLoss();
+            }
+        }
+    }
     private boolean whetherFtpPOJOAlreadyExists(String server,String user_name)
     {
         FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);

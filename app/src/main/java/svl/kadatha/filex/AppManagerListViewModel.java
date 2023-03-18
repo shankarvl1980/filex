@@ -9,8 +9,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

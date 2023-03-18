@@ -52,6 +52,13 @@ public class RealPathUtil {
 
                 // TODO handle non-primary volumes
             }
+            //UsbProvider
+            if (isUsbDocument(uri))
+            {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                return split[1];
+            }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
 
@@ -167,6 +174,11 @@ public class RealPathUtil {
      */
     public static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    public static boolean isUsbDocument(Uri uri)
+    {
+        return UsbDocumentProvider.DOCUMENTS_AUTHORITY.equals(uri.getAuthority());
     }
 
     /**

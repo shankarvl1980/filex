@@ -222,7 +222,6 @@ public class RenameFileDialog extends DialogFragment
 								if(check_SAF_permission(parent_file_path,fileObjectType))
 								{
 									viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-									//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 								}
 
 							}
@@ -239,8 +238,10 @@ public class RenameFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						renameReplaceConfirmationDialog.show(fragmentManager,"");
+						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
+//						Below is not working when overwriting, connection is lost. So for the time being, don't try renaming
+//						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
+//						renameReplaceConfirmationDialog.show(fragmentManager,"");
 
 					}
 				}
@@ -248,12 +249,10 @@ public class RenameFileDialog extends DialogFragment
 				{
 					if (check_SAF_permission(parent_file_path, fileObjectType)) {
 						viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-						//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 					}
 				} else
 				{
 					viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
-					//new RenameFileTask(parent_file_path,existing_name,new_file_path,new_name,overwriting).renameFile();
 				}
 				imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			}

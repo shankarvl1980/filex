@@ -14,11 +14,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 

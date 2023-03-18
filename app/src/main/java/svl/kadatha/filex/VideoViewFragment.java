@@ -255,7 +255,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			public void onClick(View view) {
 				if(Global.ORIENTATION==Configuration.ORIENTATION_LANDSCAPE)
 				{
-					((VideoViewActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					((VideoViewActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 				}
 				else
 				{

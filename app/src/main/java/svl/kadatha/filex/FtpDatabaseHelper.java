@@ -35,7 +35,8 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = sqLiteDatabase.query(TABLE, null, null, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                while (cursor.moveToNext()) {
+
+                while (!cursor.isAfterLast()) {
                     String server = cursor.getString(0);
                     int port = cursor.getInt(1);
                     String mode = cursor.getString(2);
@@ -46,7 +47,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
                     String display = cursor.getString(7);
 
                     ftpPOJOList.add(new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, anonymous, encoding, display));
-
+                    cursor.moveToNext();
                 }
                 cursor.close();
             }

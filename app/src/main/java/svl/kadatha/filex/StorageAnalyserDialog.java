@@ -201,7 +201,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         {
             viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
             viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
-            if(viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
+            if(viewModel.filePOJOS.size()>0 && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
             {
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile,false);

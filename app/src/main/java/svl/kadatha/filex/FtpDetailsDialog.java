@@ -52,8 +52,8 @@ public class FtpDetailsDialog extends DialogFragment {
     private TextView ftp_number_text_view,empty_ftp_list_tv;
     private FtpDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
-    private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NULL="ftp_input_details_request_code_null";
-    private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL="ftp_input_details_request_code_non_null";
+    private final static String FTP_INPUT_DETAILS_REQUEST_CODE="ftp_input_details_request_code";
+    //private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL="ftp_input_details_request_code_non_null";
     private final static String FTP_RENAME_REQUEST_CODE="ftp_rename_request_code";
 
 
@@ -138,8 +138,8 @@ public class FtpDetailsDialog extends DialogFragment {
         });
 
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.rename_icon,R.drawable.edit_icon};
-        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.rename),getString(R.string.edit)};
+        int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.connect_icon,R.drawable.edit_icon};
+        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.connect),getString(R.string.edit)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar=v.findViewById(R.id.fragment_ftp_toolbar);
         bottom_toolbar.addView(tb_layout);
@@ -238,6 +238,32 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
+        viewModel.replaceAndConnectFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.VISIBLE);
+                }
+                else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                    if(viewModel.loggedInStatus)
+                    {
+                        viewModel.loggedInStatus=false;
+                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                        ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                        ((MainActivity)context).createFragmentTransaction(viewModel.path,FileObjectType.FTP_TYPE);
+                        dismissAllowingStateLoss();
+                    }
+                    else {
+                        viewModel.replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    }
+
+                }
+            }
+        });
+
         viewModel.replaceFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -295,27 +321,24 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
-        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE_NULL, this, new FragmentResultListener() {
+        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NULL))
+                if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE))
                 {
                     progress_bar.setVisibility(View.VISIBLE);
-                    viewModel.replaceFtpPojoList(result);
+                    if(result.getBoolean("whetherToConnect"))
+                    {
+                        viewModel.replaceAndConnectFtpPojoList(result);
+                    }
+                    else {
+                        viewModel.replaceFtpPojoList(result);
+                    }
+
                 }
             }
         });
 
-        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL, this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL))
-                {
-                    progress_bar.setVisibility(View.VISIBLE);
-                    viewModel.replaceFtpPojoList(result);
-                }
-            }
-        });
 
         fragmentManager.setFragmentResultListener(FTP_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
@@ -529,7 +552,7 @@ public class FtpDetailsDialog extends DialogFragment {
             if(id==R.id.toolbar_btn_1)
             {
                 clear_selection();
-                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE_NULL,null,null);
+                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,null,null);
                 ftpDetailsInputDialog.show(fragmentManager,"");
             }
             else if(id==R.id.toolbar_btn_2)
@@ -548,9 +571,14 @@ public class FtpDetailsDialog extends DialogFragment {
                 int s=viewModel.mselecteditems.size();
                 if(s==1)
                 {
+                    if(!permissionsUtil.isNetworkConnected())
+                    {
+                        Global.print(context,getString(R.string.not_connected_to_network));
+                        return;
+                    }
+                    progress_bar.setVisibility(View.VISIBLE);
                     FtpPOJO ftpPOJO=viewModel.ftpPOJO_selected_array.get(0);
-                    FtpDisplayRenameDialog ftpDisplayRenameDialog=FtpDisplayRenameDialog.getInstance(FTP_RENAME_REQUEST_CODE,ftpPOJO.server,ftpPOJO.user_name,ftpPOJO.display);
-                    ftpDisplayRenameDialog.show(fragmentManager,"");
+                    viewModel.connectFtp(ftpPOJO);
                 }
                 clear_selection();
             }
@@ -562,7 +590,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     FtpPOJO tobe_replaced_ftp=viewModel.ftpPOJO_selected_array.get(0);
                     String ftp_server=tobe_replaced_ftp.server;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
-                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL,ftp_server,ftp_user_name);
+                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name);
                     ftpDetailsInputDialog.show(fragmentManager,"");
                 }
 
