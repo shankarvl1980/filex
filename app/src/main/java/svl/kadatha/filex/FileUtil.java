@@ -321,44 +321,56 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		@SuppressWarnings("null")
 		public static boolean copy_FtpFile_File(String src_file_path, File target_file,boolean cut,long[] bytes_read)
 		{
-			boolean success;
-			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
-				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
-				//bufferedCopy(inputStream, outputStream, false, bytes_read);
-				if (cut) {
-					deleteFTPFile(src_file_path);
+			boolean success = false;
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
+					success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+					//bufferedCopy(inputStream, outputStream, false, bytes_read);
+					if (cut) {
+						deleteFTPFile(src_file_path);
+					}
+
+				} catch (Exception e) {
+
+					return false;
 				}
+				// ignore exception
 
-			} catch (Exception e) {
+				// ignore exception
 
-				return false;
 			}
-			// ignore exception
-
-			// ignore exception
-
+			else {
+				return success;
+			}
 			return success;
 		}
 
 		public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,boolean cut,long[] bytes_read)
 		{
-			boolean success;
-			try (OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(target_file_path)) {
+			boolean success = false;
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try (OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(target_file_path)) {
 
-				success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
-				//bufferedCopy(inputStream, outputStream, false, bytes_read);
-				if (cut) {
-					deleteFTPFile(src_file_path);
+					success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+					//bufferedCopy(inputStream, outputStream, false, bytes_read);
+					if (cut) {
+						deleteFTPFile(src_file_path);
+					}
+
+				} catch (Exception e) {
+
+					return false;
 				}
+				// ignore exception
 
-			} catch (Exception e) {
+				// ignore exception
 
-				return false;
 			}
-			// ignore exception
-
-			// ignore exception
-
+			else {
+				return success;
+			}
 			return success;
 		}
 
@@ -891,26 +903,29 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 	public static FTPFile getFTPFile(String file_path)
 	{
-		FTPFile ftpFile = null;
-		File file=new File(file_path);
-		String parent_path=file.getParent();
-		String name=file.getName();
-		try {
-			FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
-			int size= ftpFiles_array.length;
-			for(int i=0;i<size;++i)
-			{
-				ftpFile=ftpFiles_array[i];
-				if(ftpFile.getName().equals(name))
+		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		{
+			FTPFile ftpFile = null;
+			File file=new File(file_path);
+			String parent_path=file.getParent();
+			String name=file.getName();
+			try {
+				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
+				int size= ftpFiles_array.length;
+				for(int i=0;i<size;++i)
 				{
-					return ftpFile;
+					ftpFile=ftpFiles_array[i];
+					if(ftpFile.getName().equals(name))
+					{
+						return ftpFile;
+					}
 				}
+			} catch (IOException e) {
+				Log.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
+				return null;
 			}
-		} catch (IOException e) {
-			Log.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
-			return null;
-		}
 
+		}
 		return null;
 	}
 
@@ -1079,14 +1094,10 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 					int size=list.length;
 					for (int i = 0; i < size; ++i)
 					{
-
 						File tmpF = list[i];
 						success=deleteSAFDirectory(context,tmpF.getAbsolutePath(),tree_uri,tree_uri_path);
-
 					}
-
 				}
-
 			}
 
 			success=deleteSAFFile(context,folder.getAbsolutePath(),tree_uri,tree_uri_path);

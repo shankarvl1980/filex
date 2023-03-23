@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
@@ -37,8 +38,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
     public boolean loggedInStatus;
     private final FtpDatabaseHelper ftpDatabaseHelper;
-    public String path;
+
     public boolean ftpPOJOAlreadyExists;
+    public static FtpDetailsDialog.FtpPOJO FTP_POJO;
+    public static String FTP_WORKING_DIR_PATH;
 
     public FtpDetailsViewModel(@NonNull Application application) {
         super(application);
@@ -116,7 +119,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 MainActivity.FTP_CLIENT=new FTPClient();
                 loggedInStatus=false;
                 try {
-                    connect(ftpPOJO);
+                    FTP_POJO=ftpPOJO;
+                    loggedInStatus=CONNECT();
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
@@ -129,48 +133,70 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    private void connect(FtpDetailsDialog.FtpPOJO ftpPOJO) throws IOException {
-        MainActivity.FTP_CLIENT.connect(ftpPOJO.server,ftpPOJO.port);
-        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode()))
-        {
-
-            loggedInStatus=MainActivity.FTP_CLIENT.login(ftpPOJO.user_name,ftpPOJO.password);
-            if(loggedInStatus)
+    public static boolean CONNECT() throws IOException {
+        if(FTP_POJO==null)return false;
+        FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_L8);
+        //MainActivity.FTP_CLIENT.configure(conf);
+        MainActivity.FTP_CLIENT.connect(FTP_POJO.server,FTP_POJO.port);
+        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode())) {
+            MainActivity.FTP_CLIENT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
+            MainActivity.FTP_CLIENT.setControlKeepAliveReplyTimeout(5000);
+            //if(ftpPOJO.mode.equals("passive"))
             {
-                //if(ftpPOJO.mode.equals("passive"))
-                {
-                    MainActivity.FTP_CLIENT.enterLocalPassiveMode();
-                }
+                MainActivity.FTP_CLIENT.enterLocalPassiveMode();
+            }
+            boolean loggedInStatus = MainActivity.FTP_CLIENT.login(FTP_POJO.user_name, FTP_POJO.password);
+            if (loggedInStatus) {
+
                 MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
 
-                path=MainActivity.FTP_CLIENT.printWorkingDirectory();
+                FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
 
-                Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
-                while(iterator.hasNext())
+                //if()
                 {
-                    if(iterator.next().getFileObjectType()==FileObjectType.FTP_TYPE)
-                    {
-                        iterator.remove();
+                    Iterator<FilePOJO> iterator = Global.STORAGE_DIR.iterator();
+                    while (iterator.hasNext()) {
+                        if (iterator.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
+                            iterator.remove();
+                        }
                     }
-                }
-                Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,path));
+                    Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
 
-                Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
-                while (iterator1.hasNext())
-                {
-                    if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
-                    {
-                        iterator1.remove();
+                    Iterator<FilePOJO> iterator1 = MainActivity.RECENTS.iterator();
+                    while (iterator1.hasNext()) {
+                        if (iterator1.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
+                            iterator1.remove();
+                        }
                     }
+
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
                 }
 
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
-            }
-            else
-            {
-                Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
+                return true;
             }
         }
+
+        Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+        while(iterator.hasNext())
+        {
+            if(iterator.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+            {
+                iterator.remove();
+            }
+        }
+        Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE,FTP_WORKING_DIR_PATH));
+
+        Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
+        while (iterator1.hasNext())
+        {
+            if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
+            {
+                iterator1.remove();
+            }
+        }
+
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
+        return false;
     }
 
     private void replaceFtpPojo(Bundle bundle)
@@ -230,7 +256,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 MainActivity.FTP_CLIENT=new FTPClient();
                 loggedInStatus=false;
                 try {
-                    connect(ftpPOJO);
+                    FTP_POJO=ftpPOJO;
+                    loggedInStatus=CONNECT();
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));

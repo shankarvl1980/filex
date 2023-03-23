@@ -162,6 +162,7 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			return true;
 		}
+
 		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
 			isSourceFromInternal=FileUtil.isFromInternal(fileObjectType,file_path);
@@ -188,6 +189,7 @@ public class PasteSetUpDialog extends DialogFragment
 					if(!check_SAF_permission_source(file_path,FileObjectType.FILE_TYPE)) return false;
 				}
 			}
+			return true;
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
@@ -209,8 +211,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 	}
 
-
-
 	private boolean check_permission_for_destination(String file_path,FileObjectType fileObjectType)
 	{
 		if(fileObjectType==FileObjectType.FILE_TYPE)
@@ -229,22 +229,26 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			return true;
 		}
-		else /*
-			if(Global.CHECK_FTP_SERVER_CONNECTED())
-			{
-				return true;
-			}
-			else
-			{
-				print(getString(R.string.ftp_server_is_not_connected));
-				return false;
-			}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			return true;
+//			if(Global.CHECK_FTP_SERVER_CONNECTED())
+//			{
+//				return true;
+//			}
+//			else
+//			{
+//				Global.print(context,getString(R.string.ftp_server_is_not_connected));
+//				return false;
+//			}
 
-			 */ if(fileObjectType ==FileObjectType.ROOT_TYPE)
+		}
+		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
 		{
 			if(!RootUtils.CAN_RUN_ROOT_COMMANDS())
 			{
 				Global.print(context,getString(R.string.root_access_not_avaialable));
+				dismissAllowingStateLoss();
 				return false;
 			}
 			else
@@ -253,7 +257,7 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 
 		}
-		else return fileObjectType == FileObjectType.FTP_TYPE;
+		return true;
 	}
 
 	private boolean check_SAF_permission_destination(String parent_file_path, FileObjectType fileObjectType)

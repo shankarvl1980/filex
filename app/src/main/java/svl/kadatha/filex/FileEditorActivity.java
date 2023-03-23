@@ -655,7 +655,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			Global.print(context,getString(R.string.file_not_found));
 			return false;
 		}
-		catch (IllegalArgumentException | IOException e)
+		catch (IllegalArgumentException e)
 		{
 			Global.print(context,getString(R.string.file_could_not_be_opened));
 			return false;

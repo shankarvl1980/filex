@@ -51,7 +51,6 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -924,37 +923,14 @@ public class Global
 		}
 		else
 		{
-			//try {
-				//MainActivity.FTP_CLIENT.disconnect();
-				Iterator<FilePOJO> iterator=STORAGE_DIR.iterator();
-				while(iterator.hasNext())
-				{
-					FilePOJO filePOJO= iterator.next();
-					if(filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
-					{
-						iterator.remove();
-						break;
-					}
-
-				}
-
-			Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
-			while (iterator1.hasNext())
-			{
-				if(iterator1.next().getFileObjectType()==FileObjectType.FTP_TYPE)
-				{
-					iterator1.remove();
-				}
-			}
-
-			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.FTP_TYPE);
-
+			try {
+				return FtpDetailsViewModel.CONNECT();
+			} catch (IOException e) {
 				return false;
-			//} catch (IOException e) {
-			//	return false;
-			//}
+			}
 		}
 	}
+
 
 	public static String GET_TRUNCATED_FILE_PATH_USB(String file_path)
 	{

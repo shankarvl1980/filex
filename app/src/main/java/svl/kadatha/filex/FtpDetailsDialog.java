@@ -227,7 +227,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                        ((MainActivity)context).createFragmentTransaction(viewModel.path,FileObjectType.FTP_TYPE);
+                        ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
                         dismissAllowingStateLoss();
                     }
                     else {
@@ -253,7 +253,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                        ((MainActivity)context).createFragmentTransaction(viewModel.path,FileObjectType.FTP_TYPE);
+                        ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
                         dismissAllowingStateLoss();
                     }
                     else {

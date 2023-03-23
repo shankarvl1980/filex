@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.annotation.RequiresApi;
 
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.parser.ParserInitializationException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1117,7 +1118,7 @@ public class FilePOJOUtil {
 
                     }
 
-                } catch (IOException e) {
+                } catch (IOException | ParserInitializationException e) {
                     return true;
                 }
             }
