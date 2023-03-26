@@ -91,7 +91,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	ConstraintLayout search_toolbar;
 	ViewGroup drawer;
     private RecyclerView workingDirListRecyclerView;
-    private RecyclerView libraryRecyclerView,networkRecyclerView;
+	private RecyclerView networkRecyclerView;
 	TextView current_dir_textview;
     Context context=this;
 	private int countBackPressed=0;
@@ -627,7 +627,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		library_expand_indicator=findViewById(R.id.library_expand_indicator);
 		LIBRARY_CATEGORIES=Arrays.asList(getResources().getStringArray(R.array.library_categories));
-		libraryRecyclerView=findViewById(R.id.library_recyclerview);
+		RecyclerView libraryRecyclerView = findViewById(R.id.library_recyclerview);
 		libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
 		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon};

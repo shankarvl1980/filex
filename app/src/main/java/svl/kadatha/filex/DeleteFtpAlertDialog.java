@@ -23,7 +23,7 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     private String ftp_display;
     private int ftp_selected_size;
     private String request_code;
-    private TextView textView, number_tv,size_tv;
+    private TextView textView;
 
 
     @Override
@@ -69,8 +69,8 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
-        number_tv=v.findViewById(R.id.dialog_fragment_rename_delete_no_of_files);
-        size_tv=v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
+        TextView number_tv = v.findViewById(R.id.dialog_fragment_rename_delete_no_of_files);
+        TextView size_tv = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
         number_tv.setVisibility(View.GONE);
         size_tv.setVisibility(View.GONE);
         if(ftp_selected_size==1)

@@ -369,7 +369,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			}
 			else
 			{
-				RecyclerViewLayout.setIcon(context,filePOJO,p1.fileimageview,p1.overlay_fileimageview);
+				RecyclerViewLayoutList.setIcon(context,filePOJO,p1.fileimageview,p1.overlay_fileimageview);
 				if(filePOJO.getFileObjectType()==FileObjectType.USB_TYPE)
 				{
 					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+ filePOJO.getPath());

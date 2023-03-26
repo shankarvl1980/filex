@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -20,6 +19,9 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.OverScroller;
 import android.widget.Scroller;
+
+import timber.log.Timber;
+
 public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView {
 	private static final String DEBUG = "DEBUG";
 //
@@ -1078,7 +1080,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 	private void printMatrixInfo() {
 		float[] n = new float[9];
 		matrix.getValues(n);
-		Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
+		Timber.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
 	}
 }
  

@@ -1,12 +1,12 @@
 package svl.kadatha.filex;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public abstract class ExecuteAsRootBase
 {
@@ -35,19 +35,19 @@ public abstract class ExecuteAsRootBase
                 {
                     retval = false;
                     exitSu = false;
-                    //Log.d("ROOT", "Can't get root access or denied by user");
+                    //Timber.d("ROOT", "Can't get root access or denied by user");
                 }
                 else if (currUid.contains("uid=0"))
                 {
                     retval = true;
                     exitSu = true;
-                    //Log.d("ROOT", "Root access granted");
+                    //Timber.d("ROOT", "Root access granted");
                 }
                 else
                 {
                     retval = false;
                     exitSu = true;
-                    //Log.d("ROOT", "Root access rejected: " + currUid);
+                    //Timber.d("ROOT", "Root access rejected: " + currUid);
                 }
 
                 if (exitSu)
@@ -63,7 +63,7 @@ public abstract class ExecuteAsRootBase
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
             retval = false;
-            //Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+            //Timber.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
         }
 
         return retval;
@@ -101,16 +101,16 @@ public abstract class ExecuteAsRootBase
                 }
                 catch (Exception ex)
                 {
-                    Log.e("ROOT", "Error executing root action", ex);
+                    Timber.e("ROOT", "Error executing root action", ex);
                 }
             }
         }
         catch (IOException | SecurityException ex)
         {
-            Log.w("ROOT", "Can't get root access", ex);
+            Timber.w("ROOT", "Can't get root access", ex);
         } catch (Exception ex)
         {
-            Log.w("ROOT", "Error executing internal operation", ex);
+            Timber.w("ROOT", "Error executing internal operation", ex);
         }
 
         return retval;

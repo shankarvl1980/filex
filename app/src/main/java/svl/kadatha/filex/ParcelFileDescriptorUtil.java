@@ -1,13 +1,14 @@
 package svl.kadatha.filex;
 
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import timber.log.Timber;
 
 /**
  * ParcelFileDescriptor Utility class.
@@ -54,7 +55,7 @@ public class ParcelFileDescriptorUtil {
                 IOUtils.copy(mIn, mOut);
                 mOut.flush();
             } catch (IOException e) {
-                Log.e("TransferThread", "writing failed");
+                Timber.e("TransferThread", "writing failed");
                 //e.printStackTrace();
             } finally {
                 IOUtils.closeQuietly(mIn);
@@ -106,7 +107,7 @@ public class ParcelFileDescriptorUtil {
                 IOUtils.copy(mIn, mOut);
                 mOut.flush();
             } catch (IOException e) {
-                Log.e("TransferThread", "writing failed");
+                Timber.e("TransferThread", "writing failed");
                 e.printStackTrace();
             } finally {
                 IOUtils.closeQuietly(mIn);

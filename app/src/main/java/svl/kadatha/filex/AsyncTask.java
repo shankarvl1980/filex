@@ -26,6 +26,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import timber.log.Timber;
+
 /**
  * <p>AsyncTask was intended to enable proper and easy use of the UI thread. However, the most
  * common use case was for integrating into UI, and that would cause Context leaks, missed
@@ -211,7 +214,7 @@ public abstract class AsyncTask<Params, Progress, Result> {
     private static final RejectedExecutionHandler sRunOnSerialPolicy =
             new RejectedExecutionHandler() {
                 public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-                    android.util.Log.w(LOG_TAG, "Exceeded ThreadPoolExecutor pool size");
+                    Timber.w(LOG_TAG, "Exceeded ThreadPoolExecutor pool size");
                     // As a last ditch fallback, run it on an executor with an unbounded queue.
                     // Create this executor lazily, hopefully almost never.
                     synchronized (this) {
@@ -360,7 +363,7 @@ public abstract class AsyncTask<Params, Progress, Result> {
                 try {
                     postResultIfNotInvoked(get());
                 } catch (InterruptedException e) {
-                    android.util.Log.w(LOG_TAG, e);
+                    Timber.w(LOG_TAG, e);
                 } catch (ExecutionException e) {
                     throw new RuntimeException("An error occurred while executing doInBackground()",
                             e.getCause());

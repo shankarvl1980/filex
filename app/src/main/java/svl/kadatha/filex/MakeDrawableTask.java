@@ -13,12 +13,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import timber.log.Timber;
 
 /**
  * Created by Yashar on 3/8/2017.
@@ -132,7 +133,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                 options.inSampleSize *= 2;
 
                 if (options.inSampleSize >= 1024) {
-                    Log.d(TAG, "Failed to optimize RAM to receive Bitmap.");
+                    Timber.d(TAG, "Failed to optimize RAM to receive Bitmap.");
 
                     break;
                 }
@@ -167,7 +168,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                 return orientation;
             }
             else {
-                Log.w(TAG, "Failed to get MediaStore image orientation.");
+                Timber.w(TAG, "Failed to get MediaStore image orientation.");
 
                 c.close();
 
@@ -199,7 +200,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                     return 0;
             }
         } catch (IOException e) {
-            Log.w(TAG, "Failed to get image orientation from file.", e);
+            Timber.w(TAG, "Failed to get image orientation from file.", e);
 
             return 0;
         }

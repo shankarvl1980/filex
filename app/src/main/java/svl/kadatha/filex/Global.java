@@ -850,7 +850,7 @@ public class Global
 	}
 
 
-	public static Bitmap GET_RESIZED_BITMAP(String path,int image_view_dimension){
+	public static Bitmap GET_RESIZED_BITMAP(String path,int required_image_view_dimension){
 		if(path==null) return null;
 		File f=new File(path);
 		Bitmap b = null;
@@ -869,8 +869,8 @@ public class Global
 
 
 		int scale = 1;
-		if (o.outHeight > image_view_dimension || o.outWidth > image_view_dimension) {
-			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_dimension /
+		if (o.outHeight > required_image_view_dimension || o.outWidth > required_image_view_dimension) {
+			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(required_image_view_dimension /
 					(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
 		}
 
@@ -893,26 +893,6 @@ public class Global
 		return b;
 	}
 
-
-	public static Bitmap GET_BITMAP_FILE_DESCRIPTOR_METHOD(String path)   {
-	if(path==null) return null;
-	Bitmap bitmap = null;
-	BitmapFactory.Options bfOptions=new BitmapFactory.Options();
-	bfOptions.inDither=false;                     //Disable Dithering mode
-	bfOptions.inTempStorage=new byte[32 * 1024];
-
-	File file=new File(path);
-
-	try(FileInputStream fs= new FileInputStream(file))
-	{
-		bitmap=BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
-
-	} catch (IOException e) {
-		return null;
-	}
-
-	return bitmap;
-}
 
 	public static boolean CHECK_FTP_SERVER_CONNECTED()
 	{

@@ -529,7 +529,6 @@ public class AlbumListFragment extends Fragment
 		private int itemWidth,itemHeight;
 		int imageview_dimension;
 		private final int select_indicator_offset=Global.TEN_DP*4;
-		private int measuredWidth,measuredHeight;
 
 		AlbumListRecyclerViewItem(Context context)
 		{
@@ -640,38 +639,38 @@ public class AlbumListFragment extends Fragment
 			int x=Global.FOURTEEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 			View v=albumimageview;
-			measuredHeight=v.getMeasuredHeight();
-			measuredWidth=v.getMeasuredWidth();
+			int measuredHeight = v.getMeasuredHeight();
+			int measuredWidth = v.getMeasuredWidth();
 			int d=(itemHeight-imageview_dimension)/2;
-			v.layout(x,d,x+measuredWidth,d+measuredHeight);
-			x+=measuredWidth+Global.TEN_DP;
+			v.layout(x,d,x+ measuredWidth,d+ measuredHeight);
+			x+= measuredWidth +Global.TEN_DP;
 
 			v=album_select_indicator;
-			measuredHeight=v.getMeasuredHeight();
-			measuredWidth=v.getMeasuredWidth();
+			measuredHeight =v.getMeasuredHeight();
+			measuredWidth =v.getMeasuredWidth();
 			int a=itemWidth-select_indicator_offset;
-			int file_select_indicator_height=measuredHeight;
+			int file_select_indicator_height= measuredHeight;
 			int c=(itemHeight-file_select_indicator_height)/2;
-			v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
+			v.layout(a,c,a+ measuredWidth,c+file_select_indicator_height);
 
 			v=albumtextview;
-			measuredHeight=v.getMeasuredHeight();
-			measuredWidth=v.getMeasuredWidth();
-			y=(itemHeight-measuredHeight-no_of_songs_textview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
-			v.layout(x,y,x+measuredWidth,y+measuredHeight);
-			y+=measuredHeight;
+			measuredHeight =v.getMeasuredHeight();
+			measuredWidth =v.getMeasuredWidth();
+			y=(itemHeight- measuredHeight -no_of_songs_textview.getMeasuredHeight()-artisttextview.getMeasuredHeight())/2;
+			v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+			y+= measuredHeight;
 
 
 			v=no_of_songs_textview;
-			measuredHeight=v.getMeasuredHeight();
-			measuredWidth=v.getMeasuredWidth();
-			v.layout(x,y,x+measuredWidth,y+measuredHeight);
-			y+=measuredHeight;
+			measuredHeight =v.getMeasuredHeight();
+			measuredWidth =v.getMeasuredWidth();
+			v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+			y+= measuredHeight;
 
 			v=artisttextview;
-			measuredHeight=v.getMeasuredHeight();
-			measuredWidth=v.getMeasuredWidth();
-			v.layout(x,y,x+measuredWidth,y+measuredHeight);
+			measuredHeight =v.getMeasuredHeight();
+			measuredWidth =v.getMeasuredWidth();
+			v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
 
 		}
 

@@ -36,7 +36,6 @@ public class AppInstallAlertDialog extends DialogFragment
     private ImageView app_icon_image_view;
     private TextView app_name_tv,package_name_tv, version_tv,installed_version_tv, message_tv;
     private String file_path;
-    private boolean remember_app_check_box;
     private Intent intent;
     private AppSelectorViewModel viewModel;
     private FrameLayout progress_bar;
@@ -59,7 +58,7 @@ public class AppInstallAlertDialog extends DialogFragment
             Uri data = bundle.getParcelable("data");
             viewModel.app_package_name=bundle.getString("app_package_name");
             viewModel.app_component_name=bundle.getString("app_component_name");
-            remember_app_check_box=bundle.getBoolean("remember_app_check_box",false);
+            boolean remember_app_check_box = bundle.getBoolean("remember_app_check_box", false);
             file_path=bundle.getString("file_path");
             viewModel.mime_type=bundle.getString("mime_type");
             for(MimePOJO mimePOJO:Global.MIME_POJOS)

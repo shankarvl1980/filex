@@ -15,68 +15,67 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 
-public class StorageAnalyserRecyclerViewLayout extends ViewGroup
+public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout
 {
     private final Context context;
     private ImageView fileimageview,overlay_fileimageview,file_select_indicator;
-    private TextView filenametextview, filesizetextview,filesizepercentagetextview,filesubfilecounttextview, itemlinebackground,itemlineforeground;
+    private TextView filenametextview, filesubfilecounttextview, filepermissionstextView,filemoddatetextview,filepathtextview;
     private int imageview_dimension;
-    private int itemWidth;
-    private int itemHeight;
-    private final boolean show_file_path;
+    public int itemWidth, itemHeight;
+    private int select_indicator_offset_linear;
 
-    StorageAnalyserRecyclerViewLayout(Context context,boolean show_file_path)
+    FileSelectorRecyclerViewLayoutList(Context context, boolean show_file_path)
     {
         super(context);
         this.context=context;
-        this.show_file_path=show_file_path;
         init();
     }
 
-    StorageAnalyserRecyclerViewLayout(Context context, AttributeSet attr, boolean show_file_path)
-    {
-        super(context,attr);
-        this.context=context;
-        this.show_file_path=show_file_path;
-        init();
-    }
 
-    StorageAnalyserRecyclerViewLayout(Context context, AttributeSet attr, int defStyle, boolean show_file_path)
+    public static void setIcon(Context context,FilePOJO filePOJO,ImageView fileimageview,ImageView overlay_fileimageview)
     {
-        super(context,attr,defStyle);
-        this.context=context;
-        this.show_file_path=show_file_path;
-        init();
+        overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
+        if(filePOJO.getType()==0)
+        {
+            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
+
+        }
+        else if(filePOJO.getType()<0)
+        {
+            GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(fileimageview);
+        }
+        else
+        {
+            GlideApp.with(context).clear(fileimageview);
+            fileimageview.setImageDrawable(ContextCompat.getDrawable(context,filePOJO.getType()));
+        }
     }
 
 
     private void init()
     {
-
-        View view = LayoutInflater.from(context).inflate(R.layout.storage_analyser_recyclerview_layout, this, true);
-
-        fileimageview= view.findViewById(R.id.analyser_image_file);
-        overlay_fileimageview= view.findViewById(R.id.analyser_overlay_image_file);
-        file_select_indicator=view.findViewById(R.id.analyser_file_select_indicator);
-        filenametextview= view.findViewById(R.id.analyser_text_file_name);
-        filesizetextview=view.findViewById(R.id.analyser_text_size);
-        filesizepercentagetextview=view.findViewById(R.id.analyser_text_size_percentage);
-        filesubfilecounttextview= view.findViewById(R.id.analyser_text_subfile_count);
-        itemlinebackground=view.findViewById(R.id.analyser_item_background);
-        itemlineforeground=view.findViewById(R.id.analyser_item_foreground);
+        View view = LayoutInflater.from(context).inflate(R.layout.filedetail_recyclerview_layout, this, true);
+        fileimageview= view.findViewById(R.id.image_file);
+        overlay_fileimageview= view.findViewById(R.id.overlay_image_file);
+        file_select_indicator=view.findViewById(R.id.file_select_indicator);
+        filenametextview= view.findViewById(R.id.text_file_name);
+        filesubfilecounttextview= view.findViewById(R.id.text_subfile_count);
+        //filepermissionstextView=view.findViewById(R.id.text_file_permissions);
+        filemoddatetextview= view.findViewById(R.id.text_file_moddate);
+        filepathtextview=view.findViewById(R.id.text_file_path);
 
         int second_line_font_size;
         int first_line_font_size;
-        setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_recyclerview));
+        int overlay_image_dimension;
 
-        if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
+        if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==0)
         {
             first_line_font_size =Global.FONT_SIZE_SMALL_FIRST_LINE;
             second_line_font_size =Global.FONT_SIZE_SMALL_DETAILS_LINE;
             imageview_dimension=Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
 
         }
-        else if(Global.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
+        else if(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR==2)
         {
             first_line_font_size =Global.FONT_SIZE_LARGE_FIRST_LINE;
             second_line_font_size =Global.FONT_SIZE_LARGE_DETAILS_LINE;
@@ -88,37 +87,39 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
             second_line_font_size =Global.FONT_SIZE_MEDIUM_DETAILS_LINE;
             imageview_dimension=Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
         }
+        overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
 
+        setBackground(ContextCompat.getDrawable(context,R.drawable.select_detail_recyclerview));
 
         fileimageview.getLayoutParams().width=imageview_dimension;
         fileimageview.getLayoutParams().height=imageview_dimension;
 
-        int overlay_image_dimension=imageview_dimension/2-Global.TWO_DP;
         overlay_fileimageview.getLayoutParams().width=overlay_image_dimension;
         overlay_fileimageview.getLayoutParams().height=overlay_image_dimension;
 
         filenametextview.setTextSize(first_line_font_size);
-        filesizetextview.setTextSize(second_line_font_size);
-        filesizepercentagetextview.setTextSize(second_line_font_size);
         filesubfilecounttextview.setTextSize(second_line_font_size);
+        //filepermissionstextView.setTextSize(second_line_font_size);
+        filemoddatetextview.setTextSize(second_line_font_size);
+        filepathtextview.setTextSize(second_line_font_size);
 
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
         {
             itemWidth=Global.SCREEN_HEIGHT;
-
         }
         else
         {
             itemWidth=Global.SCREEN_WIDTH;
-
         }
+
+        select_indicator_offset_linear=Global.TEN_DP*4; //around 40 dp which is about 1 & half of select indicator icon;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
-
-        int iconheight,maxHeight=0;
+        int iconheight;
+        int maxHeight=0;
         int usedWidth;
 
         usedWidth=Global.FOURTEEN_DP;
@@ -130,31 +131,29 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         measureChildWithMargins(file_select_indicator,widthMeasureSpec,0,heightMeasureSpec,0);
 
-        measureChildWithMargins(filenametextview,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
-        measureChildWithMargins(itemlinebackground,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
-        measureChildWithMargins(itemlineforeground,widthMeasureSpec,usedWidth+Global.TEN_DP*2,heightMeasureSpec,0);
+        measureChildWithMargins(filenametextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
+        measureChildWithMargins(filepathtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
         maxHeight+=filenametextview.getMeasuredHeight();
 
+//        if(show_file_path)
+//        {
+//            filepathtextview.setVisibility(VISIBLE);
+//            maxHeight+=filepathtextview.getMeasuredHeight();
+//        }
 
-        measureChildWithMargins(filesizetextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
+
+        measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
         usedWidth+=filesubfilecounttextview.getMeasuredWidth()+Global.TEN_DP;
 
-        measureChildWithMargins(filesizepercentagetextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
-        usedWidth+=filesizepercentagetextview.getMeasuredWidth();
+        measureChildWithMargins(filemoddatetextview,widthMeasureSpec,usedWidth+Global.TEN_DP,heightMeasureSpec,0);
 
-        measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth+Global.TEN_DP,heightMeasureSpec,0);
-
-        maxHeight+=filesubfilecounttextview.getMeasuredHeight();
+        maxHeight+=filemoddatetextview.getMeasuredHeight();
 
         maxHeight=Math.max(iconheight,maxHeight);
 
-        maxHeight+=Global.FOUR_DP*2; //providing top and bottom margin of four dp
-
+        maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
         itemHeight=maxHeight;
         setMeasuredDimension(widthMeasureSpec,maxHeight);
-
-        ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) getLayoutParams();
-        params.setMargins(0,Global.TWO_DP,0,Global.TWO_DP);
 
     }
 
@@ -162,65 +161,59 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
     protected void onLayout(boolean p1, int l, int t, int r, int b)
     {
         // TODO: Implement this method
-        int x=Global.FOURTEEN_DP,y=0;
+        int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
-        int top_for_icon=(itemHeight-imageview_dimension)/2;
+        x=Global.FOURTEEN_DP;
+        int margin_offset_icon, max_height_second_line;
+
+        int d=(itemHeight-imageview_dimension)/2;
 
         View v=overlay_fileimageview;
         int measuredHeight = v.getMeasuredHeight();
         int measuredWidth = v.getMeasuredWidth();
-        v.layout(x,top_for_icon,x+ measuredWidth,top_for_icon+ measuredHeight);
+        v.layout(x,d,x+ measuredWidth,d+ measuredHeight);
 
         v=fileimageview;
         measuredHeight =v.getMeasuredHeight();
         measuredWidth =v.getMeasuredWidth();
-        v.layout(x,top_for_icon,x+ measuredWidth,top_for_icon+ measuredHeight);
+        v.layout(x,d,x+ measuredWidth,d+ measuredHeight);
         x+= measuredWidth +Global.TEN_DP;
-
-
-        v=itemlinebackground;
-        v.layout(x,y,itemWidth-Global.TEN_DP,y+itemHeight);
-
-        v=itemlineforeground;
-        v.layout(x,y,itemWidth-Global.TEN_DP,y+itemHeight);
+        margin_offset_icon=x;
 
         v=file_select_indicator;
         measuredHeight =v.getMeasuredHeight();
         measuredWidth =v.getMeasuredWidth();
-        int a=(itemWidth-imageview_dimension)/2;
-        a+=a/2-(measuredWidth /2)+imageview_dimension-Global.FOUR_DP;
+        int a=itemWidth-select_indicator_offset_linear;
         int file_select_indicator_height= measuredHeight;
         int c=(itemHeight-file_select_indicator_height)/2;
         v.layout(a,c,a+ measuredWidth,c+file_select_indicator_height);
-
 
         v=filenametextview;
         measuredHeight =v.getMeasuredHeight();
         measuredWidth =v.getMeasuredWidth();
         y=(itemHeight- measuredHeight -filesubfilecounttextview.getMeasuredHeight())/2;
-        v.layout(x,y,itemWidth-Global.TEN_DP,y+ measuredHeight);
+        v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
         y+= measuredHeight;
-
-
-        v=filesizetextview;
-        measuredHeight =v.getMeasuredHeight();
-        measuredWidth =v.getMeasuredWidth();
-        v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
-        x+= measuredWidth;
-
-        v=filesizepercentagetextview;
-        measuredHeight =v.getMeasuredHeight();
-        measuredWidth =v.getMeasuredWidth();
-        x=(itemWidth+imageview_dimension+Global.TEN_DP- measuredWidth)/2;
-        v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
 
 
         v=filesubfilecounttextview;
         measuredHeight =v.getMeasuredHeight();
         measuredWidth =v.getMeasuredWidth();
-        x=itemWidth- measuredWidth -Global.TEN_DP;
         v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+        x+= measuredWidth;
+        max_height_second_line= measuredHeight;
 
+        v=filemoddatetextview;
+        measuredHeight =v.getMeasuredHeight();
+        measuredWidth =v.getMeasuredWidth();
+        x=itemWidth- measuredWidth -Global.TEN_DP-Global.FOUR_DP;//Math.max(x,itemWidth/2);
+        v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+        max_height_second_line=Math.max(max_height_second_line, measuredHeight);
+
+        v=filepathtextview;
+        measuredHeight =v.getMeasuredHeight();
+        measuredWidth =v.getMeasuredWidth();
+        v.layout(margin_offset_icon,y+max_height_second_line,margin_offset_icon+ measuredWidth,y+max_height_second_line+ measuredHeight);
     }
 
     @Override
@@ -259,6 +252,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
     {
 
         overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
+        fileimageview.setAlpha(filePOJO.getAlfa());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         if(filePOJO.getType()==0)
         {
@@ -276,20 +270,9 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         }
 
         filenametextview.setText(filePOJO.getName());
-        if(filePOJO.getIsDirectory())
-        {
-            filesizetextview.setText(filePOJO.getTotalSize());
-            filesizepercentagetextview.setText(filePOJO.getTotalSizePercentage());
-            filesubfilecounttextview.setText("("+filePOJO.getTotalFiles()+")");
-        }
-        else
-        {
-            filesizetextview.setText(filePOJO.getSize());
-            filesizepercentagetextview.setText(filePOJO.getTotalSizePercentage());
-            filesubfilecounttextview.setText("");
-        }
-        itemlineforeground.getBackground().setLevel((int) (filePOJO.getTotalSizePercentageDouble()*100));
-
+        filesubfilecounttextview.setText(filePOJO.getSize());
+        filemoddatetextview.setText(filePOJO.getDate());
+        filepathtextview.setText(context.getString(R.string.path)+" "+filePOJO.getPath());
     }
 
     public void set_selected(boolean item_selected)

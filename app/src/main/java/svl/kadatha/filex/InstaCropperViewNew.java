@@ -10,12 +10,13 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+
+import timber.log.Timber;
 
 /**
  * Created by Yashar on 3/8/2017.
@@ -577,7 +578,7 @@ public class InstaCropperViewNew extends View {
 
         canvas.restore();
 
-        Log.d("AAA", "raw: " + mImageRawWidth + ", " + mImageRawHeight + " now: " + mRectangle.getWidth() + ", " + mRectangle.getHeight());
+        Timber.d("AAA", "raw: " + mImageRawWidth + ", " + mImageRawHeight + " now: " + mRectangle.getWidth() + ", " + mRectangle.getHeight());
     }
 
     @Override
@@ -770,7 +771,7 @@ public class InstaCropperViewNew extends View {
 
             float targetScale = scale / overScale;
 
-            Log.d("AAA", "scale="+scale + " targetScale=" + targetScale);
+            Timber.d("AAA", "scale="+scale + " targetScale=" + targetScale);
 
             float newScale = (1 - animatedValue) * scale + animatedValue * targetScale;
             mRectangle.scaleBy(newScale / scale , mFocusX, mFocusY);
@@ -859,7 +860,7 @@ public class InstaCropperViewNew extends View {
             mEssentialBias.set(essentialInNegativeX, essentialInNegativeY, essentialInPositiveX, essentialInPositiveY);
             mOptionalBias.set(optionalInNegativeX, optionalInNegativeY, optionalInPositiveX, optionalInPositiveY);
 
-            Log.d("AAA", "fitness set. " + this);
+            Timber.d("AAA", "fitness set. " + this);
         }
 
         protected void getFittingFix(Fix fix) {
@@ -869,7 +870,7 @@ public class InstaCropperViewNew extends View {
             fix.sizeChangeX = mEssentialBias.width() - mOptionalBias.width();
             fix.sizeChangeY = mEssentialBias.height() - mOptionalBias.height();
 
-            Log.d("AAA", "Fitting fix is: " + fix);
+            Timber.d("AAA", "Fitting fix is: " + fix);
         }
 
         protected void getEssentialFix(Fix fix) {
@@ -976,7 +977,7 @@ public class InstaCropperViewNew extends View {
 
             for (Line line: mLines) {
                 float lineFitness = line.getFitness(bounds);
-//                Log.d("AAA", "Line fitness: " + lineFitness);
+//                Timber.d("AAA", "Line fitness: " + lineFitness);
 
                 boolean isEssential = lineFitness < 0;
 

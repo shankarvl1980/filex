@@ -27,7 +27,6 @@ import java.io.File;
 public class LibraryAlbumSelectDialog extends DialogFragment
 {
     private Context context;
-    private TextView label_text_view;
     private String request_code,library_type;
     private Bundle bundle;
     private FrameLayout progress_bar;
@@ -67,7 +66,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment
         // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_library_filter,container,false);
         progress_bar=v.findViewById(R.id.fragment_library_filter_progressbar);
-        label_text_view=v.findViewById(R.id.fragment_library_filter_label);
+        TextView label_text_view = v.findViewById(R.id.fragment_library_filter_label);
         label_text_view.setText(R.string.select_album);
         RecyclerView library_recyclerview = v.findViewById(R.id.fragment_library_filter_RecyclerView);
         library_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);

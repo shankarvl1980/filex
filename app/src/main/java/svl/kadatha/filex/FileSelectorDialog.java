@@ -348,7 +348,14 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		public FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
 			// TODO: Implement this method
-			return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayout(context,false,FileSelectorActivity.FILE_GRID_LAYOUT));
+			if(FileSelectorActivity.FILE_GRID_LAYOUT)
+			{
+				return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context,false));
+			}
+			else {
+				return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context,false));
+			}
+
 		}
 
 		@Override
@@ -406,9 +413,9 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 
 		class ViewHolder extends RecyclerView.ViewHolder
 		{
-			final FileSelectorRecyclerViewLayout v;
+			final RecyclerViewLayout v;
 			FileObjectType fileObjectType;
-			ViewHolder(FileSelectorRecyclerViewLayout v)
+			ViewHolder(RecyclerViewLayout v)
 			{
 				super(v);
 				this.v=v;

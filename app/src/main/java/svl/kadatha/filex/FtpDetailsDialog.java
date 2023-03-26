@@ -45,10 +45,11 @@ public class FtpDetailsDialog extends DialogFragment {
     private boolean toolbar_visible=true;
     private int scroll_distance;
     private int num_all_ftp;
-    private Button delete_btn,rename_btn,edit_btn, exit_btn;
+    private Button delete_btn;
+    private Button rename_btn;
+    private Button edit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
-    private FloatingActionButton floatingActionButton;
     private TextView ftp_number_text_view,empty_ftp_list_tv;
     private FtpDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
@@ -120,7 +121,7 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
-        floatingActionButton=v.findViewById(R.id.floating_action_ftp_list);
+        FloatingActionButton floatingActionButton = v.findViewById(R.id.floating_action_ftp_list);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,7 +148,7 @@ public class FtpDetailsDialog extends DialogFragment {
         delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
         rename_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
-        exit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+        Button exit_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
 
         BottomToolbarClickListener bottomToolbarClickListener=new BottomToolbarClickListener();
         add_btn.setOnClickListener(bottomToolbarClickListener);

@@ -26,15 +26,12 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 	private CardViewClickListener cardViewClickListener;
     private boolean show_file_path;
-    private final boolean grid_layout;
-
 
 	DetailRecyclerViewAdapter(Context context,boolean archiveview)
 	{
 		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
-		grid_layout=df.grid_layout;
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
 		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
 		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
@@ -134,7 +131,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 				df.viewModel.mselecteditems.delete(pos);
 				df.viewModel.mselecteditemsFilePath.delete(pos);
 				v.setSelected(false);
-				((RecyclerViewLayout)v).set_selected(false);
+				((RecyclerViewLayoutList)v).set_selected(false);
 				--size;
 
 				if(size==1)
@@ -170,7 +167,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 				df.viewModel.mselecteditems.put(pos,true);
 				df.viewModel.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
 				v.setSelected(true);
-				((RecyclerViewLayout)v).set_selected(true);
+				((RecyclerViewLayoutList)v).set_selected(true);
 				++size;
 
 				if(size==1)
@@ -209,7 +206,13 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 	{
-		return new ViewHolder(new RecyclerViewLayout(context,show_file_path,grid_layout));
+		if(df.grid_layout)
+		{
+			return new ViewHolder(new RecyclerViewLayoutGrid(context,show_file_path));
+		}
+		else{
+			return new ViewHolder(new RecyclerViewLayoutList(context,show_file_path));
+		}
 	}
 
 	@Override
@@ -283,44 +286,6 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+ "/" +t);
 		}
 	};
-//
-//	private final Filter file_parent_filter =new Filter () {
-//		@Override
-//		protected FilterResults performFiltering(CharSequence constraint) {
-//			df.filePOJO_list = new ArrayList<>();
-//			if (constraint == null || constraint.length() == 0) {
-//				df.filePOJO_list = df.totalFilePOJO_list;
-//			} else {
-//				String pattern = constraint.toString().toLowerCase().trim();
-//				for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
-//					FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
-//					if (new File(filePOJO.getPath()).getParentFile().getName().equals(pattern)) {
-//						df.filePOJO_list.add(filePOJO);
-//					}
-//				}
-//			}
-//			return new Filter.FilterResults();
-//		}
-//
-//		@Override
-//		protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-//			int t=df.filePOJO_list.size();
-//			if(df.viewModel.mselecteditems.size()>0)
-//			{
-//				deselectAll();
-//			}
-//			else
-//			{
-//				notifyDataSetChanged();
-//			}
-//			if(t>0)
-//			{
-//				df.recyclerView.setVisibility(View.VISIBLE);
-//				df.folder_empty.setVisibility(View.GONE);
-//			}
-//			mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+ "/" +t);
-//		}
-//	};
 
 	@Override
 	public int getItemCount()

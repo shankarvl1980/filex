@@ -1,10 +1,10 @@
 package svl.kadatha.filex;
 
-import android.util.Log;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class RootUtils {
 
@@ -49,16 +49,16 @@ public class RootUtils {
                 }
                 catch (Exception ex)
                 {
-                    Log.e("ROOT", "Error executing root action", ex);
+                    Timber.e("ROOT", "Error executing root action", ex);
                 }
             }
         }
         catch (IOException | SecurityException ex)
         {
-            Log.w("ROOT", "Can't get root access", ex);
+            Timber.w("ROOT", "Can't get root access", ex);
         } catch (Exception ex)
         {
-            Log.w("ROOT", "Error executing internal operation", ex);
+            Timber.w("ROOT", "Error executing internal operation", ex);
         }
 
         return retval;
@@ -91,21 +91,21 @@ public class RootUtils {
                 {
                     retval = false;
                     exitSu = false;
-                    Log.d("ROOT", "Can't get root access or denied by user");
+                    Timber.d("ROOT", "Can't get root access or denied by user");
                     MainActivity.SU="";
                 }
                 else if (currUid.contains("uid=0"))
                 {
                     retval = true;
                     exitSu = true;
-                    Log.d("ROOT", "Root access granted");
+                    Timber.d("ROOT", "Root access granted");
                     MainActivity.SU="su";
                 }
                 else
                 {
                     retval = false;
                     exitSu = true;
-                    Log.d("ROOT", "Root access rejected: " + currUid);
+                    Timber.d("ROOT", "Root access rejected: " + currUid);
                     MainActivity.SU="";
                     //add listener to disable su toggle
                 }
@@ -123,7 +123,7 @@ public class RootUtils {
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
             retval = false;
-            Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+            Timber.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
         }
 
         return retval;

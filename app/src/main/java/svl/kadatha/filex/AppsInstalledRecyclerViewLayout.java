@@ -24,7 +24,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
     private int imageview_dimension;
     public int itemWidth, itemHeight;
     private int select_indicator_offset_linear;
-    private int measuredWidth,measuredHeight;
 
     AppsInstalledRecyclerViewLayout(Context context)
     {
@@ -33,19 +32,6 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         init();
     }
 
-    AppsInstalledRecyclerViewLayout(Context context, AttributeSet attr)
-    {
-        super(context,attr);
-        this.context=context;
-        init();
-    }
-
-    AppsInstalledRecyclerViewLayout(Context context, AttributeSet attr, int defStyle)
-    {
-        super(context,attr,defStyle);
-        this.context=context;
-        init();
-    }
 
     private void init()
     {
@@ -209,6 +195,8 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
         // TODO: Implement this method
         int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
+        int measuredHeight;
+        int measuredWidth;
         if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
             int grid_count=Global.GRID_COUNT;
@@ -227,25 +215,25 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
          */
 
             v=appimageview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
-            y+=measuredHeight;
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+            y+= measuredHeight;
 
 
             x=Global.FOUR_DP;
             v=appnametextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
-            y+=measuredHeight;
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+            y+= measuredHeight;
 
 
 
             v=appsizetextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
 
 
         }
@@ -254,11 +242,11 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
             x=Global.FOURTEEN_DP;
             int margin_offset_icon, max_height_second_line;
             View v=appimageview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
             int d=(itemHeight-imageview_dimension)/2;
-            v.layout(x,d,x+measuredWidth,d+measuredHeight);
-            x+=measuredWidth+Global.TEN_DP;
+            v.layout(x,d,x+ measuredWidth,d+ measuredHeight);
+            x+= measuredWidth +Global.TEN_DP;
             margin_offset_icon=x;
 
             /*
@@ -273,35 +261,35 @@ public class AppsInstalledRecyclerViewLayout extends ViewGroup
              */
 
             v=appnametextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            y=(itemHeight-measuredHeight-apppackagenametextview.getMeasuredHeight()-appversiontextview.getMeasuredHeight()-appsizetextview.getMeasuredHeight())/2;
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
-            y+=measuredHeight;
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            y=(itemHeight- measuredHeight -apppackagenametextview.getMeasuredHeight()-appversiontextview.getMeasuredHeight()-appsizetextview.getMeasuredHeight())/2;
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+            y+= measuredHeight;
 
 
             v=apppackagenametextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
-            y+=measuredHeight;
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+            y+= measuredHeight;
 
             v=appversiontextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
-            y+=measuredHeight;
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+            y+= measuredHeight;
 
             v=appsizetextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            v.layout(x,y,x+measuredWidth+Global.TEN_DP,y+measuredHeight);
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            v.layout(x,y,x+ measuredWidth +Global.TEN_DP,y+ measuredHeight);
 
             v=appdatetextview;
-            measuredHeight=v.getMeasuredHeight();
-            measuredWidth=v.getMeasuredWidth();
-            x=itemWidth-select_indicator_offset_linear-measuredWidth-Global.FOURTEEN_DP;
-            v.layout(x,y,x+measuredWidth,y+measuredHeight);
+            measuredHeight =v.getMeasuredHeight();
+            measuredWidth =v.getMeasuredWidth();
+            x=itemWidth-select_indicator_offset_linear- measuredWidth -Global.FOURTEEN_DP;
+            v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
 
         }
 

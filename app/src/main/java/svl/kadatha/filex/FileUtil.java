@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +35,7 @@ import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
+import timber.log.Timber;
 
 /**
 	 * Utility class for helping parsing file systems.
@@ -232,7 +232,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				}
 
 			} catch (Exception e) {
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -249,7 +249,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 				bufferedCopy(inStream,fileOutStream,false,bytes_read);
 
 			} catch (Exception e) {
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -408,7 +408,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (Exception e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -464,7 +464,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 		}
 		catch (Exception e) {
-			//Log.e(Application.TAG,
+			//Timber.e(Application.TAG,
 			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
@@ -522,7 +522,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 		}
 		catch (Exception e) 
 		{
-			//Log.e(Application.TAG,
+			//Timber.e(Application.TAG,
 			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
@@ -564,7 +564,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (Exception e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -613,7 +613,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch(IOException e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -666,7 +666,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch(IOException e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -723,7 +723,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (Exception e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -767,7 +767,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (Exception e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -798,7 +798,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 					deleteNativeFile(source);
 				}
 			} catch (Exception e) {
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -818,7 +818,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 
 			} catch (Exception e) {
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -849,7 +849,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (Exception e)
 			{
-				//Log.e(Application.TAG,
+				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
@@ -891,7 +891,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			{
 				return inputStream == null;
 			} catch (IOException e) {
-				Log.d(Global.TAG,"exception thrown while ascertaining the path is directory - "+e.getMessage());
+				Timber.d(Global.TAG,"exception thrown while ascertaining the path is directory - "+e.getMessage());
 				return false;
 			}
 		}
@@ -921,7 +921,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 					}
 				}
 			} catch (IOException e) {
-				Log.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
+				Timber.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
 				return null;
 			}
 
@@ -989,7 +989,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 
 		}
 		catch (Exception e) {
-			//Log.e(Application.TAG,
+			//Timber.e(Application.TAG,
 			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return null;
 		}
@@ -1489,7 +1489,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 						boolean success =FileUtil.deleteNativeFile(file);
 						if (!success) 
 						{
-							//Log.w(Application.TAG, "Failed to delete file" + child);
+							//Timber.w(Application.TAG, "Failed to delete file" + child);
 							totalSuccess = false;
 						}
 					}
@@ -1546,7 +1546,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 			}
 			catch (IOException ioe) 
 			{
-				//Log.e(Application.TAG, "Could not get SD directory", ioe);
+				//Timber.e(Application.TAG, "Could not get SD directory", ioe);
 			}
 			return sdCardDirectory;
 		}
@@ -1576,7 +1576,7 @@ import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 						}
 						paths.add(path);
 					} //else {
-						//.Log.w(Application.TAG, "Unexpected external file dir: " + file.getAbsolutePath());
+						//.Timber.w(Application.TAG, "Unexpected external file dir: " + file.getAbsolutePath());
 					//}
 				}
 			}
