@@ -71,15 +71,6 @@
 		/>
 
 	<FrameLayout
-		android:id="@+id/fragment_replace_confirmation_button_layout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/layout_margin"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_replace_dialog_background" />
-
-	<FrameLayout
 		android:id="@+id/file_replacement_dialog_progressbar"
 		android:layout_height="match_parent"
 		android:layout_width="match_parent"
@@ -87,6 +78,10 @@
 		android:focusable="true"
 		android:foregroundGravity="center"
 		android:elevation="6dp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
 		>
 		<ProgressBar
 			android:layout_width="wrap_content"
@@ -95,6 +90,17 @@
 			android:layout_gravity="center"
 			/>
 	</FrameLayout>
+
+	<FrameLayout
+		android:id="@+id/fragment_replace_confirmation_button_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/layout_margin"
+		android:elevation="6dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_replace_dialog_background" />
+
 
 
 

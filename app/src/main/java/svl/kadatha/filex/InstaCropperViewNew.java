@@ -578,7 +578,7 @@ public class InstaCropperViewNew extends View {
 
         canvas.restore();
 
-        Timber.d("AAA", "raw: " + mImageRawWidth + ", " + mImageRawHeight + " now: " + mRectangle.getWidth() + ", " + mRectangle.getHeight());
+        Timber.tag("AAA").d( "raw: " + mImageRawWidth + ", " + mImageRawHeight + " now: " + mRectangle.getWidth() + ", " + mRectangle.getHeight());
     }
 
     @Override
@@ -771,7 +771,7 @@ public class InstaCropperViewNew extends View {
 
             float targetScale = scale / overScale;
 
-            Timber.d("AAA", "scale="+scale + " targetScale=" + targetScale);
+            Timber.tag("AAA").d( "scale="+scale + " targetScale=" + targetScale);
 
             float newScale = (1 - animatedValue) * scale + animatedValue * targetScale;
             mRectangle.scaleBy(newScale / scale , mFocusX, mFocusY);
@@ -860,7 +860,7 @@ public class InstaCropperViewNew extends View {
             mEssentialBias.set(essentialInNegativeX, essentialInNegativeY, essentialInPositiveX, essentialInPositiveY);
             mOptionalBias.set(optionalInNegativeX, optionalInNegativeY, optionalInPositiveX, optionalInPositiveY);
 
-            Timber.d("AAA", "fitness set. " + this);
+            Timber.tag("AAA").d( "fitness set. " + this);
         }
 
         protected void getFittingFix(Fix fix) {
@@ -870,7 +870,7 @@ public class InstaCropperViewNew extends View {
             fix.sizeChangeX = mEssentialBias.width() - mOptionalBias.width();
             fix.sizeChangeY = mEssentialBias.height() - mOptionalBias.height();
 
-            Timber.d("AAA", "Fitting fix is: " + fix);
+            Timber.tag("AAA").d( "Fitting fix is: " + fix);
         }
 
         protected void getEssentialFix(Fix fix) {
@@ -977,7 +977,7 @@ public class InstaCropperViewNew extends View {
 
             for (Line line: mLines) {
                 float lineFitness = line.getFitness(bounds);
-//                Timber.d("AAA", "Line fitness: " + lineFitness);
+//                Timber.tag("AAA").d( "Line fitness: " + lineFitness);
 
                 boolean isEssential = lineFitness < 0;
 

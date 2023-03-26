@@ -372,6 +372,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 					public void onClick(View v)
 					{
+						if(progress_bar.getVisibility()==View.VISIBLE)
+						{
+							Global.print(context,getString(R.string.please_wait));
+							return;
+						}
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 						if(destFileObjectType==FileObjectType.USB_TYPE)
 						{
@@ -398,6 +403,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 				{
 
 					public void onClick(View v) {
+						if(progress_bar.getVisibility()==View.VISIBLE)
+						{
+							Global.print(context,getString(R.string.please_wait));
+							return;
+						}
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 						if(destFileObjectType==FileObjectType.USB_TYPE)
 						{
@@ -636,24 +646,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-//	private final ActivityResultLauncher<Intent> activityResultLauncher_SAF_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-//		@Override
-//		public void onActivityResult(ActivityResult result) {
-//			if (result.getResultCode() == Activity.RESULT_OK)
-//			{
-//				Uri treeUri;
-//				treeUri = result.getData().getData();
-//				Global.ON_REQUEST_URI_PERMISSION(context, treeUri);
-//
-//				okbutton.callOnClick();
-//			}
-//			else
-//			{
-//				Global.print(context,getString(R.string.permission_not_granted));
-//			}
-//
-//		}
-//	});
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 		@Override

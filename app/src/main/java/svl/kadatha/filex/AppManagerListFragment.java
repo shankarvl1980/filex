@@ -457,7 +457,14 @@ public class AppManagerListFragment extends Fragment {
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new VH(new AppsInstalledRecyclerViewLayout(context));
+            if(AppManagerActivity.FILE_GRID_LAYOUT)
+            {
+                return new VH(new AppInstalledRecyclerViewLayoutGrid(context));
+            }else
+            {
+                return new VH(new AppInstalledRecyclerViewLayoutList(context));
+            }
+
         }
 
         @Override
@@ -519,9 +526,9 @@ public class AppManagerListFragment extends Fragment {
 
         private class VH extends RecyclerView.ViewHolder
         {
-            final AppsInstalledRecyclerViewLayout v;
+            final AppInstalledRecyclerViewLayout v;
             int pos;
-            public VH(@NonNull AppsInstalledRecyclerViewLayout itemView) {
+            public VH(@NonNull AppInstalledRecyclerViewLayout itemView) {
                 super(itemView);
                 v=itemView;
                 v.setOnClickListener(new View.OnClickListener() {

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -88,7 +89,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                 file_start= file_pointer == 0L;
                 try
                 {
-
                     FileChannel fc=fileInputStream.getChannel();
                     fc.position(file_pointer);
 
@@ -143,7 +143,7 @@ public class FileEditorViewModel extends AndroidViewModel {
 
                     buf.clear();
                     fc.position(file_pointer);
-                    bufferedReader=new BufferedReader(Channels.newReader(fc,"UTF-8"));
+                    bufferedReader=new BufferedReader(Channels.newReader(fc, StandardCharsets.UTF_8));
                     String line;
                     int count=0;
                     long br=0,total_bytes_read=0;

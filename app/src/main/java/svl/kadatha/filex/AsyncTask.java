@@ -214,7 +214,7 @@ public abstract class AsyncTask<Params, Progress, Result> {
     private static final RejectedExecutionHandler sRunOnSerialPolicy =
             new RejectedExecutionHandler() {
                 public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-                    Timber.w(LOG_TAG, "Exceeded ThreadPoolExecutor pool size");
+                    Timber.tag(LOG_TAG).w("Exceeded ThreadPoolExecutor pool size");
                     // As a last ditch fallback, run it on an executor with an unbounded queue.
                     // Create this executor lazily, hopefully almost never.
                     synchronized (this) {
@@ -363,7 +363,7 @@ public abstract class AsyncTask<Params, Progress, Result> {
                 try {
                     postResultIfNotInvoked(get());
                 } catch (InterruptedException e) {
-                    Timber.w(LOG_TAG, e);
+                    Timber.tag(LOG_TAG).w(e);
                 } catch (ExecutionException e) {
                     throw new RuntimeException("An error occurred while executing doInBackground()",
                             e.getCause());

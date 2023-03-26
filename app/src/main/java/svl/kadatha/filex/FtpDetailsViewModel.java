@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
@@ -20,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import timber.log.Timber;
 
 public class FtpDetailsViewModel extends AndroidViewModel {
 
@@ -120,7 +121,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                MainActivity.FTP_CLIENT=new FTPClient();
                 loggedInStatus=false;
                 try {
                     FTP_POJO=ftpPOJO;
@@ -139,8 +139,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
     public static boolean CONNECT() throws IOException {
         if(FTP_POJO==null)return false;
-        FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_L8);
-        //MainActivity.FTP_CLIENT.configure(conf);
+
+        MainActivity.FTP_CLIENT=new FTPClient();
+//        FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
+//        MainActivity.FTP_CLIENT.configure(conf);
         MainActivity.FTP_CLIENT.connect(FTP_POJO.server,FTP_POJO.port);
         if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode())) {
             MainActivity.FTP_CLIENT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
@@ -155,6 +157,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
 
                 FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+                Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
 
                 //if()
                 {

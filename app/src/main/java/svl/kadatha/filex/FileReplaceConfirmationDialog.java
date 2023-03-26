@@ -81,6 +81,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
+				if(progress_bar.getVisibility()==View.VISIBLE)
+				{
+					Global.print(context,getString(R.string.please_wait));
+					return;
+				}
 				if(apply_all_checkbox.isChecked())
 				{
 					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);

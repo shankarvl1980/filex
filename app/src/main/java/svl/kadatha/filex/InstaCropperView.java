@@ -302,7 +302,6 @@ public class InstaCropperView extends View {
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                //callback.onBitmapReady(bitmap);
                 ((InstaCropperActivity)context).progress_bar.setVisibility(GONE);
             }
 

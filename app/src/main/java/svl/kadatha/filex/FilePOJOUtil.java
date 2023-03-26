@@ -1024,14 +1024,14 @@ public class FilePOJOUtil {
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
             String modified_other_permission_string=Global.GET_OTHER_FILE_PERMISSION(fileclickselected);
-            Timber.d("shankar","file_path - "+fileclickselected+"   existing other permission string - "+modified_other_permission_string+" permission to read - "+file.canRead());
+            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"   existing other permission string - "+modified_other_permission_string+" permission to read - "+file.canRead());
             Global.SET_OTHER_FILE_PERMISSION("rwx",fileclickselected);
             SecurityManager securityManager=new SecurityManager();
             securityManager.checkRead(fileclickselected);
 
             file.setExecutable(true,false);
             file.setReadable(true,false);
-            Timber.d("shankar"," owner of file - "+file.canRead());
+            Timber.tag("Shankar").d("," owner of file - "+file.canRead());
 
         }
 
@@ -1153,7 +1153,7 @@ public class FilePOJOUtil {
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
             other_permission_string=Global.GET_OTHER_FILE_PERMISSION(fileclickselected);
-            Timber.d("shankar","file_path - "+fileclickselected+"    modified other permission - "+other_permission_string+" whether exists - "+new File(fileclickselected).exists());
+            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"    modified other permission - "+other_permission_string+" whether exists - "+new File(fileclickselected).exists());
             MAKE_FilePOJO_ROOT(fileclickselected);
         }
 

@@ -49,16 +49,16 @@ public class RootUtils {
                 }
                 catch (Exception ex)
                 {
-                    Timber.e("ROOT", "Error executing root action", ex);
+                    Timber.tag("ROOT").e( "Error executing root action", ex);
                 }
             }
         }
         catch (IOException | SecurityException ex)
         {
-            Timber.w("ROOT", "Can't get root access", ex);
+            Timber.tag("ROOT").w( "Can't get root access", ex);
         } catch (Exception ex)
         {
-            Timber.w("ROOT", "Error executing internal operation", ex);
+            Timber.tag("ROOT").w( "Error executing internal operation", ex);
         }
 
         return retval;
@@ -91,21 +91,21 @@ public class RootUtils {
                 {
                     retval = false;
                     exitSu = false;
-                    Timber.d("ROOT", "Can't get root access or denied by user");
+                    Timber.tag("ROOT").d( "Can't get root access or denied by user");
                     MainActivity.SU="";
                 }
                 else if (currUid.contains("uid=0"))
                 {
                     retval = true;
                     exitSu = true;
-                    Timber.d("ROOT", "Root access granted");
+                    Timber.tag("ROOT").d( "Root access granted");
                     MainActivity.SU="su";
                 }
                 else
                 {
                     retval = false;
                     exitSu = true;
-                    Timber.d("ROOT", "Root access rejected: " + currUid);
+                    Timber.tag("ROOT").d( "Root access rejected: " + currUid);
                     MainActivity.SU="";
                     //add listener to disable su toggle
                 }
@@ -123,7 +123,7 @@ public class RootUtils {
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
             retval = false;
-            Timber.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+            Timber.tag("ROOT").d( "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
         }
 
         return retval;

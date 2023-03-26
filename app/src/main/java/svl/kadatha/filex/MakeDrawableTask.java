@@ -133,7 +133,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                 options.inSampleSize *= 2;
 
                 if (options.inSampleSize >= 1024) {
-                    Timber.d(TAG, "Failed to optimize RAM to receive Bitmap.");
+                    Timber.tag(TAG).d( "Failed to optimize RAM to receive Bitmap.");
 
                     break;
                 }
@@ -168,7 +168,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                 return orientation;
             }
             else {
-                Timber.w(TAG, "Failed to get MediaStore image orientation.");
+                Timber.tag(TAG).w( "Failed to get MediaStore image orientation.");
 
                 c.close();
 
@@ -200,7 +200,7 @@ public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Dr
                     return 0;
             }
         } catch (IOException e) {
-            Timber.w(TAG, "Failed to get image orientation from file.", e);
+            Timber.tag(TAG).w( "Failed to get image orientation from file.", e);
 
             return 0;
         }

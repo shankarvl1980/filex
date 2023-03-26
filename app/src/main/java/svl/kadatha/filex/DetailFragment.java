@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -841,6 +842,28 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		
 	}
 
+	private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)
+	{
+		UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path,fileObjectType);
+		if(uriPOJO!=null)
+		{
+			tree_uri_path=uriPOJO.get_path();
+			tree_uri=uriPOJO.get_uri();
+
+		}
+
+		if(tree_uri_path.equals(""))
+		{
+			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
+			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
 	private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		if(MainActivity.usbFileRoot==null)
@@ -1009,6 +1032,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			return filepath_string_array.length;
 		}
 	}
+
 
 }
 

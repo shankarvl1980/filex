@@ -885,31 +885,38 @@ import timber.log.Timber;
 
 	public static boolean isFtpPathDirectory(String file_path)
 	{
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		//if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
+			try {
+				FtpDetailsViewModel.CONNECT();
+			} catch (IOException e) {
+				return false;
+			}
 			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(file_path))
 			{
 				return inputStream == null;
 			} catch (IOException e) {
-				Timber.d(Global.TAG,"exception thrown while ascertaining the path is directory - "+e.getMessage());
+				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
 				return false;
 			}
 		}
-		else {
-			return false;
-		}
+//		else {
+//			return false;
+//		}
 
 	}
 
 	public static FTPFile getFTPFile(String file_path)
 	{
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		//if(Global.CHECK_FTP_SERVER_CONNECTED())
+
 		{
 			FTPFile ftpFile = null;
 			File file=new File(file_path);
 			String parent_path=file.getParent();
 			String name=file.getName();
 			try {
+				FtpDetailsViewModel.CONNECT();
 				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
 				int size= ftpFiles_array.length;
 				for(int i=0;i<size;++i)
@@ -921,7 +928,7 @@ import timber.log.Timber;
 					}
 				}
 			} catch (IOException e) {
-				Timber.d(Global.TAG,"exception thrown while getting ftpfile - "+e.getMessage());
+				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
 				return null;
 			}
 

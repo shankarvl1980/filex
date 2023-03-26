@@ -1080,7 +1080,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 	private void printMatrixInfo() {
 		float[] n = new float[9];
 		matrix.getValues(n);
-		Timber.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
+		Timber.tag(DEBUG).d( "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
 	}
 }
  
