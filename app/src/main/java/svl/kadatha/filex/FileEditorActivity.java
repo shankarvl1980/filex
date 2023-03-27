@@ -52,6 +52,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 
 public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
 {
@@ -413,6 +415,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						down_button.setEnabled(true);
 						down_button.setAlpha(Global.ENABLE_ALFA);
 					}
+
 					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
 					scrollview.smoothScrollTo(0,0);
 					viewModel.textViewUndoRedo.startListening();
@@ -643,8 +646,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		try
 		{
-			ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
+			//Timber.tag(Global.TAG).d("started parcel file descriptor");
+            ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
+            //Timber.tag(Global.TAG).d("completed");
 			progress_bar.setVisibility(View.VISIBLE);
 			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(new FileInputStream(fd),pointer);

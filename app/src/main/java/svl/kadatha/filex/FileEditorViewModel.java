@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FileEditorViewModel extends AndroidViewModel {
 
@@ -50,9 +51,11 @@ public class FileEditorViewModel extends AndroidViewModel {
     public StringBuilder stringBuilder;
     private boolean isCancelled;
     public boolean edit_mode;
+    private final Application application;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);
+        this.application=application;
     }
 
 
@@ -87,6 +90,7 @@ public class FileEditorViewModel extends AndroidViewModel {
             public void run() {
                 textViewUndoRedo.clearHistory();
                 file_start= file_pointer == 0L;
+                boolean line_limit_exceeded;
                 try
                 {
                     FileChannel fc=fileInputStream.getChannel();
@@ -146,12 +150,15 @@ public class FileEditorViewModel extends AndroidViewModel {
                     bufferedReader=new BufferedReader(Channels.newReader(fc, StandardCharsets.UTF_8));
                     String line;
                     int count=0;
-                    long br=0,total_bytes_read=0;
+                    long br=0,total_bytes_read=0,line_length=0;
                     int eol_len=(eol==FileEditorActivity.EOL_RN) ? 2 : 1;
                     int max_lines_to_display = 500;
                     while((line=bufferedReader.readLine())!=null)
                     {
-                        br+=line.getBytes().length+eol_len;
+                        line_length=line.getBytes().length+eol_len;
+                        Timber.tag(Global.TAG).d("line length-"+line_length);
+                        if(line_length>100000)throw new IOException("Line length limit exceeded, could not be opened fully");
+                        br+=line_length;
                         stringBuilder.append(line).append("\n");
                         count++;
                         if(count>= max_lines_to_display)
@@ -176,7 +183,8 @@ public class FileEditorViewModel extends AndroidViewModel {
 
                 } catch(IOException e)
                 {
-                   fileRead=false;
+                    stringBuilder.setLength(0);
+                    fileRead=false;
                 } finally
                 {
                     try
