@@ -131,7 +131,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 				df.viewModel.mselecteditems.delete(pos);
 				df.viewModel.mselecteditemsFilePath.delete(pos);
 				v.setSelected(false);
-				((RecyclerViewLayoutList)v).set_selected(false);
+				((RecyclerViewLayout)v).set_selected(false);
 				--size;
 
 				if(size==1)
