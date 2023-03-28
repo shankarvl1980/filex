@@ -411,7 +411,6 @@ public class AudioPlayerActivity extends BaseActivity
 		Bitmap albumart=null;
 		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
 		{
-
 			try(MediaMetadataRetriever mmr=new MediaMetadataRetriever())
 			{
 				mmr.setDataSource(data);

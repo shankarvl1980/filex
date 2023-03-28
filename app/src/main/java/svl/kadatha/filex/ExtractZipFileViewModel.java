@@ -69,12 +69,12 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 	public static boolean EXTRACT_ZIP(ZipFile zipfile, ZipEntry zipEntry, File ZipDestFolder)
 	{
 		InputStream inStream=null;
-
-		try
+		File dir=new File(Global.CONCATENATE_PARENT_CHILD_PATH(ZipDestFolder.getAbsolutePath(),zipEntry.getName()));
+		try(OutputStream outStream=new FileOutputStream(dir))
 		{
 			inStream=zipfile.getInputStream(zipEntry);
-			BufferedInputStream bufferedinStream=new BufferedInputStream(inStream);
-			File dir=new File(Global.CONCATENATE_PARENT_CHILD_PATH(ZipDestFolder.getAbsolutePath(),zipEntry.getName()));
+			BufferedInputStream bufferedInStream=new BufferedInputStream(inStream);
+
 			if(zipEntry.isDirectory() && !dir.exists())
 			{
 				return FileUtil.mkdirsNative(dir);
@@ -90,22 +90,18 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 				{
 					FileUtil.mkdirsNative(parent_dir);
 				}
-				OutputStream outStream;
-				outStream=new FileOutputStream(dir);
-				if(outStream!=null)
-				{
-					BufferedOutputStream bufferedoutStream=new BufferedOutputStream(outStream);
-					byte[] b=new byte[8192];
-					int bytesread;
-					while((bytesread=bufferedinStream.read(b))!=-1)
-					{
-						bufferedoutStream.write(b,0,bytesread);
-					}
 
-					bufferedoutStream.close();
-					bufferedinStream.close();
-					return true;
+				BufferedOutputStream bufferedOutStream=new BufferedOutputStream(outStream);
+				byte[] b=new byte[8192];
+				int bytesread;
+				while((bytesread=bufferedInStream.read(b))!=-1)
+				{
+					bufferedOutStream.write(b,0,bytesread);
 				}
+
+				bufferedOutStream.close();
+				bufferedInStream.close();
+				return true;
 			}
 		}
 
@@ -122,13 +118,15 @@ public class ExtractZipFileViewModel extends AndroidViewModel
 				{
 					inStream.close();
 				}
+				else {
+					return false;
+				}
 			}
 			catch(Exception e)
 			{
 				return false;
 			}
 		}
-		return false;
 	}
 }
 

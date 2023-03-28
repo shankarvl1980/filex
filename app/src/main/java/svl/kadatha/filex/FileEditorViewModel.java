@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.net.Uri;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -144,10 +145,11 @@ public class FileEditorViewModel extends AndroidViewModel {
 
                     buf.clear();
                     fc.position(file_pointer);
-                    bufferedReader=new BufferedReader(Channels.newReader(fc, StandardCharsets.UTF_8));
+                    String utf="UTF-8";
+                    bufferedReader=new BufferedReader(Channels.newReader(fc, utf));
                     String line;
                     int count=0;
-                    long br=0,total_bytes_read=0,line_length=0;
+                    long br=0,total_bytes_read=0,line_length;
                     int eol_len=(eol==FileEditorActivity.EOL_RN) ? 2 : 1;
                     int max_lines_to_display = 500;
                     while((line=bufferedReader.readLine())!=null)
