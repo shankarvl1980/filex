@@ -52,8 +52,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 
 public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
 {

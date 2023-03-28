@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class FileEditorViewModel extends AndroidViewModel {
 
@@ -51,11 +50,9 @@ public class FileEditorViewModel extends AndroidViewModel {
     public StringBuilder stringBuilder;
     private boolean isCancelled;
     public boolean edit_mode;
-    private final Application application;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
 
@@ -156,8 +153,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                     while((line=bufferedReader.readLine())!=null)
                     {
                         line_length=line.getBytes().length+eol_len;
-                        Timber.tag(Global.TAG).d("line length-"+line_length);
-                        if(line_length>100000)throw new IOException("Line length limit exceeded, could not be opened fully");
+                        if(line_length>150000)throw new IOException("Line length limit exceeded, could not be opened fully");
                         br+=line_length;
                         stringBuilder.append(line).append("\n");
                         count++;
@@ -165,7 +161,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                         {
                             file_end=false;
                             total_bytes_read=file_pointer+br;
-
                             break;
                         }
                     }
