@@ -101,7 +101,7 @@ public class DefaultAppsDialog extends DialogFragment
                 final DefaultAppPOJO defaultAppPOJO=defaultAppPOJOS.get(i);
                 mime_type.setText(defaultAppPOJO.file_type);
                 app_name.setText(defaultAppPOJO.app_name);
-                GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+defaultAppPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon);
+                GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+defaultAppPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(app_icon);
                 checkBox.setVisibility(View.VISIBLE);
 
                 checkBox.setOnClickListener(new View.OnClickListener() {

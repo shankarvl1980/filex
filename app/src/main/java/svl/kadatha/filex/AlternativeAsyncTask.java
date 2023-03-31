@@ -16,15 +16,6 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
         executor = MyExecutorService.getExecutorService();
 
-
-//                Executors.newSingleThreadExecutor(new ThreadFactory() {
-//            @Override
-//            public Thread newThread(Runnable runnable) {
-//                Thread t=new Thread(runnable);
-//                t.setDaemon(true);
-//                return t;
-//            }
-//        });
     }
 
     public ExecutorService getExecutor() {
@@ -60,9 +51,9 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
         });
     }
 
-    public void execute() {
-        execute(null);
-    }
+//    public void execute() {
+//        execute(null);
+//    }
 
     public void execute(Params params) {
         getHandler().post(new Runnable() {
@@ -100,19 +91,14 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
     }
 
     public void cancel(boolean interrupt) {
-        if(interrupt)
+        if(future!=null)
         {
-            if (executor != null) {
-                executor.shutdownNow();
-            }
-        }
-        else {
             future.cancel(interrupt);
         }
 
     }
 
     public boolean isCancelled() {
-        return executor == null || executor.isTerminated() || executor.isShutdown();
+        return executor == null || executor.isTerminated() || executor.isShutdown() || future ==null || future.isCancelled();
     }
 }

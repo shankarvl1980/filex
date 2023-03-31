@@ -83,7 +83,7 @@ public class AppActionSelectDialog extends DialogFragment
         TextView app_version_tv=v.findViewById(R.id.fragment_app_action_app_version);
 
         String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+package_name+".png";
-        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_image_view);
+        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(app_image_view);
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_version_tv.setText(getString(R.string.version)+" "+  version);

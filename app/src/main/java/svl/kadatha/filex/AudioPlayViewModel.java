@@ -141,7 +141,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                                 if(file_ext.matches(Global.AUDIO_REGEX))
                                 {
 
-                                    AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,"0",fileObjectType);
+                                    AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,null,"0",fileObjectType);
                                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
 
                                     if(AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))AudioPlayerService.CURRENT_PLAY_NUMBER=count;

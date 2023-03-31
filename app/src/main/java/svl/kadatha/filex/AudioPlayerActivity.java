@@ -283,7 +283,7 @@ public class AudioPlayerActivity extends BaseActivity
 				if(data!=null)
 				{
 					String name=new File(file_path).getName();
-					AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+					AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
 					apf.initiate_audio();
 				}
 				if(AUDIO_FILE==null)

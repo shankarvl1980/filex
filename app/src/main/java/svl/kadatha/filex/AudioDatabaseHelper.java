@@ -26,7 +26,7 @@ public class AudioDatabaseHelper
 	{
 		try
 		{
-			db.execSQL("CREATE TABLE IF NOT EXISTS "+table+" (id INTEGER PRIMARY KEY, data TEXT, title TEXT, album TEXT,artist TEXT,duration TEXT)");
+			db.execSQL("CREATE TABLE IF NOT EXISTS "+table+" (id INTEGER PRIMARY KEY, data TEXT, title TEXT,album_id TEXT, album TEXT,artist TEXT,duration TEXT)");
 		}
 		catch(SQLiteException e)
 		{
@@ -42,6 +42,7 @@ public class AudioDatabaseHelper
 		contentValues.put("id",audio.getId());
 		contentValues.put("data",audio.getData());
 		contentValues.put("title",audio.getTitle());
+		contentValues.put("album_id",audio.getAlbumId());
 		contentValues.put("album",audio.getAlbum());
 		contentValues.put("artist",audio.getArtist());
 		contentValues.put("duration",audio.getDuration());
@@ -61,6 +62,7 @@ public class AudioDatabaseHelper
 			contentValues.put("id",audio.getId());
 			contentValues.put("data",audio.getData());
 			contentValues.put("title",audio.getTitle());
+			contentValues.put("album_id",audio.getAlbumId());
 			contentValues.put("album",audio.getAlbum());
 			contentValues.put("artist",audio.getArtist());
 			contentValues.put("duration",audio.getDuration());
@@ -135,12 +137,13 @@ public class AudioDatabaseHelper
 					int id=c.getInt(0);
 					String data=c.getString(1);
 					String title=c.getString(2);
-					String album=c.getString(3);
-					String artist=c.getString(4);
-					String duration=c.getString(5);
+					String album_id=c.getString(3);
+					String album=c.getString(4);
+					String artist=c.getString(5);
+					String duration=c.getString(6);
 
 
-					AudioPOJO audio=new AudioPOJO(id, data, title, album, artist, duration,FileObjectType.FILE_TYPE);
+					AudioPOJO audio=new AudioPOJO(id, data, title,album_id, album, artist, duration,FileObjectType.FILE_TYPE);
 					audio_list.add(audio);
 					c.moveToNext();
 

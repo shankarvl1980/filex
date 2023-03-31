@@ -1,5 +1,4 @@
 package svl.kadatha.filex;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
@@ -292,12 +292,12 @@ public class FileSaveService2 extends Service
 		try
 		{
 			FileInputStream fileInputStream=new FileInputStream(file);
-			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream,StandardCharsets.UTF_8));
 
 			bufferedReader.skip(current_page_end_point);
 
 			File temp_file_2=new File(temporary_file_for_save,file.getName()+"_2");
-			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true)));
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_2,true),StandardCharsets.UTF_8));
 			String line;
 			while((line=bufferedReader.readLine())!=null)
 			{
@@ -322,10 +322,10 @@ public class FileSaveService2 extends Service
 			fc.truncate(prev_page_end_point);
 
 			fileInputStream=new FileInputStream(file);
-			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream));
+			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
 
 			File temp_file_1=new File(temporary_file_for_save,file.getName()+"_1");
-			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true)));
+			bufferedWriter=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(temp_file_1,true),StandardCharsets.UTF_8));
 			while((line=bufferedReader.readLine())!=null)
 			{
 

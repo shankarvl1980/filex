@@ -129,7 +129,7 @@ public class AudioListViewModel extends AndroidViewModel {
 
                             if(new File(data).exists())
                             {
-                                audio_list.add(new AudioPOJO(id,data,title,album,artist,duration,FileObjectType.FILE_TYPE));
+                                audio_list.add(new AudioPOJO(id,data,title,album_id,album,artist,duration,FileObjectType.FILE_TYPE));
                             }
                         }
                         cursor.close();

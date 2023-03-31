@@ -567,7 +567,7 @@ public class PdfViewFragment_single_view extends Fragment
             {
                 FrameLayout frameLayout=(FrameLayout) view;
                 ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
-                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(imageView);
+                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(imageView);
                 view.setTag("loaded");
             }
             //progress_bar.setVisibility(View.GONE);

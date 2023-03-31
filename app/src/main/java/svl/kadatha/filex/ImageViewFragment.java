@@ -560,19 +560,19 @@ public class ImageViewFragment extends Fragment
 			if(viewModel.fromThirdPartyApp)
 			{
 				data=((ImageViewActivity)context).data;
-				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
 			}
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
-				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
 			}
 			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(image_view);
+				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
 			}
 
 			container.addView(v);
@@ -626,19 +626,19 @@ public class ImageViewFragment extends Fragment
 			if(viewModel.fromThirdPartyApp)
 			{
 				data=((ImageViewActivity)context).data; //on rotation oncreateview is created first, data is null in oncreate
-				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 			}
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
-				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 			}
 			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(p1.imageview);
+				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 			}
 
 			p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));

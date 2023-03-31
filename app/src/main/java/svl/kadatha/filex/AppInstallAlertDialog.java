@@ -151,7 +151,7 @@ public class AppInstallAlertDialog extends DialogFragment
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+viewModel.package_name+".png";
-                    GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(app_icon_image_view);
+                    GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(app_icon_image_view);
                     app_name_tv.setText(viewModel.app_name);
                     package_name_tv.setText(viewModel.package_name);
                     version_tv.setText(viewModel.version);
