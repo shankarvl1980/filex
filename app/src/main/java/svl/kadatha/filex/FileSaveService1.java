@@ -25,8 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class
-FileSaveService1 extends Service
+public class FileSaveService1 extends Service
 {
 	private FileSaveServiceBinder binder=new FileSaveServiceBinder();
 	private FileSaveServiceCompletionListener fileSaveServiceCompletionListener;

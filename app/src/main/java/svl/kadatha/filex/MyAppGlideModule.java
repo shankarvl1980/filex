@@ -1,5 +1,8 @@
 package svl.kadatha.filex;
 
+import android.content.Context;
+
+import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
 
@@ -11,17 +14,16 @@ public final class MyAppGlideModule extends AppGlideModule
     public boolean isManifestParsingEnabled() {
         return false;
     }
-/*
+
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        // Change bitmap format to ARGB_8888
-        builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
+        super.applyOptions(context,builder);
     }
 
-    @Override
-    public void registerComponents(Context context, Glide glide) {
-        // register ModelLoaders here.
-    }
+//    @Override
+//    public void registerComponents(Context context, Glide glide) {
+//        // register ModelLoaders here.
+//    }
 
- */
+
 }

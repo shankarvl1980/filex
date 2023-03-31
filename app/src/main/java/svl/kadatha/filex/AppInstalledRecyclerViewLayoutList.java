@@ -231,7 +231,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
     {
         //appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.getPackage_name()+".png";
-        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(appimageview);
+        GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(appimageview);
         appnametextview.setText(appPOJO.getName());
         apppackagenametextview.setText(appPOJO.getPackage_name());
         appversiontextview.setText(context.getString(R.string.version)+" "+appPOJO.getVersion());
