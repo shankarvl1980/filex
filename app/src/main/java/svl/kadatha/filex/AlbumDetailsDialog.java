@@ -588,7 +588,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			String duration_str=getString(R.string.duration)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
 			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
-			p1.view.setData(title,album,duration_str,artist,item_selected);
+			p1.view.setData(albumID,title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 		}
 

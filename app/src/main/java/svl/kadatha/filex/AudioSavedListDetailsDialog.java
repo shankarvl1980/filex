@@ -732,6 +732,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		public void onBindViewHolder(CurrentListRecyclerViewAdapter.ViewHolder p1, int p2)
 		{
 			AudioPOJO audio=clicked_audio_list.get(p2);
+			String album_id=audio.getAlbumId();
 			String title=audio.getTitle();
 			String album=getString(R.string.album_colon)+" "+audio.getAlbum();
 			long duration=0L;
@@ -756,7 +757,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				p1.view.artisttextview.setTextColor(rest_audio_text_color);
 			}
 
-			p1.view.setData(title,album,duration_str,artist,item_selected);
+			p1.view.setData(album_id,title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 
 		}

@@ -517,42 +517,7 @@ public class FilePOJOUtil {
             PI.applicationInfo.publicSourceDir = file_path;
             String package_name=PI.packageName;
             String file_with_package_name=package_name+".png";
-            if(!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name))
-            {
-                Drawable APKicon = PI.applicationInfo.loadIcon(packageManager);
-                Bitmap bitmap;
-                if(APKicon instanceof BitmapDrawable)
-                {
-                    bitmap=((BitmapDrawable)APKicon).getBitmap();
-                }
-                else
-                {
-                    bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(),APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                    APKicon.draw(canvas);
-                }
-
-                File f=new File(Global.APK_ICON_DIR,file_with_package_name);
-                FileOutputStream fileOutputStream=null;
-                try {
-                    fileOutputStream=new FileOutputStream(f);
-                    bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
-                    fileOutputStream.close();
-                    Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-                } catch (IOException e) {
-                    if(fileOutputStream!=null)
-                    {
-                        try {
-                            fileOutputStream.close();
-                        } catch (IOException ioException) {
-
-                        }
-                    }
-                }
-
-            }
-
+            AppManagerListFragment.extract_icon(file_with_package_name,packageManager,PI);
             return package_name;
         }
         else

@@ -10,6 +10,10 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
+
 public class AudioListRecyclerViewItem extends ViewGroup
 {
 	private final Context context;
@@ -231,15 +235,14 @@ public class AudioListRecyclerViewItem extends ViewGroup
 	}
 
 
-	public void setData(String title,String album,String duration,String artist,boolean item_selected)
+	public void setData(String album_id,String title,String album,String duration,String artist,boolean item_selected)
 	{
-
+		GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(album_id)).placeholder(R.drawable.audio_file_icon).error(R.drawable.audio_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(audioimageview);
 		titletextview.setText(title);
 		audio_select_indicator.setVisibility(item_selected ? VISIBLE : INVISIBLE);
 		albumtextview.setText(album);
 		durationtextview.setText(duration);
 		artisttextview.setText(artist);
-		audioimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_file_icon));
 	}
 	
 	

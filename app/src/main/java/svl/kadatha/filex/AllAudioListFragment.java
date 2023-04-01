@@ -639,6 +639,7 @@ public class AllAudioListFragment extends Fragment
 		public void onBindViewHolder(AudioListRecyclerViewAdapter.ViewHolder p1, int p2)
 		{
 			AudioPOJO audio=audio_list.get(p2);
+			String album_id=audio.getAlbumId();
 			String title=audio.getTitle();
 			String album=getString(R.string.album_colon)+" "+audio.getAlbum();
 			long duration=0L;
@@ -647,7 +648,7 @@ public class AllAudioListFragment extends Fragment
 			String duration_str=getString(R.string.duration)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
 			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
-			p1.view.setData(title,album,duration_str,artist,item_selected);
+			p1.view.setData(album_id,title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 		}
 

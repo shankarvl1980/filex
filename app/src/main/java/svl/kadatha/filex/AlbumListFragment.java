@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +32,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -450,11 +454,12 @@ public class AlbumListFragment extends Fragment
 		public void onBindViewHolder(AlbumListRecyclerViewAdapter.ViewHolder p1, int p2)
 		{
 			AlbumPOJO album=album_list.get(p2);
+			String album_id=album.getId();
 			String album_name=album.getAlbumName();
 			String no_of_songs=getString(R.string.tracks)+" "+album.getNoOfSongs();
 			String artist=getString(R.string.artists_colon)+" "+album.getArtist();
 			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
-			p1.view.setData(album_name,no_of_songs,artist,item_selected);
+			p1.view.setData(album_id,album_name,no_of_songs,artist,item_selected);
 			p1.view.setSelected(item_selected);
 
 		}
@@ -708,9 +713,9 @@ public class AlbumListFragment extends Fragment
 		}
 
 
-		public void setData(String album,String duration,String artist, boolean item_selected)
+		public void setData(String album_id,String album,String duration,String artist, boolean item_selected)
 		{
-			albumimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.audio_album_icon));
+			GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(album_id)).placeholder(R.drawable.audio_album_icon).error(R.drawable.audio_album_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(albumimageview);
 			albumtextview.setText(album);
 			album_select_indicator.setVisibility(item_selected  ? VISIBLE : INVISIBLE);
 			no_of_songs_textview.setText(duration);

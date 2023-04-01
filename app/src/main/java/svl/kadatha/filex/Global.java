@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
@@ -1124,6 +1125,12 @@ public class Global
 				alreadyWarned[0]=true;
 			}
 		}
+	}
+
+	public static Uri GET_ALBUM_ART_URI(String album_id)
+	{
+		long id=Long.parseLong(album_id);
+		return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"),id);
 	}
 
 }

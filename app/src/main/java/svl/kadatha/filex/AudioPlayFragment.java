@@ -229,7 +229,7 @@ public class AudioPlayFragment extends Fragment
 				});
 				service_bound=true;
 			}
-			
+
 			public void onServiceDisconnected(ComponentName component_nane)
 			{
 				audio_player_service.setMediaPlayerPrepareListener(null);
@@ -267,12 +267,12 @@ public class AudioPlayFragment extends Fragment
 
 		ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
 		overflow_btn.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
 			{
-				public void onClick(View v)
-				{
-					listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
-				}
-			});
+				listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
+			}
+		});
 
 		ImageButton exit_btn = v.findViewById(R.id.audio_player_exit_btn);
 		exit_btn.setOnClickListener(new View.OnClickListener() {
@@ -298,8 +298,8 @@ public class AudioPlayFragment extends Fragment
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
-		
-		
+
+
 		EquallyDistributedImageButtonsLayout tb_layout =new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
 		int[] drawables ={R.drawable.previous_icon,R.drawable.backward_icon,R.drawable.play_icon,R.drawable.forward_icon,R.drawable.next_icon};
 		tb_layout.setResourceImageDrawables(drawables);
@@ -317,25 +317,25 @@ public class AudioPlayFragment extends Fragment
 		seekbar=v.findViewById(R.id.audio_player_seekbar);
 
 		seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+		{
+			public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
 			{
-				public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
+				if(fromUser)
 				{
-					if(fromUser)
-					{
-						audio_player_service.seek_to(progress);
-					}
+					audio_player_service.seek_to(progress);
 				}
+			}
 
-				public void onStartTrackingTouch(SeekBar sb)
-				{
+			public void onStartTrackingTouch(SeekBar sb)
+			{
 
-				}
-				public void onStopTrackingTouch(SeekBar sb)
-				{
+			}
+			public void onStopTrackingTouch(SeekBar sb)
+			{
 
-				}
+			}
 
-			});
+		});
 
 		progress_bar=v.findViewById(R.id.audio_play_progressbar);
 		progress_bar.setVisibility(View.GONE);
@@ -350,42 +350,42 @@ public class AudioPlayFragment extends Fragment
 		});
 
 		backward_btn.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
 			{
-				public void onClick(View v)
-				{
-					if(progress_bar.getVisibility()==View.VISIBLE)return;
-					audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_BACKWARD).sendToTarget();
-				}
-			});
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
+				audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_BACKWARD).sendToTarget();
+			}
+		});
 
 		play_pause_btn.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
 			{
-				public void onClick(View v)
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
+				if(audio_player_service.prepared && !audio_player_service.playmode)
 				{
-					if(progress_bar.getVisibility()==View.VISIBLE)return;
-					if(audio_player_service.prepared && !audio_player_service.playmode)
-					{
-						audio_player_service.handler.obtainMessage(AudioPlayerService.START).sendToTarget();
-						play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.pause_icon));
-						update_position();
-					}
-					else if(audio_player_service.prepared && audio_player_service.playmode)
-					{
-						audio_player_service.handler.obtainMessage(AudioPlayerService.PAUSE).sendToTarget();
-						play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon));
-					}
+					audio_player_service.handler.obtainMessage(AudioPlayerService.START).sendToTarget();
+					play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.pause_icon));
+					update_position();
 				}
-			});
+				else if(audio_player_service.prepared && audio_player_service.playmode)
+				{
+					audio_player_service.handler.obtainMessage(AudioPlayerService.PAUSE).sendToTarget();
+					play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon));
+				}
+			}
+		});
 
 		forward_btn.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
 			{
-				public void onClick(View v)
-				{
-					if(progress_bar.getVisibility()==View.VISIBLE)return;
-					audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_FORWARD).sendToTarget();
-				}
-			});
-		
+				if(progress_bar.getVisibility()==View.VISIBLE)return;
+				audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_FORWARD).sendToTarget();
+			}
+		});
+
 		next_btn.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -409,7 +409,7 @@ public class AudioPlayFragment extends Fragment
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					audio_name_tv.setText(audioPlayViewModel.audio_file_name);
-					GlideApp.with(context).load(audioPlayViewModel.album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(album_art_imageview);
+					GlideApp.with(context).load(audioPlayViewModel.album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
 					audioPlayViewModel.isAlbumArtFetched.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
@@ -464,37 +464,37 @@ public class AudioPlayFragment extends Fragment
 
 		return v;
 	}
-	
+
 
 	private void update_position()
 	{
 		handler.post(new Runnable()
+		{
+			public void run()
 			{
-				public void run()
+
+				int current_pos=audio_player_service.get_current_position(); //audio_player;_service.get_current_position();
+				seekbar.setProgress(current_pos);
+				current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
+
+				if(audio_player_service.completed)
 				{
-
-					int current_pos=audio_player_service.get_current_position(); //audio_player;_service.get_current_position();
-					seekbar.setProgress(current_pos);
-					current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
-
-					if(audio_player_service.completed)
-					{
-						play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon));
-						current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
-						seekbar.setProgress(0);
-						handler.removeCallbacks(this);
-					}
-					else
-					{
-						handler.postDelayed(this,1000);
-					}
-
-
+					play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon));
+					current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
+					seekbar.setProgress(0);
+					handler.removeCallbacks(this);
+				}
+				else
+				{
+					handler.postDelayed(this,1000);
 				}
 
-			});
+
+			}
+
+		});
 	}
-	
+
 
 	private String convertSecondsToHMmSs(int milliseconds)
 	{
@@ -569,7 +569,7 @@ public class AudioPlayFragment extends Fragment
 		{
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
 		}
-		
+
 	}
 
 	@Override
@@ -599,7 +599,7 @@ public class AudioPlayFragment extends Fragment
 					isDurationMoreThanHour=(total_duration/1000)>3599;
 					current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
 					total_time_tv.setText(convertSecondsToHMmSs(total_duration));
-					
+
 					seekbar.setMax(total_duration);
 					enable_disable_previous_next_btn();
 					if(audio_player_service.playmode)
@@ -745,7 +745,7 @@ public class AudioPlayFragment extends Fragment
 					break;
 				default:
 					break;
-				
+
 			}
 			listPopWindow.dismiss();
 		}

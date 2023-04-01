@@ -184,7 +184,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                album_art= AudioPlayerActivity.getAlbumArt(audiofilepath,Global.SCREEN_WIDTH-Global.FOUR_DP);
+                album_art= AudioPlayerActivity.GET_ALBUM_ART(audiofilepath,Global.IMAGEVIEW_DIMENSION_LARGE_GRID);
                 if(album_art==null)
                 {
                     album_art= BitmapFactory.decodeResource(application.getResources(),R.drawable.woofer_icon);

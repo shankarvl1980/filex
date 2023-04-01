@@ -30,6 +30,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -406,8 +408,15 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
-	public static Bitmap getAlbumArt(String data, int image_view_size)
+
+
+	public static Bitmap GET_ALBUM_ART(String data, int image_view_size)
 	{
+//		if(album_id==null || album_id.equals(""))
+//		{
+//			album_id=new File(data).getName();
+//		}
+
 		Bitmap albumart=null;
 		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
 		{
