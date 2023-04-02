@@ -221,7 +221,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 Timber.tag(TAG).d( "found root " + partition.hashCode());
             }
         } catch (IOException e) {
-            Timber.tag(TAG).e( "error setting up device", e);
+            Timber.tag(TAG).e( "error setting up device");
         }
 
         notifyRootsChanged();

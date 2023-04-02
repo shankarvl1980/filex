@@ -49,16 +49,16 @@ public class RootUtils {
                 }
                 catch (Exception ex)
                 {
-                    Timber.tag("ROOT").e( "Error executing root action", ex);
+                    Timber.tag("ROOT").e( "Error executing root action");
                 }
             }
         }
         catch (IOException | SecurityException ex)
         {
-            Timber.tag("ROOT").w( "Can't get root access", ex);
+            Timber.tag("ROOT").w( "Can't get root access");
         } catch (Exception ex)
         {
-            Timber.tag("ROOT").w( "Error executing internal operation", ex);
+            Timber.tag("ROOT").w( "Error executing internal operation");
         }
 
         return retval;
