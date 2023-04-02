@@ -224,10 +224,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         clear_cache=true;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

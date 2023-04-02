@@ -30,7 +30,6 @@ import android.preference.PreferenceManager;
 //import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

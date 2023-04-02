@@ -12,8 +12,6 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.io.File;
-
 public class AudioListRecyclerViewItem extends ViewGroup
 {
 	private final Context context;
