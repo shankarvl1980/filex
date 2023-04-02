@@ -81,7 +81,6 @@ public class AllAudioListFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
-		//list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.refresh_icon,getString(R.string.refresh),4));
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -407,7 +408,7 @@ public class RepositoryClass {
         {
             if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
             List<AudioPOJO> audio_list=new ArrayList<>();
-            AudioPlayerActivity.EXISTING_AUDIOS_ID=new ArrayList<>();
+            AudioPlayerActivity.EXISTING_AUDIOS_ID=new HashMap<>();
             Cursor audio_cursor;
             Cursor cursor = null;
             try
@@ -441,7 +442,7 @@ public class RepositoryClass {
                             if(new File(data).exists())
                             {
                                 audio_list.add(new AudioPOJO(id,data,title,album_id,album,artist,duration,FileObjectType.FILE_TYPE));
-                                AudioPlayerActivity.EXISTING_AUDIOS_ID.add(id);
+                                AudioPlayerActivity.EXISTING_AUDIOS_ID.put(id,album_id);
                             }
                         }
 

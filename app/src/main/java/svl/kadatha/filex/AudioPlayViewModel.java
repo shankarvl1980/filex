@@ -1,8 +1,6 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -30,7 +29,8 @@ public class AudioPlayViewModel extends AndroidViewModel {
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public String file_path;
-    public Bitmap album_art;
+    //public Bitmap album_art;
+    public String album_id;
     public String audio_file_name="";
 
     public AudioPlayViewModel(@NonNull Application application) {
@@ -175,7 +175,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
         });
     }
 
-    public void fetchAlbumArt(String audiofilename,String audiofilepath)
+    public void fetchAlbumArt(int audio_id,String audiofilename,String audiofilepath)
     {
         if(isAlbumArtFetched.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         this.audio_file_name=audiofilename;
@@ -184,11 +184,27 @@ public class AudioPlayViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                album_art= AudioPlayerActivity.GET_ALBUM_ART(audiofilepath,Global.IMAGEVIEW_DIMENSION_LARGE_GRID);
-                if(album_art==null)
+                if(audio_id==0)
                 {
-                    album_art= BitmapFactory.decodeResource(application.getResources(),R.drawable.woofer_icon);
+                    if(Global.AUDIO_POJO_HASHMAP.containsKey("audio"))
+                    {
+                        List<AudioPOJO>temp_audio_pojos=Global.AUDIO_POJO_HASHMAP.get("audio");
+                        Iterator<AudioPOJO> iterator= temp_audio_pojos.iterator();
+                        while(iterator.hasNext())
+                        {
+                            AudioPOJO audioPOJO=iterator.next();
+                            if(audioPOJO.getData().equals(audiofilepath))
+                            {
+                                album_id=audioPOJO.getAlbumId();
+                            }
+                        }
+
+                    }
                 }
+                else {
+                    album_id=AudioPlayerActivity.EXISTING_AUDIOS_ID.get(audio_id);
+                }
+
                 isAlbumArtFetched.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

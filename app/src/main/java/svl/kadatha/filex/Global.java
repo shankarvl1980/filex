@@ -1129,7 +1129,16 @@ public class Global
 
 	public static Uri GET_ALBUM_ART_URI(String album_id)
 	{
-		long id=Long.parseLong(album_id);
+		long id;
+		try
+		{
+			id=Long.parseLong(album_id);
+		}
+		catch (NumberFormatException e)
+		{
+			id=0;
+		}
+
 		return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"),id);
 	}
 

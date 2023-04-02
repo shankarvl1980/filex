@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -57,7 +58,7 @@ public class AudioPlayerActivity extends BaseActivity
 	private AudioSavedListFragment aslf;
 	static String AUDIO_NOTIFICATION_INTENT_ACTION;
 	public static final String CURRENT_PLAY_LIST="Current play list";
-	public static List<Integer> EXISTING_AUDIOS_ID;
+	public static HashMap<Integer,String> EXISTING_AUDIOS_ID;
     public boolean search_toolbar_visible;
     public KeyBoardUtil keyBoardUtil;
 	public boolean fromArchiveView,fromThirdPartyApp;
@@ -410,50 +411,50 @@ public class AudioPlayerActivity extends BaseActivity
 
 
 
-	public static Bitmap GET_ALBUM_ART(String data, int image_view_size)
-	{
-//		if(album_id==null || album_id.equals(""))
+//	public static Bitmap GET_ALBUM_ART(String data, int image_view_size)
+//	{
+////		if(album_id==null || album_id.equals(""))
+////		{
+////			album_id=new File(data).getName();
+////		}
+//
+//		Bitmap albumart=null;
+//		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
 //		{
-//			album_id=new File(data).getName();
+//			try(MediaMetadataRetriever mmr=new MediaMetadataRetriever())
+//			{
+//				mmr.setDataSource(data);
+//				byte [] art_array=mmr.getEmbeddedPicture();
+//				if(art_array!=null)
+//				{
+//					int album_art_length=art_array.length;
+//					BitmapFactory.Options options=new BitmapFactory.Options();
+//					options.inJustDecodeBounds=true;
+//					BitmapFactory.decodeByteArray(art_array,0, album_art_length,options);
+//					int scale = 1;
+//					if (options.outHeight > image_view_size || options.outWidth > image_view_size) {
+//						scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_size /
+//								(double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
+//					}
+//
+//					//Decode with inSampleSize
+//					BitmapFactory.Options o2 = new BitmapFactory.Options();
+//					o2.inSampleSize = scale;
+//					albumart = BitmapFactory.decodeByteArray(art_array,0, album_art_length,o2);
+//				}
+//				mmr.release();
+//			}
+//			catch(Exception e)
+//			{
+//
+//			}
+//			finally
+//			{
+//				return albumart;
+//			}
 //		}
-
-		Bitmap albumart=null;
-		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
-		{
-			try(MediaMetadataRetriever mmr=new MediaMetadataRetriever())
-			{
-				mmr.setDataSource(data);
-				byte [] art_array=mmr.getEmbeddedPicture();
-				if(art_array!=null)
-				{
-					int album_art_length=art_array.length;
-					BitmapFactory.Options options=new BitmapFactory.Options();
-					options.inJustDecodeBounds=true;
-					BitmapFactory.decodeByteArray(art_array,0, album_art_length,options);
-					int scale = 1;
-					if (options.outHeight > image_view_size || options.outWidth > image_view_size) {
-						scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_size /
-								(double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
-					}
-
-					//Decode with inSampleSize
-					BitmapFactory.Options o2 = new BitmapFactory.Options();
-					o2.inSampleSize = scale;
-					albumart = BitmapFactory.decodeByteArray(art_array,0, album_art_length,o2);
-				}
-				mmr.release();
-			}
-			catch(Exception e)
-			{
-
-			}
-			finally
-			{
-				return albumart;
-			}
-		}
-		return albumart;
-	}
+//		return albumart;
+//	}
 
 	private class ViewPagerFragmentAdapter extends FragmentPagerAdapter
 	{
@@ -688,6 +689,7 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 		}
 	}
+
 
 
 }

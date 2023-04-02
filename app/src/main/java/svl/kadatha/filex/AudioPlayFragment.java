@@ -144,8 +144,9 @@ public class AudioPlayFragment extends Fragment
 		audioPlayViewModel.fileObjectType= audioPOJO.getFileObjectType();
 		audioPlayViewModel.fromThirdPartyApp = false;
 		audioPlayViewModel.file_path=audioPOJO.getData();
+		audioPlayViewModel.album_id=audioPOJO.getAlbumId();
 
-		setTitleArt(audioPOJO.getTitle(),audioPOJO.getData());
+		setTitleArt(audioPOJO.getId(), audioPOJO.getTitle(),audioPOJO.getData());
 		audio_player_service.current_audio=audioPOJO;
 	}
 
@@ -160,6 +161,7 @@ public class AudioPlayFragment extends Fragment
 			audioPlayViewModel.fileObjectType= activity.fileObjectType;
 			audioPlayViewModel.fromThirdPartyApp = activity.fromThirdPartyApp;
 			audioPlayViewModel.file_path=activity.file_path;
+			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
 
 			String source_folder = new File(audioPlayViewModel.file_path).getParent();
 			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp,audioPlayViewModel.fromArchiveView);
@@ -201,7 +203,7 @@ public class AudioPlayFragment extends Fragment
 							case AudioPlayerService.GOTO_NEXT:
 								if(audio_player_service.current_audio!=null)
 								{
-									setTitleArt(audio_player_service.current_audio.getTitle(),audio_player_service.current_audio.getData());
+									setTitleArt(audio_player_service.current_audio.getId(),audio_player_service.current_audio.getTitle(),audio_player_service.current_audio.getData());
 								}
 								((AudioPlayerActivity)context).on_completion_audio();
 								break;
@@ -217,7 +219,7 @@ public class AudioPlayFragment extends Fragment
 								}
 								break;
 							case AudioPlayerService.STOP:
-								setTitleArt("",null);
+								setTitleArt(0,"",null);
 								total_time_tv.setText("00.00");
 								break;
 							default:
@@ -409,7 +411,7 @@ public class AudioPlayFragment extends Fragment
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					audio_name_tv.setText(audioPlayViewModel.audio_file_name);
-					GlideApp.with(context).load(audioPlayViewModel.album_art).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
+					GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(audioPlayViewModel.album_id)).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.RESOURCE).dontAnimate().into(album_art_imageview);
 					audioPlayViewModel.isAlbumArtFetched.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
@@ -592,7 +594,7 @@ public class AudioPlayFragment extends Fragment
 					if(AudioPlayerActivity.AUDIO_FILE!=null)
 					{
 						String path=AudioPlayerActivity.AUDIO_FILE.getData();
-						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getTitle(),path); // dont try audio_player_service.current_audio, it may not have been instantiated.
+						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getId(),AudioPlayerActivity.AUDIO_FILE.getTitle(),path); // dont try audio_player_service.current_audio, it may not have been instantiated.
 
 					}
 					total_duration=audio_player_service.get_duration();
@@ -645,9 +647,9 @@ public class AudioPlayFragment extends Fragment
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
 	}
 
-	public void setTitleArt(String audiofilename,final String audiofilepath)
+	public void setTitleArt(int audio_id,String audiofilename,final String audiofilepath)
 	{
-		audioPlayViewModel.fetchAlbumArt(audiofilename,audiofilepath);
+		audioPlayViewModel.fetchAlbumArt(audio_id,audiofilename,audiofilepath);
 	}
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_write_settings=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
