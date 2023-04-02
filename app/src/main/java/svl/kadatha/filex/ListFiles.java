@@ -14,10 +14,8 @@ public class ListFiles
 		String pattern_name,pattern_long;
 		if(MainActivity.SHOW_HIDDEN_FILE)
 		{
-			
 			pattern_name="-A";
 			pattern_long="-lA";
-			
 		}
 		else
 		{
