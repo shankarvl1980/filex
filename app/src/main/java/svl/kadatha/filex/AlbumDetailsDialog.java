@@ -785,7 +785,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					audioListViewModel.audios_selected_for_delete.add(audio);
 
 				}
-				final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.FILE_TYPE);
+				final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);
 				deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
 
 			} else if (id == R.id.toolbar_btn_2) {
