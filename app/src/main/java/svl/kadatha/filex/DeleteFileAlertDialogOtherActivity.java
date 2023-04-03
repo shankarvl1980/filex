@@ -23,6 +23,8 @@ import androidx.lifecycle.ViewModelProvider;
 import java.io.File;
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 {
 
@@ -206,8 +208,7 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			tree_uri=uriPOJO.get_uri();
 		}
 
-
-		if(tree_uri_path.equals("")) {
+		if(uriPOJO==null || tree_uri_path.equals("")) {
 			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
 			safpermissionhelper.show(getActivity().getSupportFragmentManager(), "saf_permission_dialog");
 			return false;

@@ -684,7 +684,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             tree_uri=uriPOJO.get_uri();
         }
 
-        if(tree_uri_path.equals(""))
+        if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
             safpermissionhelper.show(storageAnalyserActivity.fm, "saf_permission_dialog");

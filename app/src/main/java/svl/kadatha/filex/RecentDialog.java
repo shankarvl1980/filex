@@ -167,7 +167,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			tree_uri=uriPOJO.get_uri();
 		}
 
-		if(tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
 			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
