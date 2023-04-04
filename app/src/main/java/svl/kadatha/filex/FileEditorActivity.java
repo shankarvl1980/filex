@@ -242,7 +242,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 						copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 						copy_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(copy_intent);
+						try {
+							startActivity(copy_intent);
+						}
+						catch (Exception e)
+						{
+							Global.print(context,getString(R.string.could_not_perform_action));
+						}
 						break;
 
 					case 3:

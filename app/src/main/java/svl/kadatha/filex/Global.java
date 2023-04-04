@@ -50,8 +50,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -217,6 +220,8 @@ public class Global
 	static public final String TAG="shankar";
 
 	static final long CACHE_FILE_MAX_LIMIT=1024*1024*10;
+	static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
+	static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
 
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
@@ -277,7 +282,6 @@ public class Global
 			{
 				uri_path=split[1];
 			}
-
 		}
 		else
 		{
@@ -295,7 +299,6 @@ public class Global
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 				context.getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
 				iterator.remove();
-
 			}
 		}
 
@@ -338,7 +341,6 @@ public class Global
 				{
 					return uriPOJO;
 				}
-
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
@@ -347,7 +349,6 @@ public class Global
 					return uriPOJO;
 				}
 			}
-
 		}
 		return null;
 	}
@@ -428,6 +429,7 @@ public class Global
 		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
+		SIZE_APK_ICON_LIST=APK_ICON_PACKAGE_NAME_LIST.size();
 		ARCHIVE_CACHE_DIR_LENGTH=Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
 
 	}
@@ -559,6 +561,8 @@ public class Global
 				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_MEDIUM;
 				break;
 		}
+
+		DETERMINE_TO_CLEAR_CACHE_TODAY(tinyDB);
 	}
 
 
@@ -1173,6 +1177,16 @@ public class Global
 				FileUtil.deleteNativeDirectory(dir);
 			}
 		});
+	}
+
+	public static void DETERMINE_TO_CLEAR_CACHE_TODAY(TinyDB tinyDB)
+	{
+		int cache_cleared_month=tinyDB.getInt("cache_cleared_month");
+		CURRENT_MONTH= Calendar.getInstance().get(Calendar.MONTH);
+		if(cache_cleared_month<CURRENT_MONTH || (cache_cleared_month==11 && CURRENT_MONTH!=11))
+		{
+			WHETHER_TO_CLEAR_CACHE_TODAY=true;
+		}
 	}
 
 }

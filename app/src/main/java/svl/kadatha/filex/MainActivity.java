@@ -1504,7 +1504,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 						Global.REMOVE_USB_URI_PERMISSION();
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+						if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
+						{
+							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+							if(Global.SIZE_APK_ICON_LIST>800)
+							{
+								Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
+							}
+							tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
+							Global.print(context,"cleared cache");
+						}
 						finish();
 					}
 				}
@@ -1826,7 +1835,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				Global.REMOVE_USB_URI_PERMISSION();
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
+				{
+					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+					if(Global.SIZE_APK_ICON_LIST>800)
+					{
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
+					}
+					tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
+					Global.print(context,"cleared cache");
+				}
 				finish();
 			}
 		}
@@ -2152,7 +2170,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
 				Global.REMOVE_USB_URI_PERMISSION();
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
+				{
+					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
+					if(Global.SIZE_APK_ICON_LIST>800)
+					{
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
+					}
+					tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
+					Global.print(context,"cleared cache");
+				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
 				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
