@@ -59,6 +59,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 public class Global
 {
@@ -230,9 +231,31 @@ public class Global
 					Uri uri=permission.getUri();
 					String uri_authority=uri.getAuthority();
 					String uri_path=FileUtil.getFullPathFromTreeUri(uri,context);
-					if(uri_path!=null && !uri_path.equals(File.separator)) URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
+					if(uri_path!=null) URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
 
 				}
+			}
+		}
+	}
+
+	static void REMOVE_USB_URI_PERMISSION()
+	{
+		GET_URI_PERMISSIONS_LIST(App.getAppContext());
+		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
+
+		while(iterator.hasNext())
+		{
+			UriPOJO uriPOJO=iterator.next();
+			String uri_authority= uriPOJO.get_authority();
+			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
+			{
+				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+				try
+				{
+					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
+				}
+				catch (SecurityException e){}
+				iterator.remove();
 			}
 		}
 	}
@@ -1139,6 +1162,17 @@ public class Global
 		}
 
 		return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"),id);
+	}
+
+	public static void DELETE_DIRECTORY_ASYNCHRONOUSLY(File dir)
+	{
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				FileUtil.deleteNativeDirectory(dir);
+			}
+		});
 	}
 
 }

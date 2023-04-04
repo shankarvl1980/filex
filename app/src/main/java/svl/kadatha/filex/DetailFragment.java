@@ -863,7 +863,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
+	public boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
 	{
 		if(MainActivity.usbFileRoot==null)
 		{

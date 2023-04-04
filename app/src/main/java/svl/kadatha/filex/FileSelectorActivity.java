@@ -706,7 +706,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             iterator1.remove();
                         }
                     }
-
+                    Global.REMOVE_USB_URI_PERMISSION();
                 }
                 storage_filePOJO_list=getFilePOJO_list();
                 //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);

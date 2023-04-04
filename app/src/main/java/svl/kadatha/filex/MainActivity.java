@@ -1502,8 +1502,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						df.progress_bar.setVisibility(View.VISIBLE);
 						viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-						viewModel.deleteDirectory(Global.USB_CACHE_DIR);
-						viewModel.deleteDirectory(getCacheDir());
+						Global.REMOVE_USB_URI_PERMISSION();
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
 						finish();
 					}
 				}
@@ -1823,8 +1824,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				df.progress_bar.setVisibility(View.VISIBLE);
 				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				viewModel.deleteDirectory(Global.USB_CACHE_DIR);
-				viewModel.deleteDirectory(getCacheDir());
+				Global.REMOVE_USB_URI_PERMISSION();
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
 				finish();
 			}
 		}
@@ -1908,6 +1910,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
+//								else if(df.fileObjectType==FileObjectType.USB_TYPE)
+//								{
+//
+//								}
 								break;
 							case 2:
 								size = df.viewModel.mselecteditemsFilePath.size();
@@ -2144,8 +2150,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 				df.progress_bar.setVisibility(View.VISIBLE);
 				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				viewModel.deleteDirectory(Global.USB_CACHE_DIR);
-				viewModel.deleteDirectory(getCacheDir());
+				Global.REMOVE_USB_URI_PERMISSION();
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
 				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
@@ -2524,7 +2531,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							iterator1.remove();
 						}
 					}
-
+					Global.REMOVE_USB_URI_PERMISSION();
 
 				}
 				//usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);

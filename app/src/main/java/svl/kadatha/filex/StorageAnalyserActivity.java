@@ -144,8 +144,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         });
 
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.refresh_icon,R.drawable.sort_icon,R.drawable.exit_icon};
-        String [] titles=new String[]{getString(R.string.refresh),getString(R.string.sort),getString(R.string.exit)};
+        int[] bottom_drawables ={R.drawable.refresh_icon,R.drawable.sort_icon,R.drawable.no_icon};
+        String [] titles=new String[]{getString(R.string.refresh),getString(R.string.sort),getString(R.string.close)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
 
         bottom_toolbar=findViewById(R.id.storage_analyser_bottom_toolbar);
@@ -346,7 +346,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 }
                 else
                 {
-                    Global.print(context,getString(R.string.click_exit_button_to_exit));
+                    Global.print(context,context.getString(R.string.click_close_button_to_exit));
                 }
             }
         }
