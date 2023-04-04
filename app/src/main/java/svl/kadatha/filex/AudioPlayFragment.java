@@ -133,9 +133,8 @@ public class AudioPlayFragment extends Fragment
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.ringtone_icon,getString(R.string.set_as_ringtone),4));
-
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
 	}
 
 	public void set_audio(AudioPOJO audioPOJO)
@@ -675,7 +674,7 @@ public class AudioPlayFragment extends Fragment
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
-
+			data=activity.data;
 			switch(p3)
 			{
 				case 0:
@@ -704,6 +703,9 @@ public class AudioPlayFragment extends Fragment
 					{
 						src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
+					else {
+						src_uri=data;
+					}
 
 					if(src_uri==null)
 					{
@@ -716,6 +718,35 @@ public class AudioPlayFragment extends Fragment
 
 					break;
 				case 2:
+					Uri copy_uri=null;
+					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+					{
+						copy_uri=data;
+					}
+					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
+					{
+						copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
+					}
+					else {
+						copy_uri=data;
+					}
+
+					if(copy_uri==null)
+					{
+						Global.print(context,getString(R.string.not_able_to_process));
+						break;
+					}
+					((AudioPlayerActivity)context).clear_cache=false;
+					Intent copy_intent=new Intent(context,CopyToActivity.class);
+					copy_intent.setAction(Intent.ACTION_SEND);
+					copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
+					copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+					copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					copy_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(copy_intent);
+					break;
+
+				case 3:
 					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE)
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
@@ -725,7 +756,7 @@ public class AudioPlayFragment extends Fragment
 					PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
 					propertiesDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"properties_dialog");
 					break;
-				case 3:
+				case 4:
 					boolean permission;
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 						permission = Settings.System.canWrite(context);

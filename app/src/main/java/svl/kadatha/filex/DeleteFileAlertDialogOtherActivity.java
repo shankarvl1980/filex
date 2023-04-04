@@ -112,6 +112,11 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			{
 				public void onClick(View v)
 				{
+					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(fileObjectType,null))
+					{
+						Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+						return;
+					}
 					if(fileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);

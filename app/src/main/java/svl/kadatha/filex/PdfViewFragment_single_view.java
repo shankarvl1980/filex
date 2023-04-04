@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -93,7 +94,8 @@ public class PdfViewFragment_single_view extends Fragment
         list_popupwindowpojos=new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
-        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
         DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
         floating_button_height=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,displayMetrics);
         recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int) getResources().getDimension(R.dimen.layout_margin) *2);
@@ -169,8 +171,33 @@ public class PdfViewFragment_single_view extends Fragment
                         FileIntentDispatch.sendUri(context,uri_list);
 
                         break;
-
                     case 2:
+                        Uri copy_uri=null;
+                        if(viewModel.fromThirdPartyApp)
+                        {
+                            copy_uri=data;
+
+                        }
+                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        {
+                            copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+                        }
+                        if(copy_uri==null)
+                        {
+                            Global.print(context,getString(R.string.not_able_to_process));
+                            break;
+                        }
+                        ((PdfViewActivity)context).clear_cache=false;
+                        Intent copy_intent=new Intent(context,CopyToActivity.class);
+                        copy_intent.setAction(Intent.ACTION_SEND);
+                        copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
+                        copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        copy_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(copy_intent);
+                        break;
+
+                    case 3:
                         if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));

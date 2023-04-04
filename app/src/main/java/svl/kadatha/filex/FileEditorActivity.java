@@ -168,8 +168,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),3));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.settings_icon,getString(R.string.settings),4));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.settings_icon,getString(R.string.settings),5));
 
 
 		listPopWindow=new PopupWindow(context);
@@ -218,8 +219,33 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						FileIntentDispatch.sendUri(context,uri_list);
 
 						break;
-
 					case 2:
+						Uri copy_uri=null;
+						if(viewModel.fromThirdPartyApp)
+						{
+							copy_uri=viewModel.data;
+
+						}
+						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						{
+							copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+						}
+						if(copy_uri==null)
+						{
+							Global.print(context,getString(R.string.not_able_to_process));
+							break;
+						}
+						clear_cache=false;
+						Intent copy_intent=new Intent(context,CopyToActivity.class);
+						copy_intent.setAction(Intent.ACTION_SEND);
+						copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
+						copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+						copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+						copy_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(copy_intent);
+						break;
+
+					case 3:
 						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
@@ -230,7 +256,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						propertiesDialog.show(fm,"properties_dialog");
 						break;
 
-					case 3:
+					case 4:
 						fileEditorSettingsDialog=FileEditorSettingsDialog.getInstance(viewModel.eol);
 						fileEditorSettingsDialog.show(fm,"file_editor_overflow");
 						break;

@@ -596,6 +596,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 	private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType)
 	{
+		if(file_path==null || file_path.equals("")) return false;
 		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
 			File new_file=new File(file_path);

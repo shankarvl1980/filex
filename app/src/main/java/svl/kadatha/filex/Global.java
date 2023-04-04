@@ -88,7 +88,7 @@ public class Global
 
 	static final HashMap<String,Set<String>> LIBRARY_FILTER_HASHMAP=new HashMap<>();
 
-	static final List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
+	static List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;
 	static int SCREEN_WIDTH,SCREEN_HEIGHT,DIALOG_WIDTH,DIALOG_HEIGHT,WIDTH;
 	static float SCREEN_RATIO;
@@ -219,6 +219,7 @@ public class Global
 
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
+		URI_PERMISSION_LIST=new ArrayList<>();
 		List<UriPermission> permission_list=context.getContentResolver().getPersistedUriPermissions();
 		if(permission_list.size()>0)
 		{
@@ -260,7 +261,7 @@ public class Global
 			uri_path=FileUtil.getFullPathFromTreeUri(treeUri,context);
 		}
 
-
+		GET_URI_PERMISSIONS_LIST(App.getAppContext());
 		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
 
 		while(iterator.hasNext())
@@ -277,7 +278,6 @@ public class Global
 
 		if(URI_PERMISSION_LIST.size()==0)
 		{
-			URI_PERMISSION_LIST.add(new UriPOJO(treeUri,uri_authority,uri_path));
 			final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 			context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 		}
@@ -297,12 +297,11 @@ public class Global
 			}
 			if(!parent_uri_exists)
 			{
-				URI_PERMISSION_LIST.add(new UriPOJO(treeUri,uri_authority,uri_path));
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 				context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 			}
 		}
-
+		GET_URI_PERMISSIONS_LIST(App.getAppContext());
 	}
 
 

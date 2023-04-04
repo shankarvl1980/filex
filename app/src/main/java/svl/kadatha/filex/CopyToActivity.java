@@ -172,7 +172,11 @@ public class CopyToActivity extends BaseActivity{
         });
 
         Intent intent=getIntent();
-        on_intent(intent,savedInstanceState);
+        try {
+            on_intent(intent,savedInstanceState);
+        } catch (Exception e) {
+            Global.print(context,getString(R.string.could_not_perform_action));
+        }
         imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
@@ -207,12 +211,16 @@ public class CopyToActivity extends BaseActivity{
 
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(Intent intent)  {
         super.onNewIntent(intent);
-        on_intent(intent,null);
+        try {
+            on_intent(intent,null);
+        } catch (Exception e) {
+            Global.print(context,getString(R.string.could_not_perform_action));
+        }
     }
 
-    private void on_intent(Intent intent, Bundle savedInstanceState)
+    private void on_intent(Intent intent, Bundle savedInstanceState) throws Exception
     {
         if(intent!=null)
         {
@@ -372,17 +380,16 @@ public class CopyToActivity extends BaseActivity{
 
     private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType) //copied from ArchiveSetUpDialog
     {
+        if(file_path==null || file_path.equals("")) return false;
         if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
         {
             File new_file=new File(file_path);
             return new_file.exists();
-
         }
         else if(fileObjectType== FileObjectType.USB_TYPE)
         {
             UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
             return usbFile != null;
-
         }
         else if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
@@ -395,7 +402,6 @@ public class CopyToActivity extends BaseActivity{
                 Global.print(context,getString(R.string.root_access_not_avaialable));
                 return false;
             }
-
         }
         else
         {
