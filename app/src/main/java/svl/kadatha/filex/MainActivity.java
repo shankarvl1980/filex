@@ -464,6 +464,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df==null)return;
 				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
 				{
 					df.progress_bar.setVisibility(View.VISIBLE);
@@ -1500,9 +1501,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 					else
 					{
-						df.progress_bar.setVisibility(View.VISIBLE);
-						viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-						Global.REMOVE_USB_URI_PERMISSION();
+						Global.REMOVE_USB_URI_PERMISSIONS();
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 						if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 						{
@@ -1831,9 +1831,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					set_visibility_searchbar(false);
 				}
 
-				df.progress_bar.setVisibility(View.VISIBLE);
-				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				Global.REMOVE_USB_URI_PERMISSION();
+				Global.REMOVE_USB_URI_PERMISSIONS();
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
@@ -1928,10 +1927,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
-//								else if(df.fileObjectType==FileObjectType.USB_TYPE)
-//								{
-//
-//								}
 								break;
 							case 2:
 								size = df.viewModel.mselecteditemsFilePath.size();
@@ -2165,10 +2160,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onClick(View v) {
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
-				final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				df.progress_bar.setVisibility(View.VISIBLE);
-				viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-				Global.REMOVE_USB_URI_PERMISSION();
+				Global.REMOVE_USB_URI_PERMISSIONS();
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
@@ -2475,7 +2468,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 			}
 		}
-
+		if(usbFileRoot==null)return;
 		for(FilePOJO filePOJO: Global.STORAGE_DIR)
 		{
 			if (filePOJO.getFileObjectType()== FileObjectType.USB_TYPE && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
@@ -2558,7 +2551,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							iterator1.remove();
 						}
 					}
-					Global.REMOVE_USB_URI_PERMISSION();
+					Global.REMOVE_USB_URI_PERMISSIONS();
 
 				}
 				//usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
@@ -2589,7 +2582,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			case "android.intent.action.MEDIA_EJECT":
 			case "android.intent.action.MEDIA_REMOVED":
 			case "android.intent.action.MEDIA_BAD_REMOVAL":
-
 				Global.STORAGE_DIR.clear();
 				Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
 				Global.WORKOUT_AVAILABLE_SPACE();

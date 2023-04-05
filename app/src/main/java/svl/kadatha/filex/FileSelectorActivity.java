@@ -706,7 +706,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             iterator1.remove();
                         }
                     }
-                    Global.REMOVE_USB_URI_PERMISSION();
+                    Global.REMOVE_USB_URI_PERMISSIONS();
                 }
                 storage_filePOJO_list=getFilePOJO_list();
                 //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
@@ -729,12 +729,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
-
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-
                 break;
+
             case "android.intent.action.MEDIA_EJECT":
             case "android.intent.action.MEDIA_REMOVED":
             case "android.intent.action.MEDIA_BAD_REMOVAL":

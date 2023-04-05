@@ -62,6 +62,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
+import timber.log.Timber;
+
 public class Global
 {
 	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
@@ -235,13 +237,13 @@ public class Global
 					String uri_authority=uri.getAuthority();
 					String uri_path=FileUtil.getFullPathFromTreeUri(uri,context);
 					if(uri_path!=null) URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
-
+					//Timber.tag(TAG).d("path-"+uri_path+"   uri-"+uri);
 				}
 			}
 		}
 	}
 
-	static void REMOVE_USB_URI_PERMISSION()
+	static void REMOVE_ALL_URI_PERMISSIONS()
 	{
 		GET_URI_PERMISSIONS_LIST(App.getAppContext());
 		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
@@ -249,18 +251,36 @@ public class Global
 		while(iterator.hasNext())
 		{
 			UriPOJO uriPOJO=iterator.next();
-			String uri_authority= uriPOJO.get_authority();
-			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
+			final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+			try
 			{
-				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-				try
-				{
-					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
-				}
-				catch (SecurityException e){}
-				iterator.remove();
+				App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
 			}
+			catch (SecurityException e){}
+			iterator.remove();
 		}
+	}
+
+	static void REMOVE_USB_URI_PERMISSIONS()
+	{
+//		GET_URI_PERMISSIONS_LIST(App.getAppContext());
+//		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
+//
+//		while(iterator.hasNext())
+//		{
+//			UriPOJO uriPOJO=iterator.next();
+//			String uri_authority= uriPOJO.get_authority();
+//			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
+//			{
+//				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//				try
+//				{
+//					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
+//				}
+//				catch (SecurityException e){}
+//				iterator.remove();
+//			}
+//		}
 	}
 
 	static void ON_REQUEST_URI_PERMISSION(Context context,Uri treeUri)
@@ -295,7 +315,11 @@ public class Global
 			if(uriPOJO.get_authority().equals(uri_authority) && Global.IS_CHILD_FILE(uriPOJO.get_path(),uri_path) && uriPOJO.get_path().length()>uri_path.length())
 			{
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-				context.getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
+                try
+                {
+                    context.getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
+                }
+                catch (SecurityException e){}
 				iterator.remove();
 			}
 		}
@@ -303,7 +327,15 @@ public class Global
 		if(URI_PERMISSION_LIST.size()==0)
 		{
 			final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-			context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+			try
+			{
+				context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+			}
+			catch (SecurityException e)
+			{
+				REMOVE_ALL_URI_PERMISSIONS();
+			}
+
 		}
 		else
 		{
@@ -322,7 +354,15 @@ public class Global
 			if(!parent_uri_exists)
 			{
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-				context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+				try
+				{
+					context.getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+				}
+				catch (SecurityException e)
+				{
+					REMOVE_ALL_URI_PERMISSIONS();
+				}
+
 			}
 		}
 		GET_URI_PERMISSIONS_LIST(App.getAppContext());
@@ -815,6 +855,7 @@ public class Global
 			}
 			else if(fileObjectType== FileObjectType.USB_TYPE)
 			{
+				if(MainActivity.usbFileRoot==null)return;
 				String name=MainActivity.usbFileRoot.getName();
 				totalspace=MainActivity.usbCurrentFs.getCapacity();
 				availabelspace=MainActivity.usbCurrentFs.getOccupiedSpace();

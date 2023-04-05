@@ -154,6 +154,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 }
                 FilePOJO filePOJO=src_file_list.get(i);
                 UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
+                if(f==null) return false;
                 current_file_name=f.getName();
                 success=FileUtil.deleteUsbDirectory(f);
                 if(success)
@@ -265,6 +266,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 }
                 AudioPOJO audioPOJO=src_audio_file_list.get(i);
                 UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,audioPOJO.getData());
+                if(f==null)return false;
                 current_file_name=f.getName();
                 success=FileUtil.deleteUsbDirectory(f);
                 if(success)

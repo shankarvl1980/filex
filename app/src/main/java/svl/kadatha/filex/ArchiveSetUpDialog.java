@@ -585,7 +585,15 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 		else  if(fileObjectType==FileObjectType.USB_TYPE)
 		{
-			return FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path).isDirectory();
+			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+			if(usbFile==null)
+			{
+				return false;
+			}
+			else {
+				return usbFile.isDirectory();
+			}
+
 		}
 		else
 		{

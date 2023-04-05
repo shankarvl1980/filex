@@ -1050,6 +1050,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 			}
 			else if(sourceFileObjectType==FileObjectType.USB_TYPE)
 			{
+				if(MainActivity.usbFileRoot==null)return false;
 				for(int i=0;i<size;++i)
 				{
 					if(isCancelled())
@@ -1058,6 +1059,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					}
 
 					UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,files_selected_array.get(i));
+					if(f==null)return false;
 					String file_path=f.getAbsolutePath();
 					current_file_name=f.getName();
 					success=deleteUsbDirectory(f);

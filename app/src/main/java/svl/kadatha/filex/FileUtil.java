@@ -303,6 +303,7 @@ import timber.log.Timber;
 		@SuppressWarnings("null")
 		public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
 		{
+			if(src_usbfile==null)return false;
 			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
 				bufferedCopy(inStream, outputStream,true,bytes_read);
 				if (cut) {
@@ -378,7 +379,7 @@ import timber.log.Timber;
 		@SuppressWarnings("null")
 		public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
 		{
-
+			if(source==null) return false;
 			OutputStream outStream=null;
 
 			try(InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(source,MainActivity.usbCurrentFs))
@@ -587,6 +588,7 @@ import timber.log.Timber;
 		@SuppressWarnings("null")
 		public static boolean copy_UsbFile_SAFFile(Context context, @NonNull final UsbFile source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
 		{
+			if(source==null)return false;
 			OutputStream outStream=null;
 			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(source,MainActivity.usbCurrentFs))
 			{
@@ -870,6 +872,7 @@ import timber.log.Timber;
 
 		public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
 	{
+		if(rootUsbFile==null) return null;
 		UsbFile usbFile=null;
 		try
 		{
@@ -938,6 +941,7 @@ import timber.log.Timber;
 
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
 	{
+		if(usbFile==null) return false;
 		try {
 			usbFile.setName(new_name);
 			return true;
@@ -949,6 +953,7 @@ import timber.log.Timber;
 
 	public static boolean mkdirUsb(UsbFile parentUsbFile, String name)
 	{
+		if(parentUsbFile==null) return false;
 		try {
 			parentUsbFile.createDirectory(name);
 			return true;
@@ -969,6 +974,7 @@ import timber.log.Timber;
 
 	public static boolean createUsbFile(UsbFile parentUsbFile,String name)
 	{
+		if(parentUsbFile==null) return false;
 		try {
 			parentUsbFile.createFile(name);
 			return true;
@@ -1033,6 +1039,7 @@ import timber.log.Timber;
 
 		public static boolean deleteUsbFile(UsbFile usbFile)
 		{
+			if(usbFile==null) return false;
 			try {
 				if(!usbFile.isDirectory() && usbFile.getLength()==0)
 				{
@@ -1113,6 +1120,7 @@ import timber.log.Timber;
 
 		public static boolean deleteUsbDirectory(final UsbFile folder)
 		{
+			if(folder==null)return false;
 			boolean success=true;
 
 			if (folder.isDirectory())            //Check if folder file is a real folder

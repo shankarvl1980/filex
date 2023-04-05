@@ -496,7 +496,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
-
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
