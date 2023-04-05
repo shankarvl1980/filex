@@ -220,6 +220,7 @@ public class CopyToActivity extends BaseActivity{
         }
     }
 
+    @SuppressWarnings("RedundantThrows")
     private void on_intent(Intent intent, Bundle savedInstanceState) throws Exception
     {
         if(intent!=null)

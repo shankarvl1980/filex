@@ -23,8 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 import java.io.File;
 import java.util.ArrayList;
 
-import timber.log.Timber;
-
 public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 {
 
