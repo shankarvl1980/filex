@@ -675,10 +675,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		try
 		{
-			//Timber.tag(Global.TAG).d("started parcel file descriptor");
             ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
 			FileDescriptor fd=pfd.getFileDescriptor();
-            //Timber.tag(Global.TAG).d("completed");
 			progress_bar.setVisibility(View.VISIBLE);
 			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(new FileInputStream(fd),pointer);
