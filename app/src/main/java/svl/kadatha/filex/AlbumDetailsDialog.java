@@ -223,7 +223,6 @@ public class AlbumDetailsDialog extends DialogFragment
 						scroll_distance+=dy;
 					}
 				}
-
 		});
 
 		FloatingActionButton floating_back_button = v.findViewById(R.id.album_details_floating_action_button);
@@ -603,7 +602,11 @@ public class AlbumDetailsDialog extends DialogFragment
 			return new Filter() {
 				@Override
 				protected FilterResults performFiltering(CharSequence constraint) {
+					return new FilterResults();
+				}
 
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
 					audio_list=new ArrayList<>();
 					if(constraint==null || constraint.length()==0)
 					{
@@ -622,11 +625,6 @@ public class AlbumDetailsDialog extends DialogFragment
 						}
 					}
 
-					return new FilterResults();
-				}
-
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
 					int t=audio_list.size();
 					if(audioListViewModel.mselecteditems.size()>0)
 					{

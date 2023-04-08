@@ -378,7 +378,11 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 			return new Filter() {
 				@Override
 				protected FilterResults performFiltering(CharSequence constraint) {
+					return new FilterResults();
+				}
 
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
 					filePOJO_list = new ArrayList<>();
 					if (constraint == null || constraint.length() == 0) {
 						filePOJO_list = totalFilePOJO_list;
@@ -391,11 +395,6 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 							}
 						}
 					}
-					return new FilterResults();
-				}
-
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
 
 					int t=filePOJO_list.size();
 					clearSelectionAndNotifyDataSetChanged();

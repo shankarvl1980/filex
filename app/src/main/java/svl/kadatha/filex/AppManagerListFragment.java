@@ -486,7 +486,11 @@ public class AppManagerListFragment extends Fragment {
             return new Filter() {
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
+                    return new FilterResults();
+                }
 
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
                     appPOJOList=new ArrayList<>();
                     if(constraint==null || constraint.length()==0)
                     {
@@ -504,12 +508,6 @@ public class AppManagerListFragment extends Fragment {
                             }
                         }
                     }
-                    return new FilterResults();
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-
                     int t=appPOJOList.size();
                     if(appManagerListFragmentViewModel.mselecteditems.size()>0)
                     {

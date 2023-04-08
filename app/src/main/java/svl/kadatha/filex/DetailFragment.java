@@ -105,7 +105,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private ExtractZipFileViewModel extractZipFileViewModel;
 	private static final List<String> LIBRARY_CATEGORIES=new ArrayList<>(Arrays.asList("Download","Document","Image","Audio","Video", "Archive","APK"));
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -220,12 +219,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					//Global.print(context,"No files to filter");
 					return;
 				}
-				//if(file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image") || file_click_selected_name.equals("Audio")|| file_click_selected_name.equals("Video"))
-				{
-					mainActivity.set_visibility_searchbar(false);
-					LibraryAlbumSelectDialog libraryAlbumSelectDialog=LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE,file_click_selected_name);
-					libraryAlbumSelectDialog.show(mainActivity.fm,"");
-				}
+				mainActivity.set_visibility_searchbar(false);
+				LibraryAlbumSelectDialog libraryAlbumSelectDialog=LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE,file_click_selected_name);
+				libraryAlbumSelectDialog.show(mainActivity.fm,"");
 
 			}
 		});
@@ -330,6 +326,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					scroll_distance+=dy;
 				}
 			}
+
 		});
 
 		folder_empty=v.findViewById(R.id.empty_folder);

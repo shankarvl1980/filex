@@ -204,6 +204,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					return;
 				}
 				currentAudioListRecyclerViewAdapter.getFilter().filter(s.toString());
+
 			}
 		});
 
@@ -245,7 +246,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					{
 						scroll_distance+=dy;
 					}
-
 				}
 		});
 		empty_audio_list_tv=v.findViewById(R.id.album_details_empty_list_tv);
@@ -774,7 +774,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			return new Filter() {
 				@Override
 				protected FilterResults performFiltering(CharSequence constraint) {
+					return new FilterResults();
+				}
 
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
 					clicked_audio_list=new ArrayList<>();
 					if(constraint==null || constraint.length()==0)
 					{
@@ -793,11 +797,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 						}
 					}
 
-					return new FilterResults();
-				}
-
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
 					int t=clicked_audio_list.size();
 					if(audioListViewModel.mselecteditems.size()>0)
 					{

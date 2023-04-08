@@ -243,7 +243,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		search_view.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
 			}
 
 			@Override

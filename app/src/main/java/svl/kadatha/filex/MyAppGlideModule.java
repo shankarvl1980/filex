@@ -20,10 +20,4 @@ public final class MyAppGlideModule extends AppGlideModule
         super.applyOptions(context,builder);
     }
 
-//    @Override
-//    public void registerComponents(Context context, Glide glide) {
-//        // register ModelLoaders here.
-//    }
-
-
 }

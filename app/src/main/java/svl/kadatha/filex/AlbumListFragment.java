@@ -124,6 +124,7 @@ public class AlbumListFragment extends Fragment
 						scroll_distance+=dy;
 					}
 				}
+
 			});
 		empty_tv=v.findViewById(R.id.album_list_empty);
 		progress_bar=v.findViewById(R.id.album_list_progressbar);
@@ -473,7 +474,11 @@ public class AlbumListFragment extends Fragment
 			return new Filter() {
 				@Override
 				protected FilterResults performFiltering(CharSequence constraint) {
+					return new FilterResults();
+				}
 
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
 					album_list=new ArrayList<>();
 					if(constraint==null || constraint.length()==0)
 					{
@@ -491,11 +496,7 @@ public class AlbumListFragment extends Fragment
 							}
 						}
 					}
-					return new FilterResults();
-				}
 
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
 					int t=album_list.size();
 					if(audioListViewModel.mselecteditems.size()>0)
 					{

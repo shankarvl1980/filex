@@ -663,7 +663,11 @@ public class AllAudioListFragment extends Fragment
 			return new Filter() {
 				@Override
 				protected FilterResults performFiltering(CharSequence constraint) {
+					return new FilterResults();
+				}
 
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
 					audio_list=new ArrayList<>();
 					if(constraint==null || constraint.length()==0)
 					{
@@ -681,11 +685,6 @@ public class AllAudioListFragment extends Fragment
 							}
 						}
 					}
-					return new FilterResults();
-				}
-
-				@Override
-				protected void publishResults(CharSequence constraint, FilterResults results) {
 
 					int t=audio_list.size();
 					if(audioListViewModel.mselecteditems.size()>0)

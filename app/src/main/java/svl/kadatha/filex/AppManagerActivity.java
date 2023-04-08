@@ -75,6 +75,7 @@ public class AppManagerActivity extends BaseActivity{
                 {
                     return;
                 }
+
                 for(SearchFilterListener listener:searchFilterListeners)
                 {
                     if(listener!=null)

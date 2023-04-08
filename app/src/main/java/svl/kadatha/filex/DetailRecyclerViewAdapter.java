@@ -232,6 +232,12 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	private final Filter file_name_filter =new Filter () {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
+			return new Filter.FilterResults();
+		}
+
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+
 			df.filePOJO_list = new ArrayList<>();
 			if ((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path!=null) {
 				for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
@@ -264,11 +270,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 					}
 				}
 			}
-			return new Filter.FilterResults();
-		}
 
-		@Override
-		protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
 			int t=df.filePOJO_list.size();
 			if(df.viewModel.mselecteditems.size()>0)
 			{
