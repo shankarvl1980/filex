@@ -68,37 +68,37 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    private static boolean NO_OPERATION_ON_USB()
+    private static boolean NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType fileObjectType)
     {
         boolean noOperation=true;
         if(noOperation && ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT != fileObjectType;
         }
 
         if(noOperation && ArchiveDeletePasteFileService1.DEST_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService1.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService1.DEST_FILE_OBJECT != fileObjectType;
         }
 
         if(noOperation && ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService2.SOURCE_FILE_OBJECT != fileObjectType;
         }
 
         if(noOperation && ArchiveDeletePasteFileService2.DEST_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService2.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService2.DEST_FILE_OBJECT != fileObjectType;
         }
 
         if(noOperation && ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService3.SOURCE_FILE_OBJECT != fileObjectType;
         }
 
         if(noOperation && ArchiveDeletePasteFileService3.DEST_FILE_OBJECT!=null)
         {
-            noOperation=ArchiveDeletePasteFileService3.DEST_FILE_OBJECT != FileObjectType.USB_TYPE;
+            noOperation=ArchiveDeletePasteFileService3.DEST_FILE_OBJECT != fileObjectType;
         }
 
         return noOperation;
@@ -111,7 +111,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(sourceFileObjectType==FileObjectType.USB_TYPE)
             {
-                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.USB_TYPE);
             }
         }
 
@@ -119,7 +119,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(destFileObjectType==FileObjectType.USB_TYPE)
             {
-                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_USB();
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.USB_TYPE);
             }
         }
 

@@ -227,6 +227,9 @@ public class AllAudioListFragment extends Fragment
 				{
 					if(deleteAudioViewModel.deleted_audio_files.size()>0)
 					{
+						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
+						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
+						num_all_audio = total_audio_list.size();
 						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
 						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 					}

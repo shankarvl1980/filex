@@ -40,6 +40,9 @@ public class AudioListViewModel extends AndroidViewModel {
     public boolean whether_audios_set_to_current_list;
 
     public String action="p";
+    private final Object audio_pojo_lock=new Object();
+    private final Object album_pojo_lock=new Object();
+
 
 
     public AudioListViewModel(@NonNull Application application) {
@@ -69,25 +72,28 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void listAudio()
+    public void listAudio()
     {
-        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                audio_list=new ArrayList<>();
-                if(!Global.AUDIO_POJO_HASHMAP.containsKey("audio"))
-                {
-                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                    repositoryClass.getAudioPOJOList(application,false);
+        synchronized (audio_pojo_lock)
+        {
+            if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+            asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+            ExecutorService executorService=MyExecutorService.getExecutorService();
+            future1=executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    audio_list=new ArrayList<>();
+                    if(!Global.AUDIO_POJO_HASHMAP.containsKey("audio"))
+                    {
+                        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                        repositoryClass.getAudioPOJOList(application,false);
+                    }
+                    List<AudioPOJO>temp_audio_pojos=Global.AUDIO_POJO_HASHMAP.get("audio");
+                    if(temp_audio_pojos!=null)audio_list=temp_audio_pojos;
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-                List<AudioPOJO>temp_audio_pojos=Global.AUDIO_POJO_HASHMAP.get("audio");
-                if(temp_audio_pojos!=null)audio_list=temp_audio_pojos;
-                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
+            });
+        }
     }
 
 
@@ -230,25 +236,29 @@ public class AudioListViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void listAlbum()
+    public void listAlbum()
     {
-        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future4=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                album_list=new ArrayList<>();
-                if(!Global.ALBUM_POJO_HASHMAP.containsKey("album"))
-                {
-                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                    repositoryClass.getAlbumList(application, false);
+        synchronized (album_pojo_lock)
+        {
+            if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+            asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+            ExecutorService executorService=MyExecutorService.getExecutorService();
+            future4=executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    album_list=new ArrayList<>();
+                    if(!Global.ALBUM_POJO_HASHMAP.containsKey("album"))
+                    {
+                        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                        repositoryClass.getAlbumList(application, false);
+                    }
+                    List<AlbumPOJO>temp_album_pojos=Global.ALBUM_POJO_HASHMAP.get("album");
+                    if(temp_album_pojos!=null)album_list=temp_album_pojos;
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-                List<AlbumPOJO>temp_album_pojos=Global.ALBUM_POJO_HASHMAP.get("album");
-                if(temp_album_pojos!=null)album_list=temp_album_pojos;
-                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
+            });
+        }
+
     }
 
 
