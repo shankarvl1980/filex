@@ -362,7 +362,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 switch(permission)
                 {
                     case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                        boolean show_rationale= false;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if(shouldShowRequestPermissionRationale(permission))
                             {
