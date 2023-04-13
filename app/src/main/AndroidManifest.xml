@@ -203,11 +203,13 @@
         <activity
             android:name=".ArchiveViewerActivity"
             android:label="@string/archive_viewer"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/zip" />
             </intent-filter>
-
         </activity>
 
         <activity
