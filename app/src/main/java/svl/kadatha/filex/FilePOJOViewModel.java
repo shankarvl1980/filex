@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
@@ -112,16 +113,53 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     }
                     final long final_storage_space = storage_space;
+                    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
+                    boolean isInternalStorage;
+//                    int dir_count = 0;int half_dir_count;
+//                    for(FilePOJO filePOJO:filePOJOS)
+//                    {
+//                        if(filePOJO.getIsDirectory())
+//                        {
+//                            ++dir_count;
+//                        }
+//                    }
+//                    half_dir_count=dir_count/2;
                     if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                     {
-                        fill_file_size(final_storage_space, Global.HASHMAP_INTERNAL_DIRECTORY_SIZE,true);
+                        hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
+                        isInternalStorage=true;
                     }
                     else {
-                        fill_file_size(final_storage_space, Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE,false);
+                        hashMap_directory_size=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
+                        isInternalStorage=false;
                     }
+                    HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
+                    fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+//                    future4=executorService.submit(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage);
+//                        }
+//                    });
+//
+////                    future5=executorService.submit(new Runnable() {
+////                        @Override
+////                        public void run() {
+////                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage);
+////                        }
+////                    });
+//                    try {
+//                        future4.get();
+//                        future5.get();
+//                    } catch (ExecutionException | InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+
 
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+
             }
         });
     }
@@ -144,16 +182,30 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         break;
                     }
                 }
+
                 final long final_storage_space = storage_space;
+                HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
+                boolean isInternalStorage;
+//                    int dir_count = 0;int half_dir_count;
+//                    for(FilePOJO filePOJO:filePOJOS)
+//                    {
+//                        if(filePOJO.getIsDirectory())
+//                        {
+//                            ++dir_count;
+//                        }
+//                    }
+//                    half_dir_count=dir_count/2;
                 if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                 {
-                    fill_file_size(final_storage_space, Global.HASHMAP_INTERNAL_DIRECTORY_SIZE,true);
+                    hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
+                    isInternalStorage=true;
                 }
                 else {
-                    fill_file_size(final_storage_space, Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE,false);
+                    hashMap_directory_size=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
+                    isInternalStorage=false;
                 }
-
-                //mutable_file_count.postValue(MainActivity.SHOW_HIDDEN_FILE ? filePOJOS.size() : filePOJOS_filtered.size());
+                HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
+                fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -194,11 +246,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    private void fill_file_size(long volume_storage_size, HashMap<String,FileStoragePOJO> storagePOJOHashMap, boolean isInternalStorage)
+    private void fill_file_size(long volume_storage_size, HashMap<String,FileStoragePOJO> storagePOJOHashMap, boolean isInternalStorage,int start, int end)
     {
         if(filePOJOS==null) return;
         int[] total_no_of_files=new int[1];long[] total_size_of_files=new long[1];
-        int size=filePOJOS.size();
         HashMap<String, FilePOJOViewModel.FileStoragePOJO> directory_size_hashmap;
         if(isInternalStorage)
         {
@@ -208,7 +259,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             directory_size_hashmap=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
         }
 
-        for(int i=0;i<size;++i)
+        for(int i=start;i<end;++i)
         {
             if(isCancelled()) return;
             FilePOJO filePOJO=filePOJOS.get(i);

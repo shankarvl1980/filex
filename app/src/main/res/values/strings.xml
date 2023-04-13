@@ -446,6 +446,7 @@
 	<string name="server_address_should_not_contain_spaces">Server address should not contain spaces</string>
     <string name="connect">Connect</string>
     <string name="nothing_found_here">Nothing found here</string>
+    <string name="archive_viewer">Archive Viewer</string>
 
 
 </resources>

@@ -201,6 +201,16 @@
         </activity>
 
         <activity
+            android:name=".ArchiveViewerActivity"
+            android:label="@string/archive_viewer"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
+
+        <activity
             android:name=".FtpServerActivity"
             android:label="@string/ftp_server"
             android:exported="true"
