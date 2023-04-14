@@ -450,7 +450,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						if(Global.ARCHIVE_EXTRACT_DIR.exists())
 						{
-							FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
+							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 						}
 					}
 
@@ -1004,7 +1004,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
-	public ArrayList<String> recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
+	public static ArrayList<String> recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
 	{
 		int size=file_array.size();
 		for(int i=0;i<size;++i)

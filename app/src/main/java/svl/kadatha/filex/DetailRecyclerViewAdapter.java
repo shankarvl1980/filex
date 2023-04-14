@@ -359,9 +359,9 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	}
 	
 	
-	public void setCardViewClickListener(CardViewClickListener listner)
+	public void setCardViewClickListener(CardViewClickListener listener)
 	{
-		this.cardViewClickListener=listner;
+		this.cardViewClickListener=listener;
 	}
 
 }

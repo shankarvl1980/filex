@@ -239,7 +239,7 @@ public class FilePOJOUtil {
         return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
     }
 
-    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, boolean archive_view, FileObjectType fileObjectType,String file_path)
+    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, FileObjectType fileObjectType, String file_path)
     {
         String h;
         String name=f.getName();
@@ -492,7 +492,7 @@ public class FilePOJOUtil {
                 FTPFile f=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
                 if(f!=null)
                 {
-                    filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,file_path);
+                    filePOJO=MAKE_FilePOJO(f,false, fileObjectType,file_path);
                 }
 
             }
@@ -1002,16 +1002,32 @@ public class FilePOJOUtil {
             {
                 try(DirectoryStream<Path> directoryStream= Files.newDirectoryStream(Paths.get(fileclickselected)))
                 {
-                    for(Path path : directoryStream)
+                    if(archive_view)
                     {
-                        FilePOJO filePOJO =MAKE_FilePOJO(path,true,archive_view,fileObjectType);
-                        if(!filePOJO.getName().startsWith("."))
+                        for(Path path : directoryStream)
                         {
-                            filePOJOS_filtered.add(filePOJO);
-                        }
-                        filePOJOS.add(filePOJO);
+                            FilePOJO filePOJO =MAKE_FilePOJO_ZIP(path,true,fileObjectType);
+                            if(!filePOJO.getName().startsWith("."))
+                            {
+                                filePOJOS_filtered.add(filePOJO);
+                            }
+                            filePOJOS.add(filePOJO);
 
+                        }
                     }
+                    else{
+                        for(Path path : directoryStream)
+                        {
+                            FilePOJO filePOJO =MAKE_FilePOJO(path,true,archive_view,fileObjectType);
+                            if(!filePOJO.getName().startsWith("."))
+                            {
+                                filePOJOS_filtered.add(filePOJO);
+                            }
+                            filePOJOS.add(filePOJO);
+
+                        }
+                    }
+
                 } catch (IOException e) {
 
                 }
@@ -1019,7 +1035,14 @@ public class FilePOJOUtil {
             }
             else
             {
-                file_type_fill_filePOJO(file,archive_view,fileObjectType,filePOJOS,filePOJOS_filtered);
+                if(archive_view)
+                {
+                    file_type_fill_filePOJO_zip(file,fileObjectType,filePOJOS,filePOJOS_filtered);
+                }
+                else {
+                    file_type_fill_filePOJO(file,archive_view,fileObjectType,filePOJOS,filePOJOS_filtered);
+                }
+
             }
 
         }
@@ -1072,7 +1095,7 @@ public class FilePOJOUtil {
                         FTPFile f=file_array[i];
                         String name=f.getName();
                         String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
-                        FilePOJO filePOJO=MAKE_FilePOJO(f,false,false,fileObjectType,path);
+                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path);
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
 
@@ -1129,6 +1152,7 @@ public class FilePOJOUtil {
         return true;
     }
 
+
     private static void file_type_fill_filePOJO(File file, boolean archive_view, FileObjectType fileObjectType,List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered)
     {
         File[] file_array;
@@ -1148,4 +1172,175 @@ public class FilePOJOUtil {
 
         }
     }
+
+
+    private static void file_type_fill_filePOJO_zip(File file, FileObjectType fileObjectType,List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered)
+    {
+        File[] file_array;
+        if((file_array=file.listFiles())!=null)
+        {
+            int size=file_array.length;
+            for(int i=0;i<size;++i)
+            {
+                File f=file_array[i];
+                FilePOJO filePOJO =MAKE_FilePOJO_ZIP(f,true,fileObjectType);
+                if(!filePOJO.getName().startsWith("."))
+                {
+                    filePOJOS_filtered.add(filePOJO);
+                }
+                filePOJOS.add(filePOJO);
+            }
+
+        }
+    }
+
+
+
+
+
+    static FilePOJO MAKE_FilePOJO_ZIP(File f, boolean extracticon, FileObjectType fileObjectType)
+    {
+        String name=f.getName();
+        String path=f.getAbsolutePath();
+        boolean isDirectory=f.isDirectory();
+        long dateLong=f.lastModified();
+        String date=Global.SDF.format(dateLong);
+        long sizeLong=0L;
+        String si;
+
+        String file_ext="";
+        int overlay_visible= View.INVISIBLE;
+        float alfa=Global.ENABLE_ALFA;
+        String package_name = null;
+        int type=R.drawable.folder_icon;
+
+        if(!isDirectory)
+        {
+            type=R.drawable.unknown_file_icon;
+            int idx=name.lastIndexOf(".");
+            if(idx!=-1)
+            {
+                file_ext=name.substring(idx+1);
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
+                {
+                    overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
+                }
+            }
+            try(ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE))
+            {
+                ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
+                if(zipEntry!=null) sizeLong = zipEntry.getSize();
+            }
+            catch (IOException e) {
+
+            }
+            si=FileUtil.humanReadableByteCount(sizeLong);
+        }
+        else
+        {
+            String sub_file_count=null;
+            String [] file_list;
+            if((file_list=f.list(Global.File_NAME_FILTER))!=null)
+            {
+                sub_file_count="("+file_list.length+")";
+            }
+            si=sub_file_count;
+        }
+
+        if(f.isHidden())
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    static FilePOJO MAKE_FilePOJO_ZIP(Path p, boolean extracticon, FileObjectType fileObjectType)
+    {
+        String name=p.getFileName().toString();
+        String path=p.toAbsolutePath().toString();
+        boolean isDirectory;
+        long dateLong=0;
+        long sizeLong=0L;
+        try {
+            BasicFileAttributes basicFileAttributes=Files.readAttributes(p,BasicFileAttributes.class);
+            isDirectory=basicFileAttributes.isDirectory();
+            dateLong=basicFileAttributes.lastModifiedTime().toMillis();
+            if(!isDirectory) sizeLong=basicFileAttributes.size();
+        } catch (IOException e) {
+            isDirectory=Files.isDirectory(p);
+            try {
+                dateLong = Files.getLastModifiedTime(p).toMillis();
+            } catch (IOException ioe) {
+
+            }
+        }
+
+        String date=Global.SDF.format(dateLong);
+
+        String si;
+
+        String file_ext="";
+        int overlay_visible= View.INVISIBLE;
+        float alfa=Global.ENABLE_ALFA;
+        String package_name = null;
+        int type=R.drawable.folder_icon;
+
+        if(!isDirectory)
+        {
+            type=R.drawable.unknown_file_icon;
+            int idx=name.lastIndexOf(".");
+            if(idx!=-1)
+            {
+                file_ext=name.substring(idx+1);
+                type=GET_FILE_TYPE(isDirectory,file_ext);
+                if(type==-2)
+                {
+                    overlay_visible=View.VISIBLE;
+                }
+                else if(extracticon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
+                }
+            }
+            try(ZipFile zipFile = new ZipFile(ArchiveViewerActivity.ZIP_FILE))
+            {
+                ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
+                if(zipEntry!=null) sizeLong = zipEntry.getSize();
+            }
+            catch (IOException e){}
+            si=FileUtil.humanReadableByteCount(sizeLong);
+        }
+        else
+        {
+
+            String sub_file_count=null;
+            try(DirectoryStream<Path> directoryStream=Files.newDirectoryStream(Paths.get(path),Global.GET_NIO_FILE_NAME_FILTER()))
+            {
+                int count = 0;
+                for(Path pa : directoryStream)
+                {
+                    ++count;
+                }
+                sub_file_count="("+count+")";
+            } catch (IOException e) {
+
+            }
+            si=sub_file_count;
+        }
+
+        if(p.startsWith("."))
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+    }
+
 }
