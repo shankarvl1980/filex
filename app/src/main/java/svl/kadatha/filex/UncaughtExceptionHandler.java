@@ -44,6 +44,10 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             {
                 ((CopyToActivity)appCompatActivity).clearCache();
             }
+            else if(appCompatActivity instanceof ArchiveViewerActivity)
+            {
+                ((ArchiveViewerActivity)appCompatActivity).clearCache();
+            }
             appCompatActivity.finish();
             appCompatActivity.startActivity(intent);
         }

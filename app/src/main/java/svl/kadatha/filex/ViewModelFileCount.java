@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.logging.Handler;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -58,10 +59,11 @@ public class ViewModelFileCount extends ViewModel {
                         try {
                             final int[] count = new int[1];
                             final long[] size = new long[1];
-                            new NioFileIterator(source_list_files,count, size);
+                            new NioFileIterator(source_list_files,count, size,total_no_of_files,size_of_files_formatted);
                             cumulative_no_of_files+=count[0];
-                            total_no_of_files.postValue(cumulative_no_of_files);
                             total_size_of_files+=size[0];
+
+                            total_no_of_files.postValue(cumulative_no_of_files);
                             size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
                         } catch (IOException e) {
 

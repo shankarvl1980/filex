@@ -28,6 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FilePOJOUtil {
 
@@ -1329,6 +1330,7 @@ public class FilePOJOUtil {
                     ++count;
                 }
                 sub_file_count="("+count+")";
+                Timber.tag(Global.TAG).d("path - "+path+"  and count - "+count);
             } catch (IOException e) {
 
             }

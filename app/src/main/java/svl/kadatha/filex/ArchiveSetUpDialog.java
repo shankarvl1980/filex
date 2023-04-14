@@ -296,7 +296,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 			{
 				if(rb_custom_dir.isChecked())
 				{
-					((MainActivity)context).clear_cache=false;
+					AppCompatActivity appCompatActivity = (AppCompatActivity) context;
+					if (appCompatActivity instanceof MainActivity) {
+						((MainActivity) context).clear_cache = false;
+					} else if (appCompatActivity instanceof ArchiveViewerActivity) {
+						((ArchiveViewerActivity) context).clear_cache = false;
+					}
+
 					Intent intent=new Intent(context,FileSelectorActivity.class);
 					intent.putExtra(FileSelectorActivity.ACTION_SOUGHT,FileSelectorActivity.FOLDER_SELECT_REQUEST_CODE);
 					activityResultLauncher_file_select.launch(intent);

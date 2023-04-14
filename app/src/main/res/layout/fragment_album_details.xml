@@ -86,7 +86,7 @@
 			android:background="@null"
 			android:paddingTop="@dimen/layout_margin"
 			android:paddingBottom="@dimen/layout_margin"
-			android:src="@drawable/dark_no_icon"
+			android:src="@drawable/no_icon"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@id/album_details_search_view"
 			app:layout_constraintTop_toTopOf="parent" />

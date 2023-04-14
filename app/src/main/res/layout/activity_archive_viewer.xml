@@ -39,10 +39,10 @@
     <ImageButton
 
         android:id="@+id/archive_top_toolbar_parent_dir_imagebutton"
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="?android:attr/actionBarSize"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:src="@drawable/up_icon"
         android:background="@null"
         app:layout_constraintEnd_toStartOf="@+id/archive_top_toolbar_current_dir_label"
@@ -103,13 +103,64 @@
 
 
 
-    <include
-        layout="@layout/search_bar_layout"
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/archive_viewer_search_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="archive_viewer_search_view_edit_text,archive_viewer_search_view_cancel_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <EditText
+
+        android:id="@+id/archive_viewer_search_view_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/search_edittext_background"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:singleLine="true"
+        android:textColor="?attr/toolbar_text_color"
+        android:textSize="16sp"
+        android:elevation="6dp"
+
+        app:layout_constraintEnd_toStartOf="@id/archive_viewer_search_view_cancel_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
 
+        android:id="@+id/archive_viewer_search_view_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingBottom="@dimen/layout_margin"
+        android:src="@drawable/no_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/archive_viewer_search_view_edit_text"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/activity_archive_detail_progressbar"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:foregroundGravity="center"
+        android:elevation="6dp"
+        >
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_gravity="center"
+            />
+    </FrameLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

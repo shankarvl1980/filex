@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -33,6 +34,8 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
         cancel(true);
     }
 
@@ -63,10 +66,8 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 zipFileExtracted=false;
-                if(Global.ARCHIVE_EXTRACT_DIR.exists())
-                {
-                    FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-                }
+                FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
 
                 Enumeration<? extends ZipEntry> zip_entries=zipfile.entries();
                 while(zip_entries.hasMoreElements())

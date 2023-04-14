@@ -62,6 +62,10 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 ((CopyToActivity)context).clear_cache=false;
             }
+            else if(appCompatActivity instanceof ArchiveViewerActivity)
+            {
+                ((ArchiveViewerActivity)context).clear_cache=false;
+            }
         }
 
         return emptyService;
@@ -762,7 +766,7 @@ public class ArchiveDeletePasteServiceUtil {
                             try {
                                 final int[] count = new int[1];
                                 final long[] s = new long[1];
-                                new NioFileIterator(files_selected_array,count, s);
+                                new NioFileIterator(files_selected_array,count, s,new MutableLiveData<>(),mutable_size_of_files_to_be_archived_copied);
                                 total_no_of_files+=count[0];
                                 total_size_of_files+=s[0];
 

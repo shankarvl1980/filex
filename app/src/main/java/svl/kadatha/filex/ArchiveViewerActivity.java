@@ -29,6 +29,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -81,7 +82,7 @@ public class ArchiveViewerActivity extends BaseActivity{
     TextView file_number_view;
     public static final String ACTIVITY_NAME="ARCHIVE_VIEWER_ACTIVITY";
     Toolbar bottom_toolbar;
-    ConstraintLayout search_toolbar;
+
 
     TextView current_dir_textview;
     Context context=this;
@@ -100,7 +101,8 @@ public class ArchiveViewerActivity extends BaseActivity{
     public FragmentManager fm;
     public static FragmentManager FM;
 
-    private EditText search_view;
+    private Group search_toolbar;
+    public EditText search_edittext;
     public boolean search_toolbar_visible;
     private KeyBoardUtil keyBoardUtil;
 
@@ -114,6 +116,7 @@ public class ArchiveViewerActivity extends BaseActivity{
     public FloatingActionButton floating_button_back;
 
     public ArchiveViewerViewModel viewModel;
+    public FrameLayout activity_progress_bar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,17 +158,17 @@ public class ArchiveViewerActivity extends BaseActivity{
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 
+        activity_progress_bar=findViewById(R.id.activity_archive_detail_progressbar);
         keyBoardUtil=new KeyBoardUtil(root_layout);
 
 
         imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        search_toolbar=findViewById(R.id.search_toolbar);
 
-
-        search_view=search_toolbar.findViewById(R.id.search_bar_view);
-        search_view.setMaxWidth(Integer.MAX_VALUE);
-        search_view.addTextChangedListener(new TextWatcher() {
+        search_toolbar=findViewById(R.id.archive_viewer_search_toolbar);
+        search_edittext=findViewById(R.id.archive_viewer_search_view_edit_text);
+        search_edittext.setMaxWidth(Integer.MAX_VALUE);
+        search_edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -188,6 +191,15 @@ public class ArchiveViewerActivity extends BaseActivity{
                 }
             }
         });
+
+        ImageButton search_cancel_btn = findViewById(R.id.archive_viewer_search_view_cancel_button);
+        search_cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                set_visibility_searchbar(false);
+            }
+        });
+
 
         file_number_view=findViewById(R.id.archive_detail_fragment_file_number);
 
@@ -241,11 +253,11 @@ public class ArchiveViewerActivity extends BaseActivity{
                 ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED)
                 {
-                    if(archiveViewFragment!=null)archiveViewFragment.progress_bar.setVisibility(View.VISIBLE);
+                    activity_progress_bar.setVisibility(View.VISIBLE);
                 }
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    if(archiveViewFragment!=null)archiveViewFragment.progress_bar.setVisibility(View.GONE);
+                    activity_progress_bar.setVisibility(View.GONE);
                 }
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
@@ -261,8 +273,6 @@ public class ArchiveViewerActivity extends BaseActivity{
                             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
                         }
                     }
-
-                    viewModel.isExtractionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
         });
@@ -291,7 +301,6 @@ public class ArchiveViewerActivity extends BaseActivity{
 
         if(savedInstanceState==null)
         {
-            //createFragmentTransaction(Global.INTERNAL_PRIMARY_STORAGE_PATH,FileObjectType.FILE_TYPE);
             Intent intent=getIntent();
             if(intent!=null)
             {
@@ -315,7 +324,7 @@ public class ArchiveViewerActivity extends BaseActivity{
         {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
             search_toolbar.setVisibility(View.VISIBLE);
-            search_view.requestFocus();
+            search_edittext.requestFocus();
         }
         else
         {
@@ -481,6 +490,8 @@ public class ArchiveViewerActivity extends BaseActivity{
             }
             catch(IOException e)
             {
+                viewModel.isExtractionCompleted.setValue(AsyncTaskStatus.COMPLETED);
+                activity_progress_bar.setVisibility(View.GONE);
                 Global.print(context,getString(R.string.could_not_open_zipe_file));
                 return;
             }
@@ -589,14 +600,22 @@ public class ArchiveViewerActivity extends BaseActivity{
 
     public void createFragmentTransaction(String file_path,FileObjectType fileObjectType)
     {
+        String fragment_tag;
+        String existingFilePOJOkey="";
         ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
         if(archiveViewFragment!=null)
         {
+            fragment_tag=archiveViewFragment.getTag();
+            existingFilePOJOkey=archiveViewFragment.fileObjectType+fragment_tag;
             actionmode_finish(archiveViewFragment,file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
         }
 
-        fm.beginTransaction().replace(R.id.archive_detail_fragment,ArchiveViewFragment.getInstance(fileObjectType),file_path)
-                .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+        if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
+        {
+            fm.beginTransaction().replace(R.id.archive_detail_fragment,ArchiveViewFragment.getInstance(fileObjectType),file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+        }
+
     }
 
     @Override
@@ -609,11 +628,20 @@ public class ArchiveViewerActivity extends BaseActivity{
     private void onbackpressed(boolean onBackPressed)
     {
         ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+        if(archiveViewFragment==null)
+        {
+            if(keyBoardUtil.getKeyBoardVisibility())
+            {
 
-        if(keyBoardUtil.getKeyBoardVisibility())
+                imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+            }
+            finish();
+        }
+
+        else if(keyBoardUtil.getKeyBoardVisibility())
         {
 
-            imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
         }
         else if(archiveViewFragment.viewModel.mselecteditems.size()>0)
         {
@@ -626,7 +654,6 @@ public class ArchiveViewerActivity extends BaseActivity{
         }
         else
         {
-            archive_exit();
             int entry_count;
             if((entry_count=fm.getBackStackEntryCount())>1)
             {
@@ -635,15 +662,15 @@ public class ArchiveViewerActivity extends BaseActivity{
 
                 fm.popBackStack();
                 int frag=2;
-                archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-                String tag=archiveViewFragment.getTag();
-                while(!new File(tag).exists())
+                archiveViewFragment= (ArchiveViewFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                String df_tag=archiveViewFragment.getTag();
+                while(!new File(df_tag).exists()) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
                 {
                     fm.popBackStack();
                     ++frag;
                     if(frag>entry_count) break;
-                    archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-                    tag = archiveViewFragment.getTag();
+                    archiveViewFragment= (ArchiveViewFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    df_tag = archiveViewFragment.getTag();
                 }
 
                 parent_dir_image_button.setEnabled(false);
@@ -702,7 +729,7 @@ public class ArchiveViewerActivity extends BaseActivity{
     {
         // TODO: Implement this method
         super.onPause();
-        imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
+        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
     }
 
 
@@ -716,6 +743,8 @@ public class ArchiveViewerActivity extends BaseActivity{
 
     public void DeselectAllAndAdjustToolbars(ArchiveViewFragment archiveViewFragment,String detailfrag_tag)
     {
+        bottom_toolbar.setVisibility(View.VISIBLE);
+        bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
         if(archiveViewFragment!=null)
         {
             archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
@@ -727,9 +756,9 @@ public class ArchiveViewerActivity extends BaseActivity{
     public void actionmode_finish(ArchiveViewFragment archiveViewFragment, String archiveViewfrag_tag)
     {
         DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewfrag_tag);
-        imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
-        search_view.setText("");
-        search_view.clearFocus();
+        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+        search_edittext.setText("");
+        search_edittext.clearFocus();
         search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo list
         search_toolbar_visible=false;
         if(archiveViewFragment.adapter!=null)
@@ -738,16 +767,16 @@ public class ArchiveViewerActivity extends BaseActivity{
         }
     }
 
-    public void archive_exit()
-    {
-        if(Global.ARCHIVE_EXTRACT_DIR.exists())
-        {
-            ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-            archiveViewFragment.progress_bar.setVisibility(View.VISIBLE);
-            viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
-        }
-    }
+//    public void archive_exit()
+//    {
+//        if(Global.ARCHIVE_EXTRACT_DIR.exists())
+//        {
+//            ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+//            archiveViewFragment.progress_bar.setVisibility(View.VISIBLE);
+//            viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+//            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
+//        }
+//    }
 
 
     private class TopToolbarClickListener implements View.OnClickListener
@@ -757,14 +786,17 @@ public class ArchiveViewerActivity extends BaseActivity{
         {
             // TODO: Implement this method
             ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+            if(archiveViewFragment==null)return;
             int id = v.getId();
             if (id == R.id.archive_top_toolbar_back_button) {
 
             } else if (id == R.id.archive_top_toolbar_parent_dir_imagebutton) {
 
+                if(Global.IS_CHILD_FILE(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),archiveViewFragment.fileclickselected)) return;
                 File f = new File(archiveViewFragment.fileclickselected);
                 String parent_file_path = f.getParent();
                 if (parent_file_path==null) return;
+
                 if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
 
                     File parent_file=new File(parent_file_path);
@@ -800,8 +832,10 @@ public class ArchiveViewerActivity extends BaseActivity{
         {
 
             ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+
             int id = v.getId();
             if (id == R.id.toolbar_btn_1) {
+                if(archiveViewFragment==null)return;
                 if(!search_toolbar_visible)
                 {
                     set_visibility_searchbar(true);
@@ -812,6 +846,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                 }
 
             } else if (id == R.id.toolbar_btn_2) {
+                if(archiveViewFragment==null)return;
                 if(archiveViewFragment.progress_bar.getVisibility()==View.VISIBLE)
                 {
                     Global.print(context,getString(R.string.please_wait));
@@ -821,19 +856,22 @@ public class ArchiveViewerActivity extends BaseActivity{
                 fm.beginTransaction().attach(archiveViewFragment).commit();
                 Global.WORKOUT_AVAILABLE_SPACE();
             } else if (id == R.id.toolbar_btn_3) {
+                if(archiveViewFragment==null)return;
                 if(archiveViewFragment.progress_bar.getVisibility()==View.VISIBLE)
                 {
                     Global.print(context,getString(R.string.please_wait));
                     return;
                 }
-                if(search_toolbar_visible)
-                {
-                    set_visibility_searchbar(false);
-                }
 
                 if(archiveViewFragment.progress_bar.getVisibility()==View.VISIBLE)
                 {
                     Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
+
+                if(!Global.ARCHIVE_EXTRACT_DIR.exists() || Global.ARCHIVE_EXTRACT_DIR.list().length==0)
+                {
+                    Global.print(context,getString(R.string.could_not_perform_action));
                     return;
                 }
                 Bundle bundle=new Bundle();
@@ -865,11 +903,13 @@ public class ArchiveViewerActivity extends BaseActivity{
                 }
 
             } else if (id == R.id.toolbar_btn_4) {
+                if(archiveViewFragment==null)finish();
                 if(search_toolbar_visible)
                 {
                     set_visibility_searchbar(false);
                 }
                 Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
                 if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
                 {
                     Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());

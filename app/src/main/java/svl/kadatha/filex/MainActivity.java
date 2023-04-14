@@ -1433,10 +1433,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
-			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
-			{
-				archive_exit();
-			}
+//			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
+//			{
+//				archive_exit();
+//			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)
 			{
@@ -1567,10 +1567,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
 		{
-			if(viewModel.archive_view)
-			{
-				archive_exit();   //experimental
-			}
+//			if(viewModel.archive_view)
+//			{
+//				archive_exit();   //experimental
+//			}
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			bottom_toolbar.setVisibility(View.GONE);
@@ -1584,7 +1584,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			parent_dir_image_button.setEnabled(true);
 			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 
-			archive_exit();
+			//archive_exit();// instead of archive_exit(); the following is put
+			bottom_toolbar.setVisibility(View.VISIBLE);
+			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+			viewModel.toolbar_shown="bottom";
+			paste_toolbar.setVisibility(View.GONE);
 		}
 		actionmode_toolbar.setVisibility(View.GONE);
 		if(df!=null)
@@ -1609,36 +1613,36 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
-	public void archive_exit()
-	{
-		if(Global.ARCHIVE_EXTRACT_DIR.exists())
-		{
-			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			df.progress_bar.setVisibility(View.VISIBLE);
-			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
-		}
-
-		if(viewModel.toolbar_shown_prior_archive.equals("paste"))
-		{
-			paste_toolbar.setVisibility(View.VISIBLE);
-			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-			viewModel.toolbar_shown=viewModel.toolbar_shown_prior_archive;
-			viewModel.toolbar_shown_prior_archive="";
-			bottom_toolbar.setVisibility(View.GONE);
-		}
-		else
-		{
-			bottom_toolbar.setVisibility(View.VISIBLE);
-			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-			viewModel.toolbar_shown="bottom";
-			paste_toolbar.setVisibility(View.GONE);
-		}
-
-		actionmode_toolbar.setVisibility(View.GONE);
-		extract_toolbar.setVisibility(View.GONE);
-		viewModel.archive_view=false;
-	}
+//	public void archive_exit()
+//	{
+//		if(Global.ARCHIVE_EXTRACT_DIR.exists())
+//		{
+//			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+//			df.progress_bar.setVisibility(View.VISIBLE);
+//			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
+//			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
+//		}
+//
+//		if(viewModel.toolbar_shown_prior_archive.equals("paste"))
+//		{
+//			paste_toolbar.setVisibility(View.VISIBLE);
+//			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+//			viewModel.toolbar_shown=viewModel.toolbar_shown_prior_archive;
+//			viewModel.toolbar_shown_prior_archive="";
+//			bottom_toolbar.setVisibility(View.GONE);
+//		}
+//		else
+//		{
+//			bottom_toolbar.setVisibility(View.VISIBLE);
+//			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+//			viewModel.toolbar_shown="bottom";
+//			paste_toolbar.setVisibility(View.GONE);
+//		}
+//
+//		actionmode_toolbar.setVisibility(View.GONE);
+//		extract_toolbar.setVisibility(View.GONE);
+//		viewModel.archive_view=false;
+//	}
 
 
 	public void workingDirAdd()

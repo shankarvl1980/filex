@@ -80,7 +80,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     private final static String SAF_PERMISSION_REQUEST_CODE="archive_detail_fragment_saf_permission_request_code";
-
+    private ExtractZipFileViewModel extractZipFileViewModel;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -123,6 +123,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         }
 
         file_click_selected_name=new File(fileclickselected).getName();
+
 
         if(Global.ARCHIVE_EXTRACT_DIR==null) Global.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 
@@ -223,6 +224,31 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             }
         });
 
+        extractZipFileViewModel=new ViewModelProvider(ArchiveViewFragment.this).get(ExtractZipFileViewModel.class);
+        extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+                {
+                    progress_bar.setVisibility(View.VISIBLE);
+                }
+                else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    progress_bar.setVisibility(View.GONE);
+                }
+
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+                {
+                    if(extractZipFileViewModel.isZipExtracted)
+                    {
+                        file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
+                    }
+                    extractZipFileViewModel.isZipExtracted=false;
+                    extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                }
+            }
+        });
+
 
         return v;
     }
@@ -313,7 +339,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
     @Override
     public void onFileModified() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),MainActivity.ACTIVITY_NAME);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),ArchiveViewerActivity.ACTIVITY_NAME);
     }
 
 
@@ -420,6 +446,26 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                             return;
                         }
                     }
+
+                    try (ZipFile zipfile=new ZipFile(ArchiveViewerActivity.ZIP_FILE))
+                    {
+                        ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
+                        if(zip_entry==null)
+                        {
+                            Global.print(context,getString(R.string.can_not_open_file));
+                            return;
+                        }
+
+                        if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
+                        {
+                            Global.print(context,getString(R.string.file_is_large_please_extract_to_view));
+                            return;
+                        }
+
+                        progress_bar.setVisibility(View.VISIBLE);
+                        extractZipFileViewModel.extractZip(filePOJO, zipfile,zip_entry);
+                    }
+                    catch(IOException e){}
                 }
 
             }
