@@ -222,6 +222,7 @@
 	<string name="filex_image_viewer">FileX Image Viewer</string>
 	<string name="filex_video_player">FileX Video Player</string>
 	<string name="filex_file_selector">FileX File Selector</string>
+	<string name="filex_archive_viewer">FileX Archive Viewer</string>
     <string name="renamed">Renamed</string>
 	<string name="could_not_be_renamed">could not be renamed</string>
     <string name="file">File</string>
@@ -446,7 +447,6 @@
 	<string name="server_address_should_not_contain_spaces">Server address should not contain spaces</string>
     <string name="connect">Connect</string>
     <string name="nothing_found_here">Nothing found here</string>
-    <string name="archive_viewer">Archive Viewer</string>
 
 
 </resources>

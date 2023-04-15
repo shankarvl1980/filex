@@ -443,7 +443,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
                     fileObjectType=filePOJO.getFileObjectType();
                     if(filePOJO.getIsDirectory())
                     {
-                        storageAnalyserActivity.createFileSelectorFragmentTransaction(filePOJO);
+                        storageAnalyserActivity.createFileAnalyserFragmentTransaction(filePOJO);
                     }
                     else
                     {

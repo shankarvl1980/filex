@@ -209,7 +209,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         storage_filePOJO_list=getFilePOJO_list();
         listPopWindow=new PopupWindow(context);
         ListView listView=new ListView(context);
-        PopupWindowAdapater popupWindowAdapater = new PopupWindowAdapater(context, storage_filePOJO_list);
+        PopupWindowAdapter popupWindowAdapater = new PopupWindowAdapter(context, storage_filePOJO_list);
         listView.setAdapter(popupWindowAdapater);
         listPopWindow.setContentView(listView);
         listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
@@ -627,7 +627,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         {
             FileSelectorDialog ff=FileSelectorDialog.getInstance(fileObjectType);
             fm.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
     }
@@ -752,11 +752,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-    public static class PopupWindowAdapater extends ArrayAdapter<FilePOJO>
+    public static class PopupWindowAdapter extends ArrayAdapter<FilePOJO>
     {
         final Context context;
         final List<FilePOJO> list;
-        PopupWindowAdapater(Context context, List<FilePOJO> list)
+        PopupWindowAdapter(Context context, List<FilePOJO> list)
         {
             super(context,R.layout.list_popupwindow_layout,list);
             this.context=context;
@@ -767,11 +767,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         @Override
         public View getView(int position, @Nullable final View convertView, @NonNull ViewGroup parent) {
             View v;
-            PopupWindowAdapater.ViewHolder vh;
+            PopupWindowAdapter.ViewHolder vh;
             if(convertView==null)
             {
                 v= LayoutInflater.from(context).inflate(R.layout.list_popupwindow_layout,parent,false);
-                vh=new PopupWindowAdapater.ViewHolder();
+                vh=new PopupWindowAdapter.ViewHolder();
                 vh.imageView=v.findViewById(R.id.list_popupwindow_layout_iv);
                 vh.textView=v.findViewById(R.id.list_popupwindow_tv);
                 v.setTag(vh);
@@ -779,7 +779,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             else
             {
                 v=convertView;
-                vh= (PopupWindowAdapater.ViewHolder) convertView.getTag();
+                vh= (PopupWindowAdapter.ViewHolder) convertView.getTag();
             }
             final FilePOJO filePOJO=list.get(position);
             FileObjectType fileObjectType=filePOJO.getFileObjectType();

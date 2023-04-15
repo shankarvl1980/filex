@@ -47,8 +47,6 @@ public class NioFileIterator extends SimpleFileVisitor<Path>
     public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
         ++count[0];
         size[0]+=attributes.size();
-        mutable_total_no_of_files.postValue(count[0]);
-        mutable_size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(size[0]));
         return FileVisitResult.CONTINUE;
     }
 
@@ -60,6 +58,13 @@ public class NioFileIterator extends SimpleFileVisitor<Path>
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        mutable_total_no_of_files.postValue(count[0]);
+        mutable_size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(size[0]));
         return FileVisitResult.CONTINUE;
     }
 

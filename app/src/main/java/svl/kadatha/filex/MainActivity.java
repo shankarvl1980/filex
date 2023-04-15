@@ -1398,7 +1398,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		else if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
 		{
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
-					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
 		}
 	}
 

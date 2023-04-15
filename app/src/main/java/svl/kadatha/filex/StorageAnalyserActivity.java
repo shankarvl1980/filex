@@ -91,7 +91,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         {
             if(savedInstanceState==null)
             {
-                createFileSelectorFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
+                createFileAnalyserFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
             }
         }
 
@@ -412,7 +412,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         return filePOJOS;
     }
 
-    public void createFileSelectorFragmentTransaction(FilePOJO filePOJO)
+    public void createFileAnalyserFragmentTransaction(FilePOJO filePOJO)
     {
         String fragment_tag;
         String existingFilePOJOkey="";
@@ -428,7 +428,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
             fm.beginTransaction().replace(R.id.storage_analyser_container,StorageAnalyserDialog.getInstance(fileObjectType),file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
     }

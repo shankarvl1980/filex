@@ -237,7 +237,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                         {
                             if(activity_catering.equals(STORAGE_ANALYSER))
                             {
-                                ((StorageAnalyserActivity)context).createFileSelectorFragmentTransaction(filePOJO);
+                                ((StorageAnalyserActivity)context).createFileAnalyserFragmentTransaction(filePOJO);
                             }
                             else
                             {
