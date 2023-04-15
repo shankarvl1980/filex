@@ -462,7 +462,7 @@ public class Global
 		GRID_COUNT_LARGE=WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+RECYCLERVIEW_ITEM_SPACING);
 
 
-		//apk cache directory setting
+		//cache directory setting
 		ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");

@@ -101,7 +101,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
 	private final static String ALBUM_SELECT_REQUEST_CODE="detail_fragment_album_select_request_code";
-	private ExtractZipFileViewModel extractZipFileViewModel;
 	private static final List<String> LIBRARY_CATEGORIES=new ArrayList<>(Arrays.asList("Download","Document","Image","Audio","Video", "Archive","APK"));
 
 	@Override
@@ -716,10 +715,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						mainActivity.paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					}
-					else if(mainActivity.viewModel.toolbar_shown.equals("extract"))
-					{
-						mainActivity.extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-					}
+
 					is_toolbar_visible=true;
 				}
 			});

@@ -22,8 +22,6 @@ public class PdfViewActivity extends BaseActivity {
         Context context = this;
         setContentView(R.layout.activity_blank_view);
         fm=getSupportFragmentManager();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);
     }

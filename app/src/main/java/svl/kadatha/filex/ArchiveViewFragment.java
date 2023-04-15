@@ -446,8 +446,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                         }
                     }
 
-                    try (ZipFile zipfile=new ZipFile(ArchiveViewerActivity.ZIP_FILE))
+                    try
                     {
+                        ZipFile zipfile=new ZipFile(ArchiveViewerActivity.ZIP_FILE);
                         ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
                         if(zip_entry==null)
                         {

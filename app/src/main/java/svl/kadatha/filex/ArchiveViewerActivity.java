@@ -767,16 +767,31 @@ public class ArchiveViewerActivity extends BaseActivity{
         }
     }
 
-//    public void archive_exit()
-//    {
-//        if(Global.ARCHIVE_EXTRACT_DIR.exists())
-//        {
-//            ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-//            archiveViewFragment.progress_bar.setVisibility(View.VISIBLE);
-//            viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-//            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
-//        }
-//    }
+    public static ArrayList<String> recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
+    {
+        int size=file_array.size();
+        for(int i=0;i<size;++i)
+        {
+            File f=file_array.get(i);
+            if(f.isDirectory())
+            {
+                File[] inner_file_array=f.listFiles();
+                if(inner_file_array.length==0)
+                {
+                    file_pathstring_array.add(f.getAbsolutePath()+File.separator);
+                }
+                else
+                {
+                    recursivefilepath(file_pathstring_array,Arrays.asList(inner_file_array));
+                }
+            }
+            else
+            {
+                file_pathstring_array.add(f.getAbsolutePath());
+            }
+        }
+        return file_pathstring_array;
+    }
 
 
     private class TopToolbarClickListener implements View.OnClickListener
@@ -874,7 +889,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                     Global.print(context,getString(R.string.could_not_perform_action));
                     return;
                 }
-                Bundle bundle=new Bundle();
+
                 ArrayList<String> files_selected_array=new ArrayList<>();
                 ArrayList<String> zipentry_selected_array=new ArrayList<>();
                 if(ZIP_FILE!=null)
@@ -889,7 +904,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                         {
                             file_list.add(new File(archiveViewFragment.viewModel.mselecteditemsFilePath.valueAt(i)));
                         }
-                        MainActivity.recursivefilepath(zipentry_selected_array,file_list);
+                        ArchiveViewerActivity.recursivefilepath(zipentry_selected_array,file_list);
                     }
 
                     ArchiveSetUpDialog unziparchiveDialog=ArchiveSetUpDialog.getInstance(files_selected_array,zipentry_selected_array,archiveViewFragment.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);

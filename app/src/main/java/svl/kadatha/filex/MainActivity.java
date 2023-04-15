@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	TextView file_number_view;
 	public static final String ACTIVITY_NAME="MAIN_ACTIVITY";
 
-	Toolbar extract_toolbar,bottom_toolbar,paste_toolbar,actionmode_toolbar;
+	Toolbar bottom_toolbar,paste_toolbar,actionmode_toolbar;
 	ConstraintLayout search_toolbar;
 	ViewGroup drawer;
     private RecyclerView workingDirListRecyclerView;
@@ -99,7 +99,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public TinyDB tinyDB;
 	private static final boolean[] alreadyNotificationWarned=new boolean[1];
 
-	static File ZIP_FILE;
 	static List<String> LIBRARY_CATEGORIES=new ArrayList<>();
 	static List<String> NETWORK_TYPES=new ArrayList<>();
 	private Group working_dir_button_layout;
@@ -924,32 +923,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 
 	}
-	public static ArrayList<String> recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
-	{
-		int size=file_array.size();
-		for(int i=0;i<size;++i)
-		{
-			File f=file_array.get(i);
-			if(f.isDirectory())
-			{
-				File[] inner_file_array=f.listFiles();
-				if(inner_file_array.length==0)
-				{
-					file_pathstring_array.add(f.getAbsolutePath()+File.separator);
-				}
-				else
-				{
-					recursivefilepath(file_pathstring_array,Arrays.asList(inner_file_array));
-				}
-			}
-			else
-			{
-				file_pathstring_array.add(f.getAbsolutePath());
-			}
-		}
-		return file_pathstring_array;
-	}
-
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -1222,12 +1195,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				bottom_toolbar.setVisibility(View.GONE);
 				actionmode_toolbar.setVisibility(View.GONE);
 				break;
-			case "extract":
-				extract_toolbar.setVisibility(View.VISIBLE);
-				parent_dir_image_button.setEnabled(false);
-				parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
-				bottom_toolbar.setVisibility(View.GONE);
-				break;
 		}
 
 		if(df.viewModel.mselecteditems.size()>1)
@@ -1337,10 +1304,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 						paste_toolbar.setVisibility(View.VISIBLE);
 						break;
-					case "extract":
-						extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-						extract_toolbar.setVisibility(View.VISIBLE);
-						break;
 				}
 
 				fm.popBackStack();
@@ -1440,8 +1403,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		listPopWindow.dismiss();
 		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  viewModel.archive_view)
 		{
-			extract_toolbar.setVisibility(View.VISIBLE);
-			extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			paste_toolbar.setVisibility(View.GONE);
 			bottom_toolbar.setVisibility(View.GONE);
 			viewModel.toolbar_shown="extract";
@@ -1457,7 +1418,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			bottom_toolbar.setVisibility(View.GONE);
-			extract_toolbar.setVisibility(View.GONE);
 			viewModel.toolbar_shown="paste";
 			parent_dir_image_button.setEnabled(true);
 			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
@@ -1466,7 +1426,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			parent_dir_image_button.setEnabled(true);
 			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
-
 			bottom_toolbar.setVisibility(View.VISIBLE);
 			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			viewModel.toolbar_shown="bottom";
@@ -2002,7 +1961,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 		paste_toolbar.setVisibility(View.GONE);
 		actionmode_toolbar.setVisibility(View.GONE);
-		extract_toolbar.setVisibility(View.GONE);
 		viewModel.toolbar_shown="bottom";
 		df.is_toolbar_visible=true;
 	}
