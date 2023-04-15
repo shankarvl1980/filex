@@ -26,7 +26,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public File file;
     public String source_folder;
     public boolean isWritable,isFileBig;
-    public boolean fromArchiveView,fromThirdPartyApp;
+    public boolean fromThirdPartyApp;
     public Uri data;
     public FileObjectType fileObjectType;
     public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);

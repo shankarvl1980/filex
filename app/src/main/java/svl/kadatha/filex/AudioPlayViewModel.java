@@ -25,11 +25,10 @@ public class AudioPlayViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isAlbumArtFetched=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
     public FilePOJO currently_shown_file;
-    public boolean fromArchiveView;
+
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public String file_path;
-    //public Bitmap album_art;
     public String album_id;
     public String audio_file_name="";
 
@@ -56,7 +55,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void albumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp, boolean fromArchiveView)
+    public synchronized void albumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -119,7 +118,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 AudioPlayerService.CURRENT_PLAY_NUMBER=0;
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromArchiveView || fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
+                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
                 {
                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                 }

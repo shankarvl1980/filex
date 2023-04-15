@@ -189,7 +189,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				switch(p1)
 				{
 					case 0:
-						if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
@@ -522,7 +522,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		if(intent!=null)
 		{
 			viewModel.data=intent.getData();
-			viewModel.fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			viewModel.fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			viewModel.file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 			if(viewModel.file_path==null) viewModel.file_path=RealPathUtil.getLastSegmentPath(viewModel.data);
@@ -767,7 +766,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
-				if (viewModel.fromArchiveView || viewModel.fromThirdPartyApp) {
+				if (viewModel.fromThirdPartyApp) {
 					Global.print(context,getString(R.string.cant_edit_this_file));
 					return;
 				}

@@ -15,7 +15,6 @@ public class VideoViewActivity extends BaseActivity
 	public FragmentManager fm;
 	TinyDB tinyDB;
 	public int current_page_idx;
-	public boolean fromArchiveView;
 	public FileObjectType fileObjectType;
 	public boolean fromThirdPartyApp;
 	public String source_folder;
@@ -42,14 +41,14 @@ public class VideoViewActivity extends BaseActivity
 		if(intent!=null)
 		{
 			data=intent.getData();
-			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+			//fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 			if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);
 
 			if (savedInstanceState==null)
 			{
-				fm.beginTransaction().replace(R.id.activity_blank_view_container,VideoViewContainerFragment.getNewInstance(file_path, fromArchiveView, fileObjectType),"").commit();
+				fm.beginTransaction().replace(R.id.activity_blank_view_container,VideoViewContainerFragment.getNewInstance(file_path, fileObjectType),"").commit();
 			}
 
 		}

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class CopyToActivity extends BaseActivity{
 
@@ -241,9 +242,12 @@ public class CopyToActivity extends BaseActivity{
             {
                 if(data!=null)
                 {
-                    browse_button.callOnClick();
                     String f_name=getFileName(data);
                     file_name_edit_text.setText(f_name==null ? "" : f_name);
+                    folderclickselected = Global.INTERNAL_PRIMARY_STORAGE_PATH;
+                    destFileObjectType = FileObjectType.FILE_TYPE;
+                    destination_folder_edittext.setText(folderclickselected);
+                    destination_fileObject_text_view.setText(getDestFileObjectType());
                 }
 
             }
@@ -287,6 +291,7 @@ public class CopyToActivity extends BaseActivity{
         super.onStop();
         if(!isFinishing() && !isChangingConfigurations() && clear_cache)
         {
+            Timber.tag(Global.TAG).d("cleared cached in copy to activity");
             clearCache();
         }
     }

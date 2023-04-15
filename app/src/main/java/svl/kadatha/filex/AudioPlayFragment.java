@@ -139,7 +139,6 @@ public class AudioPlayFragment extends Fragment
 
 	public void set_audio(AudioPOJO audioPOJO)
 	{
-		audioPlayViewModel.fromArchiveView = false;
 		audioPlayViewModel.fileObjectType= audioPOJO.getFileObjectType();
 		audioPlayViewModel.fromThirdPartyApp = false;
 		audioPlayViewModel.file_path=audioPOJO.getData();
@@ -156,14 +155,13 @@ public class AudioPlayFragment extends Fragment
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
 
-			audioPlayViewModel.fromArchiveView = activity.fromArchiveView;
 			audioPlayViewModel.fileObjectType= activity.fileObjectType;
 			audioPlayViewModel.fromThirdPartyApp = activity.fromThirdPartyApp;
 			audioPlayViewModel.file_path=activity.file_path;
 			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
 
 			String source_folder = new File(audioPlayViewModel.file_path).getParent();
-			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp,audioPlayViewModel.fromArchiveView);
+			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp);
 		}
 
 	}
@@ -678,7 +676,7 @@ public class AudioPlayFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					if(audioPlayViewModel.fromArchiveView || audioPlayViewModel.fromThirdPartyApp || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
+					if(audioPlayViewModel.fromThirdPartyApp || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;

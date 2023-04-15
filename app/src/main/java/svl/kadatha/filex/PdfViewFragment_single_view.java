@@ -140,7 +140,7 @@ public class PdfViewFragment_single_view extends Fragment
                 switch(p1)
                 {
                     case 0:
-                        if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -324,7 +324,6 @@ public class PdfViewFragment_single_view extends Fragment
         if(bundle!=null)
         {
             viewModel.file_path = bundle.getString("file_path");
-            viewModel.fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
             viewModel.fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
             if(viewModel.fileObjectType==null || viewModel.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
             {
@@ -427,12 +426,11 @@ public class PdfViewFragment_single_view extends Fragment
         availableHeapMemory=Global.AVAILABLE_MEMORY_MB();
     }
 
-    public static PdfViewFragment_single_view getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
+    public static PdfViewFragment_single_view getNewInstance(String file_path, FileObjectType fileObjectType)
     {
         PdfViewFragment_single_view pdfViewFragment=new PdfViewFragment_single_view();
         Bundle bundle=new Bundle();
         bundle.putString("file_path",file_path);
-        bundle.putBoolean("fromArchiveView",fromArchiveView);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
         pdfViewFragment.setArguments(bundle);
         return  pdfViewFragment;

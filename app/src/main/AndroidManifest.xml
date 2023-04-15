@@ -194,7 +194,7 @@
         </activity>
 
         <activity
-            android:name=".ArchiveViewerActivity"
+            android:name=".ArchiveViewActivity"
             android:label="@string/archive_viewer"
             android:exported="true">
             <intent-filter>

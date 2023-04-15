@@ -62,9 +62,9 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 ((CopyToActivity)context).clear_cache=false;
             }
-            else if(appCompatActivity instanceof ArchiveViewerActivity)
+            else if(appCompatActivity instanceof ArchiveViewActivity)
             {
-                ((ArchiveViewerActivity)context).clear_cache=false;
+                ((ArchiveViewActivity)context).clear_cache=false;
             }
         }
 

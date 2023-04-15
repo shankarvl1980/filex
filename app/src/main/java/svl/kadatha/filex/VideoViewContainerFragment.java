@@ -123,7 +123,7 @@ public class VideoViewContainerFragment extends Fragment
 					switch(p1)
 					{
 						case 0:
-							if(viewModel.fromArchiveView || viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -231,8 +231,6 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			viewModel.file_path=bundle.getString("file_path");
 			viewModel.fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-			viewModel.fromArchiveView=bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE);
-
 			if(viewModel.fileObjectType ==null || viewModel.fileObjectType ==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				viewModel.fromThirdPartyApp=true;
@@ -371,12 +369,11 @@ public class VideoViewContainerFragment extends Fragment
 	}
 
 
-	public static VideoViewContainerFragment getNewInstance(String file_path, boolean fromArchiveView, FileObjectType fileObjectType)
+	public static VideoViewContainerFragment getNewInstance(String file_path, FileObjectType fileObjectType)
 	{
 		VideoViewContainerFragment frag=new VideoViewContainerFragment();
 		Bundle bundle=new Bundle();
 		bundle.putString("file_path",file_path);
-		bundle.putBoolean("fromArchiveView",fromArchiveView);
 		bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
 		frag.setArguments(bundle);
 		return frag;

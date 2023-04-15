@@ -56,7 +56,7 @@ public class AudioPlayerActivity extends BaseActivity
 	public static HashMap<Integer,String> EXISTING_AUDIOS_ID;
     public boolean search_toolbar_visible;
     public KeyBoardUtil keyBoardUtil;
-	public boolean fromArchiveView,fromThirdPartyApp;
+	public boolean fromThirdPartyApp;
     AudioDatabaseHelper audioDatabaseHelper;
 	SQLiteDatabase db;
 	Uri data;
@@ -266,7 +266,6 @@ public class AudioPlayerActivity extends BaseActivity
 		if(intent!=null)
 		{
 			data=intent.getData();
-			fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
 			file_path=intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
 			if(file_path==null) file_path=RealPathUtil.getLastSegmentPath(data);
@@ -404,52 +403,6 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
-
-
-//	public static Bitmap GET_ALBUM_ART(String data, int image_view_size)
-//	{
-////		if(album_id==null || album_id.equals(""))
-////		{
-////			album_id=new File(data).getName();
-////		}
-//
-//		Bitmap albumart=null;
-//		if(data !=null && new File(data).exists()) // String data check for null is necessary when archived audio file is accessed
-//		{
-//			try(MediaMetadataRetriever mmr=new MediaMetadataRetriever())
-//			{
-//				mmr.setDataSource(data);
-//				byte [] art_array=mmr.getEmbeddedPicture();
-//				if(art_array!=null)
-//				{
-//					int album_art_length=art_array.length;
-//					BitmapFactory.Options options=new BitmapFactory.Options();
-//					options.inJustDecodeBounds=true;
-//					BitmapFactory.decodeByteArray(art_array,0, album_art_length,options);
-//					int scale = 1;
-//					if (options.outHeight > image_view_size || options.outWidth > image_view_size) {
-//						scale = (int)Math.pow(2, (int) Math.ceil(Math.log(image_view_size /
-//								(double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
-//					}
-//
-//					//Decode with inSampleSize
-//					BitmapFactory.Options o2 = new BitmapFactory.Options();
-//					o2.inSampleSize = scale;
-//					albumart = BitmapFactory.decodeByteArray(art_array,0, album_art_length,o2);
-//				}
-//				mmr.release();
-//			}
-//			catch(Exception e)
-//			{
-//
-//			}
-//			finally
-//			{
-//				return albumart;
-//			}
-//		}
-//		return albumart;
-//	}
 
 	private class ViewPagerFragmentAdapter extends FragmentPagerAdapter
 	{

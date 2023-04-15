@@ -299,8 +299,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 					AppCompatActivity appCompatActivity = (AppCompatActivity) context;
 					if (appCompatActivity instanceof MainActivity) {
 						((MainActivity) context).clear_cache = false;
-					} else if (appCompatActivity instanceof ArchiveViewerActivity) {
-						((ArchiveViewerActivity) context).clear_cache = false;
+					} else if (appCompatActivity instanceof ArchiveViewActivity) {
+						((ArchiveViewActivity) context).clear_cache = false;
 					}
 
 					Intent intent=new Intent(context,FileSelectorActivity.class);

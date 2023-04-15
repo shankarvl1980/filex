@@ -877,7 +877,7 @@ public class Global
 		File f=new File("/dummy");
 		uri = FileProvider.getUriForFile(context,context.getPackageName()+".provider",f);
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
-		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,false,uri);
+		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,uri);
 		List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
 		return resolveInfoList.size() != 0;
 	}

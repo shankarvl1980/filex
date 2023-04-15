@@ -121,7 +121,7 @@ public class FilePOJOUtil {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
-            try(ZipFile zipFile = new ZipFile(ArchiveViewerActivity.ZIP_FILE))
+            try(ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE))
             {
                 ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                 if(zipEntry!=null) sizeLong = zipEntry.getSize();
@@ -277,7 +277,7 @@ public class FilePOJOUtil {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
-            try(ZipFile zipFile = new ZipFile(ArchiveViewerActivity.ZIP_FILE))
+            try(ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE))
             {
                 ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                 if(zipEntry!=null) sizeLong = zipEntry.getSize();
@@ -752,44 +752,41 @@ public class FilePOJOUtil {
             filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
             filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
         }
-        else
+        if(filePOJOs==null || filePOJOs_filtered==null) return;
+        String name;
+        for(int i=0;i<size;++i)
         {
-            String name;
-            for(int i=0;i<size;++i)
-            {
-                name=deleted_files_name_list.get(i);
-                remove_from_FilePOJO(name,filePOJOs);
-                remove_from_FilePOJO(name,filePOJOs_filtered);
-                String file_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
-                REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_to_be_removed),fileObjectType);
+            name=deleted_files_name_list.get(i);
+            remove_from_FilePOJO(name,filePOJOs);
+            remove_from_FilePOJO(name,filePOJOs_filtered);
+            String file_to_be_removed=Global.CONCATENATE_PARENT_CHILD_PATH(source_folder,name);
+            REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_to_be_removed),fileObjectType);
 
-                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Download"))
+            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Download"))
+            {
+                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Document"))
                 {
-                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Document"))
+                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Image"))
                     {
-                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Image"))
+                        if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Audio"))
                         {
-                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Audio"))
+                            if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Video"))
                             {
-                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Video"))
+                                if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Archive"))
                                 {
-                                    if(!REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Archive"))
-                                    {
-                                        REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "APK");
-                                    }
+                                    REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "APK");
                                 }
                             }
                         }
                     }
                 }
-
-                REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
             }
 
-            Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
+            REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
 
+        Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
+        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
     }
 
 

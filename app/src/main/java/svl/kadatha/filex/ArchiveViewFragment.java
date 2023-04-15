@@ -55,19 +55,13 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public boolean grid_layout;
     private TinyDB tinyDB;
     TextView folder_empty;
-    ArchiveViewerActivity.ArchiveDetailRecyclerViewAdapter adapter;
+    ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter adapter;
     private FilePathRecyclerViewAdapter filepath_adapter;
     public String fileclickselected="";
     public String file_click_selected_name="";
 
-    public static boolean CUT_SELECTED;
-    public static boolean COPY_SELECTED;
-    public static FileObjectType CUT_COPY_FILE_OBJECT_TYPE;
-    public static String CUT_COPY_FILECLICKSELECTED="";
-    public static ArrayList<String> FILE_SELECTED_FOR_CUT_COPY=new ArrayList<>();
 
-
-    public ArchiveViewerActivity archiveViewerActivity;
+    public ArchiveViewActivity archiveViewActivity;
     private Context context;
     public FileObjectType fileObjectType;
     public int file_list_size;
@@ -85,14 +79,14 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        archiveViewerActivity=(ArchiveViewerActivity) context;
+        archiveViewActivity =(ArchiveViewActivity) context;
         tinyDB=new TinyDB(context);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        archiveViewerActivity=null;
+        archiveViewActivity =null;
     }
 
     @Override
@@ -171,13 +165,13 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 super.onScrolled(rv,dx,dy);
                 if(scroll_distance>threshold && is_toolbar_visible)
                 {
-                    archiveViewerActivity.bottom_toolbar.animate().translationY(archiveViewerActivity.bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    archiveViewActivity.bottom_toolbar.animate().translationY(archiveViewActivity.bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
                     is_toolbar_visible=false;
                     scroll_distance=0;
                 }
                 else if(scroll_distance<-threshold && !is_toolbar_visible)
                 {
-                    archiveViewerActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    archiveViewActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     is_toolbar_visible=true;
                     scroll_distance=0;
                 }
@@ -272,7 +266,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             }
             totalFilePOJO_list_Size=totalFilePOJO_list.size();
             file_list_size=totalFilePOJO_list_Size;
-            archiveViewerActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+            archiveViewActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
             Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
             time_image_view.setSelected(viewModel.library_time_desc);
             adapter.notifyDataSetChanged();
@@ -280,7 +274,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
         else if(modification_observed)
         {
-            archiveViewerActivity.actionmode_finish(this,fileclickselected);
+            archiveViewActivity.actionmode_finish(this,fileclickselected);
             modification_observed=false;
             local_activity_delete=false;
             progress_bar.setVisibility(View.VISIBLE);
@@ -311,11 +305,11 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         totalFilePOJO_list_Size=totalFilePOJO_list.size();
         file_list_size=totalFilePOJO_list_Size;
         Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-        adapter=new ArchiveViewerActivity.ArchiveDetailRecyclerViewAdapter(context);
+        adapter=new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context);
         set_adapter();
         progress_bar.setVisibility(View.GONE);
 
-        archiveViewerActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+        archiveViewActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
     }
 
 
@@ -338,7 +332,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
     @Override
     public void onFileModified() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context),ArchiveViewerActivity.ACTIVITY_NAME);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION,LocalBroadcastManager.getInstance(context), ArchiveViewActivity.ACTIVITY_NAME);
     }
 
 
@@ -378,15 +372,15 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
-            FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,true,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
-            fileTypeSelectDialog.show(archiveViewerActivity.fm,"");
+            FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,null,tree_uri,tree_uri_path,select_app,file_size);
+            fileTypeSelectDialog.show(archiveViewActivity.fm,"");
         }
         else
         {
             if(file_ext.matches("(?i)apk"))
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (!archiveViewerActivity.getPackageManager().canRequestPackageInstalls()) {
+                    if (!archiveViewActivity.getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
                         unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
                         activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
@@ -398,12 +392,12 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", false,true,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+                    FileIntentDispatch.openUri(context,file_path,"", false,null,tree_uri,tree_uri_path,select_app,file_size);
                 }
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",false,true,fileObjectType,select_app,file_size);
+                FileIntentDispatch.openFile(context,file_path,"",false,null,select_app,file_size);
             }
         }
     }
@@ -424,14 +418,14 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             folder_empty.setVisibility(View.GONE);
         }
 
-        adapter.setCardViewClickListener(new ArchiveViewerActivity.ArchiveDetailRecyclerViewAdapter.CardViewClickListener()
+        adapter.setCardViewClickListener(new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter.CardViewClickListener()
         {
             public void onClick(FilePOJO filePOJO)
             {
                 clicked_filepojo=filePOJO;
                 if(filePOJO.getIsDirectory())
                 {
-                    archiveViewerActivity.createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
+                    archiveViewActivity.createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
                 }
                 else
                 {
@@ -448,7 +442,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
                     try
                     {
-                        ZipFile zipfile=new ZipFile(ArchiveViewerActivity.ZIP_FILE);
+                        ZipFile zipfile=new ZipFile(ArchiveViewActivity.ZIP_FILE);
                         ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
                         if(zip_entry==null)
                         {
@@ -472,7 +466,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
             public void onLongClick(FilePOJO filePOJO)
             {
-                archiveViewerActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                archiveViewActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                 is_toolbar_visible=true;
             }
         });
@@ -487,7 +481,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         {
             adapter.notifyDataSetChanged();
             file_list_size=filePOJO_list.size();
-            archiveViewerActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+            archiveViewActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
             totalFilePOJO_list_Size=totalFilePOJO_list.size();
 
             if(file_list_size==0)
@@ -541,7 +535,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-            safpermissionhelper.show(archiveViewerActivity.fm,"saf_permission_dialog");
+            safpermissionhelper.show(archiveViewActivity.fm,"saf_permission_dialog");
             return false;
         }
         else
@@ -604,7 +598,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                             File f=new File(fp);
                             if(f.exists() && f.list()!=null)
                             {
-                                archiveViewerActivity.createFragmentTransaction(fp,fileObjectType);
+                                archiveViewActivity.createFragmentTransaction(fp,fileObjectType);
                             }
                         }
                     }

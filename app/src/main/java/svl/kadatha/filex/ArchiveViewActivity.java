@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,14 +23,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -41,42 +36,27 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.constraintlayout.widget.Group;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.ZipFile;
 
-import me.jahnen.libaums.core.fs.FileSystem;
-import me.jahnen.libaums.core.fs.UsbFile;
-
-public class ArchiveViewerActivity extends BaseActivity{
+public class ArchiveViewActivity extends BaseActivity{
 
     public ImageButton back_button,parent_dir_image_button,all_select;
     TextView file_number_view;
@@ -138,7 +118,7 @@ public class ArchiveViewerActivity extends BaseActivity{
             }
         }
 
-        PermissionsUtil permissionUtil=new PermissionsUtil(context,ArchiveViewerActivity.this);
+        PermissionsUtil permissionUtil=new PermissionsUtil(context, ArchiveViewActivity.this);
         permissionUtil.check_permission();
         tinyDB=new TinyDB(context);
         setContentView(R.layout.activity_archive_viewer);
@@ -378,7 +358,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                                         switch (which)
                                         {
                                             case DialogInterface.BUTTON_POSITIVE:
-                                                new PermissionsUtil(context,ArchiveViewerActivity.this).check_permission();
+                                                new PermissionsUtil(context, ArchiveViewActivity.this).check_permission();
                                                 break;
                                             case DialogInterface.BUTTON_NEGATIVE:
                                                 Global.print(context,getString(R.string.permission_not_granted));
@@ -409,7 +389,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                                         switch (which)
                                         {
                                             case DialogInterface.BUTTON_POSITIVE:
-                                                new PermissionsUtil(context,ArchiveViewerActivity.this).check_permission();
+                                                new PermissionsUtil(context, ArchiveViewActivity.this).check_permission();
                                                 break;
                                             case DialogInterface.BUTTON_NEGATIVE:
                                                 Global.print(context,getString(R.string.permission_not_granted));
@@ -434,7 +414,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                                         switch (which)
                                         {
                                             case DialogInterface.BUTTON_POSITIVE:
-                                                new PermissionsUtil(context,ArchiveViewerActivity.this).check_permission();
+                                                new PermissionsUtil(context, ArchiveViewActivity.this).check_permission();
                                                 break;
                                             case DialogInterface.BUTTON_NEGATIVE:
                                                 Global.print(context,getString(R.string.permission_not_granted));
@@ -767,7 +747,7 @@ public class ArchiveViewerActivity extends BaseActivity{
         }
     }
 
-    public static ArrayList<String> recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
+    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
     {
         int size=file_array.size();
         for(int i=0;i<size;++i)
@@ -790,7 +770,6 @@ public class ArchiveViewerActivity extends BaseActivity{
                 file_pathstring_array.add(f.getAbsolutePath());
             }
         }
-        return file_pathstring_array;
     }
 
 
@@ -904,7 +883,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                         {
                             file_list.add(new File(archiveViewFragment.viewModel.mselecteditemsFilePath.valueAt(i)));
                         }
-                        ArchiveViewerActivity.recursivefilepath(zipentry_selected_array,file_list);
+                        ArchiveViewActivity.recursivefilepath(zipentry_selected_array,file_list);
                     }
 
                     ArchiveSetUpDialog unziparchiveDialog=ArchiveSetUpDialog.getInstance(files_selected_array,zipentry_selected_array,archiveViewFragment.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
@@ -971,7 +950,7 @@ public class ArchiveViewerActivity extends BaseActivity{
 
         private final Context context;
         private final ArchiveViewFragment archiveViewFragment;
-        private final ArchiveViewerActivity archiveViewerActivity;
+        private final ArchiveViewActivity archiveViewActivity;
 
         private CardViewClickListener cardViewClickListener;
         private boolean show_file_path;
@@ -979,10 +958,10 @@ public class ArchiveViewerActivity extends BaseActivity{
         ArchiveDetailRecyclerViewAdapter(Context context)
         {
             this.context=context;
-            archiveViewerActivity=(ArchiveViewerActivity)context;
-            archiveViewFragment=(ArchiveViewFragment) archiveViewerActivity.fm.findFragmentById(R.id.archive_detail_fragment);
-            archiveViewerActivity.current_dir_textview.setText(archiveViewFragment.file_click_selected_name);
-            archiveViewerActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size()+"/"+archiveViewFragment.file_list_size);
+            archiveViewActivity =(ArchiveViewActivity)context;
+            archiveViewFragment=(ArchiveViewFragment) archiveViewActivity.fm.findFragmentById(R.id.archive_detail_fragment);
+            archiveViewActivity.current_dir_textview.setText(archiveViewFragment.file_click_selected_name);
+            archiveViewActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size()+"/"+archiveViewFragment.file_list_size);
             if(archiveViewFragment.fileObjectType==FileObjectType.FILE_TYPE || archiveViewFragment.fileObjectType==FileObjectType.ROOT_TYPE)
             {
                 File f=new File(archiveViewFragment.fileclickselected);
@@ -993,9 +972,9 @@ public class ArchiveViewerActivity extends BaseActivity{
                 }
                 else
                 {
-                    archiveViewerActivity.current_dir_textview.setText(R.string.root_directory);
-                    archiveViewerActivity.parent_dir_image_button.setEnabled(false);
-                    archiveViewerActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+                    archiveViewActivity.current_dir_textview.setText(R.string.root_directory);
+                    archiveViewActivity.parent_dir_image_button.setEnabled(false);
+                    archiveViewActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
                 }
             }
             
@@ -1064,7 +1043,7 @@ public class ArchiveViewerActivity extends BaseActivity{
 
                     if(size==0)
                     {
-                        archiveViewerActivity.DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
+                        archiveViewActivity.DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
                     }
                 }
                 else
@@ -1079,7 +1058,7 @@ public class ArchiveViewerActivity extends BaseActivity{
 
                     if(size==archiveViewFragment.file_list_size)
                     {
-                        archiveViewerActivity.all_select.setImageResource(R.drawable.deselect_icon);
+                        archiveViewActivity.all_select.setImageResource(R.drawable.deselect_icon);
                     }
 
                     if(cardViewClickListener!=null)
@@ -1088,7 +1067,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                         cardViewClickListener.onLongClick(filePOJO);
                     }
                 }
-                archiveViewerActivity.file_number_view.setText(size+"/"+archiveViewFragment.file_list_size);
+                archiveViewActivity.file_number_view.setText(size+"/"+archiveViewFragment.file_list_size);
             }
 
             @Override
@@ -1182,7 +1161,7 @@ public class ArchiveViewerActivity extends BaseActivity{
                     archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
                     archiveViewFragment.folder_empty.setVisibility(View.GONE);
                 }
-                archiveViewerActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size()+ "/" +t);
+                archiveViewActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size()+ "/" +t);
             }
         };
 
@@ -1207,14 +1186,14 @@ public class ArchiveViewerActivity extends BaseActivity{
 
             int s=archiveViewFragment.viewModel.mselecteditems.size();
 
-            archiveViewerActivity.file_number_view.setText(s+"/"+size);
+            archiveViewActivity.file_number_view.setText(s+"/"+size);
             notifyDataSetChanged();
-            archiveViewerActivity.bottom_toolbar.setVisibility(View.VISIBLE);
+            archiveViewActivity.bottom_toolbar.setVisibility(View.VISIBLE);
         }
 
         public void deselectAll()
         {
-            archiveViewerActivity.DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
+            archiveViewActivity.DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
         }
 
         interface CardViewClickListener

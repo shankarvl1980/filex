@@ -81,11 +81,10 @@ public class AppSelectorDialog extends DialogFragment
                 file_type="Other";
             }
             boolean clear_top = bundle.getBoolean("clear_top");
-            boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
             file_size=bundle.getLong("file_size");
             intent=new Intent(Intent.ACTION_VIEW);
-            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,fromArchiveView,clear_top,data);
+            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,clear_top,data);
         }
 
         if(savedInstanceState!=null)
@@ -95,7 +94,7 @@ public class AppSelectorDialog extends DialogFragment
 
     }
 
-    public static AppSelectorDialog getInstance(Uri data, String file_path,String mime_type,boolean clear_top,boolean fromArchiveView,FileObjectType fileObjectType,long file_size)
+    public static AppSelectorDialog getInstance(Uri data, String file_path,String mime_type,boolean clear_top,FileObjectType fileObjectType,long file_size)
     {
         AppSelectorDialog appSelectorDialog=new AppSelectorDialog();
         Bundle bundle=new Bundle();
@@ -103,7 +102,6 @@ public class AppSelectorDialog extends DialogFragment
         bundle.putString("file_path",file_path);
         bundle.putString("mime_type",mime_type);
         bundle.putBoolean("clear_top",clear_top);
-        bundle.putBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,fromArchiveView);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
         bundle.putLong("file_size",file_size);
         appSelectorDialog.setArguments(bundle);
@@ -240,7 +238,7 @@ public class AppSelectorDialog extends DialogFragment
                         }
                         else
                         {
-                            if(fileObjectType.equals(FileObjectType.USB_TYPE) && app_package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
+                            if(fileObjectType!=null && fileObjectType.equals(FileObjectType.USB_TYPE) && app_package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
                             {
                                 Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
                                 defaultAppDatabaseHelper.close();

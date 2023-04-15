@@ -459,7 +459,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 										file_extn=file_path.substring(file_extn_idx+1);
 									}
 									Intent intent=new Intent(Intent.ACTION_VIEW);
-									FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,null,filePOJO.getPath(),file_extn,filePOJO.getFileObjectType(),false,false,uri);
+									FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,null,filePOJO.getPath(),file_extn,filePOJO.getFileObjectType(),false,uri);
 									fileSelectorActivity.setResult(Activity.RESULT_OK,intent);
 								}
 								else

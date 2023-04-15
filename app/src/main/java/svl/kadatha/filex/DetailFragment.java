@@ -48,6 +48,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
@@ -86,7 +87,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public MainActivity mainActivity;
 	private Context context;
-	public boolean archive_view;
+
 	public FileObjectType fileObjectType;
 	public int file_list_size;
 	boolean is_toolbar_visible=true;
@@ -352,7 +353,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 			else
 			{
-				viewModel.populateFilePOJO(fileObjectType, fileclickselected, currentUsbFile, archive_view, false);
+				viewModel.populateFilePOJO(fileObjectType, fileclickselected, currentUsbFile, false, false);
 			}
 		}
 		else
@@ -437,6 +438,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(local_activity_delete)
 		{
+			Timber.tag(Global.TAG).d("local deleted");
 			modification_observed=false;
 			local_activity_delete=false;
 			if(MainActivity.SHOW_HIDDEN_FILE)
@@ -478,7 +480,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			else
 			{
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,archive_view,false);
+				viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 			}
 
 			ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -619,7 +621,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+			FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 			fileTypeSelectDialog.show(mainActivity.fm,"");
 		}
 		else
@@ -639,12 +641,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
-					 FileIntentDispatch.openUri(context,file_path,"", false,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+					 FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 				 }
 			 }
 			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			 {
-				 FileIntentDispatch.openFile(context,file_path,"",false,archive_view,fileObjectType,select_app,file_size);
+				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			 }
 		 }
 	}

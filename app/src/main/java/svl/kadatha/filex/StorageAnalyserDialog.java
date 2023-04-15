@@ -593,7 +593,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
-            FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+            FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
             fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
         }
         else
@@ -615,12 +615,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", false,false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+                    FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
                 }
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",false,false,fileObjectType,select_app,file_size);
+                FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
             }
         }
     }

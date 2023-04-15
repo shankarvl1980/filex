@@ -214,7 +214,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
-			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
+			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 			fileTypeSelectFragment.show(fragmentManager,"");
 		}
 
@@ -237,12 +237,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			{
 				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				{
-					FileIntentDispatch.openUri(context,file_path,"",false,false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
+					FileIntentDispatch.openUri(context,file_path,"",false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 				}
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			{
-				FileIntentDispatch.openFile(context,file_path,"",false,false,fileObjectType,false,file_size);
+				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 			}
 
 		}

@@ -52,7 +52,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public FilePOJO currently_shown_file;
     public boolean firststart;
 
-    public boolean fromArchiveView;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public String file_path;
@@ -148,7 +147,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 }
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromArchiveView || fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
+                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
                 {
                     if(whetherVideo)
                     {

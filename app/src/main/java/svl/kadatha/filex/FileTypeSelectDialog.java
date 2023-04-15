@@ -30,7 +30,7 @@ public class FileTypeSelectDialog extends DialogFragment
 	private long file_size;
 	private Uri tree_uri;
 	private FileObjectType fileObjectType;
-	private boolean archive_view,select_app;
+	private boolean select_app;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_type_selector_dialog_saf_permission_request_code";
 	private List<MimePOJO> mimePOJOList;
 
@@ -50,7 +50,6 @@ public class FileTypeSelectDialog extends DialogFragment
 		mime_type= bundle.getString("mime_type");
 		file_path= bundle.getString("file_path");
 		fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
-		archive_view= bundle.getBoolean("archive_view");
 		tree_uri= bundle.getParcelable("tree_uri");
 		tree_uri_path= bundle.getString("tree_uri_path");
 		select_app=bundle.getBoolean("select_app");
@@ -60,12 +59,11 @@ public class FileTypeSelectDialog extends DialogFragment
 		mimePOJOList.add(new MimePOJO("Other","*/*",""));
 	}
 
-	public static FileTypeSelectDialog getInstance(String file_path, boolean archive_view, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path,boolean select_app,long file_size)
+	public static FileTypeSelectDialog getInstance(String file_path, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path,boolean select_app,long file_size)
 	{
 		FileTypeSelectDialog fileTypeSelectDialog=new FileTypeSelectDialog();
 		Bundle bundle=new Bundle();
 		bundle.putString("file_path",file_path);
-		bundle.putBoolean("archive_view",archive_view);
 		bundle.putSerializable("fileObjectType",fileObjectType);
 		bundle.putParcelable("tree_uri",tree_uri);
 		bundle.putString("tree_uri_path",tree_uri_path);
@@ -162,12 +160,12 @@ public class FileTypeSelectDialog extends DialogFragment
 						{
 							if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 							{
-								FileIntentDispatch.openUri(context,file_path,mime_type,false,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+								FileIntentDispatch.openUri(context,file_path,mime_type,false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 							}
 						}
-						else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+						else if(fileObjectType==null || fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 						{
-							FileIntentDispatch.openFile(context,file_path,mime_type,false,archive_view,fileObjectType,select_app,file_size);
+							FileIntentDispatch.openFile(context,file_path,mime_type,false,fileObjectType,select_app,file_size);
 						}
 						dismissAllowingStateLoss();
 					}

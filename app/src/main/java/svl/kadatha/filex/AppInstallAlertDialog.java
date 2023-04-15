@@ -70,10 +70,9 @@ public class AppInstallAlertDialog extends DialogFragment
                 }
             }
             boolean clear_top = bundle.getBoolean("clear_top");
-            boolean fromArchiveView = bundle.getBoolean(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
             intent=new Intent(Intent.ACTION_VIEW);
-            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,viewModel.mime_type,file_path,"",fileObjectType,fromArchiveView,clear_top,data);
+            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,viewModel.mime_type,file_path,"",fileObjectType,clear_top,data);
         }
     }
 
