@@ -20,14 +20,13 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9;
-    public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public boolean zipFileExtracted;
+
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean checkedSAFPermissionPasteSetUp;
 
     public boolean archive_view,working_dir_open,library_or_search_shown,network_shown;
     public String toolbar_shown="bottom";
-    public String toolbar_shown_prior_archive="";
+
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
@@ -58,49 +57,6 @@ public class MainActivityViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void extractArchive(ZipFile zipfile)
-    {
-        if(isExtractionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        isExtractionCompleted.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                zipFileExtracted=false;
-                if(Global.ARCHIVE_EXTRACT_DIR.exists())
-                {
-                    FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-                }
-
-                Enumeration<? extends ZipEntry> zip_entries=zipfile.entries();
-                while(zip_entries.hasMoreElements())
-                {
-                    ZipEntry zipentry=zip_entries.nextElement();
-                    File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipentry.getName());
-                    if(zipentry.isDirectory() && !f.exists())
-                    {
-                        zipFileExtracted=f.mkdirs();
-                    }
-                    else if(!zipentry.isDirectory())
-                    {
-                        if(!f.getParentFile().exists())
-                        {
-                            zipFileExtracted=f.getParentFile().mkdirs();
-                        }
-                        try
-                        {
-                            zipFileExtracted=f.createNewFile();
-                        }
-                        catch(IOException e)
-                        {
-                            zipFileExtracted=false;
-                        }
-                    }
-                }
-                isExtractionCompleted.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
-    }
 
     public void deleteDirectory(File dir)
     {

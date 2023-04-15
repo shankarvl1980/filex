@@ -32,7 +32,7 @@ import timber.log.Timber;
 
 public class FilePOJOUtil {
 
-    static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, boolean archive_view,FileObjectType fileObjectType)
+    static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, FileObjectType fileObjectType)
     {
         String name=f.getName();
         String path=f.getAbsolutePath();
@@ -65,20 +65,8 @@ public class FilePOJOUtil {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
-            if(archive_view) {
-                try(ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE))
-                {
-                    ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
-                    if(zipEntry!=null) sizeLong = zipEntry.getSize();
-                }
-                catch (IOException e) {
 
-                }
-            }
-            else
-            {
-                sizeLong=f.length();
-            }
+            sizeLong=f.length();
             si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
@@ -101,7 +89,7 @@ public class FilePOJOUtil {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static FilePOJO MAKE_FilePOJO(Path p, boolean extracticon, boolean archive_view, FileObjectType fileObjectType)
+    static FilePOJO MAKE_FilePOJO(Path p, boolean extracticon, FileObjectType fileObjectType)
     {
         String name=p.getFileName().toString();
         String path=p.toAbsolutePath().toString();
@@ -149,21 +137,11 @@ public class FilePOJOUtil {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
             }
-            if(archive_view)
-            {
-                try(ZipFile zipFile = new ZipFile(MainActivity.ZIP_FILE))
-                {
-                    ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
-                    if(zipEntry!=null) sizeLong = zipEntry.getSize();
-                }
-                catch (IOException e){}
-            }
 
             si=FileUtil.humanReadableByteCount(sizeLong);
         }
         else
         {
-
             String sub_file_count=null;
             try(DirectoryStream<Path> directoryStream=Files.newDirectoryStream(Paths.get(path),Global.GET_NIO_FILE_NAME_FILTER()))
             {
@@ -460,7 +438,7 @@ public class FilePOJOUtil {
         if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
         {
             File f=new File(file_path);
-            filePOJO=MAKE_FilePOJO(f,true,false,fileObjectType);
+            filePOJO=MAKE_FilePOJO(f,true,fileObjectType);
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
         {
@@ -1019,7 +997,7 @@ public class FilePOJOUtil {
                     else{
                         for(Path path : directoryStream)
                         {
-                            FilePOJO filePOJO =MAKE_FilePOJO(path,true,archive_view,fileObjectType);
+                            FilePOJO filePOJO =MAKE_FilePOJO(path,true,fileObjectType);
                             if(!filePOJO.getName().startsWith("."))
                             {
                                 filePOJOS_filtered.add(filePOJO);
@@ -1041,7 +1019,7 @@ public class FilePOJOUtil {
                     file_type_fill_filePOJO_zip(file,fileObjectType,filePOJOS,filePOJOS_filtered);
                 }
                 else {
-                    file_type_fill_filePOJO(file,archive_view,fileObjectType,filePOJOS,filePOJOS_filtered);
+                    file_type_fill_filePOJO(file, fileObjectType,filePOJOS,filePOJOS_filtered);
                 }
 
             }
@@ -1154,7 +1132,7 @@ public class FilePOJOUtil {
     }
 
 
-    private static void file_type_fill_filePOJO(File file, boolean archive_view, FileObjectType fileObjectType,List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered)
+    private static void file_type_fill_filePOJO(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered)
     {
         File[] file_array;
         if((file_array=file.listFiles())!=null)
@@ -1163,7 +1141,7 @@ public class FilePOJOUtil {
             for(int i=0;i<size;++i)
             {
                 File f=file_array[i];
-                FilePOJO filePOJO =MAKE_FilePOJO(f,true,archive_view,fileObjectType);
+                FilePOJO filePOJO =MAKE_FilePOJO(f,true,fileObjectType);
                 if(!filePOJO.getName().startsWith("."))
                 {
                     filePOJOS_filtered.add(filePOJO);

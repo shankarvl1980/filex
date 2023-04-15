@@ -613,7 +613,7 @@ public class ArchiveViewerActivity extends BaseActivity{
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
             fm.beginTransaction().replace(R.id.archive_detail_fragment,ArchiveViewFragment.getInstance(fileObjectType),file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
     }

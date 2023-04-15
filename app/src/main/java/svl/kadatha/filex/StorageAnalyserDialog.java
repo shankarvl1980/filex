@@ -615,12 +615,12 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+                    FileIntentDispatch.openUri(context,file_path,"", false,false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
                 }
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),false,fileObjectType,select_app,file_size);
+                FileIntentDispatch.openFile(context,file_path,"",false,false,fileObjectType,select_app,file_size);
             }
         }
     }

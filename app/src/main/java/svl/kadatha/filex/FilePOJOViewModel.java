@@ -584,7 +584,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     Path path= Paths.get(data);
                     //if(Files.exists(path))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -604,7 +604,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     File f=new File(data);
                     // if(f.exists())
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -632,7 +632,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         {
                             return;
                         }
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(p,true,false,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(p,true,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -659,7 +659,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         return;
                     }
                     File file=file_list[i];
-                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,false,FileObjectType.FILE_TYPE);
+                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,FileObjectType.FILE_TYPE);
                     f_pojos.add(filePOJO);
                     f_pojos_filtered.add(filePOJO);
                     count++;
@@ -681,7 +681,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -693,7 +693,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -734,7 +734,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -745,7 +745,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     {
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -774,7 +774,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -787,7 +787,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         long length=basicFileAttributes.size();
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,path.getFileName().toString()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -827,7 +827,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     {
                         if((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name,f.getName()))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;
@@ -839,7 +839,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         long length=f.length();
                         if((file_type.equals("f")||file_type.equals("fd")) && Pattern.matches(search_name,f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size)))
                         {
-                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,false,FileObjectType.FILE_TYPE);
+                            FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                             f_pojos.add(filePOJO);
                             f_pojos_filtered.add(filePOJO);
                             count++;

@@ -326,54 +326,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		paste_cancel.setOnClickListener(pasteToolbarClickListener);
 		paste_toolbar_delete.setOnClickListener(pasteToolbarClickListener);
 
-		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,1,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-		int[] extract_drawables ={R.drawable.extract_icon};
-		titles=new String[]{getString(R.string.extract)};
-		tb_layout.setResourceImageDrawables(extract_drawables,titles);
-		extract_toolbar=findViewById(R.id.extract_toolbar);
-		extract_toolbar.addView(tb_layout);
-        Button extract = extract_toolbar.findViewById(R.id.toolbar_btn_1);
-		extract.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				if(df.progress_bar.getVisibility()==View.VISIBLE)
-				{
-					Global.print(context,getString(R.string.please_wait));
-					return;
-				}
-				Bundle bundle=new Bundle();
-				ArrayList<String> files_selected_array=new ArrayList<>();
-				ArrayList<String> zipentry_selected_array=new ArrayList<>();
-				if(ZIP_FILE!=null)
-				{
-					files_selected_array.add(ZIP_FILE.getAbsolutePath());
-					int size=df.viewModel.mselecteditemsFilePath.size();
-					if(df.viewModel.mselecteditemsFilePath.size()!=0)
-					{
-						List<File> file_list=new ArrayList<>();
 
-						for(int i=0;i<size;++i)
-						{
-							file_list.add(new File(df.viewModel.mselecteditemsFilePath.valueAt(i)));
-						}
-						recursivefilepath(zipentry_selected_array,file_list);
-					}
-
-					ArchiveSetUpDialog unziparchiveDialog=ArchiveSetUpDialog.getInstance(files_selected_array,zipentry_selected_array,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
-					unziparchiveDialog.show(fm,null);
-					df.clearSelectionAndNotifyDataSetChanged();
-				}
-				else
-				{
-					Global.print(context,getString(R.string.could_not_perform_action));
-					onbackpressed(false);
-				}
-
-			}
-		});
-		
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
 		int[] actionmode_drawables ={R.drawable.cut_icon,R.drawable.copy_icon,R.drawable.rename_icon,R.drawable.delete_icon,R.drawable.overflow_icon};
 		titles=new String[]{getString(R.string.cut),getString(R.string.copy),getString(R.string.rename),getString(R.string.delete),getString(R.string.more)};
@@ -425,39 +378,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 */
 		Global.WARN_NOTIFICATIONS_DISABLED(context,NotifManager.CHANNEL_ID,alreadyNotificationWarned);
 
-		viewModel.isExtractionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
-			@Override
-			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-				{
-					df.progress_bar.setVisibility(View.VISIBLE);
-				}
-				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					df.progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					viewModel.archive_view=viewModel.zipFileExtracted;
-					if(viewModel.zipFileExtracted)
-					{
-						viewModel.toolbar_shown_prior_archive=viewModel.toolbar_shown;
-						createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
-					}
-					else
-					{
-						if(Global.ARCHIVE_EXTRACT_DIR.exists())
-						{
-							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-						}
-					}
-
-					viewModel.isExtractionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				}
-			}
-		});
 
 		viewModel.isDeletionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
@@ -1165,35 +1085,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	{
 		// TODO: Implement this method
 		super.onNewIntent(intent);
-		if(intent==null)
-		{
-			return;
-		}
-
-		String receivedAction=intent.getAction();
-		Uri uri=intent.getData();
-		if(receivedAction!=null && receivedAction.equals(Intent.ACTION_VIEW) &&  uri !=null)
-		{
-			String path=RealPathUtil.getRealPath(context,uri);
-			if(path==null)
-			{
-				Global.print(context,getString(R.string.could_not_open_zipe_file));
-				return;
-			}
-			ZIP_FILE=new File(path);
-			ZipFile zipfile;
-			try
-			{
-				zipfile=new ZipFile(ZIP_FILE);
-			}
-			catch(IOException e)
-			{
-				Global.print(context,getString(R.string.could_not_open_zipe_file));
-				return;
-			}
-
-            viewModel.extractArchive(zipfile);
-		}
 	}
 
 
@@ -1433,10 +1324,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
-//			if(df.getTag().equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
-//			{
-//				archive_exit();
-//			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)
 			{
@@ -1567,10 +1454,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
 		{
-//			if(viewModel.archive_view)
-//			{
-//				archive_exit();   //experimental
-//			}
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			bottom_toolbar.setVisibility(View.GONE);
@@ -1584,7 +1467,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			parent_dir_image_button.setEnabled(true);
 			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 
-			//archive_exit();// instead of archive_exit(); the following is put
 			bottom_toolbar.setVisibility(View.VISIBLE);
 			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 			viewModel.toolbar_shown="bottom";
@@ -1612,38 +1494,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			df.adapter.getFilter().filter(null);
 		}
 	}
-
-//	public void archive_exit()
-//	{
-//		if(Global.ARCHIVE_EXTRACT_DIR.exists())
-//		{
-//			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-//			df.progress_bar.setVisibility(View.VISIBLE);
-//			viewModel.deleteDirectory(Global.ARCHIVE_EXTRACT_DIR);
-//			FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
-//		}
-//
-//		if(viewModel.toolbar_shown_prior_archive.equals("paste"))
-//		{
-//			paste_toolbar.setVisibility(View.VISIBLE);
-//			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-//			viewModel.toolbar_shown=viewModel.toolbar_shown_prior_archive;
-//			viewModel.toolbar_shown_prior_archive="";
-//			bottom_toolbar.setVisibility(View.GONE);
-//		}
-//		else
-//		{
-//			bottom_toolbar.setVisibility(View.VISIBLE);
-//			bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-//			viewModel.toolbar_shown="bottom";
-//			paste_toolbar.setVisibility(View.GONE);
-//		}
-//
-//		actionmode_toolbar.setVisibility(View.GONE);
-//		extract_toolbar.setVisibility(View.GONE);
-//		viewModel.archive_view=false;
-//	}
-
 
 	public void workingDirAdd()
 	{

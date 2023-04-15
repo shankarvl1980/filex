@@ -27,7 +27,7 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	private CardViewClickListener cardViewClickListener;
     private boolean show_file_path;
 
-	DetailRecyclerViewAdapter(Context context,boolean archiveview)
+	DetailRecyclerViewAdapter(Context context)
 	{
 		this.context=context;
 		mainActivity=(MainActivity)context;
@@ -40,11 +40,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			File parent_file=f.getParentFile();
 			if(parent_file!=null)
 			{
-				if(!(archiveview && f.equals(Global.ARCHIVE_EXTRACT_DIR)))
-				{
-					mainActivity.parent_dir_image_button.setEnabled(true);
-					mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
-				}
+				mainActivity.parent_dir_image_button.setEnabled(true);
+				mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 			}
 			else
 			{

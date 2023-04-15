@@ -124,7 +124,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
         file_click_selected_name=new File(fileclickselected).getName();
 
-
         if(Global.ARCHIVE_EXTRACT_DIR==null) Global.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 
     }
@@ -399,12 +398,12 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             {
                 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),true,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+                    FileIntentDispatch.openUri(context,file_path,"", false,true,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
                 }
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),true,fileObjectType,select_app,file_size);
+                FileIntentDispatch.openFile(context,file_path,"",false,true,fileObjectType,select_app,file_size);
             }
         }
     }

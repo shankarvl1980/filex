@@ -98,7 +98,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private FilePOJO clicked_filepojo;
 	public FrameLayout progress_bar;
 	public FilePOJOViewModel viewModel;
-	private CancelableProgressBarDialog cancelableProgressBarDialog;
 	private static final String CANCEL_PROGRESS_REQUEST_CODE="search_cancel_progress_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="detail_fragment_saf_permission_request_code";
 	private final static String ALBUM_SELECT_REQUEST_CODE="detail_fragment_album_select_request_code";
@@ -167,9 +166,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			file_click_selected_name=new File(fileclickselected).getName();
 		}
-
-		if(Global.ARCHIVE_EXTRACT_DIR==null) Global.ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
-
 
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
@@ -242,7 +238,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
-		archive_view=(fileObjectType==FileObjectType.FILE_TYPE) && Global.IS_CHILD_FILE(fileclickselected,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && mainActivity.viewModel.archive_view;
+
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));
@@ -293,9 +289,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						case "paste":
 							mainActivity.paste_toolbar.animate().translationY(mainActivity.paste_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
 							break;
-						case "extract":
-							mainActivity.extract_toolbar.animate().translationY(mainActivity.extract_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-							break;
+
 					}
 
 					is_toolbar_visible=false;
@@ -313,9 +307,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 						case "paste":
 							mainActivity.paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 							break;
-						case "extract":
-							mainActivity.extract_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-							break;
+
 					}
 					is_toolbar_visible=true;
 					scroll_distance=0;
@@ -349,9 +341,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 				search_regex = mainActivity.search_regex;
 				search_lower_limit_size = mainActivity.search_lower_limit_size;
 				search_upper_limit_size = mainActivity.search_upper_limit_size;
-				removeCancelableFragment();
-				cancelableProgressBarDialog = CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-				cancelableProgressBarDialog.set_title(getString(R.string.searching));
+
 				if (LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
 					viewModel.getLibraryList(fileclickselected);
@@ -392,30 +382,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 
-		extractZipFileViewModel=new ViewModelProvider(DetailFragment.this).get(ExtractZipFileViewModel.class);
-		extractZipFileViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
-			@Override
-			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.VISIBLE);
-				}
-				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					if(extractZipFileViewModel.isZipExtracted)
-					{
-						file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
-					}
-					extractZipFileViewModel.isZipExtracted=false;
-					extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				}
-			}
-		});
 
 		mainActivity.fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -500,10 +466,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			progress_bar.setVisibility(View.VISIBLE);
 			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				removeCancelableFragment();
-				cancelableProgressBarDialog=CancelableProgressBarDialog.getInstance(CANCEL_PROGRESS_REQUEST_CODE);
-				cancelableProgressBarDialog.set_title(getString(R.string.searching));
-
 				viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				if(LIBRARY_CATEGORIES.contains(fileclickselected))
 				{
@@ -545,13 +507,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		totalFilePOJO_list_Size=totalFilePOJO_list.size();
 		file_list_size=totalFilePOJO_list_Size;
 		Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-		adapter=new DetailRecyclerViewAdapter(context,archive_view);
+		adapter=new DetailRecyclerViewAdapter(context);
 		set_adapter();
 		progress_bar.setVisibility(View.GONE);
-		if(cancelableProgressBarDialog!=null && cancelableProgressBarDialog.getDialog()!=null)
-		{
-			cancelableProgressBarDialog.dismissAllowingStateLoss();
-		}
+
 		if(TO_BE_MOVED_TO_FILE_POJO!=null)
 		{
 			int idx=filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);
@@ -569,15 +528,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		mainActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
 	}
 
-
-	private void removeCancelableFragment()
-	{
-		cancelableProgressBarDialog= (CancelableProgressBarDialog) mainActivity.fm.findFragmentByTag(CancelableProgressBarDialog.TAG);
-		if(cancelableProgressBarDialog!=null)
-		{
-			mainActivity.fm.beginTransaction().remove(cancelableProgressBarDialog).commit();
-		}
-	}
 
 	@Override
 	public void onStop() {
@@ -690,12 +640,12 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
-					 FileIntentDispatch.openUri(context,file_path,"", file_ext.matches("(?i)zip"),archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+					 FileIntentDispatch.openUri(context,file_path,"", false,archive_view,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
 				 }
 			 }
 			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			 {
-				 FileIntentDispatch.openFile(context,file_path,"",file_ext.matches("(?i)zip"),archive_view,fileObjectType,select_app,file_size);
+				 FileIntentDispatch.openFile(context,file_path,"",false,archive_view,fileObjectType,select_app,file_size);
 			 }
 		 }
 	}
@@ -747,47 +697,9 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 					else
 					{
-						if(archive_view)
-						{
-							int idx=filePOJO.getName().lastIndexOf(".");
-							if(idx!=-1)
-							{
-								String file_ext=filePOJO.getName().substring(idx+1);
-								if(file_ext.matches("(?i)zip"))
-								{
-									Global.print(context,getString(R.string.can_not_open_file));
-									return;
-								}
-							}
-
-
-							try (ZipFile zipfile=new ZipFile(MainActivity.ZIP_FILE))
-							{
-								ZipEntry zip_entry=zipfile.getEntry(filePOJO.getPath().substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1));
-								if(zip_entry==null)
-								{
-									Global.print(context,getString(R.string.can_not_open_file));
-									return;
-								}
-
-								if(zip_entry.getSize()>Global.CACHE_FILE_MAX_LIMIT)
-								{
-									Global.print(context,getString(R.string.file_is_large_please_extract_to_view));
-									return;
-								}
-
-								progress_bar.setVisibility(View.VISIBLE);
-								extractZipFileViewModel.extractZip(filePOJO, zipfile,zip_entry);
-							}
-							catch(IOException e){}
-						}
-						else
-						{
-							file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
-						}
-
+						file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
 					}
-					if(!archive_view)RecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
+					RecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
 				}
 
 				public void onLongClick(FilePOJO filePOJO)
@@ -895,13 +807,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		{
 			truncated_path=p;
 			display_path=p;
-			if(archive_view)
-			{
-				display_path=display_path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH);
-				display_path="Archive"+display_path;
-				truncated_path=truncated_path.substring(0,Global.ARCHIVE_CACHE_DIR_LENGTH-"Archive/".length());//number added to archive_cache_dir_length is length of "Archive/"
-
-			}
 
 			if(p.equals(File.separator))
 			{
@@ -930,24 +835,11 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					{
 						int p2=getBindingAdapterPosition();
 						StringBuilder file_path;
-						if(archive_view)
+						file_path = new StringBuilder();
+						for(int i=1; i<=p2 ; ++i)
 						{
-							file_path = new StringBuilder(truncated_path);
-							for(int i=0; i<=p2 ; ++i)
-							{
-								file_path.append(File.separator).append(filepath_string_array[i]);
-							}
-
+							file_path.append(File.separator).append(filepath_string_array[i]);
 						}
-						else
-						{
-							file_path = new StringBuilder();
-							for(int i=1; i<=p2 ; ++i)
-							{
-								file_path.append(File.separator).append(filepath_string_array[i]);
-							}
-						}
-
 
 						if(fileObjectType==FileObjectType.FILE_TYPE)
 						{

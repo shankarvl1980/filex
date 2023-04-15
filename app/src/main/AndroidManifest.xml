@@ -64,31 +64,29 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/zip" />
-            </intent-filter>
         </activity>
+
         <activity
             android:name=".ArchiveDeletePasteProgressActivity1"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/MyLightDialog" />
+
         <activity
             android:name=".ArchiveDeletePasteProgressActivity2"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/MyLightDialog" />
+
         <activity
             android:name=".ArchiveDeletePasteProgressActivity3"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:theme="@style/MyLightDialog" />
+
         <activity
             android:name=".FileEditorActivity"
-            android:label="@string/filex_text_editor"
+            android:label="@string/text_editor"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -100,7 +98,7 @@
 
         <activity
             android:name=".PdfViewActivity"
-            android:label="@string/filex_pdf_viewer"
+            android:label="@string/pdf_viewer"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -110,10 +108,9 @@
             </intent-filter>
         </activity>
 
-
         <activity
             android:name=".AudioPlayerActivity"
-            android:label="@string/filex_audio_player"
+            android:label="@string/audio_player"
             android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
@@ -123,9 +120,10 @@
                 <data android:mimeType="audio/*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ImageViewActivity"
-            android:label="@string/filex_image_viewer"
+            android:label="@string/image_viewer"
             android:theme="@style/MyLightFullScreen"
             android:exported="true">
             <intent-filter>
@@ -135,13 +133,13 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".VideoViewActivity"
-            android:label="@string/filex_video_player"
+            android:label="@string/video_player"
             android:theme="@style/MyLightFullScreen"
             android:configChanges="uiMode"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -154,17 +152,14 @@
 
         <activity
             android:name=".FileSelectorActivity"
-            android:label="@string/filex_file_selector"
-            android:exported="true"
-            >
+            android:label="@string/file_selector"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.OPENABLE"/>
                 <data android:mimeType="*/*"/>
-
             </intent-filter>
-
         </activity>
 
         <activity
@@ -174,7 +169,6 @@
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-
         </activity>
 
         <activity
@@ -184,7 +178,6 @@
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-
         </activity>
 
         <activity
@@ -202,7 +195,7 @@
 
         <activity
             android:name=".ArchiveViewerActivity"
-            android:label="@string/filex_archive_viewer"
+            android:label="@string/archive_viewer"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -215,8 +208,7 @@
         <activity
             android:name=".FtpServerActivity"
             android:label="@string/ftp_server"
-            android:exported="true"
-            >
+            android:exported="true">
         </activity>
 
         <service
@@ -258,7 +250,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
         </provider>
 
@@ -272,7 +263,6 @@
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
-
 
     </application>
 

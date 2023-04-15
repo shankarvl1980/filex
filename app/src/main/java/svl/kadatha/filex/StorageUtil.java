@@ -100,7 +100,7 @@ public class StorageUtil
 	{
 		if(STORAGE_DIR.contains(f)) return;
 		STORAGE_DIR.add(f);
-		result.add(FilePOJOUtil.MAKE_FilePOJO(f,false,false,FileObjectType.FILE_TYPE));
+		result.add(FilePOJOUtil.MAKE_FilePOJO(f,false,FileObjectType.FILE_TYPE));
 		int j = 0;
 		File dummy_file;
 		do {
