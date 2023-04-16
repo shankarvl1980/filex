@@ -676,7 +676,7 @@ public class AudioPlayFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					if(audioPlayViewModel.fromThirdPartyApp || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
+					if(!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;

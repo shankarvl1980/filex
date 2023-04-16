@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
+import me.jahnen.libaums.core.fs.UsbFile;
 import timber.log.Timber;
 
 public class Global
@@ -263,24 +264,7 @@ public class Global
 
 	static void REMOVE_USB_URI_PERMISSIONS()
 	{
-//		GET_URI_PERMISSIONS_LIST(App.getAppContext());
-//		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
-//
-//		while(iterator.hasNext())
-//		{
-//			UriPOJO uriPOJO=iterator.next();
-//			String uri_authority= uriPOJO.get_authority();
-//			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
-//			{
-//				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//				try
-//				{
-//					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
-//				}
-//				catch (SecurityException e){}
-//				iterator.remove();
-//			}
-//		}
+
 	}
 
 	static void ON_REQUEST_URI_PERMISSION(Context context,Uri treeUri)
@@ -1228,5 +1212,44 @@ public class Global
 		}
 	}
 
+
+	public static File COPY_TO_USB_CACHE(String file_path)
+	{
+		File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+		if(!cache_file.exists())
+		{
+			File parent_file=cache_file.getParentFile();
+			if(parent_file!=null)
+			{
+				FileUtil.mkdirsNative(parent_file);
+				FileUtil.createNativeNewFile(cache_file);
+				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+				if(targetUsbFile!=null)
+				{
+					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+				}
+			}
+
+		}
+		return cache_file;
+	}
 }
 
+//		GET_URI_PERMISSIONS_LIST(App.getAppContext());
+//		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
+//
+//		while(iterator.hasNext())
+//		{
+//			UriPOJO uriPOJO=iterator.next();
+//			String uri_authority= uriPOJO.get_authority();
+//			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
+//			{
+//				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//				try
+//				{
+//					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
+//				}
+//				catch (SecurityException e){}
+//				iterator.remove();
+//			}
+//		}

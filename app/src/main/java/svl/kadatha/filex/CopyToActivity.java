@@ -50,6 +50,7 @@ public class CopyToActivity extends BaseActivity{
     private final static String COPY_TO_ACTION="copy_to";
     private Class emptyService;
     private Button ok_button;
+    private boolean first_start;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -172,6 +173,7 @@ public class CopyToActivity extends BaseActivity{
             }
         });
 
+        if(savedInstanceState==null)first_start=true;
         Intent intent=getIntent();
         try {
             on_intent(intent,savedInstanceState);
@@ -244,10 +246,7 @@ public class CopyToActivity extends BaseActivity{
                 {
                     String f_name=getFileName(data);
                     file_name_edit_text.setText(f_name==null ? "" : f_name);
-                    folderclickselected = Global.INTERNAL_PRIMARY_STORAGE_PATH;
-                    destFileObjectType = FileObjectType.FILE_TYPE;
-                    destination_folder_edittext.setText(folderclickselected);
-                    destination_fileObject_text_view.setText(getDestFileObjectType());
+                    browse_button.callOnClick();
                 }
 
             }
@@ -282,7 +281,14 @@ public class CopyToActivity extends BaseActivity{
     {
         // TODO: Implement this method
         super.onStart();
-        clear_cache=true;
+        if(first_start)
+        {
+                first_start=false;
+        }
+        else {
+            clear_cache=true;
+        }
+
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
@@ -291,7 +297,7 @@ public class CopyToActivity extends BaseActivity{
         super.onStop();
         if(!isFinishing() && !isChangingConfigurations() && clear_cache)
         {
-            Timber.tag(Global.TAG).d("cleared cached in copy to activity");
+            //Timber.tag(Global.TAG).d("cleared cached in copy to activity");
             clearCache();
         }
     }

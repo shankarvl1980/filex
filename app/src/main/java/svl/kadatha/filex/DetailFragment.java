@@ -438,7 +438,6 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		super.onResume();
 		if(local_activity_delete)
 		{
-			Timber.tag(Global.TAG).d("local deleted");
 			modification_observed=false;
 			local_activity_delete=false;
 			if(MainActivity.SHOW_HIDDEN_FILE)

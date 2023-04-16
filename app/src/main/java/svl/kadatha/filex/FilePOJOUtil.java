@@ -297,7 +297,6 @@ public class FilePOJOUtil {
                     ++count;
                 }
                 sub_file_count="("+count+")";
-                Timber.tag(Global.TAG).d("path - "+path+"  and count - "+count);
             } catch (IOException e) {
 
             }

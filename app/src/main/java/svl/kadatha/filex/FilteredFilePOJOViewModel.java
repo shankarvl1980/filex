@@ -99,23 +99,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     if(MainActivity.usbFileRoot!=null)
                     {
-                        File cache_file=new File(Global.USB_CACHE_DIR,file_path);
-                        if(!cache_file.exists())
-                        {
-                            File parent_file=cache_file.getParentFile();
-                            if(parent_file!=null)
-                            {
-                                FileUtil.mkdirsNative(parent_file);
-                                FileUtil.createNativeNewFile(cache_file);
-                                UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-                                if(targetUsbFile!=null)
-                                {
-                                    FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
-                                }
-                            }
-
-                        }
-
+                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
                         currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                     }
                 }
@@ -301,23 +285,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     if(MainActivity.usbFileRoot!=null)
                     {
-                        File cache_file=new File(Global.USB_CACHE_DIR,file_path);
-                        if(!cache_file.exists())
-                        {
-                            File parent_file=cache_file.getParentFile();
-                            if(parent_file!=null)
-                            {
-                                FileUtil.mkdirsNative(parent_file);
-                                FileUtil.createNativeNewFile(cache_file);
-                                UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-                                if(targetUsbFile!=null)
-                                {
-                                    FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
-                                }
-                            }
-
-                        }
-
+                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
                         currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                     }
                 }
