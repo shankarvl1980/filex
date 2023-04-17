@@ -134,9 +134,9 @@ public class ViewDialog extends DialogFragment
 					{
 						FileSelectorActivity.FILE_GRID_LAYOUT=true;
 					}
-					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
-					fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
-					fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+					fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
+					fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
 					tinyDB.putBoolean("file_selector_file_grid_layout",FileSelectorActivity.FILE_GRID_LAYOUT);
 				}
 			});
@@ -200,12 +200,12 @@ public class ViewDialog extends DialogFragment
 						{
 							FileSelectorActivity.SHOW_HIDDEN_FILE=isChecked;
 							tinyDB.putBoolean("file_selector_show_hidden_file",FileSelectorActivity.SHOW_HIDDEN_FILE);
-							FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
-							fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
-							if(fileSelectorDialog.fileObjectType==FileObjectType.FILE_TYPE || fileSelectorDialog.fileObjectType==FileObjectType.ROOT_TYPE)
+							FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+							fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+							if(fileSelectorFragment.fileObjectType==FileObjectType.FILE_TYPE || fileSelectorFragment.fileObjectType==FileObjectType.ROOT_TYPE)
 							{
-								fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
-								fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+								fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
+								fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
 							}
 
 						}
@@ -280,9 +280,9 @@ public class ViewDialog extends DialogFragment
 				public void onStopTrackingTouch(SeekBar p1)
 				{
 					tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
-					fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
-					fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+					fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
+					fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
 
 				}
 				public void onProgressChanged(SeekBar p1, int progress_value,boolean fromUser)
@@ -453,13 +453,13 @@ public class ViewDialog extends DialogFragment
 				if(!selected_sort.equals(FileSelectorActivity.SORT))
 				{
 
-					FileSelectorDialog fileSelectorDialog=(FileSelectorDialog) fragmentManager.findFragmentById(R.id.file_selector_container);
-					if(fileSelectorDialog!=null && fileSelectorDialog.progress_bar.getVisibility()==View.GONE)
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+					if(fileSelectorFragment!=null && fileSelectorFragment.progress_bar.getVisibility()==View.GONE)
 					{
 						FileSelectorActivity.SORT=selected_sort;
 						set_selection();
-						fragmentManager.beginTransaction().detach(fileSelectorDialog).commit();
-						fragmentManager.beginTransaction().attach(fileSelectorDialog).commit();
+						fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
+						fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
 						tinyDB.putString("file_selector_sort",FileSelectorActivity.SORT);
 					}
 					else

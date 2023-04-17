@@ -51,7 +51,6 @@
 
     <TextView
         android:id="@+id/archive_top_toolbar_current_dir_label"
-        style="?android:attr/spinnerStyle"
         android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
         android:gravity="center"

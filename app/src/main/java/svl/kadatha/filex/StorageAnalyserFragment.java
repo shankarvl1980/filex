@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -33,13 +35,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
-public class StorageAnalyserDialog extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class StorageAnalyserFragment extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
     private RecyclerView recycler_view;
     private TextView folder_empty_textview;
@@ -247,13 +250,13 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
     }
 
 
-    public static StorageAnalyserDialog getInstance(FileObjectType fileObjectType)
+    public static StorageAnalyserFragment getInstance(FileObjectType fileObjectType)
     {
-        StorageAnalyserDialog storageAnalyserDialog=new StorageAnalyserDialog();
+        StorageAnalyserFragment storageAnalyserFragment =new StorageAnalyserFragment();
         Bundle bundle=new Bundle();
         bundle.putSerializable("fileObjectType",fileObjectType);
-        storageAnalyserDialog.setArguments(bundle);
-        return storageAnalyserDialog;
+        storageAnalyserFragment.setArguments(bundle);
+        return storageAnalyserFragment;
     }
 
 
@@ -387,7 +390,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
         }
     }
 
-    public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder>
+    public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder> implements Filterable
     {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
@@ -412,6 +415,44 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
             // TODO: Implement this method
             return filePOJO_list.size();
         }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    return new FilterResults();
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    filePOJO_list = new ArrayList<>();
+                    if (constraint == null || constraint.length() == 0) {
+                        filePOJO_list = totalFilePOJO_list;
+                    } else {
+                        String pattern = constraint.toString().toLowerCase().trim();
+                        for (int i = 0; i < totalFilePOJO_list_Size; ++i) {
+                            FilePOJO filePOJO = totalFilePOJO_list.get(i);
+                            if (filePOJO.getLowerName().contains(pattern)) {
+                                filePOJO_list.add(filePOJO);
+                            }
+                        }
+                    }
+
+                    int t=filePOJO_list.size();
+                    clearSelectionAndNotifyDataSetChanged();
+                    if(t>0)
+                    {
+                        recycler_view.setVisibility(View.VISIBLE);
+                        folder_empty_textview.setVisibility(View.GONE);
+                    }
+
+                    storageAnalyserActivity.file_number.setText(""+t);
+
+                }
+            };
+        }
+
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
         {
@@ -487,7 +528,7 @@ public class StorageAnalyserDialog extends Fragment implements StorageAnalyserAc
 
                     if(size==0)
                     {
-                        final StorageAnalyserDialog sad=(StorageAnalyserDialog) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
+                        final StorageAnalyserFragment sad=(StorageAnalyserFragment) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
                         storageAnalyserActivity.DeselectAllAndAdjustToolbars(sad,sad.fileclickselected);
                     }
                 }

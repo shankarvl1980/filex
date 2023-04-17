@@ -6,9 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModel;
@@ -52,6 +58,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public FloatingActionButton floatingActionButton;
     public static final String ACTIVITY_NAME="STORAGE_ANALYSER_ACTIVITY";
     private int countBackPressed=0;
+    private Group search_toolbar;
+    public EditText search_edittext;
+    public boolean search_toolbar_visible;
+    private KeyBoardUtil keyBoardUtil;
+    private InputMethodManager imm;
+
 
 
     @Override
@@ -77,6 +89,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         FM=fm;
         pm=getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
+        ConstraintLayout root_layout=findViewById(R.id.storage_analyser_root_layout);
         ImageButton back_btn=findViewById(R.id.storage_analyser_back_btn);
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,8 +113,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             public void onClick(View view) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
                 fileSelectorRecentDialog.show(fm, "storage_analyser_recent_file_dialog");
-
-
             }
         });
 
@@ -109,18 +120,18 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         all_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-                if (storageAnalyserDialog.adapter == null || storageAnalyserDialog.progress_bar.getVisibility()==View.VISIBLE) {
+                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if (storageAnalyserFragment.adapter == null || storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE) {
                     Global.print(context,getString(R.string.please_wait));
                     return;
                 }
 
-                if (storageAnalyserDialog.viewModel.mselecteditems.size() < storageAnalyserDialog.filePOJO_list.size()) {
+                if (storageAnalyserFragment.viewModel.mselecteditems.size() < storageAnalyserFragment.filePOJO_list.size()) {
                     all_select.setImageResource(R.drawable.deselect_icon);
-                    storageAnalyserDialog.selectAll();
+                    storageAnalyserFragment.selectAll();
                 } else {
                     all_select.setImageResource(R.drawable.select_icon);
-                    storageAnalyserDialog.deselectAll();
+                    storageAnalyserFragment.deselectAll();
                 }
             }
         });
@@ -135,6 +146,46 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         ConstraintLayout.LayoutParams layoutParams= (ConstraintLayout.LayoutParams) size_description_layout.getLayoutParams();
         layoutParams.setMargins(imageview_dimension+Global.TEN_DP,0,0,0);
 
+        keyBoardUtil=new KeyBoardUtil(root_layout);
+
+        imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        search_toolbar=findViewById(R.id.storage_analyser_search_toolbar);
+        search_edittext=findViewById(R.id.storage_analyser_search_view_edit_text);
+        search_edittext.setMaxWidth(Integer.MAX_VALUE);
+        search_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!search_toolbar_visible)
+                {
+                    return;
+                }
+                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment !=null && storageAnalyserFragment.adapter!=null)
+                {
+                    storageAnalyserFragment.adapter.getFilter().filter(s.toString());
+                }
+            }
+        });
+
+        ImageButton search_cancel_btn = findViewById(R.id.storage_analyser_search_view_cancel_button);
+        search_cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                set_visibility_searchbar(false);
+            }
+        });
+
         floatingActionButton = findViewById(R.id.storage_analyser_floating_action_button_back);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,29 +194,53 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         });
 
-        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.refresh_icon,R.drawable.sort_icon,R.drawable.no_icon};
-        String [] titles=new String[]{getString(R.string.refresh),getString(R.string.sort),getString(R.string.close)};
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.refresh_icon,R.drawable.sort_icon,R.drawable.no_icon};
+        String [] titles=new String[]{getString(R.string.search),getString(R.string.refresh),getString(R.string.sort),getString(R.string.close)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
 
         bottom_toolbar=findViewById(R.id.storage_analyser_bottom_toolbar);
         bottom_toolbar.addView(tb_layout);
-        Button refresh_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        refresh_btn.setOnClickListener(new View.OnClickListener() {
+
+
+        Button search_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+        search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog)fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog.progress_bar.getVisibility()==View.VISIBLE)
+                StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE)
                 {
                     Global.print(context,getString(R.string.please_wait));
                     return;
                 }
-                fm.beginTransaction().detach(storageAnalyserDialog).commit();
-                fm.beginTransaction().attach(storageAnalyserDialog).commit();
+                if(!search_toolbar_visible)
+                {
+                    set_visibility_searchbar(true);
+                }
+                else
+                {
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                }
             }
         });
 
-        Button sort_btn=findViewById(R.id.toolbar_btn_2);
+
+        Button refresh_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        refresh_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment)fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
+                fm.beginTransaction().detach(storageAnalyserFragment).commit();
+                fm.beginTransaction().attach(storageAnalyserFragment).commit();
+            }
+        });
+
+        Button sort_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         sort_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,7 +249,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         });
 
-        Button exit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button exit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
         exit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,22 +268,23 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog.viewModel.mselecteditemsFilePath.size()==0)
+                final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment.viewModel.mselecteditemsFilePath.size()==0)
                 {
                     Global.print(context,getString(R.string.could_not_perform_action));
-                    DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+                    DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
                     return;
                 }
                 final ArrayList<String> files_selected_array=new ArrayList<>();
-                int size = storageAnalyserDialog.viewModel.mselecteditemsFilePath.size();
+                int size = storageAnalyserFragment.viewModel.mselecteditemsFilePath.size();
                 for (int i = 0; i < size; ++i) {
-                    int key = storageAnalyserDialog.viewModel.mselecteditemsFilePath.keyAt(i);
-                    files_selected_array.add(storageAnalyserDialog.viewModel.mselecteditemsFilePath.get(key));
+                    int key = storageAnalyserFragment.viewModel.mselecteditemsFilePath.keyAt(i);
+                    files_selected_array.add(storageAnalyserFragment.viewModel.mselecteditemsFilePath.get(key));
                 }
 
-                DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,storageAnalyserDialog.fileObjectType,storageAnalyserDialog.fileclickselected,true);
+                DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, storageAnalyserFragment.fileObjectType, storageAnalyserFragment.fileclickselected,true);
                 deleteFileAlertDialog.show(fm, "delete_dialog");
+                set_visibility_searchbar(false);
 
             }
         });
@@ -260,6 +336,35 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         }
     }
 
+    public void set_visibility_searchbar(boolean visible)
+    {
+        StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE && visible)
+        {
+            Global.print(context,getString(R.string.please_wait));
+            return;
+        }
+
+        search_toolbar_visible=visible;
+        if(search_toolbar_visible)
+        {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            search_toolbar.setVisibility(View.VISIBLE);
+            search_edittext.requestFocus();
+            storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+        }
+        else
+        {
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+            search_toolbar.setVisibility(View.GONE);
+            search_edittext.setText("");
+            search_edittext.clearFocus();
+            storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+            if(storageAnalyserFragment.adapter!=null)storageAnalyserFragment.adapter.getFilter().filter(null);
+        }
+    }
+
+
     public void clearCache()
     {
         Global.CLEAR_CACHE();
@@ -291,10 +396,18 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     private void onbackpressed(boolean onBackPressed)
     {
-        StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserDialog.viewModel.mselecteditems.size()>0)
+        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(keyBoardUtil.getKeyBoardVisibility())
         {
-            DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+        }
+        else if(storageAnalyserFragment.viewModel.mselecteditems.size()>0)
+        {
+            DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
+        }
+        else if(search_toolbar_visible)
+        {
+            set_visibility_searchbar(false);
         }
         else
         {
@@ -316,16 +429,16 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             {
                 fm.popBackStack();
                 int frag=2, entry_count=fm.getBackStackEntryCount();
-                storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                String tag=storageAnalyserDialog.getTag();
+                storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                String tag= storageAnalyserFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && storageAnalyserDialog.currentUsbFile == null)
+                while(tag !=null && !new File(tag).exists() && storageAnalyserFragment.currentUsbFile == null)
                 {
                     fm.popBackStack();
                     ++frag;
                     if(frag>entry_count) break;
-                    storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                    tag = storageAnalyserDialog.getTag();
+                    storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    tag = storageAnalyserFragment.getTag();
                 }
                 countBackPressed=0;
 
@@ -354,10 +467,10 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     public void onClickCancel()
     {
-        StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserDialog.viewModel.mselecteditems.size()>0)
+        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserFragment.viewModel.mselecteditems.size()>0)
         {
-            DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+            DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
         }
         else
         {
@@ -379,16 +492,16 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             {
                 fm.popBackStack();
                 int frag=2, entry_count=fm.getBackStackEntryCount();
-                storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                String tag=storageAnalyserDialog.getTag();
+                storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                String tag= storageAnalyserFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && storageAnalyserDialog.currentUsbFile == null)
+                while(tag !=null && !new File(tag).exists() && storageAnalyserFragment.currentUsbFile == null)
                 {
                     fm.popBackStack();
                     ++frag;
                     if(frag>entry_count) break;
-                    storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                    tag = storageAnalyserDialog.getTag();
+                    storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    tag = storageAnalyserFragment.getTag();
                 }
 
             }
@@ -416,24 +529,24 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         String fragment_tag;
         String existingFilePOJOkey="";
-        StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserDialog!=null)
+        StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserFragment !=null)
         {
-            fragment_tag=storageAnalyserDialog.getTag();
-            existingFilePOJOkey=storageAnalyserDialog.fileObjectType+fragment_tag;
-            DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.getTag());
+            fragment_tag= storageAnalyserFragment.getTag();
+            existingFilePOJOkey= storageAnalyserFragment.fileObjectType+fragment_tag;
+            DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.getTag());
         }
         FileObjectType fileObjectType=filePOJO.getFileObjectType();
         String file_path=filePOJO.getPath();
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
-            fm.beginTransaction().replace(R.id.storage_analyser_container,StorageAnalyserDialog.getInstance(fileObjectType),file_path).addToBackStack(file_path)
+            fm.beginTransaction().replace(R.id.storage_analyser_container, StorageAnalyserFragment.getInstance(fileObjectType),file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
     }
 
-    public void DeselectAllAndAdjustToolbars(StorageAnalyserDialog sad,String sad_tag)
+    public void DeselectAllAndAdjustToolbars(StorageAnalyserFragment sad, String sad_tag)
     {
 
 
@@ -451,24 +564,24 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     @Override
     public void deleteDialogOKButtonClick() {
-        final StorageAnalyserDialog storageAnalyserDialog= (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-        DeselectAllAndAdjustToolbars(storageAnalyserDialog,storageAnalyserDialog.fileclickselected);
+        final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
     }
 
     private class OtherActivityBroadcastReceiver extends BroadcastReceiver
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            StorageAnalyserDialog storageAnalyserDialog = (StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
+            StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
             String activity_name=intent.getStringExtra("activity_name");
             String file_path=intent.getStringExtra("file_path");
             FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    if (storageAnalyserDialog != null) storageAnalyserDialog.local_activity_delete = true;
+                    if (storageAnalyserFragment != null) storageAnalyserFragment.local_activity_delete = true;
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (storageAnalyserDialog != null) storageAnalyserDialog.modification_observed = true;
+                    if (storageAnalyserFragment != null) storageAnalyserFragment.modification_observed = true;
                     break;
                     /*
                 case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
@@ -512,8 +625,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
-                StorageAnalyserDialog storageAnalyserDialog=(StorageAnalyserDialog) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserDialog!=null) storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment !=null) storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
 
                 break;
         }
@@ -541,5 +654,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     {
         void onMediaAttachedAndRemoved();
     }
+
+
 
 }

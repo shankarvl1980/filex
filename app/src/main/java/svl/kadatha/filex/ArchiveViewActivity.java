@@ -824,7 +824,6 @@ public class ArchiveViewActivity extends BaseActivity{
         @Override
         public void onClick(View v)
         {
-
             ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
 
             int id = v.getId();
@@ -1101,69 +1100,40 @@ public class ArchiveViewActivity extends BaseActivity{
 
         @Override
         public Filter getFilter() {
-            return file_name_filter;
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    return new FilterResults();
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    archiveViewFragment.filePOJO_list = new ArrayList<>();
+                    if (constraint == null || constraint.length() == 0) {
+                        archiveViewFragment.filePOJO_list = archiveViewFragment.totalFilePOJO_list;
+                    } else {
+                        String pattern = constraint.toString().toLowerCase().trim();
+                        for (int i = 0; i < archiveViewFragment.totalFilePOJO_list_Size; ++i) {
+                            FilePOJO filePOJO = archiveViewFragment.totalFilePOJO_list.get(i);
+                            if (filePOJO.getLowerName().contains(pattern)) {
+                                archiveViewFragment.filePOJO_list.add(filePOJO);
+                            }
+                        }
+                    }
+
+                    int t=archiveViewFragment.filePOJO_list.size();
+                    archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
+                    if(t>0)
+                    {
+                        archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
+                        archiveViewFragment.folder_empty.setVisibility(View.GONE);
+                    }
+
+                    archiveViewActivity.file_number_view.setText(""+t);
+
+                }
+            };
         }
-
-        private final Filter file_name_filter =new Filter () {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                return new Filter.FilterResults();
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults filterResults) {
-
-                archiveViewFragment.filePOJO_list = new ArrayList<>();
-                if ((constraint == null || constraint.length() == 0) && archiveViewFragment.viewModel.library_filter_path!=null) {
-                    for (int i = 0; i < archiveViewFragment.totalFilePOJO_list_Size; ++i) {
-                        FilePOJO filePOJO = archiveViewFragment.totalFilePOJO_list.get(i);
-                        if (new File(filePOJO.getPath()).getParent().equals(archiveViewFragment.viewModel.library_filter_path)) {
-                            archiveViewFragment.filePOJO_list.add(filePOJO);
-                        }
-                    }
-                }
-                else if((constraint == null || constraint.length() == 0) && archiveViewFragment.viewModel.library_filter_path==null)
-                {
-                    archiveViewFragment.filePOJO_list = archiveViewFragment.totalFilePOJO_list;
-                }
-                else if(archiveViewFragment.viewModel.library_filter_path==null){
-                    String pattern = constraint.toString().toLowerCase().trim();
-                    for (int i = 0; i < archiveViewFragment.totalFilePOJO_list_Size; ++i) {
-                        FilePOJO filePOJO = archiveViewFragment.totalFilePOJO_list.get(i);
-                        if (filePOJO.getLowerName().contains(pattern)) {
-                            archiveViewFragment.filePOJO_list.add(filePOJO);
-                        }
-                    }
-                }
-                else
-                {
-                    String pattern = constraint.toString().toLowerCase().trim();
-                    for (int i = 0; i < archiveViewFragment.totalFilePOJO_list_Size; ++i) {
-                        FilePOJO filePOJO = archiveViewFragment.totalFilePOJO_list.get(i);
-                        if (filePOJO.getLowerName().contains(pattern) && new File(filePOJO.getPath()).getParent().equals(archiveViewFragment.viewModel.library_filter_path)) {
-                            archiveViewFragment.filePOJO_list.add(filePOJO);
-                        }
-                    }
-                }
-
-
-                int t=archiveViewFragment.filePOJO_list.size();
-                if(archiveViewFragment.viewModel.mselecteditems.size()>0)
-                {
-                    deselectAll();
-                }
-                else
-                {
-                    notifyDataSetChanged();
-                }
-                if(t>0)
-                {
-                    archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
-                    archiveViewFragment.folder_empty.setVisibility(View.GONE);
-                }
-                archiveViewActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size()+ "/" +t);
-            }
-        };
 
         @Override
         public int getItemCount()

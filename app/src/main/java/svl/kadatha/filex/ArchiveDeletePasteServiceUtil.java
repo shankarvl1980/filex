@@ -134,28 +134,28 @@ public class ArchiveDeletePasteServiceUtil {
     public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
     {
         DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
+        FileSelectorFragment fileSelectorFragment = null;
+        StorageAnalyserFragment storageAnalyserFragment = null;
 
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        if(FileSelectorActivity.FM!=null) fileSelectorFragment=(FileSelectorFragment)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserFragment =(StorageAnalyserFragment)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
 
         if(df!=null) df.adapter.clear_cache_and_refresh(file_path,fileObjectType);
-        if(fileSelectorDialog!=null) fileSelectorDialog.clear_cache_and_refresh(file_path,fileObjectType);
-        if(storageAnalyserDialog!=null) storageAnalyserDialog.clear_cache_and_refresh(file_path,fileObjectType);
+        if(fileSelectorFragment!=null) fileSelectorFragment.clear_cache_and_refresh(file_path,fileObjectType);
+        if(storageAnalyserFragment !=null) storageAnalyserFragment.clear_cache_and_refresh(file_path,fileObjectType);
     }
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder,FileObjectType fileObjectType)
     {
         DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
+        FileSelectorFragment fileSelectorFragment = null;
+        StorageAnalyserFragment storageAnalyserFragment = null;
 
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        if(FileSelectorActivity.FM!=null) fileSelectorFragment=(FileSelectorFragment)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserFragment =(StorageAnalyserFragment)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
 
         String parent_source_folder=new File(source_folder).getParent();
@@ -170,22 +170,22 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==fileObjectType)
+        if(fileSelectorFragment!=null && fileSelectorFragment.fileObjectType==fileObjectType)
         {
-            String tag=fileSelectorDialog.getTag();
+            String tag=fileSelectorFragment.getTag();
             if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
 
         }
 
-        if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==fileObjectType)
+        if(storageAnalyserFragment !=null && storageAnalyserFragment.fileObjectType==fileObjectType)
         {
-            String tag=storageAnalyserDialog.getTag();
+            String tag= storageAnalyserFragment.getTag();
             if(Global.IS_CHILD_FILE(tag,parent_source_folder))
             {
-                storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
             if(df!=null)df.local_activity_delete=true; //to avoid modification observed which causes re-populate of filepojos
         }
@@ -195,12 +195,12 @@ public class ArchiveDeletePasteServiceUtil {
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(String dest_folder,String source_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType,FilePOJO filePOJO)
     {
         DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
+        FileSelectorFragment fileSelectorFragment = null;
+        StorageAnalyserFragment storageAnalyserFragment = null;
 
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        if(FileSelectorActivity.FM!=null) fileSelectorFragment=(FileSelectorFragment)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserFragment =(StorageAnalyserFragment)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
 
         String parent_dest_folder= new File(dest_folder).getParent();
@@ -240,37 +240,37 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(fileSelectorDialog!=null )
+        if(fileSelectorFragment!=null )
         {
-            String tag=fileSelectorDialog.getTag();
+            String tag=fileSelectorFragment.getTag();
 
-            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorFragment.fileObjectType==destFileObjectType)
             {
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
 
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorDialog.fileObjectType==sourceFileObjectType)
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorFragment.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                Collections.sort(fileSelectorFragment.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
 
-        if(storageAnalyserDialog!=null)
+        if(storageAnalyserFragment !=null)
         {
-            String tag=storageAnalyserDialog.getTag();
+            String tag= storageAnalyserFragment.getTag();
 
-            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserFragment.fileObjectType==destFileObjectType)
             {
-                storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
 
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
-            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserDialog.fileObjectType==sourceFileObjectType)
+            if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserFragment.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
-                storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+                Collections.sort(storageAnalyserFragment.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
+                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
     }
@@ -279,12 +279,12 @@ public class ArchiveDeletePasteServiceUtil {
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(String dest_folder, FileObjectType destFileObjectType,FilePOJO filePOJO)
     {
         DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
+        FileSelectorFragment fileSelectorFragment = null;
+        StorageAnalyserFragment storageAnalyserFragment = null;
 
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        if(FileSelectorActivity.FM!=null) fileSelectorFragment=(FileSelectorFragment)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserFragment =(StorageAnalyserFragment)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
         String parent_dest_folder= new File(dest_folder).getParent();
         if(parent_dest_folder==null) parent_dest_folder=dest_folder;
@@ -327,25 +327,25 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(fileSelectorDialog!=null && fileSelectorDialog.fileObjectType==destFileObjectType)
+        if(fileSelectorFragment!=null && fileSelectorFragment.fileObjectType==destFileObjectType)
         {
-            String tag=fileSelectorDialog.getTag();
+            String tag=fileSelectorFragment.getTag();
 
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
-                Collections.sort(fileSelectorDialog.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                Collections.sort(fileSelectorFragment.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
 
-        if(storageAnalyserDialog!=null && storageAnalyserDialog.fileObjectType==destFileObjectType)
+        if(storageAnalyserFragment !=null && storageAnalyserFragment.fileObjectType==destFileObjectType)
         {
-            String tag=storageAnalyserDialog.getTag();
+            String tag= storageAnalyserFragment.getTag();
 
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
-                Collections.sort(storageAnalyserDialog.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                Collections.sort(storageAnalyserFragment.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
     }
@@ -353,12 +353,12 @@ public class ArchiveDeletePasteServiceUtil {
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_COPY_TO(String dest_folder, FileObjectType destFileObjectType,FilePOJO filePOJO)
     {
         DetailFragment df = null;
-        FileSelectorDialog fileSelectorDialog = null;
-        StorageAnalyserDialog storageAnalyserDialog = null;
+        FileSelectorFragment fileSelectorFragment = null;
+        StorageAnalyserFragment storageAnalyserFragment = null;
 
         if(MainActivity.FM!=null) df=(DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if(FileSelectorActivity.FM!=null) fileSelectorDialog=(FileSelectorDialog)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if(StorageAnalyserActivity.FM!=null) storageAnalyserDialog=(StorageAnalyserDialog)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        if(FileSelectorActivity.FM!=null) fileSelectorFragment=(FileSelectorFragment)FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
+        if(StorageAnalyserActivity.FM!=null) storageAnalyserFragment =(StorageAnalyserFragment)StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
 
 
         String parent_dest_folder= new File(dest_folder).getParent();
@@ -389,23 +389,23 @@ public class ArchiveDeletePasteServiceUtil {
             }
         }
 
-        if(fileSelectorDialog!=null )
+        if(fileSelectorFragment!=null )
         {
-            String tag=fileSelectorDialog.getTag();
+            String tag=fileSelectorFragment.getTag();
 
-            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && fileSelectorFragment.fileObjectType==destFileObjectType)
             {
-                fileSelectorDialog.clearSelectionAndNotifyDataSetChanged();
+                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
 
-        if(storageAnalyserDialog!=null)
+        if(storageAnalyserFragment !=null)
         {
-            String tag=storageAnalyserDialog.getTag();
+            String tag= storageAnalyserFragment.getTag();
 
-            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserDialog.fileObjectType==destFileObjectType)
+            if (Global.IS_CHILD_FILE(tag,parent_dest_folder) && storageAnalyserFragment.fileObjectType==destFileObjectType)
             {
-                storageAnalyserDialog.clearSelectionAndNotifyDataSetChanged();
+                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
     }

@@ -1277,13 +1277,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(keyBoardUtil.getKeyBoardVisibility())
 		{
-
 			imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 		}
 		else if(df.viewModel.mselecteditems.size()>0)
 		{
 			actionmode_finish(df,df.fileclickselected);
-
 		}
 		else if(search_toolbar_visible)
 		{

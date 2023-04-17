@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
-public class FileSelectorDialog extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class FileSelectorFragment extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
 	private RecyclerView recycler_view;
     private TextView folder_empty_textview;
@@ -201,13 +201,13 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 	}
 
 
-	public static FileSelectorDialog getInstance(FileObjectType fileObjectType)
+	public static FileSelectorFragment getInstance(FileObjectType fileObjectType)
 	{
-		FileSelectorDialog fileSelectorDialog=new FileSelectorDialog();
+		FileSelectorFragment fileSelectorFragment=new FileSelectorFragment();
 		Bundle bundle=new Bundle();
 		bundle.putSerializable("fileObjectType",fileObjectType);
-		fileSelectorDialog.setArguments(bundle);
-		return fileSelectorDialog;
+		fileSelectorFragment.setArguments(bundle);
+		return fileSelectorFragment;
 	}
 
 
@@ -359,7 +359,7 @@ public class FileSelectorDialog extends Fragment implements FileSelectorActivity
 		}
 
 		@Override
-		public void onBindViewHolder(final FileSelectorDialog.FileSelectorAdapter.ViewHolder p1, int p2)
+		public void onBindViewHolder(final FileSelectorFragment.FileSelectorAdapter.ViewHolder p1, int p2)
 		{
 			// TODO: Implement this method
 			FilePOJO file=filePOJO_list.get(p2);
