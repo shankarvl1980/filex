@@ -80,7 +80,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
     public void back_up(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType,List<String> new_name_list,Uri tree_uri,String tree_uri_path)
     {
-        if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(null,destFileObjectType))
+        if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
         {
             Global.print(application,application.getString(R.string.wait_till_completion_on_going_operation_on_usb));
             return;

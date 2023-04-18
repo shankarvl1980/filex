@@ -362,7 +362,7 @@
 	<string name="want_to_stop_ftp_server_service">Want to stop the FTP Server service?</string>
 	<string name="ftp_settings_already_exists_want_to_replace_it">An FTP settings already exists. Want to replace it?</string>
 	<string name="optional_in_bracket">(optional)</string>
-
+	<string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
 
 	<string name="ftp_server">FTP Server</string>
 	<string name="ftp_client">FTP</string>

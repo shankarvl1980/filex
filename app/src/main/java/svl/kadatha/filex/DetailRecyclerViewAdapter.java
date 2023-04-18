@@ -222,70 +222,58 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	}
 
 	@Override
-	public Filter getFilter() {
-		return file_name_filter;
+	public Filter getFilter() {return new Filter() {
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				return new FilterResults();
+			}
+
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+
+				df.filePOJO_list = new ArrayList<>();
+				if ((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path != null) {
+					for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
+						FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
+						if (new File(filePOJO.getPath()).getParent().equals(df.viewModel.library_filter_path)) {
+							df.filePOJO_list.add(filePOJO);
+						}
+					}
+				} else if ((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path == null) {
+					df.filePOJO_list = df.totalFilePOJO_list;
+				} else if (df.viewModel.library_filter_path == null) {
+					String pattern = constraint.toString().toLowerCase().trim();
+					for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
+						FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
+						if (filePOJO.getLowerName().contains(pattern)) {
+							df.filePOJO_list.add(filePOJO);
+						}
+					}
+				} else {
+					String pattern = constraint.toString().toLowerCase().trim();
+					for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
+						FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
+						if (filePOJO.getLowerName().contains(pattern) && new File(filePOJO.getPath()).getParent().equals(df.viewModel.library_filter_path)) {
+							df.filePOJO_list.add(filePOJO);
+						}
+					}
+				}
+
+
+				int t = df.filePOJO_list.size();
+				if (df.viewModel.mselecteditems.size() > 0) {
+					deselectAll();
+				} else {
+					notifyDataSetChanged();
+				}
+				if (t > 0) {
+					df.recyclerView.setVisibility(View.VISIBLE);
+					df.folder_empty.setVisibility(View.GONE);
+				}
+				mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size() + "/" + t);
+			}
+		};
 	}
-
-	private final Filter file_name_filter =new Filter () {
-		@Override
-		protected FilterResults performFiltering(CharSequence constraint) {
-			return new Filter.FilterResults();
-		}
-
-		@Override
-		protected void publishResults(CharSequence constraint, FilterResults filterResults) {
-
-			df.filePOJO_list = new ArrayList<>();
-			if ((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path!=null) {
-				for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
-					FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
-					if (new File(filePOJO.getPath()).getParent().equals(df.viewModel.library_filter_path)) {
-						df.filePOJO_list.add(filePOJO);
-					}
-				}
-			}
-			else if((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path==null)
-			{
-				df.filePOJO_list = df.totalFilePOJO_list;
-			}
-			else if(df.viewModel.library_filter_path==null){
-				String pattern = constraint.toString().toLowerCase().trim();
-				for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
-					FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
-					if (filePOJO.getLowerName().contains(pattern)) {
-						df.filePOJO_list.add(filePOJO);
-					}
-				}
-			}
-			else
-			{
-				String pattern = constraint.toString().toLowerCase().trim();
-				for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {
-					FilePOJO filePOJO = df.totalFilePOJO_list.get(i);
-					if (filePOJO.getLowerName().contains(pattern) && new File(filePOJO.getPath()).getParent().equals(df.viewModel.library_filter_path)) {
-						df.filePOJO_list.add(filePOJO);
-					}
-				}
-			}
-
-
-			int t=df.filePOJO_list.size();
-			if(df.viewModel.mselecteditems.size()>0)
-			{
-				deselectAll();
-			}
-			else
-			{
-				notifyDataSetChanged();
-			}
-			if(t>0)
-			{
-				df.recyclerView.setVisibility(View.VISIBLE);
-				df.folder_empty.setVisibility(View.GONE);
-			}
-			mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+ "/" +t);
-		}
-	};
 
 	@Override
 	public int getItemCount()

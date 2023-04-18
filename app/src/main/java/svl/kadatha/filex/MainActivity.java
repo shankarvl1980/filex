@@ -1289,21 +1289,22 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else
 		{
+			switch (viewModel.toolbar_shown)
+			{
+				case "bottom":
+					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+					bottom_toolbar.setVisibility(View.VISIBLE);
+					df.is_toolbar_visible=true;
+					break;
+				case "paste":
+					paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+					paste_toolbar.setVisibility(View.VISIBLE);
+					df.is_toolbar_visible=true;
+					break;
+			}
 			int entry_count;
 			if((entry_count=fm.getBackStackEntryCount())>1)
 			{
-				switch (viewModel.toolbar_shown)
-				{
-					case "bottom":
-						bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-						bottom_toolbar.setVisibility(View.VISIBLE);
-						break;
-					case "paste":
-						paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-						paste_toolbar.setVisibility(View.VISIBLE);
-						break;
-				}
-
 				fm.popBackStack();
 				int frag=2;
 				df= (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
@@ -1317,11 +1318,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df_tag = df.getTag();
 				}
 
-				if(df_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) && viewModel.archive_view)
-				{
-					parent_dir_image_button.setEnabled(false);
-					parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
-				}
 				countBackPressed=0;
 				/*
 				if((entry_count-frag)<1)
@@ -1399,19 +1395,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)
 	{
 		listPopWindow.dismiss();
-		if(Global.IS_CHILD_FILE(detailfrag_tag,Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()) &&  viewModel.archive_view)
-		{
-			paste_toolbar.setVisibility(View.GONE);
-			bottom_toolbar.setVisibility(View.GONE);
-			viewModel.toolbar_shown="extract";
-			if(detailfrag_tag.equals(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
-			{
-				parent_dir_image_button.setEnabled(false);
-				parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
-			}
-
-		}
-		else if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
+		if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
 		{
 			paste_toolbar.setVisibility(View.VISIBLE);
 			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));

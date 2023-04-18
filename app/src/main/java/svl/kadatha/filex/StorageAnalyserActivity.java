@@ -253,6 +253,10 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         exit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(search_toolbar_visible)
+                {
+                    set_visibility_searchbar(false);
+                }
                 finish();
             }
         });
@@ -351,7 +355,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
             search_toolbar.setVisibility(View.VISIBLE);
             search_edittext.requestFocus();
-            storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
         }
         else
         {
@@ -359,7 +362,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             search_toolbar.setVisibility(View.GONE);
             search_edittext.setText("");
             search_edittext.clearFocus();
-            storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+            DeselectAllAndAdjustToolbars(storageAnalyserFragment,storageAnalyserFragment.getTag());
             if(storageAnalyserFragment.adapter!=null)storageAnalyserFragment.adapter.getFilter().filter(null);
         }
     }
@@ -413,17 +416,17 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         {
             switch (toolbar_shown)
             {
-
                 case "bottom":
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     bottom_toolbar.setVisibility(View.VISIBLE);
+                    storageAnalyserFragment.is_toolbar_visible=true;
                     break;
                 case "actionmode":
                     actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     actionmode_toolbar.setVisibility(View.VISIBLE);
+                    storageAnalyserFragment.is_toolbar_visible=true;
                     break;
             }
-
 
             if(fm.getBackStackEntryCount()>1)
             {
@@ -461,53 +464,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 {
                     Global.print(context,context.getString(R.string.click_close_button_to_exit));
                 }
-            }
-        }
-    }
-
-    public void onClickCancel()
-    {
-        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserFragment.viewModel.mselecteditems.size()>0)
-        {
-            DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
-        }
-        else
-        {
-            switch (toolbar_shown)
-            {
-
-                case "bottom":
-                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    bottom_toolbar.setVisibility(View.VISIBLE);
-                    break;
-                case "actionmode":
-                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    actionmode_toolbar.setVisibility(View.VISIBLE);
-                    break;
-            }
-
-
-            if(fm.getBackStackEntryCount()>1)
-            {
-                fm.popBackStack();
-                int frag=2, entry_count=fm.getBackStackEntryCount();
-                storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                String tag= storageAnalyserFragment.getTag();
-
-                while(tag !=null && !new File(tag).exists() && storageAnalyserFragment.currentUsbFile == null)
-                {
-                    fm.popBackStack();
-                    ++frag;
-                    if(frag>entry_count) break;
-                    storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                    tag = storageAnalyserFragment.getTag();
-                }
-
-            }
-            else
-            {
-                finish();
             }
         }
     }

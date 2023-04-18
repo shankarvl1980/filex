@@ -612,7 +612,6 @@ public class ArchiveViewActivity extends BaseActivity{
         {
             if(keyBoardUtil.getKeyBoardVisibility())
             {
-
                 imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
             }
             finish();
@@ -634,11 +633,13 @@ public class ArchiveViewActivity extends BaseActivity{
         }
         else
         {
+            bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+            bottom_toolbar.setVisibility(View.VISIBLE);
+            archiveViewFragment.is_toolbar_visible=true;
+
             int entry_count;
             if((entry_count=fm.getBackStackEntryCount())>1)
             {
-                bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                bottom_toolbar.setVisibility(View.VISIBLE);
 
                 fm.popBackStack();
                 int frag=2;
@@ -653,8 +654,7 @@ public class ArchiveViewActivity extends BaseActivity{
                     df_tag = archiveViewFragment.getTag();
                 }
 
-                parent_dir_image_button.setEnabled(false);
-                parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+
                 countBackPressed=0;
 				/*
 				if((entry_count-frag)<1)
@@ -667,7 +667,7 @@ public class ArchiveViewActivity extends BaseActivity{
             }
             else
             {
-				/*
+                /*
 				floating_button_back.setEnabled(false);
 				floating_button_back.setAlpha(Global.DISABLE_ALFA);
 

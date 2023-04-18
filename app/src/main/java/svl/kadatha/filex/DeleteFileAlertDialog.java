@@ -273,7 +273,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 	
 	private void start_delete_progress_activity(Class service)
 	{
-		if(ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(sourceFileObjectType,null))
+		if(ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,null))
 		{
 			bundle.putString("source_uri_path",tree_uri_path);
 			bundle.putParcelable("source_uri",tree_uri);

@@ -440,7 +440,16 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                     }
 
                     int t=filePOJO_list.size();
-                    clearSelectionAndNotifyDataSetChanged();
+
+                    if(viewModel.mselecteditems.size()>0)
+                    {
+                        deselectAll();
+                    }
+                    else
+                    {
+                        notifyDataSetChanged();
+                    }
+
                     if(t>0)
                     {
                         recycler_view.setVisibility(View.VISIBLE);

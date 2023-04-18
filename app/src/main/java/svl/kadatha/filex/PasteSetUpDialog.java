@@ -328,7 +328,7 @@ public class PasteSetUpDialog extends DialogFragment
 			return;
 		}
 
-		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(sourceFileObjectType,destFileObjectType))
+		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,destFileObjectType))
 		{
 			Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
 			dismissAllowingStateLoss();

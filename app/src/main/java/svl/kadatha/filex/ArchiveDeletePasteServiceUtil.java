@@ -108,7 +108,7 @@ public class ArchiveDeletePasteServiceUtil {
         return noOperation;
     }
 
-    public static boolean WHETHER_TO_START_SERVICE_AS_NO_USB(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
+    public static boolean WHETHER_TO_START_SERVICE_ON_USB(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
     {
         boolean noOperation=true;
         if(noOperation && sourceFileObjectType!=null)
@@ -129,7 +129,27 @@ public class ArchiveDeletePasteServiceUtil {
 
         return noOperation;
     }
+    public static boolean WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
+    {
+        boolean noOperation=true;
+        if(noOperation && sourceFileObjectType!=null)
+        {
+            if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+            {
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
+            }
+        }
 
+        if(noOperation && destFileObjectType!=null)
+        {
+            if(destFileObjectType==FileObjectType.FTP_TYPE)
+            {
+                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
+            }
+        }
+
+        return noOperation;
+    }
 
     public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
     {

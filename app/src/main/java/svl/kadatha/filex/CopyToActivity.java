@@ -123,7 +123,7 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
-                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_AS_NO_USB(null,destFileObjectType))
+                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
                 {
                     Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
                     return;
