@@ -50,7 +50,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private String media_category=null;
     final List<FilePOJO> path=new ArrayList<>();
     public String file_type="f";
-    private int count=0;
+    int count;
+    int dir_count;int half_dir_count;
 
     public String library_filter_path;
     public boolean library_time_desc=false;
@@ -115,15 +116,17 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     final long final_storage_space = storage_space;
                     HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
                     boolean isInternalStorage;
-//                    int dir_count = 0;int half_dir_count;
-//                    for(FilePOJO filePOJO:filePOJOS)
-//                    {
-//                        if(filePOJO.getIsDirectory())
-//                        {
-//                            ++dir_count;
-//                        }
-//                    }
-//                    half_dir_count=dir_count/2;
+
+                    dir_count = 0;half_dir_count=0;
+                    for(FilePOJO filePOJO:filePOJOS)
+                    {
+                        if(filePOJO.getIsDirectory())
+                        {
+                            ++dir_count;
+                        }
+                    }
+                    half_dir_count=dir_count/2;
+
                     if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                     {
                         hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
@@ -134,27 +137,28 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         isInternalStorage=false;
                     }
                     HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
-                    fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
-//                    future4=executorService.submit(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage);
-//                        }
-//                    });
-//
-////                    future5=executorService.submit(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage);
-////                        }
-////                    });
-//                    try {
-//                        future4.get();
-//                        future5.get();
-//                    } catch (ExecutionException | InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//
+                    //fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+
+                    future4=executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,half_dir_count);
+                        }
+                    });
+
+                    future5=executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count+1,filePOJOS.size());
+                        }
+                    });
+                    try {
+                        future4.get();
+                        future5.get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
 
 
                 }
@@ -186,15 +190,18 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 final long final_storage_space = storage_space;
                 HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
                 boolean isInternalStorage;
-//                    int dir_count = 0;int half_dir_count;
-//                    for(FilePOJO filePOJO:filePOJOS)
-//                    {
-//                        if(filePOJO.getIsDirectory())
-//                        {
-//                            ++dir_count;
-//                        }
-//                    }
-//                    half_dir_count=dir_count/2;
+
+                dir_count = 0;half_dir_count=0;
+                for(FilePOJO filePOJO:filePOJOS)
+                {
+                    if(filePOJO.getIsDirectory())
+                    {
+                        ++dir_count;
+                    }
+                }
+                half_dir_count=dir_count/2;
+
+
                 if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                 {
                     hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
@@ -205,7 +212,30 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     isInternalStorage=false;
                 }
                 HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
-                fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+                //fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+
+                future6=executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,half_dir_count);
+                    }
+                });
+
+                future7=executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count+1,filePOJOS.size());
+                    }
+                });
+                try {
+                    future6.get();
+                    future7.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

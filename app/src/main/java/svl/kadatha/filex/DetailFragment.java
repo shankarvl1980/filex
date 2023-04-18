@@ -91,8 +91,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	public FileObjectType fileObjectType;
 	public int file_list_size;
 	boolean is_toolbar_visible=true;
-	private Uri tree_uri;
-	private String tree_uri_path="";
+	public Uri tree_uri;
+	public String tree_uri_path="";
 	public boolean local_activity_delete,modification_observed;
 	private FileModifyObserver fileModifyObserver;
 	public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;

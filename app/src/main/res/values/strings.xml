@@ -249,6 +249,7 @@
 	<string name="read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions">Read and write permissions are must for the app to work. Please grant the permissions</string>
 	<string name="could_not_open_zipe_file">Could not open the zip file</string>
 	<string name="directories_can_not_be_sent_select_one_file">Directories can not be sent. Select at least one file.</string>
+	<string name="directories_can_not_be_sent_select_only_one_file">Directories can not be sent. Select only one file.</string>
 	<string name="select_only_a_zip_file">Select only a zip file</string>
 	<string name="selected_files_have_been_copied">Selected files have been copied.</string>
 	<string name="selected_filed_have_been_moved">Selected files have been moved.</string>

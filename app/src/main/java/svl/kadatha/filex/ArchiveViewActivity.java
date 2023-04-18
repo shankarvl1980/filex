@@ -654,24 +654,10 @@ public class ArchiveViewActivity extends BaseActivity{
                     df_tag = archiveViewFragment.getTag();
                 }
 
-
                 countBackPressed=0;
-				/*
-				if((entry_count-frag)<1)
-				{
-					floating_button_back.setEnabled(false);
-					floating_button_back.setAlpha(Global.DISABLE_ALFA);
-				}
-
-				 */
             }
             else
             {
-                /*
-				floating_button_back.setEnabled(false);
-				floating_button_back.setAlpha(Global.DISABLE_ALFA);
-
-				 */
                 if(onBackPressed)
                 {
                     countBackPressed++;

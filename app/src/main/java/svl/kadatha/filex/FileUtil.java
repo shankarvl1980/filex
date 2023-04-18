@@ -869,8 +869,7 @@ import timber.log.Timber;
 			}
 			return true;
 		}
-
-		public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
+	public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
 	{
 		if(rootUsbFile==null) return null;
 		UsbFile usbFile=null;

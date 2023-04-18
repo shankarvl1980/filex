@@ -1139,6 +1139,7 @@ public class FilePOJOUtil {
                     else{
                         for(Path path : directoryStream)
                         {
+                            //Timber.tag(Global.TAG).d(""+path.toAbsolutePath());
                             FilePOJO filePOJO =MAKE_FilePOJO(path,true,fileObjectType);
                             if(!filePOJO.getName().startsWith("."))
                             {

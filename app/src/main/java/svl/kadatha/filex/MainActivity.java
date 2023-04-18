@@ -1317,24 +1317,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df= (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
 					df_tag = df.getTag();
 				}
-
 				countBackPressed=0;
-				/*
-				if((entry_count-frag)<1)
-				{
-					floating_button_back.setEnabled(false);
-					floating_button_back.setAlpha(Global.DISABLE_ALFA);
-				}
 
-				 */
 			}
 			else
 			{
-				/*
-				floating_button_back.setEnabled(false);
-				floating_button_back.setAlpha(Global.DISABLE_ALFA);
-
-				 */
 				if(onBackPressed)
 				{
 					countBackPressed++;
@@ -1499,6 +1486,22 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		return file_list_excluding_dir;
 	}
 
+	public ArrayList<Uri> iterate_to_attach_usb_file(SparseArray<String> file_list, DetailFragment df)
+	{
+		ArrayList<Uri> uri_list_excluding_dir=new ArrayList<>();
+		int size=file_list.size();
+		for(int i=0;i<size;++i)
+		{
+			String file_path=file_list.valueAt(i);
+			UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+			if(f!=null && !f.isDirectory())
+			{
+				uri_list_excluding_dir.add(FileUtil.getDocumentUri(file_path,df.tree_uri,df.tree_uri_path));
+				break;
+			}
+		}
+		return uri_list_excluding_dir;
+	}
 
 	@Override
 	public void deleteDialogOKButtonClick() {
@@ -1720,6 +1723,20 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 										break;
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
+								}
+								else if(df.fileObjectType==FileObjectType.USB_TYPE)
+								{
+									String file_path=df.viewModel.mselecteditemsFilePath.valueAt(0);
+									if(file_path!=null && df.check_availability_USB_SAF_permission(file_path,FileObjectType.USB_TYPE))
+									{
+										ArrayList<Uri> uri_list_excluding_dir;
+										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditemsFilePath,df);
+										if (uri_list_excluding_dir.size() == 0) {
+											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
+											break;
+										}
+										FileIntentDispatch.sendUri(MainActivity.this,uri_list_excluding_dir);
+									}
 								}
 								break;
 							case 2:
