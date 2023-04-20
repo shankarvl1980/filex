@@ -71,7 +71,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 import me.jahnen.libaums.core.fs.FileSystem;

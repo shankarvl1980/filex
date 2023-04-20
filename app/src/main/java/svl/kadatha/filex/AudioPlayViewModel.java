@@ -14,11 +14,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 public class AudioPlayViewModel extends AndroidViewModel {
 
-    private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -34,7 +31,6 @@ public class AudioPlayViewModel extends AndroidViewModel {
 
     public AudioPlayViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
 

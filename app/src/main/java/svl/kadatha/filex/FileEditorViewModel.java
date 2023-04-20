@@ -18,8 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 public class FileEditorViewModel extends AndroidViewModel {
 
     private Future<?> future1,future2,future3;
@@ -49,6 +47,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public StringBuilder stringBuilder;
     private boolean isCancelled;
     public boolean edit_mode;
+    public boolean is_eol_group_visible;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);

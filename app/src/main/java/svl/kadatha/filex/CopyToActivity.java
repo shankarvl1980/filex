@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class CopyToActivity extends BaseActivity{
 

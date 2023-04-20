@@ -63,7 +63,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class Global
 {

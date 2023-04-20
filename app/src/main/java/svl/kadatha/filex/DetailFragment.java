@@ -44,11 +44,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements MainActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
 {
@@ -797,8 +794,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder>
 	{
 		final String[] filepath_string_array;
-		String display_path;
-		String truncated_path;
+		final String display_path;
+		final String truncated_path;
 
 		FilePathRecyclerViewAdapter(String p)
 		{

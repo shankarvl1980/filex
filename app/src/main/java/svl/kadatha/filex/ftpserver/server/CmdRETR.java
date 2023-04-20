@@ -66,15 +66,15 @@ public class CmdRETR extends FtpCmd implements Runnable {
                 byte[] buffer = new byte[SessionThread.DATA_CHUNK_SIZE];
                 int bytesRead;
                 if (sessionThread.openDataSocket()) {
-                    Timber.tag(TAG).d( "RETR opened data socket");
+                    Timber.tag(TAG).d("RETR opened data socket");
                 } else {
                     errString = "425 Error opening socket\r\n";
-                    Timber.tag(TAG).d( "Error in initDataSocket()");
+                    Timber.tag(TAG).i("Error in initDataSocket()");
                     break mainblock;
                 }
                 sessionThread.writeString("150 Sending file\r\n");
                 if (sessionThread.isBinaryMode()) { // RANG is supported only in binary mode.
-                    Timber.tag(TAG).d( "Transferring in binary mode");
+                    Timber.tag(TAG).d("Transferring in binary mode");
                     long offset = 0L;
                     long endPosition = fileToRetr.length() - 1;
                     if (sessionThread.offset >= 0) {
@@ -98,15 +98,15 @@ public class CmdRETR extends FtpCmd implements Runnable {
 
                         if (!success) {
                             errString = "426 Data socket error\r\n";
-                            Timber.tag(TAG).d( "Data socket error");
+                            Timber.tag(TAG).i("Data socket error");
                             break mainblock;
                         }
                     }
                 } else { // We're in ASCII mode
-                    Timber.tag(TAG).d( "Transferring in ASCII mode");
+                    Timber.tag(TAG).d("Transferring in ASCII mode");
                     if (sessionThread.offset >= 0) {
                         errString = "550 Unable to seek to requested position in ASCII mode";
-                        Timber.tag(TAG).d( "Error: " + errString);
+                        Timber.tag(TAG).e("Error: " + errString);
                         break mainblock;
                     }
                     // We have to convert all solitary \n to \r\n

@@ -197,6 +197,13 @@ public class RenameFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.enter_file_name));
 					return;
 				}
+
+				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
+				{
+					Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+					return;
+				}
+
 				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);
 
 				overwriting= whether_file_already_exists(new_file_path, fileObjectType);

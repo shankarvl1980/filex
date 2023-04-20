@@ -19,7 +19,10 @@ import android.widget.RadioGroup.LayoutParams;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 public class FileEditorSettingsDialog extends DialogFragment
 {
@@ -35,7 +38,9 @@ public class FileEditorSettingsDialog extends DialogFragment
 	final static int MIN_TEXT_SIZE=10, MAX_TEXT_SIZE=20;
 	private EOL_ChangeListener eol_changeListener;
 	FileEditorActivity fileEditorActivity;
-
+	private Group eol_group;
+	private FileEditorViewModel viewModel;
+	private ImageButton eol_group_expander;
 
 	@Override
 	public void onAttach(Context context)
@@ -70,6 +75,8 @@ public class FileEditorSettingsDialog extends DialogFragment
 			not_wrap=savedInstanceState.getBoolean("not_wrap");
 			selected_eol=savedInstanceState.getInt("selected_eol");
 		}
+
+		viewModel=new ViewModelProvider(requireActivity()).get(FileEditorViewModel.class);
 	}
 
 	public static FileEditorSettingsDialog getInstance(int selected_eol)
@@ -88,6 +95,30 @@ public class FileEditorSettingsDialog extends DialogFragment
 	{
 		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_file_editor_settings,container,false);
+		eol_group_expander=v.findViewById(R.id.file_editor_settings_advanced_expander);
+		View advanced_label_group = v.findViewById(R.id.file_editor_settings_advanced_group);
+
+		advanced_label_group.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(viewModel.is_eol_group_visible)
+				{
+					eol_group.setVisibility(View.GONE);
+					eol_group_expander.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.down_arrow_dialog_icon));
+				}
+				else {
+					eol_group.setVisibility(View.VISIBLE);
+					eol_group_expander.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_dialog_icon));
+				}
+				viewModel.is_eol_group_visible=!viewModel.is_eol_group_visible;
+			}
+		});
+		eol_group=v.findViewById(R.id.file_editor_settings_eol_group);
+		if(viewModel.is_eol_group_visible)
+		{
+			eol_group.setVisibility(View.VISIBLE);
+			eol_group_expander.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.right_arrow_drawer_icon));
+		}
 		RadioGroup eol_rg = v.findViewById(R.id.eol_rg);
 		eol_rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
 		{
@@ -247,7 +278,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 		enable_disable_btns();
 		return v;
 	}
-
 
 	private void enable_disable_btns()
 	{

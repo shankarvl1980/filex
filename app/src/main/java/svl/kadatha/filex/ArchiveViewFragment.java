@@ -36,7 +36,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -53,7 +52,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     LinearLayoutManager llm;
     GridLayoutManager glm;
     public boolean grid_layout;
-    private TinyDB tinyDB;
     TextView folder_empty;
     ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter adapter;
     private FilePathRecyclerViewAdapter filepath_adapter;
@@ -80,7 +78,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         super.onAttach(context);
         this.context=context;
         archiveViewActivity =(ArchiveViewActivity) context;
-        tinyDB=new TinyDB(context);
+        TinyDB tinyDB = new TinyDB(context);
     }
 
     @Override

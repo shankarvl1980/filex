@@ -171,6 +171,11 @@ public class CreateFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;
 				}
+				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
+				{
+					Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+					return;
+				}
 
 				String new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_folder,new_name);
 				File file=new File(new_file_path);
@@ -181,6 +186,7 @@ public class CreateFileDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					return;
 				}
+
 
 				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
 				//new CreateFileTask(file,isWritable).createFile();

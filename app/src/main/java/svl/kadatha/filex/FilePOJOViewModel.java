@@ -117,15 +117,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
                     boolean isInternalStorage;
 
-                    dir_count = 0;half_dir_count=0;
-                    for(FilePOJO filePOJO:filePOJOS)
-                    {
-                        if(filePOJO.getIsDirectory())
-                        {
-                            ++dir_count;
-                        }
-                    }
-                    half_dir_count=dir_count/2;
+                    dir_count = 0;half_dir_count=dir_count/2;
 
                     if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                     {
@@ -137,7 +129,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         isInternalStorage=false;
                     }
                     HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
-                    //fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+
 
                     future4=executorService.submit(new Runnable() {
                         @Override
@@ -149,14 +141,14 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     future5=executorService.submit(new Runnable() {
                         @Override
                         public void run() {
-                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count+1,filePOJOS.size());
+                            fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count,filePOJOS.size());
                         }
                     });
                     try {
                         future4.get();
                         future5.get();
                     } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+
                     }
 
 
@@ -191,15 +183,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
                 boolean isInternalStorage;
 
-                dir_count = 0;half_dir_count=0;
-                for(FilePOJO filePOJO:filePOJOS)
-                {
-                    if(filePOJO.getIsDirectory())
-                    {
-                        ++dir_count;
-                    }
-                }
-                half_dir_count=dir_count/2;
+                dir_count = filePOJOS.size();half_dir_count=dir_count/2;
 
 
                 if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
@@ -212,7 +196,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     isInternalStorage=false;
                 }
                 HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
-                //fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,0,filePOJOS.size());
+
 
                 future6=executorService.submit(new Runnable() {
                     @Override
@@ -224,17 +208,15 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 future7=executorService.submit(new Runnable() {
                     @Override
                     public void run() {
-                        fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count+1,filePOJOS.size());
+                        fill_file_size(final_storage_space, finalHashMap_directory_size,isInternalStorage,half_dir_count,filePOJOS.size());
                     }
                 });
                 try {
                     future6.get();
                     future7.get();
                 } catch (ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
+
                 }
-
-
 
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

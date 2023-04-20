@@ -18,7 +18,6 @@ import java.util.zip.ZipFile;
 
 public class ArchiveViewerViewModel extends AndroidViewModel {
 
-    private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9;
     public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -28,7 +27,6 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
 
     public ArchiveViewerViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
     @Override
