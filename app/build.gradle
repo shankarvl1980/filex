@@ -52,6 +52,7 @@ android {
             signingConfig signingConfigs.release_config
         }
     }
+    namespace 'svl.kadatha.filex'
 }
 
 dependencies {
