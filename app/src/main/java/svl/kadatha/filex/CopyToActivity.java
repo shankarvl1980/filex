@@ -115,16 +115,16 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
+                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
+                {
+                    Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+                    return;
+                }
+
                 emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
                 if(emptyService==null)
                 {
                     Global.print(context,getString(R.string.maximum_3_services_processed));
-                    return;
-                }
-
-                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
-                {
-                    Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
                     return;
                 }
 
@@ -188,6 +188,11 @@ public class CopyToActivity extends BaseActivity{
                 if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
                 {
                     emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
+                    if(emptyService==null)
+                    {
+                        Global.print(context,getString(R.string.maximum_3_services_processed));
+                        return;
+                    }
                     Intent intent=new Intent(context,emptyService);
                     intent.setAction(COPY_TO_ACTION);
                     intent.putExtra("bundle",result);

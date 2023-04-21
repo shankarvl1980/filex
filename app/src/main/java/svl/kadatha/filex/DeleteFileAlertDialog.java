@@ -136,6 +136,12 @@ public class DeleteFileAlertDialog extends DialogFragment
 			{
 				public void onClick(View v)
 				{
+					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,null))
+					{
+						Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+						return;
+					}
+
 					DeleteFileAlertDialog.this.getViewModelStore().clear();
 					if(sourceFileObjectType== FileObjectType.FILE_TYPE)
 					{
@@ -273,20 +279,12 @@ public class DeleteFileAlertDialog extends DialogFragment
 	
 	private void start_delete_progress_activity(Class service)
 	{
-		if(ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,null))
-		{
-			bundle.putString("source_uri_path",tree_uri_path);
-			bundle.putParcelable("source_uri",tree_uri);
-			Intent intent=new Intent(context,service);
-			intent.setAction("delete");
-			intent.putExtra("bundle",bundle);
-			context.startActivity(intent);
-
-		}
-		else
-		{
-			Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
-		}
+		bundle.putString("source_uri_path",tree_uri_path);
+		bundle.putParcelable("source_uri",tree_uri);
+		Intent intent=new Intent(context,service);
+		intent.setAction("delete");
+		intent.putExtra("bundle",bundle);
+		context.startActivity(intent);
 
 	}
 
