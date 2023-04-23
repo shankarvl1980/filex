@@ -9,7 +9,7 @@ import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.server.FtpUser;
 
 public class FtpServerViewModel extends AndroidViewModel {
-    public String user_name,password,chroot;
+    public String user_name="pc",password="pc",chroot=Global.INTERNAL_PRIMARY_STORAGE_PATH;
     public static int PORT;
     public static FtpUser FTP_USER;
     public static boolean ALLOW_ANONYMOUS;

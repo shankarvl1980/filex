@@ -23,7 +23,7 @@ package svl.kadatha.filex.ftpserver.ftp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 
 //import com.google.gson.Gson;
@@ -144,10 +144,10 @@ public class FsSettings {
 //        return port;
     }
 
-    public static boolean shouldTakeFullWakeLock() {
-        final SharedPreferences sp = getSharedPreferences();
-        return sp.getBoolean("stayAwake", true);
-    }
+//    public static boolean shouldTakeFullWakeLock() {
+//        final SharedPreferences sp = getSharedPreferences();
+//        return sp.getBoolean("stayAwake", true);
+//    }
 
 //    public static int getTheme() {
 //        SharedPreferences sp = getSharedPreferences();
@@ -169,27 +169,22 @@ public class FsSettings {
 //
 //    }
 
-    public static boolean showNotificationIcon() {
-        SharedPreferences sp = getSharedPreferences();
-        return sp.getBoolean("show_notification_icon_preference", true);
-    }
+//    public static boolean showNotificationIcon() {
+//        SharedPreferences sp = getSharedPreferences();
+//        return sp.getBoolean("show_notification_icon_preference", true);
+//    }
 
     /**
      * @return the SharedPreferences for this application
      */
-    private static SharedPreferences getSharedPreferences() {
-        final Context context = App.getAppContext();
-        return PreferenceManager.getDefaultSharedPreferences(context);
-    }
+//    private static SharedPreferences getSharedPreferences() {
+//        final Context context = App.getAppContext();
+//        return PreferenceManager.getDefaultSharedPreferences(context);
+//    }
 
-    public static String getExternalStorageUri() {
-        final SharedPreferences sp = getSharedPreferences();
-        return sp.getString("externalStorageUri", null);
-    }
-
-    public static void setExternalStorageUri(String externalStorageUri) {
-        final SharedPreferences sp = getSharedPreferences();
-        sp.edit().putString("externalStorageUri", externalStorageUri).apply();
-    }
+//    public static String getExternalStorageUri() {
+//        final SharedPreferences sp = getSharedPreferences();
+//        return sp.getString("externalStorageUri", null);
+//    }
 
 }

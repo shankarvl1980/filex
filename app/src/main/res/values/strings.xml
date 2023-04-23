@@ -413,7 +413,7 @@
 	<string name="advanced_settings_label">Advanced settings...</string>
 	<string name="port_number_label">Port Number</string>
 	<string name="port_validation_error">Port number must be in the range 1 to 65535.</string>
-	<string name="set_port_and_credentials">Set port and credentials</string>
+	<string name="set_port_credentials_and_directory">Set port, credentials and directory</string>
 	<string name="notification_server_starting">Starting at %s</string>
 	<string name="notification_title">FTP Server is running</string>
 	<string name="notification_text">at %s</string>

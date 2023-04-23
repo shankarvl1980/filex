@@ -257,6 +257,10 @@ public class AppSelectorDialog extends DialogFragment
                                 {
                                     ((StorageAnalyserActivity)context).clear_cache=false;
                                 }
+                                else if(appCompatActivity instanceof ArchiveViewActivity)
+                                {
+                                    ((ArchiveViewActivity)context).clear_cache=false;
+                                }
                             }
 
                             intent.setComponent(new ComponentName(app_package_name,app_component_name));

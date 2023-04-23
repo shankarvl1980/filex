@@ -19,6 +19,9 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
+import svl.kadatha.filex.UriPOJO;
 import svl.kadatha.filex.ftpserver.ftp.FsSettings;
 import timber.log.Timber;
 
@@ -107,7 +110,7 @@ public abstract class FtpServerFileUtil {
         } else {
             // Storage Access Framework
             DocumentFile targetDocument = getDocumentFile(target, false, context);
-            outStream =  new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
+            if(targetDocument!=null) outStream =  new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
         }
         return outStream;
     }
@@ -559,10 +562,14 @@ public abstract class FtpServerFileUtil {
             originalDirectory = true;
             //continue
         }
-        String as = FsSettings.getExternalStorageUri();
+
 
         Uri treeUri = null;
-        if (as != null) treeUri = Uri.parse(as);
+        UriPOJO uriPOJO= Global.CHECK_AVAILABILITY_URI_PERMISSION(file.getAbsolutePath(), FileObjectType.FILE_TYPE);
+        if(uriPOJO!=null)
+        {
+            treeUri=uriPOJO.get_uri();
+        }
         if (treeUri == null) {
             return null;
         }

@@ -352,7 +352,7 @@ public class Global
 	}
 
 
-	static UriPOJO CHECK_AVAILABILITY_URI_PERMISSION(String file_path, FileObjectType fileObjectType)
+	public static UriPOJO CHECK_AVAILABILITY_URI_PERMISSION(String file_path, FileObjectType fileObjectType)
 	{
 		for(UriPOJO uriPOJO:URI_PERMISSION_LIST)
 		{

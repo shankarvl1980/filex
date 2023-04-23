@@ -41,7 +41,7 @@ public class FtpServerActivity extends BaseActivity {
     private Context context;
     private TextView ftp_url_text_view;
     private TextView ftp_switch_label;
-    private Group user_password_group,port_password_group;
+    private Group user_password_group,port_password_edit_group;
     private EditText port_input, user_input, password_input,user_name_host,password_host,chroot_host;
     private SwitchCompat ftp_start_stop_switch;
     private final Handler mHandler = new Handler();
@@ -79,7 +79,7 @@ public class FtpServerActivity extends BaseActivity {
                 FtpServerViewModel.ALLOW_ANONYMOUS=b;
             }
         });
-        port_password_group=findViewById(R.id.ftp_server_port_password_group);
+        port_password_edit_group=findViewById(R.id.ftp_server_port_password_edit_group);
         user_password_group=findViewById(R.id.ftp_server_user_password_group);
         port_input=findViewById(R.id.ftp_server_port_input);
         user_input=findViewById(R.id.ftp_server_user_input);
@@ -175,15 +175,18 @@ public class FtpServerActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b)
                 {
-                    port_password_group.setVisibility(View.VISIBLE);
+                    user_password_group.setVisibility(View.GONE);
+                    port_password_edit_group.setVisibility(View.VISIBLE);
                 }
                 else
                 {
-                    port_password_group.setVisibility(View.GONE);
+                    user_password_group.setVisibility(View.VISIBLE);
+                    port_password_edit_group.setVisibility(View.GONE);
                     imm.hideSoftInputFromWindow(port_input.getWindowToken(),0);
                     imm.hideSoftInputFromWindow(user_input.getWindowToken(),0);
                     imm.hideSoftInputFromWindow(password_input.getWindowToken(),0);
                 }
+                ftp_url_text_view.setVisibility(View.GONE);
             }
         });
 
@@ -209,6 +212,7 @@ public class FtpServerActivity extends BaseActivity {
                 }
             }
         });
+        disable_ftp_username_pwd_tv(true);
     }
 
     private boolean validateInput(boolean correctIfNotValid) {
@@ -331,8 +335,8 @@ public class FtpServerActivity extends BaseActivity {
             service_started =true;
             ftp_start_stop_switch.setChecked(true);
             user_password_group.setVisibility(View.VISIBLE);
-            port_password_group.setVisibility(View.GONE);
-            disable_ftp_username_pwd_tv(true);
+            port_password_edit_group.setVisibility(View.GONE);
+            //disable_ftp_username_pwd_tv(true);
 
             InetAddress address = FsService.getLocalInetAddress();
             if (address == null) {
@@ -344,27 +348,30 @@ public class FtpServerActivity extends BaseActivity {
                     + FsSettings.getPortNumber() + "/";
             ftp_switch_label.setText(R.string.server_service_started);
 
-            ftp_url_text_view.setText(ipText);
+            ftp_url_text_view.setText(getString(R.string.enter_below_host_address_in_file_explorer_of_pc_to_access_files)+"\n"+ ipText);
             set_port_pwd_group_checkbox.setVisibility(View.INVISIBLE);
 
         } else {
             ftp_start_stop_switch.setChecked(false);
             service_started =false;
             ftp_switch_label.setText(R.string.running_summary_stopped);
-            user_password_group.setVisibility(View.GONE);
+
             if(set_port_pwd_group_checkbox.isChecked())
             {
-                port_password_group.setVisibility(View.VISIBLE);
+                user_password_group.setVisibility(View.GONE);
+                port_password_edit_group.setVisibility(View.VISIBLE);
             }
             else
             {
-                port_password_group.setVisibility(View.GONE);
+                user_password_group.setVisibility(View.VISIBLE);
+                port_password_edit_group.setVisibility(View.GONE);
             }
-            disable_ftp_username_pwd_tv(false);
-            user_name_host.setText("pc");
-            password_host.setText("pc");
-            chroot_host.setText(chroot_list.get(0));
+            //disable_ftp_username_pwd_tv(false);
+            user_name_host.setText(viewModel.user_name);
+            password_host.setText(viewModel.password);
+            chroot_host.setText(viewModel.chroot);
             set_port_pwd_group_checkbox.setVisibility(View.VISIBLE);
+            ftp_url_text_view.setVisibility(View.GONE);
         }
     }
 

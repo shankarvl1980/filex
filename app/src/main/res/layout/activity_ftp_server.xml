@@ -101,12 +101,12 @@
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
                 android:button="@null"
                 android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                android:text="@string/set_port_and_credentials"
+                android:text="@string/set_port_credentials_and_directory"
                 android:textSize="16sp"
                 android:layout_margin="10dp"
                 />
             <androidx.constraintlayout.widget.Group
-                android:id="@+id/ftp_server_port_password_group"
+                android:id="@+id/ftp_server_port_password_edit_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:constraint_referenced_ids="ftp_server_port_label_input,ftp_server_port_input,ftp_server_user_label_input,
@@ -234,23 +234,11 @@
                 android:id="@+id/ftp_server_user_password_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="ftp_server_host_url_description,ftp_server_host_url,ftp_server_user_name_label,ftp_server_user_name,
+                app:constraint_referenced_ids="ftp_server_host_url,ftp_server_user_name_label,ftp_server_user_name,
                 ftp_server_password_label,ftp_server_pword,ftp_server_chroot_label,ftp_server_chroot"
                 />
 
-            <TextView
-                android:id="@+id/ftp_server_host_url_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/ten_dp"
-                android:textSize="16sp"
-                android:text="@string/enter_below_host_address_in_file_explorer_of_pc_to_access_files"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
-                />
+
 
             <TextView
                 android:id="@+id/ftp_server_host_url"
@@ -263,7 +251,7 @@
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_host_url_description"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_chroot_spinner_input"
                 />
 
 

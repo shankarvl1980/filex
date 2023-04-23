@@ -142,6 +142,10 @@ class FileIntentDispatch
 							{
 								((StorageAnalyserActivity)context).clear_cache=false;
 							}
+							else if(appCompatActivity instanceof ArchiveViewActivity)
+							{
+								((ArchiveViewActivity)context).clear_cache=false;
+							}
 						}
 
 						intent.setComponent(new ComponentName(package_name,app_component_name));

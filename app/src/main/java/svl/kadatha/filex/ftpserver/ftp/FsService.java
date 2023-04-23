@@ -304,13 +304,8 @@ public class FsService extends Service implements Runnable {
     private void takeWakeLock() {
         if (wakeLock == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if (FsSettings.shouldTakeFullWakeLock()) {
-                Timber.tag(TAG).d( "takeWakeLock: Taking full wake lock");
-                wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, TAG);
-            } else {
-                Timber.tag(TAG).d( "maybeTakeWakeLock: Taking partial wake lock");
-                wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            }
+            Timber.tag(TAG).d( "takeWakeLock: Taking full wake lock");
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
             wakeLock.setReferenceCounted(false);
         }
         wakeLock.acquire();
