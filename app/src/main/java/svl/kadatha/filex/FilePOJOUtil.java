@@ -1257,7 +1257,7 @@ public class FilePOJOUtil {
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
             other_permission_string=Global.GET_OTHER_FILE_PERMISSION(fileclickselected);
-            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"    modified other permission - "+other_permission_string+" whether exists - "+new File(fileclickselected).exists());
+            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"    modified other permission - "+other_permission_string+" whether existsUri - "+new File(fileclickselected).existsUri());
             MAKE_FilePOJO_ROOT(fileclickselected);
         }
 

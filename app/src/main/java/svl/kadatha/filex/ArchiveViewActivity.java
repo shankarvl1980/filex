@@ -60,7 +60,7 @@ public class ArchiveViewActivity extends BaseActivity{
 
     public ImageButton back_button,parent_dir_image_button,all_select;
     TextView file_number_view;
-    public static final String ACTIVITY_NAME="ARCHIVE_VIEWER_ACTIVITY";
+    public static final String ACTIVITY_NAME="ARCHIVE_VIEW_ACTIVITY";
     Toolbar bottom_toolbar;
 
 
@@ -725,7 +725,7 @@ public class ArchiveViewActivity extends BaseActivity{
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
         search_edittext.setText("");
         search_edittext.clearFocus();
-        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo list
+        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo listUri
         search_toolbar_visible=false;
         if(archiveViewFragment.adapter!=null)
         {
@@ -926,9 +926,6 @@ public class ArchiveViewActivity extends BaseActivity{
             }
         }
     }
-
-
-
 
     public static class ArchiveDetailRecyclerViewAdapter extends  RecyclerView.Adapter <ArchiveDetailRecyclerViewAdapter.ViewHolder> implements Filterable
     {

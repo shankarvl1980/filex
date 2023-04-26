@@ -150,7 +150,7 @@ public class Iterate
 			long size_of_files=0L;
 			String parent_file_path=source_list_files.get(i);
 			Uri uri=FileUtil.getDocumentUri(parent_file_path,source_uri,source_uri_path);
-			if(FileUtil.isDirectory(context,uri))
+			if(FileUtil.isDirectoryUri(context,uri))
 			{
 				Uri children_uri= DocumentsContract.buildChildDocumentsUriUsingTree(source_uri,FileUtil.getDocumentID(parent_file_path,source_uri,source_uri_path));
 				Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
@@ -181,7 +181,7 @@ public class Iterate
 			{
 				target_list_files.add(parent_file_path);
 				no_of_files++;
-				size_of_files+=FileUtil.getSize(context,uri);
+				size_of_files+=FileUtil.getSizeUri(context,uri);
 			}
 			FOLDERWISE_NO_OF_FILES.add(no_of_files);
 			FOLDERWISE_SIZE_OF_FILES.add(size_of_files);

@@ -160,7 +160,7 @@ public class FileSaveService2 extends Service
 
 				} else {
 
-					fileOutputStream = FileUtil.get_fileoutputstream(context, file.getAbsolutePath(), tree_uri, tree_uri_path);
+					fileOutputStream = FileUtil.get_file_outputstream(context, file.getAbsolutePath(), tree_uri, tree_uri_path);
 					if (fileOutputStream != null) {
 						if (eol == altered_eol) {
 							result = save_file(fileOutputStream, prev_page_end_point, current_page_end_point, content.getBytes());

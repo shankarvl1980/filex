@@ -97,7 +97,7 @@ public class AppManagerActivity extends BaseActivity{
 
         TabLayout tabLayout = findViewById(R.id.activity_app_manager_tab_layout);
         viewPager=findViewById(R.id.activity_app_manager_viewpager);
-        adapter = new AppManagementFragmentAdapter(fm);
+        adapter = new AppManagementFragmentAdapter(fm,context);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -185,8 +185,10 @@ public class AppManagerActivity extends BaseActivity{
     {
 
         private AppManagerListFragment mCurrentFragment;
-        public AppManagementFragmentAdapter(@NonNull FragmentManager fm) {
+        private final Context context;
+        public AppManagementFragmentAdapter(@NonNull FragmentManager fm, Context context) {
             super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.context=context;
         }
 
         public AppManagerListFragment getCurrentFragment()
@@ -206,21 +208,18 @@ public class AppManagerActivity extends BaseActivity{
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            switch (position)
-            {
-                case 1:
-                    Bundle bundle=new Bundle();
-                    bundle.putString(APP_TYPE,SYSTEM_APPS);
-                    AppManagerListFragment appManagerListFragment=new AppManagerListFragment();
-                    appManagerListFragment.setArguments(bundle);
-                    return appManagerListFragment;
-                default:
-                    Bundle bundle1=new Bundle();
-                    bundle1.putString(APP_TYPE,USER_INSTALLED_APPS);
-                    AppManagerListFragment appManagerListFragment1=new AppManagerListFragment();
-                    appManagerListFragment1.setArguments(bundle1);
-                    return appManagerListFragment1;
+            if (position == 1) {
+                Bundle bundle = new Bundle();
+                bundle.putString(APP_TYPE, SYSTEM_APPS);
+                AppManagerListFragment appManagerListFragment = new AppManagerListFragment();
+                appManagerListFragment.setArguments(bundle);
+                return appManagerListFragment;
             }
+            Bundle bundle1 = new Bundle();
+            bundle1.putString(APP_TYPE, USER_INSTALLED_APPS);
+            AppManagerListFragment appManagerListFragment1 = new AppManagerListFragment();
+            appManagerListFragment1.setArguments(bundle1);
+            return appManagerListFragment1;
         }
 
         @Override
@@ -236,13 +235,10 @@ public class AppManagerActivity extends BaseActivity{
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position)
-            {
-                case 1:
-                    return "System Apps";
-                default:
-                    return "User-installed Apps";
+            if (position == 1) {
+                return context.getString(R.string.system_apps);
             }
+            return context.getString(R.string.user_installed_apps);
         }
     }
 

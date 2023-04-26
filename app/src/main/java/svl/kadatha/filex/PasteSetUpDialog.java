@@ -392,7 +392,7 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			if(check_SAF_permission_destination(new_file_path,fileObjectType))
 			{
-				return FileUtil.exists(context, new_file_path, tree_uri, tree_uri_path);
+				return FileUtil.existsUri(context, new_file_path, tree_uri, tree_uri_path);
 			}
 			else
 			{

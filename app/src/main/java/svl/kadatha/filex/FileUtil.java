@@ -49,6 +49,7 @@ import timber.log.Timber;
 		private static final String PRIMARY_VOLUME_NAME = "primary";
 		public final static int BUFFER_SIZE=8192;
 		public static int USB_CHUNK_SIZE;
+		private static final Object GET_FTP_LOCK=new Object();
 
 		/**
 		 * Hide default constructor.
@@ -83,7 +84,7 @@ import timber.log.Timber;
 											@NonNull Uri tree_uri, String tree_uri_path)
 		{
 			Uri uri=getDocumentUri(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name),tree_uri,tree_uri_path);
-			if(exists(context,uri))
+			if(existsUri(context,uri))
 			{
 				return uri;
 			}
@@ -130,17 +131,17 @@ import timber.log.Timber;
 			return target_uri_id;
 		}
 
-	public static String getMimeType(Context context,Uri uri)
+	public static String getMimeTypeUri(Context context, Uri uri)
 	{
 		return context.getContentResolver().getType(uri);
 	}
 
- 	public static boolean isDirectory(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
+ 	public static boolean isDirectoryUri(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
 	{
 		Uri uri=getDocumentUri(target_file_path,tree_uri, tree_uri_path);
 		if(uri!=null)
 		{
-			String mime_type=getMimeType(context,uri);
+			String mime_type= getMimeTypeUri(context,uri);
 			return mime_type.equals(DocumentsContract.Document.MIME_TYPE_DIR);
 		}
 		else
@@ -149,7 +150,7 @@ import timber.log.Timber;
 		}
 	}
 
-	public static boolean isDirectory(Context context, @NonNull Uri uri)
+	public static boolean isDirectoryUri(Context context, @NonNull Uri uri)
 	{
 
 		String mime_type;
@@ -164,7 +165,7 @@ import timber.log.Timber;
 		return false;
 	}
 
-	public static long getSize(Context context, @NonNull Uri uri)
+	public static long getSizeUri(Context context, @NonNull Uri uri)
 	{
 		String size="0";
 		Cursor cursor=context.getContentResolver().query(uri,new String[] {DocumentsContract.Document.COLUMN_SIZE},null,null,null);
@@ -177,12 +178,12 @@ import timber.log.Timber;
 		return Long.parseLong(size);
 	}
 
-	public static boolean exists(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
+	public static boolean existsUri(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
 	{
 		Uri uri=getDocumentUri(target_file_path,tree_uri,tree_uri_path);
 		if(uri!=null)
 		{
-			return exists(context,uri);
+			return existsUri(context,uri);
 		}
 		else
 		{
@@ -190,20 +191,20 @@ import timber.log.Timber;
 		}
 	}
 
-	public static boolean exists(Context context, Uri uri)
+	public static boolean existsUri(Context context, Uri uri)
 	{
 		return context.getContentResolver().getType(uri) !=null;
 	}
 
 
 
-	public static List<String> list(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
+	public static List<String> listUri(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
 	{
 		List<String> list=new ArrayList<>();
 		Uri uri=getDocumentUri(target_file_path,tree_uri, tree_uri_path);
 		if(uri!=null)
 		{
-			if(isDirectory(context,uri))
+			if(isDirectoryUri(context,uri))
 			{
 				Uri children_uri=DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(target_file_path,tree_uri,tree_uri_path));
 				Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
@@ -650,13 +651,20 @@ import timber.log.Timber;
 					outStream = context.getContentResolver().openOutputStream(uri);
 					if (outStream != null)
 					{
-						success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
+						if(Global.CHECK_FTP_SERVER_CONNECTED())
+						{
+							success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
 //						inStream=MainActivity.FTP_CLIENT.retrieveFileStream(source_file_path);
 //						bufferedCopy(inStream,outStream,false,bytes_read);
-						if(cut)
-						{
-							deleteFTPFile(source_file_path);
+							if(cut)
+							{
+								deleteFTPFile(source_file_path);
+							}
 						}
+						else {
+							return false;
+						}
+
 					}
 
 				}
@@ -794,15 +802,21 @@ import timber.log.Timber;
 		{
 			boolean success = false;
 			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-			try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
-				bufferedCopy(fileInStream,outStream,false,bytes_read);
-				if (cut) {
-					deleteNativeFile(source);
+			//OutputStream outStream = null;
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
+					bufferedCopy(fileInStream,outStream,false,bytes_read);
+					if (cut) {
+						deleteNativeFile(source);
+					}
+					success=true;
+				} catch (Exception e) {
+					//Timber.e(Application.TAG,
+					//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+					return false;
 				}
-			} catch (Exception e) {
-				//Timber.e(Application.TAG,
-				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
-				return false;
+
 			}
 
 			return success;
@@ -813,20 +827,26 @@ import timber.log.Timber;
 		{
 			boolean success;
 			//OutputStream outStream=null;
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try (InputStream inStream = context.getContentResolver().openInputStream(data)) {
+					String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
+					success = MainActivity.FTP_CLIENT.storeFile(file_path, inStream);
 
-			try (InputStream inStream = context.getContentResolver().openInputStream(data)) {
-				String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-				success = MainActivity.FTP_CLIENT.storeFile(file_path, inStream);
 
+				} catch (Exception e) {
+					//Timber.e(Application.TAG,
+					//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+					return false;
+				}
+				// ignore exception
 
-			} catch (Exception e) {
-				//Timber.e(Application.TAG,
-				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+				return success;
+			}
+			else {
 				return false;
 			}
-			// ignore exception
 
-			return success;
 		}
 
 
@@ -885,57 +905,106 @@ import timber.log.Timber;
 		return usbFile;
 	}
 
+
 	public static boolean isFtpPathDirectory(String file_path)
 	{
-		//if(Global.CHECK_FTP_SERVER_CONNECTED())
+		synchronized (GET_FTP_LOCK)
 		{
-			try {
-				FtpDetailsViewModel.CONNECT();
-			} catch (IOException e) {
-				return false;
-			}
-			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(file_path))
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
 			{
-				return inputStream == null;
-			} catch (IOException e) {
-				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
-				return false;
+//			try {
+//				FtpDetailsViewModel.CONNECT();
+//			} catch (IOException e) {
+//				return false;
+//			}
+				try {
+					MainActivity.FTP_CLIENT.changeWorkingDirectory(file_path);
+					//FTPFile[] ftpFiles=MainActivity.FTP_CLIENT.listFiles();
+					MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
+					return true;//ftpFiles!=null && ftpFiles.length>0;
+				} catch (IOException e) {
+					Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
+					return false;
+				}
+//				try (InputStream inputStream=MainActivity.FTP_CLIENT.retr)
+//				{
+//					MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
+//					return inputStream == null;
+//				} catch (IOException e) {
+//					Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
+//					return false;
+//				}
 			}
+			return false;
 		}
-//		else {
-//			return false;
-//		}
 
 	}
 
-	public static FTPFile getFTPFile(String file_path)
+//		public static FTPFile getFTPFile(String file_path)
+//		{
+//			synchronized (GET_FTP_LOCK)
+//			{
+//				if(Global.CHECK_FTP_SERVER_CONNECTED())
+//				{
+//					FTPFile ftpFile = null;
+//					File file=new File(file_path);
+//					try {
+//						//FtpDetailsViewModel.CONNECT();
+//						MainActivity.FTP_CLIENT.changeWorkingDirectory(file_path);
+//						FTPFile[] ftpFiles=MainActivity.FTP_CLIENT.listFiles();
+//						MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
+//						if(ftpFiles!=null && ftpFiles.length==1)
+//						{
+//							return ftpFiles[0];
+//						}
+//
+//					} catch (IOException e) {
+//						Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
+//						return null;
+//					}
+//
+//
+//				}
+//				return null;
+//			}
+//
+//		}
+
+		public static FTPFile getFTPFile(String file_path)
 	{
-		//if(Global.CHECK_FTP_SERVER_CONNECTED())
-
+		synchronized (GET_FTP_LOCK)
 		{
-			FTPFile ftpFile = null;
-			File file=new File(file_path);
-			String parent_path=file.getParent();
-			String name=file.getName();
-			try {
-				FtpDetailsViewModel.CONNECT();
-				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
-				int size= ftpFiles_array.length;
-				for(int i=0;i<size;++i)
-				{
-					ftpFile=ftpFiles_array[i];
-					if(ftpFile.getName().equals(name))
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				FTPFile ftpFile = null;
+				File file=new File(file_path);
+				String parent_path=file.getParent();
+				String name=file.getName();
+				try {
+					//FtpDetailsViewModel.CONNECT();
+					MainActivity.FTP_CLIENT.changeWorkingDirectory(parent_path);
+					FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles();
+					MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
+					int size= ftpFiles_array.length;
+					for(int i=0;i<size;++i)
 					{
-						return ftpFile;
+						ftpFile=ftpFiles_array[i];
+						if(ftpFile.getName().equals(name))
+						{
+							return ftpFile;
+						}
 					}
+					//MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
+				} catch (IOException e) {
+					Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
+					return null;
 				}
-			} catch (IOException e) {
-				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-				return null;
-			}
 
+
+			}
+			return null;
 		}
-		return null;
+
 	}
 
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
@@ -963,11 +1032,27 @@ import timber.log.Timber;
 
 	public static boolean mkdirFtp(String file_path)
 	{
-		try {
-			return MainActivity.FTP_CLIENT.makeDirectory(file_path);
-		} catch (IOException e) {
+		boolean dirExists;
+		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		{
+			try {
+				dirExists=MainActivity.FTP_CLIENT.changeWorkingDirectory(file_path);
+				if(dirExists)
+				{
+					return true;
+				}
+				else {
+					return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+				}
+
+			} catch (IOException e) {
+				return false;
+			}
+		}
+		else {
 			return false;
 		}
+
 	}
 
 
@@ -984,7 +1069,7 @@ import timber.log.Timber;
 
 
 	@SuppressWarnings("null")
-	public static FileOutputStream get_fileoutputstream(Context context,@NonNull final String target_file_path, Uri tree_uri,String tree_uri_path)
+	public static FileOutputStream get_file_outputstream(Context context, @NonNull final String target_file_path, Uri tree_uri, String tree_uri_path)
 	{
 		FileOutputStream fileOutStream=null;
 		try 
@@ -1064,9 +1149,15 @@ import timber.log.Timber;
 
 		private static boolean deleteFTPFile(String file_path)
 		{
-			try {
-				return MainActivity.FTP_CLIENT.deleteFile(file_path);
-			} catch (IOException e) {
+			if(Global.CHECK_FTP_SERVER_CONNECTED())
+			{
+				try {
+					return MainActivity.FTP_CLIENT.deleteFile(file_path);
+				} catch (IOException e) {
+					return false;
+				}
+			}
+			else {
 				return false;
 			}
 		}
@@ -1078,7 +1169,7 @@ import timber.log.Timber;
 		if (folder.isDirectory())            //Check if folder file is a real folder
 		{
 			File[] list = folder.listFiles(); //Storing all file name within array
-			if (list != null)                //Checking list value is null or not to check folder containts atlest one file
+			if (list != null)                //Checking listUri value is null or not to check folder containts atlest one file
 			{
 				int size=list.length;
 				for (int i = 0; i < size; ++i)
@@ -1129,7 +1220,7 @@ import timber.log.Timber;
 					list = folder.listFiles();
 				} catch (IOException e) {
 				}
-				if (list != null)                //Checking list value is null or not to check folder containts atlest one file
+				if (list != null)                //Checking listUri value is null or not to check folder containts atlest one file
 				{
 					int size=list.length;
 					for (int i = 0; i < size; ++i)
@@ -1155,7 +1246,6 @@ import timber.log.Timber;
 			try {
 				if(FileUtil.isFtpPathDirectory(file_path))
 				{
-
 					String[] list = MainActivity.FTP_CLIENT.listNames(file_path); //Storing all file name within array
 					if(list!=null)
 					{
@@ -1163,7 +1253,6 @@ import timber.log.Timber;
 						for (int i = 0; i < size; ++i)
 						{
 							success=deleteFtpDirectory(list[i]);
-
 						}
 					}
 
@@ -1192,15 +1281,15 @@ import timber.log.Timber;
 	public static boolean deleteSAFDirectory(final File folder, Context context,String baseFolder) {     
 		boolean success=false;
 
-		if (folder.isDirectory())            //Check if folder file is a real folder
+		if (folder.isDirectoryUri())            //Check if folder file is a real folder
 		{
-			File[] list = folder.listFiles(); //Storing all file name within array
-			if (list != null)                //Checking list value is null or not to check folder containts atlest one file
+			File[] listUri = folder.listFiles(); //Storing all file name within array
+			if (listUri != null)                //Checking listUri value is null or not to check folder containts atlest one file
 			{
-				for (int i = 0; i < list.length; ++i)
+				for (int i = 0; i < listUri.length; ++i)
 				{
-					File tmpF = list[i];
-					if (tmpF.isDirectory())   //if folder  found within folder remove that folder using recursive method
+					File tmpF = listUri[i];
+					if (tmpF.isDirectoryUri())   //if folder  found within folder remove that folder using recursive method
 					{
 						success=deleteSAFDirectory(tmpF,context,baseFolder);
 					}
@@ -1212,7 +1301,7 @@ import timber.log.Timber;
 				}
 			}
 
-			if(folder.exists())  //delete empty folder
+			if(folder.existsUri())  //delete empty folder
 			{
 				success=deleteSAFFile(folder,context,baseFolder);
 			}
@@ -1407,7 +1496,7 @@ import timber.log.Timber;
 			String [] file_path_substring=target_file_path.substring(offset).split("/");
 			for (int i=0; i< file_path_substring.length;++i)
 			{
-				if(!FileUtil.exists(context,Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]),tree_uri,tree_uri_path))
+				if(!FileUtil.existsUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]),tree_uri,tree_uri_path))
 				{
 
 					if(target_uri_path_copy.equals(""))
@@ -1566,9 +1655,9 @@ import timber.log.Timber;
 		}
 
 		/**
-		 * Get a list of external SD card paths. (Kitkat or higher.)
+		 * Get a listUri of external SD card paths. (Kitkat or higher.)
 		 *
-		 * @return A list of external SD card paths.
+		 * @return A listUri of external SD card paths.
 		 */
 		public static String[] getExtSdCardPaths(Context context)
 		{

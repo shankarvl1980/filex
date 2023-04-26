@@ -51,9 +51,6 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
         });
     }
 
-//    public void execute() {
-//        execute(null);
-//    }
 
     public void execute(Params params) {
         getHandler().post(new Runnable() {

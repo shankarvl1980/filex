@@ -141,8 +141,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         if(FTP_POJO==null)return false;
 
         MainActivity.FTP_CLIENT=new FTPClient();
-//        FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
-//        MainActivity.FTP_CLIENT.configure(conf);
         MainActivity.FTP_CLIENT.connect(FTP_POJO.server,FTP_POJO.port);
         if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode())) {
             MainActivity.FTP_CLIENT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second

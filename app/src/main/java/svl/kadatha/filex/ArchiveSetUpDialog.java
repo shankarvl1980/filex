@@ -640,7 +640,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		{
 			if(check_SAF_permission(file_path,fileObjectType))
 			{
-				return FileUtil.exists(context, file_path, tree_uri, tree_uri_path);
+				return FileUtil.existsUri(context, file_path, tree_uri, tree_uri_path);
 			}
 			else
 			{

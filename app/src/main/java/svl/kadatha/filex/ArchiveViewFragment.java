@@ -48,10 +48,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public int totalFilePOJO_list_Size;
     public RecyclerView filepath_recyclerview;
     public RecyclerView recyclerView;
-    public ImageView layout_image_view,filter_image_view,time_image_view;
+    public ImageView time_image_view;
     LinearLayoutManager llm;
     GridLayoutManager glm;
-    public boolean grid_layout;
     TextView folder_empty;
     ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter adapter;
     private FilePathRecyclerViewAdapter filepath_adapter;

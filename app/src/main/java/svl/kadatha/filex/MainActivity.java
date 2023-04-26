@@ -158,7 +158,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		context=this;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 			if (!Environment.isExternalStorageManager())
@@ -1243,7 +1243,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(file_path.equals(DetailFragment.SEARCH_RESULT))
 		{
 			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
-					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
 
 		}
 		else if(DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null && !(fileObjectType+file_path).equals(existingFilePOJOkey))
@@ -1414,7 +1414,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 		search_view.setText("");
 		search_view.clearFocus();
-		search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo list
+		search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
 		search_toolbar_visible=false;
 		if(df.adapter!=null)
 		{

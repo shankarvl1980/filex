@@ -1236,7 +1236,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			try {
 //				folder = FileUtil.getFTPFile(file_path); //MainActivity.FTP_CLIENT.mlistFile(file_path);
 //				if(folder==null) return false;
-//                if (folder.isDirectory())            //Check if folder file is a real folder
+//                if (folder.isDirectoryUri())            //Check if folder file is a real folder
 				if(FileUtil.isFtpPathDirectory(file_path))
 				{
 					if(isCancelled())
@@ -1253,7 +1253,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 							{
 								return false;
 							}
-							//FTPFile tmpF = list[i];
+							//FTPFile tmpF = listUri[i];
 							//String name=tmpF.getName();
 							//String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);
 							success=deleteFtpDirectory(list[i]);
@@ -1264,12 +1264,12 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				}
 				counter_no_files++;
-				counter_size_files+=0;//folder.getSize();
+				counter_size_files+=0;//folder.getSizeUri();
 				total_bytes_read[0]=counter_size_files;
 				size_of_files_format=FileUtil.humanReadableByteCount(counter_size_files);
 				//mutable_count_no_files.postValue(counter_no_files);
 				deleted_file_name=new File(file_path).getName();
-				//if(folder.isDirectory())
+				//if(folder.isDirectoryUri())
 				if(FileUtil.isFtpPathDirectory(file_path))
 				{
 					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
@@ -1539,7 +1539,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				{
 					return false;
 				}
-				if(!destination.exists())// || !destination.isDirectory())
+				if(!destination.exists())// || !destination.isDirectoryUri())
 				{
 					if(!(success=FileUtil.mkdirsNative(destination)))
 					{
@@ -1547,7 +1547,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					}
 				}
 				else {
-					if(destination.isDirectory()) success=true;   //make success true as destination dir exists to execute cut directory
+					if(destination.isDirectory()) success=true;   //make success true as destination dir existsUri to execute cut directory
 				}
 
 				String[] files_name_array = source.list();
@@ -1612,7 +1612,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				if(destFileObjectType==FileObjectType.FILE_TYPE)
 				{
 					File destination=new File(dest_file_path,name);
-					if(!destination.exists())// || !destination.isDirectory())
+					if(!destination.exists())// || !destination.isDirectoryUri())
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -1629,7 +1629,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				else
 				{
 					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
-					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
+					if(!FileUtil.existsUri(context,dest_uri) || !FileUtil.isDirectoryUri(context,dest_uri))
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -1699,7 +1699,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
 				UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
-				if(dest_usbFile==null) // || !dest_usbFile.isDirectory())
+				if(dest_usbFile==null) // || !dest_usbFile.isDirectoryUri())
 				{
 					dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
 					if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
@@ -1768,17 +1768,17 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
 				//FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-				//if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
-				if(FileUtil.isFtpPathDirectory(file_path))
+				//if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
+				//if(FileUtil.isFtpPathDirectory(file_path))
 				{
 					if(!(success=FileUtil.mkdirFtp(file_path)))
 					{
 						return false;
 					}
 				}
-				else {
-					success=true;
-				}
+//				else {
+//					success=true;
+//				}
 
 
 				String[] files_name_list = source.list();
@@ -1839,7 +1839,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
 				UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
-				if(dest_usbFile==null)// || !dest_usbFile.isDirectory())
+				if(dest_usbFile==null)// || !dest_usbFile.isDirectoryUri())
 				{
 					dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
 					if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
@@ -1911,7 +1911,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				{
 					return false;
 				}
-				if(!destination.exists()) // || !destination.isDirectory())
+				if(!destination.exists()) // || !destination.isDirectoryUri())
 				{
 					if(!(success=FileUtil.mkdirsNative(destination)))
 					{
@@ -1987,7 +1987,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				if(destFileObjectType==FileObjectType.FILE_TYPE)
 				{
 					File destination=new File(dest_file_path,name);
-					if(!destination.exists()) // || !destination.isDirectory())
+					if(!destination.exists()) // || !destination.isDirectoryUri())
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -2004,7 +2004,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				else
 				{
 					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
-					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
+					if(!FileUtil.existsUri(context,dest_uri) || !FileUtil.isDirectoryUri(context,dest_uri))
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -2075,14 +2075,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 			File destination=new File(parent_file_path,name);
 //			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
 //			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectory())
+//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
 				{
 					return false;
 				}
-				if(!destination.exists()) // || !destination.isDirectory())
+				if(!destination.exists()) // || !destination.isDirectoryUri())
 				{
 					if(!(success=FileUtil.mkdirsNative(destination)))
 					{
@@ -2136,7 +2136,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 				counter_no_files++;
-				counter_size_files+=0;//src_ftpfile.getSize();
+				counter_size_files+=0;//src_ftpfile.getSizeUri();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
 				copied_file=new File(src_file_path).getName();
 				success=FileUtil.copy_FtpFile_File(src_file_path,destination,cut,total_bytes_read);
@@ -2153,7 +2153,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			boolean success=false;
 //			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
 //			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectory())
+//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
@@ -2164,7 +2164,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				if(destFileObjectType==FileObjectType.FILE_TYPE)
 				{
 					File destination=new File(dest_file_path,name);
-					if(!destination.exists()) // || !destination.isDirectory())
+					if(!destination.exists()) // || !destination.isDirectoryUri())
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -2221,7 +2221,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 				counter_no_files++;
-				counter_size_files+=0;//src_ftpfile.getSize();
+				counter_size_files+=0;//src_ftpfile.getSizeUri();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
 				copied_file=new File(src_file_path).getName();
 				success=FileUtil.copy_FtpFile_SAFFile(context,src_file_path,dest_file_path,name,uri,uri_path,cut,total_bytes_read);
@@ -2237,7 +2237,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			boolean success=false;
 //			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
 //			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectory())
+//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
@@ -2248,7 +2248,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
 //				FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-//				if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
+//				if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
 //				{
 //					if(!(success=FileUtil.mkdirFtp(file_path)))
 //					{
@@ -2256,7 +2256,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 //					}
 //				}
 //				else {
-//					if(dest_ftpFile.isDirectory()) success=true;
+//					if(dest_ftpFile.isDirectoryUri()) success=true;
 //				}
 
 				if(FileUtil.isFtpPathDirectory(file_path))
@@ -2314,7 +2314,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 				counter_no_files++;
-				counter_size_files+=0;//src_ftpfile.getSize();
+				counter_size_files+=0;//src_ftpfile.getSizeUri();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
 				copied_file=new File(src_file_path).getName();
 				success=FileUtil.copy_FtpFile_FtpFile(src_file_path,dest_file_path,cut,total_bytes_read);

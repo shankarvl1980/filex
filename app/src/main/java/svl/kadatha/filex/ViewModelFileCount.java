@@ -240,7 +240,7 @@ public class ViewModelFileCount extends ViewModel {
             long size_of_files=0L;
             String parent_file_path=source_list_files.get(i);
             Uri uri=FileUtil.getDocumentUri(parent_file_path,tree_uri,tree_uri_path);
-            if(FileUtil.isDirectory(context,uri))
+            if(FileUtil.isDirectoryUri(context,uri))
             {
                 Uri children_uri= DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(parent_file_path,tree_uri,tree_uri_path));
                 Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);

@@ -152,7 +152,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                     while((line=bufferedReader.readLine())!=null)
                     {
                         line_length=line.getBytes().length+eol_len;
-                        if(line_length>150000)throw new IOException("Line length limit exceeded, could not be opened fully");
+                        if(line_length>100000)throw new IOException("Line length limit exceeded, could not be opened fully");
                         br+=line_length;
                         stringBuilder.append(line).append("\n");
                         count++;

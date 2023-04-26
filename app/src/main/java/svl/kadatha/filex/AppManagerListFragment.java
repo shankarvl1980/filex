@@ -664,7 +664,7 @@ public class AppManagerListFragment extends Fragment {
         {
             if(check_SAF_permission(new_file_path,fileObjectType,bundle))
             {
-                return FileUtil.exists(context, new_file_path, tree_uri, tree_uri_path);
+                return FileUtil.existsUri(context, new_file_path, tree_uri, tree_uri_path);
             }
             else
             {

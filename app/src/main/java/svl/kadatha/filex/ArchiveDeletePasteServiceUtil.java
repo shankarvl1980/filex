@@ -516,7 +516,7 @@ public class ArchiveDeletePasteServiceUtil {
                 }
                 else
                 {
-                    if(FileUtil.exists(context,f.getAbsolutePath(),tree_uri,tree_uri_path))
+                    if(FileUtil.existsUri(context,f.getAbsolutePath(),tree_uri,tree_uri_path))
                     {
                         FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
                     }
@@ -643,7 +643,7 @@ public class ArchiveDeletePasteServiceUtil {
             }
             else
             {
-                parent_dir_exists=FileUtil.exists(context,parent_dest_file_path,uri,uri_path);
+                parent_dir_exists=FileUtil.existsUri(context,parent_dest_file_path,uri,uri_path);
             }
             if(!parent_dir_exists)
             {
@@ -959,7 +959,7 @@ public class ArchiveDeletePasteServiceUtil {
                 long size_of_files=0L;
                 String parent_file_path=source_list_files.get(i);
                 Uri uri=FileUtil.getDocumentUri(parent_file_path,target_uri,target_uri_path);
-                if(FileUtil.isDirectory(context,uri))
+                if(FileUtil.isDirectoryUri(context,uri))
                 {
                     Uri children_uri= DocumentsContract.buildChildDocumentsUriUsingTree(target_uri,FileUtil.getDocumentID(parent_file_path,target_uri,target_uri_path));
                     Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
@@ -983,7 +983,7 @@ public class ArchiveDeletePasteServiceUtil {
                 else
                 {
                     no_of_files++;
-                    size_of_files+=FileUtil.getSize(context,uri);
+                    size_of_files+=FileUtil.getSizeUri(context,uri);
                 }
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;

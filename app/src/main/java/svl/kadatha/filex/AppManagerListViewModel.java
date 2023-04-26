@@ -213,7 +213,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            if(!destination.exists())// || !destination.isDirectory())
+            if(!destination.exists())// || !destination.isDirectoryUri())
             {
                 if(!(success=FileUtil.mkdirsNative(destination)))
                 {
@@ -221,7 +221,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
             }
             else {
-                if(destination.isDirectory()) success=true;   //make success true as destination dir exists to execute cut directory
+                if(destination.isDirectory()) success=true;   //make success true as destination dir existsUri to execute cut directory
             }
 
             String[] files_name_array = source.list();
@@ -274,7 +274,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
             if(destFileObjectType==FileObjectType.FILE_TYPE)
             {
                 File destination=new File(dest_file_path,name);
-                if(!destination.exists())// || !destination.isDirectory())
+                if(!destination.exists())// || !destination.isDirectoryUri())
                 {
                     if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
                     {
@@ -292,7 +292,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 				else
 				{
 					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
-					if(!FileUtil.exists(context,dest_uri) || !FileUtil.isDirectory(context,dest_uri))
+					if(!FileUtil.existsUri(context,dest_uri) || !FileUtil.isDirectoryUri(context,dest_uri))
 					{
 						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
 						{
@@ -349,7 +349,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
             String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
             UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
-            if(dest_usbFile==null) // || !dest_usbFile.isDirectory())
+            if(dest_usbFile==null) // || !dest_usbFile.isDirectoryUri())
             {
                 dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
                 if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
@@ -405,7 +405,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
             String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
             //FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-            //if(dest_ftpFile==null) // || !dest_usbFile.isDirectory())
+            //if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
             if(FileUtil.isFtpPathDirectory(file_path))
             {
                 if(!(success=FileUtil.mkdirFtp(file_path)))
