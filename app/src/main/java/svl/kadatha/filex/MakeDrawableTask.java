@@ -25,7 +25,7 @@ import timber.log.Timber;
  * Created by Yashar on 3/8/2017.
  */
 
-public class MakeDrawableTask extends svl.kadatha.filex.AsyncTask<Void, Void, Drawable> {
+public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable> {
 
     private static final String TAG = "MakeDrawableTask";
 

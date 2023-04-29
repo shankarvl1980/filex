@@ -184,7 +184,7 @@ public class InstaCropperView extends View {
 
         final Context context = getContext();
 
-        new svl.kadatha.filex.AsyncTask<Void, Void, Bitmap>() {
+        new AlternativeAsyncTask<Void, Void, Bitmap>() {
 
             @Override
             protected void onPreExecute() {
@@ -305,7 +305,7 @@ public class InstaCropperView extends View {
                 ((InstaCropperActivity)context).progress_bar.setVisibility(GONE);
             }
 
-        }.execute();
+        }.execute(null);
     }
 
     private Bitmap cropImageAndResize(Context context, int left, int top, int right, int bottom, int width, int height) {
@@ -514,7 +514,7 @@ public class InstaCropperView extends View {
 
         };
 
-        mMakeDrawableTask.execute();
+        mMakeDrawableTask.execute(null);
     }
 
     private void onDrawableChanged() {

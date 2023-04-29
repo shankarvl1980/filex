@@ -519,7 +519,7 @@ public class InstaCropperViewNew extends View {
 
         };
 
-        mMakeDrawableTask.execute();
+        mMakeDrawableTask.execute(null);
     }
 
     private void onDrawableChanged() {

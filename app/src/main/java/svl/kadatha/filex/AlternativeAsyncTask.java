@@ -18,13 +18,10 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     }
 
-    public ExecutorService getExecutor() {
-        return executor;
-    }
-
     public Handler getHandler() {
         if (handler == null) {
-            synchronized(AsyncTask.class) {
+            synchronized(AlternativeAsyncTask.class)
+            {
                 handler = new Handler(Looper.getMainLooper());
             }
         }
@@ -33,7 +30,9 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     protected void onPreExecute() {}
 
-    protected abstract Result doInBackground(Params... params);
+    //protected abstract Result doInBackground()
+
+    protected abstract Result doInBackground(Params[] params);
 
     protected void onPostExecute(Result result) {}
 
@@ -41,7 +40,6 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     protected void onProgressUpdate(@NotNull Progress value) {}
 
-    // used for push progress resport to UI
     public void publishProgress(@NotNull Progress value) {
         getHandler().post(new Runnable() {
             @Override
@@ -52,7 +50,7 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
     }
 
 
-    public void execute(Params params) {
+    public void execute(Params[] params) {
         getHandler().post(new Runnable() {
             @Override
             public void run() {

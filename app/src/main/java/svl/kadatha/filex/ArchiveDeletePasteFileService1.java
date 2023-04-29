@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -127,7 +126,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
 					archiveAsyncTask=new ArchiveAsyncTask();
-					archiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					archiveAsyncTask.execute(null);//executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.zipping)+" '"+zip_folder_name+".zip "+getString(R.string.at)+" "+dest_folder;
 
 				}
@@ -152,7 +151,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					}
 
 					unarchiveAsyncTask=new UnarchiveAsyncTask();
-					unarchiveAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					unarchiveAsyncTask.execute(null);//executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.unzipping)+" '"+zip_file_path+" "+getString(R.string.at)+" "+dest_folder;
 
 				}
@@ -169,7 +168,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					source_folder=bundle.getString("source_folder");
 					storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
 					delete_file_async_task=new DeleteFileAsyncTask();
-					delete_file_async_task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					delete_file_async_task.execute(null);///executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
 
 				}
@@ -194,7 +193,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
 					cutCopyAsyncTask=new CutCopyAsyncTask();
-					cutCopyAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					cutCopyAsyncTask.execute(null);//executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=(cut? getString(R.string.moving_files) +" "+getString(R.string.to_symbol)+" "+dest_folder : getString(R.string.copying_files)+" "+getString(R.string.to_symbol)+" "+dest_folder);
 
 				}
@@ -216,7 +215,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(1,counter_size_files);
 					fileCountSize.fileCount();
 					copyToAsyncTask=new CopyToAsyncTask();
-					copyToAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					copyToAsyncTask.execute(null);//executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					notification_content=(getString(R.string.copying_files)+" "+getString(R.string.to_symbol)+" "+dest_folder);
 
 				}
@@ -332,7 +331,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		Global.SET_OTHER_FILE_PERMISSION(source_other_file_permission,source_folder);
 	}
 
-	public class ArchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	public class ArchiveAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		final String zip_file_name=zip_folder_name+".zip";
 		UsbFile parentUsbFile,zipUsbFile;
@@ -407,6 +406,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 					int size=files_selected_array.size();
 					for(int i=0;i<size;++i)
 					{
+						if(isCancelled())
+						{
+							return false;
+						}
 						String path=files_selected_array.get(i);
 						List<File> file_array=new ArrayList<>();
 						Iterate.populate(new File(path),file_array,false);
@@ -608,7 +611,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 	}
 
-	public class UnarchiveAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 
 		String zip_dest_path;
@@ -914,7 +917,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 	}
 
-	private class DeleteFileAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	private class DeleteFileAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		final List<String> deleted_file_names=new ArrayList<>();
 		final List<String> deleted_files_path_list=new ArrayList<>();
@@ -1234,9 +1237,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 			boolean success=true;
 			FTPFile folder;
 			try {
-//				folder = FileUtil.getFTPFile(file_path); //MainActivity.FTP_CLIENT.mlistFile(file_path);
-//				if(folder==null) return false;
-//                if (folder.isDirectoryUri())            //Check if folder file is a real folder
 				if(FileUtil.isFtpPathDirectory(file_path))
 				{
 					if(isCancelled())
@@ -1253,9 +1253,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 							{
 								return false;
 							}
-							//FTPFile tmpF = listUri[i];
-							//String name=tmpF.getName();
-							//String path=Global.CONCATENATE_PARENT_CHILD_PATH(file_path,name);
 							success=deleteFtpDirectory(list[i]);
 
 						}
@@ -1315,7 +1312,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 		}
 	}
 
-	public class CutCopyAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	public class CutCopyAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		FilePOJO filePOJO;
 
@@ -1608,7 +1605,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 
-
 				if(destFileObjectType==FileObjectType.FILE_TYPE)
 				{
 					File destination=new File(dest_file_path,name);
@@ -1767,19 +1763,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-				//FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-				//if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
-				//if(FileUtil.isFtpPathDirectory(file_path))
+				if(!(success=FileUtil.mkdirFtp(file_path)))
 				{
-					if(!(success=FileUtil.mkdirFtp(file_path)))
-					{
-						return false;
-					}
+					return false;
 				}
-//				else {
-//					success=true;
-//				}
-
 
 				String[] files_name_list = source.list();
 				if(files_name_list==null)
@@ -2073,9 +2060,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		{
 			boolean success=false;
 			File destination=new File(parent_file_path,name);
-//			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
-//			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
@@ -2151,9 +2135,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		public boolean Copy_FtpFile_SAFFile(Context context, String src_file_path, String dest_file_path,String name,Uri uri,String uri_path,boolean cut)
 		{
 			boolean success=false;
-//			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
-//			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
@@ -2235,9 +2216,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 		public boolean Copy_FtpFile_FtpFile(String src_file_path, String dest_file_path,String name,boolean cut)
 		{
 			boolean success=false;
-//			FTPFile src_ftpfile=FileUtil.getFTPFile(src_file_path);//MainActivity.FTP_CLIENT.mlistFile(src_file_path);
-//			if(src_ftpfile==null)return false;
-//			if (src_ftpfile.isDirectoryUri())
 			if(FileUtil.isFtpPathDirectory(src_file_path))
 			{
 				if(isCancelled())
@@ -2245,29 +2223,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 					return false;
 				}
 
-
 				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-//				FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-//				if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
-//				{
-//					if(!(success=FileUtil.mkdirFtp(file_path)))
-//					{
-//						return false;
-//					}
-//				}
-//				else {
-//					if(dest_ftpFile.isDirectoryUri()) success=true;
-//				}
-
-				if(FileUtil.isFtpPathDirectory(file_path))
+				if(!(success=FileUtil.mkdirFtp(file_path)))
 				{
-					success=true;
-				}
-				else {
-					if(!(success=FileUtil.mkdirFtp(file_path)))
-					{
-						return false;
-					}
+					return false;
 				}
 
 				String[] inner_source_list;
@@ -2348,7 +2307,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	}
 
 
-	public class CopyToAsyncTask extends svl.kadatha.filex.AsyncTask<Void,Void,Boolean>
+	public class CopyToAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		FilePOJO filePOJO;
 
@@ -2434,7 +2393,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			}
 
 			copied_file=file_name;
-			success=FileUtil.copy_to_File(context,data,destination,cut,total_bytes_read);
+			success=FileUtil.copy_to_File(context,data,destination, total_bytes_read);
 			//mutable_count_no_files.postValue(counter_no_files);
 			return success;
 		}
@@ -2450,7 +2409,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				return false;
 			}
 			copied_file=file_name;
-			success=FileUtil.copy_to_SAFFile(context,data,dest_file_path,name,uri,uri_path,cut,total_bytes_read);
+			success=FileUtil.copy_to_SAFFile(context,data,dest_file_path,name,uri,uri_path, total_bytes_read);
 			return success;
 		}
 
@@ -2462,7 +2421,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				return false;
 			}
 			copied_file=file_name;
-			success=FileUtil.copy_to_UsbFile(context,data,dest_file_path,name,cut,total_bytes_read);
+			success=FileUtil.copy_to_UsbFile(context,data,dest_file_path,name, total_bytes_read);
 			//mutable_count_no_files.postValue(counter_no_files);
 			return success;
 		}
@@ -2476,7 +2435,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				return false;
 			}
 			copied_file=file_name;
-			success=FileUtil.copy_to_FtpFile(context, data,dest_file_path,name,cut);
+			success=FileUtil.copy_to_FtpFile(context, data,dest_file_path,name,total_bytes_read);
 			//mutable_count_no_files.postValue(counter_no_files);
 			return success;
 		}
