@@ -76,7 +76,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this,2,Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
 		Button hide_button = buttons_layout.findViewById(R.id.first_button);
 		hide_button.setText(R.string.hide);
-		Button cancel_button = findViewById(R.id.second_button);
+		Button cancel_button = buttons_layout.findViewById(R.id.second_button);
 		cancel_button.setText(R.string.cancel);
 
 		hide_button.setOnClickListener(new View.OnClickListener()

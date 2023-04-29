@@ -60,9 +60,9 @@ public class SaveFileConfirmationDialog extends DialogFragment
         TextView size_files_textview = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
         ViewGroup buttons_layout = v.findViewById((R.id.fragment_create_rename_delete_button_layout));
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-        Button okbutton = v.findViewById(R.id.first_button);
+        Button okbutton = buttons_layout.findViewById(R.id.first_button);
 		okbutton.setText(R.string.yes);
-        Button cancelbutton = v.findViewById(R.id.second_button);
+        Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.no);
 
 		dialog_heading_textview.setText(R.string.save);

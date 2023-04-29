@@ -79,7 +79,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button ok_button = buttons_layout.findViewById(R.id.first_button);
 		ok_button.setText(R.string.ok);
-        Button cancel_button = v.findViewById(R.id.second_button);
+        Button cancel_button = buttons_layout.findViewById(R.id.second_button);
 		cancel_button.setText(R.string.cancel);
 		ok_button.setOnClickListener(new View.OnClickListener()
 		{

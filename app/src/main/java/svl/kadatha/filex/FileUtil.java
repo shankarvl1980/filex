@@ -40,37 +40,37 @@ import timber.log.Timber;
 /**
 	 * Utility class for helping parsing file systems.
 	 */
-	public final class FileUtil 
-	{
+public final class FileUtil
+{
 
-		/**
-		 * The name of the primary volume (LOLLIPOP).
-		 */
-		private static final String PRIMARY_VOLUME_NAME = "primary";
-		public final static int BUFFER_SIZE=8192;
-		public static int USB_CHUNK_SIZE;
-		private static final Object GET_FTP_LOCK=new Object();
-
-		/**
-		 * Hide default constructor.
-		 */
-		private FileUtil() 
-		{
-			throw new UnsupportedOperationException();
-		}
-
-	
-	
 	/**
-	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
-	 * existing, it is created.
-	 *
-	 * @param file              The file.
-	 * @param isDirectory       flag indicating if the file should be a directory.
-	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
-	 * @return The DocumentFile
+	 * The name of the primary volume (LOLLIPOP).
 	 */
-	 
+	private static final String PRIMARY_VOLUME_NAME = "primary";
+	public final static int BUFFER_SIZE=8192;
+	public static int USB_CHUNK_SIZE;
+	private static final Object GET_FTP_LOCK=new Object();
+
+	/**
+	 * Hide default constructor.
+	 */
+	private FileUtil()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+
+/**
+ * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
+ * existing, it is created.
+ *
+ * @param file              The file.
+ * @param isDirectory       flag indicating if the file should be a directory.
+ * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
+ * @return The DocumentFile
+ */
+
 
 
 
@@ -341,10 +341,7 @@ import timber.log.Timber;
 			// ignore exception
 
 		}
-		else {
-			return success;
-		}
-		//return success;
+		return success;
 	}
 
 	public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,boolean cut,long[] bytes_read)
@@ -370,10 +367,7 @@ import timber.log.Timber;
 			// ignore exception
 
 		}
-		else {
-			return success;
-		}
-		//return success;
+		return success;
 	}
 
 
@@ -532,7 +526,7 @@ import timber.log.Timber;
 		{
 			try 
 			{
-				outStream.close();
+				if(outStream!=null)outStream.close();
 			}
 			catch (Exception e) 
 			{
@@ -815,7 +809,7 @@ import timber.log.Timber;
 				if (cut) {
 					deleteNativeFile(source);
 				}
-				success=true;
+				return true;
 			} catch (Exception e) {
 				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
@@ -838,8 +832,6 @@ import timber.log.Timber;
 			try (InputStream inStream = context.getContentResolver().openInputStream(data); OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
 				bufferedCopy(inStream,outStream,false,bytes_read);
 				return true;
-
-
 			} catch (Exception e) {
 				//Timber.e(Application.TAG,
 				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
@@ -851,10 +843,7 @@ import timber.log.Timber;
 		else {
 			return false;
 		}
-
 	}
-
-
 
 	public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
 	{
@@ -910,7 +899,20 @@ import timber.log.Timber;
 		return usbFile;
 	}
 
+	public static boolean isFtpFileExists(String file_path)
+	{
+		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		{
+			try {
+				String status=MainActivity.FTP_CLIENT.getStatus(file_path);
+				return status != null;
+			} catch (IOException e) {
+				return false;
+			}
 
+		}
+		return false;
+	}
 	public static boolean isFtpPathDirectory(String file_path)
 	{
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
@@ -959,7 +961,7 @@ import timber.log.Timber;
 	{
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			FTPFile ftpFile = null;
+			FTPFile ftpFile;
 			File file=new File(file_path);
 			String parent_path=file.getParent();
 			String name=file.getName();
@@ -1011,27 +1013,32 @@ import timber.log.Timber;
 
 	public static boolean mkdirFtp(String file_path)
 	{
-		boolean dirExists;
+		boolean dirExists,fileExists;
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
 			try {
-				dirExists=FileUtil.isFtpPathDirectory(file_path);
-				if(dirExists)
+				fileExists=FileUtil.isFtpFileExists(file_path);
+				if(fileExists)
 				{
-					return true;
+					dirExists=FileUtil.isFtpPathDirectory(file_path);
+					if(dirExists)
+					{
+						return true;
+					}
+					else {
+						return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+					}
 				}
 				else {
 					return MainActivity.FTP_CLIENT.makeDirectory(file_path);
 				}
 
+
 			} catch (IOException e) {
 				return false;
 			}
 		}
-		else {
-			return false;
-		}
-
+		return false;
 	}
 
 
@@ -1136,9 +1143,7 @@ import timber.log.Timber;
 				return false;
 			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	public static boolean deleteNativeDirectory(final File folder)

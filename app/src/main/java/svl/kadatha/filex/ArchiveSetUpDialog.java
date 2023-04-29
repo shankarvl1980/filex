@@ -140,9 +140,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 		progress_bar.setVisibility(View.GONE);
 		ViewGroup buttons_layout = zipdialogview.findViewById(R.id.fragment_archive_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-		okbutton= zipdialogview.findViewById(R.id.first_button);
+		okbutton= buttons_layout.findViewById(R.id.first_button);
 		okbutton.setText(R.string.ok);
-		Button cancelbutton = zipdialogview.findViewById(R.id.second_button);
+		Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
 		browsebutton.setVisibility(View.GONE);
 		customdir_edittext.setVisibility(View.GONE);

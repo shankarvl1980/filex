@@ -108,9 +108,9 @@ public class RenameFileDialog extends DialogFragment
 		progress_bar=v.findViewById(R.id.fragment_create_rename_delete_progressbar);
 		ViewGroup buttons_layout = v.findViewById(R.id.fragment_create_rename_delete_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-        okbutton = buttons_layout.findViewById(R.id.first_button);
+		okbutton = buttons_layout.findViewById(R.id.first_button);
 		okbutton.setText(R.string.ok);
-        Button cancelbutton = v.findViewById(R.id.second_button);
+        Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
 
 		dialog_heading_textview.setText(R.string.rename);
@@ -245,10 +245,10 @@ public class RenameFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
+//						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
 //						Below is not working when overwriting, connection is lost. So for the time being, don't try renaming
-//						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-//						renameReplaceConfirmationDialog.show(fragmentManager,"");
+						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
+						renameReplaceConfirmationDialog.show(fragmentManager,"");
 
 					}
 				}

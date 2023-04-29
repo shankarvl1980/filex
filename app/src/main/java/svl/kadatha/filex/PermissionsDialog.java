@@ -117,9 +117,9 @@ public class PermissionsDialog extends DialogFragment
         CheckBox other_exe_chkbox = v.findViewById(R.id.fragment_permissions_other_execute_chkbox);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_permissions_button_layout);
 		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
-        Button save_btn = v.findViewById(R.id.first_button);
+        Button save_btn = buttons_layout.findViewById(R.id.first_button);
 		save_btn.setText(R.string.save);
-        Button cancel_btn = v.findViewById(R.id.second_button);
+        Button cancel_btn = buttons_layout.findViewById(R.id.second_button);
 		cancel_btn.setText(R.string.cancel);
 		save_btn.setOnClickListener(new View.OnClickListener()
 		{

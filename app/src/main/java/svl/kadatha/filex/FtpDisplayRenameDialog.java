@@ -79,7 +79,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button okbutton = buttons_layout.findViewById(R.id.first_button);
         okbutton.setText(R.string.ok);
-        Button cancelbutton = v.findViewById(R.id.second_button);
+        Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
         cancelbutton.setText(R.string.cancel);
 
         dialog_heading_textview.setText(R.string.rename);

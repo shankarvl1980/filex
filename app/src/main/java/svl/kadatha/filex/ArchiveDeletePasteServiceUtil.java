@@ -820,14 +820,18 @@ public class ArchiveDeletePasteServiceUtil {
                     }
                     else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
                     {
-//                        FTPFile[] f_array=new FTPFile[size];
-//                        for(int i=0;i<size;++i)
-//                        {
-//
-//                            FTPFile f = FileUtil.getFTPFile(files_selected_array.get(i));//MainActivity.FTP_CLIENT.mlistFile(files_selected_array.get(i));
-//                            f_array[i]=f;
-//                        }
-//                        populate(f_array,include_folder,source_folder);
+                        if(Global.CHECK_FTP_SERVER_CONNECTED())
+                        {
+                            FTPFile[] f_array=new FTPFile[size];
+                            for(int i=0;i<size;++i)
+                            {
+
+                                FTPFile f = FileUtil.getFTPFile(files_selected_array.get(i));//MainActivity.FTP_CLIENT.mlistFile(files_selected_array.get(i));
+                                f_array[i]=f;
+                            }
+                            populate(f_array,include_folder,source_folder);
+                        }
+
                     }
                     else
                     {

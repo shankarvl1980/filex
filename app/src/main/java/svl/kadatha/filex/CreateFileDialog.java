@@ -285,18 +285,10 @@ public class CreateFileDialog extends DialogFragment
 			Global.print(context,getString(R.string.root_access_not_avaialable));
 			return false;
 		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return true;
-		}
-		else
-		{
-			return check_SAF_permission(new_file_path,fileObjectType);
+		else return fileObjectType == FileObjectType.FTP_TYPE;
 
-		}
 		//Global.print(context,getString(R.string.could_not_create));
-		//return false;
-	}
+    }
 
 	@Override
 	public void onResume()
