@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
+import timber.log.Timber;
 
 public class ArchiveDeletePasteServiceUtil {
 
@@ -620,9 +621,9 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 FileUtil.mkdirsUsb(zip_dest_path,zip_entry_name);
             }
-            else
+            else if(destFileObjectType==FileObjectType.FTP_TYPE)
             {
-                FileUtil.mkdirsSAFD(context,dest_file_path,null,uri,uri_path);
+                FileUtil.mkdirsFTP(zip_dest_path,zip_entry_name);
             }
 
         }
@@ -631,7 +632,7 @@ public class ArchiveDeletePasteServiceUtil {
             File parent_dest_file=dest_file.getParentFile();
             String parent_dest_file_path=parent_dest_file.getAbsolutePath();
 
-            boolean parent_dir_exists;
+            boolean parent_dir_exists = false;
             if(destFileObjectType==FileObjectType.FILE_TYPE)
             {
                 parent_dir_exists=parent_dest_file.exists();
@@ -641,10 +642,11 @@ public class ArchiveDeletePasteServiceUtil {
                 UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_dest_file_path);
                 parent_dir_exists= (usbFile != null);
             }
-            else
+            else if(destFileObjectType==FileObjectType.FTP_TYPE)
             {
-                parent_dir_exists=FileUtil.existsUri(context,parent_dest_file_path,uri,uri_path);
+                parent_dir_exists=FileUtil.isFtpFileExists(parent_dest_file_path);
             }
+
             if(!parent_dir_exists)
             {
                 if(destFileObjectType==FileObjectType.FILE_TYPE)
@@ -666,10 +668,11 @@ public class ArchiveDeletePasteServiceUtil {
                     {
                         FileUtil.mkdirsUsb(zip_dest_path,zip_entry_parent);
                     }
-                    else
+                    else if(destFileObjectType==FileObjectType.FTP_TYPE)
                     {
-                        FileUtil.mkdirsSAFD(context,parent_dest_file_path,null,uri,uri_path);
+                        FileUtil.mkdirsFTP(zip_dest_path,zip_entry_parent);
                     }
+
                 }
             }
 
@@ -701,6 +704,11 @@ public class ArchiveDeletePasteServiceUtil {
                     UsbFile childUsbFile=usbFile.createFile(name);
                     if(!childUsbFile.isDirectory()) outStream=new UsbFileOutputStream(childUsbFile);
                 }
+            }
+            else if(destFileObjectType==FileObjectType.FTP_TYPE)
+            {
+                String name=dest_file.getName();
+                outStream=MainActivity.FTP_CLIENT.storeFileStream(Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
             }
 
             if(outStream!=null)
@@ -825,7 +833,6 @@ public class ArchiveDeletePasteServiceUtil {
                             FTPFile[] f_array=new FTPFile[size];
                             for(int i=0;i<size;++i)
                             {
-
                                 FTPFile f = FileUtil.getFTPFile(files_selected_array.get(i));//MainActivity.FTP_CLIENT.mlistFile(files_selected_array.get(i));
                                 f_array[i]=f;
                             }
@@ -944,6 +951,7 @@ public class ArchiveDeletePasteServiceUtil {
                     no_of_files++;
                     size_of_files+=f.getSize();
                 }
+                Timber.tag(Global.TAG).d("number of files "+no_of_files+"  and size "+size_of_files);
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));

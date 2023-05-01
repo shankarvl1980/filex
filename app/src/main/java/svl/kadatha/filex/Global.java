@@ -960,6 +960,20 @@ public class Global
 		}
 	}
 
+	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
+	{
+		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
+		Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+		while(iterator.hasNext())
+		{
+			if(iterator.next().getFileObjectType()==fileObjectType)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	public static String GET_TRUNCATED_FILE_PATH_USB(String file_path)
 	{

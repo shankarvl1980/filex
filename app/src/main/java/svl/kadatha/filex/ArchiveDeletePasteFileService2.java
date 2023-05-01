@@ -2316,7 +2316,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 				counter_size_files+=0;//src_ftpfile.getSizeUri();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
 				copied_file=new File(src_file_path).getName();
-				success=FileUtil.copy_FtpFile_FtpFile(src_file_path,dest_file_path,cut,total_bytes_read);
+				success=FileUtil.copy_FtpFile_FtpFile(src_file_path,dest_file_path,name,cut,total_bytes_read);
 				//mutable_count_no_files.postValue(counter_no_files);
 			}
 

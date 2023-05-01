@@ -343,7 +343,7 @@ public class CopyToActivity extends BaseActivity{
             case USB_TYPE:
                 return "(USB)";
             case FTP_TYPE:
-                return "(PC)";
+                return "(FTP)";
             default:
                 return "";
         }

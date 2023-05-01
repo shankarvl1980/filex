@@ -364,37 +364,28 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         {
             for(String permission:permission_not_granted_list)
             {
-                switch(permission)
-                {
-                    case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if(shouldShowRequestPermissionRationale(permission))
-                            {
-                                showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which)
-                                    {
-                                        switch (which)
-                                        {
-                                            case DialogInterface.BUTTON_POSITIVE:
-                                                new PermissionsUtil(context,FileSelectorActivity.this).check_permission();
-                                                break;
-                                            case DialogInterface.BUTTON_NEGATIVE:
-                                                Global.print(context,getString(R.string.permission_not_granted));
-                                                finish();
-                                                break;
-                                        }
+                if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permission)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (shouldShowRequestPermissionRationale(permission)) {
+                            showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            new PermissionsUtil(context, FileSelectorActivity.this).check_permission();
+                                            break;
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            Global.print(context, getString(R.string.permission_not_granted));
+                                            finish();
+                                            break;
                                     }
-                                });
-                            }
-                            else
-                            {
-                                Global.print(context,getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
-                                finish();
-                            }
+                                }
+                            });
+                        } else {
+                            Global.print(context, getString(R.string.seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app));
+                            finish();
                         }
-                        break;
+                    }
                 }
 
             }
@@ -564,7 +555,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 FileSelectorFragment fileSelectorFragment= (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 String tag=fileSelectorFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null)
+                while(tag !=null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null && !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(fileSelectorFragment.fileObjectType))
                 {
                     fm.popBackStack();
                     ++frag;

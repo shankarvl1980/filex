@@ -191,11 +191,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 					destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);
 
-					if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
-					{
-						Global.print(context,getString(R.string.not_able_to_process));
-						return;
-					}
+//					if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+//					{
+//						Global.print(context,getString(R.string.not_able_to_process));
+//						return;
+//					}
 
 					if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
 						Global.print(context,getString(R.string.directory_not_exist_not_valid));
@@ -453,11 +453,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 							zip_output_folder=null;
 						}
 
-						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
-						{
-							Global.print(context,getString(R.string.not_able_to_process));
-							return;
-						}
+//						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+//						{
+//							Global.print(context,getString(R.string.not_able_to_process));
+//							return;
+//						}
 
 						if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
 							Global.print(context,getString(R.string.directory_not_exist_not_valid));
@@ -576,7 +576,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			return false;
+			return true;
 		}
 		else return fileObjectType == FileObjectType.USB_TYPE;
 
@@ -601,6 +601,10 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 
 		}
+//		else if(fileObjectType==FileObjectType.FTP_TYPE)
+//		{
+//			return true;
+//		}
 		else
 		{
 			return false;
@@ -622,6 +626,10 @@ public class ArchiveSetUpDialog extends DialogFragment
 			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 			return usbFile != null;
 
+		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			return true;//FileUtil.isFtpFileExists(file_path);
 		}
 		else if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{

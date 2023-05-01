@@ -396,6 +396,19 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				}
 			}
+			else if(destFileObjectType==FileObjectType.FTP_TYPE)
+			{
+				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name);
+				if(Global.CHECK_FTP_SERVER_CONNECTED())
+				{
+					try {
+						outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
+					} catch (IOException e) {
+
+					}
+				}
+
+			}
 
 			if(outStream!=null) {
 				BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outStream);
@@ -526,6 +539,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 							// ignore exception
 						}
 					}
+				}
+				else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+				{
+					Global.print_background_thread(context,context.getString(R.string.can_not_do_archive_unarchive_here));
+					return false;
 				}
 
 			}
@@ -709,6 +727,15 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 				return unzip(zip_file_path,tree_uri,tree_uri_path,zip_dest_path,isWritable);
 			}
+			else if(destFileObjectType==FileObjectType.FTP_TYPE)
+			{
+				if(zip_folder_name!=null)
+				{
+					success=FileUtil.mkdirFtp(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_folder_name));
+					if(!success) return success;
+				}
+				return unzip(zip_file_path,tree_uri,tree_uri_path,zip_dest_path,isWritable);
+			}
 
 
 			if(zipentry_selected_array.size()!=0)
@@ -828,6 +855,14 @@ public class ArchiveDeletePasteFileService1 extends Service
 						return false;
 					}
 
+				}
+				else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+				{
+					try {
+						bufferedInputStream=new BufferedInputStream(MainActivity.FTP_CLIENT.retrieveFileStream(zip_file_path));
+					} catch (IOException e) {
+						return false;
+					}
 				}
 
 			}
@@ -2276,7 +2311,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				counter_size_files+=0;//src_ftpfile.getSizeUri();
 				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
 				copied_file=new File(src_file_path).getName();
-				success=FileUtil.copy_FtpFile_FtpFile(src_file_path,dest_file_path,cut,total_bytes_read);
+				success=FileUtil.copy_FtpFile_FtpFile(src_file_path,dest_file_path,name,cut,total_bytes_read);
 				//mutable_count_no_files.postValue(counter_no_files);
 			}
 

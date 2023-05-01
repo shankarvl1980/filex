@@ -15,6 +15,8 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -344,14 +346,19 @@ public final class FileUtil
 		return success;
 	}
 
-	public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,boolean cut,long[] bytes_read)
+	public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,String name,boolean cut,long[] bytes_read)
 	{
 		boolean success = false;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(src_file_path) ;OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(target_file_path)) {
-
-				//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
+			try {
+                MainActivity.FTP_CLIENT.retrieveFile(src_file_path,byteArrayOutputStream);
+				inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+				outputStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
 				bufferedCopy(inputStream, outputStream, false, bytes_read);
 				if (cut) {
 					deleteFTPFile(src_file_path);
@@ -362,6 +369,21 @@ public final class FileUtil
 
 				return false;
 			}
+            finally
+            {
+                try
+                {
+                    if(byteArrayOutputStream!=null)byteArrayOutputStream.close();
+					if(inputStream!=null)inputStream.close();
+					if(outputStream!=null)outputStream.close();
+
+                }
+                catch (Exception e)
+                {
+                    // ignore exception
+                }
+
+            }
 			// ignore exception
 
 			// ignore exception
@@ -1502,6 +1524,30 @@ public final class FileUtil
 		}
 		return success;
 	}
+
+	public static boolean mkdirsFTP(String parent_file_path, @NonNull String path)
+	{
+		boolean success=true;
+		String [] file_path_substring=path.split("/");
+		int size=file_path_substring.length;
+		for (int i=0; i<size;++i)
+		{
+			String path_string=file_path_substring[i];
+			if(!path_string.equals(""))
+			{
+				String new_dir_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,path_string);
+				success=mkdirFtp(new_dir_path);
+				parent_file_path+=File.separator+path_string;
+				if(!success)
+				{
+					return false;
+				}
+			}
+
+		}
+		return success;
+	}
+
 
 
 
