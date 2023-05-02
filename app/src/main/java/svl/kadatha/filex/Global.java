@@ -90,7 +90,7 @@ public class Global
 	static final HashMap<String,List<AudioPOJO>> AUDIO_POJO_HASHMAP=new HashMap<>();
 	static final HashMap<String,List<AlbumPOJO>> ALBUM_POJO_HASHMAP=new HashMap<>();
 
-	static final HashMap<String,Set<String>> LIBRARY_FILTER_HASHMAP=new HashMap<>();
+	static final HashMap<String,List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP=new HashMap<>();
 
 	static List<UriPOJO> URI_PERMISSION_LIST=new ArrayList<>();
 	static int ORIENTATION;

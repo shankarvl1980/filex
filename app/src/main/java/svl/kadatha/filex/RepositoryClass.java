@@ -285,7 +285,14 @@ public class RepositoryClass {
                 }
             }
 
-            Global.LIBRARY_FILTER_HASHMAP.put(media_category,parent_directory);
+            List<LibraryAlbumSelectDialog.LibraryDirPOJO> libraryDirPOJOS =new ArrayList<>();
+            for(String path:parent_directory)
+            {
+                String name=new File(path).getName();
+                boolean fromSDCard=!Global.IS_CHILD_FILE(path,Global.INTERNAL_PRIMARY_STORAGE_PATH);
+                libraryDirPOJOS.add(new LibraryAlbumSelectDialog.LibraryDirPOJO(path,name,fromSDCard));
+            }
+            Global.LIBRARY_FILTER_HASHMAP.put(media_category,libraryDirPOJOS);
             cursor.close();
         }
     }

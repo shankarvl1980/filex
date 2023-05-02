@@ -24,7 +24,7 @@
 
 
 	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/dialog_recent_root_dir_RecyclerView"
+		android:id="@+id/dialog_recent_root_dir_recycler_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="@dimen/layout_margin"
@@ -51,11 +51,11 @@
 		android:textSize="18sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/dialog_recent_root_dir_RecyclerView" />
+		app:layout_constraintTop_toBottomOf="@+id/dialog_recent_root_dir_recycler_view" />
 
 
 			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/dialog_recent_RecyclerView"
+				android:id="@+id/dialog_recent_recycler_view"
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
 				android:choiceMode="singleChoice"

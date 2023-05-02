@@ -12,7 +12,7 @@ public class LibraryAlbumSelectViewModel extends ViewModel {
     private boolean isCancelled;
     private Future<?> future1,future2;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final List<String> parent_file_path_list=new ArrayList<>();
+    public final List<LibraryAlbumSelectDialog.LibraryDirPOJO> libraryDirPOJOS=new ArrayList<>();
 
     @Override
     protected void onCleared() {
@@ -40,8 +40,8 @@ public class LibraryAlbumSelectViewModel extends ViewModel {
             @Override
             public void run() {
 
-                parent_file_path_list.add("All");
-                parent_file_path_list.addAll(Global.LIBRARY_FILTER_HASHMAP.get(library_type));
+                libraryDirPOJOS.add(new LibraryAlbumSelectDialog.LibraryDirPOJO("All","All",false));
+                libraryDirPOJOS.addAll(Global.LIBRARY_FILTER_HASHMAP.get(library_type));
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
