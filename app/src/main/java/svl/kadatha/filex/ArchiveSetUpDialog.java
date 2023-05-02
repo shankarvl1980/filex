@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -197,7 +198,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 //						return;
 //					}
 
-					if (!isFilePathValidExists(archivedestfolder, destFileObjectType)) {
+					if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,archivedestfolder)) {
 						Global.print(context,getString(R.string.directory_not_exist_not_valid));
 						return;
 					}
@@ -228,7 +229,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
 					bundle.putSerializable("destFileObjectType",destFileObjectType);
 
-					if(isFilePathValidExists(zip_folder_path+".zip",destFileObjectType))
+					if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path+".zip"))
 					{
 						if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 						{
@@ -459,7 +460,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 //							return;
 //						}
 
-						if (!isFilePathValidExists(unarchivedestfolder, destFileObjectType)) {
+						if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,unarchivedestfolder)) {
 							Global.print(context,getString(R.string.directory_not_exist_not_valid));
 							return;
 						}
@@ -479,7 +480,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putParcelable("tree_uri", tree_uri);
 						bundle.putString("dest_folder", unarchivedestfolder);
 						bundle.putString("zip_folder_name", zip_output_folder);
-						if (create_folder_checkbox.isChecked() && isFilePathValidExists(zip_folder_path, destFileObjectType)) {
+						if (create_folder_checkbox.isChecked() && Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
@@ -526,7 +527,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			case USB_TYPE:
 				return "(USB)";
 			case FTP_TYPE:
-				return "(PC)";
+				return "(FTP)";
 			default:
 				return "";
 		}
@@ -601,10 +602,29 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 
 		}
-//		else if(fileObjectType==FileObjectType.FTP_TYPE)
-//		{
-//			return true;
-//		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			File f=new File(file_path);
+			String parent_file_path=f.getParent();
+			String file_name=f.getName();
+			List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
+			if(filePOJOs!=null)
+			{
+				if(filePOJOs.size()==0)return true; //folder is blank, so folder can be created
+				for(FilePOJO filePOJO:filePOJOs)
+				{
+					if(filePOJO.getName().equals(file_name))
+					{
+						return filePOJO.getIsDirectory();
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			return false;
+		}
 		else
 		{
 			return false;
@@ -612,52 +632,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 	}
 
 
-	private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType)
-	{
-		if(file_path==null || file_path.equals("")) return false;
-		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			File new_file=new File(file_path);
-			return new_file.exists();
-
-		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
-		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-			return usbFile != null;
-
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return true;//FileUtil.isFtpFileExists(file_path);
-		}
-		else if(fileObjectType==FileObjectType.ROOT_TYPE)
-		{
-			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-			{
-				return !RootUtils.WHETHER_FILE_EXISTS(file_path);
-			}
-			else
-			{
-				Global.print(context,getString(R.string.root_access_not_avaialable));
-				return false;
-			}
-
-		}
-		else
-		{
-			if(check_SAF_permission(file_path,fileObjectType))
-			{
-				return FileUtil.existsUri(context, file_path, tree_uri, tree_uri_path);
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-	}
-	
 	@Override
 	public void onResume()
 	{

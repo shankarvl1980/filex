@@ -155,7 +155,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
 
                 FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
-                Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
+                //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
 
                 //if()
                 {

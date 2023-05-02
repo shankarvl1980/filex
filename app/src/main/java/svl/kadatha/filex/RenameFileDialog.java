@@ -206,7 +206,7 @@ public class RenameFileDialog extends DialogFragment
 
 				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);
 
-				overwriting= whether_file_already_exists(new_file_path, fileObjectType);
+				overwriting= Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path);
 				isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
 
 				if(overwriting)
@@ -387,54 +387,5 @@ public class RenameFileDialog extends DialogFragment
 		super.onDismiss(dialog);
 	}
 
-	private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
-	{
-		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			File new_file=new File(new_file_path);
-			return new_file.exists();
-
-		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
-		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,new_file_path);
-			return usbFile != null;
-
-		}
-		else if(fileObjectType==FileObjectType.ROOT_TYPE)
-		{
-			return RootUtils.WHETHER_FILE_EXISTS(new_file_path);
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
-			if(filePOJOs!=null)
-			{
-				for(FilePOJO filePOJO:filePOJOs)
-				{
-					if(filePOJO.getPath().equals(new_file_path))
-					{
-						return true;
-					}
-				}
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if(check_SAF_permission(new_file_path,fileObjectType))
-			{
-				return FileUtil.existsUri(context, new_file_path, tree_uri, tree_uri_path);
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
-	}
 
 }

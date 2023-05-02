@@ -407,6 +407,10 @@ public class CopyToActivity extends BaseActivity{
             UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
             return usbFile != null;
         }
+        else if(fileObjectType==FileObjectType.FTP_TYPE)
+        {
+            return true;
+        }
         else if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
             if(RootUtils.CAN_RUN_ROOT_COMMANDS())

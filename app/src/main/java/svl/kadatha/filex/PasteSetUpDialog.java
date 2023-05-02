@@ -367,39 +367,9 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			return true;
-//			final boolean[] result_came = new boolean[1];
-//			final FTPFile[] ftpFile = new FTPFile[1];
-//
-//			ExecutorService executorService=MyExecutorService.getExecutorService();
-//			executorService.execute(new Runnable() {
-//				@Override
-//				public void run() {
-//					ftpFile[0] =FileUtil.getFTPFile(new_file_path);
-//					result_came[0] =true;
-//				}
-//			});
-//
-//			while(!result_came[0])
-//			{
-//				if(ftpFile[0]!=null)
-//				{
-//					return true;
-//				}
-//			}
+			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,new_file_path);
 		}
-		else
-		{
-			if(check_SAF_permission_destination(new_file_path,fileObjectType))
-			{
-				return FileUtil.existsUri(context, new_file_path, tree_uri, tree_uri_path);
-			}
-			else
-			{
-				return false;
-			}
-		}
-
+		return false;
 	}
 
 }

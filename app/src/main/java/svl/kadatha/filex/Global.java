@@ -974,7 +974,62 @@ public class Global
 		return false;
 	}
 
+	public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType,String file_path)
+	{
+		if(file_path==null || file_path.equals("")) return false;
+		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			File new_file=new File(file_path);
+			return new_file.exists();
 
+		}
+		else if(fileObjectType== FileObjectType.USB_TYPE)
+		{
+			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+			return usbFile != null;
+
+		}
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
+		{
+			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,file_path);
+		}
+		else if(fileObjectType==FileObjectType.ROOT_TYPE)
+		{
+			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+			{
+				return !RootUtils.WHETHER_FILE_EXISTS(file_path);
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+		return false;
+	}
+
+	public static boolean CHECK_EXISTENCE_FILE_IN_FILE_POJO(FileObjectType fileObjectType,String file_path)
+	{
+		File f=new File(file_path);
+		String parent_file_path=f.getParent();
+		String file_name=f.getName();
+		List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
+		if(filePOJOs!=null)
+		{
+			for(FilePOJO filePOJO:filePOJOs)
+			{
+				if(filePOJO.getName().equals(file_name))
+				{
+					return true;
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return false;
+	}
 	public static String GET_TRUNCATED_FILE_PATH_USB(String file_path)
 	{
 		if(file_path.equals(File.separator)) return file_path;

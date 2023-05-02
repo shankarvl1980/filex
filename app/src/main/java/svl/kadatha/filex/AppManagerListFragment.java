@@ -647,6 +647,10 @@ public class AppManagerListFragment extends Fragment {
             return usbFile != null;
 
         }
+        else if(fileObjectType==FileObjectType.FTP_TYPE)
+        {
+            return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,new_file_path);
+        }
         else if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
             if(RootUtils.CAN_RUN_ROOT_COMMANDS())
@@ -660,17 +664,7 @@ public class AppManagerListFragment extends Fragment {
             }
 
         }
-        else
-        {
-            if(check_SAF_permission(new_file_path,fileObjectType,bundle))
-            {
-                return FileUtil.existsUri(context, new_file_path, tree_uri, tree_uri_path);
-            }
-            else
-            {
-                return false;
-            }
-        }
+        return false;
 
     }
 
