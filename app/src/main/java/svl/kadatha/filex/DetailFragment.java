@@ -60,7 +60,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 	private TinyDB tinyDB;
 	TextView folder_empty;
 	DetailRecyclerViewAdapter adapter;
-	private FilePathRecyclerViewAdapter filepath_adapter;
+	public FilePathRecyclerViewAdapter filepath_adapter;
 	public String fileclickselected="";
 	public String file_click_selected_name="";
 	public UsbFile currentUsbFile;
@@ -791,7 +791,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		}
 	}
 
-	private class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder>
+	public class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder>
 	{
 		final String[] filepath_string_array;
 		final String display_path;

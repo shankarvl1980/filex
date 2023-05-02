@@ -275,8 +275,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		current_dir_textview.setOnClickListener(topToolbarClickListener);
 		all_select.setOnClickListener(topToolbarClickListener);
 
-
-        floating_button_back = findViewById(R.id.floating_action_button_back);
+		floating_button_back = findViewById(R.id.floating_action_button_back);
 		floating_button_back.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View p1)
@@ -287,19 +286,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		
 		EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-		int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.search_icon,R.drawable.refresh_icon,R.drawable.view_icon,R.drawable.exit_icon};
-		String [] titles=new String[]{getString(R.string.new_),getString(R.string.search),getString(R.string.refresh),getString(R.string.view),getString(R.string.exit)};
+		int[] bottom_drawables ={R.drawable.search_icon,R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.view_icon,R.drawable.exit_icon};
+		String [] titles=new String[]{getString(R.string.search),getString(R.string.new_),getString(R.string.refresh),getString(R.string.view),getString(R.string.exit)};
 		tb_layout.setResourceImageDrawables(bottom_drawables,titles);
 		bottom_toolbar=findViewById(R.id.bottom_toolbar);
 		bottom_toolbar.addView(tb_layout);
-        Button create_file = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        Button search = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+		Button search = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+		Button create_file = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
         Button refresh = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         Button view = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
         Button finish = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
         BottomToolbarClickListener bottomToolbarClickListener = new BottomToolbarClickListener();
-		create_file.setOnClickListener(bottomToolbarClickListener);
 		search.setOnClickListener(bottomToolbarClickListener);
+		create_file.setOnClickListener(bottomToolbarClickListener);
 		refresh.setOnClickListener(bottomToolbarClickListener);
 		view.setOnClickListener(bottomToolbarClickListener);
 		finish.setOnClickListener(bottomToolbarClickListener);
@@ -1286,6 +1285,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			set_visibility_searchbar(false);
 		}
+		else if(df.viewModel.library_filter_path!=null)
+		{
+			df.filepath_adapter=df.new FilePathRecyclerViewAdapter(df.fileclickselected);
+			df.filepath_recyclerview.setAdapter(df.filepath_adapter);
+			df.viewModel.library_filter_path=null;
+			df.adapter.getFilter().filter(null);
+		}
 		else
 		{
 			switch (viewModel.toolbar_shown)
@@ -1576,10 +1582,20 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public void onClick(View v)
 		{
-
 			DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
+				if(!search_toolbar_visible)
+				{
+					set_visibility_searchbar(true);
+				}
+				else
+				{
+					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				}
+
+			} else if (id == R.id.toolbar_btn_2) {
+
 				if(search_toolbar_visible)
 				{
 					set_visibility_searchbar(false);
@@ -1596,15 +1612,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				CreateFileAlertDialog dialog = CreateFileAlertDialog.getInstance(df.fileclickselected,df.fileObjectType);
 				dialog.show(fm, "create_file_dialog");
-			} else if (id == R.id.toolbar_btn_2) {
-				if(!search_toolbar_visible)
-				{
-					set_visibility_searchbar(true);
-				}
-				else
-				{
-					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-				}
 
 			} else if (id == R.id.toolbar_btn_3) {
 				if(df.progress_bar.getVisibility()==View.VISIBLE)

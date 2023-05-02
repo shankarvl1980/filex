@@ -314,7 +314,7 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 			return;
 		}
-		if(!whether_file_already_exists(dest_folder,destFileObjectType))
+		if(!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,dest_folder))
 		{
 			Global.print(context,getString(R.string.directory_not_exist_not_valid));
 			dismissAllowingStateLoss();
@@ -351,25 +351,5 @@ public class PasteSetUpDialog extends DialogFragment
 		dismissAllowingStateLoss();
 	}
 
-	private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType)
-	{
-		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			File new_file=new File(new_file_path);
-			return new_file.exists();
-
-		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
-		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,new_file_path);
-			return usbFile != null;
-
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,new_file_path);
-		}
-		return false;
-	}
 
 }

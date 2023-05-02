@@ -603,7 +603,7 @@ public class AppManagerListFragment extends Fragment {
                 String file_path=file.getAbsolutePath();
                 bundle.putString("file_path",dest_folder);
                 bundle.putSerializable("fileObjectType",destFileObjectType);
-                if(whether_file_already_exists(file_path,destFileObjectType,bundle))
+                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,file_path))
                 {
                     ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
                     archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
@@ -632,42 +632,6 @@ public class AppManagerListFragment extends Fragment {
             viewModel.back_up(new ArrayList<>(Collections.singletonList(app_path)),dest_folder,destFileObjectType,Collections.singletonList(new_name),tree_uri,tree_uri_path);
         }
     }
-
-    private boolean whether_file_already_exists(String new_file_path,FileObjectType fileObjectType,Bundle bundle)
-    {
-        if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-        {
-            File new_file=new File(new_file_path);
-            return new_file.exists();
-
-        }
-        else if(fileObjectType== FileObjectType.USB_TYPE)
-        {
-            UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,new_file_path);
-            return usbFile != null;
-
-        }
-        else if(fileObjectType==FileObjectType.FTP_TYPE)
-        {
-            return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,new_file_path);
-        }
-        else if(fileObjectType==FileObjectType.ROOT_TYPE)
-        {
-            if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-            {
-                return !RootUtils.WHETHER_FILE_EXISTS(new_file_path);
-            }
-            else
-            {
-                Global.print(context,getString(R.string.root_access_not_avaialable));
-                return false;
-            }
-
-        }
-        return false;
-
-    }
-
     private boolean is_file_writable(String file_path,FileObjectType fileObjectType,Bundle bundle)
     {
         if(fileObjectType==FileObjectType.FILE_TYPE)
