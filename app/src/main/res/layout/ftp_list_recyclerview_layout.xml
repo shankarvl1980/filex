@@ -9,7 +9,7 @@
         android:id="@+id/ftp_list_recyclerview_image_ftp"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:src="@drawable/ftp_server_icon"
+        android:src="@drawable/ftp_file_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

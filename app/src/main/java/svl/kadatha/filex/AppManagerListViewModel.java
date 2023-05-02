@@ -86,6 +86,12 @@ public class AppManagerListViewModel extends AndroidViewModel {
             return;
         }
 
+        if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(null,destFileObjectType))
+        {
+            Global.print(application,application.getString(R.string.wait_till_current_service_on_ftp_finishes));
+            return;
+        }
+
         if(isBackedUp.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         isBackedUp.setValue(AsyncTaskStatus.STARTED);
         this.destFileObjectType=destFileObjectType;

@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT;
+	public static FTPClient FTP_CLIENT,FTP_CLIENT_FOR_COUNT,FTP_CLIENT_FOR_PROGRESS;
 
 	public long search_lower_limit_size=0;
 	public long search_upper_limit_size=0;
@@ -741,32 +741,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		networkRecyclerView=findViewById(R.id.network_recyclerview);
 		networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]network_icon_image_array={R.drawable.ftp_file_icon,R.drawable.ftp_server_icon};
+		int[]network_icon_image_array={R.drawable.ftp_server_icon,R.drawable.ftp_file_icon};
 		networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES,network_icon_image_array));
 
 
-
-//		View ftp_details_heading_layout=findViewById(R.id.ftp_label_background);
-//		ftp_details_heading_layout.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
-//				pbf.show(fm,"");
-//				drawerLayout.closeDrawer(drawer);
-//				Handler h=new Handler();
-//				h.postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-//						actionmode_finish(df,df.fileclickselected);
-//						FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
-//						ftpDetailsDialog.show(fm,"");
-//						pbf.dismissAllowingStateLoss();
-//					}
-//				},500);
-//
-//			}
-//		});
 
 		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);

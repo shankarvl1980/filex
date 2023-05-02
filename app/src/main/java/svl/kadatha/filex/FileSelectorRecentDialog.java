@@ -304,7 +304,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
                 {
-                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_server_icon));
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
                     p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName()+space);
                 }
 

@@ -204,6 +204,12 @@ public class RenameFileDialog extends DialogFragment
 					return;
 				}
 
+				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
+				{
+					Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+					return;
+				}
+
 				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);
 
 				overwriting= Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path);
@@ -245,8 +251,6 @@ public class RenameFileDialog extends DialogFragment
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
-//						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
-//						Below is not working when overwriting, connection is lost. So for the time being, don't try renaming
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
 						renameReplaceConfirmationDialog.show(fragmentManager,"");
 

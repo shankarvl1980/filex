@@ -142,6 +142,12 @@ public class DeleteFileAlertDialog extends DialogFragment
 						return;
 					}
 
+					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(sourceFileObjectType,null))
+					{
+						Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+						return;
+					}
+
 					DeleteFileAlertDialog.this.getViewModelStore().clear();
 					if(sourceFileObjectType== FileObjectType.FILE_TYPE)
 					{

@@ -1485,6 +1485,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 					} else if (destFileObjectType == FileObjectType.USB_TYPE) {
 						copy_result = Copy_UsbFile_UsbFile(src_usbfile, dest_folder, src_file_name, cut);
 					}
+					else if(destFileObjectType==FileObjectType.FTP_TYPE)
+					{
+						copy_result=Copy_UsbFile_FtpFile(src_usbfile,dest_folder,src_file_name,cut);
+					}
 
 					if (copy_result) {
 						copied_files_name.add(new File(src_file_path).getName());
@@ -2086,6 +2090,78 @@ public class ArchiveDeletePasteFileService1 extends Service
 				//mutable_count_no_files.postValue(counter_no_files);
 			}
 
+			return success;
+		}
+
+		@SuppressWarnings("null")
+
+		public boolean Copy_UsbFile_FtpFile(UsbFile src_usbfile, String dest_file_path, String name,boolean cut)
+		{
+			boolean success=false;
+			if (src_usbfile.isDirectory())
+			{
+				if(isCancelled())
+				{
+					return false;
+				}
+
+				String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
+				if(!FileUtil.isFtpFileExists(file_path))
+				{
+					if(!(success=FileUtil.mkdirFtp(file_path)))
+					{
+						return false;
+					}
+				}
+				else {
+					if(FileUtil.isFtpPathDirectory(file_path)) success=true;
+				}
+
+
+				UsbFile[] inner_source_list;
+				try {
+					inner_source_list = src_usbfile.listFiles();
+				} catch (IOException e) {
+					return false;
+				}
+
+				if(inner_source_list==null)
+				{
+					++counter_no_files;
+					//mutable_count_no_files.postValue(counter_no_files);
+					return true;
+				}
+
+				int size=inner_source_list.length;
+				for (int i=0;i<size;++i)
+				{
+					UsbFile inner_usbfile=inner_source_list[i];
+					if(isCancelled())
+					{
+						return false;
+					}
+					success=Copy_UsbFile_FtpFile(inner_usbfile, file_path, inner_usbfile.getName(),cut);
+				}
+				counter_no_files++;
+				//mutable_count_no_files.postValue(counter_no_files);
+				if(success&&cut)
+				{
+					FileUtil.deleteUsbDirectory(src_usbfile);
+				}
+			}
+			else
+			{
+				if(isCancelled())
+				{
+					return false;
+				}
+				counter_no_files++;
+				counter_size_files+=src_usbfile.getLength();
+				size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
+				copied_file=new File(src_usbfile.getAbsolutePath()).getName();
+				success=FileUtil.copy_UsbFile_FtpFile(src_usbfile,dest_file_path,name,cut,total_bytes_read);
+				//mutable_count_no_files.postValue(counter_no_files);
+			}
 			return success;
 		}
 

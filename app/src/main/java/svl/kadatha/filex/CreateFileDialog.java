@@ -43,7 +43,6 @@ public class CreateFileDialog extends DialogFragment
 	private String parent_folder;
 	private FileObjectType fileObjectType;
 	private String other_file_permission;
-	private List<FilePOJO> destFilePOJOs;
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
 	private FrameLayout progress_bar;
@@ -69,9 +68,6 @@ public class CreateFileDialog extends DialogFragment
 			parent_folder=bundle.getString("parent_folder");
 			fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
 		}
-
-
-		destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
 
 		other_file_permission=Global.GET_OTHER_FILE_PERMISSION(parent_folder);
 		handler=new Handler(Looper.getMainLooper());
@@ -177,19 +173,29 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 
+				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
+				{
+					Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+					return;
+				}
+
 				String new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_folder,new_name);
 				File file=new File(new_file_path);
 
 				boolean isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
-				if(!check_name_availability(new_file_path, isWritable,fileObjectType))
+				if(Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path))
+				{
+					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
+					return;
+				}
+
+				if(!is_file_writable(new_file_path, fileObjectType))
 				{
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					return;
 				}
 
-
 				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
-				//new CreateFileTask(file,isWritable).createFile();
 			}	
 
 		});
@@ -236,59 +242,30 @@ public class CreateFileDialog extends DialogFragment
 		return createFileDialog;
 	}
 
-	private boolean check_name_availability(String new_file_path, boolean isWritable, FileObjectType fileObjectType)
+	private boolean is_file_writable(String file_path,FileObjectType fileObjectType)
 	{
-		File new_file=new File(new_file_path);
-		String new_file_name=new_file.getName();
-		if(destFilePOJOs==null) //first start of app after installation, hashmap size is zero
+		if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				if(new_file.exists())
-				{
-					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
-					return false;
-				}
-			}
-		}
-		else
-		{
-			for(FilePOJO filePOJO:destFilePOJOs)
-			{
-				if(filePOJO.getName().equals(new_file_name))
-				{
-					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
-					return false;
-				}
-
-			}
-		}
-
-		if(fileObjectType== FileObjectType.FILE_TYPE)
-		{
+			boolean isWritable;
+			isWritable=FileUtil.isWritable(fileObjectType,file_path);
 			if(isWritable)
 			{
 				return true;
 			}
 			else
 			{
-				return check_SAF_permission(new_file_path,fileObjectType);
+				return check_SAF_permission(file_path,fileObjectType);
 			}
-
 		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
+		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			return MainActivity.usbFileRoot != null;
+			return true;
 		}
-		else if(fileObjectType==FileObjectType.ROOT_TYPE)
-		{
-			Global.print(context,getString(R.string.root_access_not_avaialable));
-			return false;
-		}
-		else return fileObjectType == FileObjectType.FTP_TYPE;
+		else return fileObjectType == FileObjectType.USB_TYPE;
 
-		//Global.print(context,getString(R.string.could_not_create));
-    }
+	}
+
+
 
 	@Override
 	public void onResume()

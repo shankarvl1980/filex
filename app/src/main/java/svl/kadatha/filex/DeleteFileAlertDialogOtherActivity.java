@@ -115,6 +115,12 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 						Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
 						return;
 					}
+
+					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
+					{
+						Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+						return;
+					}
 					if(fileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);

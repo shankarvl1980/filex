@@ -960,6 +960,39 @@ public class Global
 		}
 	}
 
+	public static boolean CHECK_FTP_SERVER_COUNT_CONNECTED()
+	{
+		int reply_code=MainActivity.FTP_CLIENT_FOR_COUNT.getReplyCode();
+		if(FTPReply.isPositiveCompletion(reply_code))
+		{
+			return true;
+		}
+		else
+		{
+			try {
+				return FtpDetailsViewModel.CONNECT_FOR_COUNT();
+			} catch (IOException e) {
+				return false;
+			}
+		}
+	}
+
+	public static boolean CHECK_FTP_SERVER_PROGRESS_CONNECTED()
+	{
+		int reply_code=MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode();
+		if(FTPReply.isPositiveCompletion(reply_code))
+		{
+			return true;
+		}
+		else
+		{
+			try {
+				return FtpDetailsViewModel.CONNECT_FOR_PROGRESS();
+			} catch (IOException e) {
+				return false;
+			}
+		}
+	}
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
 		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
@@ -992,7 +1025,7 @@ public class Global
 		}
 		else
 		{
-			return false;
+			return true; //filepojos will be null if switched to other apps and come back
 		}
 		return false;
 	}

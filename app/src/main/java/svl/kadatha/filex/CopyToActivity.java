@@ -105,7 +105,7 @@ public class CopyToActivity extends BaseActivity{
 
                 final String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected,file_name);
 
-                if (!isFilePathValidExists(folderclickselected, destFileObjectType)) {
+                if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,folderclickselected)) {
                     Global.print(context,getString(R.string.directory_not_exist_not_valid));
                     return;
                 }
@@ -118,6 +118,12 @@ public class CopyToActivity extends BaseActivity{
                 if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
                 {
                     Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
+                    return;
+                }
+
+                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(null,destFileObjectType))
+                {
+                    Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
                     return;
                 }
 
@@ -137,7 +143,7 @@ public class CopyToActivity extends BaseActivity{
                 bundle.putParcelable("tree_uri",tree_uri);
                 bundle.putSerializable("destFileObjectType",destFileObjectType);
 
-                if(isFilePathValidExists(full_path,destFileObjectType))
+                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path))
                 {
                     if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType))
                     {
@@ -392,48 +398,6 @@ public class CopyToActivity extends BaseActivity{
         }
         else return fileObjectType == FileObjectType.USB_TYPE;
 
-    }
-
-    private boolean isFilePathValidExists(String file_path,FileObjectType fileObjectType) //copied from ArchiveSetUpDialog
-    {
-        if(file_path==null || file_path.equals("")) return false;
-        if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-        {
-            File new_file=new File(file_path);
-            return new_file.exists();
-        }
-        else if(fileObjectType== FileObjectType.USB_TYPE)
-        {
-            UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-            return usbFile != null;
-        }
-        else if(fileObjectType==FileObjectType.FTP_TYPE)
-        {
-            return true;
-        }
-        else if(fileObjectType==FileObjectType.ROOT_TYPE)
-        {
-            if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-            {
-                return !RootUtils.WHETHER_FILE_EXISTS(file_path);
-            }
-            else
-            {
-                Global.print(context,getString(R.string.root_access_not_avaialable));
-                return false;
-            }
-        }
-        else
-        {
-            if(check_SAF_permission(file_path,fileObjectType))
-            {
-                return FileUtil.existsUri(context, file_path, tree_uri, tree_uri_path);
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

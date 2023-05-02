@@ -328,6 +328,13 @@ public class PasteSetUpDialog extends DialogFragment
 			return;
 		}
 
+		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(sourceFileObjectType,destFileObjectType))
+		{
+			Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+			dismissAllowingStateLoss();
+			return;
+		}
+
 		Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 		if(emptyService==null)
 		{
