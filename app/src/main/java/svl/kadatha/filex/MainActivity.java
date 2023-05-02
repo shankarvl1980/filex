@@ -741,7 +741,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		networkRecyclerView=findViewById(R.id.network_recyclerview);
 		networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]network_icon_image_array={R.drawable.ftp_server_icon,R.drawable.ftp_file_icon};
+		int[]network_icon_image_array={R.drawable.ftp_file_icon,R.drawable.ftp_server_icon};
 		networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES,network_icon_image_array));
 
 

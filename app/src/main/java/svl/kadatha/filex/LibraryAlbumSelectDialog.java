@@ -11,15 +11,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 
@@ -68,7 +72,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment
         progress_bar=v.findViewById(R.id.fragment_library_filter_progressbar);
         TextView label_text_view = v.findViewById(R.id.fragment_library_filter_label);
         label_text_view.setText(R.string.select_album);
-        RecyclerView library_recyclerview = v.findViewById(R.id.fragment_library_filter_RecyclerView);
+        RecyclerView library_recyclerview = v.findViewById(R.id.fragment_library_filter_recyclerView);
         library_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
         library_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 
@@ -146,27 +150,42 @@ public class LibraryAlbumSelectDialog extends DialogFragment
         public void onBindViewHolder(LibraryRecyclerViewAdapter.VH p1, int p2)
         {
             // TODO: Implement this method
-            p1.album_name_tv.setText(new File(viewModel.parent_file_path_list.get(p2)).getName());
-            p1.album_path_tv.setText(viewModel.parent_file_path_list.get(p2));
+            if(viewModel.libraryDirPOJOS.get(p2).getPath().equals("All"))
+            {
+                p1.album_dir_image.setImageDrawable(null);
+            }
+            else if(viewModel.libraryDirPOJOS.get(p2).isFromSDCard())
+            {
+                p1.album_dir_image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
+            }
+            else
+            {
+                p1.album_dir_image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
+            }
+
+            p1.album_name_tv.setText(viewModel.libraryDirPOJOS.get(p2).getName());
+            p1.album_path_tv.setText(viewModel.libraryDirPOJOS.get(p2).getPath());
         }
 
         @Override
         public int getItemCount()
         {
             // TODO: Implement this method
-            return viewModel.parent_file_path_list.size();
+            return viewModel.libraryDirPOJOS.size();
         }
 
 
         private class VH extends RecyclerView.ViewHolder
         {
             final View v;
+            final ImageView album_dir_image;
             final TextView album_name_tv, album_path_tv;
             int pos;
             VH(View vi)
             {
                 super(vi);
                 v=vi;
+                album_dir_image=v.findViewById(R.id.album_image_dir);
                 album_name_tv=v.findViewById(R.id.album_name);
                 album_path_tv=v.findViewById(R.id.album_path);
 
@@ -178,7 +197,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment
                         String parent_file_path=null;
                         if(pos!=0)
                         {
-                            parent_file_path=viewModel.parent_file_path_list.get(pos);
+                            parent_file_path=viewModel.libraryDirPOJOS.get(pos).getPath();
                             bundle.putString("parent_file_name",new File(parent_file_path).getName());
                         }
 
@@ -191,6 +210,32 @@ public class LibraryAlbumSelectDialog extends DialogFragment
             }
         }
 
+    }
+
+    static class LibraryDirPOJO
+    {
+        private final String path;
+        private final String name;
+        private final boolean fromSDCard;
+
+        public LibraryDirPOJO(String path, String name, boolean fromSDCard) {
+            this.path = path;
+            this.name = name;
+            this.fromSDCard = fromSDCard;
+        }
+
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isFromSDCard() {
+            return fromSDCard;
+        }
     }
 
 }

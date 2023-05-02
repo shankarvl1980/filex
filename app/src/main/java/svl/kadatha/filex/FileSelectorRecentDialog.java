@@ -99,8 +99,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     {
         // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_recent,container,false);
-        RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_RecyclerView);
-        recent_recyclerview = v.findViewById(R.id.dialog_recent_RecyclerView);
+        RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_recycler_view);
+        recent_recyclerview = v.findViewById(R.id.dialog_recent_recycler_view);
         recent_label=v.findViewById(R.id.recent_label);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
@@ -304,7 +304,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
                 {
-                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_server_icon));
                     p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName()+space);
                 }
 

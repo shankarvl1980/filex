@@ -22,7 +22,7 @@
 	<androidx.recyclerview.widget.RecyclerView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:id="@+id/fragment_library_filter_RecyclerView"
+		android:id="@+id/fragment_library_filter_recyclerView"
 		android:choiceMode="singleChoice"
 		android:background="?attr/dialog_background"
 		android:layout_marginTop="@dimen/layout_margin"
