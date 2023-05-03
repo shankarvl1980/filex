@@ -123,6 +123,15 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             public void run() {
                 loggedInStatus=false;
                 try {
+
+                    MainActivity.FTP_CLIENT.disconnect();
+
+                    MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
+
+                    MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
+
+                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
+
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT();
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
@@ -158,7 +167,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         }
 
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
-
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 
         boolean connected=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
         if(connected)
@@ -190,77 +199,12 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 return true;
             }
         }
+        else
+        {
+            ftpClient.disconnect();
+        }
         return false;
     }
-
-//    public static boolean CONNECT_FOR_COUNT() throws IOException {
-//        if(FTP_POJO==null)return false;
-//
-//        MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
-//
-//        MainActivity.FTP_CLIENT_FOR_COUNT.connect(FTP_POJO.server,FTP_POJO.port);
-//
-//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_COUNT.getReplyCode())) {
-//            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-//            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveReplyTimeout(5000);
-//
-//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_COUNT.login(FTP_POJO.user_name, FTP_POJO.password);
-//            if (loggedInStatus) {
-//
-//                MainActivity.FTP_CLIENT_FOR_COUNT.setFileType(FTP.BINARY_FILE_TYPE);
-//                MainActivity.FTP_CLIENT_FOR_COUNT.enterLocalPassiveMode();
-//
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public static boolean CONNECT_FOR_PROGRESS() throws IOException {
-//        if(FTP_POJO==null)return false;
-//
-//        MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
-//
-//        MainActivity.FTP_CLIENT_FOR_PROGRESS.connect(FTP_POJO.server,FTP_POJO.port);
-//
-//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode())) {
-//            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-//            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveReplyTimeout(5000);
-//
-//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_PROGRESS.login(FTP_POJO.user_name, FTP_POJO.password);
-//            if (loggedInStatus) {
-//
-//                MainActivity.FTP_CLIENT_FOR_PROGRESS.setFileType(FTP.BINARY_FILE_TYPE);
-//                MainActivity.FTP_CLIENT_FOR_PROGRESS.enterLocalPassiveMode();
-//
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public static boolean CONNECT_FOR_COPY_TO_VIEW() throws IOException {
-//        if(FTP_POJO==null)return false;
-//
-//        MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
-//
-//        MainActivity.FTP_CLIENT_FOR_COPY_VIEW.connect(FTP_POJO.server,FTP_POJO.port);
-//
-//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode())) {
-//            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-//            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setControlKeepAliveReplyTimeout(5000);
-//
-//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_COPY_VIEW.login(FTP_POJO.user_name, FTP_POJO.password);
-//            if (loggedInStatus) {
-//
-//                MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setFileType(FTP.BINARY_FILE_TYPE);
-//                MainActivity.FTP_CLIENT_FOR_COPY_VIEW.enterLocalPassiveMode();
-//
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     private void replaceFtpPojo(Bundle bundle)
     {

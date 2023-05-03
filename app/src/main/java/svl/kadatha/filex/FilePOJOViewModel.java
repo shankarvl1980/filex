@@ -56,6 +56,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     public String library_filter_path;
     public boolean library_time_desc=false;
+    public String ftp_cached_file_path;
+    public FileObjectType ftp_cached_file_fileObjectType;
 
 
 
@@ -330,10 +332,12 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-    public void copyFtpToDevice(String file_path)
+    public void copyFtpToDevice(String file_path, FileObjectType fileObjectType)
     {
         if(copyFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
         copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ftp_cached_file_path=file_path;
+        ftp_cached_file_fileObjectType=fileObjectType;
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future10=executorService.submit(new Runnable() {
             @Override

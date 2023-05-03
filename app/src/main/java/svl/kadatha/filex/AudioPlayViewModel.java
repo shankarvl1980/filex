@@ -73,7 +73,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
                 {
-                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
+                    File cache_file=new File(Global.FTP_CACHE_DIR,file_path);//Global.COPY_TO_FTP_CACHE(file_path);
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
                 else

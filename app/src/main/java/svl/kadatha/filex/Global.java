@@ -1334,7 +1334,7 @@ public class Global
 				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 				if(targetUsbFile!=null)
 				{
-					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{});
+					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
 				}
 			}
 
@@ -1354,11 +1354,8 @@ public class Global
 				FileUtil.createNativeNewFile(cache_file);
 				if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_COPY_VIEW))
 				{
-//					try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-//						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{});
-					try(OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(cache_file))){
-						MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFile(file_path,outputStream);
-
+					try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
 
 						return cache_file;
 
