@@ -379,6 +379,25 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			}
 		});
 
+		viewModel.copyFtpAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+			@Override
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
+					//FileIntentDispatch.openFile(context,);
+
+					viewModel.copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+
+
+
+			}
+		});
 
 		mainActivity.fm.setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -647,6 +666,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 else if(fileObjectType==FileObjectType.FTP_TYPE)
 			{
 				Global.print(context,getString(R.string.copy_file_to_device_to_view));
+//				progress_bar.setVisibility(View.VISIBLE);
+//				viewModel.copyFtpToDevice(file_path);
 			}
 		 }
 	}

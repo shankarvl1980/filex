@@ -91,20 +91,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public void copyFtpToDevice(String file_path)
-    {
-        if(copyFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
-        copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future10=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-
-                Global.COPY_TO_FTP_CACHE(file_path);
-                copyFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
-    }
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -344,6 +330,19 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
+    public void copyFtpToDevice(String file_path)
+    {
+        if(copyFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future10=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                Global.COPY_TO_FTP_CACHE(file_path);
+                copyFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
     public synchronized void getLibraryList(String media_category)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
