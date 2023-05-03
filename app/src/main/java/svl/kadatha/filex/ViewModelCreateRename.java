@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -23,6 +24,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean file_created;
     public boolean fileNameChanged;
+    public List<FilePOJO> destFilePOJOs;
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);

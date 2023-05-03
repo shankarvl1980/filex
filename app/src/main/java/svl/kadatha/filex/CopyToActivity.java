@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.Collections;
@@ -50,6 +51,7 @@ public class CopyToActivity extends BaseActivity{
     private Class emptyService;
     private Button ok_button;
     private boolean first_start;
+    private CopyToActivityViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class CopyToActivity extends BaseActivity{
         Button cancel_button = buttons_layout.findViewById(R.id.second_button);
         cancel_button.setText(R.string.cancel);
 
+        viewModel=new ViewModelProvider(this).get(CopyToActivityViewModel.class);
         ok_button.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
@@ -103,12 +106,13 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
+                viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+folderclickselected);
                 final String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected,file_name);
 
-                if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,folderclickselected)) {
-                    Global.print(context,getString(R.string.directory_not_exist_not_valid));
-                    return;
-                }
+//                if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,folderclickselected)) {
+//                    Global.print(context,getString(R.string.directory_not_exist_not_valid));
+//                    return;
+//                }
 
                 if(!is_file_writable(folderclickselected,destFileObjectType))
                 {
@@ -143,7 +147,7 @@ public class CopyToActivity extends BaseActivity{
                 bundle.putParcelable("tree_uri",tree_uri);
                 bundle.putSerializable("destFileObjectType",destFileObjectType);
 
-                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path))
+                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path,viewModel.destFilePOJOs))
                 {
                     if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType))
                     {

@@ -110,6 +110,7 @@ public class CreateFileDialog extends DialogFragment
 
 
 		ViewModelCreateRename viewModel=new ViewModelProvider(this).get(ViewModelCreateRename.class);
+		viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_folder);
 		viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -183,7 +184,7 @@ public class CreateFileDialog extends DialogFragment
 				File file=new File(new_file_path);
 
 				boolean isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
-				if(Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path))
+				if(Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path,viewModel.destFilePOJOs))
 				{
 					Global.print(context,getString(R.string.new_file_can_not_be_created_a_file_with_the_specified_name_exists));
 					return;

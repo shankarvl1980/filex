@@ -1007,15 +1007,13 @@ public class Global
 		return false;
 	}
 
-	private static boolean CHECK_EXISTENCE_FILE_IN_FILE_POJO(FileObjectType fileObjectType,String file_path)
+	private static boolean CHECK_EXISTENCE_FILE_IN_FILE_POJO(String file_path,List<FilePOJO> destFilePOJOs)
 	{
 		File f=new File(file_path);
-		String parent_file_path=f.getParent();
 		String file_name=f.getName();
-		List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
-		if(filePOJOs!=null)
+		if(destFilePOJOs!=null)
 		{
-			for(FilePOJO filePOJO:filePOJOs)
+			for(FilePOJO filePOJO:destFilePOJOs)
 			{
 				if(filePOJO.getName().equals(file_name))
 				{
@@ -1025,12 +1023,12 @@ public class Global
 		}
 		else
 		{
-			return true; //filepojos will be null if switched to other apps and come back
+			return false;
 		}
 		return false;
 	}
 
-	public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType,String file_path)
+	public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType,String file_path,List<FilePOJO> destFilePOJOs)
 	{
 		if(file_path==null || file_path.equals("")) return false;
 		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -1047,7 +1045,7 @@ public class Global
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(fileObjectType,file_path);
+			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(file_path,destFilePOJOs);
 		}
 		else if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{

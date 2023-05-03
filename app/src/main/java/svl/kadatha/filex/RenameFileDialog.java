@@ -126,6 +126,7 @@ public class RenameFileDialog extends DialogFragment
 
 
 		ViewModelCreateRename viewModel=new ViewModelProvider(this).get(ViewModelCreateRename.class);
+		viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
 		viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -212,7 +213,7 @@ public class RenameFileDialog extends DialogFragment
 
 				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);
 
-				overwriting= Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path);
+				overwriting= Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path,viewModel.destFilePOJOs);
 				isWritable=FileUtil.isWritable(fileObjectType,new_file_path);
 
 				if(overwriting)

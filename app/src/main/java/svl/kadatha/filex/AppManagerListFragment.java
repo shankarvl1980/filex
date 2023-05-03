@@ -599,11 +599,12 @@ public class AppManagerListFragment extends Fragment {
                 String dest_folder=bundle.getString("dest_folder");
                 FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
                 String new_name=bundle.getString("new_name");
+                viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
                 File file=new File(dest_folder,new_name);
                 String file_path=file.getAbsolutePath();
                 bundle.putString("file_path",dest_folder);
                 bundle.putSerializable("fileObjectType",destFileObjectType);
-                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,file_path))
+                if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,file_path,viewModel.destFilePOJOs))
                 {
                     ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
                     archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);

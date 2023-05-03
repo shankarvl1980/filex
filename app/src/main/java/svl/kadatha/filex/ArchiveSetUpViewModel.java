@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -15,7 +16,7 @@ public class ArchiveSetUpViewModel extends ViewModel {
     public ArrayList<String> files_selected_array=new ArrayList<>();
     public String folderclickselected=Global.INTERNAL_PRIMARY_STORAGE_PATH;
     public FileObjectType custom_dir_fileObjectType=FileObjectType.FILE_TYPE;
-
+    public List<FilePOJO> destFilePOJOs;
 
     @Override
     protected void onCleared() {

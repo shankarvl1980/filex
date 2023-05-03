@@ -314,12 +314,13 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 			return;
 		}
-		if(!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,dest_folder))
-		{
-			Global.print(context,getString(R.string.directory_not_exist_not_valid));
-			dismissAllowingStateLoss();
-			return;
-		}
+
+//		if(!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,dest_folder))
+//		{
+//			Global.print(context,getString(R.string.directory_not_exist_not_valid));
+//			dismissAllowingStateLoss();
+//			return;
+//		}
 
 		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,destFileObjectType))
 		{

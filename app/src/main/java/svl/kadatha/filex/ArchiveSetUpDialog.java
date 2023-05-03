@@ -154,6 +154,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		zip_file_path=files_selected_array.get(0);
 
 		viewModel=new ViewModelProvider(this).get(ArchiveSetUpViewModel.class);
+
 		viewModel.isRecursiveFilesRemoved.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -191,17 +192,17 @@ public class ArchiveSetUpDialog extends DialogFragment
 					String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 					destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);
-
+					viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+archivedestfolder);
 //					if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
 //					{
 //						Global.print(context,getString(R.string.not_able_to_process));
 //						return;
 //					}
 
-					if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,archivedestfolder)) {
-						Global.print(context,getString(R.string.directory_not_exist_not_valid));
-						return;
-					}
+//					if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,archivedestfolder)) {
+//						Global.print(context,getString(R.string.directory_not_exist_not_valid));
+//						return;
+//					}
 
 					if(!is_file_writable(archivedestfolder,destFileObjectType))
 					{
@@ -229,7 +230,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					bundle.putSerializable("sourceFileObjectType",sourceFileObjectType);
 					bundle.putSerializable("destFileObjectType",destFileObjectType);
 
-					if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path+".zip"))
+					if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path+".zip",viewModel.destFilePOJOs))
 					{
 						if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
 						{
@@ -447,6 +448,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 								return;
 							}
 							zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(unarchivedestfolder,zip_output_folder);
+							viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+unarchivedestfolder); //only if your crating new folder store unarchive files
 						}
 						else
 						{
@@ -454,16 +456,17 @@ public class ArchiveSetUpDialog extends DialogFragment
 							zip_output_folder=null;
 						}
 
+
 //						if(destFileObjectType==FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
 //						{
 //							Global.print(context,getString(R.string.not_able_to_process));
 //							return;
 //						}
 
-						if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,unarchivedestfolder)) {
-							Global.print(context,getString(R.string.directory_not_exist_not_valid));
-							return;
-						}
+//						if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,unarchivedestfolder)) {
+//							Global.print(context,getString(R.string.directory_not_exist_not_valid));
+//							return;
+//						}
 
 						if (!is_file_writable(unarchivedestfolder, destFileObjectType)) {
 							return;
@@ -480,7 +483,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putParcelable("tree_uri", tree_uri);
 						bundle.putString("dest_folder", unarchivedestfolder);
 						bundle.putString("zip_folder_name", zip_output_folder);
-						if (create_folder_checkbox.isChecked() && Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path)) {
+						if (create_folder_checkbox.isChecked() && Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path,viewModel.destFilePOJOs)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);

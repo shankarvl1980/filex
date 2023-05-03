@@ -28,6 +28,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
     private final long[] bytes_read=new long[1];
+    public List<FilePOJO> destFilePOJOs;
 
     public AppManagerListViewModel(@NonNull Application application) {
         super(application);
