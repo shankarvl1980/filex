@@ -452,6 +452,7 @@
     <string name="connect">Connect</string>
     <string name="nothing_found_here">Nothing found here</string>
     <string name="advanced">Advanced</string>
+    <string name="not_supported">not supported</string>
 
 
 </resources>

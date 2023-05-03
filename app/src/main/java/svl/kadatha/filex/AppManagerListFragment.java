@@ -633,6 +633,7 @@ public class AppManagerListFragment extends Fragment {
             viewModel.back_up(new ArrayList<>(Collections.singletonList(app_path)),dest_folder,destFileObjectType,Collections.singletonList(new_name),tree_uri,tree_uri_path);
         }
     }
+
     private boolean is_file_writable(String file_path,FileObjectType fileObjectType,Bundle bundle)
     {
         if(fileObjectType==FileObjectType.FILE_TYPE)
@@ -648,12 +649,7 @@ public class AppManagerListFragment extends Fragment {
                 return check_SAF_permission(file_path,fileObjectType,bundle);
             }
         }
-        else if(fileObjectType==FileObjectType.FTP_TYPE)
-        {
-            return false;
-        }
-        else return fileObjectType == FileObjectType.USB_TYPE;
-
+        return true;
     }
 
     private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType,Bundle bundle)

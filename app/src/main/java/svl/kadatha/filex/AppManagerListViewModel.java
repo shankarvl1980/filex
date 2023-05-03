@@ -103,8 +103,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             @Override
             public void run() {
 
-                List<FilePOJO> destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
-
                 if(destFilePOJOs==null)
                 {
                     UsbFile currentUsbFile=null;
@@ -125,10 +123,14 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 }
 
 
-                for(FilePOJO filePOJO:destFilePOJOs)
+                if(destFilePOJOs!=null)
                 {
-                    dest_file_names.add(filePOJO.getName());
+                    for(FilePOJO filePOJO:destFilePOJOs)
+                    {
+                        dest_file_names.add(filePOJO.getName());
+                    }
                 }
+
 
                 List<String> overwritten_copied_file_name_list;
                 boolean copy_result = false;
@@ -140,12 +142,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
                 if(destFileObjectType==FileObjectType.ROOT_TYPE)
                 {
-                    if(destFileObjectType==FileObjectType.USB_TYPE)
-                    {
-                        isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
-                        return;
-                    }
-
+                    isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
+                    return;
                 }
                 List<File> src_file_list=new ArrayList<>();
 
@@ -174,7 +172,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         } else if (destFileObjectType == FileObjectType.USB_TYPE) {
                             copy_result = Copy_File_UsbFile(file, dest_folder, current_file_name, cut,bytes_read);
                         } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
-                            copy_result = Copy_File_FtpFile(file, dest_folder, current_file_name, cut);
+                            copy_result = Copy_File_FtpFile(file, dest_folder, current_file_name, cut,bytes_read);
                         }
 
                     }
@@ -399,7 +397,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         return success;
     }
 
-    private boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut)
+    private boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut, long[] bytes_read)
     {
         boolean success=false;
 
@@ -411,19 +409,10 @@ public class AppManagerListViewModel extends AndroidViewModel {
             }
 
             String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-            //FTPFile dest_ftpFile=FileUtil.getFTPFile(file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-            //if(dest_ftpFile==null) // || !dest_usbFile.isDirectoryUri())
-            if(FileUtil.isFtpPathDirectory(file_path))
+            if(!(success=FileUtil.mkdirFtp(file_path)))
             {
-                if(!(success=FileUtil.mkdirFtp(file_path)))
-                {
-                    return false;
-                }
+                return false;
             }
-            else {
-                success=true;
-            }
-
 
             String[] files_name_list = source.list();
             if(files_name_list==null)
@@ -439,7 +428,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     return false;
                 }
                 File srcFile = new File(source, inner_file_name);
-                success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut);
+                success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut,bytes_read);
             }
         }
         else
@@ -448,11 +437,11 @@ public class AppManagerListViewModel extends AndroidViewModel {
             {
                 return false;
             }
-            success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut,bytes_read);
-        }
 
+            success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut,bytes_read);
+            //mutable_count_no_files.postValue(counter_no_files);
+        }
         return success;
     }
-
 
 }

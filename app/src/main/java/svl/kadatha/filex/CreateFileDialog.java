@@ -258,12 +258,7 @@ public class CreateFileDialog extends DialogFragment
 				return check_SAF_permission(file_path,fileObjectType);
 			}
 		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return true;
-		}
-		else return fileObjectType == FileObjectType.USB_TYPE;
-
+		return true;
 	}
 
 

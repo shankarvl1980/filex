@@ -232,15 +232,16 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 					if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path+".zip",viewModel.destFilePOJOs))
 					{
-						if(!isFilePathDirectory(zip_folder_path+".zip",destFileObjectType))
+						if(isFilePathDirectory(zip_folder_path+".zip",destFileObjectType,viewModel.destFilePOJOs))
 						{
-							ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-							archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+							Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
 
 						}
 						else
 						{
-							Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+zip_folder_name+"'");
+							ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
+							archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+
 						}
 					}
 					else
@@ -484,13 +485,12 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putString("dest_folder", unarchivedestfolder);
 						bundle.putString("zip_folder_name", zip_output_folder);
 						if (create_folder_checkbox.isChecked() && Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path,viewModel.destFilePOJOs)) {
-							if (isFilePathDirectory(zip_folder_path, destFileObjectType)) {
+							if (isFilePathDirectory(zip_folder_path, destFileObjectType,viewModel.destFilePOJOs)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
 								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
 
 							} else {
 								Global.print(context,getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
-
 							}
 						} else {
 							Intent intent = new Intent(context, emptyService);
@@ -578,15 +578,10 @@ public class ArchiveSetUpDialog extends DialogFragment
 				return check_SAF_permission(file_path,fileObjectType);
 			}
 		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return true;
-		}
-		else return fileObjectType == FileObjectType.USB_TYPE;
-
+		return true;
 	}
 
-	public static boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType)
+	public static boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType, List<FilePOJO> filePOJOs)
 	{
 
 		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
@@ -608,9 +603,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
 			File f=new File(file_path);
-			String parent_file_path=f.getParent();
 			String file_name=f.getName();
-			List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
 			if(filePOJOs!=null)
 			{
 				if(filePOJOs.size()==0)return true; //folder is blank, so folder can be created
@@ -624,9 +617,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 			else
 			{
-				return false;
+				return true;
 			}
-			return false;
+			return true;
 		}
 		else
 		{

@@ -160,7 +160,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
 
         MainActivity.FTP_CLIENT=new FTPClient();
-
         MainActivity.FTP_CLIENT.connect(FTP_POJO.server,FTP_POJO.port);
 
         if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode())) {
@@ -179,6 +178,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
                 return true;
             }
+
         }
 
         return false;

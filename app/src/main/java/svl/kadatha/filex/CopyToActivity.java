@@ -149,7 +149,7 @@ public class CopyToActivity extends BaseActivity{
 
                 if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path,viewModel.destFilePOJOs))
                 {
-                    if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType))
+                    if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType,viewModel.destFilePOJOs))
                     {
                         ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
                         archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
@@ -396,11 +396,7 @@ public class CopyToActivity extends BaseActivity{
                 return check_SAF_permission(file_path,fileObjectType);
             }
         }
-        else if(fileObjectType==FileObjectType.FTP_TYPE)
-        {
-            return false;
-        }
-        else return fileObjectType == FileObjectType.USB_TYPE;
+        return true;
 
     }
 

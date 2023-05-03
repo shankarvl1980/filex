@@ -594,7 +594,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     String data=cursor.getString(0);
                     Path path= Paths.get(data);
-                    //if(Files.existsUri(path))
+                    //if(Files.exists(path))
                     {
                         FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
@@ -614,7 +614,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                     String data=cursor.getString(0);
                     File f=new File(data);
-                    // if(f.existsUri())
+                    // if(f.exists())
                     {
                         FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);

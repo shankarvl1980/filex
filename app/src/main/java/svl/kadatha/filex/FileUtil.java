@@ -51,7 +51,6 @@ public final class FileUtil
 	private static final String PRIMARY_VOLUME_NAME = "primary";
 	public final static int BUFFER_SIZE=8192;
 	public static int USB_CHUNK_SIZE;
-	private static final Object GET_FTP_LOCK=new Object();
 
 	/**
 	 * Hide default constructor.
@@ -392,6 +391,56 @@ public final class FileUtil
 		return success;
 	}
 
+	@SuppressWarnings("null")
+	public static boolean copy_FtpFile_UsbFile(String src_file_path, String target_file_path,String name,boolean cut,long[] bytes_read)
+	{
+		boolean success = false;
+		OutputStream outputStream=null;
+		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		{
+			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(src_file_path)) {
+				//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
+				UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
+				if (parentUsbFile != null) {
+					UsbFile targetUsbFile = getUsbFile(MainActivity.usbFileRoot, Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path, name));
+					if (targetUsbFile != null && targetUsbFile.getLength() == 0)
+						deleteUsbFile(targetUsbFile);
+					targetUsbFile = parentUsbFile.createFile(name);
+//					long length = source.getLength();
+//					if (length > 0) targetUsbFile.setLength(length); // causes problem
+					outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
+
+					bufferedCopy(inputStream, outputStream, false, bytes_read);
+					if (cut) {
+						deleteFTPFile(src_file_path);
+					}
+					return true;
+				}
+
+			} catch (Exception e) {
+
+				return false;
+			}
+			finally
+			{
+				try
+				{
+					if(outputStream!=null)outputStream.close();
+				}
+				catch (Exception e)
+				{
+					// ignore exception
+				}
+
+			}
+			// ignore exception
+
+			// ignore exception
+
+		}
+		return success;
+	}
+
 
 	@SuppressWarnings("null")
 	public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
@@ -416,6 +465,7 @@ public final class FileUtil
 				{
 					deleteUsbFile(source);
 				}
+				return true;
 			}
 			else
 			{
@@ -442,7 +492,6 @@ public final class FileUtil
 			}
 
 		}
-		return true;
 	}
 
 	@SuppressWarnings("null")
