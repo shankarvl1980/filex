@@ -85,7 +85,6 @@ public class PdfViewFragment_single_view extends Fragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class PdfViewFragment_single_view extends Fragment
                 switch(p1)
                 {
                     case 0:
-                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -157,7 +156,7 @@ public class PdfViewFragment_single_view extends Fragment
                             src_uri=data;
 
                         }
-                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                         {
                             src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
                         }
@@ -178,7 +177,7 @@ public class PdfViewFragment_single_view extends Fragment
                             copy_uri=data;
 
                         }
-                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                         {
                             copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
                         }
@@ -204,7 +203,7 @@ public class PdfViewFragment_single_view extends Fragment
                         break;
 
                     case 3:
-                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -346,7 +345,7 @@ public class PdfViewFragment_single_view extends Fragment
                 }
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    if(viewModel.fileObjectType==FileObjectType.USB_TYPE)
+                    if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                     {
                         ((PdfViewActivity)context).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
                     }

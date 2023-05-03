@@ -315,7 +315,7 @@
     <string name="outofmemory_exception_thrown">OutOfMemory exception is thrown</string>
     <string name="exception_thrown">Exception thrown</string>
     <string name="file_not_in_PDF_format_or_corrupted">file not in PDF format or corrupted</string>
-    <string name="insuffient_memory_to_load_file">Insufficient memory to load the file</string>
+    <string name="insufficient_memory_to_load_file">Insufficient memory to load the file</string>
     <string name="app_manager">App Manager</string>
     <string name="no_app_found">No app found</string>
     <string name="app_action">App action</string>
@@ -366,6 +366,7 @@
 	<string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
 	<string name="system_apps">System Apps</string>
 	<string name="user_installed_apps">User-installed Apps</string>
+	<string name="copy_file_to_device_to_view">copy the file to device to view</string>
 
 
 

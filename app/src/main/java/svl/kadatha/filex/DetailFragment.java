@@ -644,6 +644,10 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 			 {
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			 }
+			 else if(fileObjectType==FileObjectType.FTP_TYPE)
+			{
+				Global.print(context,getString(R.string.copy_file_to_device_to_view));
+			}
 		 }
 	}
 

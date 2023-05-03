@@ -11,6 +11,7 @@ import android.provider.DocumentsContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedInputStream;
@@ -1086,9 +1087,9 @@ public final class FileUtil
 		return null;
 	}
 
-	public static FTPFile getFTPFile_count(String file_path)
+	public static FTPFile getFTPFileFromOtherFTPClient(FTPClient ftpClient,String file_path)
 	{
-		if(Global.CHECK_FTP_SERVER_COUNT_CONNECTED())
+		if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(ftpClient))
 		{
 			FTPFile ftpFile;
 			File file=new File(file_path);
@@ -1096,7 +1097,7 @@ public final class FileUtil
 			String name=file.getName();
 			try {
 
-				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT_FOR_COUNT.listFiles(parent_path);
+				FTPFile[] ftpFiles_array=ftpClient.listFiles(parent_path);
 				int size= ftpFiles_array.length;
 				for(int i=0;i<size;++i)
 				{
@@ -1117,36 +1118,36 @@ public final class FileUtil
 		return null;
 	}
 
-	public static FTPFile getFTPFile_progress(String file_path)
-	{
-		if(Global.CHECK_FTP_SERVER_PROGRESS_CONNECTED())
-		{
-			FTPFile ftpFile;
-			File file=new File(file_path);
-			String parent_path=file.getParent();
-			String name=file.getName();
-			try {
-
-				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT_FOR_PROGRESS.listFiles(parent_path);
-				int size= ftpFiles_array.length;
-				for(int i=0;i<size;++i)
-				{
-					ftpFile=ftpFiles_array[i];
-					if(ftpFile.getName().equals(name))
-					{
-						return ftpFile;
-					}
-				}
-
-			} catch (IOException e) {
-				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-				return null;
-			}
-
-
-		}
-		return null;
-	}
+//	public static FTPFile getFTPFile_progress(String file_path)
+//	{
+//		if(Global.CHECK_FTP_SERVER_PROGRESS_CONNECTED())
+//		{
+//			FTPFile ftpFile;
+//			File file=new File(file_path);
+//			String parent_path=file.getParent();
+//			String name=file.getName();
+//			try {
+//
+//				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT_FOR_PROGRESS.listFiles(parent_path);
+//				int size= ftpFiles_array.length;
+//				for(int i=0;i<size;++i)
+//				{
+//					ftpFile=ftpFiles_array[i];
+//					if(ftpFile.getName().equals(name))
+//					{
+//						return ftpFile;
+//					}
+//				}
+//
+//			} catch (IOException e) {
+//				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
+//				return null;
+//			}
+//
+//
+//		}
+//		return null;
+//	}
 
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
 	{

@@ -139,7 +139,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT,FTP_CLIENT_FOR_COUNT,FTP_CLIENT_FOR_PROGRESS;
+	public static FTPClient FTP_CLIENT=new FTPClient(),FTP_CLIENT_FOR_COUNT=new FTPClient(),
+			FTP_CLIENT_FOR_PROGRESS=new FTPClient(),FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
 
 	public long search_lower_limit_size=0;
 	public long search_upper_limit_size=0;
@@ -1318,6 +1319,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						Global.REMOVE_USB_URI_PERMISSIONS();
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 						if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 						{
 							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
@@ -1616,6 +1618,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.REMOVE_USB_URI_PERMISSIONS();
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
 					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
@@ -1958,6 +1961,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.REMOVE_USB_URI_PERMISSIONS();
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
 					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());

@@ -343,21 +343,21 @@ public class CopyToActivity extends BaseActivity{
         clear_cache=savedInstanceState.getBoolean("clear_cache");
     }
 
-    private String getDestFileObjectType()
-    {
-
-        switch (destFileObjectType)
-        {
-            case FILE_TYPE:
-                return "(Device)";
-            case USB_TYPE:
-                return "(USB)";
-            case FTP_TYPE:
-                return "(FTP)";
-            default:
-                return "";
-        }
-    }
+//    private String getDestFileObjectType()
+//    {
+//
+//        switch (destFileObjectType)
+//        {
+//            case FILE_TYPE:
+//                return "(Device)";
+//            case USB_TYPE:
+//                return "(USB)";
+//            case FTP_TYPE:
+//                return "(FTP)";
+//            default:
+//                return "";
+//        }
+//    }
 
     private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType)
     {
@@ -409,7 +409,7 @@ public class CopyToActivity extends BaseActivity{
                 folderclickselected = intent.getStringExtra("folderclickselected");
                 destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
                 destination_folder_edittext.setText(folderclickselected);
-                destination_fileObject_text_view.setText(getDestFileObjectType());
+                destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
             }
         }
     });

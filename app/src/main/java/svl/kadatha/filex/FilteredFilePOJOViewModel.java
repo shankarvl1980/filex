@@ -105,6 +105,11 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
+                else if(fileObjectType==FileObjectType.FTP_TYPE)
+                {
+                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                }
                 else
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
@@ -129,7 +134,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 }
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
+                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
                 {
                     if(whetherVideo)
                     {
@@ -291,6 +296,11 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
+                else if(fileObjectType==FileObjectType.FTP_TYPE)
+                {
+                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                }
                 else
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
@@ -311,10 +321,15 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     }
                     else if(fileObjectType==FileObjectType.USB_TYPE)
                     {
-                        Uri uri= FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
-                        pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(uri,"r"));
+//                        Uri uri= FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
+//                        pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(uri,"r"));
+                        pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }
                     else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                    {
+                        pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
+                    }
+                    else if(fileObjectType==FileObjectType.FTP_TYPE)
                     {
                         pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }

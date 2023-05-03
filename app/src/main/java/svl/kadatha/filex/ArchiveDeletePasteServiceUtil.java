@@ -828,12 +828,12 @@ public class ArchiveDeletePasteServiceUtil {
                     }
                     else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
                     {
-                        if(Global.CHECK_FTP_SERVER_PROGRESS_CONNECTED())
+                        if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_PROGRESS))
                         {
                             FTPFile[] f_array=new FTPFile[size];
                             for(int i=0;i<size;++i)
                             {
-                                FTPFile f = FileUtil.getFTPFile_progress(files_selected_array.get(i));
+                                FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(MainActivity.FTP_CLIENT_FOR_PROGRESS,files_selected_array.get(i));
                                 f_array[i]=f;
                             }
                             populate(f_array,include_folder,source_folder);

@@ -42,6 +42,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private boolean isCancelled=false;
     private Future<?> future1,future2,future3, future4, future5, future6, future7, future8,future9,future10,future11;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> copyFtpAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public SparseBooleanArray mselecteditems=new SparseBooleanArray();
     public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
@@ -90,7 +91,20 @@ public class FilePOJOViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
+    public void copyFtpToDevice(String file_path)
+    {
+        if(copyFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future10=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
 
+                Global.COPY_TO_FTP_CACHE(file_path);
+                copyFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;

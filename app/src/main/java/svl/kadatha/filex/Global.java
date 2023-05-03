@@ -38,14 +38,18 @@ import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,6 +80,7 @@ public class Global
 
 	static File ARCHIVE_EXTRACT_DIR;
 	static File USB_CACHE_DIR;
+	static File FTP_CACHE_DIR;
 	static File APK_ICON_DIR;
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
@@ -448,6 +453,7 @@ public class Global
 		//cache directory setting
 		ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
+		FTP_CACHE_DIR=context.getExternalFilesDir(".ftp_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		SIZE_APK_ICON_LIST=APK_ICON_PACKAGE_NAME_LIST.size();
@@ -960,9 +966,9 @@ public class Global
 		}
 	}
 
-	public static boolean CHECK_FTP_SERVER_COUNT_CONNECTED()
+	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
 	{
-		int reply_code=MainActivity.FTP_CLIENT_FOR_COUNT.getReplyCode();
+		int reply_code=ftpClient.getReplyCode();
 		if(FTPReply.isPositiveCompletion(reply_code))
 		{
 			return true;
@@ -970,29 +976,14 @@ public class Global
 		else
 		{
 			try {
-				return FtpDetailsViewModel.CONNECT_FOR_COUNT();
+				return FtpDetailsViewModel.CONNECT_FTP_CLIENT(ftpClient);
 			} catch (IOException e) {
 				return false;
 			}
 		}
 	}
 
-	public static boolean CHECK_FTP_SERVER_PROGRESS_CONNECTED()
-	{
-		int reply_code=MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode();
-		if(FTPReply.isPositiveCompletion(reply_code))
-		{
-			return true;
-		}
-		else
-		{
-			try {
-				return FtpDetailsViewModel.CONNECT_FOR_PROGRESS();
-			} catch (IOException e) {
-				return false;
-			}
-		}
-	}
+
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
 		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
@@ -1107,6 +1098,22 @@ public class Global
 				return null;
 		}
 	}
+
+	public static String GET_FileObjectType(FileObjectType fileObjectType)
+	{
+		switch (fileObjectType)
+		{
+			case FILE_TYPE:
+				return "(Device)";
+			case USB_TYPE:
+				return "(USB)";
+			case FTP_TYPE:
+				return "(FTP)";
+			default:
+				return "";
+		}
+	}
+
 
 	public static long AVAILABLE_MEMORY_MB(){
 		Runtime runtime=Runtime.getRuntime();
@@ -1327,7 +1334,38 @@ public class Global
 				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 				if(targetUsbFile!=null)
 				{
-					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{});
+				}
+			}
+
+		}
+		return cache_file;
+	}
+
+	public static File COPY_TO_FTP_CACHE(String file_path)
+	{
+		File cache_file=new File(Global.FTP_CACHE_DIR,file_path);
+		if(!cache_file.exists())
+		{
+			File parent_file=cache_file.getParentFile();
+			if(parent_file!=null)
+			{
+				FileUtil.mkdirsNative(parent_file);
+				FileUtil.createNativeNewFile(cache_file);
+				if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_COPY_VIEW))
+				{
+//					try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+//						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{});
+					try(OutputStream outputStream=new BufferedOutputStream(new FileOutputStream(cache_file))){
+						MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFile(file_path,outputStream);
+
+
+						return cache_file;
+
+					} catch (Exception e) {
+
+						return cache_file;
+					}
 				}
 			}
 

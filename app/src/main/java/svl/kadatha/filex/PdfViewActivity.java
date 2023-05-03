@@ -30,7 +30,6 @@ public class PdfViewActivity extends BaseActivity {
         if(intent!=null)
         {
             data=intent.getData();
-            //boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
             FileObjectType fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
             if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);

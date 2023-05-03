@@ -125,8 +125,9 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT();
-                    CONNECT_FOR_COUNT();
-                    CONNECT_FOR_PROGRESS();
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
@@ -159,47 +160,32 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
 
 
-        MainActivity.FTP_CLIENT=new FTPClient();
-        MainActivity.FTP_CLIENT.connect(FTP_POJO.server,FTP_POJO.port);
-
-        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT.getReplyCode())) {
-
-            MainActivity.FTP_CLIENT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-            MainActivity.FTP_CLIENT.setControlKeepAliveReplyTimeout(5000);
-
-            boolean loggedInStatus = MainActivity.FTP_CLIENT.login(FTP_POJO.user_name, FTP_POJO.password);
-            if (loggedInStatus) {
-
-                MainActivity.FTP_CLIENT.setFileType(FTP.BINARY_FILE_TYPE);
-                MainActivity.FTP_CLIENT.enterLocalPassiveMode();
-                FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
-                //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
-
-                Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
-                return true;
-            }
-
+        boolean connected=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
+        if(connected)
+        {
+            FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+            //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
+            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+            return true;
         }
 
         return false;
     }
 
-    public static boolean CONNECT_FOR_COUNT() throws IOException {
+    public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
         if(FTP_POJO==null)return false;
 
-        MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
+        ftpClient.connect(FTP_POJO.server,FTP_POJO.port);
 
-        MainActivity.FTP_CLIENT_FOR_COUNT.connect(FTP_POJO.server,FTP_POJO.port);
+        if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+            ftpClient.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
+            ftpClient.setControlKeepAliveReplyTimeout(5000);
 
-        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_COUNT.getReplyCode())) {
-            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveReplyTimeout(5000);
-
-            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_COUNT.login(FTP_POJO.user_name, FTP_POJO.password);
+            boolean loggedInStatus = ftpClient.login(FTP_POJO.user_name, FTP_POJO.password);
             if (loggedInStatus) {
 
-                MainActivity.FTP_CLIENT_FOR_COUNT.setFileType(FTP.BINARY_FILE_TYPE);
-                MainActivity.FTP_CLIENT_FOR_COUNT.enterLocalPassiveMode();
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                ftpClient.enterLocalPassiveMode();
 
                 return true;
             }
@@ -207,28 +193,74 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         return false;
     }
 
-    public static boolean CONNECT_FOR_PROGRESS() throws IOException {
-        if(FTP_POJO==null)return false;
-
-        MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
-
-        MainActivity.FTP_CLIENT_FOR_PROGRESS.connect(FTP_POJO.server,FTP_POJO.port);
-
-        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode())) {
-            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveReplyTimeout(5000);
-
-            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_PROGRESS.login(FTP_POJO.user_name, FTP_POJO.password);
-            if (loggedInStatus) {
-
-                MainActivity.FTP_CLIENT_FOR_PROGRESS.setFileType(FTP.BINARY_FILE_TYPE);
-                MainActivity.FTP_CLIENT_FOR_PROGRESS.enterLocalPassiveMode();
-
-                return true;
-            }
-        }
-        return false;
-    }
+//    public static boolean CONNECT_FOR_COUNT() throws IOException {
+//        if(FTP_POJO==null)return false;
+//
+//        MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
+//
+//        MainActivity.FTP_CLIENT_FOR_COUNT.connect(FTP_POJO.server,FTP_POJO.port);
+//
+//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_COUNT.getReplyCode())) {
+//            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
+//            MainActivity.FTP_CLIENT_FOR_COUNT.setControlKeepAliveReplyTimeout(5000);
+//
+//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_COUNT.login(FTP_POJO.user_name, FTP_POJO.password);
+//            if (loggedInStatus) {
+//
+//                MainActivity.FTP_CLIENT_FOR_COUNT.setFileType(FTP.BINARY_FILE_TYPE);
+//                MainActivity.FTP_CLIENT_FOR_COUNT.enterLocalPassiveMode();
+//
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    public static boolean CONNECT_FOR_PROGRESS() throws IOException {
+//        if(FTP_POJO==null)return false;
+//
+//        MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
+//
+//        MainActivity.FTP_CLIENT_FOR_PROGRESS.connect(FTP_POJO.server,FTP_POJO.port);
+//
+//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode())) {
+//            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
+//            MainActivity.FTP_CLIENT_FOR_PROGRESS.setControlKeepAliveReplyTimeout(5000);
+//
+//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_PROGRESS.login(FTP_POJO.user_name, FTP_POJO.password);
+//            if (loggedInStatus) {
+//
+//                MainActivity.FTP_CLIENT_FOR_PROGRESS.setFileType(FTP.BINARY_FILE_TYPE);
+//                MainActivity.FTP_CLIENT_FOR_PROGRESS.enterLocalPassiveMode();
+//
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    public static boolean CONNECT_FOR_COPY_TO_VIEW() throws IOException {
+//        if(FTP_POJO==null)return false;
+//
+//        MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+//
+//        MainActivity.FTP_CLIENT_FOR_COPY_VIEW.connect(FTP_POJO.server,FTP_POJO.port);
+//
+//        if(FTPReply.isPositiveCompletion(MainActivity.FTP_CLIENT_FOR_PROGRESS.getReplyCode())) {
+//            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
+//            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setControlKeepAliveReplyTimeout(5000);
+//
+//            boolean loggedInStatus = MainActivity.FTP_CLIENT_FOR_COPY_VIEW.login(FTP_POJO.user_name, FTP_POJO.password);
+//            if (loggedInStatus) {
+//
+//                MainActivity.FTP_CLIENT_FOR_COPY_VIEW.setFileType(FTP.BINARY_FILE_TYPE);
+//                MainActivity.FTP_CLIENT_FOR_COPY_VIEW.enterLocalPassiveMode();
+//
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     private void replaceFtpPojo(Bundle bundle)
     {
@@ -289,8 +321,9 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT();
-                    CONNECT_FOR_COUNT();
-                    CONNECT_FOR_PROGRESS();
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));

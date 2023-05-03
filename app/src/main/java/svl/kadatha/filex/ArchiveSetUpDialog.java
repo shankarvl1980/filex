@@ -523,17 +523,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private String getDestFileObjectType()
 	{
 		FileObjectType fileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-		switch (fileObjectType)
-		{
-			case FILE_TYPE:
-				return "(Device)";
-			case USB_TYPE:
-				return "(USB)";
-			case FTP_TYPE:
-				return "(FTP)";
-			default:
-				return "";
-		}
+		return Global.GET_FileObjectType(fileObjectType);
 	}
 
 	private String getParentFilePath(String file_path)

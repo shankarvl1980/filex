@@ -103,11 +103,11 @@ public class ViewModelFileCount extends ViewModel {
                 else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
                 {
                     FTPFile[] f_array=new FTPFile[size];
-                    if(Global.CHECK_FTP_SERVER_COUNT_CONNECTED())
+                    if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_COUNT))
                     {
                         for(int i=0;i<size;++i)
                         {
-                            FTPFile f = FileUtil.getFTPFile_count(source_list_files.get(i));
+                            FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(MainActivity.FTP_CLIENT_FOR_COUNT,source_list_files.get(i));
                             f_array[i]=f;
                         }
                         populate(f_array,include_folder,source_folder);

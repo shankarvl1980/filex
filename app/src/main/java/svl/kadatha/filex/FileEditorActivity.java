@@ -189,7 +189,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				switch(p1)
 				{
 					case 0:
-						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
@@ -205,7 +205,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						{
 							src_uri=viewModel.data;
 						}
-						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 						{
 							src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
@@ -226,7 +226,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							copy_uri=viewModel.data;
 
 						}
-						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 						{
 							copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
@@ -252,7 +252,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						break;
 
 					case 3:
-						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE)
+						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
@@ -340,7 +340,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(viewModel.fileObjectType==FileObjectType.USB_TYPE)
+					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						viewModel.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 					}
