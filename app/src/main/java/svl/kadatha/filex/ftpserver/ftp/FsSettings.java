@@ -70,14 +70,10 @@ public class FsSettings {
 //        }
     }
 
-//    public static FtpUser getUser(String username) {
-//
-//        for (FtpUser user : getUsers()) {
-//            if (user.getUsername().equals(username))
-//                return user;
-//        }
-//        return null;
-//    }
+    public static FtpUser getUser(String username) {
+
+        return FtpServerViewModel.FTP_USER;
+    }
 
 //    public static void addUser(FtpUser user) {
 //        if (getUser(user.getUsername()) != null) {

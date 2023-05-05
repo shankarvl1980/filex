@@ -50,7 +50,7 @@ public class CmdPASS extends FtpCmd implements Runnable {
             return;
         }
 
-        FtpUser user = FtpServerViewModel.FTP_USER;//FsSettings.getUser(attemptUsername);
+        FtpUser user = FsSettings.getUser(attemptUsername);
         if (user == null) {
             Timber.tag(TAG).i( "Failed authentication, username does not exist!");
             Util.sleepIgnoreInterrupt(1000); // sleep to foil brute force attack

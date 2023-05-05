@@ -324,6 +324,10 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
                 }
+                else if (destFileObjectType==FileObjectType.FTP_TYPE)
+                {
+                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.FTP_TYPE);
+                }
             }
             else
             {
@@ -514,6 +518,10 @@ public class ArchiveDeletePasteServiceUtil {
                     {
                         FileUtil.deleteUsbDirectory(zipUsbFile);
                     }
+                }
+                else if(destFileObjectType==FileObjectType.FTP_TYPE)
+                {
+                    //do not do any thing as it is on main thread
                 }
                 else
                 {
