@@ -56,6 +56,7 @@ public abstract class FtpServerFileUtil {
             } else {
                 // Storage Access Framework
                 DocumentFile targetDocument = getDocumentFile(target, false, context);
+                if(targetDocument==null)return false;
                 outStream =
                         context.getContentResolver().openOutputStream(targetDocument.getUri());
 
@@ -179,8 +180,8 @@ public abstract class FtpServerFileUtil {
                 if (DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
                     return true;
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                return false;
             }
         }
 
@@ -214,8 +215,8 @@ public abstract class FtpServerFileUtil {
                 if(DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
                     return true;
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                return false;
             }
         }
 
@@ -302,8 +303,8 @@ public abstract class FtpServerFileUtil {
             if (file.createNewFile()) {
                 return true;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return false;
         }
 
         // Try with Storage Access Framework.
@@ -565,7 +566,16 @@ public abstract class FtpServerFileUtil {
 
 
         Uri treeUri = null;
-        UriPOJO uriPOJO= Global.CHECK_AVAILABILITY_URI_PERMISSION(file.getAbsolutePath(), FileObjectType.FILE_TYPE);
+        File parent_file=file.getParentFile();
+        if(parent_file!=null)
+        {
+            if(!parent_file.exists()) return null;
+        }
+        else {
+            return null;
+        }
+
+        UriPOJO uriPOJO= Global.CHECK_AVAILABILITY_URI_PERMISSION(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
         if(uriPOJO!=null)
         {
             treeUri=uriPOJO.get_uri();
@@ -573,6 +583,11 @@ public abstract class FtpServerFileUtil {
         if (treeUri == null) {
             return null;
         }
+        if(!uriPOJO.get_path().equals(baseFolder))
+        {
+            return null;
+        }
+
         if (file.exists()) {
             Uri documentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, DocumentsContract.getTreeDocumentId(treeUri) + relativePath);
             DocumentFile document = DocumentFile.fromSingleUri(context, documentUri);
