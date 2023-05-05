@@ -134,7 +134,7 @@
             <View
                 android:id="@+id/activity_copy_to_background_padding"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/layout_margin"
+                android:layout_height="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/activity_copy_to_browse_button"

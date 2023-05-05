@@ -84,6 +84,10 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 				mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 			}
 		}
+		else if(df.fileObjectType==FileObjectType.FTP_TYPE)
+		{
+
+		}
 
 	}
 

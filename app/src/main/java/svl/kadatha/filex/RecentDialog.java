@@ -374,6 +374,10 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				{
 					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+ filePOJO.getPath());
 				}
+				else if(filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
+				{
+					p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+ filePOJO.getPath());
+				}
 				else
 				{
 					p1.textView_recent_dir.setText(filePOJO.getPath());
