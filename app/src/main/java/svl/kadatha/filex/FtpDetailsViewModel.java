@@ -123,15 +123,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             public void run() {
                 loggedInStatus=false;
                 try {
-
-                    MainActivity.FTP_CLIENT.disconnect();
-
-                    MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
-
-                    MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
-
-                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
-
+                    DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT();
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
@@ -148,6 +140,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             }
         });
     }
+
 
     public static boolean CONNECT() throws IOException {
         if(FTP_POJO==null)return false;
@@ -204,6 +197,18 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             ftpClient.disconnect();
         }
         return false;
+    }
+
+    public static void DISCONNECT_FTP_CLIENT() {
+        try {
+            MainActivity.FTP_CLIENT.disconnect();
+            MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
+            MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
+            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
+        } catch (IOException e) {
+
+        }
+
     }
 
     private void replaceFtpPojo(Bundle bundle)

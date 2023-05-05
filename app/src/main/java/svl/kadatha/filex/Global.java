@@ -75,7 +75,7 @@ public class Global
 	static ArrayList<FilePOJO> STORAGE_DIR=new ArrayList<>();
 	static final List<String> INTERNAL_STORAGE_PATH_LIST=new ArrayList<>();
 	static String INTERNAL_PRIMARY_STORAGE_PATH="";
-	static String EXTERNAL_STORAGE_PATH="";
+	static List<String> EXTERNAL_STORAGE_PATH_LIST=new ArrayList<>();
 	static String USB_STORAGE_PATH;
 
 	static File ARCHIVE_EXTRACT_DIR;
@@ -241,7 +241,23 @@ public class Global
 					Uri uri=permission.getUri();
 					String uri_authority=uri.getAuthority();
 					String uri_path=FileUtil.getFullPathFromTreeUri(uri,context);
-					if(uri_path!=null) URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
+					if(uri_path!=null)
+					{
+						if(uri_path.equals(File.separator) && uri_authority.equals("com.android.externalstorage.documents") )
+						{
+							final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+							try
+							{
+								App.getAppContext().getContentResolver().releasePersistableUriPermission(uri,takeFlags);
+							}
+							catch (SecurityException e){}
+						}
+						else {
+							URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
+						}
+					}
+
+
 					//Timber.tag(TAG).d("path-"+uri_path+"   uri-"+uri);
 				}
 			}
@@ -370,6 +386,7 @@ public class Global
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
+				if(uriPOJO.get_path().equals(File.separator)) return null;
 				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;

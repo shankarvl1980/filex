@@ -112,7 +112,7 @@ public class StorageUtil
 		{
 			Global.INTERNAL_STORAGE_PATH_LIST.add(f.getAbsolutePath());
 		}
-		if(Environment.isExternalStorageRemovable(f)) Global.EXTERNAL_STORAGE_PATH = f.getAbsolutePath();
+		if(Environment.isExternalStorageRemovable(f)) Global.EXTERNAL_STORAGE_PATH_LIST.add(f.getAbsolutePath());
 
 	}
 

@@ -1772,17 +1772,27 @@ public final class FileUtil
 
 	public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path)
 	{
-		boolean is_from_internal = false;
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
 		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH_LIST)
 		{
 			if (Global.IS_CHILD_FILE(file_path,internal_storage_path)) {
-				is_from_internal = true;
-				break;
+				return true;
 			}
 		}
-		return is_from_internal;
+		return false;
 	}
+
+	public static boolean isFilePathFromExternalStorage(FileObjectType fileObjectType,String file_path)
+	{
+		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
+		for(String external_path : Global.EXTERNAL_STORAGE_PATH_LIST)
+		{
+			if(Global.IS_CHILD_FILE(file_path,external_path))
+				return true;
+		}
+		return false;
+	}
+
 
 
 	public static boolean isWritable(FileObjectType fileObjectType,@NonNull final String file_path)

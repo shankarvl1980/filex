@@ -580,7 +580,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
                 StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserFragment !=null) storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
 

@@ -102,7 +102,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
 
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && Global.IS_CHILD_FILE(fileclickselected,Global.EXTERNAL_STORAGE_PATH)))
+            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || FileUtil.isFilePathFromExternalStorage(FileObjectType.FILE_TYPE,fileclickselected))
             {
                 fileObjectType=FileObjectType.FILE_TYPE;
             }

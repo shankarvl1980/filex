@@ -1320,6 +1320,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+                        FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
 						if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 						{
 							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
@@ -1619,6 +1620,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+				FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
 					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
@@ -1962,6 +1964,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
 				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+				FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
 				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
 				{
 					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
@@ -2385,7 +2388,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
 				Global.WORKOUT_AVAILABLE_SPACE();
 				storageRecyclerAdapter.notifyDataSetChanged();
-				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
+				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 				if(df!=null) df.clearSelectionAndNotifyDataSetChanged();
 				if (recentDialogListener != null) {

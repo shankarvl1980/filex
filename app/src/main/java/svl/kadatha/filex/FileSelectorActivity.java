@@ -741,7 +741,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.EXTERNAL_STORAGE_PATH), FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
                 FileSelectorFragment fileSelectorFragment=(FileSelectorFragment)fm.findFragmentById(R.id.file_selector_container);
                 if(fileSelectorFragment!=null) fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                 break;
