@@ -227,10 +227,14 @@ public final class FileUtil
 	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
 		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
-			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
-			if (cut) {
-				deleteNativeFile(source);
+			if(cut)
+			{
+				source.renameTo(target);
 			}
+			else {
+				bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
+			}
+
 
 		} catch (Exception e) {
 			//Timber.e(Application.TAG,
@@ -356,13 +360,17 @@ public final class FileUtil
 		{
 			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 			try {
-                MainActivity.FTP_CLIENT.retrieveFile(src_file_path,byteArrayOutputStream);
-				inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-				outputStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
-				bufferedCopy(inputStream, outputStream, false, bytes_read);
-				if (cut) {
-					deleteFTPFile(src_file_path);
+                if(cut)
+				{
+					MainActivity.FTP_CLIENT.rename(src_file_path,file_path);
 				}
+				else {
+					MainActivity.FTP_CLIENT.retrieveFile(src_file_path,byteArrayOutputStream);
+					inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+					outputStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
+					bufferedCopy(inputStream, outputStream, false, bytes_read);
+				}
+
 				return true;
 
 			} catch (Exception e) {
@@ -464,8 +472,10 @@ public final class FileUtil
 				bufferedCopy(inStream,outStream,true,bytes_read);
 				if(cut)
 				{
+					//move in usb is attempted and does not work, hence copy first and cut
 					deleteUsbFile(source);
 				}
+
 				return true;
 			}
 			else

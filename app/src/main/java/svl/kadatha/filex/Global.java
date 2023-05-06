@@ -976,7 +976,7 @@ public class Global
 		else
 		{
 			try {
-				return FtpDetailsViewModel.CONNECT();
+				return FtpDetailsViewModel.CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
 			} catch (IOException e) {
 				return false;
 			}

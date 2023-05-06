@@ -153,8 +153,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     }
 
-
-
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
 

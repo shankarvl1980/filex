@@ -125,10 +125,18 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=CONNECT();
+                    loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
+                    if(loggedInStatus)
+                    {
+                        FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
+                        {
+                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+                        }
+                    }
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
@@ -142,37 +150,19 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     }
 
 
-    public static boolean CONNECT() throws IOException {
-        if(FTP_POJO==null)return false;
-
-        Iterator<FilePOJO> iterator = Global.STORAGE_DIR.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
-                iterator.remove();
-            }
-        }
-
-        Iterator<FilePOJO> iterator1 = MainActivity.RECENTS.iterator();
-        while (iterator1.hasNext()) {
-            if (iterator1.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
-                iterator1.remove();
-            }
-        }
-
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
-        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
-
-        boolean connected=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
-        if(connected)
-        {
-            FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
-            //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
-            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
-            return true;
-        }
-
-        return false;
-    }
+//    public static boolean CONNECT() throws IOException {
+//        if(FTP_POJO==null)return false;
+//
+//        boolean connected=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
+//        if(connected)
+//        {
+//            FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+//            //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
         if(FTP_POJO==null)return false;
@@ -201,11 +191,29 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
     public static void DISCONNECT_FTP_CLIENT() {
         try {
+
+            Iterator<FilePOJO> iterator = Global.STORAGE_DIR.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
+                    iterator.remove();
+                }
+            }
+
+            Iterator<FilePOJO> iterator1 = MainActivity.RECENTS.iterator();
+            while (iterator1.hasNext()) {
+                if (iterator1.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
+                    iterator1.remove();
+                }
+            }
+
+            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
+            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+
             MainActivity.FTP_CLIENT.disconnect();
             MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
             MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
             MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
-        } catch (IOException e) {
+        } catch (Exception e) {
 
         }
 
@@ -275,10 +283,18 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=CONNECT();
+                    loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
+                    if(loggedInStatus)
+                    {
+                        FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
+                        {
+                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+                        }
+                    }
                 }
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));

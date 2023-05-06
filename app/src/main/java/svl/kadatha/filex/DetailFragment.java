@@ -653,6 +653,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					}
 				}
 			}
+
 		 	if(fileObjectType==FileObjectType.USB_TYPE)
 			 {
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
