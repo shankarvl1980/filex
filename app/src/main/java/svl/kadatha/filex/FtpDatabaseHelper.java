@@ -21,7 +21,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT, port INTEGER, mode TEXT, user_name TEXT, password TEXT, anonymous INTEGER,encoding TEXT,display TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE+" (server TEXT, port INTEGER, mode TEXT, user_name TEXT, password TEXT, type TEXT ,anonymous INTEGER,encoding TEXT,display TEXT)");
     }
 
     @Override
@@ -42,11 +42,12 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
                     String mode = cursor.getString(2);
                     String user_name = cursor.getString(3);
                     String password = cursor.getString(4);
-                    boolean anonymous = cursor.getInt(5) != 0;
-                    String encoding = cursor.getString(6);
-                    String display = cursor.getString(7);
+                    String type = cursor.getString(5);
+                    boolean anonymous = cursor.getInt(6) != 0;
+                    String encoding = cursor.getString(7);
+                    String display = cursor.getString(8);
 
-                    ftpPOJOList.add(new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, anonymous, encoding, display));
+                    ftpPOJOList.add(new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, type, anonymous, encoding, display));
                     cursor.moveToNext();
                 }
                 cursor.close();
@@ -58,7 +59,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long insert(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    public long insert(String server,int port,String mode, String user_name,String password,String type,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
@@ -69,23 +70,25 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("mode",mode);
         contentValues.put("user_name",user_name);
         contentValues.put("password",password);
+        contentValues.put("type",type);
         contentValues.put("anonymous",anonymous ? 1 : 0);
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
         return sqLiteDatabase.insert(TABLE,null,contentValues);
     }
 
-    public long update(String original_server,String original_user_name, String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+    public long update(String original_server,String original_user_name, String server,int port,String mode, String user_name,String password,String type,boolean anonymous,String encoding, String display)
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
+        //sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
         contentValues.put("mode",mode);
         contentValues.put("user_name",user_name);
         contentValues.put("password",password);
+        contentValues.put("type",type);
         contentValues.put("anonymous",anonymous ? 1 : 0);
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
@@ -97,6 +100,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         }
         else
         {
+            cursor.close();
             return sqLiteDatabase.insert(TABLE,null,contentValues);
         }
 
@@ -127,11 +131,12 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
            String mode = cursor.getString(2);
            String user_name = cursor.getString(3);
            String password = cursor.getString(4);
-           boolean anonymous = cursor.getInt(5) != 0;
-           String encoding = cursor.getString(6);
-           String display = cursor.getString(7);
+           String type = cursor.getString(5);
+           boolean anonymous = cursor.getInt(6) != 0;
+           String encoding = cursor.getString(7);
+           String display = cursor.getString(8);
 
-           ftpPOJO=new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, anonymous, encoding, display);
+           ftpPOJO=new FtpDetailsDialog.FtpPOJO(server, port, mode, user_name, password, type, anonymous, encoding, display);
 
            cursor.close();
        }

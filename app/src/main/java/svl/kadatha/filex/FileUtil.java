@@ -1118,37 +1118,6 @@ public final class FileUtil
 		return null;
 	}
 
-//	public static FTPFile getFTPFile_progress(String file_path)
-//	{
-//		if(Global.CHECK_FTP_SERVER_PROGRESS_CONNECTED())
-//		{
-//			FTPFile ftpFile;
-//			File file=new File(file_path);
-//			String parent_path=file.getParent();
-//			String name=file.getName();
-//			try {
-//
-//				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT_FOR_PROGRESS.listFiles(parent_path);
-//				int size= ftpFiles_array.length;
-//				for(int i=0;i<size;++i)
-//				{
-//					ftpFile=ftpFiles_array[i];
-//					if(ftpFile.getName().equals(name))
-//					{
-//						return ftpFile;
-//					}
-//				}
-//
-//			} catch (IOException e) {
-//				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-//				return null;
-//			}
-//
-//
-//		}
-//		return null;
-//	}
-
 	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
 	{
 		if(usbFile==null) return false;

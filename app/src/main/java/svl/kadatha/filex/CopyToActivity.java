@@ -109,11 +109,6 @@ public class CopyToActivity extends BaseActivity{
                 viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+folderclickselected);
                 final String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected,file_name);
 
-//                if (!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,folderclickselected)) {
-//                    Global.print(context,getString(R.string.directory_not_exist_not_valid));
-//                    return;
-//                }
-
                 if(!is_file_writable(folderclickselected,destFileObjectType))
                 {
                     return;
@@ -342,22 +337,6 @@ public class CopyToActivity extends BaseActivity{
         destFileObjectType= (FileObjectType) savedInstanceState.getSerializable("destFileObjectType");
         clear_cache=savedInstanceState.getBoolean("clear_cache");
     }
-
-//    private String getDestFileObjectType()
-//    {
-//
-//        switch (destFileObjectType)
-//        {
-//            case FILE_TYPE:
-//                return "(Device)";
-//            case USB_TYPE:
-//                return "(USB)";
-//            case FTP_TYPE:
-//                return "(FTP)";
-//            default:
-//                return "";
-//        }
-//    }
 
     private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType)
     {

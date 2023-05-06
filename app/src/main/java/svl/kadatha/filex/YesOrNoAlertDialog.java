@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -19,7 +20,14 @@ public class YesOrNoAlertDialog extends DialogFragment
     private Bundle bundle;
     private String request_code;
     private int message;
+    private Context context;
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -45,7 +53,6 @@ public class YesOrNoAlertDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        Context context = getContext();
         View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);

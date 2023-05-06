@@ -221,19 +221,25 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         String mode=bundle.getString("mode");
         String user_name=bundle.getString("user_name");
         String password=bundle.getString("password");
+        String type=bundle.getString("type");
         boolean anonymous=bundle.getBoolean("anonymous");
         String encoding=bundle.getString("encoding");
         String display=bundle.getString("display");
         boolean update=bundle.getBoolean("update");
+        boolean replace=bundle.getBoolean("replace");
         if(original_server==null)original_server="";
         if(original_user_name==null)original_user_name="";
+        if(replace)
+        {
+            ftpDatabaseHelper.delete(server, user_name);
+        }
         if(update)
         {
-            row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password, anonymous,encoding,display);
+            row_number=ftpDatabaseHelper.update(original_server,original_user_name,server,port,mode,user_name,password,type ,anonymous,encoding,display);
         }
         else
         {
-            row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password, anonymous,encoding,display);
+            row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password,type ,anonymous,encoding,display);
         }
 
         ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
@@ -265,9 +271,9 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 String server=bundle.getString("server");
                 String user_name=bundle.getString("user_name");
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
-                MainActivity.FTP_CLIENT=new FTPClient();
                 loggedInStatus=false;
                 try {
+                    DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT();
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);

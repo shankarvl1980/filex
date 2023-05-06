@@ -53,7 +53,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private TextView ftp_number_text_view,empty_ftp_list_tv;
     private FtpDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
-    private final static String FTP_INPUT_DETAILS_REQUEST_CODE="ftp_input_details_request_code";
+    public final static String FTP_INPUT_DETAILS_REQUEST_CODE="ftp_input_details_request_code";
     //private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL="ftp_input_details_request_code_non_null";
     private final static String FTP_RENAME_REQUEST_CODE="ftp_rename_request_code";
 
@@ -621,18 +621,20 @@ public class FtpDetailsDialog extends DialogFragment {
         final String mode;
         final String user_name;
         final String password;
+        final String type;
         final String encoding;
         final String display;
         final int port;
         final boolean anonymous;
 
-        FtpPOJO(String server,int port,String mode, String user_name,String password,boolean anonymous,String encoding, String display)
+        FtpPOJO(String server,int port,String mode, String user_name,String password,String type,boolean anonymous,String encoding, String display)
         {
             this.server=server;
             this.port=port;
             this.mode=mode;
             this.user_name=user_name;
             this.password=password;
+            this.type=type;
             this.anonymous=anonymous;
             this.encoding=encoding;
             this.display=display;

@@ -361,7 +361,7 @@
 	<string name="parent_directory">Parent directory</string>
     <string name="network">Network</string>
 	<string name="want_to_stop_ftp_server_service">Want to stop the FTP Server service?</string>
-	<string name="ftp_settings_already_exists_want_to_replace_it">An FTP settings already exists. Want to replace it?</string>
+	<string name="ftp_setting_already_exists_want_to_replace_it">An FTP setting already exists. Want to replace it?</string>
 	<string name="optional_in_bracket">(optional)</string>
 	<string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
 	<string name="system_apps">System Apps</string>
@@ -454,6 +454,7 @@
     <string name="nothing_found_here">Nothing found here</string>
     <string name="advanced">Advanced</string>
     <string name="not_supported">not supported</string>
+    <string name="update_ftp_server">Update FTP Server</string>
 
 
 </resources>

@@ -24,7 +24,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
 
     private Context context;
     private FtpDatabaseHelper ftpDatabaseHelper;
-    private String original_server="",original_user_name="",server="",mode="",user_name="",password="",encoding="",display="";
+    private String original_server="",original_user_name="",server="",mode="",user_name="",password="",type="",encoding="",display="";
     private int port;
     private int anonymous;
     private TextView server_tv,port_tv,user_name_tv,password_tv,encoding_tv,display_tv;
@@ -88,6 +88,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
                     port=ftpPOJO.port;
                     mode=ftpPOJO.mode;
                     password=ftpPOJO.password;
+                    type=ftpPOJO.type;
                     anonymous=ftpPOJO.anonymous ? 1 : 0;
                     encoding=ftpPOJO.encoding;
                     display=ftpPOJO.display;
@@ -101,6 +102,11 @@ public class FtpDetailsInputDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_ftp_details_input,container,false);
+        TextView title_tv=v.findViewById(R.id.ftp_details_title);
+        if(update)
+        {
+            title_tv.setText(R.string.update_ftp_server);
+        }
         server_tv=v.findViewById(R.id.ftp_details_server);
         port_tv=v.findViewById(R.id.ftp_details_port);
         mode_active_radio_btn=v.findViewById(R.id.ftp_details_active_radio_btn);
@@ -196,12 +202,13 @@ public class FtpDetailsInputDialog extends DialogFragment {
             port=Integer.parseInt(port_tv.getText().toString().trim());
             mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
             password=password_tv.getText().toString().trim();
+            type="ftp";
             anonymous=anonymous_check_box.isChecked() ? 1 : 0;
             display=display_tv.getText().toString().trim();
             bundle.putBoolean("whetherToConnect",whetherToConnect);
             if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
             {
-                YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_settings_already_exists_want_to_replace_it,bundle);
+                YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
                 ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
             }
             else
@@ -213,13 +220,17 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 bundle.putString("mode",mode);
                 bundle.putString("user_name",user_name);
                 bundle.putString("password",password);
+                bundle.putString("type",type);
                 bundle.putBoolean("anonymous",anonymous != 0);
                 bundle.putString("encoding",encoding);
                 bundle.putString("display",display);
                 bundle.putBoolean("update",update);
+                bundle.putBoolean("replace",replace);
 
-                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+
                 dismissAllowingStateLoss();
+                //request_code gets changed on yesornodialog orientation change. so request_code be hardcoded.
+                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
             }
         }
     }
