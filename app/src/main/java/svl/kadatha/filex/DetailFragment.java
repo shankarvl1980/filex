@@ -391,7 +391,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					progress_bar.setVisibility(View.GONE);
 					if(viewModel.ftp_cached_file_path!=null)
 					{
-						FileIntentDispatch.openFile(context,viewModel.ftp_cached_file_path,"",false,viewModel.ftp_cached_file_fileObjectType,false,Global.CACHE_FILE_MAX_LIMIT);
+						FileIntentDispatch.openFile(context,viewModel.ftp_cached_file_path,"",false,viewModel.ftp_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
 					}
 
 					viewModel.copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -673,7 +673,7 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 					return;
 				}
 				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.copyFtpToDevice(file_path,fileObjectType);
+				viewModel.copyFtpToDevice(file_path,fileObjectType,select_app);
 			}
 		 }
 	}

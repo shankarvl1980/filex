@@ -46,7 +46,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private int scroll_distance;
     private int num_all_ftp;
     private Button delete_btn;
-    private Button rename_btn;
+    private Button disconnect_btn;
     private Button edit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
@@ -140,22 +140,21 @@ public class FtpDetailsDialog extends DialogFragment {
 
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
         int[] bottom_drawables ={R.drawable.document_add_icon,R.drawable.delete_icon,R.drawable.connect_icon,R.drawable.edit_icon};
-        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.connect),getString(R.string.edit)};
+        String [] titles=new String[]{getString(R.string.new_),getString(R.string.delete),getString(R.string.disconnect),getString(R.string.edit)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar=v.findViewById(R.id.fragment_ftp_toolbar);
         bottom_toolbar.addView(tb_layout);
         Button add_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        rename_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        disconnect_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
-        Button exit_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+
 
         BottomToolbarClickListener bottomToolbarClickListener=new BottomToolbarClickListener();
         add_btn.setOnClickListener(bottomToolbarClickListener);
         delete_btn.setOnClickListener(bottomToolbarClickListener);
-        rename_btn.setOnClickListener(bottomToolbarClickListener);
+        disconnect_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
-        exit_btn.setOnClickListener(bottomToolbarClickListener);
 
         viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
         viewModel.fetchFtpPojoList();
@@ -529,23 +528,23 @@ public class FtpDetailsDialog extends DialogFragment {
             delete_btn.setAlpha(Global.ENABLE_ALFA);
             if(selection_size==1)
             {
-                rename_btn.setAlpha(Global.ENABLE_ALFA);
+                //rename_btn.setAlpha(Global.ENABLE_ALFA);
                 edit_btn.setAlpha(Global.ENABLE_ALFA);
             }
             else
             {
-                rename_btn.setAlpha(Global.DISABLE_ALFA);
+                //rename_btn.setAlpha(Global.DISABLE_ALFA);
                 edit_btn.setAlpha(Global.DISABLE_ALFA);
             }
         }
         else
         {
             delete_btn.setAlpha(Global.DISABLE_ALFA);
-            rename_btn.setAlpha(Global.DISABLE_ALFA);
+            //rename_btn.setAlpha(Global.DISABLE_ALFA);
             edit_btn.setAlpha(Global.DISABLE_ALFA);
         }
         delete_btn.setEnabled(enable);
-        rename_btn.setEnabled(enable && selection_size==1);
+        //rename_btn.setEnabled(enable && selection_size==1);
         edit_btn.setEnabled(enable && selection_size==1);
     }
 
@@ -574,24 +573,27 @@ public class FtpDetailsDialog extends DialogFragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
-                int s=viewModel.mselecteditems.size();
-                if(s==1)
-                {
-                    if(!permissionsUtil.isNetworkConnected())
-                    {
-                        Global.print(context,getString(R.string.not_connected_to_network));
-                        return;
-                    }
-                    if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType.FTP_TYPE,FileObjectType.FTP_TYPE))
-                    {
-                        Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-                        return;
-                    }
-                    progress_bar.setVisibility(View.VISIBLE);
-                    FtpPOJO ftpPOJO=viewModel.ftpPOJO_selected_array.get(0);
-                    viewModel.connectFtp(ftpPOJO);
-                }
-                clear_selection();
+                FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
+                Global.print(context, "ftp connection disconnected");
+
+//                int s=viewModel.mselecteditems.size();
+//                if(s==1)
+//                {
+//                    if(!permissionsUtil.isNetworkConnected())
+//                    {
+//                        Global.print(context,getString(R.string.not_connected_to_network));
+//                        return;
+//                    }
+//                    if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType.FTP_TYPE,FileObjectType.FTP_TYPE))
+//                    {
+//                        Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
+//                        return;
+//                    }
+//                    progress_bar.setVisibility(View.VISIBLE);
+//                    FtpPOJO ftpPOJO=viewModel.ftpPOJO_selected_array.get(0);
+//                    viewModel.connectFtp(ftpPOJO);
+//                }
+//                clear_selection();
             }
             else if(id==R.id.toolbar_btn_4)
             {

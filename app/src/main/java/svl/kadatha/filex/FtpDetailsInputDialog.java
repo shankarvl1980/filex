@@ -193,45 +193,38 @@ public class FtpDetailsInputDialog extends DialogFragment {
             return;
         }
 
-        if(!permissionsUtil.isNetworkConnected())
+        port=Integer.parseInt(port_tv.getText().toString().trim());
+        mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
+        password=password_tv.getText().toString().trim();
+        type="ftp";
+        anonymous=anonymous_check_box.isChecked() ? 1 : 0;
+        display=display_tv.getText().toString().trim();
+        bundle.putBoolean("whetherToConnect",whetherToConnect);
+        if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
         {
-            Global.print(context,getString(R.string.not_connected_to_network));
+            YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
+            ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
         }
         else
         {
-            port=Integer.parseInt(port_tv.getText().toString().trim());
-            mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
-            password=password_tv.getText().toString().trim();
-            type="ftp";
-            anonymous=anonymous_check_box.isChecked() ? 1 : 0;
-            display=display_tv.getText().toString().trim();
-            bundle.putBoolean("whetherToConnect",whetherToConnect);
-            if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
-            {
-                YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
-                ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
-            }
-            else
-            {
-                bundle.putString("original_server",original_server);
-                bundle.putString("original_user_name",original_user_name);
-                bundle.putString("server",server);
-                bundle.putInt("port",port);
-                bundle.putString("mode",mode);
-                bundle.putString("user_name",user_name);
-                bundle.putString("password",password);
-                bundle.putString("type",type);
-                bundle.putBoolean("anonymous",anonymous != 0);
-                bundle.putString("encoding",encoding);
-                bundle.putString("display",display);
-                bundle.putBoolean("update",update);
-                bundle.putBoolean("replace",replace);
+            bundle.putString("original_server",original_server);
+            bundle.putString("original_user_name",original_user_name);
+            bundle.putString("server",server);
+            bundle.putInt("port",port);
+            bundle.putString("mode",mode);
+            bundle.putString("user_name",user_name);
+            bundle.putString("password",password);
+            bundle.putString("type",type);
+            bundle.putBoolean("anonymous",anonymous != 0);
+            bundle.putString("encoding",encoding);
+            bundle.putString("display",display);
+            bundle.putBoolean("update",update);
+            bundle.putBoolean("replace",replace);
 
 
-                dismissAllowingStateLoss();
-                //request_code gets changed on yesornodialog orientation change. so request_code be hardcoded.
-                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
-            }
+            dismissAllowingStateLoss();
+            //request_code gets changed on yesornodialog orientation change. so request_code be hardcoded.
+            ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
         }
     }
     private boolean whetherFtpPOJOAlreadyExists(String server,String user_name)

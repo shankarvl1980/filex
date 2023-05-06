@@ -267,7 +267,7 @@ public class AppSelectorDialog extends DialogFragment
                             try {
                                 context.startActivity(intent);
                             }
-                            catch (ActivityNotFoundException e){
+                            catch (Exception e){
                                 Global.print(context,getString(R.string.exception_thrown));
                             }
 

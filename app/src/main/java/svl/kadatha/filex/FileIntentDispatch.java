@@ -152,7 +152,7 @@ class FileIntentDispatch
 						try {
 							context.startActivity(intent);
 						}
-						catch (ActivityNotFoundException e){
+						catch (Exception e){
 							Global.print(context,context.getString(R.string.exception_thrown));
 						}
 					}

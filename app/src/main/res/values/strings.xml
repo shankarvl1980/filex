@@ -451,6 +451,7 @@
 	<string name="server_service_started">Server service started</string>
 	<string name="server_address_should_not_contain_spaces">Server address should not contain spaces</string>
     <string name="connect">Connect</string>
+	<string name="disconnect">Disconnect</string>
     <string name="nothing_found_here">Nothing found here</string>
     <string name="advanced">Advanced</string>
     <string name="not_supported">not supported</string>
