@@ -1548,10 +1548,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					}
 					else if(destFileObjectType==FileObjectType.FTP_TYPE)
 					{
-						
-						Global.print_background_thread(context,context.getString(R.string.not_supported));
-						return false;
-						//copy_result=Copy_FtpFile_FtpFile(src_file_path,dest_folder,src_file_name,cut);
+						copy_result=Copy_FtpFile_FtpFile(src_file_path,dest_folder,src_file_name,cut);
 					}
 					else if(destFileObjectType==FileObjectType.USB_TYPE)
 					{

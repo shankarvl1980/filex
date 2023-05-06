@@ -60,6 +60,7 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			dismissAllowingStateLoss();
 		}
+
 		if(files_selected_array.size()==0)dismissAllowingStateLoss();
 	}
 
@@ -232,16 +233,6 @@ public class PasteSetUpDialog extends DialogFragment
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
 			return true;
-//			if(Global.CHECK_FTP_SERVER_CONNECTED())
-//			{
-//				return true;
-//			}
-//			else
-//			{
-//				Global.print(context,getString(R.string.ftp_server_is_not_connected));
-//				return false;
-//			}
-
 		}
 		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
 		{
@@ -314,13 +305,6 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 			return;
 		}
-
-//		if(!Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,dest_folder))
-//		{
-//			Global.print(context,getString(R.string.directory_not_exist_not_valid));
-//			dismissAllowingStateLoss();
-//			return;
-//		}
 
 		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,destFileObjectType))
 		{
