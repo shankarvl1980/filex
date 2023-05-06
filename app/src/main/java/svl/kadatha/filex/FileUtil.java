@@ -227,12 +227,10 @@ public final class FileUtil
 	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
 		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
-			if(cut)
-			{
-				source.renameTo(target);
-			}
-			else {
-				bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
+			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
+			if (cut) {
+				// rename method does not work where move is between sd and internal memory. hence copy and cut
+				deleteNativeFile(source);
 			}
 
 
