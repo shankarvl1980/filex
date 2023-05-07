@@ -43,7 +43,7 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent"
-				app:layout_constraintBottom_toBottomOf="@id/eol_rg"
+				app:layout_constraintBottom_toBottomOf="@id/fragment_file_editor_background_padding"
 				/>
 
 
@@ -146,7 +146,7 @@
 				android:paddingStart="@dimen/ten_dp"
 				android:paddingEnd="@dimen/ten_dp"
 				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/ten_dp"
+				android:paddingBottom="@dimen/layout_margin"
 				/>
 			<ImageButton
 				android:layout_width="30dp"
@@ -200,7 +200,7 @@
 				android:background="?attr/dialog_background"
 				android:paddingStart="20dp"
 				android:paddingEnd="20dp"
-				android:paddingBottom="@dimen/ten_dp"
+				android:paddingBottom="@dimen/layout_margin"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/end_of_line_label">
@@ -230,6 +230,15 @@
 					android:minHeight="36dp"
 					/>
 			</RadioGroup>
+			<View
+				android:id="@+id/fragment_file_editor_background_padding"
+				android:layout_width="match_parent"
+				android:layout_height="8dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/eol_rg"
+				/>
+
 
 
 			<FrameLayout
@@ -240,7 +249,7 @@
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/eol_rg" />
+				app:layout_constraintTop_toBottomOf="@id/fragment_file_editor_background_padding" />
 
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
