@@ -125,6 +125,11 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             public void run() {
                 loggedInStatus=false;
                 try {
+                    MainActivity.FTP_CLIENT=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
@@ -268,6 +273,11 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
                 loggedInStatus=false;
                 try {
+                    MainActivity.FTP_CLIENT=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);

@@ -52,12 +52,6 @@ public class App extends Application {
 
         registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter);
 
-        MainActivity.FTP_CLIENT=new FTPClient();
-        MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
-        MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
-        MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
-
-
     }
 
     /**
