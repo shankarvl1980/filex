@@ -70,8 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="?attr/recycler_text_color"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_ftp_switch"
                 />
@@ -107,42 +107,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="?attr/recycler_text_color"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
-                />
-
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_server_set_port_pwd_checkbox"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
-                android:button="@null"
-                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                android:text="@string/set_port_credentials_and_directory"
-                android:textSize="16sp"
-                android:layout_margin="10dp"
-                />
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/ftp_server_port_password_edit_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="ftp_server_port_label_input,ftp_server_port_input,ftp_server_user_label_input,
-                ftp_server_user_input,ftp_server_password_label_input,ftp_server_pword_input,ftp_server_chroot_label_input,ftp_server_chroot_spinner_input"
                 />
 
             <TextView
-                android:id="@+id/ftp_server_port_label_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_server_set_port_pwd_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
+                android:button="@null"
+                android:text="@string/ftp_server_details"
+                android:textSize="16sp"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:layout_marginTop="15dp"
+                />
+
+            <TextView
+                android:id="@+id/ftp_server_port_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/port"
                 android:gravity="start"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_set_port_pwd_checkbox"
-                app:layout_constraintEnd_toStartOf="@id/ftp_server_port_input"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_set_port_pwd_label"
+                app:layout_constraintEnd_toStartOf="@id/ftp_server_port"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingTop="@dimen/layout_margin"
@@ -152,129 +146,14 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/ftp_server_port_input"
+                android:id="@+id/ftp_server_port"
                 android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_server_port_label_input"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_server_port_label_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:inputType="number"
-                android:singleLine="true"
-                android:digits="0123456789"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-
-            <TextView
-                android:id="@+id/ftp_server_user_label_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_name"
-                android:gravity="start"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_port_label_input"
-                app:layout_constraintEnd_toStartOf="@id/ftp_server_user_input"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_server_user_input"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_server_user_label_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_server_user_label_input"
                 android:inputType="text"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-
-
-            <TextView
-                android:id="@+id/ftp_server_password_label_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/password"
-                android:gravity="start"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_user_label_input"
-                app:layout_constraintEnd_toStartOf="@id/ftp_server_pword_input"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_server_pword_input"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_server_password_label_input"
+                app:layout_constraintStart_toEndOf="@id/ftp_server_port_label"
+                app:layout_constraintBottom_toBottomOf="@id/ftp_server_port_label"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_server_password_label_input"
-                android:inputType="text"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
-
-            <TextView
-                android:id="@+id/ftp_server_chroot_label_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/directory"
-                android:gravity="start"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_password_label_input"
-                app:layout_constraintEnd_toStartOf="@id/ftp_server_chroot_spinner_input"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
-            <Spinner
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_server_chroot_spinner_input"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_server_chroot_label_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/ftp_server_chroot_label_input"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_server_chroot_label_input"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:textSize="16sp"
-                />
-
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/ftp_server_user_password_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="ftp_server_host_url,ftp_server_user_name_label,ftp_server_user_name,
-                ftp_server_password_label,ftp_server_pword,ftp_server_chroot_label,ftp_server_chroot"
-                />
-
-
-
-            <TextView
-                android:id="@+id/ftp_server_host_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:layout_marginBottom="@dimen/ten_dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_chroot_spinner_input"
-
-                />
-
 
             <TextView
                 android:id="@+id/ftp_server_user_name_label"
@@ -284,7 +163,7 @@
                 android:gravity="start"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_server_host_url"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_port_label"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_user_name"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/layout_margin"
@@ -358,7 +237,49 @@
                 app:layout_constraintBottom_toBottomOf="@id/ftp_server_chroot_label"
                 android:layout_marginEnd="@dimen/ten_dp"
                 />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ftp_server_credential_set_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_chroot"
+                android:layout_marginStart="@dimen/layout_margin"
+                android:layout_marginEnd="@dimen/ten_dp"
 
+                android:text="@string/set"
+
+                />
+            <TextView
+                android:id="@+id/ftp_server_host_url_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:layout_marginBottom="@dimen/ten_dp"
+                android:textSize="16sp"
+                android:text="@string/enter_below_host_address_in_file_explorer_of_pc_to_access_files"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_credential_set_button"
+
+                />
+
+
+            <TextView
+                android:id="@+id/ftp_server_host_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:layout_marginBottom="@dimen/ten_dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ftp_server_host_url_description"
+
+                />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

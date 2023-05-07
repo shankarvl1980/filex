@@ -69,7 +69,7 @@ public class FsNotification {
 
         // Define Notification's message and Intent
         CharSequence contentTitle = context.getString(R.string.notification_title);
-        CharSequence contentText = String.format(context.getString(R.string.notification_text), ipText);
+        CharSequence contentText = ipText;
 
         int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
 
@@ -85,12 +85,12 @@ public class FsNotification {
         PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
                 stopIntent, PendingIntent.FLAG_ONE_SHOT | pending_intent_flag);
 
-        int preferenceIcon = android.R.drawable.ic_menu_preferences;
-        CharSequence preferenceText = context.getString(R.string.notif_settings_text);
-        Intent preferenceIntent = new Intent(context, FtpServerActivity.class);
-        preferenceIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent preferencePendingIntent = PendingIntent.getActivity(context, 0,
-                preferenceIntent, pending_intent_flag);
+//        int preferenceIcon = android.R.drawable.ic_menu_preferences;
+//        CharSequence preferenceText = context.getString(R.string.notif_settings_text);
+//        Intent preferenceIntent = new Intent(context, FtpServerActivity.class);
+//        preferenceIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        PendingIntent preferencePendingIntent = PendingIntent.getActivity(context, 0,
+//                preferenceIntent, pending_intent_flag);
 
         int priority = Notification.PRIORITY_LOW;
 
@@ -116,7 +116,6 @@ public class FsNotification {
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(priority)
                 .addAction(stopIcon, stopText, stopPendingIntent)
-                .addAction(preferenceIcon, preferenceText, preferencePendingIntent)
                 .setShowWhen(false)
                 .build();
 

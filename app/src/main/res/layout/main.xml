@@ -316,7 +316,6 @@
 					android:choiceMode="multipleChoice"
 					android:paddingStart="@dimen/layout_margin"
 					android:paddingEnd="@dimen/layout_margin"
-					android:paddingBottom="@dimen/layout_margin"
 					android:scrollbarThumbVertical="@drawable/scrollbar"
 					android:scrollbars="vertical"
 					android:visibility="gone"

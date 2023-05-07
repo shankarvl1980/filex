@@ -39,18 +39,18 @@ import timber.log.Timber;
 
 public class FtpServerActivity extends BaseActivity {
     private Context context;
-    private TextView ftp_url_text_view;
+    private TextView ftp_url_description_text_view,ftp_url_text_view;
     private TextView ftp_switch_label;
-    private Group user_password_group,port_password_edit_group;
-    private EditText port_input, user_input, password_input,user_name_host,password_host,chroot_host;
+    private EditText port_host,user_name_host,password_host,chroot_host;
+
     private SwitchCompat ftp_start_stop_switch;
     private final Handler mHandler = new Handler();
-    private CheckBox set_port_pwd_group_checkbox;
+    private Button set_button;
     private FtpServerViewModel viewModel;
-    private InputMethodManager imm;
-    private Spinner chroot_spinner;
-    private List<String> chroot_list;
+
+
     private static final String FTP_SERVER_CLOSE_REQUEST_CODE="ftp_server_close_request_code";
+    private static final String FTP_SERVER_DETAILS_SET_REQUEST_CODE="ftp_server_details_set_request_code";
     private static final boolean[] alreadyNotificationWarned=new boolean[1];
 
     @Override
@@ -58,16 +58,7 @@ public class FtpServerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         this.context=this;
         setContentView(R.layout.activity_ftp_server);
-        imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        chroot_list= new ArrayList<>();
-        for(FilePOJO filePOJO:Global.STORAGE_DIR)
-        {
-            if(!filePOJO.getPath().equals(File.separator))
-            {
-                chroot_list.add(filePOJO.getPath());
-            }
-        }
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item,chroot_list);
+
         viewModel=new ViewModelProvider(this).get(FtpServerViewModel.class);
         TextView connection_status_tv = findViewById(R.id.ftp_server_connection_status);
         ftp_switch_label=findViewById(R.id.ftp_server_switch_label);
@@ -79,80 +70,79 @@ public class FtpServerActivity extends BaseActivity {
                 FtpServerViewModel.ALLOW_ANONYMOUS=b;
             }
         });
-        port_password_edit_group=findViewById(R.id.ftp_server_port_password_edit_group);
-        user_password_group=findViewById(R.id.ftp_server_user_password_group);
-        port_input=findViewById(R.id.ftp_server_port_input);
-        user_input=findViewById(R.id.ftp_server_user_input);
-        password_input=findViewById(R.id.ftp_server_pword_input);
-        chroot_spinner=findViewById(R.id.ftp_server_chroot_spinner_input);
-        chroot_spinner.setAdapter(arrayAdapter);
-        chroot_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                viewModel.chroot=chroot_list.get(i);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        if(FtpServerViewModel.PORT !=0)
-        {
-            port_input.setText(FtpServerViewModel.PORT+"");
-        }
-        else
-        {
-            port_input.setText(getString(R.string.portnumber_default));
-        }
-
-        if(viewModel.user_name!=null && !viewModel.user_name.equals(""))
-        {
-            user_input.setText(viewModel.user_name);
-        }
-        else
-        {
-            user_input.setText(getString(R.string.username_default));
-        }
-
-        if(viewModel.password!=null && !viewModel.password.equals(""))
-        {
-            password_input.setText(viewModel.password);
-        }
-        else
-        {
-            password_input.setText(getString(R.string.password_default));
-        }
-
-        if(viewModel.chroot !=null && !viewModel.chroot.equals(""))
-        {
-            chroot_spinner.setSelection(chroot_list.indexOf(viewModel.chroot));
-        }
-        else
-        {
-            chroot_spinner.setSelection(0);
-        }
-
+        ftp_url_description_text_view=findViewById(R.id.ftp_server_host_url_description);
         ftp_url_text_view=findViewById(R.id.ftp_server_host_url);
+        port_host=findViewById(R.id.ftp_server_port);
         user_name_host=findViewById(R.id.ftp_server_user_name);
         password_host=findViewById(R.id.ftp_server_pword);
         chroot_host=findViewById(R.id.ftp_server_chroot);
 
         ftp_start_stop_switch=findViewById(R.id.ftp_server_ftp_switch);
-        set_port_pwd_group_checkbox=findViewById(R.id.ftp_server_set_port_pwd_checkbox);
+        set_button=findViewById(R.id.ftp_server_credential_set_button);
+        set_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String username=user_name_host.getText().toString();
+                String password=password_host.getText().toString();
+                String directory=chroot_host.getText().toString();
+
+                FtpServerSetDetailsDialog ftpServerSetDetailsDialog=FtpServerSetDetailsDialog.getInstance(FTP_SERVER_DETAILS_SET_REQUEST_CODE,FtpServerViewModel.PORT, username, password,directory);
+                ftpServerSetDetailsDialog.show(getSupportFragmentManager(),"");
+            }
+        });
+
+        if(FtpServerViewModel.PORT ==0)
+        {
+            FtpServerViewModel.PORT=2525;
+            port_host.setText(""+FtpServerViewModel.PORT);
+        }
+        else {
+            port_host.setText(""+FtpServerViewModel.PORT);
+        }
+
+
+        if(viewModel.user_name!=null && !viewModel.user_name.equals(""))
+        {
+            user_name_host.setText(viewModel.user_name);
+        }
+        else
+        {
+            user_name_host.setText(getString(R.string.username_default));
+        }
+
+        if(viewModel.password!=null && !viewModel.password.equals(""))
+        {
+            password_host.setText(viewModel.password);
+        }
+        else
+        {
+            password_host.setText(getString(R.string.password_default));
+        }
+
+        if(viewModel.chroot !=null && !viewModel.chroot.equals(""))
+        {
+            chroot_host.setText(viewModel.chroot);
+        }
+        else
+        {
+            chroot_host.setText(viewModel.chroot_list.get(0));
+        }
+
+        validateInput(true);
 
 
         Global.WARN_NOTIFICATIONS_DISABLED(context,FsNotification.CHANNEL_ID,alreadyNotificationWarned);
         updateRunningState();
 
-        ftp_start_stop_switch.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return !validateInput(!set_port_pwd_group_checkbox.isChecked());
-
-            }
-        });
+//        ftp_start_stop_switch.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                return !validateInput(!set_port_pwd_group_checkbox.isChecked());
+//
+//            }
+//        });
 
         ftp_start_stop_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -170,25 +160,25 @@ public class FtpServerActivity extends BaseActivity {
             }
         });
 
-        set_port_pwd_group_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b)
-                {
-                    user_password_group.setVisibility(View.GONE);
-                    port_password_edit_group.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    user_password_group.setVisibility(View.VISIBLE);
-                    port_password_edit_group.setVisibility(View.GONE);
-                    imm.hideSoftInputFromWindow(port_input.getWindowToken(),0);
-                    imm.hideSoftInputFromWindow(user_input.getWindowToken(),0);
-                    imm.hideSoftInputFromWindow(password_input.getWindowToken(),0);
-                }
-                ftp_url_text_view.setVisibility(View.GONE);
-            }
-        });
+//        set_port_pwd_group_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                if(b)
+//                {
+//                    user_password_group.setVisibility(View.GONE);
+//                    port_password_edit_group.setVisibility(View.VISIBLE);
+//                }
+//                else
+//                {
+//                    user_password_group.setVisibility(View.VISIBLE);
+//                    port_password_edit_group.setVisibility(View.GONE);
+//                    imm.hideSoftInputFromWindow(port_input.getWindowToken(),0);
+//                    imm.hideSoftInputFromWindow(user_input.getWindowToken(),0);
+//                    imm.hideSoftInputFromWindow(password_input.getWindowToken(),0);
+//                }
+//                ftp_url_text_view.setVisibility(View.GONE);
+//            }
+//        });
 
 
         FrameLayout button_layout = findViewById(R.id.ftp_server_button_layout);
@@ -203,6 +193,15 @@ public class FtpServerActivity extends BaseActivity {
             }
         });
 
+        getSupportFragmentManager().setFragmentResultListener(FTP_SERVER_DETAILS_SET_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                port_host.setText(""+FtpServerViewModel.PORT);
+                user_name_host.setText(viewModel.user_name);
+                password_host.setText(viewModel.password);
+                chroot_host.setText(viewModel.chroot);
+            }
+        });
         getSupportFragmentManager().setFragmentResultListener(FTP_SERVER_CLOSE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -215,39 +214,86 @@ public class FtpServerActivity extends BaseActivity {
         disable_ftp_username_pwd_tv(true);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateRunningState();
+
+        Timber.tag(TAG).d("onResume: Registering the FTP server actions");
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(FsService.ACTION_STARTED);
+        filter.addAction(FsService.ACTION_STOPPED);
+        filter.addAction(FsService.ACTION_FAILEDTOSTART);
+        registerReceiver(mFsActionsReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Timber.tag(TAG).d("onPause: Unregistering the FTPServer actions");
+        unregisterReceiver(mFsActionsReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(FsService.isRunning())
+        {
+            YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_SERVER_CLOSE_REQUEST_CODE,R.string.want_to_stop_ftp_server_service,new Bundle());
+            ftpServerCloseAlertDialog.show(getSupportFragmentManager(),"");
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+
+    }
+
     private boolean validateInput(boolean correctIfNotValid) {
 
         int port=0;
         try {
-            port = Integer.parseInt(port_input.getText().toString());
+            port = Integer.parseInt(port_host.getText().toString());
         } catch (Exception e) {
             Timber.tag(TAG).d("Error parsing port number! Moving on...");
             port= Integer.parseInt(getString(R.string.portnumber_default));
-            port_input.setText(port+"");
+            FtpServerViewModel.PORT=port;
         }
-        String username=user_input.getText().toString();
-        String password=password_input.getText().toString();
-        String directory=chroot_spinner.getSelectedItem().toString();
+
+        String username=user_name_host.getText().toString();
+        String password=password_host.getText().toString();
+        String directory=chroot_host.getText().toString();
 
         if(correctIfNotValid)
         {
             if (port <= 0 || 65535 < port) {
                 port= Integer.parseInt(getString(R.string.portnumber_default));
-                port_input.setText(port+"");
+                FtpServerViewModel.PORT=port;
+                port_host.setText(String.valueOf(port));
             }
             if (!username.matches("[a-zA-Z0-9]+")) {
                 username=getString(R.string.username_default);
-                user_input.setText(username);
+                user_name_host.setText(username);
             }
             if (!password.matches("[a-zA-Z0-9]+")) {
                 password=getString(R.string.password_default);
+                password_host.setText(password);
             }
 
             if (directory==null) {
-                chroot_spinner.setSelection(0);
-                directory=chroot_spinner.getSelectedItem().toString();
-            }
+                if(viewModel.chroot_list.size()>0)
+                {
+                    chroot_host.setText(viewModel.chroot_list.get(0));
+                }
 
+            }
         }
 
         if (port <= 0 || 65535 < port) {
@@ -274,56 +320,14 @@ public class FtpServerActivity extends BaseActivity {
         viewModel.chroot=directory;
         FtpServerViewModel.FTP_USER=new FtpUser(username,password,directory);
 
-        user_name_host.setText(username);
-        password_host.setText(password);
-        chroot_host.setText(directory);
+        port_host.setText(String.valueOf(port));
+        user_name_host.setText(viewModel.user_name);
+        password_host.setText(viewModel.password);
+        chroot_host.setText(viewModel.chroot);
+
         return true;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        updateRunningState();
-        //updateUsersPref();
-
-        Timber.tag(TAG).d("onResume: Registering the FTP server actions");
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(FsService.ACTION_STARTED);
-        filter.addAction(FsService.ACTION_STOPPED);
-        filter.addAction(FsService.ACTION_FAILEDTOSTART);
-        registerReceiver(mFsActionsReceiver, filter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Timber.tag(TAG).d("onPause: Unregistering the FTPServer actions");
-        unregisterReceiver(mFsActionsReceiver);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacksAndMessages(null);
-        imm.hideSoftInputFromWindow(port_input.getWindowToken(),0);
-        imm.hideSoftInputFromWindow(user_input.getWindowToken(),0);
-        imm.hideSoftInputFromWindow(password_input.getWindowToken(),0);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(FsService.isRunning())
-        {
-            YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_SERVER_CLOSE_REQUEST_CODE,R.string.want_to_stop_ftp_server_service,new Bundle());
-            ftpServerCloseAlertDialog.show(getSupportFragmentManager(),"");
-        }
-        else
-        {
-            super.onBackPressed();
-        }
-
-    }
 
     private void updateRunningState() {
 
@@ -334,8 +338,10 @@ public class FtpServerActivity extends BaseActivity {
             // Fill in the FTP server address
             service_started =true;
             ftp_start_stop_switch.setChecked(true);
-            user_password_group.setVisibility(View.VISIBLE);
-            port_password_edit_group.setVisibility(View.GONE);
+            set_button.setEnabled(false);
+            set_button.setAlpha(Global.DISABLE_ALFA);
+            //user_password_group.setVisibility(View.VISIBLE);
+            //port_password_edit_group.setVisibility(View.GONE);
             //disable_ftp_username_pwd_tv(true);
 
             InetAddress address = FsService.getLocalInetAddress();
@@ -347,30 +353,34 @@ public class FtpServerActivity extends BaseActivity {
             String ipText = "ftp://" + address.getHostAddress() + ":"
                     + FsSettings.getPortNumber() + "/";
             ftp_switch_label.setText(R.string.server_service_started);
-
-            ftp_url_text_view.setText(getString(R.string.enter_below_host_address_in_file_explorer_of_pc_to_access_files)+"\n"+ ipText);
-            set_port_pwd_group_checkbox.setVisibility(View.INVISIBLE);
+            ftp_url_description_text_view.setVisibility(View.VISIBLE);
+            ftp_url_text_view.setVisibility(View.VISIBLE);
+            ftp_url_text_view.setText(ipText);
+            //set_port_pwd_group_checkbox.setVisibility(View.INVISIBLE);
 
         } else {
             ftp_start_stop_switch.setChecked(false);
             service_started =false;
             ftp_switch_label.setText(R.string.running_summary_stopped);
+            set_button.setEnabled(true);
+            set_button.setAlpha(Global.ENABLE_ALFA);
 
-            if(set_port_pwd_group_checkbox.isChecked())
-            {
-                user_password_group.setVisibility(View.GONE);
-                port_password_edit_group.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                user_password_group.setVisibility(View.VISIBLE);
-                port_password_edit_group.setVisibility(View.GONE);
-            }
+//            if(set_port_pwd_group_checkbox.isChecked())
+//            {
+//                user_password_group.setVisibility(View.GONE);
+//                port_password_edit_group.setVisibility(View.VISIBLE);
+//            }
+//            else
+//            {
+//                user_password_group.setVisibility(View.VISIBLE);
+//                port_password_edit_group.setVisibility(View.GONE);
+//            }
             //disable_ftp_username_pwd_tv(false);
-            user_name_host.setText(viewModel.user_name);
-            password_host.setText(viewModel.password);
-            chroot_host.setText(viewModel.chroot);
-            set_port_pwd_group_checkbox.setVisibility(View.VISIBLE);
+//            user_name_host.setText(viewModel.user_name);
+//            password_host.setText(viewModel.password);
+//            chroot_host.setText(viewModel.chroot);
+//            set_port_pwd_group_checkbox.setVisibility(View.VISIBLE);
+            ftp_url_description_text_view.setVisibility(View.GONE);
             ftp_url_text_view.setVisibility(View.GONE);
         }
     }
@@ -410,22 +420,31 @@ public class FtpServerActivity extends BaseActivity {
     {
         if(disable)
         {
+            port_host.clearFocus();
             user_name_host.clearFocus();
             password_host.clearFocus();
             chroot_host.clearFocus();
+            port_host.setShowSoftInputOnFocus(false);
             user_name_host.setShowSoftInputOnFocus(false);
             password_host.setShowSoftInputOnFocus(false);
             chroot_host.setShowSoftInputOnFocus(false);
-            imm.hideSoftInputFromWindow(user_name_host.getWindowToken(),0);
-            imm.hideSoftInputFromWindow(password_host.getWindowToken(),0);
-            imm.hideSoftInputFromWindow(chroot_host.getWindowToken(),0);
         }
         else
         {
+            port_host.setShowSoftInputOnFocus(true);
             user_name_host.setShowSoftInputOnFocus(true);
             password_host.setShowSoftInputOnFocus(true);
             chroot_host.setShowSoftInputOnFocus(true);
         }
+
+        port_host.setLongClickable(!disable);
+        port_host.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return disable;
+            }
+        });
+
         user_name_host.setLongClickable(!disable);
         user_name_host.setOnTouchListener(new View.OnTouchListener()
         {
