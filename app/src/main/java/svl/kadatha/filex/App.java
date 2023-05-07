@@ -24,6 +24,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.ftp.NsdService;
 import timber.log.Timber;
@@ -49,6 +51,12 @@ public class App extends Application {
         intentFilter.addAction(FsService.ACTION_FAILEDTOSTART);
 
         registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter);
+
+        MainActivity.FTP_CLIENT=new FTPClient();
+        MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
+        MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
+        MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+
 
     }
 

@@ -48,6 +48,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public static FtpDetailsDialog.FtpPOJO FTP_POJO;
     public static String FTP_WORKING_DIR_PATH;
 
+
+
     public FtpDetailsViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
