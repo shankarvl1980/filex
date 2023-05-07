@@ -149,21 +149,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-
-//    public static boolean CONNECT() throws IOException {
-//        if(FTP_POJO==null)return false;
-//
-//        boolean connected=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
-//        if(connected)
-//        {
-//            FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
-//            //Timber.tag(Global.TAG).d("ftp working dir path "+FTP_WORKING_DIR_PATH);
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
     public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
         if(FTP_POJO==null)return false;
 

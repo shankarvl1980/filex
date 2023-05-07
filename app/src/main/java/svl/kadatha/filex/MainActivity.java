@@ -61,6 +61,7 @@ import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -138,9 +139,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private ListView listView;
     private MediaMountReceiver mediaMountReceiver;
 	public static String SU="";
+
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT=new FTPClient(),FTP_CLIENT_FOR_COUNT=new FTPClient(),
-			FTP_CLIENT_FOR_PROGRESS=new FTPClient(),FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+	public static FTPClient FTP_CLIENT=new FTPClient();
+	public static FTPClient FTP_CLIENT_FOR_COUNT=new FTPClient();
+	public static FTPClient FTP_CLIENT_FOR_PROGRESS=new FTPClient();
+	public static FTPClient	FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
 
 	public long search_lower_limit_size=0;
 	public long search_upper_limit_size=0;

@@ -82,7 +82,8 @@ public class VideoViewContainerFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
-		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,146,context.getResources().getDisplayMetrics());
+		float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
+		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,height,context.getResources().getDisplayMetrics());
 	}
 
 	@Override
