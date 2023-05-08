@@ -279,7 +279,6 @@ public class FileSaveService1 extends Service
 
 			}
 		}
-
 	}
 	
 	private boolean save_file_with_altered_eol(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, String content, String eol_string)
@@ -292,7 +291,6 @@ public class FileSaveService1 extends Service
 		{
 			FileInputStream fileInputStream=new FileInputStream(file);
 			bufferedReader=new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-
 
 			bufferedReader.skip(current_page_end_point);
 			File temp_file_2=new File(temporary_file_for_save,file.getName()+"_2");
@@ -372,7 +370,6 @@ public class FileSaveService1 extends Service
 			{
 
 			}
-
 		}
 		return true;
 	}

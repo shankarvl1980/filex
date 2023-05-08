@@ -139,7 +139,6 @@ public class FileSaveService3 extends Service
 				break;
 		}
 
-
 		String finalEol_string = eol_string;
 		ExecutorService executorService=MyExecutorService.getExecutorService();
 		Future future = executorService.submit(new Runnable() {
@@ -279,10 +278,7 @@ public class FileSaveService3 extends Service
 			{
 
 			}
-
-
 		}
-
 	}
 
 	private boolean save_file_with_altered_eol(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, String content, String eol_string)
@@ -374,7 +370,6 @@ public class FileSaveService3 extends Service
 			{
 
 			}
-
 		}
 		return true;
 	}
