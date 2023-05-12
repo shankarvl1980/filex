@@ -174,10 +174,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 return true;
             }
         }
-        else
-        {
-            ftpClient.disconnect();
-        }
+
         return false;
     }
 

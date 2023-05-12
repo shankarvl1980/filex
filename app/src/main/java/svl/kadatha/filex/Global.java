@@ -968,33 +968,30 @@ public class Global
 
 	public static boolean CHECK_FTP_SERVER_CONNECTED()
 	{
-		int reply_code=MainActivity.FTP_CLIENT.getReplyCode();
-		if(FTPReply.isPositiveCompletion(reply_code))
-		{
-			return true;
-		}
-		else
-		{
-			try {
-				return FtpDetailsViewModel.CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
-			} catch (IOException e) {
-				return false;
-			}
-		}
+		return CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT);
 	}
 
 	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
 	{
 		int reply_code=ftpClient.getReplyCode();
-		if(FTPReply.isPositiveCompletion(reply_code))
-		{
-			return true;
-		}
-		else
-		{
+		//if(FTPReply.isPositiveCompletion(reply_code))
+		try {
+			if(ftpClient.sendNoOp())
+			{
+				return true;
+			}
+			else
+			{
+				try {
+					return FtpDetailsViewModel.CONNECT_FTP_CLIENT(ftpClient);
+				} catch (IOException ioe) {
+					return false;
+				}
+			}
+		} catch (Exception e) {
 			try {
 				return FtpDetailsViewModel.CONNECT_FTP_CLIENT(ftpClient);
-			} catch (IOException e) {
+			} catch (IOException ie) {
 				return false;
 			}
 		}
