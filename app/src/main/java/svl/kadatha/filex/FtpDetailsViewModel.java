@@ -129,6 +129,9 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
 
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
@@ -136,12 +139,15 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
                     if(loggedInStatus)
                     {
                         FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
-                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH,MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO));
                         }
                     }
                 }
@@ -202,6 +208,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
             MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
             MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
+            MainActivity.FTP_CLIENT_FOR_LISTING.disconnect();
+            MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO.disconnect();
+            MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY.disconnect();
+            Timber.tag(Global.TAG).d("ftp disconnected");
         } catch (Exception e) {
 
         }
@@ -274,6 +284,9 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
 
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
@@ -281,12 +294,15 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
                     if(loggedInStatus)
                     {
                         FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
-                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH, MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO));
                         }
                     }
                 }

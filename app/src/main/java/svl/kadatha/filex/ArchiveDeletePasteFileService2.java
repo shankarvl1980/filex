@@ -440,6 +440,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 						filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
 						return true;
 					}
+					catch (Exception e){}
 
 
 					finally
@@ -516,16 +517,18 @@ public class ArchiveDeletePasteFileService2 extends Service
 									total_bytes_read[0]+=bytesread;
 
 								}
+
 								bufferedInputStream.close();
 							}
 							//mutable_count_no_files.postValue(counter_no_files);
 
 						}
+
 						filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name),destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name)));
 						return true;
 					}
 
-					catch(IOException e)
+					catch(Exception e)
 					{
 						//print("Exception thrown");
 					}
@@ -611,6 +614,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 						total_bytes_read[0]+=bytesread;
 
 					}
+
 					bufferedInputStream.close();
 				}
 				//mutable_count_no_files.postValue(counter_no_files);

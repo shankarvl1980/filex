@@ -209,7 +209,7 @@ public class ViewModelFileCount extends ViewModel {
                     String name=f.getName();
                     path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
                     populate(MainActivity.FTP_CLIENT_FOR_COUNT.listFiles(path),include_folder,path);
-                } catch (IOException e) {
+                } catch (Exception e) {
 
                 }
                 if(include_folder)

@@ -976,7 +976,7 @@ public class Global
 		int reply_code=ftpClient.getReplyCode();
 		//if(FTPReply.isPositiveCompletion(reply_code))
 		try {
-			if(ftpClient.sendNoOp())
+			if(ftpClient.isAvailable())
 			{
 				return true;
 			}
@@ -1370,7 +1370,7 @@ public class Global
 				{
 					try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
 						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
-
+						MainActivity.FTP_CLIENT_FOR_COPY_VIEW.completePendingCommand();
 						return cache_file;
 
 					} catch (Exception e) {

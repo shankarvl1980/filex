@@ -728,6 +728,7 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     bufferedOutStream.write(b,0,bytesread);
                 }
+
                 bufferedOutStream.close();
             }
         }
@@ -946,7 +947,7 @@ public class ArchiveDeletePasteServiceUtil {
                         String name=f.getName();
                         path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
                         populate(MainActivity.FTP_CLIENT_FOR_PROGRESS.listFiles(path),include_folder,path);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
 
                     }
                     if(include_folder)

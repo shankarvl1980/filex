@@ -331,9 +331,11 @@ public final class FileUtil
 			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(src_file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
 				//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
 				bufferedCopy(inputStream, outputStream, false, bytes_read);
+				MainActivity.FTP_CLIENT.completePendingCommand();
 				if (cut) {
 					deleteFTPFile(src_file_path);
 				}
+
 				return true;
 
 			} catch (Exception e) {
@@ -367,6 +369,7 @@ public final class FileUtil
 					inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 					outputStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
 					bufferedCopy(inputStream, outputStream, false, bytes_read);
+					MainActivity.FTP_CLIENT.completePendingCommand();
 				}
 
 				return true;
@@ -416,11 +419,12 @@ public final class FileUtil
 //					long length = source.getLength();
 //					if (length > 0) targetUsbFile.setLength(length); // causes problem
 					outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
-
 					bufferedCopy(inputStream, outputStream, false, bytes_read);
+					MainActivity.FTP_CLIENT.completePendingCommand();
 					if (cut) {
 						deleteFTPFile(src_file_path);
 					}
+
 					return true;
 				}
 
@@ -512,9 +516,11 @@ public final class FileUtil
 		{
 			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
 				bufferedCopy(inStream, outputStream,true,bytes_read);
+				MainActivity.FTP_CLIENT.completePendingCommand();
 				if (cut) {
 					deleteUsbFile(src_usbfile);
 				}
+
 				return true;
 
 			} catch (Exception e) {
@@ -757,6 +763,7 @@ public final class FileUtil
 						//success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
 						inStream=MainActivity.FTP_CLIENT.retrieveFileStream(source_file_path);
 						bufferedCopy(inStream,outStream,false,bytes_read);
+						MainActivity.FTP_CLIENT.completePendingCommand();
 						if(cut)
 						{
 							deleteFTPFile(source_file_path);
@@ -912,10 +919,13 @@ public final class FileUtil
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
 			try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
+
 				bufferedCopy(fileInStream,outStream,false,bytes_read);
+				MainActivity.FTP_CLIENT.completePendingCommand();
 				if (cut) {
 					deleteNativeFile(source);
 				}
+
 				return true;
 			} catch (Exception e) {
 				//Timber.e(Application.TAG,
@@ -938,6 +948,7 @@ public final class FileUtil
 			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 			try (InputStream inStream = context.getContentResolver().openInputStream(data); OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
 				bufferedCopy(inStream,outStream,false,bytes_read);
+				MainActivity.FTP_CLIENT.completePendingCommand();
 				return true;
 			} catch (Exception e) {
 				//Timber.e(Application.TAG,
@@ -1022,15 +1033,21 @@ public final class FileUtil
 	}
 	public static boolean isFtpPathDirectory(String file_path)
 	{
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
+		if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY))
 		{
-			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(file_path))
-			{
-				return inputStream == null;
+			try {
+				return MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY.changeWorkingDirectory(file_path);
 			} catch (IOException e) {
 				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
 				return false;
 			}
+//			try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path))
+//			{
+//				return inputStream == null;
+//			} catch (IOException e) {
+//				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
+//				return false;
+//			}
 		}
 		return false;
 	}
@@ -1085,7 +1102,7 @@ public final class FileUtil
 					}
 				}
 
-			} catch (IOException e) {
+			} catch (Exception e) {
 				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
 				return null;
 			}
@@ -1116,7 +1133,8 @@ public final class FileUtil
 					}
 				}
 
-			} catch (IOException e) {
+			} catch (Exception e) {
+				//if(ftpClient)
 				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
 				return null;
 			}

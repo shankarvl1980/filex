@@ -379,7 +379,13 @@ public class ArchiveSetUpDialog extends DialogFragment
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 						if(destFileObjectType==FileObjectType.USB_TYPE)
 						{
-							Global.print(context,getString(R.string.can_not_do_archive_unarchive_here));
+							Global.print(context,getString(R.string.not_supported));
+							return;
+						}
+
+						if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+						{
+							Global.print(context,getString(R.string.not_supported));
 							return;
 						}
 						progress_bar.setVisibility(View.VISIBLE);
@@ -408,9 +414,9 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-						if(destFileObjectType==FileObjectType.USB_TYPE)
+						if(destFileObjectType==FileObjectType.USB_TYPE || destFileObjectType==FileObjectType.FTP_TYPE)
 						{
-							Global.print(context,getString(R.string.can_not_do_archive_unarchive_here));
+							Global.print(context,getString(R.string.not_supported));
 							return;
 						}
 						String zip_output_folder = zip_file_edittext.getText().toString().trim();
