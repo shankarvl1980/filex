@@ -1041,13 +1041,6 @@ public final class FileUtil
 				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
 				return false;
 			}
-//			try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path))
-//			{
-//				return inputStream == null;
-//			} catch (IOException e) {
-//				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
-//				return false;
-//			}
 		}
 		return false;
 	}
@@ -1134,7 +1127,6 @@ public final class FileUtil
 				}
 
 			} catch (Exception e) {
-				//if(ftpClient)
 				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
 				return null;
 			}

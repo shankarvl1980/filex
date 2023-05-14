@@ -148,6 +148,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public static FTPClient	FTP_CLIENT_FOR_LISTING;
 	public static FTPClient FTP_CLIENT_FOR_CREATING_FILE_POJO;
 	public static FTPClient FTP_CLIENT_FOR_CHECK_DIRECTORY;
+	public static FTPClient FTP_CLIENT_FOR_ADD_POJO;
 
 	public long search_lower_limit_size=0;
 	public long search_upper_limit_size=0;

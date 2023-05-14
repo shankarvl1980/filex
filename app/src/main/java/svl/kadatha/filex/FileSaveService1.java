@@ -280,7 +280,7 @@ public class FileSaveService1 extends Service
 			}
 		}
 	}
-	
+
 	private boolean save_file_with_altered_eol(FileOutputStream fileOutputStream,long prev_page_end_point, long current_page_end_point, String content, String eol_string)
 	{
 		BufferedReader bufferedReader=null;
@@ -355,7 +355,6 @@ public class FileSaveService1 extends Service
 
 		} catch(IOException e)
 		{
-
 			return false;
 		} finally
 		{

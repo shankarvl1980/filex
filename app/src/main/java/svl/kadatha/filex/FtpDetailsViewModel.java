@@ -132,6 +132,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_ADD_POJO=new FTPClient();
 
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
@@ -142,6 +143,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_ADD_POJO);
                     if(loggedInStatus)
                     {
                         FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
@@ -211,6 +213,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             MainActivity.FTP_CLIENT_FOR_LISTING.disconnect();
             MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO.disconnect();
             MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY.disconnect();
+            MainActivity.FTP_CLIENT_FOR_ADD_POJO.disconnect();
             Timber.tag(Global.TAG).d("ftp disconnected");
         } catch (Exception e) {
 
@@ -287,6 +290,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
                     MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
+                    MainActivity.FTP_CLIENT_FOR_ADD_POJO=new FTPClient();
 
                     DISCONNECT_FTP_CLIENT();
                     FTP_POJO=ftpPOJO;
@@ -297,6 +301,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
                     CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
+                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_ADD_POJO);
                     if(loggedInStatus)
                     {
                         FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();

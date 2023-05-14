@@ -20,8 +20,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOUtil {
 
+    static final SimpleDateFormat SDF_FTP=new SimpleDateFormat("yyyyMMddHHmmss");
     static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, FileObjectType fileObjectType)
     {
         String name=f.getName();
@@ -384,7 +387,17 @@ public class FilePOJOUtil {
         String date="";
         try {
             String str=ftpClient.getModificationTime(file_path);
-            date =Global.SDF.format(str.substring(str.indexOf(" ")));
+            if(str!=null)
+            {
+                if(str.contains(" "))
+                {
+                    str=str.substring(str.indexOf(" "));
+                }
+
+                Date d =SDF_FTP.parse(str);
+                date=Global.SDF.format(d);
+            }
+
         } catch (Exception e) {
 
         }
@@ -920,7 +933,7 @@ public class FilePOJOUtil {
             for(int i=0;i<size;++i)
             {
                 file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
-                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,MainActivity.FTP_CLIENT_FOR_LISTING);
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,MainActivity.FTP_CLIENT_FOR_ADD_POJO);
                 if(filePOJO!=null)
                 {
                     filePOJOs.add(filePOJO);
