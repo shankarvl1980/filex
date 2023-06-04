@@ -588,7 +588,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 	private boolean request_focus()
 	{
-		if(audio_manager!=null)
+		if(audio_manager==null)
 		{
 			audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		}

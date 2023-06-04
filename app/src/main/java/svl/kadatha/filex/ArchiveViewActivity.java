@@ -330,7 +330,8 @@ public class ArchiveViewActivity extends BaseActivity{
                 else if(permissions[i].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 {
                     Global.STORAGE_DIR.clear();
-                    clearCache();
+                    Global.HASHMAP_FILE_POJO.clear();
+                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);
@@ -522,7 +523,8 @@ public class ArchiveViewActivity extends BaseActivity{
                 if (Environment.isExternalStorageManager())
                 {
                     Global.STORAGE_DIR.clear();
-                    clearCache();
+                    Global.HASHMAP_FILE_POJO.clear();
+                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);

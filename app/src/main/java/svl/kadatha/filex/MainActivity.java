@@ -930,7 +930,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 				{
 					Global.STORAGE_DIR.clear();
-					clearCache();
+					Global.HASHMAP_FILE_POJO.clear();
+					Global.HASHMAP_FILE_POJO_FILTERED.clear();
 					Intent in=getIntent();
 					finish();
 					startActivity(in);
@@ -1092,7 +1093,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if (Environment.isExternalStorageManager())
 				{
 					Global.STORAGE_DIR.clear();
-					clearCache();
+					Global.HASHMAP_FILE_POJO.clear();
+					Global.HASHMAP_FILE_POJO_FILTERED.clear();
 					Intent in=getIntent();
 					finish();
 					startActivity(in);
@@ -1328,20 +1330,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 					else
 					{
-						Global.REMOVE_USB_URI_PERMISSIONS();
-						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-                        FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
-						if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
-						{
-							Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
-							if(Global.SIZE_APK_ICON_LIST>800)
-							{
-								Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-							}
-							tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
-							Global.print(context,"cleared cache");
-						}
 						finish();
 					}
 				}
@@ -1625,21 +1613,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				if(search_toolbar_visible)
 				{
 					set_visibility_searchbar(false);
-				}
-
-				Global.REMOVE_USB_URI_PERMISSIONS();
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-				FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
-				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
-				{
-					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
-					if(Global.SIZE_APK_ICON_LIST>800)
-					{
-						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-					}
-					tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
-					Global.print(context,"cleared cache");
 				}
 				finish();
 			}
@@ -1970,20 +1943,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		public void onClick(View v) {
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
-				Global.REMOVE_USB_URI_PERMISSIONS();
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-				Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-				FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
-				if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
-				{
-					Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
-					if(Global.SIZE_APK_ICON_LIST>800)
-					{
-						Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-					}
-					tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
-					Global.print(context,"cleared cache");
-				}
 				finish();
 			} else if (id == R.id.toolbar_btn_2) {
 				final ProgressBarFragment pbf = ProgressBarFragment.newInstance();

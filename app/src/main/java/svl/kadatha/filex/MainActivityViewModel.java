@@ -19,6 +19,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean checkedSAFPermissionPasteSetUp;
+    private final TinyDB tinyDB;
 
     public boolean archive_view,working_dir_open,library_or_search_shown,network_shown;
     public String toolbar_shown="bottom";
@@ -27,12 +28,27 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
+        tinyDB=new TinyDB(application);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
         cancel(true);
+        Global.REMOVE_USB_URI_PERMISSIONS();
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+        FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
+        if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
+        {
+            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());
+            if(Global.SIZE_APK_ICON_LIST>800)
+            {
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
+            }
+            tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
+            Global.print(application,"cleared cache");
+        }
     }
 
     public void cancel(boolean mayInterruptRunning){

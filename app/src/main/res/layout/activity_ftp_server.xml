@@ -139,7 +139,7 @@
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_port"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
+                android:paddingTop="8dp"
                 android:paddingBottom="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 />

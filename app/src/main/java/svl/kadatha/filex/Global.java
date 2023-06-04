@@ -561,10 +561,12 @@ public class Global
 		{
 			Global.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
 			FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
+			IMAGE_VIDEO_GRID_LAYOUT=true;
 			tinyDB.putBoolean("not_first_run",true);
 			tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-			IMAGE_VIDEO_GRID_LAYOUT=true;
+			tinyDB.putBoolean("image_video_grid_layout",IMAGE_VIDEO_GRID_LAYOUT);
+
 		}
 		//
 
