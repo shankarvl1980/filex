@@ -782,7 +782,7 @@ public class AudioPlayerService extends Service
 			}
 			nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
 			nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
-				.setSmallIcon(R.drawable.app_icon)
+				.setSmallIcon(R.drawable.app_icon_notification)
 				.setAutoCancel(true)
 				.setPriority(priority)
 				.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

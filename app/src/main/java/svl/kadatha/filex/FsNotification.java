@@ -108,7 +108,7 @@ public class FsNotification {
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.app_icon)
+                .setSmallIcon(R.drawable.app_icon_notification)
                 .setTicker(tickerText)
                 .setWhen(when)
                 .setOngoing(true)

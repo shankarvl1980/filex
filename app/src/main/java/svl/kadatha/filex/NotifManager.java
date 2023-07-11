@@ -35,7 +35,7 @@ public class NotifManager
 
 		}
 		notification_builder
-			.setSmallIcon(R.drawable.app_icon)
+			.setSmallIcon(R.drawable.app_icon_notification)
 			.setAutoCancel(true)
 			.setPriority(priority)
 			.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

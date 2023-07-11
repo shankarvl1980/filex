@@ -281,7 +281,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				{
 					mp.setDataSource(file_path);
 				}
-				else if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
+				else if(fileObjectType==FileObjectType.USB_TYPE)
 				{
 					mp.setDataSource(context,data);
 				}
@@ -588,7 +588,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 	private boolean request_focus()
 	{
-		if(audio_manager==null)
+		if(audio_manager!=null)
 		{
 			audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		}

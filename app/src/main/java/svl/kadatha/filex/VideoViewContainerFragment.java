@@ -433,15 +433,15 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			// TODO: Implement this method
 
-			final VideoViewFragment frag;
+			final VideoViewFragment_mod frag;
 			boolean b=viewModel.firststart;
 			FilePOJO filePOJO=viewModel.video_list.getKeyAtIndex(p1);
 			final String file_path=filePOJO.getPath();
 			int position=viewModel.video_list.get(filePOJO);
-			frag=VideoViewFragment.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
+			frag=VideoViewFragment_mod.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
 			viewModel.firststart=false;
 
-			frag.setVideoPositionListener(new VideoViewFragment.VideoPositionListener()
+			frag.setVideoPositionListener(new VideoViewFragment_mod.VideoPositionListener()
 			{
 				public void setPosition(Integer idx, Integer position)
 				{

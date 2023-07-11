@@ -170,8 +170,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         ftpClient.connect(FTP_POJO.server,FTP_POJO.port);
 
         if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-            ftpClient.setControlKeepAliveTimeout(1);//Send An Keep Alive Message every second
-            ftpClient.setControlKeepAliveReplyTimeout(5000);
+            ftpClient.setControlKeepAliveTimeout(300);//Send An Keep Alive Message every second
+            ftpClient.setControlKeepAliveReplyTimeout(30000);
 
             boolean loggedInStatus = ftpClient.login(FTP_POJO.user_name, FTP_POJO.password);
             if (loggedInStatus) {
