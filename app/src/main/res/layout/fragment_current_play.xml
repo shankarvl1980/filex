@@ -97,6 +97,18 @@
         app:layout_constraintTop_toBottomOf="@id/current_play_artists"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+    <ImageButton
+        android:id="@+id/current_play_list_image_btn"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_background"
+        android:padding="10dp"
+        android:layout_margin="@dimen/layout_margin"
+        android:src="@drawable/play_list_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
+
+        />
 
     <TextView
         android:id="@+id/current_play_volume_text"

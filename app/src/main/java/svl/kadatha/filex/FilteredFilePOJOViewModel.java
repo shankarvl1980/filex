@@ -14,7 +14,6 @@ import android.util.SparseBooleanArray;
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.FileProvider;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -53,6 +52,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public String file_path;
+
+    public boolean video_refreshed;
 
 
     public FilteredFilePOJOViewModel(@NonNull Application application) {

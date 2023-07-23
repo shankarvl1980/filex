@@ -402,7 +402,7 @@
 
 	<string name="settings_label">Settings</string>
 	<string name="user_label">User</string>
-	<string name="login_settings_label">Login settings...</string>
+	<string name="login_settings_label">Login settings…</string>
 	<string name="username_label">Username</string>
 	<string name="password_label">Password</string>
 	<string name="show_password_label">Display password</string>
@@ -414,7 +414,7 @@
     </string>
 	<string name="allow_anonymous_label">Allow anonymous login</string>
 	<string name="anonymous_summary">Anonymous logins are allowed only read access</string>
-	<string name="advanced_settings_label">Advanced settings...</string>
+	<string name="advanced_settings_label">Advanced settings…</string>
 	<string name="port_number_label">Port Number</string>
 	<string name="port_validation_error">Port number must be in the range 1 to 65535.</string>
 	<string name="set_port_credentials_and_directory">Set port, credentials and directory</string>

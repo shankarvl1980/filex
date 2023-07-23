@@ -1,5 +1,4 @@
 package svl.kadatha.filex;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;

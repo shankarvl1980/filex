@@ -31,8 +31,6 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private RadioButton mode_active_radio_btn;
     private CheckBox anonymous_check_box;
     private boolean update,replace;
-    private PermissionsUtil permissionsUtil;
-    private String request_code;
     private Bundle bundle;
     private static final String FTP_REPLACE_REQUEST_CODE="ftp_replace_request_code";
 
@@ -52,7 +50,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         super.onAttach(context);
         this.context=context;
         ftpDatabaseHelper=new FtpDatabaseHelper(context);
-        permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context);
+        PermissionsUtil permissionsUtil = new PermissionsUtil(context, (AppCompatActivity) context);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         bundle=getArguments();
         if(bundle!=null)
         {
-            request_code=bundle.getString("request_code");
+            String request_code = bundle.getString("request_code");
             original_server=bundle.getString("server");
             original_user_name=bundle.getString("user_name");
             if(original_server==null)

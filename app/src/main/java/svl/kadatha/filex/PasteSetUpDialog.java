@@ -14,10 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class PasteSetUpDialog extends DialogFragment
 {

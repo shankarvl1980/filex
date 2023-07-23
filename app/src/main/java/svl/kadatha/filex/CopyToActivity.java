@@ -25,11 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class CopyToActivity extends BaseActivity{
 

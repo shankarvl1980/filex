@@ -170,6 +170,30 @@ public class AudioPlayerActivity extends BaseActivity
 		aslf=(AudioSavedListFragment) adapter.instantiateItem(view_pager,3);
 		adapter.finishUpdate(view_pager);
 
+		apf.setAudioSelectListener(new AudioPlayFragment.AudioSelectListener()
+		{
+			public void onAudioSelect(Uri data, AudioPOJO audio)
+			{
+				android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
+				service_intent.setData(data);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+				{
+					startForegroundService(service_intent);
+				}
+				else
+				{
+					startService(service_intent);
+				}
+
+				AUDIO_FILE=audio;
+				if(apf!=null)
+				{
+					apf.set_audio(audio);
+				}
+
+			}
+		});
+
 
 		albumlf.setAudioSelectListener(new AlbumListFragment.AudioSelectListener()
 		{

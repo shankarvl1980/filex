@@ -29,9 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
-
-import me.jahnen.libaums.core.fs.UsbFile;
 
 public class RenameFileDialog extends DialogFragment
 {

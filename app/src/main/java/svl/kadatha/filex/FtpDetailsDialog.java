@@ -46,7 +46,6 @@ public class FtpDetailsDialog extends DialogFragment {
     private int scroll_distance;
     private int num_all_ftp;
     private Button delete_btn;
-    private Button disconnect_btn;
     private Button edit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
@@ -146,7 +145,7 @@ public class FtpDetailsDialog extends DialogFragment {
         bottom_toolbar.addView(tb_layout);
         Button add_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        disconnect_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button disconnect_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
 
 

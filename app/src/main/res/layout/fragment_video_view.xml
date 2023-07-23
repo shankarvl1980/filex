@@ -14,6 +14,16 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
+
+	<androidx.constraintlayout.widget.Group
+		android:id="@+id/video_play_refresh_play_pause_group"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:constraint_referenced_ids="video_play_refresh_btn,video_play_pause_img_btn"
+		/>
+
+
+
 	<ImageButton
 		android:id="@+id/video_play_pause_img_btn"
 		android:layout_width="wrap_content"
@@ -21,11 +31,24 @@
 		android:adjustViewBounds="true"
 		android:background="@drawable/oval_shape"
 		android:padding="10dp"
-		android:src="@drawable/play_icon1"
+		android:src="@drawable/video_play_icon"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
+
+	<ImageButton
+		android:id="@+id/video_play_refresh_btn"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:adjustViewBounds="true"
+		android:background="@drawable/oval_shape"
+		android:padding="10dp"
+		android:src="@drawable/video_refresh_icon"
+		app:layout_constraintBottom_toTopOf="@id/video_view_bottom_butt"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		 />
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"

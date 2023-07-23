@@ -71,6 +71,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
 		}
+		//videoViewActivity.videoViewFragment_modList.add(this);
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		//videoViewActivity.videoViewFragment_modList.remove(this);
 	}
 
 	@Override
@@ -364,7 +371,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 				if(completed)
 				{
-					play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon1));
+					play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 					current_progress=isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0);
 					current_progress_tv.setText(current_progress+"/"+total_time);
 					seekbar.setProgress(0);
@@ -448,7 +455,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 			 if(prepared && playmode)
 			{
 				pause();
-				play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon1));
+				play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 			}
 			if (videoPositionListener != null)
 			{
@@ -527,7 +534,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 		{
 			if(mp.isPlaying())mp.pause();
 			playmode=false;
-			play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.play_icon1));
+			play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 			bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
 			bottom_butt_visible=true;
 			play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);

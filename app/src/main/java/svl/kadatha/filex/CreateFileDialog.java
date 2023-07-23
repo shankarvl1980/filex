@@ -28,7 +28,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
 
 public class CreateFileDialog extends DialogFragment
 {

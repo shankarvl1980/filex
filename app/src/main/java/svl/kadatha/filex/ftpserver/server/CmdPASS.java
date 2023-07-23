@@ -19,7 +19,6 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 
 package svl.kadatha.filex.ftpserver.server;
 
-import svl.kadatha.filex.FtpServerViewModel;
 import svl.kadatha.filex.ftpserver.ftp.FsSettings;
 import svl.kadatha.filex.ftpserver.ftp.Util;
 import timber.log.Timber;

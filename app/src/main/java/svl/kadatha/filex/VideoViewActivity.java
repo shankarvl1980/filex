@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 public class VideoViewActivity extends BaseActivity
 {
@@ -21,6 +22,7 @@ public class VideoViewActivity extends BaseActivity
 	public static final String ACTIVITY_NAME="VIDEO_VIEW_ACTIVITY";
 	public boolean clear_cache;
 	private VideoViewContainerFragment videoViewContainerFragment;
+	public FilteredFilePOJOViewModel viewModel;
 
 
     @Override
@@ -34,6 +36,7 @@ public class VideoViewActivity extends BaseActivity
 		tinyDB=new TinyDB(context);
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
+		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)

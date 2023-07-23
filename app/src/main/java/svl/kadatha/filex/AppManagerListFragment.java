@@ -55,8 +55,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 public class AppManagerListFragment extends Fragment {
 
     private Context context;

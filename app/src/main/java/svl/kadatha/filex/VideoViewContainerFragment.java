@@ -63,6 +63,7 @@ public class VideoViewContainerFragment extends Fragment
 	public FrameLayout progress_bar;
 	public FilteredFilePOJOViewModel viewModel;
 	private static final String DELETE_FILE_REQUEST_CODE="video_file_delete_request_code";
+	public static final String REFRESH_VIDEO_CODE="video_play_refresh_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -82,6 +83,7 @@ public class VideoViewContainerFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
+
 		float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
 		floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,height,context.getResources().getDisplayMetrics());
 	}
@@ -225,7 +227,7 @@ public class VideoViewContainerFragment extends Fragment
 			}
 			
 		});
-		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+		viewModel=new ViewModelProvider(requireActivity()).get(FilteredFilePOJOViewModel.class);
 		data=videoViewActivity.data;
 		Bundle bundle=getArguments();
 		if(bundle!=null)
@@ -366,6 +368,18 @@ public class VideoViewContainerFragment extends Fragment
 			}
 		});
 
+		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(REFRESH_VIDEO_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(REFRESH_VIDEO_CODE))
+				{
+					adapter.notifyDataSetChanged();
+					viewModel.video_refreshed=true;
+				}
+
+			}
+		});
+
 		return v;
 	}
 
@@ -450,6 +464,7 @@ public class VideoViewContainerFragment extends Fragment
 						viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx),position);
 					}
 				}
+
 			});
 			return frag;
 		}
@@ -471,5 +486,6 @@ public class VideoViewContainerFragment extends Fragment
 		}
 
 	}
+
 
 }

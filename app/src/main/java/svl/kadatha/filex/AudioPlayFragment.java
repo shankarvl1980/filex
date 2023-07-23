@@ -65,6 +65,7 @@ public class AudioPlayFragment extends Fragment
 	private ImageButton previous_btn;
 	private ImageButton play_pause_btn;
 	private ImageButton next_btn;
+	private ImageButton audio_play_list_btn;
 	private TextView audio_name_tv,audio_album_tv,audio_artists_tv,next_audio_tv,total_time_tv,current_progress_tv;
 	private SeekBar seekbar;
 	private int total_duration;
@@ -80,8 +81,10 @@ public class AudioPlayFragment extends Fragment
 	private Uri data;
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
+	private static final String AUDIO_SELECT_REQUEST_CODE="audio_play_audio_select_request_code";
 	private FrameLayout progress_bar;AudioPlayerActivity activity;
 	private AudioPlayViewModel audioPlayViewModel;
+	private AudioSelectListener audioSelectListener;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -238,6 +241,7 @@ public class AudioPlayFragment extends Fragment
 			}
 		};
 
+
 		SeekBar volumeControlSeekbar = v.findViewById(R.id.current_play_volume_seekbar);
 		volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 		volumeControlSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -287,6 +291,14 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
+		audio_play_list_btn=v.findViewById(R.id.current_play_list_image_btn);
+		audio_play_list_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,0,AudioPlayerActivity.CURRENT_PLAY_LIST);
+				audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
+			}
+		});
 
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
@@ -460,6 +472,34 @@ public class AudioPlayFragment extends Fragment
 				}
 			}
 		});
+
+		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
+				{
+					AudioPOJO audio=result.getParcelable("audio");
+					int id=audio.getId();
+					Uri data;
+					if(id==0)
+					{
+						File file=new File(audio.getData());
+						data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
+					}
+					else
+					{
+						Uri uri= MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+						data=Uri.withAppendedPath(uri,String.valueOf(id));
+					}
+
+					if(audioSelectListener!=null && data !=null)
+					{
+						audioSelectListener.onAudioSelect(data,audio);
+					}
+				}
+			}
+		});
+
 
 		return v;
 	}
@@ -852,6 +892,15 @@ public class AudioPlayFragment extends Fragment
 		}
 
 		Global.print(context,getString(R.string.ringtone_set));
+	}
+	interface AudioSelectListener
+	{
+		void onAudioSelect(Uri data, AudioPOJO audio);
+	}
+
+	public void setAudioSelectListener(AudioSelectListener listener)
+	{
+		audioSelectListener=listener;
 	}
 
 }

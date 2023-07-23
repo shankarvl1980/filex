@@ -24,8 +24,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-import org.apache.commons.net.ftp.FTPClient;
-
 import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.ftp.NsdService;
 import timber.log.Timber;

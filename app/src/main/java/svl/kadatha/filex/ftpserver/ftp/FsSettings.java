@@ -21,9 +21,7 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 package svl.kadatha.filex.ftpserver.ftp;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import androidx.preference.PreferenceManager;
 
 
 //import com.google.gson.Gson;

@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.parser.ParserInitializationException;
 
 import java.io.BufferedReader;
 import java.io.File;

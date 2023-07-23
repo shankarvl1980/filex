@@ -22,7 +22,6 @@ import java.util.List;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.UriPOJO;
-import svl.kadatha.filex.ftpserver.ftp.FsSettings;
 import timber.log.Timber;
 
 
