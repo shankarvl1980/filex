@@ -26,7 +26,7 @@ public class DetailRecyclerViewAdapterDiffUtil extends DiffUtil.Callback
 	public int getNewListSize()
 	{
 		// TODO: Implement this method
-		return new_list.size();
+		return new_list!=null ? new_list.size() : 0;
 	}
 
 	@Override
@@ -41,7 +41,15 @@ public class DetailRecyclerViewAdapterDiffUtil extends DiffUtil.Callback
 	public boolean areContentsTheSame(int p1, int p2)
 	{
 		// TODO: Implement this method
-		return true;
+		FilePOJO oldFilePOJO=old_list.get(p1);
+		FilePOJO newFilePOJO=new_list.get(p2);
+		if(oldFilePOJO.getIsDirectory())
+		{
+			return oldFilePOJO.getSize().equals(newFilePOJO.getSize());
+		}
+		else {
+			return oldFilePOJO.getSizeLong()==newFilePOJO.getSizeLong();
+		}
 	}
 
 	@Override

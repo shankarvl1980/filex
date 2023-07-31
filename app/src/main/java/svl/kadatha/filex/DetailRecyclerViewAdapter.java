@@ -9,10 +9,12 @@ import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
@@ -285,7 +287,11 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		return df.filePOJO_list.size();
 	}
 	
-
+	public void updateList(List<FilePOJO> newFilePOJOList)
+	{
+		DiffUtil.DiffResult diffResult=DiffUtil.calculateDiff(new DetailRecyclerViewAdapterDiffUtil(df.filePOJO_list,newFilePOJOList));
+		diffResult.dispatchUpdatesTo(this);
+	}
 
 
 	public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)

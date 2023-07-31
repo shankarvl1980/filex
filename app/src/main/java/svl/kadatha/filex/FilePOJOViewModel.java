@@ -117,10 +117,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     }
                     final long final_storage_space = storage_space;
-                    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
+                    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size;
                     boolean isInternalStorage;
 
-                    dir_count = 0;half_dir_count=dir_count/2;
+                    dir_count = filePOJOS.size();half_dir_count=dir_count/2;
 
                     if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                     {
@@ -161,7 +161,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view)
+    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -181,7 +181,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
 
                 final long final_storage_space = storage_space;
-                HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size=new HashMap<>();
+                HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size;
                 boolean isInternalStorage;
 
                 dir_count = filePOJOS.size();half_dir_count=dir_count/2;

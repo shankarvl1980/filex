@@ -207,7 +207,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             if(viewModel.filePOJOS.size()>0 && (viewModel.filePOJOS.get(0).getTotalSizePercentage()==null || viewModel.filePOJOS.get(viewModel.filePOJOS.size()-1).getTotalSizePercentage()==null))
             {
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile,false);
+                viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile);
             }
             else
             {
@@ -678,7 +678,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             {
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile,false);
+                viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile);
             }
             else
             {

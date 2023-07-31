@@ -130,7 +130,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         {
             public void onClick(View v)
             {
-                recentRecyclerAdapter.clear_recents();
+                recentRecyclerAdapter.clear_recent();
                 if(activity_catering.equals(STORAGE_ANALYSER))
                 {
                     StorageAnalyserActivity.RECENTS=new LinkedList<>();
@@ -335,7 +335,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             return dir_linkedlist.size();
         }
 
-        public void clear_recents()
+        public void clear_recent()
         {
             dir_linkedlist=new LinkedList<>();
             notifyDataSetChanged();
