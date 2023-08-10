@@ -151,14 +151,14 @@ public class Global
 	static final float DISABLE_ALFA= (float) 0.4;
 	static final float ENABLE_ALFA= (float) 1.0;
 	
-	static final int FONT_SIZE_SMALL_FIRST_LINE=14;
-	static final int FONT_SIZE_SMALL_DETAILS_LINE=11;
+	static final int FONT_SIZE_SMALL_FIRST_LINE=15;
+	static final int FONT_SIZE_SMALL_DETAILS_LINE=12;
 	
-	static final int FONT_SIZE_MEDIUM_FIRST_LINE=16;
-	static final int FONT_SIZE_MEDIUM_DETAILS_LINE=12;
+	static final int FONT_SIZE_MEDIUM_FIRST_LINE=17;
+	static final int FONT_SIZE_MEDIUM_DETAILS_LINE=13;
 	
-	static final int FONT_SIZE_LARGE_FIRST_LINE=18;
-	static final int FONT_SIZE_LARGE_DETAILS_LINE=14;
+	static final int FONT_SIZE_LARGE_FIRST_LINE=19;
+	static final int FONT_SIZE_LARGE_DETAILS_LINE=15;
 	
 	static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL=8;
 	static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM=9;

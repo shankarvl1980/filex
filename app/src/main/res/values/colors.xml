@@ -15,6 +15,7 @@
 	<color name="light_activity_background">#F4F4F4</color>
 	<color name="light_filepath_recyclerview_background">#FF099EA3</color>
 	<color name="light_drawer_title">#05FAF2</color>
+	<color name="light_drawer_item_pressed">#AFF8F6</color>
 	<color name="light_dialog_title">@color/light_toolbar_background</color>
 	<color name="light_dialog_background">#F8F5F5</color>
 	<color name="light_tab_select_text_color">@color/light_heading_text_color</color>

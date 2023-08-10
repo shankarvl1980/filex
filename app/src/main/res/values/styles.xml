@@ -22,6 +22,7 @@
         <item name="dialog_recyclerview_background">@color/light_dialog_recyclerview_background</item>
         <item name="filepath_recyclerview_background">@color/light_filepath_recyclerview_background</item>
         <item name="drawer_title">@color/light_drawer_title</item>
+        <item name="drawer_item_pressed">@color/light_drawer_item_pressed</item>
         <item name="dialog_title">@color/light_dialog_title</item>
         <item name="dialog_background">@color/light_dialog_background</item>
         <item name="list_popup_window_background">@color/light_list_popup_window_background</item>
