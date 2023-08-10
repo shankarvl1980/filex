@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:background="?attr/dialog_title"
 		android:text="@string/properties"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		android:paddingStart="@dimen/ten_dp"
 		android:paddingEnd="@dimen/ten_dp"
 		android:paddingTop="@dimen/layout_margin"

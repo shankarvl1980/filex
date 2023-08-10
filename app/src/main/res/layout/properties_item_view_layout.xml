@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:padding="@dimen/layout_margin"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:gravity="end"
 
 
@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:text=":"
@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/layout_margin"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:layout_weight="1"
 
         />

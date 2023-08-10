@@ -22,7 +22,7 @@
             android:id="@+id/list_popupwindow_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:layout_margin="@dimen/layout_margin"
             android:minHeight="36dp"
             android:textColor="?attr/toolbar_text_color"

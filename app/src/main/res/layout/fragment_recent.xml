@@ -17,7 +17,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/directories"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -48,7 +48,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/recent"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/dialog_recent_root_dir_recycler_view" />

@@ -56,7 +56,7 @@
         android:gravity="center"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toStartOf="@+id/archive_detail_fragment_all_select"
         app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_parent_dir_imagebutton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -78,7 +78,7 @@
         android:id="@+id/archive_filepath_recyclerview_height"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:background="@null"
         android:minHeight="34dp"
         android:gravity="center"
@@ -121,7 +121,7 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/archive_viewer_search_view_cancel_button"

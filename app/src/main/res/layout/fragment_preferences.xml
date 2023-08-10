@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/dialog_title"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
@@ -44,7 +44,7 @@
                 android:layout_marginEnd="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:text="@string/theme"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -69,6 +69,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/light"
                     android:minHeight="36dp"
+                    android:textSize="15sp"
                     />
 
                 <RadioButton
@@ -77,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/dark"
                     android:minHeight="36dp"
+                    android:textSize="15sp"
                     />
                 <RadioButton
                     android:id="@+id/preferences_rb_system"
@@ -84,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/system_default"
                     android:minHeight="36dp"
+                    android:textSize="15sp"
                     />
 
             </RadioGroup>
@@ -105,7 +108,7 @@
                 android:layout_marginEnd="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:text="@string/default_apps_to_open_files"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/fragment_preferences_divider1" />
 
@@ -148,7 +151,7 @@
                 android:layout_margin="@dimen/ten_dp"
                 android:textColor="@color/light_recycler_text_color"
                 android:text="@string/show_file_path_for_library_files"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider2" />
@@ -170,7 +173,7 @@
                 android:layout_margin="@dimen/ten_dp"
                 android:textColor="@color/light_recycler_text_color"
                 android:text="@string/enable_usb_flash_drive"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3" />
@@ -210,7 +213,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="@color/toolbar_background"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:padding="@dimen/layout_margin"
             android:layout_gravity="top"
             android:gravity="center_vertical"
@@ -232,7 +235,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/file_size_display_colon"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     />
 
                 <RadioGroup
@@ -264,7 +267,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_apps_colon"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:layout_marginTop="@dimen/layout_margin"
                     />
                 <LinearLayout

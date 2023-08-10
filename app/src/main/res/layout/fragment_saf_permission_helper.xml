@@ -14,7 +14,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:background="?attr/dialog_title"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		android:layout_gravity="top"
 		/>
 
@@ -134,7 +134,7 @@
             android:text="@string/storage_access_permission"
             android:padding="@dimen/layout_margin"
             android:background="@color/dialog_title"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:layout_gravity="top"
         />
 

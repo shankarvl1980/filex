@@ -13,7 +13,7 @@
 		android:paddingEnd="@dimen/ten_dp"
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +54,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/wait_till_the_process_completes"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		app:layout_constraintBottom_toBottomOf="@+id/progress_bar_background"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/fragment_cancelable_progressbar_pb"
@@ -95,7 +95,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:id="@+id/fragment_cancelable_pbf_title"
 
             android:background="@color/dialog_title"
@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_cancelable_pbf_message"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:text="@string/wait_till_the_process_completes"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/layout_margin"

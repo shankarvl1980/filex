@@ -50,7 +50,7 @@
 		android:paddingEnd="@dimen/ten_dp"
 		android:singleLine="true"
 		android:textColor="?attr/toolbar_text_color"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:elevation="6dp"
 
 		app:layout_constraintEnd_toStartOf="@id/search_view_cancel_button"
@@ -141,7 +141,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:singleLine="true"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:background="@null"
                     android:textColor="@color/edit_text_color"
                     android:layout_gravity="center_vertical"

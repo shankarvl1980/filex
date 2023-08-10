@@ -49,7 +49,7 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/app_manager_search_view_cancel_button"

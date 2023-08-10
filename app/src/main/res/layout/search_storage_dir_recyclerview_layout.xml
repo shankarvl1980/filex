@@ -23,7 +23,7 @@
 
 
 		android:textColor="?attr/recycler_text_color"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		app:layout_constraintBottom_toBottomOf="parent"
 
 		app:layout_constraintStart_toEndOf="@+id/image_search_storage_dir"
@@ -71,7 +71,7 @@
 			android:id="@+id/text_search_storage_dir_name"
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:textSize="16sp"
+			android:textSize="17sp"
 		android:layout_centerInParent="true"
 		android:paddingStart="@dimen/layout_margin"
 		android:paddingEnd="@dimen/layout_margin"

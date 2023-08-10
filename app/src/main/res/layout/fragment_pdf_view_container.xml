@@ -34,7 +34,7 @@
             android:paddingEnd="@dimen/ten_dp"
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
-            android:textSize="16sp"
+            android:textSize="17sp"
 
             />
 

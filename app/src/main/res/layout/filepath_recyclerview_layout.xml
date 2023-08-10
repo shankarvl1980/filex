@@ -9,7 +9,7 @@
 		android:id="@+id/filepath_recyclerview_TextView"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:background="@null"
 		android:gravity="center"
 		android:paddingStart="@dimen/layout_margin"

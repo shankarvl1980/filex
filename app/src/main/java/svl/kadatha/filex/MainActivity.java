@@ -758,7 +758,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 
 
-		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width);
+		int drawer_width=(int)getResources().getDimension(R.dimen.drawer_width_with_padding);
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,drawer_width,drawer_width);
 		int[] drawer_end_drawables ={R.drawable.exit_drawer_icon,R.drawable.settings_drawer_icon};
 		titles=new String[]{getString(R.string.exit),getString(R.string.settings)};

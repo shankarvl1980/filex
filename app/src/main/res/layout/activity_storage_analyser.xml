@@ -36,7 +36,7 @@
             style="?android:attr/spinnerStyle"
             android:paddingStart="@dimen/layout_margin"
             android:paddingEnd="@dimen/layout_margin"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
             android:gravity="center"
@@ -78,7 +78,7 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_search_view_cancel_button"

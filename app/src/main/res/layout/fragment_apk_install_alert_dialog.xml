@@ -13,7 +13,7 @@
         android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:text="@string/app_installation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,7 @@
         android:id="@+id/fragment_apk_install_apk_name_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fragment_apk_install_icon_imageview"
         app:layout_constraintTop_toTopOf="@id/fragment_apk_install_dialog_background"
@@ -141,7 +141,7 @@
         app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_button_barrier"
         android:background="?attr/dialog_background"
         android:padding="@dimen/ten_dp"
-        android:textSize="16sp"
+        android:textSize="17sp"
         />
     <FrameLayout
         android:id="@+id/fragment_apk_install_progressbar"

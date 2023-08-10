@@ -14,7 +14,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:background="?attr/dialog_title"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		android:layout_gravity="top"/>
 
 	<ScrollView
@@ -33,7 +33,7 @@
 				android:layout_height="wrap_content"
 				android:text="@string/layout"
 				android:gravity="start"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent"
 				android:background="?attr/dialog_background"
@@ -64,6 +64,7 @@
 					android:layout_height="wrap_content"
 					android:text="@string/list"
 					android:layout_weight="1"
+					android:textSize="15sp"
 
 					/>
 
@@ -74,6 +75,7 @@
 					android:layout_height="wrap_content"
 					android:text="@string/grid"
 					android:layout_weight="1"
+					android:textSize="15sp"
 
 					/>
 
@@ -94,7 +96,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/font_size"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				android:paddingStart="@dimen/ten_dp"
 				android:paddingEnd="@dimen/ten_dp"
 				android:paddingTop="@dimen/ten_dp"
@@ -133,7 +135,7 @@
 				app:layout_constraintEnd_toStartOf="@id/font_medium_label"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
-
+				android:textSize="15sp"
 				/>
 
 			<TextView
@@ -146,7 +148,7 @@
 				app:layout_constraintEnd_toStartOf="@id/font_large_label"
 				app:layout_constraintStart_toEndOf="@id/font_small_label"
 				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
-
+				android:textSize="15sp"
 				/>
 
 			<TextView
@@ -163,7 +165,7 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toEndOf="@id/font_medium_label"
 				app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize"
-
+				android:textSize="15sp"
 				/>
 
 
@@ -182,7 +184,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/sort"
-				android:textSize="16sp"
+				android:textSize="17sp"
 
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
@@ -216,7 +218,7 @@
 						android:layout_height="wrap_content"
 						android:gravity="center"
 						android:text="@string/name"
-						android:textSize="16sp"
+						android:textSize="17sp"
 						/>
 
 					<TextView
@@ -224,7 +226,7 @@
 						android:layout_height="wrap_content"
 						android:gravity="center"
 						android:text="@string/date"
-						android:textSize="16sp"
+						android:textSize="17sp"
 						/>
 
 					<TextView
@@ -232,7 +234,7 @@
 						android:layout_height="wrap_content"
 						android:gravity="center"
 						android:text="@string/size"
-						android:textSize="16sp"
+						android:textSize="17sp"
 						/>
 
 				</TableRow>
@@ -326,7 +328,7 @@
 				android:id="@+id/view_switch_show_hidden"
 				android:text="@string/show_hidden_files"
 				android:textColor="@color/light_recycler_text_color"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				android:theme="@style/MyLightSwitchCompat"
 				app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
 				android:background="?attr/dialog_background"
@@ -371,7 +373,7 @@
             android:text="@string/view"
             android:padding="@dimen/layout_margin"
             android:background="@color/dialog_title"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:layout_gravity="top"/>
 
         <ScrollView
@@ -401,7 +403,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/layout_colon"
                         android:gravity="start"
-                        android:textSize="16sp"
+                        android:textSize="17sp"
 
                         />
 
@@ -450,7 +452,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/font_size_colon"
-                        android:textSize="16sp"/>
+                        android:textSize="17sp"/>
 
                     <SeekBar
                         android:id="@+id/seekbar_fontsize"
@@ -499,7 +501,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/sort_colon"
-                        android:textSize="16sp"/>
+                        android:textSize="17sp"/>
 
 
                     <TableLayout
@@ -521,7 +523,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
                                 android:text="@string/name"
-                                android:textSize="16sp"
+                                android:textSize="17sp"
                                 android:gravity="center"
 
 
@@ -530,7 +532,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
                                 android:text="@string/date"
-                                android:textSize="16sp"
+                                android:textSize="17sp"
 
                                 android:gravity="center"
 

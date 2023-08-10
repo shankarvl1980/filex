@@ -8,7 +8,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:background="?attr/dialog_title"
 			android:paddingStart="@dimen/ten_dp"
 			android:paddingEnd="@dimen/ten_dp"
@@ -44,7 +44,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/name"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:paddingStart="@dimen/ten_dp"
 		android:paddingEnd="@dimen/ten_dp"
 		android:paddingTop="@dimen/ten_dp"
@@ -58,7 +58,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:textColor="?attr/edit_text_color"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:layout_marginStart="@dimen/ten_dp"
 		android:layout_marginEnd="@dimen/ten_dp"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
 		android:layout_marginStart="@dimen/ten_dp"
 		android:layout_marginEnd="@dimen/ten_dp"
 		android:text="@string/whole_word"
-		android:textSize="14sp"
+		android:textSize="15sp"
 		android:minHeight="36dp"
 		app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_casesensitive_checkbox"
 		app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginTop="-3dp"
 		android:text="@string/case_sensitive"
-		android:textSize="14sp"
+		android:textSize="15sp"
 		android:minHeight="36dp"
 		android:layout_marginStart="@dimen/ten_dp"
 		android:layout_marginEnd="@dimen/ten_dp"
@@ -99,7 +99,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginTop="-3dp"
 		android:text="@string/regex"
-		android:textSize="14sp"
+		android:textSize="15sp"
 		android:minHeight="36dp"
 		android:layout_marginStart="@dimen/ten_dp"
 		android:layout_marginEnd="@dimen/ten_dp"
@@ -119,7 +119,7 @@
 				android:paddingTop="@dimen/ten_dp"
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/type"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
@@ -205,7 +205,7 @@
 					android:paddingEnd="@dimen/ten_dp"
 					android:gravity="start"
 					android:text="@string/size"
-					android:textSize="16sp"
+					android:textSize="17sp"
 
 					/>
 
@@ -215,7 +215,7 @@
 					android:layout_height="wrap_content"
 					android:paddingEnd="15dp"
 					android:text="KB"
-
+					android:textSize="15sp"
 					/>
 
 				<RadioButton
@@ -225,7 +225,7 @@
 					android:layout_height="wrap_content"
 					android:paddingEnd="15dp"
 					android:text="MB"
-
+					android:textSize="15sp"
 					/>
 
 				<RadioButton
@@ -235,7 +235,7 @@
 					android:layout_height="wrap_content"
 					android:paddingEnd="15dp"
 					android:text="GB"
-
+					android:textSize="15sp"
 					/>
 
 			</RadioGroup>
@@ -257,7 +257,7 @@
 						android:paddingTop="@dimen/layout_margin"
 						android:paddingBottom="@dimen/layout_margin"
 						android:text="@string/greater_than"
-						android:textSize="14sp"
+						android:textSize="15sp"
 						/>
 					<TextView
 
@@ -271,7 +271,7 @@
 						android:id="@+id/dialog_fragment_search_lower_bound"
 						android:layout_width="60sp"
 						android:layout_height="wrap_content"
-						android:textSize="14sp"
+						android:textSize="15sp"
 						android:inputType="number"
 						android:digits="0123456789"
 						android:gravity="end"
@@ -295,7 +295,7 @@
 						android:paddingTop="@dimen/layout_margin"
 						android:paddingBottom="@dimen/layout_margin"
 						android:text="@string/lesser_than"
-						android:textSize="14sp"
+						android:textSize="15sp"
 						/>
 
 					<TextView
@@ -310,7 +310,7 @@
 						android:id="@+id/dialog_fragment_search_upper_bound"
 						android:layout_width="60sp"
 						android:layout_height="wrap_content"
-						android:textSize="14sp"
+						android:textSize="15sp"
 						android:inputType="number"
 						android:digits="0123456789"
 						android:gravity="end"
@@ -335,7 +335,7 @@
 				android:paddingTop="@dimen/ten_dp"
 				android:paddingBottom="@dimen/layout_margin"
 				android:text="@string/search_in"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table"
@@ -349,7 +349,7 @@
 				android:focusable="false"
 				android:padding="@dimen/layout_margin"
 				android:singleLine="true"
-				android:textSize="16sp"
+				android:textSize="17sp"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/search_in_label" />
@@ -383,7 +383,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:background="@color/dialog_title"
             android:padding="@dimen/layout_margin"
             android:text="@string/search"
@@ -408,13 +408,13 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dialog_fragment_search_file_label"
                     android:text="@string/name_colon"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                 />
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/dialog_fragment_search_file_edittext"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:layout_marginStart="-3dp"
                     android:layout_marginEnd="-3dp"
                     android:layout_below="@+id/dialog_fragment_search_file_label"
@@ -426,7 +426,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dialog_fragment_search_wholeword_checkbox"
                     android:text="@string/whole_word"
-                    android:textSize="14sp"
+                    android:textSize="15sp"
                     android:layout_marginTop="-3dp"
                     android:layout_marginStart="-3dp"
                     android:layout_below="@+id/dialog_fragment_search_file_edittext"
@@ -438,7 +438,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dialog_fragment_search_casesensitive_checkbox"
                     android:text="@string/case_sensitive"
-                    android:textSize="14sp"
+                    android:textSize="15sp"
                     android:layout_marginTop="-3dp"
                     android:layout_below="@+id/dialog_fragment_search_file_edittext"
                     android:layout_toEndOf="@+id/dialog_fragment_search_wholeword_checkbox"
@@ -449,7 +449,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dialog_fragment_search_regex_checkbox"
                     android:text="@string/regex"
-                    android:textSize="14sp"
+                    android:textSize="15sp"
                     android:layout_marginTop="-3dp"
                     android:layout_marginStart="-3dp"
                     android:layout_below="@+id/dialog_fragment_search_wholeword_checkbox"
@@ -486,7 +486,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/type_colon"
                         android:gravity="start"
-                        android:textSize="16sp"
+                        android:textSize="17sp"
 
                     />
 
@@ -533,7 +533,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:text="@string/search_in_colon"
             />
 
@@ -541,7 +541,7 @@
             android:id="@+id/dialog_fragment_search_storage_dir_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:singleLine="true"
             android:focusable="false"
 

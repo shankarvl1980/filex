@@ -26,7 +26,7 @@
         android:paddingEnd="@dimen/layout_margin"
 
         android:textColor="?attr/recycler_main_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@+id/ftp_list_recyclerview_image_ftp"
         app:layout_constraintTop_toTopOf="parent"
         android:maxLines="2"
@@ -42,7 +42,7 @@
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        android:textSize="14sp"
+        android:textSize="15sp"
 
         app:layout_constraintStart_toStartOf="@id/ftp_list_recyclerview_display"
         app:layout_constraintTop_toBottomOf="@id/ftp_list_recyclerview_display"
@@ -58,7 +58,7 @@
         android:paddingEnd="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        android:textSize="14sp"
+        android:textSize="15sp"
 
         app:layout_constraintStart_toStartOf="@id/ftp_list_recyclerview_display"
         app:layout_constraintTop_toBottomOf="@id/ftp_list_recyclerview_server"

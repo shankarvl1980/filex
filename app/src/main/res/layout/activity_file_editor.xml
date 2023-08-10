@@ -51,7 +51,7 @@
 			android:id="@+id/file_editor_file_name_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:textSize="16sp"
+			android:textSize="17sp"
 			android:singleLine="true"
 			android:paddingStart="@dimen/ten_dp"
 			android:paddingEnd="@dimen/ten_dp"

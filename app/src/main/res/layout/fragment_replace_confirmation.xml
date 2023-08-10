@@ -16,7 +16,7 @@
 		android:paddingBottom="@dimen/layout_margin"
 		android:text="@string/replace_file"
 
-		android:textSize="18sp"
+		android:textSize="19sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
 		android:background="?attr/dialog_background"
 		android:padding="@dimen/ten_dp"
 
-		android:textSize="16sp"
+		android:textSize="17sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/replace_confirmation_title" />
@@ -125,7 +125,7 @@
 
             android:padding="@dimen/layout_margin"
             android:background="@color/dialog_title"
-            android:textSize="18sp"
+            android:textSize="19sp"
 
             android:layout_gravity="top"
 
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/dialog_fragment_replace_message"
             android:layout_marginBottom="@dimen/layout_margin"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:paddingTop="@dimen/layout_margin"
 
 

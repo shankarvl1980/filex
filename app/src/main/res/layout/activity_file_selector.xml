@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/ten_dp"
             android:paddingEnd="@dimen/ten_dp"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
             android:clickable="false"
@@ -78,7 +78,7 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/file_selector_search_view_cancel_button"

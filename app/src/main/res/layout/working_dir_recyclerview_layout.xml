@@ -9,7 +9,7 @@
 		android:id="@+id/working_dir_name"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:layout_margin="@dimen/layout_margin"
 		android:gravity="center_vertical"
 		android:minHeight="36dp"

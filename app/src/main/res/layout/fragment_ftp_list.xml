@@ -15,7 +15,7 @@
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:text="@string/ftp"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:background="?attr/dialog_title"
         android:gravity="center_vertical"
         />

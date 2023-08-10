@@ -14,12 +14,13 @@
         android:paddingEnd="@dimen/layout_margin"
         android:gravity="center_vertical"
         android:background="@drawable/select_detail_grid_recyclerview"
+        android:textSize="17sp"
 
         />
     <ImageView
         android:id="@+id/default_app_image_view"
-        android:layout_height="30dp"
-        android:layout_width="30dp"
+        android:layout_height="34dp"
+        android:layout_width="34dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center_vertical"
@@ -35,7 +36,7 @@
         android:gravity="center_vertical"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-
+        android:textSize="17sp"
 
         />
     <CheckBox

@@ -34,7 +34,7 @@
 			android:paddingEnd="@dimen/ten_dp"
 			android:singleLine="true"
 			android:textColor="?attr/toolbar_text_color"
-			android:textSize="16sp"
+			android:textSize="17sp"
 
 			/>
 
@@ -158,7 +158,7 @@ android:layout_height="match_parent"
 		android:layout_height="match_parent"
 		android:paddingStart="@dimen/layout_margin"
 		android:paddingEnd="@dimen/layout_margin"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:singleLine="true"
 		android:gravity="center_vertical"
 		android:textColor="@color/icon_color"

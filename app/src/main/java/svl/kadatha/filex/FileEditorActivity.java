@@ -115,7 +115,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		FILE_EDITOR_TEXT_SIZE=tinyDB.getFloat("file_editor_text_size");
 		if(FILE_EDITOR_TEXT_SIZE<=0 || FILE_EDITOR_TEXT_SIZE> FileEditorSettingsDialog.MAX_TEXT_SIZE)
 		{
-			FILE_EDITOR_TEXT_SIZE=14F;
+			FILE_EDITOR_TEXT_SIZE=16F;
 			tinyDB.putFloat("file_editor_text_size",FILE_EDITOR_TEXT_SIZE);
 		}
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);

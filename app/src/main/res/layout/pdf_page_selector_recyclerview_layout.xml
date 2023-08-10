@@ -10,7 +10,7 @@
         android:layout_width="@dimen/image_preview_dimen"
         android:layout_height="@dimen/image_preview_dimen"
         android:background="?attr/activity_background"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:gravity="center"
         />
 

@@ -11,7 +11,7 @@
         android:padding="@dimen/layout_margin"
 
         android:text="@string/remove_default_apps"
-        android:textSize="18sp"
+        android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +73,7 @@
             android:paddingTop="@dimen/layout_margin"
             android:paddingBottom="@dimen/layout_margin"
             android:background="?attr/dialog_title"
-            android:textSize="18sp"
+            android:textSize="19sp"
             android:layout_gravity="top"
 
             />

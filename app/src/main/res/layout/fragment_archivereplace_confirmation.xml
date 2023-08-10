@@ -16,7 +16,7 @@
 		android:paddingTop="@dimen/layout_margin"
 		android:paddingBottom="@dimen/layout_margin"
 		android:background="?attr/dialog_title"
-		android:textSize="18sp"
+		android:textSize="19sp"
 		android:layout_gravity="top"
 
 	/>
@@ -26,7 +26,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/dialog_fragment_archive_replace_message"
 		android:layout_marginTop="@dimen/layout_margin"
-		android:textSize="16sp"
+		android:textSize="17sp"
 		android:background="?attr/dialog_background"
 		android:padding="@dimen/ten_dp"
 		
