@@ -192,7 +192,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 					String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 					destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
 					final String zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(archivedestfolder,zip_folder_name);
-					viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+archivedestfolder);
+					RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+					viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+archivedestfolder);
 
 					if(!is_file_writable(archivedestfolder,destFileObjectType))
 					{
@@ -445,7 +446,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 								return;
 							}
 							zip_folder_path=Global.CONCATENATE_PARENT_CHILD_PATH(unarchivedestfolder,zip_output_folder);
-							viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+unarchivedestfolder); //only if your crating new folder store unarchive files
+							RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+							viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+unarchivedestfolder); //only if your crating new folder store unarchive files
 						}
 						else
 						{

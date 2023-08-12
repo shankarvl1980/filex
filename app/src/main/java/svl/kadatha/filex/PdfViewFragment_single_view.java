@@ -610,11 +610,10 @@ public class PdfViewFragment_single_view extends Fragment
         PdfRenderer.Page page= pdfRenderer.openPage(i);
         int pageWidth=page.getWidth();
         int pageHeight=page.getHeight();
-        //int pdf_density=density_dpi/72;
-        //float scale = Math.min((float) image_view_width / pageWidth, (float) image_view_height / pageHeight);
-        int required_width= 2*pageWidth;
-        int required_height= 2*pageHeight;
-        Bitmap bitmap=Bitmap.createBitmap(required_width,required_height, Bitmap.Config.ARGB_8888);
+
+        //Bitmap bitmap=Bitmap.createBitmap(2*pageWidth,2*pageHeight, Bitmap.Config.ARGB_8888);
+        //Bitmap bitmap=Global.scaleToFitWidth(Bitmap.createBitmap(pageWidth, pageHeight, Bitmap.Config.ARGB_8888),Global.SCREEN_WIDTH);
+        Bitmap bitmap=Global.scaleToFitHeight(Bitmap.createBitmap(pageWidth, pageHeight, Bitmap.Config.ARGB_8888),Global.SCREEN_HEIGHT);
         Canvas canvas=new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
         canvas.drawBitmap(bitmap,0f,0f,null);

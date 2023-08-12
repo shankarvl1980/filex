@@ -126,7 +126,7 @@ public abstract class FtpCmd implements Runnable {
 
         if (session.isUserLoggedIn()) {
             cmdInstance.run();
-        } else if (session.isAnonymouslyLoggedIn() == true) {
+        } else if (session.isAnonymouslyLoggedIn()) {
             boolean validCmd = false;
             for (Class<?> cl : allowedCmdsWhileAnonymous) {
                 if (cmdInstance.getClass().equals(cl)) {
@@ -134,7 +134,7 @@ public abstract class FtpCmd implements Runnable {
                     break;
                 }
             }
-            if (validCmd == true) {
+            if (validCmd) {
                 cmdInstance.run();
             } else {
                 session.writeString("530 Guest user is not allowed to use that command\r\n");

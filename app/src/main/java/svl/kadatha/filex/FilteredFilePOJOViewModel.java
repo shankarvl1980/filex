@@ -118,19 +118,20 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
 
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-                if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+ finalSource_folder))
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+ finalSource_folder))
                 {
-                    FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType, finalSource_folder,null,false);
+                    FilePOJOUtil.FILL_FILE_POJO(filePOJOS,filePOJOS_filtered,fileObjectType, finalSource_folder,null,false);
                 }
                 else
                 {
                     if(MainActivity.SHOW_HIDDEN_FILE)
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+ finalSource_folder) ;
+                        filePOJOS=repositoryClass.hashmap_file_pojo.get(fileObjectType+ finalSource_folder) ;
                     }
                     else
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+ finalSource_folder);
+                        filePOJOS=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+ finalSource_folder);
                     }
                 }
 
@@ -322,8 +323,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     }
                     else if(fileObjectType==FileObjectType.USB_TYPE)
                     {
-//                        Uri uri= FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
-//                        pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(uri,"r"));
                         pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }
                     else if(fileObjectType==FileObjectType.ROOT_TYPE)

@@ -110,7 +110,7 @@ public class NsdService extends Service {
                     // all kinds of problems with the NsdManager, give it
                     // some extra time before I make next call
                     Thread.sleep(500);
-                    if (running == false) {
+                    if (!running) {
                         Timber.tag(TAG).e( "NsdManager is no longer needed, bailing out");
                         mNsdManager = null;
                         return;

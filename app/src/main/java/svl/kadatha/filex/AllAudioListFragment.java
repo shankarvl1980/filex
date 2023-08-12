@@ -101,7 +101,8 @@ public class AllAudioListFragment extends Fragment
 
 				progress_bar.setVisibility(View.VISIBLE);
 				clear_selection();
-				Global.AUDIO_POJO_HASHMAP.clear();
+				RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+				repositoryClass.audio_pojo_hashmap.clear();
 				FULLY_POPULATED=false;
 				audioListViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				audioListViewModel.listAudio();

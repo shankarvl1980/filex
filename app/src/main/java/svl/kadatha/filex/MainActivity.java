@@ -57,8 +57,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.apache.commons.net.ftp.FTPClient;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,14 +138,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public static String SU="";
 
 	public FloatingActionButton floating_button_back;
-	public static FTPClient FTP_CLIENT;
-	public static FTPClient FTP_CLIENT_FOR_COUNT;
-	public static FTPClient FTP_CLIENT_FOR_PROGRESS;
-	public static FTPClient	FTP_CLIENT_FOR_COPY_VIEW;
-	public static FTPClient	FTP_CLIENT_FOR_LISTING;
-	public static FTPClient FTP_CLIENT_FOR_CREATING_FILE_POJO;
-	public static FTPClient FTP_CLIENT_FOR_CHECK_DIRECTORY;
-	public static FTPClient FTP_CLIENT_FOR_ADD_POJO;
 
 	public long search_lower_limit_size=0;
 	public long search_upper_limit_size=0;
@@ -162,12 +152,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private Group library_layout_group,network_layout_group;
 	private Handler h;
 	private NestedScrollView nestedScrollView;
+	private RepositoryClass repositoryClass;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
 		super.onCreate(savedInstanceState);
 		context=this;
+		repositoryClass=RepositoryClass.getRepositoryClass();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 			if (!Environment.isExternalStorageManager())
 			{
@@ -450,7 +442,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		storageDirListRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
 
 		storageDirListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-		storageRecyclerAdapter=new StorageRecyclerAdapter(Global.STORAGE_DIR);
+		storageRecyclerAdapter=new StorageRecyclerAdapter(repositoryClass.storage_dir);
 		storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
 		Group usb_heading = findViewById(R.id.usb_background);
@@ -720,6 +712,27 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
+		View access_pc_heading_layout=findViewById(R.id.access_pc_label_background);
+		access_pc_heading_layout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+				pbf.show(fm,"");
+				drawerLayout.closeDrawer(drawer);
+				Handler h=new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						actionmode_finish(df,df.fileclickselected);
+						Intent intent=new Intent(context, FtpServerActivity.class);
+						startActivity(intent);
+						pbf.dismissAllowingStateLoss();
+					}
+				},500);
+
+			}
+		});
 
 		network_layout_group=findViewById(R.id.network_layout_group);
 		View network_heading_layout = findViewById(R.id.network_layout_background);
@@ -753,7 +766,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		networkRecyclerView=findViewById(R.id.network_recyclerview);
 		networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]network_icon_image_array={R.drawable.ftp_server_icon,R.drawable.ftp_file_icon};
+		int[]network_icon_image_array={R.drawable.ftp_file_icon};
 		networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES,network_icon_image_array));
 
 
@@ -813,7 +826,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void run() {
 				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
-				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
 				while(iterator.hasNext())
 				{
 					Map.Entry<String,List<FilePOJO>> entry=iterator.next();
@@ -928,9 +941,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 				{
-					Global.STORAGE_DIR.clear();
-					Global.HASHMAP_FILE_POJO.clear();
-					Global.HASHMAP_FILE_POJO_FILTERED.clear();
+					repositoryClass.storage_dir.clear();
+					repositoryClass.hashmap_file_pojo.clear();
+					repositoryClass.hashmap_file_pojo_filtered.clear();
 					Intent in=getIntent();
 					finish();
 					startActivity(in);
@@ -1091,9 +1104,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 				if (Environment.isExternalStorageManager())
 				{
-					Global.STORAGE_DIR.clear();
-					Global.HASHMAP_FILE_POJO.clear();
-					Global.HASHMAP_FILE_POJO_FILTERED.clear();
+					repositoryClass.storage_dir.clear();
+					repositoryClass.hashmap_file_pojo.clear();
+					repositoryClass.hashmap_file_pojo_filtered.clear();
 					Intent in=getIntent();
 					finish();
 					startActivity(in);
@@ -1598,6 +1611,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					Global.print(context,getString(R.string.please_wait));
 					return;
 				}
+
+				if(df.fileObjectType!=FileObjectType.SEARCH_LIBRARY_TYPE) //refresh/remove only file objec type is not search/library type
+				{
+					repositoryClass.hashmap_file_pojo.remove(df.fileObjectType+df.fileclickselected);
+					repositoryClass.hashmap_file_pojo_filtered.remove(df.fileObjectType+df.fileclickselected);
+					df.viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+
 				fm.beginTransaction().detach(df).commit();
 				fm.beginTransaction().attach(df).commit();
 				Global.WORKOUT_AVAILABLE_SPACE();
@@ -1872,7 +1893,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					Global.print(context,getString(R.string.please_wait));
 					return;
 				}
-				fm.beginTransaction().detach(df).attach(df).commit();
+				if(df.fileObjectType!=FileObjectType.SEARCH_LIBRARY_TYPE) //refresh/remove only file objec type is not search/library type
+				{
+					repositoryClass.hashmap_file_pojo.remove(df.fileObjectType+df.fileclickselected);
+					repositoryClass.hashmap_file_pojo_filtered.remove(df.fileObjectType+df.fileclickselected);
+					df.viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+
+				fm.beginTransaction().detach(df).commit();
+				fm.beginTransaction().attach(df).commit();
+
 			} else if (id == R.id.toolbar_btn_3) {
 				if(df.progress_bar.getVisibility()==View.VISIBLE)
 				{
@@ -2181,11 +2211,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							actionmode_finish(df,df.fileclickselected);
 							if(position[0]==0)
 							{
-								Intent intent=new Intent(context, FtpServerActivity.class);
-								startActivity(intent);
-							}
-							else if(position[0]==1)
-							{
 								FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
 								ftpDetailsDialog.show(fm,"");
 							}
@@ -2243,7 +2268,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 		if(usbFileRoot==null)return;
-		for(FilePOJO filePOJO: Global.STORAGE_DIR)
+		for(FilePOJO filePOJO: repositoryClass.storage_dir)
 		{
 			if (filePOJO.getFileObjectType()== FileObjectType.USB_TYPE && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
 				usb_path_added = true;
@@ -2254,7 +2279,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(!usb_path_added)
 		{
 			Global.USB_STORAGE_PATH=usbFileRoot.getAbsolutePath();
-			Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(usbFileRoot,false));
+			repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(usbFileRoot,false));
 			Global.WORKOUT_AVAILABLE_SPACE();
 			storageRecyclerAdapter.notifyDataSetChanged();
 		}
@@ -2287,7 +2312,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					usbCurrentFs=null;
 					usbFileRoot=null;
 
-					Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+					Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
 					while(iterator.hasNext())
 					{
 						if(iterator.next().getFileObjectType()==FileObjectType.USB_TYPE)
@@ -2344,8 +2369,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		switch (action) {
 			case "android.intent.action.MEDIA_MOUNTED":
-				Global.STORAGE_DIR.clear();
-				Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+				repositoryClass.storage_dir.clear();
+				repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
 				Global.WORKOUT_AVAILABLE_SPACE();
 				storageRecyclerAdapter.notifyDataSetChanged();
 				if (recentDialogListener != null) {
@@ -2356,11 +2381,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			case "android.intent.action.MEDIA_EJECT":
 			case "android.intent.action.MEDIA_REMOVED":
 			case "android.intent.action.MEDIA_BAD_REMOVAL":
-				Global.STORAGE_DIR.clear();
-				Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+				repositoryClass.storage_dir.clear();
+				repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
 				Global.WORKOUT_AVAILABLE_SPACE();
 				storageRecyclerAdapter.notifyDataSetChanged();
-				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
+				FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
 				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 				if(df!=null) df.clearSelectionAndNotifyDataSetChanged();
 				if (recentDialogListener != null) {

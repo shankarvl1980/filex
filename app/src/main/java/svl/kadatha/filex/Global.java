@@ -70,13 +70,8 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class Global
 {
 	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
-
-	static ArrayList<FilePOJO> STORAGE_DIR=new ArrayList<>();
-	static final List<String> INTERNAL_STORAGE_PATH_LIST=new ArrayList<>();
 	static String INTERNAL_PRIMARY_STORAGE_PATH="";
-	static List<String> EXTERNAL_STORAGE_PATH_LIST=new ArrayList<>();
 	static String USB_STORAGE_PATH;
-
 	static File ARCHIVE_EXTRACT_DIR;
 	static File USB_CACHE_DIR;
 	static File FTP_CACHE_DIR;
@@ -84,15 +79,6 @@ public class Global
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
 
-	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO_FILTERED=new HashMap<>();
-	static final HashMap<String,List<FilePOJO>> HASHMAP_FILE_POJO=new HashMap<>();
-
-	static HashMap<String, FilePOJOViewModel.FileStoragePOJO> HASHMAP_INTERNAL_DIRECTORY_SIZE=new HashMap<>();
-	static HashMap<String, FilePOJOViewModel.FileStoragePOJO> HASHMAP_EXTERNAL_DIRECTORY_SIZE=new HashMap<>();
-	static final HashMap<String,List<AppManagerListFragment.AppPOJO>> APP_POJO_HASHMAP=new HashMap<>();
-
-	static final HashMap<String,List<AudioPOJO>> AUDIO_POJO_HASHMAP=new HashMap<>();
-	static final HashMap<String,List<AlbumPOJO>> ALBUM_POJO_HASHMAP=new HashMap<>();
 
 	static final HashMap<String,List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP=new HashMap<>();
 
@@ -666,21 +652,23 @@ public class Global
 
 	static FilePOJO GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR()
 	{
-		if(STORAGE_DIR.get(0).getPath().equals("/"))
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		if(repositoryClass.storage_dir.get(0).getPath().equals("/"))
 		{
-			return STORAGE_DIR.get(1);
+			return repositoryClass.storage_dir.get(1);
 		}
 		else
 		{
-			return STORAGE_DIR.get(0);
+			return repositoryClass.storage_dir.get(0);
 		}
 	}
 
 	static void GET_STORAGE_DIR(Context context)
 	{
-		if(STORAGE_DIR.size()==0)
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		if(repositoryClass.storage_dir.size()==0)
 		{
-			STORAGE_DIR=new ArrayList<>(StorageUtil.getSdCardPaths(context,true));
+			repositoryClass.storage_dir =new ArrayList<>(StorageUtil.getSdCardPaths(context,true));
 			INTERNAL_PRIMARY_STORAGE_PATH=GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath();
 			WORKOUT_AVAILABLE_SPACE();
 		}
@@ -849,7 +837,8 @@ public class Global
 
 	static void WORKOUT_AVAILABLE_SPACE()
 	{
-		for(FilePOJO filePOJO:Global.STORAGE_DIR)
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		for(FilePOJO filePOJO:repositoryClass.storage_dir)
 		{
 			long totalspace=0,availabelspace=0;
 			FileObjectType fileObjectType=filePOJO.getFileObjectType();
@@ -969,7 +958,7 @@ public class Global
 
 	public static boolean CHECK_FTP_SERVER_CONNECTED()
 	{
-		return CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT);
+		return CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientMain);
 	}
 
 	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
@@ -984,14 +973,14 @@ public class Global
 			else
 			{
 				try {
-					return FtpDetailsViewModel.CONNECT_FTP_CLIENT(ftpClient);
+					return FtpClientRepository.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
 				} catch (IOException ioe) {
 					return false;
 				}
 			}
 		} catch (Exception e) {
 			try {
-				return FtpDetailsViewModel.CONNECT_FTP_CLIENT(ftpClient);
+				return FtpClientRepository.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
 			} catch (IOException ie) {
 				return false;
 			}
@@ -1002,7 +991,8 @@ public class Global
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
 		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
-		Iterator<FilePOJO> iterator=Global.STORAGE_DIR.iterator();
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
 		while(iterator.hasNext())
 		{
 			if(iterator.next().getFileObjectType()==fileObjectType)
@@ -1232,7 +1222,8 @@ public class Global
 
 	public static void CLEAR_CACHE()
 	{
-		Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
 		while(iterator.hasNext())
 		{
 			Map.Entry<String,List<FilePOJO>> entry=iterator.next();
@@ -1367,11 +1358,11 @@ public class Global
 			{
 				FileUtil.mkdirsNative(parent_file);
 				FileUtil.createNativeNewFile(cache_file);
-				if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_COPY_VIEW))
+				if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForCopyView))
 				{
-					try (InputStream inputStream=MainActivity.FTP_CLIENT_FOR_COPY_VIEW.retrieveFileStream(file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+					try (InputStream inputStream=FtpClientRepository.getInstance().ftpClientForCopyView.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
 						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
-						MainActivity.FTP_CLIENT_FOR_COPY_VIEW.completePendingCommand();
+						FtpClientRepository.getInstance().ftpClientForCopyView.completePendingCommand();
 						return cache_file;
 
 					} catch (Exception e) {
@@ -1383,6 +1374,17 @@ public class Global
 
 		}
 		return cache_file;
+	}
+
+	public static Bitmap scaleToFitWidth(Bitmap bitmap,int width){
+		float factor=width/(float)bitmap.getWidth();
+		return Bitmap.createScaledBitmap(bitmap,width,(int)(bitmap.getHeight()*factor),true);
+	}
+
+
+	public static Bitmap scaleToFitHeight(Bitmap bitmap,int height){
+		float factor=height/(float)bitmap.getHeight();
+		return Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*factor),height,true);
 	}
 }
 

@@ -61,6 +61,7 @@
         app:layout_constraintStart_toStartOf="@id/fragment_apk_install_apk_name_tv"
         app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_apk_name_tv"
         android:maxLines="3"
+        android:textSize="15sp"
         />
 
     <TableLayout
@@ -81,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:text="@string/version"
+                android:textSize="15sp"
                 />
             <TextView
 
@@ -88,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:text=": "
+                android:textSize="15sp"
                 />
             <TextView
                 android:id="@+id/fragment_apk_install_apk_version_tv"
@@ -95,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:maxLines="1"
+                android:textSize="15sp"
                 />
         </TableRow>
         <TableRow>
@@ -104,6 +108,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/installed_version"
                 android:layout_marginTop="@dimen/layout_margin"
+                android:textSize="15sp"
                 />
             <TextView
 
@@ -111,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:text=": "
+                android:textSize="15sp"
                 />
             <TextView
                 android:id="@+id/fragment_apk_install_apk_installed_version_tv"
@@ -118,6 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:maxLines="1"
+                android:textSize="15sp"
                 />
 
         </TableRow>

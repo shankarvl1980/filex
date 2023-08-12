@@ -69,7 +69,8 @@ public class SearchDialog extends DialogFragment
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		for(FilePOJO filepojo:Global.STORAGE_DIR)
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		for(FilePOJO filepojo:repositoryClass.storage_dir)
 		{
 			if(filepojo.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(filepojo.getPath()))))
 			{

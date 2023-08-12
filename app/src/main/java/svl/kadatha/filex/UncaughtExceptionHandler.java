@@ -22,8 +22,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         StringWriter strack_trace=new StringWriter();
         e.printStackTrace(new PrintWriter(strack_trace));
-
-        Global.STORAGE_DIR.clear();
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        repositoryClass.storage_dir.clear();
         AppCompatActivity appCompatActivity=(AppCompatActivity)context;
         if(appCompatActivity!=null)
         {

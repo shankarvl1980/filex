@@ -328,10 +328,10 @@ public final class FileUtil
 		boolean success = false;
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(src_file_path) ; OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
+			try (InputStream inputStream=FtpClientRepository.getInstance().ftpClientMain.retrieveFileStream(src_file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
 				//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
 				bufferedCopy(inputStream, outputStream, false, bytes_read);
-				MainActivity.FTP_CLIENT.completePendingCommand();
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				if (cut) {
 					deleteFTPFile(src_file_path);
 				}
@@ -362,14 +362,14 @@ public final class FileUtil
 			try {
                 if(cut)
 				{
-					MainActivity.FTP_CLIENT.rename(src_file_path,file_path);
+					FtpClientRepository.getInstance().ftpClientMain.rename(src_file_path,file_path);
 				}
 				else {
-					MainActivity.FTP_CLIENT.retrieveFile(src_file_path,byteArrayOutputStream);
+					FtpClientRepository.getInstance().ftpClientMain.retrieveFile(src_file_path,byteArrayOutputStream);
 					inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-					outputStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
+					outputStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path);
 					bufferedCopy(inputStream, outputStream, false, bytes_read);
-					MainActivity.FTP_CLIENT.completePendingCommand();
+					FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				}
 
 				return true;
@@ -408,7 +408,7 @@ public final class FileUtil
 		OutputStream outputStream=null;
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			try (InputStream inputStream=MainActivity.FTP_CLIENT.retrieveFileStream(src_file_path)) {
+			try (InputStream inputStream=FtpClientRepository.getInstance().ftpClientMain.retrieveFileStream(src_file_path)) {
 				//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
 				UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
 				if (parentUsbFile != null) {
@@ -420,7 +420,7 @@ public final class FileUtil
 //					if (length > 0) targetUsbFile.setLength(length); // causes problem
 					outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
 					bufferedCopy(inputStream, outputStream, false, bytes_read);
-					MainActivity.FTP_CLIENT.completePendingCommand();
+					FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 					if (cut) {
 						deleteFTPFile(src_file_path);
 					}
@@ -514,9 +514,9 @@ public final class FileUtil
 		String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
+			try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path)) {
 				bufferedCopy(inStream, outputStream,true,bytes_read);
-				MainActivity.FTP_CLIENT.completePendingCommand();
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				if (cut) {
 					deleteUsbFile(src_usbfile);
 				}
@@ -761,9 +761,9 @@ public final class FileUtil
 					if(Global.CHECK_FTP_SERVER_CONNECTED())
 					{
 						//success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
-						inStream=MainActivity.FTP_CLIENT.retrieveFileStream(source_file_path);
+						inStream=FtpClientRepository.getInstance().ftpClientMain.retrieveFileStream(source_file_path);
 						bufferedCopy(inStream,outStream,false,bytes_read);
-						MainActivity.FTP_CLIENT.completePendingCommand();
+						FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 						if(cut)
 						{
 							deleteFTPFile(source_file_path);
@@ -918,10 +918,10 @@ public final class FileUtil
 		//OutputStream outStream = null;
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
-			try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
+			try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path)) {
 
 				bufferedCopy(fileInStream,outStream,false,bytes_read);
-				MainActivity.FTP_CLIENT.completePendingCommand();
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				if (cut) {
 					deleteNativeFile(source);
 				}
@@ -946,9 +946,9 @@ public final class FileUtil
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
 			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-			try (InputStream inStream = context.getContentResolver().openInputStream(data); OutputStream outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path)) {
+			try (InputStream inStream = context.getContentResolver().openInputStream(data); OutputStream outStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path)) {
 				bufferedCopy(inStream,outStream,false,bytes_read);
-				MainActivity.FTP_CLIENT.completePendingCommand();
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				return true;
 			} catch (Exception e) {
 				//Timber.e(Application.TAG,
@@ -1022,7 +1022,7 @@ public final class FileUtil
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
 			try {
-				String status=MainActivity.FTP_CLIENT.getStatus(file_path);
+				String status=FtpClientRepository.getInstance().ftpClientMain.getStatus(file_path);
 				return status != null;
 			} catch (IOException e) {
 				return false;
@@ -1033,10 +1033,10 @@ public final class FileUtil
 	}
 	public static boolean isFtpPathDirectory(String file_path)
 	{
-		if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY))
+		if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForCheckDirectory))
 		{
 			try {
-				return MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY.changeWorkingDirectory(file_path);
+				return FtpClientRepository.getInstance().ftpClientForCheckDirectory.changeWorkingDirectory(file_path);
 			} catch (IOException e) {
 				Timber.tag(Global.TAG).d("exception thrown while ascertaining the path is directory - "+e.getMessage());
 				return false;
@@ -1084,7 +1084,7 @@ public final class FileUtil
 			String name=file.getName();
 			try {
 
-				FTPFile[] ftpFiles_array=MainActivity.FTP_CLIENT.listFiles(parent_path);
+				FTPFile[] ftpFiles_array=FtpClientRepository.getInstance().ftpClientMain.listFiles(parent_path);
 				int size= ftpFiles_array.length;
 				for(int i=0;i<size;++i)
 				{
@@ -1174,11 +1174,11 @@ public final class FileUtil
 						return true;
 					}
 					else {
-						return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+						return FtpClientRepository.getInstance().ftpClientMain.makeDirectory(file_path);
 					}
 				}
 				else {
-					return MainActivity.FTP_CLIENT.makeDirectory(file_path);
+					return FtpClientRepository.getInstance().ftpClientMain.makeDirectory(file_path);
 				}
 
 
@@ -1286,7 +1286,7 @@ public final class FileUtil
 		if(Global.CHECK_FTP_SERVER_CONNECTED())
 		{
 			try {
-				return MainActivity.FTP_CLIENT.deleteFile(file_path);
+				return FtpClientRepository.getInstance().ftpClientMain.deleteFile(file_path);
 			} catch (IOException e) {
 				return false;
 			}
@@ -1378,7 +1378,7 @@ public final class FileUtil
 		try {
 			if(FileUtil.isFtpPathDirectory(file_path))
 			{
-				String[] list = MainActivity.FTP_CLIENT.listNames(file_path); //Storing all file name within array
+				String[] list = FtpClientRepository.getInstance().ftpClientMain.listNames(file_path); //Storing all file name within array
 				if(list!=null)
 				{
 					int size=list.length;
@@ -1392,10 +1392,10 @@ public final class FileUtil
 
 			if(FileUtil.isFtpPathDirectory(file_path))
 			{
-				success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
+				success=FtpClientRepository.getInstance().ftpClientMain.removeDirectory(file_path);
 			}
 			else {
-				success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+				success=FtpClientRepository.getInstance().ftpClientMain.deleteFile(file_path);
 			}
 
 		} catch (IOException e) {
@@ -1760,7 +1760,8 @@ public final class FileUtil
 	public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path)
 	{
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
-		for(String internal_storage_path:Global.INTERNAL_STORAGE_PATH_LIST)
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		for(String internal_storage_path:repositoryClass.internal_storage_path_list)
 		{
 			if (Global.IS_CHILD_FILE(file_path,internal_storage_path)) {
 				return true;
@@ -1772,7 +1773,8 @@ public final class FileUtil
 	public static boolean isFilePathFromExternalStorage(FileObjectType fileObjectType,String file_path)
 	{
 		if(!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) return  false;
-		for(String external_path : Global.EXTERNAL_STORAGE_PATH_LIST)
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		for(String external_path : repositoryClass.external_storage_path_list)
 		{
 			if(Global.IS_CHILD_FILE(file_path,external_path))
 				return true;

@@ -59,6 +59,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
                     if(MainActivity.usbFileRoot!=null)
@@ -83,19 +84,19 @@ public class AudioPlayViewModel extends AndroidViewModel {
 
 
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
-                if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+source_folder))
+                if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+source_folder))
                 {
-                    FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,source_folder,null,false);
+                    FilePOJOUtil.FILL_FILE_POJO(filePOJOS,filePOJOS_filtered,fileObjectType,source_folder,null,false);
                 }
                 else
                 {
                     if(MainActivity.SHOW_HIDDEN_FILE)
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder) ;
+                        filePOJOS=repositoryClass.hashmap_file_pojo.get(fileObjectType+source_folder) ;
                     }
                     else
                     {
-                        filePOJOS=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
+                        filePOJOS=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+source_folder);
                     }
                 }
 
@@ -170,9 +171,10 @@ public class AudioPlayViewModel extends AndroidViewModel {
             public void run() {
                 if(audio_id==0)
                 {
-                    if(Global.AUDIO_POJO_HASHMAP.containsKey("audio"))
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    if(repositoryClass.audio_pojo_hashmap.containsKey("audio"))
                     {
-                        List<AudioPOJO>temp_audio_pojos=Global.AUDIO_POJO_HASHMAP.get("audio");
+                        List<AudioPOJO>temp_audio_pojos=repositoryClass.audio_pojo_hashmap.get("audio");
                         Iterator<AudioPOJO> iterator= temp_audio_pojos.iterator();
                         while(iterator.hasNext())
                         {

@@ -117,8 +117,8 @@ public class AppInstallAlertDialog extends DialogFragment
                     Global.print(context,getString(R.string.exception_thrown));
                 }
 
-
-                Global.APP_POJO_HASHMAP.clear();
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.app_pojo_hashmap.clear();
                 dismissAllowingStateLoss();
 
             }

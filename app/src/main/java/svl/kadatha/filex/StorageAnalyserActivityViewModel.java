@@ -18,7 +18,8 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        Global.HASHMAP_INTERNAL_DIRECTORY_SIZE=new HashMap<>();
-        Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE=new HashMap<>();
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        repositoryClass.hashmap_internal_directory_size =new HashMap<>();
+        repositoryClass.hashmap_external_directory_size =new HashMap<>();
     }
 }

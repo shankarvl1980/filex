@@ -65,7 +65,6 @@ public class AudioPlayFragment extends Fragment
 	private ImageButton previous_btn;
 	private ImageButton play_pause_btn;
 	private ImageButton next_btn;
-	private ImageButton audio_play_list_btn;
 	private TextView audio_name_tv,audio_album_tv,audio_artists_tv,next_audio_tv,total_time_tv,current_progress_tv;
 	private SeekBar seekbar;
 	private int total_duration;
@@ -291,7 +290,7 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
-		audio_play_list_btn=v.findViewById(R.id.current_play_list_image_btn);
+		ImageButton audio_play_list_btn = v.findViewById(R.id.current_play_list_image_btn);
 		audio_play_list_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

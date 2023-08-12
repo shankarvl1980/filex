@@ -185,14 +185,15 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         folder_empty=v.findViewById(R.id.fragment_archive_empty_folder);
         filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);
         viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-        if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+fileclickselected))
         {
             viewModel.populateFilePOJO(fileObjectType, fileclickselected, null, true, false);
         }
         else
         {
-            viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-            viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+            viewModel.filePOJOS=repositoryClass.hashmap_file_pojo.get(fileObjectType+fileclickselected);
+            viewModel.filePOJOS_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+fileclickselected);
             after_filledFilePojos_procedure();
         }
 

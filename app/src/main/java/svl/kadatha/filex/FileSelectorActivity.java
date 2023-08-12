@@ -85,11 +85,13 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public EditText search_edittext;
     private int countBackPressed=0;
     private InputMethodManager imm;
+    private RepositoryClass repositoryClass;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
+        repositoryClass=RepositoryClass.getRepositoryClass();
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
         {
             if (!Environment.isExternalStorageManager())
@@ -349,9 +351,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 }
                 else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 {
-                    Global.STORAGE_DIR.clear();
-                    Global.HASHMAP_FILE_POJO.clear();
-                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);
@@ -481,9 +483,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager())
                 {
-                    Global.STORAGE_DIR.clear();
-                    Global.HASHMAP_FILE_POJO.clear();
-                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);
@@ -597,7 +599,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public List<FilePOJO> getFilePOJO_list()
     {
         List<FilePOJO> filePOJOS = new ArrayList<>();
-        for(FilePOJO filePOJO:Global.STORAGE_DIR)
+        for(FilePOJO filePOJO:repositoryClass.storage_dir)
         {
             if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE || filePOJO.getFileObjectType()==FileObjectType.USB_TYPE)
             {
@@ -723,8 +725,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         switch (action) {
             case "android.intent.action.MEDIA_MOUNTED":
-                Global.STORAGE_DIR.clear();
-                Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
                 if (recentDialogListener != null) {
@@ -735,15 +737,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             case "android.intent.action.MEDIA_EJECT":
             case "android.intent.action.MEDIA_REMOVED":
             case "android.intent.action.MEDIA_BAD_REMOVAL":
-                Global.STORAGE_DIR.clear();
-                Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
 
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
                 FileSelectorFragment fileSelectorFragment=(FileSelectorFragment)fm.findFragmentById(R.id.file_selector_container);
                 if(fileSelectorFragment!=null) fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                 break;
@@ -783,7 +785,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             FileObjectType fileObjectType=filePOJO.getFileObjectType();
             if(fileObjectType==FileObjectType.FILE_TYPE)
             {
-                if(Global.INTERNAL_STORAGE_PATH_LIST.contains(filePOJO.getPath()))
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                if(repositoryClass.internal_storage_path_list.contains(filePOJO.getPath()))
                 {
                     vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
                 }

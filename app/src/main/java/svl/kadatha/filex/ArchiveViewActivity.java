@@ -329,9 +329,10 @@ public class ArchiveViewActivity extends BaseActivity{
                 }
                 else if(permissions[i].equals(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 {
-                    Global.STORAGE_DIR.clear();
-                    Global.HASHMAP_FILE_POJO.clear();
-                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);
@@ -522,9 +523,10 @@ public class ArchiveViewActivity extends BaseActivity{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager())
                 {
-                    Global.STORAGE_DIR.clear();
-                    Global.HASHMAP_FILE_POJO.clear();
-                    Global.HASHMAP_FILE_POJO_FILTERED.clear();
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
                     Intent in=getIntent();
                     finish();
                     startActivity(in);

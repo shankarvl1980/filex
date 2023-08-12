@@ -102,8 +102,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
-                FilePOJOUtil.FILL_FILEPOJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
+                FilePOJOUtil.FILL_FILE_POJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
                 if(fill_file_size_also)
                 {
                     long storage_space=0L;
@@ -124,11 +125,11 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                     {
-                        hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
+                        hashMap_directory_size=repositoryClass.hashmap_internal_directory_size;
                         isInternalStorage=true;
                     }
                     else {
-                        hashMap_directory_size=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
+                        hashMap_directory_size=repositoryClass.hashmap_external_directory_size;
                         isInternalStorage=false;
                     }
                     HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
@@ -169,6 +170,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 long storage_space=0L;
                 String key=fileObjectType+fileclickselected;
                 for(Map.Entry<String,SpacePOJO> entry:Global.SPACE_ARRAY.entrySet())
@@ -189,11 +191,11 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                 if(Global.IS_CHILD_FILE(fileclickselected,Global.INTERNAL_PRIMARY_STORAGE_PATH))
                 {
-                    hashMap_directory_size=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
+                    hashMap_directory_size=repositoryClass.hashmap_internal_directory_size;
                     isInternalStorage=true;
                 }
                 else {
-                    hashMap_directory_size=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
+                    hashMap_directory_size=repositoryClass.hashmap_external_directory_size;
                     isInternalStorage=false;
                 }
                 HashMap<String, FileStoragePOJO> finalHashMap_directory_size = hashMap_directory_size;
@@ -262,14 +264,15 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private void fill_file_size(long volume_storage_size, HashMap<String,FileStoragePOJO> storagePOJOHashMap, boolean isInternalStorage,int start, int end)
     {
         if(filePOJOS==null) return;
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
         int[] total_no_of_files=new int[1];long[] total_size_of_files=new long[1];
         HashMap<String, FilePOJOViewModel.FileStoragePOJO> directory_size_hashmap;
         if(isInternalStorage)
         {
-            directory_size_hashmap=Global.HASHMAP_INTERNAL_DIRECTORY_SIZE;
+            directory_size_hashmap=repositoryClass.hashmap_internal_directory_size;
         }
         else {
-            directory_size_hashmap=Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE;
+            directory_size_hashmap=repositoryClass.hashmap_external_directory_size;
         }
 
         for(int i=start;i<end;++i)
@@ -381,8 +384,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         repositoryClass.getApkList(application,isCancelled);
                         break;
                 }
-                filePOJOS=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-                filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+                filePOJOS=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+                filePOJOS_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -453,7 +456,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
                 else
                 {
-                    for(FilePOJO f : Global.STORAGE_DIR)
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    for(FilePOJO f : repositoryClass.storage_dir)
                     {
                         if(f.getFileObjectType()==FileObjectType.FILE_TYPE && Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(new File(f.getPath()))))
                         {
@@ -531,8 +535,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         search_file(filePOJOS,filePOJOS_filtered);
                     }
                 }
-                Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
-                Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.hashmap_file_pojo.put(fileObjectType+fileclickselected,filePOJOS);
+                repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+fileclickselected,filePOJOS_filtered);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

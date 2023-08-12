@@ -103,7 +103,8 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
-                viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+folderclickselected);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+folderclickselected);
                 final String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected,file_name);
 
                 if(!is_file_writable(folderclickselected,destFileObjectType))

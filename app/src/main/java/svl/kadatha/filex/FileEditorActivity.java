@@ -95,7 +95,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		
 		context=this;
 		fm=getSupportFragmentManager();
 		localBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -363,7 +362,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						{
 							long internal_available_space,external_available_space,file_size;
 							file_size=viewModel.file.length();
-							for(FilePOJO filePOJO:Global.STORAGE_DIR)
+							RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+							for(FilePOJO filePOJO:repositoryClass.storage_dir)
 							{
 								if(filePOJO.getFileObjectType()!=FileObjectType.FILE_TYPE)
 								{

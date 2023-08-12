@@ -677,6 +677,50 @@
 					app:layout_constraintTop_toTopOf="@+id/search_label"
 					/>
 
+				<View
+					android:id="@+id/access_pc_label_background"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_marginTop="@dimen/layout_margin"
+
+					android:background="@drawable/select_drawer_item"
+					app:layout_constraintBottom_toBottomOf="@+id/access_pc_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/search_label_background"
+					/>
+
+				<TextView
+					android:id="@+id/access_pc_label"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
+					android:minHeight="48dp"
+					android:text="@string/access_from_pc"
+					android:textColor="?attr/heading_text_color"
+					android:textSize="17sp"
+					android:paddingStart="@dimen/ten_dp"
+					android:paddingEnd="@dimen/ten_dp"
+
+					app:layout_constraintEnd_toStartOf="@id/access_pc_image_view"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@+id/access_pc_label_background"
+					/>
+
+				<ImageView
+					android:id="@+id/access_pc_image_view"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:layout_gravity="center_vertical"
+					android:layout_marginEnd="10dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/ftp_server_icon"
+					app:layout_constraintBottom_toBottomOf="@id/access_pc_label"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/access_pc_label"
+					app:layout_constraintTop_toTopOf="@+id/access_pc_label"
+					/>
+
 
 				<View
 					android:id="@+id/network_layout_background"
@@ -687,7 +731,7 @@
 					app:layout_constraintBottom_toBottomOf="@id/network_heading"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@id/search_label_background"
+					app:layout_constraintTop_toBottomOf="@id/access_pc_label_background"
 
 					/>
 

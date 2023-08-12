@@ -8,19 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import timber.log.Timber;
 
 public class FtpDetailsViewModel extends AndroidViewModel {
 
@@ -125,31 +117,18 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             public void run() {
                 loggedInStatus=false;
                 try {
-                    MainActivity.FTP_CLIENT=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_ADD_POJO=new FTPClient();
-
-                    DISCONNECT_FTP_CLIENT();
+                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
+                    ftpClientRepository.instantiate();
+                    ftpClientRepository.disconnect_ftp_clients();
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_ADD_POJO);
+                    loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)
                     {
-                        FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTP_WORKING_DIR_PATH = ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
-                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH,MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO));
+                            RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH,ftpClientRepository.ftpClientForCreatingFilePojo));
                         }
                     }
                 }
@@ -164,62 +143,28 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
-        if(FTP_POJO==null)return false;
+//    public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
+//        if(FTP_POJO==null)return false;
+//
+//        ftpClient.connect(FTP_POJO.server,FTP_POJO.port);
+//
+//        if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+//            ftpClient.setControlKeepAliveTimeout(300);//Send An Keep Alive Message every second
+//            ftpClient.setControlKeepAliveReplyTimeout(30000);
+//
+//            boolean loggedInStatus = ftpClient.login(FTP_POJO.user_name, FTP_POJO.password);
+//            if (loggedInStatus) {
+//
+//                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+//                ftpClient.enterLocalPassiveMode();
+//
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
-        ftpClient.connect(FTP_POJO.server,FTP_POJO.port);
-
-        if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-            ftpClient.setControlKeepAliveTimeout(300);//Send An Keep Alive Message every second
-            ftpClient.setControlKeepAliveReplyTimeout(30000);
-
-            boolean loggedInStatus = ftpClient.login(FTP_POJO.user_name, FTP_POJO.password);
-            if (loggedInStatus) {
-
-                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                ftpClient.enterLocalPassiveMode();
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static void DISCONNECT_FTP_CLIENT() {
-        try {
-
-            Iterator<FilePOJO> iterator = Global.STORAGE_DIR.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
-                    iterator.remove();
-                }
-            }
-
-            Iterator<FilePOJO> iterator1 = MainActivity.RECENTS.iterator();
-            while (iterator1.hasNext()) {
-                if (iterator1.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
-                    iterator1.remove();
-                }
-            }
-
-            FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
-            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
-
-            MainActivity.FTP_CLIENT.disconnect();
-            MainActivity.FTP_CLIENT_FOR_COUNT.disconnect();
-            MainActivity.FTP_CLIENT_FOR_PROGRESS.disconnect();
-            MainActivity.FTP_CLIENT_FOR_COPY_VIEW.disconnect();
-            MainActivity.FTP_CLIENT_FOR_LISTING.disconnect();
-            MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO.disconnect();
-            MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY.disconnect();
-            MainActivity.FTP_CLIENT_FOR_ADD_POJO.disconnect();
-            Timber.tag(Global.TAG).d("ftp disconnected");
-        } catch (Exception e) {
-
-        }
-
-    }
 
     private void replaceFtpPojo(Bundle bundle)
     {
@@ -283,31 +228,19 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
                 loggedInStatus=false;
                 try {
-                    MainActivity.FTP_CLIENT=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_COUNT=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_PROGRESS=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_COPY_VIEW=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_LISTING=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY=new FTPClient();
-                    MainActivity.FTP_CLIENT_FOR_ADD_POJO=new FTPClient();
 
-                    DISCONNECT_FTP_CLIENT();
+                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
+                    ftpClientRepository.instantiate();
+                    ftpClientRepository.disconnect_ftp_clients();
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COUNT);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_PROGRESS);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_COPY_VIEW);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_LISTING);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_CHECK_DIRECTORY);
-                    CONNECT_FTP_CLIENT(MainActivity.FTP_CLIENT_FOR_ADD_POJO);
+                    loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)
                     {
-                        FTP_WORKING_DIR_PATH = MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTP_WORKING_DIR_PATH = ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
-                            Global.STORAGE_DIR.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH, MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO));
+                            RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH, ftpClientRepository.ftpClientForCreatingFilePojo));
                         }
                     }
                 }

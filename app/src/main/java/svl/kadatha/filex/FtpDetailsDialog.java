@@ -225,9 +225,16 @@ public class FtpDetailsDialog extends DialogFragment {
                     {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                        ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                        dismissAllowingStateLoss();
+                        if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
+                        {
+                            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                            ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            dismissAllowingStateLoss();
+                        }
+                        else {
+                            Global.print(context,getString(R.string.server_could_not_be_connected));
+                        }
+
                     }
                     else {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -251,9 +258,17 @@ public class FtpDetailsDialog extends DialogFragment {
                     {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                        ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                        dismissAllowingStateLoss();
+                        if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
+                        {
+                            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                            ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            dismissAllowingStateLoss();
+                        }
+                        else {
+                            Global.print(context,getString(R.string.server_could_not_be_connected));
+                        }
+
+
                     }
                     else {
                         viewModel.replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -396,7 +411,7 @@ public class FtpDetailsDialog extends DialogFragment {
             String user_name=ftpPOJO.user_name;
             holder.ftp_display.setText((display==null || display.equals("")) ? server : display);
             holder.ftp_server.setText(server);
-            holder.ftp_user_name.setText(getString(R.string.user)+" "+user_name);
+            holder.ftp_user_name.setText(getString(R.string.user)+" - "+user_name);
             boolean item_selected=viewModel.mselecteditems.get(position,false);
             holder.v.setSelected(item_selected);
             holder.ftp_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
@@ -572,7 +587,7 @@ public class FtpDetailsDialog extends DialogFragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
-                FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
+                FtpClientRepository.getInstance().disconnect_ftp_clients();
                 Global.print(context, "ftp connection disconnected");
 
 //                int s=viewModel.mselecteditems.size();

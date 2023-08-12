@@ -108,11 +108,13 @@ public class StorageUtil
 			dummy_file = new File(f, fileName);
 		}
 		while (dummy_file.exists());
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
 		if(isWritable(dummy_file))
 		{
-			Global.INTERNAL_STORAGE_PATH_LIST.add(f.getAbsolutePath());
+
+			repositoryClass.internal_storage_path_list.add(f.getAbsolutePath());
 		}
-		if(Environment.isExternalStorageRemovable(f)) Global.EXTERNAL_STORAGE_PATH_LIST.add(f.getAbsolutePath());
+		if(Environment.isExternalStorageRemovable(f)) repositoryClass.external_storage_path_list.add(f.getAbsolutePath());
 
 	}
 

@@ -123,7 +123,8 @@ public class RenameFileDialog extends DialogFragment
 
 
 		ViewModelCreateRename viewModel=new ViewModelProvider(this).get(ViewModelCreateRename.class);
-		viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_file_path);
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+parent_file_path);
 		viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {

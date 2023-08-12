@@ -38,7 +38,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         Global.REMOVE_USB_URI_PERMISSIONS();
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-        FtpDetailsViewModel.DISCONNECT_FTP_CLIENT();
+        FtpClientRepository.getInstance().disconnect_ftp_clients();
         if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
         {
             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());

@@ -34,6 +34,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 public class FilePOJOUtil {
 
     static final SimpleDateFormat SDF_FTP=new SimpleDateFormat("yyyyMMddHHmmss");
+
     static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, FileObjectType fileObjectType)
     {
         String name=f.getName();
@@ -725,8 +726,9 @@ public class FilePOJOUtil {
     public static void REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(String filePOJOHashmapKeyPath,final List<String> deleted_files_path_list, FileObjectType fileObjectType)
     {
         final int size=deleted_files_path_list.size();
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
         if(filePOJOs==null || filePOJOs_filtered==null)
         {
             return;
@@ -745,8 +747,8 @@ public class FilePOJOUtil {
             REMOVE_FROM_AUDIO_CACHE(fileObjectType,deleted_file_path);
 
         }
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
+        repositoryClass.hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
+        repositoryClass.hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
 
     }
 
@@ -754,8 +756,9 @@ public class FilePOJOUtil {
     {
         final int size=deleted_files_name_list.size();
         UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(source_folder,fileObjectType);
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+source_folder);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+source_folder);
         if(filePOJOs==null || filePOJOs_filtered==null)
         {
             UsbFile currentUsbFile=null;
@@ -771,9 +774,9 @@ public class FilePOJOUtil {
                     }
                 }
             }
-            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,source_folder,currentUsbFile,false);
-            filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+source_folder);
-            filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+source_folder);
+            FILL_FILE_POJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,source_folder,currentUsbFile,false);
+            filePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+source_folder);
+            filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+source_folder);
         }
         if(filePOJOs==null || filePOJOs_filtered==null) return;
         String name;
@@ -808,8 +811,8 @@ public class FilePOJOUtil {
             REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
 
-        Global.HASHMAP_FILE_POJO.put(fileObjectType+source_folder,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+source_folder,filePOJOs_filtered);
+        repositoryClass.hashmap_file_pojo.put(fileObjectType+source_folder,filePOJOs);
+        repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+source_folder,filePOJOs_filtered);
     }
 
 
@@ -847,8 +850,9 @@ public class FilePOJOUtil {
     private static boolean REMOVE_FROM_LIBRARY_CACHE(FileObjectType fileObjectType,String file_path, String media_category)
     {
         if(fileObjectType!=FileObjectType.FILE_TYPE)return false;
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
         if(filePOJOs!=null)
         {
             Iterator<FilePOJO> iterator=filePOJOs.iterator();
@@ -869,7 +873,8 @@ public class FilePOJOUtil {
     private static void REMOVE_FROM_AUDIO_CACHE(FileObjectType fileObjectType,String file_path_to_be_removed)
     {
         if(fileObjectType!=FileObjectType.FILE_TYPE)return;
-        List<AudioPOJO> audioPOJOS=Global.AUDIO_POJO_HASHMAP.get("audio");
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<AudioPOJO> audioPOJOS=repositoryClass.audio_pojo_hashmap.get("audio");
         if(audioPOJOS!=null)
         {
             Iterator<AudioPOJO> iterator= audioPOJOS.iterator();
@@ -891,8 +896,9 @@ public class FilePOJOUtil {
         FilePOJO filePOJO = null;
         int size;
         UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(dest_folder,fileObjectType);
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+dest_folder);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+dest_folder);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+dest_folder);
         if(filePOJOs==null)
         {
             UsbFile currentUsbFile=null;
@@ -907,9 +913,9 @@ public class FilePOJOUtil {
                     }
                 }
             }
-            FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,dest_folder,currentUsbFile,false);
-            filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+dest_folder);
-            filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+dest_folder);
+            FILL_FILE_POJO(new ArrayList<>(), new ArrayList<>(),fileObjectType,dest_folder,currentUsbFile,false);
+            filePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+dest_folder);
+            filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+dest_folder);
             if(filePOJOs==null)return null;
         }
         else
@@ -932,7 +938,7 @@ public class FilePOJOUtil {
             for(int i=0;i<size;++i)
             {
                 file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
-                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,MainActivity.FTP_CLIENT_FOR_ADD_POJO);
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,FtpClientRepository.getInstance().ftpClientForAddPojo);
                 if(filePOJO!=null)
                 {
                     filePOJOs.add(filePOJO);
@@ -942,20 +948,22 @@ public class FilePOJOUtil {
                     }
                 }
             }
-            Global.HASHMAP_FILE_POJO.put(fileObjectType+dest_folder,filePOJOs);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+dest_folder,filePOJOs_filtered);
+            repositoryClass.hashmap_file_pojo.put(fileObjectType+dest_folder,filePOJOs);
+            repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+dest_folder,filePOJOs_filtered);
 
         }
 
         REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(overwritten_file_path_list, fileObjectType);
         return filePOJO;
+
     }
 
     public static FilePOJO ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(String filePOJOHashmapKeyPath, final List<String> added_file_path_list, FileObjectType fileObjectType, List<String> overwritten_file_path_list)
     {
         FilePOJO filePOJO = null;
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath);
         if(filePOJOs==null || filePOJOs_filtered==null)
         {
             return null;
@@ -986,7 +994,7 @@ public class FilePOJOUtil {
             filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, file_name_list,fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
             if(filePOJO==null)
             {
-                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,FtpClientRepository.getInstance().ftpClientForCreatingFilePojo);
             }
             if(filePOJO!=null)
             {
@@ -997,8 +1005,8 @@ public class FilePOJOUtil {
                 }
             }
         }
-        Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
+        repositoryClass.hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
+        repositoryClass.hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
 
         REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(overwritten_file_path_list, fileObjectType);
         return filePOJO;
@@ -1008,8 +1016,9 @@ public class FilePOJOUtil {
     public static void UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(String dest_folder, FileObjectType fileObjectType)
     {
         String parent_path_to_dest_folder=new File(dest_folder).getParent();
-        List<FilePOJO> filePOJOs=Global.HASHMAP_FILE_POJO.get(fileObjectType+parent_path_to_dest_folder);
-        List<FilePOJO> filePOJOs_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+parent_path_to_dest_folder);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOs=repositoryClass.hashmap_file_pojo.get(fileObjectType+parent_path_to_dest_folder);
+        List<FilePOJO> filePOJOs_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+parent_path_to_dest_folder);
         if(filePOJOs==null ||filePOJOs_filtered==null)
         {
             return;
@@ -1017,7 +1026,7 @@ public class FilePOJOUtil {
         String name=new File(dest_folder).getName();
         FilePOJO removed_filePOJO=remove_from_FilePOJO(name,filePOJOs);
         remove_from_FilePOJO(name,filePOJOs_filtered);
-        FilePOJO filePOJO = filePOJO=MAKE_FilePOJO(fileObjectType,dest_folder,MainActivity.FTP_CLIENT_FOR_CREATING_FILE_POJO);
+        FilePOJO filePOJO =MAKE_FilePOJO(fileObjectType,dest_folder,FtpClientRepository.getInstance().ftpClientForCreatingFilePojo);
         if(filePOJO==null)filePOJO=removed_filePOJO;
         if(filePOJO!=null)
         {
@@ -1028,8 +1037,8 @@ public class FilePOJOUtil {
             }
 
         }
-        Global.HASHMAP_FILE_POJO.put(fileObjectType+parent_path_to_dest_folder,filePOJOs);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+parent_path_to_dest_folder,filePOJOs_filtered);
+        repositoryClass.hashmap_file_pojo.put(fileObjectType+parent_path_to_dest_folder,filePOJOs);
+        repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+parent_path_to_dest_folder,filePOJOs_filtered);
     }
 
 
@@ -1047,7 +1056,8 @@ public class FilePOJOUtil {
 
     private static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType)
     {
-        Iterator<Map.Entry<String, List<FilePOJO>>> iterator=Global.HASHMAP_FILE_POJO.entrySet().iterator();
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
         while(iterator.hasNext())
         {
             Map.Entry<String, List<FilePOJO>> entry= iterator.next();
@@ -1057,7 +1067,7 @@ public class FilePOJOUtil {
             }
         }
 
-        iterator=Global.HASHMAP_FILE_POJO_FILTERED.entrySet().iterator();
+        iterator=repositoryClass.hashmap_file_pojo_filtered.entrySet().iterator();
         while(iterator.hasNext())
         {
             Map.Entry<String, List<FilePOJO>> entry= iterator.next();
@@ -1067,17 +1077,18 @@ public class FilePOJOUtil {
             }
         }
 
-        Global.HASHMAP_INTERNAL_DIRECTORY_SIZE.remove(file_path);
-        Global.HASHMAP_EXTERNAL_DIRECTORY_SIZE.remove(file_path);
+        repositoryClass.hashmap_internal_directory_size.remove(file_path);
+        repositoryClass.hashmap_external_directory_size.remove(file_path);
 
     }
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
     {
         String parent_file_path=new File(file_path).getParent();
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
         if(parent_file_path!=null)
         {
-            for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
+            for (Map.Entry<String, List<FilePOJO>> entry : repositoryClass.hashmap_file_pojo.entrySet()) {
                 if (Global.IS_CHILD_FILE(fileObjectType + file_path, entry.getKey())) {
                     List<FilePOJO> filePOJOS = entry.getValue();
                     if (filePOJOS != null) {
@@ -1098,7 +1109,8 @@ public class FilePOJOUtil {
 
     public static void SET_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
     {
-        for (Map.Entry<String, List<FilePOJO>> entry : Global.HASHMAP_FILE_POJO.entrySet()) {
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        for (Map.Entry<String, List<FilePOJO>> entry : repositoryClass.hashmap_file_pojo.entrySet()) {
             if ((fileObjectType + file_path).equals(entry.getKey())) {
                 List<FilePOJO> filePOJOS = entry.getValue();
                 if (filePOJOS != null) {
@@ -1118,10 +1130,9 @@ public class FilePOJOUtil {
     }
 
 
-    public static void FILL_FILEPOJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
-                                     String fileclickselected, UsbFile usbFile , boolean archive_view)
+    public static void FILL_FILE_POJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
+                                      String fileclickselected, UsbFile usbFile , boolean archive_view)
     {
-
         filePOJOS.clear(); filePOJOS_filtered.clear();
         String other_permission_string = null;
         File file=new File(fileclickselected);
@@ -1225,7 +1236,7 @@ public class FilePOJOUtil {
         }
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
-            if(!Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_LISTING))
+            if(!Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForListing))
             {
                 return;
             }
@@ -1234,14 +1245,14 @@ public class FilePOJOUtil {
                 FTPFile[] file_array;
                 try {
 
-                    file_array=MainActivity.FTP_CLIENT_FOR_LISTING.listFiles(fileclickselected);
+                    file_array=FtpClientRepository.getInstance().ftpClientForListing.listFiles(fileclickselected);
                     int size=file_array.length;
                     for(int i=0;i<size;++i)
                     {
                         FTPFile f=file_array[i];
                         String name=f.getName();
                         String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
-                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path,MainActivity.FTP_CLIENT_FOR_LISTING);
+                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path,FtpClientRepository.getInstance().ftpClientForListing);
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
 
@@ -1293,8 +1304,9 @@ public class FilePOJOUtil {
 
  */
 
-        Global.HASHMAP_FILE_POJO.put(fileObjectType+fileclickselected,filePOJOS);
-        Global.HASHMAP_FILE_POJO_FILTERED.put(fileObjectType+fileclickselected,filePOJOS_filtered);
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        repositoryClass.hashmap_file_pojo.put(fileObjectType+fileclickselected,filePOJOS);
+        repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+fileclickselected,filePOJOS_filtered);
     }
 
 

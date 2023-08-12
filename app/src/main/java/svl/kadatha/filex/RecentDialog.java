@@ -76,7 +76,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
-		root_dir_linkedlist.addAll(Global.STORAGE_DIR); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+		root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	public void onMediaAttachedAndRemoved()
 	{
 		root_dir_linkedlist.clear();
-		root_dir_linkedlist.addAll(Global.STORAGE_DIR); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+		root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
 		rootdirrecycleradapter.notifyDataSetChanged();
 		recentRecyclerAdapter.notifyDataSetChanged();
 	}

@@ -404,7 +404,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 				if(Global.CHECK_FTP_SERVER_CONNECTED())
 				{
 					try {
-						outStream=MainActivity.FTP_CLIENT.storeFileStream(file_path);
+						outStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path);
 					} catch (IOException e) {
 
 					}
@@ -879,11 +879,11 @@ public class ArchiveDeletePasteFileService1 extends Service
 							if(destFileObjectType==FileObjectType.FTP_TYPE)
 							{
 								ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-								MainActivity.FTP_CLIENT.retrieveFile(zip_file_path,byteArrayOutputStream);
+								FtpClientRepository.getInstance().ftpClientMain.retrieveFile(zip_file_path,byteArrayOutputStream);
 								bufferedInputStream=new BufferedInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 							}
 							else {
-								bufferedInputStream=new BufferedInputStream(MainActivity.FTP_CLIENT.retrieveFileStream(zip_file_path));
+								bufferedInputStream=new BufferedInputStream(FtpClientRepository.getInstance().ftpClientMain.retrieveFileStream(zip_file_path));
 							}
 
 						} catch (IOException e) {
@@ -1309,7 +1309,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 					{
 						return false;
 					}
-					String[] list = MainActivity.FTP_CLIENT.listNames(file_path); //Storing all file name within array
+					String[] list = FtpClientRepository.getInstance().ftpClientMain.listNames(file_path); //Storing all file name within array
 					if(list!=null)
 					{
 						int size=list.length;
@@ -1335,10 +1335,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 				//if(folder.isDirectoryUri())
 				if(FileUtil.isFtpPathDirectory(file_path))
 				{
-					success=MainActivity.FTP_CLIENT.removeDirectory(file_path);
+					success=FtpClientRepository.getInstance().ftpClientMain.removeDirectory(file_path);
 				}
 				else {
-					success=MainActivity.FTP_CLIENT.deleteFile(file_path);
+					success=FtpClientRepository.getInstance().ftpClientMain.deleteFile(file_path);
 				}
 
 			} catch (IOException e) {
@@ -2217,7 +2217,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String[] inner_source_list;
 				try {
-					inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+					inner_source_list = FtpClientRepository.getInstance().ftpClientMain.listNames(src_file_path);
 				} catch (IOException e) {
 					return false;
 				}
@@ -2297,7 +2297,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String[] inner_source_list;
 				try {
-					inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+					inner_source_list = FtpClientRepository.getInstance().ftpClientMain.listNames(src_file_path);
 				} catch (IOException e) {
 					return false;
 				}
@@ -2368,7 +2368,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String[] inner_source_list;
 				try {
-					inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+					inner_source_list = FtpClientRepository.getInstance().ftpClientMain.listNames(src_file_path);
 				} catch (IOException e) {
 					return false;
 				}
@@ -2449,7 +2449,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 
 				String[] inner_source_list;
 				try {
-					inner_source_list = MainActivity.FTP_CLIENT.listNames(src_file_path);
+					inner_source_list = FtpClientRepository.getInstance().ftpClientMain.listNames(src_file_path);
 				} catch (IOException e) {
 					return false;
 				}

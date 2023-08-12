@@ -716,7 +716,7 @@ public class ArchiveDeletePasteServiceUtil {
             else if(destFileObjectType==FileObjectType.FTP_TYPE)
             {
                 String name=dest_file.getName();
-                outStream=MainActivity.FTP_CLIENT.storeFileStream(Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
+                outStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
             }
 
             if(outStream!=null)
@@ -837,12 +837,12 @@ public class ArchiveDeletePasteServiceUtil {
                     }
                     else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
                     {
-                        if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(MainActivity.FTP_CLIENT_FOR_PROGRESS))
+                        if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForProgress))
                         {
                             FTPFile[] f_array=new FTPFile[size];
                             for(int i=0;i<size;++i)
                             {
-                                FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(MainActivity.FTP_CLIENT_FOR_PROGRESS,files_selected_array.get(i));
+                                FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(FtpClientRepository.getInstance().ftpClientForProgress,files_selected_array.get(i));
                                 f_array[i]=f;
                             }
                             populate(f_array,include_folder,source_folder);
@@ -946,7 +946,7 @@ public class ArchiveDeletePasteServiceUtil {
                     try {
                         String name=f.getName();
                         path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
-                        populate(MainActivity.FTP_CLIENT_FOR_PROGRESS.listFiles(path),include_folder,path);
+                        populate(FtpClientRepository.getInstance().ftpClientForProgress.listFiles(path),include_folder,path);
                     } catch (Exception e) {
 
                     }

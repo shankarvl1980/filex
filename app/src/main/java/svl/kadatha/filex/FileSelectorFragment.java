@@ -97,7 +97,8 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		}
 		else if(fileObjectType==FileObjectType.FILE_TYPE)
 		{
-			for(String path:Global.INTERNAL_STORAGE_PATH_LIST)
+			RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+			for(String path:repositoryClass.internal_storage_path_list)
 			{
 				if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
 				{
@@ -156,14 +157,15 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		folder_selected_textview.setText(fileclickselected);
 
 		viewModel=new ViewModelProvider(this).get(FilePOJOViewModel.class);
-		if (!Global.HASHMAP_FILE_POJO.containsKey(fileObjectType+fileclickselected))
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+fileclickselected))
 		{
 			viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,false);
 		}
 		else
 		{
-			viewModel.filePOJOS=Global.HASHMAP_FILE_POJO.get(fileObjectType+fileclickselected);
-			viewModel.filePOJOS_filtered=Global.HASHMAP_FILE_POJO_FILTERED.get(fileObjectType+fileclickselected);
+			viewModel.filePOJOS=repositoryClass.hashmap_file_pojo.get(fileObjectType+fileclickselected);
+			viewModel.filePOJOS_filtered=repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType+fileclickselected);
 			after_filledFilePojos_procedure();
 		}
 

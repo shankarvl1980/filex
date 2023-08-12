@@ -75,12 +75,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	}
 
 	@Override
-	public void onDetach() {
-		super.onDetach();
-		//videoViewActivity.videoViewFragment_modList.remove(this);
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method

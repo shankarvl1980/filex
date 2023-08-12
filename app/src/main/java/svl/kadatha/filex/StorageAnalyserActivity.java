@@ -63,6 +63,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public boolean search_toolbar_visible;
     private KeyBoardUtil keyBoardUtil;
     private InputMethodManager imm;
+    private RepositoryClass repositoryClass;
 
 
 
@@ -70,6 +71,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
+        repositoryClass=RepositoryClass.getRepositoryClass();
         ViewModel viewModel=new ViewModelProvider(this).get(StorageAnalyserActivityViewModel.class); //required to clear hashmap internal and external storage details on final finish of activity
         mediaMountReceiver=new MediaMountReceiver();
         mediaMountReceiver.addMediaMountListener(this);
@@ -471,7 +473,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public List<FilePOJO> getFilePOJO_list()
     {
         List<FilePOJO> filePOJOS = new ArrayList<>();
-        for(FilePOJO filePOJO:Global.STORAGE_DIR)
+        for(FilePOJO filePOJO:repositoryClass.storage_dir)
         {
             if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE)
             {
@@ -561,8 +563,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public void onMediaMount(String action) {
         switch (action) {
             case "android.intent.action.MEDIA_MOUNTED":
-                Global.STORAGE_DIR.clear();
-                Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
                 if (recentDialogListener != null) {
@@ -573,14 +575,14 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             case "android.intent.action.MEDIA_EJECT":
             case "android.intent.action.MEDIA_REMOVED":
             case "android.intent.action.MEDIA_BAD_REMOVAL":
-                Global.STORAGE_DIR.clear();
-                Global.STORAGE_DIR.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storage_filePOJO_list=getFilePOJO_list();
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Global.EXTERNAL_STORAGE_PATH_LIST, FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
                 StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserFragment !=null) storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
 

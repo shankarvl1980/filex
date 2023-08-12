@@ -71,7 +71,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         {
                             InputStream bin = new ByteArrayInputStream(new byte[0]);
                             try {
-                                file_created=MainActivity.FTP_CLIENT.storeFile(new_file_path, bin);
+                                file_created=FtpClientRepository.getInstance().ftpClientMain.storeFile(new_file_path, bin);
                             } catch (IOException e) {
                                 file_created=false;
                             }
@@ -111,7 +111,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         if(Global.CHECK_FTP_SERVER_CONNECTED())
                         {
                             try {
-                                file_created=MainActivity.FTP_CLIENT.makeDirectory(new_file_path);
+                                file_created=FtpClientRepository.getInstance().ftpClientMain.makeDirectory(new_file_path);
                             } catch (IOException e) {
                             }
                         }
@@ -195,7 +195,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     if(Global.CHECK_FTP_SERVER_CONNECTED())
                     {
                         try {
-                            fileNameChanged=MainActivity.FTP_CLIENT.rename(existing_file.getAbsolutePath(),new_file_path);
+                            fileNameChanged=FtpClientRepository.getInstance().ftpClientMain.rename(existing_file.getAbsolutePath(),new_file_path);
                         } catch (IOException e) {
                         }
                     }

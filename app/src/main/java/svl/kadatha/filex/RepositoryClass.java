@@ -44,6 +44,19 @@ public class RepositoryClass {
     private final Object album_pojo_lock=new Object();
 
 
+    ArrayList<FilePOJO> storage_dir =new ArrayList<>();
+    final HashMap<String,List<FilePOJO>> hashmap_file_pojo_filtered =new HashMap<>();
+    final HashMap<String,List<FilePOJO>> hashmap_file_pojo =new HashMap<>();
+    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_internal_directory_size =new HashMap<>();
+    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_external_directory_size =new HashMap<>();
+    final HashMap<String,List<AppManagerListFragment.AppPOJO>> app_pojo_hashmap =new HashMap<>();
+    final HashMap<String,List<AudioPOJO>> audio_pojo_hashmap =new HashMap<>();
+    final HashMap<String,List<AlbumPOJO>> album_pojo_hashmap =new HashMap<>();
+    final List<String> internal_storage_path_list =new ArrayList<>();
+    final List<String> external_storage_path_list =new ArrayList<>();
+
+
+
     private RepositoryClass(){}
 
     private static final class RepositoryClassHolder {
@@ -61,15 +74,15 @@ public class RepositoryClass {
         synchronized (download_lock)
         {
             String media_category="Download";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,download_count=0,download_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
 
     }
@@ -80,15 +93,15 @@ public class RepositoryClass {
         synchronized (document_lock)
         {
             String media_category="Document";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,document_count=0,document_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
     }
 
@@ -97,15 +110,15 @@ public class RepositoryClass {
         synchronized (image_lock)
         {
             String media_category="Image";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,image_count=0,image_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
     }
 
@@ -114,15 +127,15 @@ public class RepositoryClass {
         synchronized (audio_lock)
         {
             String media_category="Audio";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,audio_count=0,audio_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
     }
 
@@ -131,15 +144,15 @@ public class RepositoryClass {
         synchronized (video_lock)
         {
             String media_category="Video";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,video_count=0,video_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
     }
 
@@ -148,15 +161,15 @@ public class RepositoryClass {
         synchronized (archive_lock)
         {
             String media_category="Archive";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,archive_count=0,archive_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
 
     }
@@ -166,15 +179,15 @@ public class RepositoryClass {
         synchronized (apk_lock)
         {
             String media_category="APK";
-            if(Global.HASHMAP_FILE_POJO.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
             {
                 return;
             }
             List<FilePOJO>filePOJOS=new ArrayList<>();
             List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
             search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,apk_count=0,apk_mutable_count);
-            Global.HASHMAP_FILE_POJO.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
-            Global.HASHMAP_FILE_POJO_FILTERED.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
     }
 
@@ -355,7 +368,7 @@ public class RepositoryClass {
     {
         synchronized (app_lock)
         {
-            if(Global.APP_POJO_HASHMAP.containsKey("system")) return;
+            if(app_pojo_hashmap.containsKey("system")) return;
 
             List<AppManagerListFragment.AppPOJO> userAppPOJOList=new ArrayList<>();
             List<AppManagerListFragment.AppPOJO> systemAppPOJOList=new ArrayList<>();
@@ -403,8 +416,8 @@ public class RepositoryClass {
                     userAppPOJOList.add(new AppManagerListFragment.AppPOJO(name, package_name, path, size, date,version));
                 }
             }
-            Global.APP_POJO_HASHMAP.put("user",userAppPOJOList);
-            Global.APP_POJO_HASHMAP.put("system",systemAppPOJOList);
+            app_pojo_hashmap.put("user",userAppPOJOList);
+            app_pojo_hashmap.put("system",systemAppPOJOList);
         }
 
     }
@@ -413,7 +426,7 @@ public class RepositoryClass {
     {
         synchronized (audio_pojo_lock)
         {
-            if(Global.AUDIO_POJO_HASHMAP.containsKey("audio")) return;
+            if(audio_pojo_hashmap.containsKey("audio")) return;
             List<AudioPOJO> audio_list=new ArrayList<>();
             AudioPlayerActivity.EXISTING_AUDIOS_ID=new HashMap<>();
             Cursor audio_cursor;
@@ -457,7 +470,7 @@ public class RepositoryClass {
                     }
 
                 }
-                Global.AUDIO_POJO_HASHMAP.put("audio",audio_list);
+                audio_pojo_hashmap.put("audio",audio_list);
                 cursor.close();
             }
 
@@ -469,7 +482,7 @@ public class RepositoryClass {
     {
         synchronized (album_pojo_lock)
         {
-            if(Global.ALBUM_POJO_HASHMAP.containsKey("album"))return;
+            if(album_pojo_hashmap.containsKey("album"))return;
             List<AlbumPOJO>album_list=new ArrayList<>();
             Cursor cursor = null;
             try
@@ -490,7 +503,7 @@ public class RepositoryClass {
                     String album_path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
                     album_list.add(new AlbumPOJO(id,album_name,artist,no_of_songs,album_path));
                 }
-                Global.ALBUM_POJO_HASHMAP.put("album",album_list);
+                album_pojo_hashmap.put("album",album_list);
                 cursor.close();
             }
         }

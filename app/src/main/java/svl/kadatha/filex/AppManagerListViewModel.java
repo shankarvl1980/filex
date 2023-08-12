@@ -63,16 +63,16 @@ public class AppManagerListViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 systemAppPOJOList=new ArrayList<>();
                 userAppPOJOList=new ArrayList<>();
-                if(!Global.APP_POJO_HASHMAP.containsKey("system"))
+                if(!repositoryClass.app_pojo_hashmap.containsKey("system"))
                 {
-                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                     repositoryClass.populateAppsList(application);
                 }
 
-                userAppPOJOList=Global.APP_POJO_HASHMAP.get("user");
-                systemAppPOJOList=Global.APP_POJO_HASHMAP.get("system");
+                userAppPOJOList=repositoryClass.app_pojo_hashmap.get("user");
+                systemAppPOJOList=repositoryClass.app_pojo_hashmap.get("system");
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -118,8 +118,9 @@ public class AppManagerListViewModel extends AndroidViewModel {
                             }
                         }
                     }
-                    FilePOJOUtil.FILL_FILEPOJO(new ArrayList<>(), new ArrayList<>(),destFileObjectType,dest_folder,currentUsbFile,false);
-                    destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+                    FilePOJOUtil.FILL_FILE_POJO(new ArrayList<>(), new ArrayList<>(),destFileObjectType,dest_folder,currentUsbFile,false);
+                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                    destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+dest_folder);
                 }
 
 

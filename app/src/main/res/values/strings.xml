@@ -121,6 +121,7 @@
 	<string name="remove">Remove</string>
 	<string name="library">Library</string>
 	<string name="show_hidden_files">Show hidden files</string>
+	<string name="access_from_pc">Access from PC</string>
 	<string name="browse">Browse</string>
 	<string name="are_you_sure_to_delete_the_selected_file">Are you sure to delete the selected file?</string>
 	<string name="are_you_sure_to_delete_the_selected_files">Are you sure to delete the selected files?</string>
@@ -383,7 +384,6 @@
 	</string-array>
 
 	<string-array name="network_types">
-		<item>@string/ftp_server</item>
 		<item>@string/ftp_client</item>
 	</string-array>
 

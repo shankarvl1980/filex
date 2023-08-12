@@ -17,14 +17,15 @@ public class FtpServerViewModel extends AndroidViewModel {
     public static int PORT;
     public static FtpUser FTP_USER;
     public static boolean ALLOW_ANONYMOUS;
-    public List<String> chroot_list;
+    public final List<String> chroot_list;
 
     public FtpServerViewModel(@NonNull Application application) {
         super(application);
         PORT=Integer.parseInt(application.getString(R.string.portnumber_default));
         FTP_USER=new FtpUser(application.getString(R.string.username_default),application.getString(R.string.password_default),Global.INTERNAL_PRIMARY_STORAGE_PATH);
         chroot_list= new ArrayList<>();
-        for(FilePOJO filePOJO:Global.STORAGE_DIR)
+        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        for(FilePOJO filePOJO:repositoryClass.storage_dir)
         {
             if(!filePOJO.getPath().equals(File.separator) && filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE)
             {

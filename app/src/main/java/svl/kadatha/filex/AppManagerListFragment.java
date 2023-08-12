@@ -597,7 +597,8 @@ public class AppManagerListFragment extends Fragment {
                 String dest_folder=bundle.getString("dest_folder");
                 FileObjectType destFileObjectType= (FileObjectType) bundle.getSerializable("destFileObjectType");
                 String new_name=bundle.getString("new_name");
-                viewModel.destFilePOJOs=Global.HASHMAP_FILE_POJO.get(destFileObjectType+dest_folder);
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+dest_folder);
                 File file=new File(dest_folder,new_name);
                 String file_path=file.getAbsolutePath();
                 bundle.putString("file_path",dest_folder);
@@ -782,7 +783,8 @@ public class AppManagerListFragment extends Fragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
-                if(progress_bar.getVisibility()==View.VISIBLE || !Global.APP_POJO_HASHMAP.containsKey("system"))
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                if(progress_bar.getVisibility()==View.VISIBLE || !repositoryClass.app_pojo_hashmap.containsKey("system"))
                 {
                     Global.print(context,getString(R.string.please_wait));
                     return;
@@ -790,16 +792,9 @@ public class AppManagerListFragment extends Fragment {
 
 
 
-                Global.APP_POJO_HASHMAP.clear();
-//                //progress_bar.setVisibility(View.VISIBLE);
-//                ViewPager viewPager=((AppManagerActivity)context).viewPager;
-//                viewPager.getAdapter().notifyDataSetChanged();
-//                //progress_bar.setVisibility(View.VISIBLE);
+                repositoryClass.app_pojo_hashmap.clear();
                 ((AppManagerActivity)context).refresh_adapter();
-////                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-////
-////
-////                viewModel.populateApps();
+
            }
         }
 
