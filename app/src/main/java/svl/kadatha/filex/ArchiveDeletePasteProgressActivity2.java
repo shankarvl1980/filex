@@ -288,12 +288,8 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 								from_textview.setText(archiveDeletePasteFileService.source_folder);
 								current_file.setText(archiveDeletePasteFileService.current_file_name);
 								copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
-								if(archiveDeletePasteFileService.isFromInternal)
-								{
-									no_files.setText(getString(R.string.deleted) +" "+ archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
-									size_files.setText(getString(R.string.size) +" "+ size_progress);
-								}
-
+								no_files.setText(getString(R.string.deleted) +" "+ archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
+								size_files.setText(getString(R.string.size) +" "+ size_progress);
 							}
 
 							break;

@@ -59,8 +59,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 	private String intent_action;
 
 	private DeleteFileAsyncTask delete_file_async_task;
-
-	boolean isFromInternal;
 	String current_file_name;
 
 	String size_of_files_format,deleted_file_name;
