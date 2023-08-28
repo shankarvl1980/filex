@@ -135,12 +135,6 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout
         measureChildWithMargins(filepathtextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
         maxHeight+=filenametextview.getMeasuredHeight();
 
-//        if(show_file_path)
-//        {
-//            filepathtextview.setVisibility(VISIBLE);
-//            maxHeight+=filepathtextview.getMeasuredHeight();
-//        }
-
 
         measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
         usedWidth+=filesubfilecounttextview.getMeasuredWidth()+Global.TEN_DP;

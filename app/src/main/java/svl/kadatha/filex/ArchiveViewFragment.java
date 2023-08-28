@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,25 +92,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         Bundle bundle=getArguments();
         fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
         fileclickselected=getTag();
-
-//        if(fileObjectType==FileObjectType.ROOT_TYPE)
-//        {
-//            if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,fileclickselected) || (Global.EXTERNAL_STORAGE_PATH!=null && !Global.EXTERNAL_STORAGE_PATH.equals("") && Global.IS_CHILD_FILE (fileclickselected,Global.EXTERNAL_STORAGE_PATH)))
-//            {
-//                fileObjectType=FileObjectType.FILE_TYPE;
-//            }
-//        }
-//        else if(fileObjectType==FileObjectType.FILE_TYPE)
-//        {
-//            for(String path:Global.INTERNAL_STORAGE_PATH_LIST)
-//            {
-//                if(Global.IS_CHILD_FILE(new File(path).getParent(),fileclickselected))
-//                {
-//                    fileObjectType=FileObjectType.ROOT_TYPE;
-//                    break;
-//                }
-//            }
-//        }
 
         file_click_selected_name=new File(fileclickselected).getName();
 
@@ -474,8 +453,8 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
     public void clearSelectionAndNotifyDataSetChanged()
     {
-        viewModel.mselecteditems=new SparseBooleanArray();
-        viewModel.mselecteditemsFilePath=new SparseArray<>();
+        viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
             adapter.notifyDataSetChanged();

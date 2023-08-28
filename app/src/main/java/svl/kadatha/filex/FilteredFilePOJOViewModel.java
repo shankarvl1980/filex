@@ -9,7 +9,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.util.SparseBooleanArray;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
@@ -36,7 +35,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
     public final IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
     public int total_images;
-    public SparseBooleanArray selected_item_sparseboolean=new SparseBooleanArray();
+    public IndexedLinkedHashMap<Integer,Boolean> mselecteditems=new IndexedLinkedHashMap<>();
     public int file_selected_idx=0;
     public PdfRenderer pdfRenderer;
     public double size_per_page_MB;

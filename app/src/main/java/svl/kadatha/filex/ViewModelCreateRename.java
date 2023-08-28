@@ -7,19 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 
 public class ViewModelCreateRename extends AndroidViewModel {
 
-    private final Application application;
     public FilePOJO filePOJO;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean file_created;
@@ -28,7 +25,6 @@ public class ViewModelCreateRename extends AndroidViewModel {
 
     public ViewModelCreateRename(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
     public void createFile(File file, FileObjectType fileObjectType, boolean isWritable, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri)
@@ -43,21 +39,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
             public void run() {
                 if(file_type==0)
                 {
-                    if(isWritable)
-                    {
-                        file_created=FileUtil.createNativeNewFile(file);
-                    }
-                    else if(fileObjectType== FileObjectType.FILE_TYPE)
-                    {
-                        file_created=FileUtil.createSAFNewFile(application,parent_folder,new_name,tree_uri,tree_uri_path);
-                    }
-                    else if(fileObjectType== FileObjectType.USB_TYPE)
-                    {
-                        UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-                        file_created=FileUtil.createUsbFile(parentUsbFile,new_name);
-
-                    }
-                    else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                    if(fileObjectType==FileObjectType.ROOT_TYPE)
                     {
                         //file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
@@ -65,40 +47,15 @@ public class ViewModelCreateRename extends AndroidViewModel {
                             file_created=FileUtil.createNativeNewFile(file);
                         }
                     }
-                    else if(fileObjectType==FileObjectType.FTP_TYPE)
-                    {
-                        if(Global.CHECK_FTP_SERVER_CONNECTED())
-                        {
-                            InputStream bin = new ByteArrayInputStream(new byte[0]);
-                            try {
-                                file_created=FtpClientRepository.getInstance().ftpClientMain.storeFile(new_file_path, bin);
-                            } catch (IOException e) {
-                                file_created=false;
-                            }
-                        }
-                        else
-                        {
-                            file_created=false;
-                        }
-
+                    else {
+                        FileModel fileModel= FileModelFactory.getFileModel(parent_folder,fileObjectType,tree_uri,tree_uri_path);
+                        file_created=fileModel.createFile(new_name);
                     }
+
                 }
                 else if(file_type==1)
                 {
-                    if(isWritable)
-                    {
-                        file_created=FileUtil.mkdirNative(file);
-                    }
-                    else if(fileObjectType== FileObjectType.FILE_TYPE)
-                    {
-                        file_created=FileUtil.mkdirSAF(application,parent_folder,new_name,tree_uri,tree_uri_path);
-                    }
-                    else if(fileObjectType== FileObjectType.USB_TYPE)
-                    {
-                        UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_folder);
-                        file_created=FileUtil.mkdirUsb(parentUsbFile,new_name);
-                    }
-                    else if(fileObjectType==FileObjectType.ROOT_TYPE)
+                    if(fileObjectType==FileObjectType.ROOT_TYPE)
                     {
                         //file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
@@ -106,19 +63,9 @@ public class ViewModelCreateRename extends AndroidViewModel {
                             file_created=FileUtil.mkdirNative(file);
                         }
                     }
-                    else if(fileObjectType==FileObjectType.FTP_TYPE)
-                    {
-                        if(Global.CHECK_FTP_SERVER_CONNECTED())
-                        {
-                            try {
-                                file_created=FtpClientRepository.getInstance().ftpClientMain.makeDirectory(new_file_path);
-                            } catch (IOException e) {
-                            }
-                        }
-                        else
-                        {
-                            file_created=false;
-                        }
+                    else {
+                        FileModel fileModel= FileModelFactory.getFileModel(parent_folder,fileObjectType,tree_uri,tree_uri_path);
+                        file_created=fileModel.makeDirIfNotExists(new_name);
                     }
                 }
                 if(file_created)
@@ -131,7 +78,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
     }
 
 
-    public void renameFile(String parent_file_path, String existing_file_path, String existing_name,String new_file_path, String new_name, boolean isWritable, FileObjectType fileObjectType, boolean isDirectory, boolean overwriting,String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType)
+    public void renameFile(String parent_file_path, String existing_file_path, String existing_name,String new_file_path, String new_name, boolean isWritable, FileObjectType fileObjectType, boolean isDirectory, boolean overwrite,String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -141,39 +88,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                if(fileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    if(isWritable)
-                    {
-                        fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-                    }
-                    else
-                    {
-                        if(overwriting) //to overwrite file name
-                        {
-                            boolean isDir=new File(new_file_path).isDirectory();
-                            if(!isDir && !isDirectory)
-                            {
-                                if(FileUtil.deleteSAFDirectory(application,new_file_path,tree_uri,tree_uri_path))
-                                {
-                                    fileNameChanged=FileUtil.renameSAFFile(application,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            fileNameChanged=FileUtil.renameSAFFile(application,Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),new_name,tree_uri,tree_uri_path);
-                        }
-                    }
-                }
-                else if(fileObjectType== FileObjectType.USB_TYPE)
-                {
-                    UsbFile existingUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,existing_file.getAbsolutePath());
-                    fileNameChanged=FileUtil.renameUsbFile(existingUsbFile,new_name);
-
-                }
-                else if (fileObjectType==FileObjectType.ROOT_TYPE)
+                if (fileObjectType==FileObjectType.ROOT_TYPE)
                 {
                     if(RootUtils.CAN_RUN_ROOT_COMMANDS())
                     {
@@ -190,25 +105,17 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     }
 
                 }
-                else if(fileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    if(Global.CHECK_FTP_SERVER_CONNECTED())
-                    {
-                        try {
-                            fileNameChanged=FtpClientRepository.getInstance().ftpClientMain.rename(existing_file.getAbsolutePath(),new_file_path);
-                        } catch (IOException e) {
-                        }
-                    }
-                    else
-                    {
-                        Global.print_background_thread(application,application.getString(R.string.ftp_server_is_not_connected));
-                    }
+                else {
+                        FileModel fileModel=FileModelFactory.getFileModel(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),fileObjectType,tree_uri,tree_uri_path);
+                        fileNameChanged=fileModel.rename(new_name,overwrite);
                 }
+
+
                 if(fileNameChanged)
                 {
                     if(dfFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
                     {
-                        if(overwriting)
+                        if(overwrite)
                         {
                             FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path),fileObjectType);
                         }
@@ -216,7 +123,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                     }
                     else
                     {
-                        if(overwriting)
+                        if(overwrite)
                         {
                             FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name),fileObjectType);
                         }

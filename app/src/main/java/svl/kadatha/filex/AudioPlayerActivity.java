@@ -270,16 +270,6 @@ public class AudioPlayerActivity extends BaseActivity
 		});
 
 
-		/*
-		new TabLayoutMediator(tab_layout, view_pager, new TabLayoutMediator.TabConfigurationStrategy() {
-			@Override
-			public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-				tab.setText(getString(tab_title[position]));
-			}
-		}).attach();
-
-		 */
-
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
 		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
@@ -502,7 +492,7 @@ public class AudioPlayerActivity extends BaseActivity
 			switch (current_item)
 			{
 				case 1:
-					if(aalf.audioListViewModel.mselecteditems.size()>0)
+					if(aalf.audioListViewModel.audio_pojo_selected_items.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();
@@ -519,7 +509,7 @@ public class AudioPlayerActivity extends BaseActivity
 					}
 					break;
 				case 2:
-					if(albumlf.audioListViewModel.mselecteditems.size()>0)
+					if(albumlf.audioListViewModel.album_pojo_selected_items.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();
@@ -538,7 +528,7 @@ public class AudioPlayerActivity extends BaseActivity
 					}
 					break;
 				case 3:
-					if(aslf.audioListViewModel.mselecteditems.size()>0)
+					if(aslf.audioListViewModel.audio_saved_list_selected_items.size()>0)
 					{
 						aalf.clear_selection();
 						albumlf.clear_selection();

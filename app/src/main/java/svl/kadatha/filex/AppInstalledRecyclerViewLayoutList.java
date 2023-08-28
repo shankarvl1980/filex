@@ -103,12 +103,6 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         usedWidth+=imageview_dimension;
         iconheight=imageview_dimension;
 
-            /*
-            measureChildWithMargins(appselect_indicator,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
-            usedWidth+=select_indicator_offset_linear;
-
-             */
-
         measureChildWithMargins(appnametextview,widthMeasureSpec,usedWidth+Global.FOUR_DP+(Global.TEN_DP*2),heightMeasureSpec,0);
         maxHeight+=appnametextview.getMeasuredHeight();
 
@@ -149,17 +143,6 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         v.layout(x,d,x+ measuredWidth,d+ measuredHeight);
         x+= measuredWidth +Global.TEN_DP;
         margin_offset_icon=x;
-
-            /*
-            v=appselect_indicator;
-            measuredHeight=v.getMeasuredHeight();
-		    measuredWidth=v.getMeasuredWidth();
-            int a=itemWidth-select_indicator_offset_linear;
-            int file_select_indicator_height=measuredHeight;
-            int c=(itemHeight-file_select_indicator_height)/2;
-            v.layout(a,c,a+measuredWidth,c+file_select_indicator_height);
-
-             */
 
         v=appnametextview;
         measuredHeight =v.getMeasuredHeight();
@@ -238,13 +221,5 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         appsizetextview.setText(appPOJO.getSize());
         appdatetextview.setText(appPOJO.getDate());
     }
-
-    /*
-    public void set_selected(boolean item_selected)
-    {
-        appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-    }
-
-     */
 
 }

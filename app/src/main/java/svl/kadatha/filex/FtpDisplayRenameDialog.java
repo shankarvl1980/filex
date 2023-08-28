@@ -105,22 +105,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     dismissAllowingStateLoss();
                     return;
                 }
-                /*
-                if(new_name.equalsIgnoreCase(display))
-                {
-                    imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
-                    dismissAllowingStateLoss();
-                    print(getString(R.string.could_not_be_renamed));
-                    return;
-                }
-
-                if(CheckStringForSpecialCharacters.whetherStringContains(new_name))
-                {
-                    print(getString(R.string.avoid_name_involving_special_characters));
-                    return;
-                }
-
-                 */
                 if(new_name.equals(""))
                 {
                     Global.print(context,getString(R.string.enter_file_name));

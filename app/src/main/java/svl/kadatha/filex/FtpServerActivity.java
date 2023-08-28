@@ -128,14 +128,6 @@ public class FtpServerActivity extends BaseActivity {
         Global.WARN_NOTIFICATIONS_DISABLED(context,FsNotification.CHANNEL_ID,alreadyNotificationWarned);
         updateRunningState();
 
-//        ftp_start_stop_switch.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                return !validateInput(!set_port_pwd_group_checkbox.isChecked());
-//
-//            }
-//        });
-
         ftp_start_stop_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -151,26 +143,6 @@ public class FtpServerActivity extends BaseActivity {
                 }
             }
         });
-
-//        set_port_pwd_group_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                if(b)
-//                {
-//                    user_password_group.setVisibility(View.GONE);
-//                    port_password_edit_group.setVisibility(View.VISIBLE);
-//                }
-//                else
-//                {
-//                    user_password_group.setVisibility(View.VISIBLE);
-//                    port_password_edit_group.setVisibility(View.GONE);
-//                    imm.hideSoftInputFromWindow(port_input.getWindowToken(),0);
-//                    imm.hideSoftInputFromWindow(user_input.getWindowToken(),0);
-//                    imm.hideSoftInputFromWindow(password_input.getWindowToken(),0);
-//                }
-//                ftp_url_text_view.setVisibility(View.GONE);
-//            }
-//        });
 
 
         FrameLayout button_layout = findViewById(R.id.ftp_server_button_layout);
@@ -332,9 +304,6 @@ public class FtpServerActivity extends BaseActivity {
             ftp_start_stop_switch.setChecked(true);
             set_button.setEnabled(false);
             set_button.setAlpha(Global.DISABLE_ALFA);
-            //user_password_group.setVisibility(View.VISIBLE);
-            //port_password_edit_group.setVisibility(View.GONE);
-            //disable_ftp_username_pwd_tv(true);
 
             InetAddress address = FsService.getLocalInetAddress();
             if (address == null) {
@@ -357,21 +326,6 @@ public class FtpServerActivity extends BaseActivity {
             set_button.setEnabled(true);
             set_button.setAlpha(Global.ENABLE_ALFA);
 
-//            if(set_port_pwd_group_checkbox.isChecked())
-//            {
-//                user_password_group.setVisibility(View.GONE);
-//                port_password_edit_group.setVisibility(View.VISIBLE);
-//            }
-//            else
-//            {
-//                user_password_group.setVisibility(View.VISIBLE);
-//                port_password_edit_group.setVisibility(View.GONE);
-//            }
-            //disable_ftp_username_pwd_tv(false);
-//            user_name_host.setText(viewModel.user_name);
-//            password_host.setText(viewModel.password);
-//            chroot_host.setText(viewModel.chroot);
-//            set_port_pwd_group_checkbox.setVisibility(View.VISIBLE);
             ftp_url_description_text_view.setVisibility(View.GONE);
             ftp_url_text_view.setVisibility(View.GONE);
         }

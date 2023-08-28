@@ -149,7 +149,16 @@ public class RenameFileDialog extends DialogFragment
 				if(requestKey.equals(REPLACEMENT_CONFIRMATION) && result!=null)
 				{
 					String new_name=result.getString("rename_file_name");
-					viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+					if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable)
+					{
+						if (check_SAF_permission(parent_file_path, fileObjectType)) {
+						viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+					}
+					} else
+					{
+						viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+					}
+
 				}
 			}
 		});
@@ -233,7 +242,8 @@ public class RenameFileDialog extends DialogFragment
 							{
 								if(check_SAF_permission(parent_file_path,fileObjectType))
 								{
-									viewModel.renameFile(parent_file_path,existing_file_path,existing_name,new_file_path,new_name,isWritable,fileObjectType,isDirectory,overwriting,tree_uri_path,tree_uri,filePOJOHashmapKeyPath,df.fileObjectType);
+									RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
+									renameReplaceConfirmationDialog.show(fragmentManager,"");
 								}
 
 							}

@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.hardware.usb.UsbDevice;
@@ -130,9 +129,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
         };
 
 
-        context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
-        context.registerReceiver(usbAttachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
-        context.registerReceiver(usbDetachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+//        context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+//        context.registerReceiver(usbAttachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
+//        context.registerReceiver(usbDetachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
         CHECKED_TIMES++;
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -493,17 +492,8 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     private UsbFile getFileForDocId(String documentId) throws IOException {
         Timber.tag(TAG).d( "getFileForDocId() " + documentId);
-        /*
-        UsbFile file = mFileCache.get(documentId);
-        if (null != file)
-            return file;
-
-
-         */
         Timber.tag(TAG).d( "No cache entry for " + documentId);
 
-        //UsbPartition usbPartition= (UsbPartition) mRoots.values().toArray()[0];
-        //UsbFile rootUsb=MainActivity.usbFileRoot;
         String[] path_segments=documentId.split(ROOT_SEPARATOR);
         if(path_segments.length==1)
         {
@@ -513,76 +503,12 @@ public class UsbDocumentProvider extends DocumentsProvider {
         else
         {
             String path=path_segments[1];
-            /*
-            if(path.startsWith("/"))
-            {
-                path=path.replaceFirst("/","");
-            }
-
-             */
 
             return MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
 
-            /*
-            Timber.tag(TAG).d("path segments "+path_segments[1]);
-            String path=path_segments[1];
-           path=new File(path).getAbsolutePath();
-            String name = new File(path).getName();
-            String path_copy=path;
-            final int splitIndex = path.lastIndexOf(DIRECTORY_SEPARATOR);
-
-            UsbFile parent=MainActivity.usbFileRoot.search(new File(path).getParent());
-
-
-            for (UsbFile child : parent.listFiles())
-            {
-                if (name.equals(child.getName()))
-                {
-                    mFileCache.put(documentId, child);
-                    return child;
-                }
-            }
-
-            */
-
         }
 
 
-    /*
-        final int splitIndex = documentId.lastIndexOf(DIRECTORY_SEPARATOR);
-        if (splitIndex < 0)
-        {
-            String rootId = documentId.substring(0, documentId.length() - 1);
-            UsbPartition usbPartition = mRoots.get(rootId);
-            if (null == usbPartition)
-            {
-                throw new FileNotFoundException("Missing root for " + rootId);
-            }
-
-            file = usbPartition.fileSystem.getRootDirectory();
-            mFileCache.put(documentId, file);
-            return file;
-        }
-
-        UsbFile parent = getFileForDocId(documentId.substring(0, splitIndex));
-        if (null == parent)
-            throw new FileNotFoundException("Missing parent for " + documentId);
-        String name = documentId.substring(splitIndex + 1);
-
-        for (UsbFile child : parent.listFiles())
-        {
-            if (name.equals(child.getName()))
-            {
-                mFileCache.put(documentId, child);
-                return child;
-            }
-        }
-
-
-
-    throw new FileNotFoundException("File not found " + documentId);
-
-     */
     }
 
 }

@@ -192,18 +192,6 @@ public class PasteSetUpDialog extends DialogFragment
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
 			return true;
-			/*
-			if(Global.CHECK_FTP_SERVER_CONNECTED())
-			{
-				return true;
-			}
-			else
-			{
-				print(getString(R.string.ftp_server_is_not_connected));
-				return false;
-			}
-
-			 */
 		}
 		return true; //this needs to be true, after success checking of permission of in searchlibrarytype to return true
 

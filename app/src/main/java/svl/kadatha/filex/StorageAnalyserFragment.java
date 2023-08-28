@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -406,7 +404,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         {
             // TODO: Implement this method
             FilePOJO file=filePOJO_list.get(p2);
-            boolean selected=viewModel.mselecteditems.get(p2,false);
+            boolean selected=viewModel.mselecteditems.containsKey(p2);
             p1.v.setData(file,selected);
             p1.v.setSelected(selected);
         }
@@ -514,25 +512,21 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             private void longClickMethod (View v, int size)
             {
                 pos=getBindingAdapterPosition();
-                if(viewModel.mselecteditems.get(pos,false))
+                if(viewModel.mselecteditems.containsKey(pos))
                 {
-                    viewModel.mselecteditems.delete(pos);
-                    viewModel.mselecteditemsFilePath.delete(pos);
+                    viewModel.mselecteditems.remove(pos);
+                    //viewModel.mselecteditemsFilePath.delete(pos);
                     v.setSelected(false);
                     ((StorageAnalyserRecyclerViewLayout)v).set_selected(false);
                     --size;
 
                     if(size==1)
                     {
-                        //    mainActivity.rename.setEnabled(true);
-                        //  mainActivity.rename.setAlpha(Global.ENABLE_ALFA);
 
                         onLongClickAdjustToolbars();
                     }
                     else if(size>1)
                     {
-                        //mainActivity.rename.setEnabled(false);
-                        //mainActivity.rename.setAlpha(Global.DISABLE_ALFA);
 
                         onLongClickAdjustToolbars();
                     }
@@ -545,21 +539,17 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                 }
                 else
                 {
-                    viewModel.mselecteditems.put(pos,true);
-                    viewModel.mselecteditemsFilePath.put(pos,filePOJO_list.get(pos).getPath());
+                    viewModel.mselecteditems.put(pos,filePOJO_list.get(pos).getPath());
+                    //viewModel.mselecteditemsFilePath.put(pos,filePOJO_list.get(pos).getPath());
                     v.setSelected(true);
                     ((StorageAnalyserRecyclerViewLayout)v).set_selected(true);
                     ++size;
 
                     if(size==1)
                     {
-                        //mainActivity.rename.setEnabled(true);
-                        //mainActivity.rename.setAlpha(Global.ENABLE_ALFA);
                     }
                     else if(size>1)
                     {
-                        //mainActivity.rename.setEnabled(false);
-                        //mainActivity.rename.setAlpha(Global.DISABLE_ALFA);
                     }
 
                     if(size==file_list_size)
@@ -578,14 +568,14 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
 
     public void selectAll()
     {
-        viewModel.mselecteditems=new SparseBooleanArray();
-        viewModel.mselecteditemsFilePath=new SparseArray<>();
+        viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         int size=filePOJO_list.size();
 
         for(int i=0;i<size;++i)
         {
-            viewModel.mselecteditems.put(i,true);
-            viewModel.mselecteditemsFilePath.put(i,filePOJO_list.get(i).getPath());
+            viewModel.mselecteditems.put(i,filePOJO_list.get(i).getPath());
+            //viewModel.mselecteditemsFilePath.put(i,filePOJO_list.get(i).getPath());
         }
 
         int s=viewModel.mselecteditems.size();
@@ -672,8 +662,8 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
 
     public void clearSelectionAndNotifyDataSetChanged()
     {
-        viewModel.mselecteditems=new SparseBooleanArray();
-        viewModel.mselecteditemsFilePath=new SparseArray<>();
+        viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
             if(viewModel.filePOJOS.size()>0 && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)
@@ -708,8 +698,8 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
 
     public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
     {
-        viewModel.mselecteditems=new SparseBooleanArray();
-        viewModel.mselecteditemsFilePath=new SparseArray<>();
+        viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         storageAnalyserActivity.clearCache(file_path,fileObjectType);
         modification_observed=true;
         Global.WORKOUT_AVAILABLE_SPACE();

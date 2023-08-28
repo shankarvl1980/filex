@@ -2,14 +2,12 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -31,8 +29,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> changeFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> checkDuplicateFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FtpDetailsDialog.FtpPOJO> ftpPOJOList;
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public List<FtpDetailsDialog.FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
+    public IndexedLinkedHashMap<Integer, FtpDetailsDialog.FtpPOJO> mselecteditems=new IndexedLinkedHashMap<>();
+    //public List<FtpDetailsDialog.FtpPOJO> ftpPOJO_selected_array=new ArrayList<>();
     public boolean loggedInStatus;
     private final FtpDatabaseHelper ftpDatabaseHelper;
 
@@ -119,7 +117,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
                     ftpClientRepository.instantiate();
-                    ftpClientRepository.disconnect_ftp_clients();
+                    //ftpClientRepository.disconnect_ftp_clients();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)
@@ -142,28 +140,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             }
         });
     }
-
-//    public static boolean CONNECT_FTP_CLIENT(FTPClient ftpClient) throws IOException {
-//        if(FTP_POJO==null)return false;
-//
-//        ftpClient.connect(FTP_POJO.server,FTP_POJO.port);
-//
-//        if(FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-//            ftpClient.setControlKeepAliveTimeout(300);//Send An Keep Alive Message every second
-//            ftpClient.setControlKeepAliveReplyTimeout(30000);
-//
-//            boolean loggedInStatus = ftpClient.login(FTP_POJO.user_name, FTP_POJO.password);
-//            if (loggedInStatus) {
-//
-//                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-//                ftpClient.enterLocalPassiveMode();
-//
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 
 
     private void replaceFtpPojo(Bundle bundle)
@@ -231,7 +207,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
                     FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
                     ftpClientRepository.instantiate();
-                    ftpClientRepository.disconnect_ftp_clients();
+                    //ftpClientRepository.disconnect_ftp_clients();
                     FTP_POJO=ftpPOJO;
                     loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)

@@ -484,21 +484,6 @@ public class TinyDB {
       @param key SharedPreferences key
      * @param obj is the Object you want to put 
      */
-//    public void putObject(String key, Object obj){
-//    	checkForNullKey(key);
-//    	Gson gson = new Gson(); 
-//    	putString(key, gson.toJson(obj));
-//    }
-//    
-//    public void putListObject(String key, ArrayList<Object> objArray){
-//    	checkForNullKey(key); 
-//    	Gson gson = new Gson(); 
-//    	ArrayList<String> objStrings = new ArrayList<String>();
-//    	for(Object obj : objArray){
-//    		objStrings.add(gson.toJson(obj));
-//    	}
-//    	putListString(key, objStrings);
-//    }
 
     /**
      * Remove SharedPreferences item with 'key'

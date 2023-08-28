@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.app.Application;
-import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 
 public class AppManagerListViewModel extends AndroidViewModel {
 
@@ -168,13 +169,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     if (isWritable) {
                         copy_result = Copy_File_File(file, dest_file_path, cut,bytes_read);
                     } else {
-                        if (destFileObjectType == FileObjectType.FILE_TYPE) {
-                            copy_result = Copy_File_SAFFile(application, file, dest_folder, current_file_name, tree_uri, tree_uri_path, cut,bytes_read);
-                        } else if (destFileObjectType == FileObjectType.USB_TYPE) {
-                            copy_result = Copy_File_UsbFile(file, dest_folder, current_file_name, cut,bytes_read);
-                        } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
-                            copy_result = Copy_File_FtpFile(file, dest_folder, current_file_name, cut,bytes_read);
-                        }
+                        copy_result=Copy_File_FileModel(file,dest_folder,current_file_name,tree_uri,tree_uri_path,bytes_read);
 
                     }
                     String f_p = file.getAbsolutePath();
@@ -204,6 +199,20 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    private boolean Copy_File_FileModel(File source, String dest_file_path, String name,Uri uri, String uri_path,long[] bytes_read)
+    {
+        boolean success;
+
+        if(isCancelled())
+        {
+            return false;
+        }
+
+        FileModel destFileModel= FileModelFactory.getFileModel(dest_file_path,destFileObjectType,uri,uri_path);
+        success=FileUtil.copy_File_FileModel(source,destFileModel,name,false,bytes_read);
+        return success;
     }
 
 
@@ -260,188 +269,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             success=FileUtil.copy_File_File(source,destination,cut,bytes_read);
         }
 
-        return success;
-    }
-
-
-    @SuppressWarnings("null")
-    private boolean Copy_File_SAFFile(Context context, File source, String dest_file_path, String name, Uri uri, String uri_path, boolean cut, long[] bytes_read)
-    {
-        boolean success=false;
-
-        if (source.isDirectory())
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-
-
-            if(destFileObjectType==FileObjectType.FILE_TYPE)
-            {
-                File destination=new File(dest_file_path,name);
-                if(!destination.exists())// || !destination.isDirectoryUri())
-                {
-                    if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
-                    {
-                        return false;
-                    }
-                }
-                else {
-                    if(destination.isDirectory()) success=true;
-                }
-
-            }
-
-            /*
-				//for other SAF
-				else
-				{
-					Uri dest_uri=FileUtil.getDocumentUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name),uri,uri_path);
-					if(!FileUtil.existsUri(context,dest_uri) || !FileUtil.isDirectoryUri(context,dest_uri))
-					{
-						if(!(success=FileUtil.mkdirSAF(context,dest_file_path,name,uri,uri_path)))
-						{
-							return false;
-						}
-					}
-
-				}
-
-				 */
-
-
-            String[] files_name_list = source.list();
-            if(files_name_list==null)
-            {
-                return true;
-            }
-            int size=files_name_list.length;
-            for (int i=0;i<size;++i)
-            {
-                String inner_file_name=files_name_list[i];
-                if(isCancelled())
-                {
-                    return false;
-                }
-                File srcFile = new File(source, inner_file_name);
-                String inner_dest_file=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-                success=Copy_File_SAFFile(context,srcFile,inner_dest_file,inner_file_name,uri,uri_path,cut,bytes_read);
-            }
-
-        }
-        else
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-            success=FileUtil.copy_File_SAFFile(context,source,dest_file_path,name,uri,uri_path,cut,bytes_read);
-        }
-
-        return success;
-    }
-
-    private boolean Copy_File_UsbFile(File source, String dest_file_path, String name, boolean cut, long[] bytes_read)
-    {
-        boolean success=false;
-
-        if (source.isDirectory())
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-
-            String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-            UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
-            if(dest_usbFile==null) // || !dest_usbFile.isDirectoryUri())
-            {
-                dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, dest_file_path);
-                if(!(success=FileUtil.mkdirUsb(dest_usbFile,name)))
-                {
-                    return false;
-                }
-            }
-            else {
-                if(dest_usbFile.isDirectory()) success=true;
-            }
-
-
-            String[] files_name_list = source.list();
-            if(files_name_list==null)
-            {
-                return true;
-            }
-            int size=files_name_list.length;
-            for (int i=0;i<size;++i)
-            {
-                String inner_file_name=files_name_list[i];
-                if(isCancelled())
-                {
-                    return false;
-                }
-                File srcFile = new File(source, inner_file_name);
-                success=Copy_File_UsbFile(srcFile, file_path,inner_file_name,cut,bytes_read);
-            }
-
-        }
-        else
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-            success=FileUtil.copy_File_UsbFile(source,dest_file_path,name,cut,bytes_read);
-        }
-
-        return success;
-    }
-
-    private boolean Copy_File_FtpFile(File source, String dest_file_path,String name,boolean cut, long[] bytes_read)
-    {
-        boolean success=false;
-
-        if (source.isDirectory())
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-
-            String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,name);
-            if(!(success=FileUtil.mkdirFtp(file_path)))
-            {
-                return false;
-            }
-
-            String[] files_name_list = source.list();
-            if(files_name_list==null)
-            {
-                return true;
-            }
-            int size=files_name_list.length;
-            for (int i=0;i<size;++i)
-            {
-                String inner_file_name=files_name_list[i];
-                if(isCancelled())
-                {
-                    return false;
-                }
-                File srcFile = new File(source, inner_file_name);
-                success=Copy_File_FtpFile(srcFile, file_path,inner_file_name,cut,bytes_read);
-            }
-        }
-        else
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-
-            success=FileUtil.copy_File_FtpFile(source,dest_file_path,name,cut,bytes_read);
-            //mutable_count_no_files.postValue(counter_no_files);
-        }
         return success;
     }
 

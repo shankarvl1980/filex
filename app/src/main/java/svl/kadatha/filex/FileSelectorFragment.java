@@ -272,7 +272,14 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		fileSelectorActivity.file_number.setText(""+file_list_size);
 
 		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
-		adapter=new FileSelectorAdapter();
+		if(FileSelectorActivity.FILE_GRID_LAYOUT)
+		{
+			adapter=new FileSelectorAdapterGrid();
+		}
+		else {
+			adapter=new FileSelectorAdapterList();
+		}
+
 		set_adapter();
 		progress_bar.setVisibility(View.GONE);
 
@@ -344,21 +351,10 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 	}
 
 
-	public class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable
+	public abstract class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable
 	{
 		@Override
-		public FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
-		{
-			// TODO: Implement this method
-			if(FileSelectorActivity.FILE_GRID_LAYOUT)
-			{
-				return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context,false));
-			}
-			else {
-				return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context,false));
-			}
-
-		}
+		public abstract FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
 
 		@Override
 		public void onBindViewHolder(final FileSelectorFragment.FileSelectorAdapter.ViewHolder p1, int p2)
@@ -476,6 +472,22 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 					}
 				});
 			}
+		}
+	}
+
+	public class FileSelectorAdapterGrid extends FileSelectorAdapter{
+
+		@Override
+		public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+			return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context,false));
+		}
+	}
+
+	public class FileSelectorAdapterList extends FileSelectorAdapter{
+
+		@Override
+		public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+			return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context,false));
 		}
 	}
 

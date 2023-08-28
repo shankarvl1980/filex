@@ -38,6 +38,9 @@ import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FtpFileModel;
+import svl.kadatha.filex.filemodel.UsbFileModel;
 import timber.log.Timber;
 
 /**
@@ -82,7 +85,7 @@ public final class FileUtil
 		return DocumentsContract.buildDocumentUriUsingTree(tree_uri,target_uri_id);
 	}
 
-	public static Uri createDocumentUri(Context context, @NonNull final String parent_file_path, @Nullable String name, @NonNull final boolean isDirectory,
+	public static Uri createDocumentUri(Context context, @NonNull final String parent_file_path, @Nullable String name, final boolean isDirectory,
 										@NonNull Uri tree_uri, String tree_uri_path)
 	{
 		Uri uri=getDocumentUri(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name),tree_uri,tree_uri_path);
@@ -222,7 +225,44 @@ public final class FileUtil
 		return  list;
 	}
 
+	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name ,boolean cut, long[] bytes_read)
+	{
+		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); OutputStream outputStream = destFileModel.getChildOutputStream(child_name,0)) {
 
+			bufferedCopy(fileInputStream,outputStream,false,bytes_read);
+			if(destFileModel instanceof FtpFileModel)
+			{
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
+			}
+			if (cut) {
+				sourceFile.delete();
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@SuppressWarnings("null")
+	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name ,boolean cut, long[] bytes_read)
+	{
+		try (InputStream inputStream = sourceFileModel.getInputStream(); OutputStream outputStream = destFileModel.getChildOutputStream(child_name,0)) {
+			boolean fromUsbFile=sourceFileModel instanceof UsbFileModel;
+			bufferedCopy(inputStream,outputStream,fromUsbFile,bytes_read);
+			if(sourceFileModel instanceof FtpFileModel || destFileModel instanceof FtpFileModel)
+			{
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
+			}
+			if (cut) {
+				sourceFileModel.delete();
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
+	}
 	@SuppressWarnings("null")
 	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
@@ -235,8 +275,6 @@ public final class FileUtil
 
 
 		} catch (Exception e) {
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		// ignore exception
@@ -244,6 +282,23 @@ public final class FileUtil
 		return true;
 	}
 
+	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel,String file_name,long []bytes_read)
+	{
+		try (InputStream inStream=App.getAppContext().getContentResolver().openInputStream(data); OutputStream fileOutStream = destFileModel.getChildOutputStream(file_name,0)) {
+
+			bufferedCopy(inStream,fileOutStream,false,bytes_read);
+			if(destFileModel instanceof FtpFileModel)
+			{
+				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
+			}
+
+		} catch (Exception e) {
+			return false;
+		}
+		// ignore exception
+		// ignore exception
+		return true;
+	}
 	@SuppressWarnings("null")
 	public static boolean copy_to_File(Context context, @NonNull final Uri data, @NonNull final File target, long[] bytes_read)
 	{
@@ -252,8 +307,6 @@ public final class FileUtil
 			bufferedCopy(inStream,fileOutStream,false,bytes_read);
 
 		} catch (Exception e) {
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		// ignore exception
@@ -416,8 +469,6 @@ public final class FileUtil
 					if (targetUsbFile != null && targetUsbFile.getLength() == 0)
 						deleteUsbFile(targetUsbFile);
 					targetUsbFile = parentUsbFile.createFile(name);
-//					long length = source.getLength();
-//					if (length > 0) targetUsbFile.setLength(length); // causes problem
 					outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
 					bufferedCopy(inputStream, outputStream, false, bytes_read);
 					FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
@@ -489,8 +540,6 @@ public final class FileUtil
 		}
 		catch (Exception e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally
@@ -536,7 +585,7 @@ public final class FileUtil
 
 
 
-	@SuppressWarnings("null")
+	@SuppressWarnings({"null", "IOStreamConstructor"})
 	public static boolean copy_SAFFile_SAFFile(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, String target_file_path, String name, Uri tree_uri, String tree_uri_path, long[] bytes_read)
 	{
 		InputStream inStream = null;
@@ -573,8 +622,6 @@ public final class FileUtil
 
 		}
 		catch (Exception e) {
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally 
@@ -631,8 +678,6 @@ public final class FileUtil
 		}
 		catch (Exception e) 
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally 
@@ -673,8 +718,6 @@ public final class FileUtil
 		}
 		catch (Exception e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally
@@ -723,8 +766,6 @@ public final class FileUtil
 		}
 		catch(IOException e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 
@@ -789,8 +830,6 @@ public final class FileUtil
 		}
 		catch(IOException e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 
@@ -846,8 +885,6 @@ public final class FileUtil
 		}
 		catch (Exception e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally
@@ -878,8 +915,6 @@ public final class FileUtil
 				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
 				if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
 				targetUsbFile = parentUsbFile.createFile(name);
-//					long length=source.length();
-//					if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
 				outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
 				bufferedCopy(inStream,outStream,false,bytes_read);
 			}
@@ -890,8 +925,6 @@ public final class FileUtil
 		}
 		catch (Exception e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally
@@ -928,8 +961,6 @@ public final class FileUtil
 
 				return true;
 			} catch (Exception e) {
-				//Timber.e(Application.TAG,
-				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
 
@@ -951,8 +982,6 @@ public final class FileUtil
 				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 				return true;
 			} catch (Exception e) {
-				//Timber.e(Application.TAG,
-				//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 				return false;
 			}
 			// ignore exception
@@ -983,8 +1012,6 @@ public final class FileUtil
 		}
 		catch (Exception e)
 		{
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally
@@ -1043,66 +1070,6 @@ public final class FileUtil
 			}
 		}
 		return false;
-	}
-
-//		public static FTPFile getFTPFile(String file_path)
-//		{
-//			synchronized (GET_FTP_LOCK)
-//			{
-//				if(Global.CHECK_FTP_SERVER_CONNECTED())
-//				{
-//					FTPFile ftpFile = null;
-//					File file=new File(file_path);
-//					try {
-//						//FtpDetailsViewModel.CONNECT();
-//						MainActivity.FTP_CLIENT.changeWorkingDirectory(file_path);
-//						FTPFile[] ftpFiles=MainActivity.FTP_CLIENT.listFiles();
-//						MainActivity.FTP_CLIENT.changeWorkingDirectory(FtpDetailsViewModel.FTP_WORKING_DIR_PATH);
-//						if(ftpFiles!=null && ftpFiles.length==1)
-//						{
-//							return ftpFiles[0];
-//						}
-//
-//					} catch (IOException e) {
-//						Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-//						return null;
-//					}
-//
-//
-//				}
-//				return null;
-//			}
-//
-//		}
-	public static FTPFile getFTPFile(String file_path)
-	{
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			FTPFile ftpFile;
-			File file=new File(file_path);
-			String parent_path=file.getParent();
-			String name=file.getName();
-			try {
-
-				FTPFile[] ftpFiles_array=FtpClientRepository.getInstance().ftpClientMain.listFiles(parent_path);
-				int size= ftpFiles_array.length;
-				for(int i=0;i<size;++i)
-				{
-					ftpFile=ftpFiles_array[i];
-					if(ftpFile.getName().equals(name))
-					{
-						return ftpFile;
-					}
-				}
-
-			} catch (Exception e) {
-				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-				return null;
-			}
-
-
-		}
-		return null;
 	}
 
 	public static FTPFile getFTPFileFromOtherFTPClient(FTPClient ftpClient,String file_path)
@@ -1201,7 +1168,6 @@ public final class FileUtil
 		}
 	}
 
-
 	@SuppressWarnings("null")
 	public static FileOutputStream get_file_outputstream(Context context, @NonNull final String target_file_path, Uri tree_uri, String tree_uri_path)
 	{
@@ -1220,8 +1186,6 @@ public final class FileUtil
 
 		}
 		catch (Exception e) {
-			//Timber.e(Application.TAG,
-			//  "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -1294,6 +1258,26 @@ public final class FileUtil
 		return false;
 	}
 
+	public static boolean deleteFileModel(final FileModel fileModel)
+	{
+		boolean success;
+		if (fileModel.isDirectory())            //Check if folder file is a real folder
+		{
+			FileModel[] list = fileModel.list(); //Storing all file name within array
+			if(list!=null)
+			{
+				int size=list.length;
+				for (int i = 0; i < size; ++i)
+				{
+					FileModel tmpF = list[i];
+					success=deleteFileModel(tmpF);
+
+				}
+			}
+		}
+		success=fileModel.delete();
+		return success;
+	}
 	public static boolean deleteNativeDirectory(final File folder)
 	{
 		boolean success=true;
@@ -1320,7 +1304,7 @@ public final class FileUtil
 
 	public static boolean deleteSAFDirectory(Context context,final String file_path, Uri tree_uri, String tree_uri_path)
 	{
-		boolean success=true;
+		boolean success;
 		File folder=new File(file_path);
 		if (folder.isDirectory())            //Check if folder file is a real folder
 		{
@@ -1343,7 +1327,7 @@ public final class FileUtil
 	public static boolean deleteUsbDirectory(final UsbFile folder)
 	{
 		if(folder==null)return false;
-		boolean success=true;
+		boolean success;
 
 		if (folder.isDirectory())            //Check if folder file is a real folder
 		{
@@ -1359,7 +1343,6 @@ public final class FileUtil
 				{
 					UsbFile tmpF = list[i];
 					success=deleteUsbDirectory(tmpF);
-
 				}
 			}
 
@@ -1387,7 +1370,6 @@ public final class FileUtil
 						success=deleteFtpDirectory(list[i]);
 					}
 				}
-
 			}
 
 			if(FileUtil.isFtpPathDirectory(file_path))
@@ -1405,50 +1387,6 @@ public final class FileUtil
 		return success;
 	}
 
-
-
-/*
-
-	 //This method is not useful because we can directly delete entire directory through deleteSAFFile(@NonNull final File file, Context context,String baseFolder) method without resorting to any recursive method.
-	public static boolean deleteSAFDirectory(final File folder, Context context,String baseFolder) {     
-		boolean success=false;
-
-		if (folder.isDirectoryUri())            //Check if folder file is a real folder
-		{
-			File[] listUri = folder.listFiles(); //Storing all file name within array
-			if (listUri != null)                //Checking listUri value is null or not to check folder containts atlest one file
-			{
-				for (int i = 0; i < listUri.length; ++i)
-				{
-					File tmpF = listUri[i];
-					if (tmpF.isDirectoryUri())   //if folder  found within folder remove that folder using recursive method
-					{
-						success=deleteSAFDirectory(tmpF,context,baseFolder);
-					}
-					else
-					{
-						success=deleteSAFFile(tmpF,context,baseFolder); //else delete filr
-					}
-
-				}
-			}
-
-			if(folder.existsUri())  //delete empty folder
-			{
-				success=deleteSAFFile(folder,context,baseFolder);
-			}
-
-		}
-		else
-		{
-			success=deleteSAFFile(folder,context,baseFolder);
-		}
-		
-		return success;
-	}
-
-	*/
-		
 	/**
 	 * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
 	 *
@@ -1602,50 +1540,6 @@ public final class FileUtil
 					return false;
 				}
 			}
-
-		}
-		return success;
-	}
-	public static boolean mkdirsSAFD(Context context, String target_file_path, @NonNull String name, Uri tree_uri, String tree_uri_path)
-	{
-		boolean success=false;
-
-		target_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-
-		String target_uri_path_copy="";
-		int offset;
-		if(tree_uri_path.equals(File.separator))
-		{
-			offset=1;
-		}
-		else
-		{
-			target_uri_path_copy=tree_uri_path;
-			offset=tree_uri_path.length()+1;
-		}
-
-		String [] file_path_substring=target_file_path.substring(offset).split("/");
-		for (int i=0; i< file_path_substring.length;++i)
-		{
-			if(!FileUtil.existsUri(context,Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]),tree_uri,tree_uri_path))
-			{
-
-				if(target_uri_path_copy.equals(""))
-				{
-					success=mkdirSAF(context,tree_uri_path,file_path_substring[i],tree_uri,tree_uri_path);
-				}
-				else
-				{
-					success=mkdirSAF(context,target_uri_path_copy,file_path_substring[i],tree_uri,tree_uri_path);
-				}
-
-				if(!success)
-				{
-					return false;
-				}
-
-			}
-			target_uri_path_copy=Global.CONCATENATE_PARENT_CHILD_PATH(target_uri_path_copy,file_path_substring[i]);
 
 		}
 		return success;

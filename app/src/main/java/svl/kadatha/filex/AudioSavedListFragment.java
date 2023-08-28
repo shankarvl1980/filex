@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,7 +215,7 @@ public class AudioSavedListFragment extends Fragment
 
 
 
-		int size=audioListViewModel.mselecteditems.size();
+		int size=audioListViewModel.audio_saved_list_selected_items.size();
 		enable_disable_buttons(size != 0);
 		
 		file_number_view.setText(size+"/"+num_all_audio_list);
@@ -267,10 +266,10 @@ public class AudioSavedListFragment extends Fragment
 			int id=p1.getId();
 			if(id==R.id.toolbar_btn_1)
 			{
-				if (audioListViewModel.audio_list_selected_array.size() >= 1) {
+				if (audioListViewModel.audio_saved_list_selected_items.size() >= 1) {
 					{
 						progress_bar.setVisibility(View.VISIBLE);
-						audioListViewModel.fetch_saved_audio_list(audioListViewModel.audio_list_selected_array);
+						audioListViewModel.fetch_saved_audio_list(new ArrayList<>(audioListViewModel.audio_saved_list_selected_items.values()));
 
 					}
 
@@ -279,13 +278,24 @@ public class AudioSavedListFragment extends Fragment
 			}
 			else if(id==R.id.toolbar_btn_2)
 			{
-				if (audioListViewModel.audio_list_selected_array.size() >= 1) {
-					if(audioListViewModel.audio_list_selected_array.contains(AudioPlayerActivity.CURRENT_PLAY_LIST))
+				if (audioListViewModel.audio_saved_list_selected_items.size() >= 1) {
+					if(audioListViewModel.audio_saved_list_selected_items.containsValue(AudioPlayerActivity.CURRENT_PLAY_LIST))
 					{
 						AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();
-						audioListViewModel.audio_list_selected_array.remove(AudioPlayerActivity.CURRENT_PLAY_LIST);
+						int size=audioListViewModel.audio_saved_list_selected_items.size();
+						for(int i=0;i<size;++i)
+						{
+							String list_name=audioListViewModel.audio_saved_list_selected_items.getValueAtIndex(i);
+							Integer key=audioListViewModel.audio_saved_list_selected_items.getKeyAtIndex(i);
+							if(list_name.equals(AudioPlayerActivity.CURRENT_PLAY_LIST))
+							{
+								audioListViewModel.audio_saved_list_selected_items.remove(key);
+								break;
+							}
+						}
+
 					}
-					for(String list_name:audioListViewModel.audio_list_selected_array)
+					for(String list_name:audioListViewModel.audio_saved_list_selected_items.values())
 					{
 						AudioPlayerActivity.AUDIO_SAVED_LIST.remove(list_name);
 						saved_audio_list.remove(list_name);
@@ -299,15 +309,15 @@ public class AudioSavedListFragment extends Fragment
 			}
 			else if(id==R.id.toolbar_btn_3)
 			{
-				if(audioListViewModel.mselecteditems.size()<num_all_audio_list)
+				if(audioListViewModel.audio_saved_list_selected_items.size()<num_all_audio_list)
 				{
-					audioListViewModel.mselecteditems=new SparseBooleanArray();
-					audioListViewModel.audio_list_selected_array=new ArrayList<>();
+					audioListViewModel.audio_saved_list_selected_items =new IndexedLinkedHashMap<>();
+					//audioListViewModel.audio_saved_list_selected_items =new IndexedLinkedHashMap<>();
 
 					for(int i=0;i<num_all_audio_list;++i)
 					{
-						audioListViewModel.mselecteditems.put(i,true);
-						audioListViewModel.audio_list_selected_array.add(saved_audio_list.get(i));
+						audioListViewModel.audio_saved_list_selected_items.put(i,saved_audio_list.get(i));
+						//audioListViewModel.audio_list_selected_array.add();
 					}
 					all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
 					audio_saved_list_adapter.notifyDataSetChanged();
@@ -318,7 +328,7 @@ public class AudioSavedListFragment extends Fragment
 
 				}
 
-				int s=audioListViewModel.mselecteditems.size();
+				int s=audioListViewModel.audio_saved_list_selected_items.size();
 				if (s >= 1) {
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible = true;
@@ -341,11 +351,11 @@ public class AudioSavedListFragment extends Fragment
 
 	public void clear_selection()
 	{
-		audioListViewModel.mselecteditems=new SparseBooleanArray();
-		audioListViewModel.audio_list_selected_array=new ArrayList<>();
+		audioListViewModel.audio_saved_list_selected_items =new IndexedLinkedHashMap<>();
+		//audioListViewModel.audio_list_selected_array=new ArrayList<>();
 		if(audio_saved_list_adapter!=null)audio_saved_list_adapter.notifyDataSetChanged();
 		enable_disable_buttons(false);
-		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio_list);
+		file_number_view.setText(audioListViewModel.audio_saved_list_selected_items.size()+"/"+num_all_audio_list);
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 	}
 	
@@ -374,7 +384,7 @@ public class AudioSavedListFragment extends Fragment
 						public void onClick(View p)
 						{
 							pos=getBindingAdapterPosition();
-							int size=audioListViewModel.mselecteditems.size();
+							int size=audioListViewModel.audio_saved_list_selected_items.size();
 							if(size>0)
 							{
 
@@ -394,7 +404,7 @@ public class AudioSavedListFragment extends Fragment
 					{
 						public boolean onLongClick(View p)
 						{
-							onLongClickProcedure(p,audioListViewModel.mselecteditems.size());
+							onLongClickProcedure(p,audioListViewModel.audio_saved_list_selected_items.size());
 							return true;
 
 						}
@@ -405,12 +415,12 @@ public class AudioSavedListFragment extends Fragment
 			private void onLongClickProcedure(View v, int size)
 			{
 				pos=getBindingAdapterPosition();
-				if(audioListViewModel.mselecteditems.get(pos,false))
+				if(audioListViewModel.audio_saved_list_selected_items.containsKey(pos))
 				{
 					v.setSelected(false);
 					select_indicator.setVisibility(View.INVISIBLE);
-					audioListViewModel.audio_list_selected_array.remove(saved_audio_list.get(pos));
-					audioListViewModel.mselecteditems.delete(pos);
+					//audioListViewModel.audio_list_selected_array.remove(saved_audio_list.get(pos));
+					audioListViewModel.audio_saved_list_selected_items.remove(pos);
 					--size;
 					if(size>=1)
 					{
@@ -430,8 +440,8 @@ public class AudioSavedListFragment extends Fragment
 				{
 					v.setSelected(true);
 					select_indicator.setVisibility(View.VISIBLE);
-					audioListViewModel.audio_list_selected_array.add(saved_audio_list.get(pos));
-					audioListViewModel.mselecteditems.put(pos,true);
+					//audioListViewModel.audio_list_selected_array.add(saved_audio_list.get(pos));
+					audioListViewModel.audio_saved_list_selected_items.put(pos,saved_audio_list.get(pos));
 
 					bottom_toolbar.setVisibility(View.VISIBLE);
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -483,7 +493,7 @@ public class AudioSavedListFragment extends Fragment
 			
 			p1.textView.setTextSize(first_line_font_size);
 			p1.textView.setText(saved_audio_list.get(p2));
-			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
+			boolean item_selected=audioListViewModel.audio_saved_list_selected_items.containsKey(p2);
 			p1.view.setSelected(item_selected);
 			p1.select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
 

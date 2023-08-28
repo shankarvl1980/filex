@@ -456,6 +456,7 @@
     <string name="not_supported">not supported</string>
     <string name="update_ftp_server">Update FTP Server</string>
     <string name="set">Set</string>
+    <string name="error_setting_up_device">error setting up device</string>
 
 
 </resources>

@@ -275,17 +275,17 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserFragment.viewModel.mselecteditemsFilePath.size()==0)
+                if(storageAnalyserFragment.viewModel.mselecteditems.size()==0)
                 {
                     Global.print(context,getString(R.string.could_not_perform_action));
                     DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
                     return;
                 }
                 final ArrayList<String> files_selected_array=new ArrayList<>();
-                int size = storageAnalyserFragment.viewModel.mselecteditemsFilePath.size();
+                int size = storageAnalyserFragment.viewModel.mselecteditems.size();
                 for (int i = 0; i < size; ++i) {
-                    int key = storageAnalyserFragment.viewModel.mselecteditemsFilePath.keyAt(i);
-                    files_selected_array.add(storageAnalyserFragment.viewModel.mselecteditemsFilePath.get(key));
+                    //int key = storageAnalyserFragment.viewModel.mselecteditemsFilePath.keyAt(i);
+                    files_selected_array.add(storageAnalyserFragment.viewModel.mselecteditems.getValueAtIndex(i));
                 }
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, storageAnalyserFragment.fileObjectType, storageAnalyserFragment.fileclickselected,true);

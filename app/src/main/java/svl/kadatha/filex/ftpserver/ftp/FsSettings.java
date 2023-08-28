@@ -73,36 +73,6 @@ public class FsSettings {
         return FtpServerViewModel.FTP_USER;
     }
 
-//    public static void addUser(FtpUser user) {
-//        if (getUser(user.getUsername()) != null) {
-//            throw new IllegalArgumentException("User already exists");
-//        }
-//        SharedPreferences sp = getSharedPreferences();
-//        Gson gson = new Gson();
-//        List<FtpUser> userList = getUsers();
-//        userList.add(user);
-//        sp.edit().putString("users", gson.toJson(userList)).apply();
-//    }
-
-//    public static void removeUser(String username) {
-//        SharedPreferences sp = getSharedPreferences();
-//        Gson gson = new Gson();
-//        List<FtpUser> users = getUsers();
-//        ArrayList<FtpUser> found = new ArrayList<>();
-//        for (FtpUser user : users) {
-//            if (user.getUsername().equals(username)) {
-//                found.add(user);
-//            }
-//        }
-//        users.removeAll(found);
-//        sp.edit().putString("users", gson.toJson(users)).apply();
-//    }
-
-//    public static void modifyUser(String username, FtpUser newUser) {
-//        removeUser(username);
-//        addUser(newUser);
-//    }
-
     public static boolean allowAnonymous() {
         return FtpServerViewModel.ALLOW_ANONYMOUS;
     }
@@ -127,58 +97,10 @@ public class FsSettings {
     public static int getPortNumber() {
         return FtpServerViewModel.PORT;
 
-//        final SharedPreferences sp = getSharedPreferences();
-//        // TODO: port is always an number, so store this accordingly
-//        String portString = sp.getString("portNum", App.getAppContext().getString(R.string.portnumber_default));
-//        if (portString == null) {
-//            portString = App.getAppContext().getString(R.string.portnumber_default);
-//        }
-//        int port = Integer.valueOf(portString);
-//        Timber.tag(TAG).v( "Using port: " + port);
-//        return port;
     }
 
-//    public static boolean shouldTakeFullWakeLock() {
-//        final SharedPreferences sp = getSharedPreferences();
-//        return sp.getBoolean("stayAwake", true);
-//    }
-
-//    public static int getTheme() {
-//        SharedPreferences sp = getSharedPreferences();
-//        String theme = sp.getString("theme", "0");
-//        if (theme == null) {
-//            return R.style.AppThemeDark;
-//        }
-//
-//        switch (theme) {
-//            case "0":
-//                return R.style.AppThemeDark;
-//            case "1":
-//                return R.style.AppThemeLight;
-//            case "2":
-//                return R.style.AppThemeLight_DarkActionBar;
-//            default:
-//                return R.style.AppThemeDark;
-//        }
-//
-//    }
-
-//    public static boolean showNotificationIcon() {
-//        SharedPreferences sp = getSharedPreferences();
-//        return sp.getBoolean("show_notification_icon_preference", true);
-//    }
-
-    /**
+/**
      * @return the SharedPreferences for this application
      */
-//    private static SharedPreferences getSharedPreferences() {
-//        final Context context = App.getAppContext();
-//        return PreferenceManager.getDefaultSharedPreferences(context);
-//    }
-
-//    public static String getExternalStorageUri() {
-//        final SharedPreferences sp = getSharedPreferences();
-//        return sp.getString("externalStorageUri", null);
-//    }
 
 }

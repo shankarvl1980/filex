@@ -228,12 +228,6 @@ public class AppSelectorDialog extends DialogFragment
                             AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
                             appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
-                            if(remember_app_check_box.isChecked())
-                            {
-                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name,app_component_name);
-                            }
-                            defaultAppDatabaseHelper.close();
-                            dismissAllowingStateLoss();
                         }
                         else
                         {
@@ -271,13 +265,14 @@ public class AppSelectorDialog extends DialogFragment
                             }
 
 
-                            if(remember_app_check_box.isChecked())
-                            {
-                                defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name,app_component_name);
-                            }
-                            defaultAppDatabaseHelper.close();
-                            dismissAllowingStateLoss();
                         }
+
+                        if(remember_app_check_box.isChecked())
+                        {
+                            defaultAppDatabaseHelper.insert_row(mime_type,file_type,app_name,app_package_name,app_component_name);
+                        }
+                        defaultAppDatabaseHelper.close();
+                        dismissAllowingStateLoss();
 
                     }
                 });

@@ -48,31 +48,23 @@ public class IndexedLinkedHashMap<K,V> extends LinkedHashMap<K,V> {
 		return super.replace(key, value);
 	}
 */
-	
-	
+	@Override
+	public V remove(Object key){
+		return removeKey((K) key);
+	}
+
 
 	public V removeKey(K key)
 	{
 		// TODO: Implement this method
-		if(al_Index.remove(key))
-		return super.remove(key);
+		//Timber.tag(Global.TAG).d("removed-"+removed);
+		if(al_Index.remove(key)){
+			return super.remove(key);
+		}
+
 		return null;
 	}
 
-/*
-	public boolean remove(K key, V value)
-	{
-		// TODO: Implement this method
-		if(super.remove(key, value))
-		return al_Index.remove(key);
-		return false;
-	}
-	*/
-	public V removeKeyAtIndex(int i) 
-	{
-        return remove(al_Index.get(i));
-    }
-	
 	public boolean removeIndex(K key)
 	{
 		return al_Index.remove(key);

@@ -3,7 +3,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -203,12 +202,12 @@ public class AllAudioListFragment extends Fragment
 					}
 
 					FULLY_POPULATED=true;
-					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
+					file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size()+"/"+num_all_audio);
 				}
 			}
 		});
 
-		int size=audioListViewModel.mselecteditems.size();
+		int size=audioListViewModel.audio_pojo_selected_items.size();
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_audio);
 
@@ -378,10 +377,10 @@ public class AllAudioListFragment extends Fragment
 
 			}  else if (id == R.id.toolbar_btn_2) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (audioListViewModel.audio_selected_array.size() < 1) {
+				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
-				AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_selected_array;
+				AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>(audioListViewModel.audio_pojo_selected_items.values());
 				Iterator<AudioPOJO> iterator=AudioPlayerService.AUDIO_QUEUED_ARRAY.iterator();
 				while(iterator.hasNext())
 				{
@@ -407,7 +406,7 @@ public class AllAudioListFragment extends Fragment
 				((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 			} else if (id == R.id.toolbar_btn_3) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (audioListViewModel.audio_selected_array.size() < 1) {
+				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
 
@@ -416,7 +415,7 @@ public class AllAudioListFragment extends Fragment
 
 			} else if (id == R.id.toolbar_btn_4) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (audioListViewModel.audio_selected_array.size() < 1) {
+				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
@@ -427,13 +426,13 @@ public class AllAudioListFragment extends Fragment
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
 				int size = audio_list.size();
 
-				if (audioListViewModel.mselecteditems.size() < size) {
-					audioListViewModel.mselecteditems = new SparseBooleanArray();
-					audioListViewModel.audio_selected_array = new ArrayList<>();
+				if (audioListViewModel.audio_pojo_selected_items.size() < size) {
+					audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
+					//audioListViewModel.audio_selected_array = new ArrayList<>();
 
 					for (int i = 0; i < size; ++i) {
-						audioListViewModel.mselecteditems.put(i, true);
-						audioListViewModel.audio_selected_array.add(audio_list.get(i));
+						audioListViewModel.audio_pojo_selected_items.put(i, audio_list.get(i));
+						//audioListViewModel.audio_selected_array.add(audio_list.get(i));
 					}
 					all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
 					audioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -441,7 +440,7 @@ public class AllAudioListFragment extends Fragment
 					clear_selection();
 				}
 
-				int s=audioListViewModel.mselecteditems.size();
+				int s=audioListViewModel.audio_pojo_selected_items.size();
 				if (s >= 1) {
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible = true;
@@ -463,8 +462,8 @@ public class AllAudioListFragment extends Fragment
 			num_all_audio=total_audio_list.size();
 		}
 
-		audioListViewModel.audio_selected_array=new ArrayList<>();
-		audioListViewModel.mselecteditems=new SparseBooleanArray();
+		//audioListViewModel.audio_selected_array=new ArrayList<>();
+		audioListViewModel.audio_pojo_selected_items =new IndexedLinkedHashMap<>();
 		if (audioListRecyclerViewAdapter!=null) audioListRecyclerViewAdapter.notifyDataSetChanged();
 		enable_disable_buttons(false);
 		if(num_all_audio<=0)
@@ -472,7 +471,7 @@ public class AllAudioListFragment extends Fragment
 			recyclerview.setVisibility(View.GONE);
 			empty_tv.setVisibility(View.VISIBLE);
 		}
-		file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+num_all_audio);
+		file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size()+"/"+num_all_audio);
 		all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
 	}
 
@@ -484,17 +483,17 @@ public class AllAudioListFragment extends Fragment
 		{
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
-			if (audioListViewModel.audio_selected_array.size() < 1) {
+			if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 				return;
 			}
 			switch(p3)
 			{
 				case 0:
 					audioListViewModel.audios_selected_for_delete = new ArrayList<>();
-					int size=audioListViewModel.audio_selected_array.size();
+					int size=audioListViewModel.audio_pojo_selected_items.size();
 					for(int i=0;i<size;++i)
 					{
-						AudioPOJO audio=audioListViewModel.audio_selected_array.get(i);
+						AudioPOJO audio=audioListViewModel.audio_pojo_selected_items.getValueAtIndex(i);
 						files_selected_array.add(audio.getData());
 						audioListViewModel.audios_selected_for_delete.add(audio);
 
@@ -504,7 +503,7 @@ public class AllAudioListFragment extends Fragment
 					break;
 				case 1:
 					ArrayList<File> file_list=new ArrayList<>();
-					for(AudioPOJO audio:audioListViewModel.audio_selected_array)
+					for(AudioPOJO audio:audioListViewModel.audio_pojo_selected_items.values())
 					{
 						file_list.add(new File(audio.getData()));
 					}
@@ -513,7 +512,7 @@ public class AllAudioListFragment extends Fragment
 					break;
 					
 				case 2:
-					for(AudioPOJO audio:audioListViewModel.audio_selected_array)
+					for(AudioPOJO audio:audioListViewModel.audio_pojo_selected_items.values())
 					{
 						files_selected_array.add(audio.getData());
 					}
@@ -550,7 +549,7 @@ public class AllAudioListFragment extends Fragment
 			public void onClick(View p1)
 			{
 				pos=getBindingAdapterPosition();
-				int size=audioListViewModel.mselecteditems.size();
+				int size=audioListViewModel.audio_pojo_selected_items.size();
 				if(size>0)
 				{
 					onLongClickProcedure(p1,size);
@@ -580,19 +579,19 @@ public class AllAudioListFragment extends Fragment
 			@Override
 			public boolean onLongClick(View p1)
 			{
-				onLongClickProcedure(p1,audioListViewModel.mselecteditems.size());
+				onLongClickProcedure(p1,audioListViewModel.audio_pojo_selected_items.size());
 				return true;
 			}
 
 			private void onLongClickProcedure(View v, int size)
 			{
 				pos=getBindingAdapterPosition();
-				if(audioListViewModel.mselecteditems.get(pos,false))
+				if(audioListViewModel.audio_pojo_selected_items.containsKey(pos))
 				{
-					audioListViewModel.mselecteditems.delete(pos);
+					audioListViewModel.audio_pojo_selected_items.remove(pos);
 					v.setSelected(false);
 					((AudioListRecyclerViewItem)v).set_selected(false);
-					audioListViewModel.audio_selected_array.remove(audio_list.get(pos));
+					//audioListViewModel.audio_selected_array.remove(audio_list.get(pos));
 					--size;
 					if(size>=1)
 					{
@@ -611,10 +610,10 @@ public class AllAudioListFragment extends Fragment
 				}
 				else
 				{
-					audioListViewModel.mselecteditems.put(pos,true);
+					audioListViewModel.audio_pojo_selected_items.put(pos,audio_list.get(pos));
 					v.setSelected(true);
 					((AudioListRecyclerViewItem)v).set_selected(true);
-					audioListViewModel.audio_selected_array.add(audio_list.get(pos));
+					//audioListViewModel.audio_selected_array.add(audio_list.get(pos));
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=true;
 					scroll_distance=0;
@@ -650,7 +649,7 @@ public class AllAudioListFragment extends Fragment
 			if(duration_string!=null) duration=Long.parseLong(duration_string);
 			String duration_str=getString(R.string.duration)+" "+ (String.format("%d:%02d",duration/1000/60,duration/1000%60));
 			String artist=getString(R.string.artists_colon)+" "+audio.getArtist();
-			boolean item_selected=audioListViewModel.mselecteditems.get(p2,false);
+			boolean item_selected=audioListViewModel.audio_pojo_selected_items.containsKey(p2);
 			p1.view.setData(album_id,title,album,duration_str,artist,item_selected);
 			p1.view.setSelected(item_selected);
 		}
@@ -691,7 +690,7 @@ public class AllAudioListFragment extends Fragment
 					}
 
 					int t=audio_list.size();
-					if(audioListViewModel.mselecteditems.size()>0)
+					if(audioListViewModel.audio_pojo_selected_items.size()>0)
 					{
 						clear_selection();
 					}
@@ -699,7 +698,7 @@ public class AllAudioListFragment extends Fragment
 					{
 						notifyDataSetChanged();
 					}
-					file_number_view.setText(audioListViewModel.mselecteditems.size()+"/"+t);
+					file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size()+"/"+t);
 				}
 			};
 		}

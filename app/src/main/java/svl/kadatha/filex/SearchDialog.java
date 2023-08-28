@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +38,8 @@ public class SearchDialog extends DialogFragment
 {
 	private EditText search_file_name_edit_text, lower_bound_edit_text,upper_bound_edit_text;
 	private CheckBox wholeword_checkbox,casesensitive_checkbox,regex_checkbox;
-    private final SparseBooleanArray dir_selected_booleanarray=new SparseBooleanArray();
-	private final Set<FilePOJO> selected_search_dir_list= new HashSet<>();
+    private final IndexedLinkedHashMap<Integer,FilePOJO> dir_selected_items=new IndexedLinkedHashMap<>();
+	//private final Set<FilePOJO> selected_search_dir_list= new HashSet<>();
     private Context context;
 	private final List<FilePOJO> storage_list=new ArrayList<>();
 	private InputMethodManager imm;
@@ -259,7 +258,7 @@ public class SearchDialog extends DialogFragment
 					}
 
 				}
-				if(selected_search_dir_list.size()==0)
+				if(dir_selected_items.size()==0)
 				{
 					Global.print(context,getString(R.string.select_directories_to_search_in));
 					return;
@@ -267,7 +266,7 @@ public class SearchDialog extends DialogFragment
 				else
 				{
 					search_in_dir=new HashSet<>();
-					search_in_dir.addAll(selected_search_dir_list);
+					search_in_dir.addAll(dir_selected_items.values());
 				}
 				search_whole_word=wholeword_checkbox.isChecked();
 				search_case_sensitive=casesensitive_checkbox.isChecked();
@@ -357,13 +356,13 @@ public class SearchDialog extends DialogFragment
 						pos=getBindingAdapterPosition();
 						if(p2)
 						{
-							dir_selected_booleanarray.put(pos,p2);
-							selected_search_dir_list.add(storage_list.get(pos));
+							dir_selected_items.put(pos,storage_list.get(pos));
+							//selected_search_dir_list.add(storage_list.get(pos));
 						}
 						else
 						{
-							dir_selected_booleanarray.delete(pos);
-							selected_search_dir_list.remove(storage_list.get(pos));
+							dir_selected_items.remove(pos);
+							//selected_search_dir_list.remove(storage_list.get(pos));
 						}
 					}
 
@@ -389,7 +388,7 @@ public class SearchDialog extends DialogFragment
 			{
 				p1.iv.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
 				p1.tv.setText(storage_list.get(p2).getName());
-				if(dir_selected_booleanarray.size()==0)
+				if(dir_selected_items.size()==0)
 				{
 					p1.cb.setChecked(true);
 				}
@@ -401,7 +400,7 @@ public class SearchDialog extends DialogFragment
 
 			}
 		
-			p1.cb.setChecked(dir_selected_booleanarray.get(p2,false));
+			p1.cb.setChecked(dir_selected_items.containsKey(p2));
 			
 		}
 		

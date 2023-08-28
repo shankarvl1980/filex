@@ -26,7 +26,7 @@ public class AudioDatabaseHelper
 	{
 		try
 		{
-			db.execSQL("CREATE TABLE IF NOT EXISTS "+table+" (id INTEGER PRIMARY KEY, data TEXT, title TEXT,album_id TEXT, album TEXT,artist TEXT,duration TEXT)");
+			db.execSQL("CREATE TABLE IF NOT EXISTS "+table+" (id INTEGER, data TEXT, title TEXT,album_id TEXT, album TEXT,artist TEXT,duration TEXT)");
 		}
 		catch(SQLiteException e)
 		{
@@ -46,8 +46,12 @@ public class AudioDatabaseHelper
 		contentValues.put("album",audio.getAlbum());
 		contentValues.put("artist",audio.getArtist());
 		contentValues.put("duration",audio.getDuration());
-		
-		return db.insert(table,null,contentValues);
+
+		try{
+			return db.insert(table,null,contentValues);
+		}
+		catch (SQLiteException e){}
+		return 0;
 	}
 	
 
@@ -58,32 +62,25 @@ public class AudioDatabaseHelper
 		for(int i=0;i<size;++i)
 		{
 			AudioPOJO audio=audio_list.get(i);
-			ContentValues contentValues=new ContentValues();
-			contentValues.put("id",audio.getId());
-			contentValues.put("data",audio.getData());
-			contentValues.put("title",audio.getTitle());
-			contentValues.put("album_id",audio.getAlbumId());
-			contentValues.put("album",audio.getAlbum());
-			contentValues.put("artist",audio.getArtist());
-			contentValues.put("duration",audio.getDuration());
-			db.insert(table,null,contentValues);
+			insert(table,audio);
 		}
 		
 	}
 	
-	public int delete(String table,int id)
+	public int delete_by_audio_id(String table,int id)
 	{
 		return db.delete(table,"id=?",new String [] {Integer.toString(id)});
 	}
 	
-	public void delete(String table,List<AudioPOJO> audio_list)
+	public void delete_by_rowid(String table,List<Long> audio_rowid_list)
 	{
 		
-		int size=audio_list.size();
+		//int size=audio_list.size();
+		int size=audio_rowid_list.size();
 		for(int i=0;i<size;++i)
 		{
-			AudioPOJO audio=audio_list.get(i);
-			db.delete(table,"id=?",new String [] {Integer.toString(audio.getId())});
+			long rowID= audio_rowid_list.get(i);
+			db.delete(table,"rowid=?",new String []{String.valueOf(rowID)});
 		}
 	}
 	
@@ -95,7 +92,11 @@ public class AudioDatabaseHelper
 	
 	public void deleteTable(String table)
 	{
-		db.execSQL("DROP TABLE IF EXISTS "+table);
+		try{
+			db.execSQL("DROP TABLE IF EXISTS "+table);
+		}
+		catch (SQLiteException e){}
+
 	
 	}
 	
@@ -123,17 +124,18 @@ public class AudioDatabaseHelper
 		return l;
 	}
 	
-	public ArrayList<AudioPOJO> getAudioList(String table)
+	public IndexedLinkedHashMap<Long,AudioPOJO> getAudioList(String table)
 	{
-		ArrayList<AudioPOJO> audio_list=new ArrayList<>();
+		IndexedLinkedHashMap<Long,AudioPOJO> audio_list=new IndexedLinkedHashMap<>();
 		try
 		{
-			Cursor c=db.rawQuery("SELECT * FROM "+table,null);
+			Cursor c=db.rawQuery("SELECT  *,rowid FROM "+table ,null);
 			if(c.moveToFirst())
 			{
 				while(!c.isAfterLast())
 				{
 
+					long rowid=c.getLong(c.getColumnIndexOrThrow("rowid"));
 					int id=c.getInt(0);
 					String data=c.getString(1);
 					String title=c.getString(2);
@@ -144,7 +146,7 @@ public class AudioDatabaseHelper
 
 
 					AudioPOJO audio=new AudioPOJO(id, data, title,album_id, album, artist, duration,FileObjectType.FILE_TYPE);
-					audio_list.add(audio);
+					audio_list.put(rowid,audio);
 					c.moveToNext();
 
 				}

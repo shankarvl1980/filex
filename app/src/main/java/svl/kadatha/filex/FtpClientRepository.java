@@ -78,11 +78,9 @@ public class FtpClientRepository {
             ftpClientForCheckDirectory.disconnect();
             ftpClientForAddPojo.disconnect();
             ftpClientForNoop.disconnect();
-//            FtpClientNoopHandlerThread ftpClientNoopHandlerThread=FtpClientNoopHandlerThread.getInstance();
-//            ftpClientNoopHandlerThread.handler.obtainMessage(FtpClientNoopHandlerThread.STOP).sendToTarget();
 
         } catch (Exception e) {
-
+                //e.getMessage();
         }
     }
 
@@ -102,7 +100,7 @@ public class FtpClientRepository {
              * @since 3.0
              * @see #setControlKeepAliveReplyTimeout(int)
              */
-            ftpClient.setControlKeepAliveTimeout(1200);//Send An Keep Alive Message every second
+            ftpClient.setControlKeepAliveTimeout(10);//(1200);
 
 
             /**
@@ -113,7 +111,7 @@ public class FtpClientRepository {
              * @since 3.0
              * @see #setControlKeepAliveTimeout(long)
              */
-            ftpClient.setControlKeepAliveReplyTimeout(20000);
+            ftpClient.setControlKeepAliveReplyTimeout(500);//(20000);
 
             boolean loggedInStatus = ftpClient.login(ftpPOJO.user_name,ftpPOJO.password);
             if (loggedInStatus) {
@@ -137,10 +135,6 @@ public class FtpClientRepository {
         connect_ftp_client(ftpClientForCheckDirectory,ftpPOJO);
         connect_ftp_client(ftpClientForAddPojo,ftpPOJO);
         connect_ftp_client(ftpClientForNoop,ftpPOJO);
-
-//        FtpClientNoopHandlerThread ftpClientNoopHandlerThread=FtpClientNoopHandlerThread.getInstance();
-//        ftpClientNoopHandlerThread.start();
-//        ftpClientNoopHandlerThread.handler.obtainMessage(FtpClientNoopHandlerThread.START).sendToTarget();
 
         return loggedInStatus;
     }

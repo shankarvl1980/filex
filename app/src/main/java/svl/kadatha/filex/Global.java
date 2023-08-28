@@ -118,11 +118,12 @@ public class Global
 
 	static int GRID_COUNT_SMALL,GRID_COUNT_MEDIUM,GRID_COUNT_LARGE,GRID_COUNT;
 	static int BUTTON_HEIGHT;
-	static int ONE_DP;
+	static float ONE_DP;
+	//static float ONE_SP;
 	static int TWO_DP;
 	static int THIRTY_SIX_DP;
 	static int SELECTOR_ICON_DIMENSION;
-	static int ONE_SP;
+
 	static int FOUR_DP;
 	static int FIVE_DP;
 	static int SIX_DP;
@@ -301,7 +302,7 @@ public class Global
 		while(iterator.hasNext())
 		{
 			UriPOJO uriPOJO=iterator.next();
-			if(uriPOJO.get_authority().equals(uri_authority) && Global.IS_CHILD_FILE(uriPOJO.get_path(),uri_path) && uriPOJO.get_path().length()>uri_path.length())
+			if(uriPOJO.get_authority().equals(uri_authority) && IS_CHILD_FILE(uriPOJO.get_path(),uri_path) && uriPOJO.get_path().length()>uri_path.length())
 			{
 				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 try
@@ -333,7 +334,7 @@ public class Global
 			{
 				if(uriPOJO.get_authority().equals(uri_authority))
 				{
-					if(Global.IS_CHILD_FILE(uri_path,uriPOJO.get_path()))
+					if(IS_CHILD_FILE(uri_path,uriPOJO.get_path()))
 					{
 						parent_uri_exists=true;
 						break;
@@ -364,7 +365,7 @@ public class Global
 		{
 			if(fileObjectType==FileObjectType.USB_TYPE && uriPOJO.get_authority().equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
 			{
-				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
+				if(IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
 				}
@@ -372,7 +373,7 @@ public class Global
 			else if(fileObjectType==FileObjectType.FILE_TYPE &&  uriPOJO.get_authority().equals("com.android.externalstorage.documents"))
 			{
 				if(uriPOJO.get_path().equals(File.separator)) return null;
-				if(Global.IS_CHILD_FILE(file_path,uriPOJO.get_path()))
+				if(IS_CHILD_FILE(file_path,uriPOJO.get_path()))
 				{
 					return uriPOJO;
 				}
@@ -412,44 +413,45 @@ public class Global
 		if(IMAGEVIEW_DIMENSION_SMALL_LIST==0)
 		{
 			DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
-			ONE_SP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
+			//ONE_SP=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
+			ONE_DP=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,1,displayMetrics);
 
-			FOUR_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
-			FIVE_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,displayMetrics);
-			SIX_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,displayMetrics);
-			EIGHT_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,displayMetrics);
-			TEN_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,displayMetrics);
-			TWELVE_DP=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,12,displayMetrics);
+			TWO_DP= (int) (ONE_DP*2);
+			FOUR_DP= (int) (ONE_DP*4);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
+			FIVE_DP= (int) (ONE_DP*5);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,displayMetrics);
+			SIX_DP= (int) (ONE_DP*6);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,displayMetrics);
+			EIGHT_DP= (int) (ONE_DP*8);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,displayMetrics);
+			TEN_DP= (int) (ONE_DP*10);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,displayMetrics);
+			TWELVE_DP= (int) (ONE_DP*12);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,12,displayMetrics);
+			FOURTEEN_DP= (int) (ONE_DP*14);//TEN_DP+FOUR_DP;
+			THIRTY_SIX_DP= (int) (ONE_DP*36);
+
 
 			int list_s=FIVE_DP;
 			int list_g=IS_TABLET ? TWELVE_DP : TEN_DP;
 
 
-			ONE_DP=FOUR_DP/4;
-			TWO_DP=FOUR_DP/2;
 
-			THIRTY_SIX_DP=FOUR_DP*9;
-			FOURTEEN_DP=TEN_DP+FOUR_DP;
 			SELECTOR_ICON_DIMENSION=TEN_DP+TEN_DP+SIX_DP;
 			RECYCLERVIEW_ITEM_SPACING=IS_TABLET ? TEN_DP : SIX_DP;
 			LIST_POPUP_WINDOW_DROP_DOWN_OFFSET=IS_TABLET ? TEN_DP : SIX_DP;
 
 
-			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
-			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
-			IMAGEVIEW_DIMENSION_LARGE_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
+			IMAGEVIEW_DIMENSION_SMALL_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL+FOUR_DP;
+			IMAGEVIEW_DIMENSION_MEDIUM_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM+FOUR_DP;
+			IMAGEVIEW_DIMENSION_LARGE_LIST=list_s*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE+FOUR_DP;
 
 			IMAGEVIEW_DIMENSION_SMALL_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
 			IMAGEVIEW_DIMENSION_MEDIUM_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
 			IMAGEVIEW_DIMENSION_LARGE_GRID=list_g*IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
 
-			BUTTON_HEIGHT=FOUR_DP*12;
+			BUTTON_HEIGHT= (int) (ONE_DP*48);
 
 			DIVIDERITEMDECORATION=new DividerItemDecoration(context,DividerItemDecoration.VERTICAL);
 		}
-		GRID_COUNT_SMALL=WIDTH/(IMAGEVIEW_DIMENSION_SMALL_GRID+RECYCLERVIEW_ITEM_SPACING);
-		GRID_COUNT_MEDIUM=WIDTH/(IMAGEVIEW_DIMENSION_MEDIUM_GRID+RECYCLERVIEW_ITEM_SPACING);
-		GRID_COUNT_LARGE=WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+RECYCLERVIEW_ITEM_SPACING);
+		GRID_COUNT_SMALL=  WIDTH/(IMAGEVIEW_DIMENSION_SMALL_GRID+RECYCLERVIEW_ITEM_SPACING);
+		GRID_COUNT_MEDIUM=  WIDTH/(IMAGEVIEW_DIMENSION_MEDIUM_GRID+RECYCLERVIEW_ITEM_SPACING);
+		GRID_COUNT_LARGE=  WIDTH/(IMAGEVIEW_DIMENSION_LARGE_GRID+RECYCLERVIEW_ITEM_SPACING);
 
 
 		//cache directory setting
@@ -459,7 +461,7 @@ public class Global
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		SIZE_APK_ICON_LIST=APK_ICON_PACKAGE_NAME_LIST.size();
-		ARCHIVE_CACHE_DIR_LENGTH=Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
+		ARCHIVE_CACHE_DIR_LENGTH=ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
 
 	}
 
@@ -544,11 +546,11 @@ public class Global
 		FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=tinyDB.getInt("file_selector_recycler_view_font_size_factor");
 		if(!tinyDB.getBoolean("not_first_run"))
 		{
-			Global.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
+			RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
 			FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR=1;
 			IMAGE_VIDEO_GRID_LAYOUT=true;
 			tinyDB.putBoolean("not_first_run",true);
-			tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
+			tinyDB.putInt("recycler_view_font_size_factor",RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putBoolean("image_video_grid_layout",IMAGE_VIDEO_GRID_LAYOUT);
 
@@ -564,13 +566,13 @@ public class Global
 		switch(RECYCLER_VIEW_FONT_SIZE_FACTOR)
 		{
 			case 0:
-				GRID_COUNT=Global.GRID_COUNT_SMALL;
+				GRID_COUNT=GRID_COUNT_SMALL;
 				break;
 			case 2:
-				GRID_COUNT=Global.GRID_COUNT_LARGE;
+				GRID_COUNT=GRID_COUNT_LARGE;
 				break;
 			default:
-				GRID_COUNT=Global.GRID_COUNT_MEDIUM;
+				GRID_COUNT=GRID_COUNT_MEDIUM;
 				break;
 		}
 //
@@ -583,13 +585,13 @@ public class Global
 		switch(FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR)
 		{
 			case 0:
-				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_SMALL;
+				FileSelectorActivity.GRID_COUNT=GRID_COUNT_SMALL;
 				break;
 			case 2:
-				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_LARGE;
+				FileSelectorActivity.GRID_COUNT=GRID_COUNT_LARGE;
 				break;
 			default:
-				FileSelectorActivity.GRID_COUNT=Global.GRID_COUNT_MEDIUM;
+				FileSelectorActivity.GRID_COUNT=GRID_COUNT_MEDIUM;
 				break;
 		}
 
@@ -609,15 +611,15 @@ public class Global
 	static int GET_HEIGHT_LIST_VIEW(ListView listView) {
 
 		ListAdapter mAdapter= listView.getAdapter();
-		int listviewElementsheight = 0;
+		int listViewElementsHeight = 0;
 		for (int i = 0; i < mAdapter.getCount(); i++) {
 			View mView = mAdapter.getView(i, null, listView);
 			mView.measure(
 					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
 					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-			listviewElementsheight += mView.getMeasuredHeight()+Global.ONE_DP;
+			listViewElementsHeight += mView.getMeasuredHeight()+ONE_DP;
 		}
-		return listviewElementsheight;
+		return listViewElementsHeight;
 	}
 
 	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name)
@@ -692,58 +694,6 @@ public class Global
 		return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
 	}
 
-/*
-	public static void GET_NAVIGATION_BAR_HEIGHT(Context context){
-
-		Resources resources = context.getResources();
-
-
-		int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
-		if(id > 0 && resources.getBoolean(id) && IS_TABLET)
-
-		//if(HAS_NAVBAR((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)))
-		{
-			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-			if (resourceId > 0) {
-				NAVIGATION_BAR_HEIGHT=resources.getDimensionPixelSize(resourceId);
-			}
-		}
-		else
-		{
-			NAVIGATION_BAR_HEIGHT=0;
-		}
-
-	}
-
-
- */
-	/*
-	public static double GET_NAVIGATION_BAR_HEIGHT(Context context) {
-		try {
-			WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-			Display display = windowManager.getDefaultDisplay();
-			DisplayMetrics displayMetrics = new DisplayMetrics();
-			DisplayMetrics realDisplayMetrics = new DisplayMetrics();
-			display.getMetrics(displayMetrics);
-			display.getRealMetrics(realDisplayMetrics);
-			Resources resources = context.getResources();
-			if(displayMetrics.heightPixels != realDisplayMetrics.heightPixels) {
-
-				int resourceID = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-				if (resourceID > 0 && ViewConfiguration.get(context).hasPermanentMenuKey())
-					return NAVIGATION_BAR_HEIGHT=(resources.getDimensionPixelSize(resourceID) / displayMetrics.density);
-				return NAVIGATION_BAR_HEIGHT=0;
-			}
-		}
-		catch (Exception e){
-			return NAVIGATION_BAR_HEIGHT=0;
-		}
-		return NAVIGATION_BAR_HEIGHT=0;
-	}
-
-
-	 */
-
 
 	public static int GET_NAVIGATION_STATUS_BAR_HEIGHT(Context context) {
 		Point appUsableSize = getAppUsableScreenSize(context);
@@ -797,21 +747,6 @@ public class Global
 	public static String GET_FILE_PERMISSION(String file_path)
 	{
 		String permission_string = null;
-		/*
-		String[] command_line_long = {"ls", "-ld", file_path};
-		try {
-			java.lang.Process process_long = Runtime.getRuntime().exec(command_line_long);
-			BufferedReader bf_long = new BufferedReader(new InputStreamReader(process_long.getInputStream()));
-			String line_long=bf_long.readLine(); //consume first line as not required
-			if(line_long != null) {
-				String [] split_line=line_long.split("\\s+");
-				permission_string=split_line[0];
-			}
-			process_long.waitFor();
-		}
-		catch (Exception e){}
-
-		 */
 		return permission_string;
 	}
 
@@ -826,11 +761,6 @@ public class Global
 	public static boolean SET_OTHER_FILE_PERMISSION(String permission, String file_path)
 	{
 		boolean success = false;
-	/*
-		RootUtils.EXECUTE(Arrays.asList("mount -o rw,remount /"));
-		success=RootUtils.EXECUTE(Arrays.asList("chmod o="+permission,file_path));
-
-	 */
 		return success;
 	}
 
@@ -887,7 +817,7 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if(Global.IS_CHILD_FILE(dest_folder,iterator.next()))
+					if(IS_CHILD_FILE(dest_folder,iterator.next()))
 					{
 						iterator.remove();
 					}
@@ -901,7 +831,7 @@ public class Global
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
 				{
-					if(Global.IS_CHILD_FILE(dest_folder,iterator.next()))
+					if(IS_CHILD_FILE(dest_folder,iterator.next()))
 					{
 						iterator.remove();
 					}
@@ -1041,7 +971,7 @@ public class Global
 		}
 		else if(fileObjectType==FileObjectType.FTP_TYPE)
 		{
-			return Global.CHECK_EXISTENCE_FILE_IN_FILE_POJO(file_path,destFilePOJOs);
+			return CHECK_EXISTENCE_FILE_IN_FILE_POJO(file_path,destFilePOJOs);
 		}
 		else if(fileObjectType==FileObjectType.ROOT_TYPE)
 		{
@@ -1240,7 +1170,7 @@ public class Global
 			if (Build.VERSION.SDK_INT >= 33){
 				if(context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
 				{
-					Global.print(context, context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+					print(context, context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
 					alreadyWarned[0] = true;
 					return;
 				}
@@ -1249,7 +1179,7 @@ public class Global
 			{
 				NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 				if (!manager.areNotificationsEnabled()) {
-					Global.print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+					print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
 					alreadyWarned[0]=true;
 					return;
 				}
@@ -1266,13 +1196,13 @@ public class Global
 					switch (channelId)
 					{
 						case NotifManager.CHANNEL_ID:
-							Global.print(context,NotifManager.CHANNEL_NAME+" - "+message);
+							print(context,NotifManager.CHANNEL_NAME+" - "+message);
 							break;
 						case AudioPlayerService.CHANNEL_ID:
-							Global.print(context,AudioPlayerService.CHANNEL_NAME+" - "+message);
+							print(context,AudioPlayerService.CHANNEL_NAME+" - "+message);
 							break;
 						case FsNotification.CHANNEL_ID:
-							Global.print(context,FsNotification.CHANNEL_NAME+" - "+message);
+							print(context,FsNotification.CHANNEL_NAME+" - "+message);
 							break;
 					}
 					alreadyWarned[0]=true;
@@ -1284,7 +1214,7 @@ public class Global
 		{
 			if(!NotificationManagerCompat.from(context).areNotificationsEnabled())
 			{
-				Global.print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
+				print(context,context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
 				alreadyWarned[0]=true;
 			}
 		}
@@ -1329,7 +1259,7 @@ public class Global
 
 	public static File COPY_TO_USB_CACHE(String file_path)
 	{
-		File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+		File cache_file=new File(USB_CACHE_DIR,file_path);
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();
@@ -1350,7 +1280,7 @@ public class Global
 
 	public static File COPY_TO_FTP_CACHE(String file_path)
 	{
-		File cache_file=new File(Global.FTP_CACHE_DIR,file_path);
+		File cache_file=new File(FTP_CACHE_DIR,file_path);
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();
@@ -1358,7 +1288,7 @@ public class Global
 			{
 				FileUtil.mkdirsNative(parent_file);
 				FileUtil.createNativeNewFile(cache_file);
-				if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForCopyView))
+				if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForCopyView))
 				{
 					try (InputStream inputStream=FtpClientRepository.getInstance().ftpClientForCopyView.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
 						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});

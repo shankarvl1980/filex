@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -209,7 +208,14 @@ public class AppManagerListFragment extends Fragment {
 
                     total_appPOJO_list=appPOJOList;
                     Collections.sort(appPOJOList,FileComparator.AppPOJOComparate(Global.APP_MANAGER_SORT));
-                    adapter=new AppListAdapter();
+                    if(AppManagerActivity.FILE_GRID_LAYOUT)
+                    {
+                        adapter=new AppListAdapterGrid();
+                    }
+                    else {
+                        adapter=new AppListAdpaterList();
+                    }
+
                     recyclerView.setAdapter(adapter);
                     num_all_app=total_appPOJO_list.size();
                     app_count_textview.setText(""+num_all_app);
@@ -268,19 +274,6 @@ public class AppManagerListFragment extends Fragment {
 
                     Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(app_path));
                     FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-                    /*
-                    try {
-                        PackageManager pm = context.getPackageManager();
-                        ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), 0);
-                        File srcFile = new File(ai.publicSourceDir);
-                        Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(srcFile.getPath()));
-                        FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-
-                    } catch (Exception e) {
-                        Global.print(context,getString(R.string.could_not_perform_action));
-                    }
-
-                     */
 
                 }
                 clear_selection();
@@ -434,8 +427,8 @@ public class AppManagerListFragment extends Fragment {
 
     public void clear_selection()
     {
-        appManagerListFragmentViewModel.app_selected_array=new ArrayList<>();
-        appManagerListFragmentViewModel.mselecteditems=new SparseBooleanArray();
+        //appManagerListFragmentViewModel.app_selected_array=new ArrayList<>();
+        appManagerListFragmentViewModel.mselecteditems=new IndexedLinkedHashMap<>();
         if (adapter!=null)
         {
             adapter.notifyDataSetChanged();
@@ -450,25 +443,16 @@ public class AppManagerListFragment extends Fragment {
     }
 
 
-    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH> implements Filterable
+    private abstract class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.VH> implements Filterable
     {
         @NonNull
         @Override
-        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if(AppManagerActivity.FILE_GRID_LAYOUT)
-            {
-                return new VH(new AppInstalledRecyclerViewLayoutGrid(context));
-            }else
-            {
-                return new VH(new AppInstalledRecyclerViewLayoutList(context));
-            }
-
-        }
+        public abstract VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             AppPOJO appPOJO=appPOJOList.get(position);
-            boolean selected=appManagerListFragmentViewModel.mselecteditems.get(position,false);
+            boolean selected=appManagerListFragmentViewModel.mselecteditems.containsKey(position);
             holder.v.setData(appPOJO,selected);
             holder.v.setSelected(selected);
 
@@ -520,7 +504,7 @@ public class AppManagerListFragment extends Fragment {
             };
         }
 
-        private class VH extends RecyclerView.ViewHolder
+        public class VH extends RecyclerView.ViewHolder
         {
             final AppInstalledRecyclerViewLayout v;
             int pos;
@@ -533,10 +517,10 @@ public class AppManagerListFragment extends Fragment {
                         pos=getBindingAdapterPosition();
                         if(appManagerListFragmentViewModel.mselecteditems.size()>0)
                         {
-                            if (!appManagerListFragmentViewModel.mselecteditems.get(pos, false)) {
+                            if (!appManagerListFragmentViewModel.mselecteditems.containsKey(pos)) {
                                 clear_selection();
-                                appManagerListFragmentViewModel.mselecteditems.put(pos,true);
-                                appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
+                                appManagerListFragmentViewModel.mselecteditems.put(pos,appPOJOList.get(pos));
+                                //appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
                                 //show_app_action_select_dialog(appPOJOList.get(pos));
                             }
@@ -547,8 +531,8 @@ public class AppManagerListFragment extends Fragment {
                         }
                         else
                         {
-                            appManagerListFragmentViewModel.mselecteditems.put(pos,true);
-                            appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
+                            appManagerListFragmentViewModel.mselecteditems.put(pos,appPOJOList.get(pos));
+                            //appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
                             //show_app_action_select_dialog(appPOJOList.get(pos));
                         }
@@ -557,6 +541,26 @@ public class AppManagerListFragment extends Fragment {
                 });
 
             }
+        }
+    }
+
+    public class AppListAdapterGrid extends AppListAdapter
+    {
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new VH(new AppInstalledRecyclerViewLayoutGrid(context));
+        }
+    }
+
+    public class AppListAdpaterList extends AppListAdapter
+    {
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new VH(new AppInstalledRecyclerViewLayoutList(context));
         }
     }
 
@@ -725,7 +729,7 @@ public class AppManagerListFragment extends Fragment {
             // TODO: Implement this method
             final Bundle bundle=new Bundle();
             final ArrayList<String> files_selected_array=new ArrayList<>();
-            if (appManagerListFragmentViewModel.app_selected_array.size() < 1) {
+            if (appManagerListFragmentViewModel.mselecteditems.size() < 1) {
                 return;
             }
 
@@ -738,7 +742,7 @@ public class AppManagerListFragment extends Fragment {
                     break;
 
                 case 2:
-                    for(AppPOJO app:appManagerListFragmentViewModel.app_selected_array)
+                    for(AppPOJO app:appManagerListFragmentViewModel.mselecteditems.values())
                     {
                         files_selected_array.add(app.getPath());
                     }

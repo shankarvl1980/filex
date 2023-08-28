@@ -12,7 +12,6 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +23,8 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import me.jahnen.libaums.core.fs.UsbFileOutputStream;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
 
 public class ArchiveDeletePasteServiceUtil {
@@ -604,120 +604,37 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String UNARCHIVE(Context context, String zip_dest_path, ZipEntry zipEntry, boolean isWritable,
-                   FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream
+    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream
 
     ) throws IOException {
         String zip_entry_name=zipEntry.getName();
         String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);
         File dest_file=new File(dest_file_path);
 
+        FileModel fileModel= FileModelFactory.getFileModel(zip_dest_path,destFileObjectType,uri,uri_path);
+
         if(zipEntry.isDirectory())
         {
-            if(destFileObjectType==FileObjectType.FILE_TYPE)
-            {
-                if(isWritable)
-                {
-                    FileUtil.mkdirsNative(dest_file);
-                }
-                else
-                {
-                    FileUtil.mkdirsSAFFile(context,zip_dest_path,zip_entry_name,uri,uri_path);
-                }
-            }
-            else if(destFileObjectType== FileObjectType.USB_TYPE)
-            {
-                FileUtil.mkdirsUsb(zip_dest_path,zip_entry_name);
-            }
-            else if(destFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                FileUtil.mkdirsFTP(zip_dest_path,zip_entry_name);
-            }
-
+            fileModel.makeDirsRecursively(zip_entry_name);
         }
         else if(!zipEntry.isDirectory())
         {
             File parent_dest_file=dest_file.getParentFile();
             String parent_dest_file_path=parent_dest_file.getAbsolutePath();
 
-            boolean parent_dir_exists = false;
-            if(destFileObjectType==FileObjectType.FILE_TYPE)
-            {
-                parent_dir_exists=parent_dest_file.exists();
-            }
-            else if(destFileObjectType==FileObjectType.USB_TYPE)
-            {
-                UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_dest_file_path);
-                parent_dir_exists= (usbFile != null);
-            }
-            else if(destFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                parent_dir_exists=FileUtil.isFtpFileExists(parent_dest_file_path);
-            }
+            FileModel zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
+            boolean parent_dir_exists = zipEntryFileModel.exists();
 
             if(!parent_dir_exists)
             {
-                if(destFileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    if(isWritable)
-                    {
-                        FileUtil.mkdirsNative(parent_dest_file);
-                    }
-                    else
-                    {
-                        String zip_entry_parent=new File(zip_entry_name).getParent();
-                        FileUtil.mkdirsSAFFile(context,zip_dest_path,zip_entry_parent,uri,uri_path);
-                    }
-                }
-                else
-                {
-                    String zip_entry_parent=new File(zip_entry_name).getParent();
-                    if(destFileObjectType==FileObjectType.USB_TYPE)
-                    {
-                        FileUtil.mkdirsUsb(zip_dest_path,zip_entry_parent);
-                    }
-                    else if(destFileObjectType==FileObjectType.FTP_TYPE)
-                    {
-                        FileUtil.mkdirsFTP(zip_dest_path,zip_entry_parent);
-                    }
-
-                }
+                String zip_entry_parent=new File(zip_entry_name).getParent();
+                fileModel.makeDirsRecursively(zip_entry_parent);
             }
 
-            OutputStream outStream=null;
+            OutputStream outStream;
 
-            if(destFileObjectType==FileObjectType.FILE_TYPE)
-            {
-                if(isWritable)
-                {
-                    outStream=new FileOutputStream(dest_file);
-                }
-                else
-                {
-                    Uri zipuri = FileUtil.createDocumentUri(context,parent_dest_file_path,dest_file.getName(),false,uri,uri_path);
-                    if (zipuri != null)
-                    {
-                        outStream = context.getContentResolver().openOutputStream(zipuri);
-                    }
-                }
-            }
-            else if(destFileObjectType==FileObjectType.USB_TYPE)
-            {
-                UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_dest_file_path);
-                if(usbFile!=null)
-                {
-                    String name=dest_file.getName();
-                    UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
-                    if(targetUsbFile!=null && targetUsbFile.getLength()==0) FileUtil.deleteUsbFile(targetUsbFile);
-                    UsbFile childUsbFile=usbFile.createFile(name);
-                    if(!childUsbFile.isDirectory()) outStream=new UsbFileOutputStream(childUsbFile);
-                }
-            }
-            else if(destFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                String name=dest_file.getName();
-                outStream=FtpClientRepository.getInstance().ftpClientMain.storeFileStream(Global.CONCATENATE_PARENT_CHILD_PATH(parent_dest_file_path,name));
-            }
+            zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
+            outStream=zipEntryFileModel.getChildOutputStream(dest_file.getName(),0);
 
             if(outStream!=null)
             {

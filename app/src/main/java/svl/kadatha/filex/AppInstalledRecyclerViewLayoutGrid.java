@@ -141,15 +141,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
 
         View v;
 
-        /*
-            v=appselect_indicator;
-            measuredHeight=v.getMeasuredHeight();
-		    measuredWidth=v.getMeasuredWidth();
-            int a=grid_width-((grid_width-imageview_dimension)/2)-Global.SELECTOR_ICON_DIMENSION;
-            v.layout(a,y,a+measuredWidth,y+measuredHeight);
-
-         */
-
         v=appimageview;
         measuredHeight =v.getMeasuredHeight();
         measuredWidth =v.getMeasuredWidth();
@@ -217,13 +208,5 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         appsizetextview.setText(appPOJO.getSize());
         appdatetextview.setText(appPOJO.getDate());
     }
-
-    /*
-    public void set_selected(boolean item_selected)
-    {
-        appselect_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
-    }
-
-     */
 
 }

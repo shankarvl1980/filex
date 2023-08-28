@@ -85,13 +85,6 @@ public class FsNotification {
         PendingIntent stopPendingIntent = PendingIntent.getService(context, 0,
                 stopIntent, PendingIntent.FLAG_ONE_SHOT | pending_intent_flag);
 
-//        int preferenceIcon = android.R.drawable.ic_menu_preferences;
-//        CharSequence preferenceText = context.getString(R.string.notif_settings_text);
-//        Intent preferenceIntent = new Intent(context, FtpServerActivity.class);
-//        preferenceIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        PendingIntent preferencePendingIntent = PendingIntent.getActivity(context, 0,
-//                preferenceIntent, pending_intent_flag);
-
         int priority = Notification.PRIORITY_LOW;
 
 

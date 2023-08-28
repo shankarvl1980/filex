@@ -1,8 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,19 +17,16 @@ import java.util.List;
 import me.jahnen.libaums.core.fs.UsbFile;
 
 
-public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecyclerViewAdapter.ViewHolder> implements Filterable
+public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecyclerViewAdapter.ViewHolder> implements Filterable
 {
-	
-	private final Context context;
+
 	private final DetailFragment df;
 	private final MainActivity mainActivity;
 
 	private CardViewClickListener cardViewClickListener;
-    private boolean show_file_path;
 
 	DetailRecyclerViewAdapter(Context context)
 	{
-		this.context=context;
 		mainActivity=(MainActivity)context;
 		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
 		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
@@ -57,13 +52,14 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			mainActivity.parent_dir_image_button.setEnabled(false);
 			mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
 
+			boolean show_file_path;
 			if(df.fileclickselected.equals(DetailFragment.SEARCH_RESULT))
 			{
-				show_file_path=true;
+				show_file_path =true;
 			}
 			else
 			{
-				show_file_path=Global.SHOW_FILE_PATH;
+				show_file_path =Global.SHOW_FILE_PATH;
 			}
 		}
 		else if(df.fileObjectType== FileObjectType.USB_TYPE)
@@ -129,10 +125,10 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 		private void longClickMethod (View v, int size)
 		{
 			pos=getBindingAdapterPosition();
-			if(df.viewModel.mselecteditems.get(pos,false))
+			if(df.viewModel.mselecteditems.containsKey(pos))
 			{
-				df.viewModel.mselecteditems.delete(pos);
-				df.viewModel.mselecteditemsFilePath.delete(pos);
+				df.viewModel.mselecteditems.remove(pos);
+				//df.viewModel.mselecteditemsFilePath.delete(pos);
 				v.setSelected(false);
 				((RecyclerViewLayout)v).set_selected(false);
 				--size;
@@ -167,8 +163,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 			}
 			else
 			{
-				df.viewModel.mselecteditems.put(pos,true);
-				df.viewModel.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
+				df.viewModel.mselecteditems.put(pos,df.filePOJO_list.get(pos).getPath());
+				//df.viewModel.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
 				v.setSelected(true);
 				((RecyclerViewLayout)v).set_selected(true);
 				++size;
@@ -207,22 +203,14 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	}
 
 	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
-	{
-		if(df.grid_layout)
-		{
-			return new ViewHolder(new RecyclerViewLayoutGrid(context,show_file_path));
-		}
-		else{
-			return new ViewHolder(new RecyclerViewLayoutList(context,show_file_path));
-		}
-	}
+	public abstract ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
+
 
 	@Override
 	public void onBindViewHolder(DetailRecyclerViewAdapter.ViewHolder p1, int p2)
 	{
 		FilePOJO file=df.filePOJO_list.get(p2);
-		boolean selected=df.viewModel.mselecteditems.get(p2,false);
+		boolean selected=df.viewModel.mselecteditems.containsKey(p2);
 		p1.view.setData(file,selected);
 		p1.view.setSelected(selected);
 	}
@@ -298,8 +286,8 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 	{
 		if(df!=null)
 		{
-			df.viewModel.mselecteditems=new SparseBooleanArray();
-			df.viewModel.mselecteditemsFilePath=new SparseArray<>();
+			df.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+			//df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 			df.mainActivity.clearCache(file_path,fileObjectType);
 			df.modification_observed=true;
 		}
@@ -309,14 +297,14 @@ public class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <DetailRecy
 
 	public void selectAll()
 	{
-		df.viewModel.mselecteditems=new SparseBooleanArray();
-		df.viewModel.mselecteditemsFilePath=new SparseArray<>();
+		df.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+		//df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 		int size=df.filePOJO_list.size();
 
 		for(int i=0;i<size;++i)
 		{
-			df.viewModel.mselecteditems.put(i,true);
-			df.viewModel.mselecteditemsFilePath.put(i,df.filePOJO_list.get(i).getPath());
+			df.viewModel.mselecteditems.put(i,df.filePOJO_list.get(i).getPath());
+			//df.viewModel.mselecteditemsFilePath.put(i,df.filePOJO_list.get(i).getPath());
 		}
 
 		int s=df.viewModel.mselecteditems.size();

@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,8 +126,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
 	private USBReceiver usbReceiver;
 	private InputMethodManager imm;
-	static UsbFile usbFileRoot;
-	static FileSystem usbCurrentFs;
+	public static UsbFile usbFileRoot;
+	public static FileSystem usbCurrentFs;
 	public static boolean USB_ATTACHED;
 	private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
 	public boolean clear_cache;
@@ -1469,13 +1468,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		v.getLayoutParams().height=number_items*Global.FOUR_DP*14;
 	}
 
-	public ArrayList<File> iterate_to_attach_file(SparseArray<String> file_list)
+	public ArrayList<File> iterate_to_attach_file(IndexedLinkedHashMap<Integer,String> file_list)
 	{
 		ArrayList<File> file_list_excluding_dir=new ArrayList<>();
 		int size=file_list.size();
 		for(int i=0;i<size;++i)
 		{
-			File f=new File(file_list.valueAt(i));
+			File f=new File(file_list.getValueAtIndex(i));
 			if(!f.isDirectory())
 			{
 				file_list_excluding_dir.add(f);
@@ -1484,13 +1483,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		return file_list_excluding_dir;
 	}
 
-	public ArrayList<Uri> iterate_to_attach_usb_file(SparseArray<String> file_list, DetailFragment df)
+	public ArrayList<Uri> iterate_to_attach_usb_file(IndexedLinkedHashMap<Integer,String> file_list, DetailFragment df)
 	{
 		ArrayList<Uri> uri_list_excluding_dir=new ArrayList<>();
 		int size=file_list.size();
 		for(int i=0;i<size;++i)
 		{
-			String file_path=file_list.valueAt(i);
+			String file_path=file_list.getValueAtIndex(i);
 			UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 			if(f!=null && !f.isDirectory())
 			{
@@ -1647,23 +1646,23 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			if(df.viewModel.mselecteditemsFilePath.size()==0)
+			if(df.viewModel.mselecteditems.size()==0)
 			{
 				Global.print(context,getString(R.string.could_not_perform_action));
 				actionmode_finish(df,df.fileclickselected);
 				return;
 			}
 			final ArrayList<String> files_selected_array=new ArrayList<>();
-			final ArrayList<Integer> files_selected_index_array=new ArrayList<>();
+			//final ArrayList<Integer> files_selected_index_array=new ArrayList<>();
 			int size;
 			int id = v.getId();
 			if (id == R.id.toolbar_btn_1) {
 				DetailFragment.CUT_SELECTED = true;
 				DetailFragment.COPY_SELECTED = false;
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
-				size = df.viewModel.mselecteditemsFilePath.size();
+				size = df.viewModel.mselecteditems.size();
 				for (int i = 0; i < size; ++i) {
-					DetailFragment.FILE_SELECTED_FOR_CUT_COPY.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+					DetailFragment.FILE_SELECTED_FOR_CUT_COPY.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 				}
 				DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = df.fileObjectType;
 				DetailFragment.CUT_COPY_FILECLICKSELECTED=df.fileclickselected;
@@ -1672,15 +1671,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				DetailFragment.COPY_SELECTED = true;
 				DetailFragment.CUT_SELECTED = false;
 				DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
-				size = df.viewModel.mselecteditemsFilePath.size();
+				size = df.viewModel.mselecteditems.size();
 				for (int i = 0; i < size; ++i) {
-					DetailFragment.FILE_SELECTED_FOR_CUT_COPY.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+					DetailFragment.FILE_SELECTED_FOR_CUT_COPY.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 				}
 				DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = df.fileObjectType;
 				DetailFragment.CUT_COPY_FILECLICKSELECTED=df.fileclickselected;
 				actionmode_finish(df,df.fileclickselected);
 			} else if (id == R.id.toolbar_btn_3) {
-				FilePOJO filePOJO = df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0)); //take file pojo from df.adapter.filepojolist, not from df.filepojolist
+				FilePOJO filePOJO = df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0)); //take file pojo from df.adapter.filepojolist, not from df.filepojolist
 				String parent_file_path = new File(filePOJO.getPath()).getParent();
 				String existing_name = filePOJO.getName();
 				boolean isDirectory = filePOJO.getIsDirectory();
@@ -1688,11 +1687,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				renameFileAlertDialog.show(fm, "rename_dialog");
 				actionmode_finish(df,df.fileclickselected);
 			} else if (id == R.id.toolbar_btn_4) {
-				size = df.viewModel.mselecteditemsFilePath.size();
+				size = df.viewModel.mselecteditems.size();
 				for (int i = 0; i < size; ++i) {
-					int key = df.viewModel.mselecteditemsFilePath.keyAt(i);
-					files_selected_array.add(df.viewModel.mselecteditemsFilePath.get(key));
-					files_selected_index_array.add(key);
+					//int key = df.viewModel.mselecteditemsFilePath.keyAt(i);
+					files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
+					//files_selected_index_array.add(key);
 				}
 
 				DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
@@ -1710,7 +1709,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							case 1:
 								if ((df.fileObjectType == FileObjectType.FILE_TYPE) || (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE)) {
 									ArrayList<File> file_list_excluding_dir;
-									file_list_excluding_dir = iterate_to_attach_file(df.viewModel.mselecteditemsFilePath);
+									file_list_excluding_dir = iterate_to_attach_file(df.viewModel.mselecteditems);
 									if (file_list_excluding_dir.size() == 0) {
 										Global.print(context,getString(R.string.directories_can_not_be_sent_select_one_file));
 										break;
@@ -1719,11 +1718,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								else if(df.fileObjectType==FileObjectType.USB_TYPE)
 								{
-									String file_path=df.viewModel.mselecteditemsFilePath.valueAt(0);
+									String file_path=df.viewModel.mselecteditems.getValueAtIndex(0);
 									if(file_path!=null && df.check_availability_USB_SAF_permission(file_path,FileObjectType.USB_TYPE))
 									{
 										ArrayList<Uri> uri_list_excluding_dir;
-										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditemsFilePath,df);
+										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditems,df);
 										if (uri_list_excluding_dir.size() == 0) {
 											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
 											break;
@@ -1733,9 +1732,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								break;
 							case 2:
-								size = df.viewModel.mselecteditemsFilePath.size();
+								size = df.viewModel.mselecteditems.size();
 								for (int i = 0; i < size; ++i) {
-									files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+									files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 								}
 
 								PropertiesDialog propertiesDialog = PropertiesDialog.getInstance(files_selected_array,df.fileObjectType);
@@ -1749,19 +1748,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								MoveToCopyToProcedure(df,false);
 								break;
 							case 5:
-								size = df.viewModel.mselecteditemsFilePath.size();
+								size = df.viewModel.mselecteditems.size();
 								for (int i = 0; i < size; ++i) {
-									files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+									files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 								}
 								ArchiveSetUpDialog archiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
 								archiveSetUpDialog.show(fm, "zip_dialog");
 								break;
 							case 6:
-								if (df.viewModel.mselecteditemsFilePath.size() != 1) {
+								if (df.viewModel.mselecteditems.size() != 1) {
 									Global.print(context,getString(R.string.select_only_a_zip_file));
 									break;
 								}
-								String path = df.viewModel.mselecteditemsFilePath.valueAt(0);
+								String path = df.viewModel.mselecteditems.getValueAtIndex(0);
 								String file_name = new File(path).getName();
 								String file_ext = "";
 								int idx = file_name.lastIndexOf(".");
@@ -1769,9 +1768,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									file_ext = file_name.substring(idx + 1);
 								}
 								if (file_ext.matches(("(?i)zip"))) {
-									size = df.viewModel.mselecteditemsFilePath.size();
+									size = df.viewModel.mselecteditems.size();
 									for (int i = 0; i < size; ++i) {
-										files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+										files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 									}
 									ArchiveSetUpDialog unarchiveSetUpDialog=ArchiveSetUpDialog.getInstance(files_selected_array,null,df.fileObjectType,ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
 									unarchiveSetUpDialog.show(fm, "zip_dialog");
@@ -1780,11 +1779,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								break;
 							case 7:
-								if (df.viewModel.mselecteditemsFilePath.size() != 1) {
+								if (df.viewModel.mselecteditems.size() != 1) {
 									Global.print(context,getString(R.string.select_only_a_file));
 									break;
 								}
-								FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0));
+								FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0));
 								if(filePOJO.getIsDirectory())
 								{
 									Global.print(context,getString(R.string.select_only_a_file));
@@ -1810,13 +1809,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					list_popupwindowpojos.add(open_listPopupWindowPOJO);
 				}
 
-				if (df.viewModel.mselecteditemsFilePath.size() != 1) {
+				if (df.viewModel.mselecteditems.size() != 1) {
 					list_popupwindowpojos.remove(extract_listPopupWindowPOJO);
 					list_popupwindowpojos.remove(open_listPopupWindowPOJO);
 				}
-				else if(df.viewModel.mselecteditemsFilePath.size()==1)
+				else if(df.viewModel.mselecteditems.size()==1)
 				{
-					FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.keyAt(0));
+					FilePOJO filePOJO=df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0));
 					if(filePOJO.getIsDirectory())
 					{
 						list_popupwindowpojos.remove(extract_listPopupWindowPOJO);
@@ -1846,9 +1845,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		clear_cache=false;
 		Bundle bundle=new Bundle();
 		ArrayList<String>files_selected_array=new ArrayList<>();
-		int size = df.viewModel.mselecteditemsFilePath.size();
+		int size = df.viewModel.mselecteditems.size();
 		for (int i = 0; i < size; ++i) {
-			files_selected_array.add(df.viewModel.mselecteditemsFilePath.valueAt(i));
+			files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 		}
 		bundle.putString("source_folder", df.fileclickselected);
 		bundle.putStringArrayList("files_selected_array", files_selected_array);
@@ -1935,10 +1934,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				paste_pastecancel_view_procedure(df);
 			} else if (id == R.id.toolbar_btn_4) {
 				if (df.viewModel.mselecteditems.size() > 0) {
-					size = df.viewModel.mselecteditemsFilePath.size();
+					size = df.viewModel.mselecteditems.size();
 					for (int i = 0; i < size; ++i) {
-						int key = df.viewModel.mselecteditemsFilePath.keyAt(i);
-						files_selected_array.add(df.viewModel.mselecteditemsFilePath.get(key));
+						files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
 					}
 
 					DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array,df.fileObjectType,df.fileclickselected,false);
@@ -2255,6 +2253,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			UsbMassStorageDevice device=UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
 			try {
 				device.init();
+				if(device.getPartitions().size()==0)
+				{
+					Global.print(context, getString(R.string.error_setting_up_device));
+					return;
+				}
 				usbCurrentFs = device.getPartitions().get(0).getFileSystem();
 				usbFileRoot = usbCurrentFs.getRootDirectory();
 				FileUtil.USB_CHUNK_SIZE=usbCurrentFs.getChunkSize();

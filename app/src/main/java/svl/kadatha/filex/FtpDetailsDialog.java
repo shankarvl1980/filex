@@ -3,7 +3,6 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -329,7 +328,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     progress_bar.setVisibility(View.VISIBLE);
                     ftpPJO_selected_for_delete=new ArrayList<>();
-                    ftpPJO_selected_for_delete.addAll(viewModel.ftpPOJO_selected_array);
+                    ftpPJO_selected_for_delete.addAll(viewModel.mselecteditems.values());
                     viewModel.deleteFtpPojo(ftpPJO_selected_for_delete);
                 }
             }
@@ -384,8 +383,8 @@ public class FtpDetailsDialog extends DialogFragment {
 
     public void clear_selection()
     {
-        viewModel.mselecteditems=new SparseBooleanArray();
-        viewModel.ftpPOJO_selected_array=new ArrayList<>();
+        viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+        //viewModel.ftpPOJO_selected_array=new ArrayList<>();
 
         if(ftpListAdapter!=null)ftpListAdapter.notifyDataSetChanged();
         enable_disable_buttons(false,0);
@@ -412,7 +411,7 @@ public class FtpDetailsDialog extends DialogFragment {
             holder.ftp_display.setText((display==null || display.equals("")) ? server : display);
             holder.ftp_server.setText(server);
             holder.ftp_user_name.setText(getString(R.string.user)+" - "+user_name);
-            boolean item_selected=viewModel.mselecteditems.get(position,false);
+            boolean item_selected=viewModel.mselecteditems.containsKey(position);
             holder.v.setSelected(item_selected);
             holder.ftp_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         }
@@ -484,12 +483,12 @@ public class FtpDetailsDialog extends DialogFragment {
             private void onLongClickProcedure(View v, int size)
             {
                 pos=getBindingAdapterPosition();
-                if(viewModel.mselecteditems.get(pos,false))
+                if(viewModel.mselecteditems.containsKey(pos))
                 {
                     v.setSelected(false);
                     ftp_select_indicator.setVisibility(View.INVISIBLE);
-                    viewModel.ftpPOJO_selected_array.remove(viewModel.ftpPOJOList.get(pos));
-                    viewModel.mselecteditems.delete(pos);
+                    //viewModel.ftpPOJO_selected_array.remove(viewModel.ftpPOJOList.get(pos));
+                    viewModel.mselecteditems.remove(pos);
                     --size;
                     if(size>=1)
                     {
@@ -509,8 +508,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     v.setSelected(true);
                     ftp_select_indicator.setVisibility(View.VISIBLE);
-                    viewModel.ftpPOJO_selected_array.add(viewModel.ftpPOJOList.get(pos));
-                    viewModel.mselecteditems.put(pos,true);
+                    //viewModel.ftpPOJO_selected_array.add(viewModel.ftpPOJOList.get(pos));
+                    viewModel.mselecteditems.put(pos,viewModel.ftpPOJOList.get(pos));
 
                     bottom_toolbar.setVisibility(View.VISIBLE);
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -519,12 +518,6 @@ public class FtpDetailsDialog extends DialogFragment {
 
                     ++size;
                     enable_disable_buttons(true,size);
-                    /*
-                    if(size==num_all_ftp_list)
-                    {
-                        all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
-                    }
-                     */
 
                 }
                 ftp_number_text_view.setText(size+"/"+num_all_ftp);
@@ -579,7 +572,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 int s=viewModel.mselecteditems.size();
                 if(s>0)
                 {
-                    FtpPOJO ftpPOJO=viewModel.ftpPOJO_selected_array.get(0);
+                    FtpPOJO ftpPOJO=viewModel.mselecteditems.getValueAtIndex(0);
                     String display=ftpPOJO.display;
                     DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.equals("")) ? ftpPOJO.server : display,s);
                     deleteFtpAlertDialog.show(fragmentManager,"");
@@ -590,31 +583,13 @@ public class FtpDetailsDialog extends DialogFragment {
                 FtpClientRepository.getInstance().disconnect_ftp_clients();
                 Global.print(context, "ftp connection disconnected");
 
-//                int s=viewModel.mselecteditems.size();
-//                if(s==1)
-//                {
-//                    if(!permissionsUtil.isNetworkConnected())
-//                    {
-//                        Global.print(context,getString(R.string.not_connected_to_network));
-//                        return;
-//                    }
-//                    if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType.FTP_TYPE,FileObjectType.FTP_TYPE))
-//                    {
-//                        Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-//                        return;
-//                    }
-//                    progress_bar.setVisibility(View.VISIBLE);
-//                    FtpPOJO ftpPOJO=viewModel.ftpPOJO_selected_array.get(0);
-//                    viewModel.connectFtp(ftpPOJO);
-//                }
-//                clear_selection();
             }
             else if(id==R.id.toolbar_btn_4)
             {
                 int s=viewModel.mselecteditems.size();
                 if(s==1)
                 {
-                    FtpPOJO tobe_replaced_ftp=viewModel.ftpPOJO_selected_array.get(0);
+                    FtpPOJO tobe_replaced_ftp=viewModel.mselecteditems.getValueAtIndex(0);
                     String ftp_server=tobe_replaced_ftp.server;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
                     FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name);

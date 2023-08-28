@@ -4,7 +4,6 @@ import android.app.Application;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,15 +24,19 @@ public class AudioListViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> isAudioFetchingFromAlbumFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> isSavingAudioFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-
-    public List<AudioPOJO> audio_selected_array=new ArrayList<>();
+    public IndexedLinkedHashMap<Integer,AudioPOJO> audio_pojo_selected_items =new IndexedLinkedHashMap<>();
+    //public List<AudioPOJO> audio_selected_array=new ArrayList<>();
     public List<AudioPOJO> audio_list;
+    public List<Long> audio_rowid_list=new ArrayList<>();
+    public List<Long> selected_audio_rowid_list=new ArrayList<>();
 
-    public List<AlbumPOJO> album_selected_array=new ArrayList<>();
+
+    public IndexedLinkedHashMap<Integer,AlbumPOJO> album_pojo_selected_items =new IndexedLinkedHashMap<>();
+    //public List<AlbumPOJO> album_selected_array=new ArrayList<>();
     public List<AlbumPOJO> album_list;
 
-    public List<String> audio_list_selected_array=new ArrayList<>();
+    public IndexedLinkedHashMap<Integer,String> audio_saved_list_selected_items =new IndexedLinkedHashMap<>();
+    //public List<String> audio_list_selected_array=new ArrayList<>();
 
     public boolean audio_list_created;
     public List<AudioPOJO> audios_selected_for_delete;
@@ -84,10 +87,7 @@ public class AudioListViewModel extends AndroidViewModel {
                 public void run() {
                     RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                     audio_list=new ArrayList<>();
-                    if(!repositoryClass.audio_pojo_hashmap.containsKey("audio"))
-                    {
-                        repositoryClass.getAudioPOJOList(application,false);
-                    }
+                    repositoryClass.getAudioPOJOList(application,false);
                     List<AudioPOJO>temp_audio_pojos=repositoryClass.audio_pojo_hashmap.get("audio");
                     if(temp_audio_pojos!=null)audio_list=temp_audio_pojos;
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -202,21 +202,22 @@ public class AudioListViewModel extends AndroidViewModel {
                     switch(action)
                     {
                         case "q":
-                            AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_selected_array);
+                            AudioPlayerService.AUDIO_QUEUED_ARRAY.addAll(audio_pojo_selected_items.values());
                             Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                         case "s":
                             if(audioDatabaseHelper!=null)
                             {
+                                ArrayList<AudioPOJO> to_be_saved_list=new ArrayList<>(audio_pojo_selected_items.values());
                                 if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                                 {
-                                    audioDatabaseHelper.insert(list_name,audio_selected_array);
+                                    audioDatabaseHelper.insert(list_name,to_be_saved_list);
                                     Global.print_background_thread(application,application.getString(R.string.added_audios_to) +" '" +list_name + "'");
                                 }
                                 else
                                 {
                                     audioDatabaseHelper.createTable(list_name);
-                                    audioDatabaseHelper.insert(list_name,audio_selected_array);
+                                    audioDatabaseHelper.insert(list_name,to_be_saved_list);
                                     AudioPlayerActivity.AUDIO_SAVED_LIST.add(list_name);
                                     audio_list_created=true;
                                     Global.print_background_thread(application,"'" + list_name + "' " + application.getString(R.string.audio_list_created));
@@ -225,7 +226,7 @@ public class AudioListViewModel extends AndroidViewModel {
 
                             break;
                         default:
-                            AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_selected_array;
+                            AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>(audio_pojo_selected_items.values());
                             Global.print_background_thread(application,application.getString(R.string.added_audios_current_play_list));
                             break;
                     }
@@ -248,10 +249,7 @@ public class AudioListViewModel extends AndroidViewModel {
                 public void run() {
                     RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                     album_list=new ArrayList<>();
-                    if(!repositoryClass.album_pojo_hashmap.containsKey("album"))
-                    {
-                        repositoryClass.getAlbumList(application, false);
-                    }
+                    repositoryClass.getAlbumList(application, false);
                     List<AlbumPOJO>temp_album_pojos=repositoryClass.album_pojo_hashmap.get("album");
                     if(temp_album_pojos!=null)album_list=temp_album_pojos;
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -284,14 +282,17 @@ public class AudioListViewModel extends AndroidViewModel {
                 else if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
                 {
                     AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application);
-                    audio_list=audioDatabaseHelper.getAudioList(list_name);
+                    IndexedLinkedHashMap<Long, AudioPOJO> audio_indexed_hashmap=audioDatabaseHelper.getAudioList(list_name);
+                    audio_list= new ArrayList<>(audio_indexed_hashmap.values());
+                    audio_rowid_list= new ArrayList<>(audio_indexed_hashmap.keySet());
                     Iterator<AudioPOJO> it=audio_list.iterator();
                     while(it.hasNext())
                     {
                         AudioPOJO audio=it.next();
                         if(!new File(audio.getData()).exists())
                         {
-                            audioDatabaseHelper.delete(list_name,audio.getId());
+                            int removed_row=audioDatabaseHelper.delete_by_audio_id(list_name,audio.getId());
+                            audio_rowid_list.remove(removed_row);
                             it.remove();
                         }
                     }
@@ -333,14 +334,18 @@ public class AudioListViewModel extends AndroidViewModel {
         else if(AudioPlayerActivity.AUDIO_SAVED_LIST.contains(list_name))
         {
             AudioDatabaseHelper audioDatabaseHelper=new AudioDatabaseHelper(application);
-            clicked_audio_list=audioDatabaseHelper.getAudioList(list_name);
+            IndexedLinkedHashMap<Long, AudioPOJO> audio_indexed_hashmap=audioDatabaseHelper.getAudioList(list_name);
+            clicked_audio_list= new ArrayList<>(audio_indexed_hashmap.values());
+            audio_rowid_list= new ArrayList<>(audio_indexed_hashmap.keySet());
+
             Iterator<AudioPOJO> it=clicked_audio_list.iterator();
             while(it.hasNext())
             {
                 AudioPOJO audio=it.next();
                 if(!new File(audio.getData()).exists())
                 {
-                    audioDatabaseHelper.delete(list_name,audio.getId());
+                    int removed_row=audioDatabaseHelper.delete_by_audio_id(list_name,audio.getId());
+                    audio_rowid_list.remove(removed_row);
                     it.remove();
                 }
             }

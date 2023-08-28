@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -526,7 +524,24 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 		totalFilePOJO_list_Size=totalFilePOJO_list.size();
 		file_list_size=totalFilePOJO_list_Size;
 		Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-		adapter=new DetailRecyclerViewAdapter(context);
+		boolean show_file_path = false;
+		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			if (DetailFragment.SEARCH_RESULT.equals(fileclickselected)) {
+				show_file_path = true;
+			} else {
+				show_file_path = Global.SHOW_FILE_PATH;
+			}	
+		}
+		
+		if(grid_layout)
+		{
+			adapter=new DetailRecyclerViewAdapterGrid(context,show_file_path);
+		}
+		else {
+			adapter=new DetailRecyclerViewAdapterList(context,show_file_path);
+		}
+
 		set_adapter();
 		progress_bar.setVisibility(View.GONE);
 
@@ -755,8 +770,8 @@ public class DetailFragment extends Fragment implements MainActivity.DetailFragm
 
 	public void clearSelectionAndNotifyDataSetChanged()
 	{
-		viewModel.mselecteditems=new SparseBooleanArray();
-		viewModel.mselecteditemsFilePath=new SparseArray<>();
+		viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+		//viewModel.mselecteditemsFilePath=new SparseArray<>();
 		if(adapter!=null)
 		{
 			adapter.notifyDataSetChanged();

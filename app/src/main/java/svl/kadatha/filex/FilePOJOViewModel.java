@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -44,9 +42,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> copyFtpAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
-    public SparseBooleanArray mselecteditems=new SparseBooleanArray();
-    public SparseArray<String> mselecteditemsFilePath=new SparseArray<>();
-
+    public IndexedLinkedHashMap<Integer,String> mselecteditems=new IndexedLinkedHashMap<>();
     private String what_to_find=null;
     private String media_category=null;
     final List<FilePOJO> path=new ArrayList<>();

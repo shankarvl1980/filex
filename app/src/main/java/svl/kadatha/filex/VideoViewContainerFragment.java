@@ -297,7 +297,7 @@ public class VideoViewContainerFragment extends Fragment
 								Map.Entry<FilePOJO,Integer> entry=iterator.next();
 								if(entry.getKey().getPath().equals(filePOJO.getPath()) && entry.getKey().getFileObjectType()==filePOJO.getFileObjectType())
 								{
-									viewModel.video_list.removeIndex(filePOJO);
+									viewModel.video_list.removeIndex(filePOJO); //remove will not index, hence separately removing index
 									iterator.remove();
 									break;
 								}
@@ -447,15 +447,15 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			// TODO: Implement this method
 
-			final VideoViewFragment_mod frag;
+			final VideoViewFragment frag;
 			boolean b=viewModel.firststart;
 			FilePOJO filePOJO=viewModel.video_list.getKeyAtIndex(p1);
 			final String file_path=filePOJO.getPath();
 			int position=viewModel.video_list.get(filePOJO);
-			frag=VideoViewFragment_mod.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
+			frag= VideoViewFragment.getNewInstance(viewModel.fileObjectType,viewModel.fromThirdPartyApp,file_path,position,p1,b);
 			viewModel.firststart=false;
 
-			frag.setVideoPositionListener(new VideoViewFragment_mod.VideoPositionListener()
+			frag.setVideoPositionListener(new VideoViewFragment.VideoPositionListener()
 			{
 				public void setPosition(Integer idx, Integer position)
 				{

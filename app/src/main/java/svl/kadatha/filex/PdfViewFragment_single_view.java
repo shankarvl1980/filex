@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -275,8 +274,8 @@ public class PdfViewFragment_single_view extends Fragment
             public void onPageSelected(int i)
             {
                 lm.scrollToPositionWithOffset(i,-preview_image_offset);
-                viewModel.selected_item_sparseboolean=new SparseBooleanArray();
-                viewModel.selected_item_sparseboolean.put(i,true);
+                viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+                viewModel.mselecteditems.put(i,true);
                 if(picture_selector_adapter!=null)
                 {
                     picture_selector_adapter.notifyDataSetChanged();
@@ -353,7 +352,7 @@ public class PdfViewFragment_single_view extends Fragment
                     pdf_view_adapter=new PdfViewPagerAdapter();
                     view_pager.setAdapter(pdf_view_adapter);
                     view_pager.setCurrentItem(viewModel.image_selected_idx);
-                    viewModel.selected_item_sparseboolean.put(viewModel.image_selected_idx,true);
+                    viewModel.mselecteditems.put(viewModel.image_selected_idx,true);
                     picture_selector_adapter=new PictureSelectorAdapter(viewModel.total_pages);
 
                     recyclerview.setLayoutManager(lm);
@@ -595,8 +594,12 @@ public class PdfViewFragment_single_view extends Fragment
             {
                 FrameLayout frameLayout=(FrameLayout) view;
                 ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
-                GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(imageView);
-                view.setTag("loaded");
+                try{
+                    GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(imageView);
+                    view.setTag("loaded");
+                }
+                catch (IllegalArgumentException e){ cancel(true);}
+
             }
         }
     }
@@ -644,7 +647,7 @@ public class PdfViewFragment_single_view extends Fragment
         {
             // TODO: Implement this method
             p1.textView.setText(p2+1+"");
-            p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));
+            p1.v.setSelected(viewModel.mselecteditems.containsKey(p2));
 
         }
 

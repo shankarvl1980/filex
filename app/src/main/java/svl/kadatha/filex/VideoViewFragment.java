@@ -22,30 +22,35 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
+
+import timber.log.Timber;
 
 public class VideoViewFragment extends Fragment implements SurfaceHolder.Callback,MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,MediaPlayer.OnSeekCompleteListener,
 		MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,AudioManager.OnAudioFocusChangeListener
 {
 
+	public MediaPlayer mp;
 	private SurfaceView surfaceView;
-	private MediaPlayer mp;
-	public boolean prepared,playmode,stopped,completed;
+	private boolean prepared,stopped;
 	public int total_duration;
-	private int position;
+
 	private Context context;
 	private String file_path;
-	private Integer idx;
-	private boolean firststart;
-	private boolean wasPlaying,isPlaying;
+
+
 	private VideoPositionListener videoPositionListener;
 	private AudioManager audio_manager;
-	private Handler handler, handler_seekbar_updation;
-	private ImageButton play_pause_img_button, orientation_change_img_button;
+	private Handler handler, handler_seekbar_update;
+	private ImageButton play_pause_img_button;
+	private ImageButton orientation_change_img_button;
 	private Runnable runnable;
 	private TextView current_progress_tv;
 	private SeekBar seekbar;
@@ -53,14 +58,16 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private ConstraintLayout bottom_butt;
 	private boolean bottom_butt_visible;
 	private SurfaceHolder surfaceHolder;
-	private int orientation;
-	private boolean orientation_change;
+
 	private boolean isDurationMoreThanHour;
 	private AudioFocusRequest audioFocusRequest;
 	private int toolbar_height;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
 	private VideoViewActivity videoViewActivity;
+	private VideoViewFragmentViewModel viewModel;
+
+	private Group refresh_play_pause_group;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -71,7 +78,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
 		}
-		//videoViewActivity.videoViewFragment_modList.add(this);
 	}
 
 	@Override
@@ -79,36 +85,21 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
+		viewModel=new ViewModelProvider(this).get(VideoViewFragmentViewModel.class);
+
 		Bundle bundle=getArguments();
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		fromThirdPartyApp=bundle.getBoolean("fromThirdPartyApp");
 		file_path=bundle.getString("file_path");
 		if(savedInstanceState==null)
 		{
-			position=bundle.getInt("position");
-			idx=bundle.getInt("idx");
-			firststart=bundle.getBoolean("firststart");
+			viewModel.position=bundle.getInt("position");
+			viewModel.idx=bundle.getInt("idx");
+			viewModel.firststart=bundle.getBoolean("firststart");
 		}
-		else
-		{
-			position=savedInstanceState.getInt("position");
-			idx=savedInstanceState.getInt("idx");
-			firststart=savedInstanceState.getBoolean("firststart");
-			isPlaying=savedInstanceState.getBoolean("isPlaying");
-			orientation=savedInstanceState.getInt("orientation");
-		}
+
 	}
 
-
-	@Override
-	public void onSaveInstanceState(@NonNull Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putBoolean("firststart",firststart);
-		outState.putInt("position",position);
-		outState.putInt("idx",idx);
-		outState.putBoolean("isPlaying",isPlaying);
-		outState.putInt("orientation",orientation);
-	}
 
 
 	@Override
@@ -117,17 +108,18 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		// TODO: Implement this method
 
 		View v = inflater.inflate(R.layout.fragment_video_view, container, false);
+		refresh_play_pause_group=v.findViewById(R.id.video_play_refresh_play_pause_group);
 		handler=new Handler();
-		handler_seekbar_updation=new Handler();
+		handler_seekbar_update=new Handler();
 		surfaceView=v.findViewById(R.id.surface_view);
 		surfaceHolder=surfaceView.getHolder();
 		surfaceHolder.addCallback(this);
-
+		initiateMediaPlayer();
 		v.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View vi)
 			{
-				if(playmode)
+				if(viewModel.playmode)
 				{
 					if(bottom_butt_visible)
 					{
@@ -142,7 +134,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 						handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
 					}
-					play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+					refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+					//play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
 
 				}
 
@@ -159,18 +152,26 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			@Override
 			public void onClick(View v) {
 
-				if(prepared && !playmode)
+				if(prepared && !viewModel.playmode)
 				{
-					start();
+					mp_start();
 
 				}
-				else if(prepared && playmode)
+				else if(prepared && viewModel.playmode)
 				{
-					pause();
+					mp_pause();
 				}
 			}
 		});
 
+		ImageButton refresh_image_button = v.findViewById(R.id.video_play_refresh_btn);
+		refresh_image_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mp_stop();
+				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(VideoViewContainerFragment.REFRESH_VIDEO_CODE,new Bundle());
+			}
+		});
 
 		ImageButton backward_img_button = v.findViewById(R.id.video_player_backward);
 		backward_img_button.setOnTouchListener(new RepeatListener(400, 101, new View.OnClickListener() {
@@ -197,7 +198,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		current_progress_tv=v.findViewById(R.id.video_player_current_progress);
 		ConstraintLayout.LayoutParams layoutParams=(ConstraintLayout.LayoutParams) toolbar_background.getLayoutParams();
 		layoutParams.height=Global.ACTION_BAR_HEIGHT;
-		toolbar_height=Global.ACTION_BAR_HEIGHT+(Global.ONE_DP*4);
+		toolbar_height=Global.ACTION_BAR_HEIGHT+(Global.FOUR_DP);
 		seekbar=v.findViewById(R.id.video_player_seekbar);
 
 		seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
@@ -239,11 +240,12 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 		runnable=new Runnable() {
 			@Override
 			public void run() {
-				if(playmode)
+				if(viewModel.playmode)
 				{
 					bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
 					bottom_butt_visible=false;
-					play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+					refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+					//play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
 				}
 
 			}
@@ -264,6 +266,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				}
 			}
 		});
+
 		return v;
 	}
 	@Override
@@ -271,6 +274,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	{
 		if(mp!=null)
 		{
+			//viewModel.mp.setSurface(null);
+
 			mp.setDisplay(holder);
 			try {
 				Uri data=((VideoViewActivity)context).data;
@@ -282,7 +287,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				{
 					mp.setDataSource(file_path);
 				}
-				else if(fileObjectType==FileObjectType.USB_TYPE)
+				else if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
 				{
 					mp.setDataSource(context,data);
 				}
@@ -294,6 +299,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 			}
 		}
+
 	}
 
 	@Override
@@ -307,6 +313,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	{
 
 	}
+
+
 
 	private void setSurfaceViewSize() {
 
@@ -334,7 +342,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	}
 
 	
-	public static VideoViewFragment getNewInstance(FileObjectType fileObjectType, boolean fromThirdPartyApp,  String file_path,Integer position, Integer idx,boolean firststart)
+	public static VideoViewFragment getNewInstance(FileObjectType fileObjectType, boolean fromThirdPartyApp, String file_path, Integer position, Integer idx, boolean firststart)
 	{
 		VideoViewFragment frag=new VideoViewFragment();
 		Bundle bundle=new Bundle();
@@ -350,7 +358,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 	private void update_position()
 	{
-		handler_seekbar_updation.post(new Runnable()
+		handler_seekbar_update.post(new Runnable()
 		{
 			public void run()
 			{
@@ -363,15 +371,15 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				}
 
 
-				if(completed)
+				if(viewModel.completed)
 				{
 					play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 					current_progress=isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0);
 					current_progress_tv.setText(current_progress+"/"+total_time);
 					seekbar.setProgress(0);
-					handler_seekbar_updation.removeCallbacks(this);
+					handler_seekbar_update.removeCallbacks(this);
 				}
-				handler_seekbar_updation.postDelayed(this,1000);
+				handler_seekbar_update.postDelayed(this,1000);
 
 			}
 
@@ -401,19 +409,14 @@ private String convertSecondsToHMmSs(int milliseconds)
 	@Override
 	public void onStart() {
 		super.onStart();
-		mp=new MediaPlayer();
-		mp.setOnCompletionListener(this);
-		mp.setOnErrorListener(this);
-		mp.setOnBufferingUpdateListener(this);
-		mp.setOnSeekCompleteListener(this);
-		mp.setOnInfoListener(this);
-		mp.setOnPreparedListener(this);
-		mp.setScreenOnWhilePlaying(true);
-		if(orientation!=0)
+		//Timber.tag(Global.TAG).d("started "+file_path);
+
+
+		if(viewModel.orientation!=0)
 		{
-			orientation_change= orientation != Global.ORIENTATION;
+			boolean orientation_change = viewModel.orientation != Global.ORIENTATION;
 		}
-		orientation=Global.ORIENTATION;
+		viewModel.orientation=Global.ORIENTATION;
 		if(Global.ORIENTATION==Configuration.ORIENTATION_LANDSCAPE)
 		{
 			orientation_change_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.full_screen_exit_icon));
@@ -423,10 +426,21 @@ private String convertSecondsToHMmSs(int milliseconds)
 			orientation_change_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.full_screen_icon));
 		}
 
-		if(orientation_change)
-		{
-			wasPlaying=isPlaying;
-		}
+	}
+
+	private void initiateMediaPlayer()
+	{
+
+		mp=new MediaPlayer();
+		mp.setOnCompletionListener(this);
+		mp.setOnErrorListener(this);
+		mp.setOnBufferingUpdateListener(this);
+		mp.setOnSeekCompleteListener(this);
+		mp.setOnInfoListener(this);
+		mp.setOnPreparedListener(this);
+		mp.setScreenOnWhilePlaying(true);
+
+
 	}
 
 
@@ -435,26 +449,28 @@ private String convertSecondsToHMmSs(int milliseconds)
 		super.onPause();
 		if(mp!=null)
 		{
-
-			if(idx!=((VideoViewActivity)context).current_page_idx)
+			if(viewModel.idx!=((VideoViewActivity)context).current_page_idx)
 			{
-				isPlaying=false;
+				viewModel.wasPlaying=false;
 			}
 			else
 			{
-				isPlaying=mp.isPlaying();
+				viewModel.wasPlaying=mp.isPlaying();
 			}
 
-			position=mp.getCurrentPosition();
-			 if(prepared && playmode)
+			//viewModel.isPlaying=false;
+			viewModel.position=mp.getCurrentPosition();
+			if(prepared && viewModel.playmode)
 			{
-				pause();
+				mp_pause();
 				play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 			}
 			if (videoPositionListener != null)
 			{
-				videoPositionListener.setPosition(idx, position);
+				videoPositionListener.setPosition(viewModel.idx, viewModel.position);
 			}
+
+
 		}
 
 	}
@@ -462,7 +478,8 @@ private String convertSecondsToHMmSs(int milliseconds)
 	@Override
 	public void onStop() {
 		super.onStop();
-		stop();
+		mp_stop();
+
 	}
 
 
@@ -475,14 +492,14 @@ private String convertSecondsToHMmSs(int milliseconds)
 		total_duration=mp.getDuration();
 		isDurationMoreThanHour=(total_duration/1000)>3599;
 		seekbar.setMax(total_duration);
-		if(position<51)
+		if(viewModel.position<51)
 		{
 			current_progress=isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0);
 		}
 		else
 		{
-			current_progress=convertSecondsToHMmSs(position);
-			seekbar.setProgress(position);
+			current_progress=convertSecondsToHMmSs(viewModel.position);
+			seekbar.setProgress(viewModel.position);
 		}
 
 		total_time=convertSecondsToHMmSs(total_duration);
@@ -495,56 +512,60 @@ private String convertSecondsToHMmSs(int milliseconds)
 		//}
 		//else
 		{
-			mp.seekTo(Math.max(position,50));
+			mp.seekTo(Math.max(viewModel.position,50));
 		}
 
-		if(firststart || wasPlaying )
+		if(viewModel.firststart || viewModel.wasPlaying)
 		{
-			start();
+			mp_start();
+
 
 		}
-		firststart=false;
+		viewModel.firststart=false;
+		((VideoViewActivity)context).viewModel.video_refreshed=false;
 
 	}
-	public void start()
+	public void mp_start()
 	{
 		if(prepared)
 		{
 			if(request_focus())
 			{
 				mp.start();
-				playmode=true;
-				completed=false;
+				viewModel.playmode=true;
+				viewModel.completed=false;
 				update_position();
-				play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.dark_pause_icon));
+				play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_pause_icon));
 				handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 			}
 
 		}
 	}
-	public void pause()
+	public void mp_pause()
 	{
 		if(prepared)
 		{
 			if(mp.isPlaying())mp.pause();
-			playmode=false;
+			viewModel.playmode=false;
 			play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.video_play_icon));
 			bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
 			bottom_butt_visible=true;
-			play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+			refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+			//play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
 		}
 	}
-	public void stop()
+	public void mp_stop()
 	{
-		stopped=true;
-		prepared=false;
-		if(mp!=null)
+
+		if(mp!=null && prepared)
 		{
 			mp.stop();
 			mp.reset();
 			mp.release();
+
 		}
-		wasPlaying=false;
+		stopped=true;
+		prepared=false;
 		mp=null;
 		releaseAudioFocus();
 	}
@@ -589,7 +610,8 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 	private boolean request_focus()
 	{
-		if(audio_manager!=null)
+		//if(!getUserVisibleHint()) return false;
+		if(audio_manager==null)
 		{
 			audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		}
@@ -651,7 +673,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
 				if(mp!=null)
 				{
-					pause();
+					mp_pause();
 				}
 
 				break;
@@ -690,12 +712,15 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 		if(surfaceHolder!=null)
 		{
-			mp.reset();
-			mp.release();
-			onStart();
+			if(mp!=null)
+            {
+                mp.reset();
+                mp.release();
+            }
+			initiateMediaPlayer();
 		}
 
-
+		Timber.tag(Global.TAG).d("video error");
 		return true;
 	}
 
@@ -703,15 +728,16 @@ private String convertSecondsToHMmSs(int milliseconds)
 	public void onCompletion(MediaPlayer p1)
 	{
 		// TODO: Implement this method
-		completed=true;
-		playmode=false;
+		viewModel.completed=true;
+		viewModel.playmode=false;
 		if(!bottom_butt_visible)
 		{
 			bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
 			bottom_butt_visible=true;
 			handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 		}
-		play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+		refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+		//play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
 
 	}
 
@@ -726,7 +752,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 	public void onDestroyView() {
 		super.onDestroyView();
 		handler.removeCallbacksAndMessages(null);
-		handler_seekbar_updation.removeCallbacksAndMessages(null);
+		handler_seekbar_update.removeCallbacksAndMessages(null);
 	}
 
 	@Override
@@ -736,14 +762,14 @@ private String convertSecondsToHMmSs(int milliseconds)
 	}
 
 
-interface VideoPositionListener
-{
-	void setPosition(Integer idx, Integer position);
-}
+	interface VideoPositionListener
+	{
+		void setPosition(Integer idx, Integer position);
+	}
 
-public void setVideoPositionListener(VideoPositionListener listener)
-{
-	videoPositionListener=listener;
-}
+	public void setVideoPositionListener(VideoPositionListener listener)
+	{
+		videoPositionListener=listener;
+	}
 
 }

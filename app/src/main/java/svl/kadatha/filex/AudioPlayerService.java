@@ -771,7 +771,7 @@ public class AudioPlayerService extends Service
 			// TODO Auto-generated constructor stub
 			this.parent = parent;
 			nManager = (android.app.NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
-			int priority = Notification.PRIORITY_LOW;
+			int priority = Notification.PRIORITY_HIGH;
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 			{
 				String description = "This is to operate the audio player controls";

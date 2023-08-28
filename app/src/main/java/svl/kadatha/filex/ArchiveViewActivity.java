@@ -14,8 +14,6 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -863,14 +861,14 @@ public class ArchiveViewActivity extends BaseActivity{
                 if(ZIP_FILE!=null)
                 {
                     files_selected_array.add(ZIP_FILE.getAbsolutePath());
-                    int size=archiveViewFragment.viewModel.mselecteditemsFilePath.size();
-                    if(archiveViewFragment.viewModel.mselecteditemsFilePath.size()!=0)
+                    int size=archiveViewFragment.viewModel.mselecteditems.size();
+                    if(size!=0)
                     {
                         List<File> file_list=new ArrayList<>();
 
                         for(int i=0;i<size;++i)
                         {
-                            file_list.add(new File(archiveViewFragment.viewModel.mselecteditemsFilePath.valueAt(i)));
+                            file_list.add(new File(archiveViewFragment.viewModel.mselecteditems.getValueAtIndex(i)));
                         }
                         ArchiveViewActivity.recursivefilepath(zipentry_selected_array,file_list);
                     }
@@ -1002,10 +1000,10 @@ public class ArchiveViewActivity extends BaseActivity{
             private void longClickMethod (View v, int size)
             {
                 pos=getBindingAdapterPosition();
-                if(archiveViewFragment.viewModel.mselecteditems.get(pos,false))
+                if(archiveViewFragment.viewModel.mselecteditems.containsKey(pos))
                 {
-                    archiveViewFragment.viewModel.mselecteditems.delete(pos);
-                    archiveViewFragment.viewModel.mselecteditemsFilePath.delete(pos);
+                    archiveViewFragment.viewModel.mselecteditems.remove(pos);
+                    //archiveViewFragment.viewModel.mselecteditemsFilePath.delete(pos);
                     v.setSelected(false);
                     ((RecyclerViewLayout)v).set_selected(false);
                     --size;
@@ -1034,8 +1032,8 @@ public class ArchiveViewActivity extends BaseActivity{
                 }
                 else
                 {
-                    archiveViewFragment.viewModel.mselecteditems.put(pos,true);
-                    archiveViewFragment.viewModel.mselecteditemsFilePath.put(pos,archiveViewFragment.filePOJO_list.get(pos).getPath());
+                    archiveViewFragment.viewModel.mselecteditems.put(pos,archiveViewFragment.filePOJO_list.get(pos).getPath());
+                    //archiveViewFragment.viewModel.mselecteditemsFilePath.put(pos,archiveViewFragment.filePOJO_list.get(pos).getPath());
                     v.setSelected(true);
                     ((RecyclerViewLayout)v).set_selected(true);
                     ++size;
@@ -1080,7 +1078,7 @@ public class ArchiveViewActivity extends BaseActivity{
         public void onBindViewHolder(ViewHolder p1, int p2)
         {
             FilePOJO file=archiveViewFragment.filePOJO_list.get(p2);
-            boolean selected=archiveViewFragment.viewModel.mselecteditems.get(p2,false);
+            boolean selected=archiveViewFragment.viewModel.mselecteditems.containsKey(p2);
             p1.view.setData(file,selected);
             p1.view.setSelected(selected);
         }
@@ -1131,14 +1129,14 @@ public class ArchiveViewActivity extends BaseActivity{
 
         public void selectAll()
         {
-            archiveViewFragment.viewModel.mselecteditems=new SparseBooleanArray();
-            archiveViewFragment.viewModel.mselecteditemsFilePath=new SparseArray<>();
+            archiveViewFragment.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+            //archiveViewFragment.viewModel.mselecteditemsFilePath=new SparseArray<>();
             int size=archiveViewFragment.filePOJO_list.size();
 
             for(int i=0;i<size;++i)
             {
-                archiveViewFragment.viewModel.mselecteditems.put(i,true);
-                archiveViewFragment.viewModel.mselecteditemsFilePath.put(i,archiveViewFragment.filePOJO_list.get(i).getPath());
+                archiveViewFragment.viewModel.mselecteditems.put(i,archiveViewFragment.filePOJO_list.get(i).getPath());
+                //archiveViewFragment.viewModel.mselecteditemsFilePath.put(i,archiveViewFragment.filePOJO_list.get(i).getPath());
             }
 
             int s=archiveViewFragment.viewModel.mselecteditems.size();

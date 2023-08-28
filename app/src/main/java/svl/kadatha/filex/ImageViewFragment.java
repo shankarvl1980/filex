@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -311,8 +310,8 @@ public class ImageViewFragment extends Fragment
 			public void onPageSelected(int i)
 			{
 				lm.scrollToPositionWithOffset(i,-preview_image_offset);
-				viewModel.selected_item_sparseboolean=new SparseBooleanArray();
-				viewModel.selected_item_sparseboolean.put(i,true);
+				viewModel.mselecteditems=new IndexedLinkedHashMap<>();
+				viewModel.mselecteditems.put(i,true);
 				if(picture_selector_adapter!=null)
 				{
 					picture_selector_adapter.notifyDataSetChanged();
@@ -392,7 +391,7 @@ public class ImageViewFragment extends Fragment
 					view_pager.setAdapter(image_view_adapter);
 					view_pager.setCurrentItem(viewModel.file_selected_idx);
 					current_image_tv.setText(viewModel.file_selected_idx+1+"/"+viewModel.total_images);
-					viewModel.selected_item_sparseboolean.put(viewModel.file_selected_idx,true);
+					viewModel.mselecteditems.put(viewModel.file_selected_idx,true);
 					picture_selector_adapter=new PictureSelectorAdapter(viewModel.album_file_pojo_list);
 					lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
 					recyclerview.setLayoutManager(lm);
@@ -674,7 +673,7 @@ public class ImageViewFragment extends Fragment
 				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 			}
 
-			p1.v.setSelected(viewModel.selected_item_sparseboolean.get(p2,false));
+			p1.v.setSelected(viewModel.mselecteditems.containsKey(p2));
 
 		}
 

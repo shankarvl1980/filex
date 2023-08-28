@@ -51,8 +51,6 @@ public class ListFiles
 
 				String p=Global.CONCATENATE_PARENT_CHILD_PATH(file_name,line_name);
 				File f=new File(p);
-				//String d=DetailFragment.getFileSize(f,archive_view);
-				//DetailFragment.SizeClass sizeClass =DetailFragment.getFileSize(f,isDirectory,archive_view);
 				long sizeLong=f.length();
 				String si;
 				int overlay_visible=View.INVISIBLE;

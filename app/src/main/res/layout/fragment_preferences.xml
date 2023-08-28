@@ -176,7 +176,9 @@
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3" />
+                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3"
+                android:visibility="gone"
+                />
             <View
                 android:id="@+id/fragment_preferences_divider4"
                 android:layout_width="match_parent"
@@ -186,6 +188,7 @@
                 android:layout_marginBottom="@dimen/layout_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb"
+                android:visibility="gone"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

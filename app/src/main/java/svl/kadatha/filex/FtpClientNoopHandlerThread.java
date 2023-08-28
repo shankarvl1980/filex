@@ -22,8 +22,9 @@ public class FtpClientNoopHandlerThread extends HandlerThread {
         if(ftpClientNoopHandlerThread==null)
         {
             ftpClientNoopHandlerThread=new FtpClientNoopHandlerThread("ftpclientnoophandlerthread");
+            ftpClientNoopHandlerThread.start();
+            ftpClientNoopHandlerThread.onLooperPrepared();
         }
-        ftpClientNoopHandlerThread.start();
         return ftpClientNoopHandlerThread;
     }
 
@@ -57,6 +58,7 @@ public class FtpClientNoopHandlerThread extends HandlerThread {
                 switch (msg.what)
                 {
                     case START:
+                        noopHandler.removeCallbacks(runnable);
                         noopHandler.postDelayed(runnable,5000);
                         break;
                     case STOP:
