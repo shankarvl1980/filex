@@ -126,8 +126,6 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 					FilePOJO filePOJO=df.filePOJO_list.get(pos);
 					cardViewClickListener.onLongClick(filePOJO,size);
 				}
-
-
 			}
 			else
 			{
@@ -142,7 +140,10 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 					cardViewClickListener.onLongClick(filePOJO,size);
 				}
 			}
-			df.detailFragmentListener.setFileNumberView(size+"/"+df.file_list_size);
+			if(df.detailFragmentListener!=null)
+			{
+				df.detailFragmentListener.setFileNumberView(size+"/"+df.file_list_size);
+			}
 		}
 		
 		@Override
@@ -215,7 +216,10 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 					df.recyclerView.setVisibility(View.VISIBLE);
 					df.folder_empty.setVisibility(View.GONE);
 				}
-				df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + t);
+				if(df.detailFragmentListener!=null)
+				{
+					df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + t);
+				}
 			}
 		};
 	}
@@ -238,7 +242,6 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 		if(df!=null)
 		{
 			df.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-			//df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 			if(df.detailFragmentListener!=null)
 			{
 				df.detailFragmentListener.clearCache(file_path,fileObjectType);
