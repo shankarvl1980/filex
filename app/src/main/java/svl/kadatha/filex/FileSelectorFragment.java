@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
-public class FileSelectorFragment extends Fragment implements FileSelectorActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class FileSelectorFragment extends Fragment implements FileModifyObserver.FileObserverListener
 {
 	private RecyclerView recycler_view;
     private TextView folder_empty_textview;
@@ -42,7 +42,6 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 	public FileSelectorAdapter adapter;
 	public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
 	public int totalFilePOJO_list_Size;
-	public FileSelectorActivity fileSelectorActivity;
 	public String fileclickselected;
 	public FileObjectType fileObjectType;
 	public UsbFile currentUsbFile;
@@ -55,21 +54,25 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 	public FrameLayout progress_bar;
 	public FilePOJOViewModel viewModel;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_selector_dialog_saf_permission_request_code";
+	public DetailFragmentListener detailFragmentListener;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		fileSelectorActivity=(FileSelectorActivity)context;
-		fileSelectorActivity.addFragmentCommunicationListener(this);
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof DetailFragmentListener)
+		{
+			detailFragmentListener= (DetailFragmentListener) activity;
+		}
 
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		fileSelectorActivity.removeFragmentCommunicationListener(this);
-		fileSelectorActivity=null;
+		detailFragmentListener=null;
+
 	}
 
 	@Override
@@ -232,7 +235,11 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 			}
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
 			file_list_size=filePOJO_list.size();
-			fileSelectorActivity.file_number.setText(""+file_list_size);
+			if(detailFragmentListener!=null)
+			{
+				detailFragmentListener.setFileNumberView(""+file_list_size);
+			}
+
 			Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 			adapter.notifyDataSetChanged();
 		}
@@ -269,7 +276,11 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		}
 		totalFilePOJO_list_Size=totalFilePOJO_list.size();
 		file_list_size=filePOJO_list.size();
-		fileSelectorActivity.file_number.setText(""+file_list_size);
+		if(detailFragmentListener!=null)
+		{
+			detailFragmentListener.setFileNumberView(""+file_list_size);
+		}
+
 
 		Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
 		if(FileSelectorActivity.FILE_GRID_LAYOUT)
@@ -301,33 +312,28 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		fileModifyObserver.setFileObserverListener(null);
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		fileSelectorActivity.removeFragmentCommunicationListener(this);
-	}
 
-	@Override
-	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-		if(file_path==null || fileObjectType==null)
-		{
-			//cache_cleared=true;
-		}
-		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
-		{
-			//cache_cleared=true;
-		}
-		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
-		{
-			//cache_cleared=true;
-		}
-	}
-
-
-	@Override
-	public void setUsbFileRootNull() {
-		currentUsbFile=null;
-	}
+//	@Override
+//	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+//		if(file_path==null || fileObjectType==null)
+//		{
+//			//cache_cleared=true;
+//		}
+//		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
+//		{
+//			//cache_cleared=true;
+//		}
+//		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
+//		{
+//			//cache_cleared=true;
+//		}
+//	}
+//
+//
+//	@Override
+//	public void setUsbFileRootNull() {
+//		currentUsbFile=null;
+//	}
 
 
 	@Override
@@ -402,7 +408,10 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 						folder_empty_textview.setVisibility(View.GONE);
 					}
 
-					fileSelectorActivity.file_number.setText(""+t);
+					if(detailFragmentListener!=null)
+					{
+						detailFragmentListener.setFileNumberView(""+t);
+					}
 
 				}
 			};
@@ -426,12 +435,18 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 						fileObjectType=filePOJO.getFileObjectType();
 						if(filePOJO.getIsDirectory())
 						{
-							fileSelectorActivity.createFileSelectorFragmentTransaction(filePOJO);
+							if(detailFragmentListener!=null)
+							{
+								detailFragmentListener.createFragmentTransaction(filePOJO.getPath(),fileObjectType);
+							}
+
 							FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO,FileSelectorRecentDialog.FILE_SELECTOR);
 						}
 						else
 						{
-							if(fileSelectorActivity.action_sought_request_code==FileSelectorActivity.PICK_FILE_REQUEST_CODE)
+							AppCompatActivity activity= (AppCompatActivity) context;
+							if(!(activity instanceof FileSelectorActivity)) return;
+							if(((FileSelectorActivity)activity).action_sought_request_code==FileSelectorActivity.PICK_FILE_REQUEST_CODE)
 							{
 								Uri uri = null;
 								if(fileObjectType==FileObjectType.USB_TYPE)
@@ -458,13 +473,13 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 									}
 									Intent intent=new Intent(Intent.ACTION_VIEW);
 									FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,null,filePOJO.getPath(),file_extn,filePOJO.getFileObjectType(),false,uri);
-									fileSelectorActivity.setResult(Activity.RESULT_OK,intent);
+									getActivity().setResult(Activity.RESULT_OK,intent);
 								}
 								else
 								{
-									fileSelectorActivity.setResult(Activity.RESULT_CANCELED);
+									getActivity().setResult(Activity.RESULT_CANCELED);
 								}
-								fileSelectorActivity.finish();
+								getActivity().finish();
 
 							}
 						}
@@ -498,7 +513,11 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		{
 			adapter.notifyDataSetChanged();
 			file_list_size=filePOJO_list.size();
-			fileSelectorActivity.file_number.setText(""+file_list_size);
+			if(detailFragmentListener!=null)
+			{
+				detailFragmentListener.setFileNumberView(""+file_list_size);
+			}
+
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
 
 			if(file_list_size==0)
@@ -518,7 +537,12 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 
 	public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
 	{
-		fileSelectorActivity.clearCache(file_path,fileObjectType);
+		if(detailFragmentListener!=null)
+		{
+			detailFragmentListener.clearCache(file_path,fileObjectType);
+		}
+
+
 		modification_observed=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
@@ -539,7 +563,7 @@ public class FileSelectorFragment extends Fragment implements FileSelectorActivi
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			safpermissionhelper.show(fileSelectorActivity.fm, "saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(), "saf_permission_dialog");
 			return false;
 		}
 		else

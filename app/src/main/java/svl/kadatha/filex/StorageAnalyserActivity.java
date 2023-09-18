@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModel;
@@ -37,7 +39,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StorageAnalyserActivity extends  BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
+public class StorageAnalyserActivity extends  BaseActivity implements MediaMountReceiver.MediaMountListener,DetailFragmentListener, DeleteFileAlertDialog.OKButtonClickListener
 {
     private Context context;
     private LocalBroadcastManager localBroadcastManager;
@@ -46,7 +48,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public FragmentManager fm;
     public PackageManager pm;
     public TextView current_dir, file_number;
-    private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
+   // private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
     public RecentDialogListener recentDialogListener;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
@@ -64,7 +66,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private KeyBoardUtil keyBoardUtil;
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
-
+    private StorageAnalyserActivityViewModel viewModel;
 
 
     @Override
@@ -72,7 +74,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         super.onCreate(savedInstanceState);
         context=this;
         repositoryClass=RepositoryClass.getRepositoryClass();
-        ViewModel viewModel=new ViewModelProvider(this).get(StorageAnalyserActivityViewModel.class); //required to clear hashmap internal and external storage details on final finish of activity
+        viewModel=new ViewModelProvider(this).get(StorageAnalyserActivityViewModel.class); //required to clear hashmap internal and external storage details on final finish of activity
         mediaMountReceiver=new MediaMountReceiver();
         mediaMountReceiver.addMediaMountListener(this);
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
@@ -106,7 +108,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         {
             if(savedInstanceState==null)
             {
-                createFileAnalyserFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR());
+                createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getFileObjectType());
             }
         }
 
@@ -184,7 +186,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         search_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                set_visibility_searchbar(false);
+                setSearchBarVisibility(false);
             }
         });
 
@@ -217,7 +219,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 }
                 if(!search_toolbar_visible)
                 {
-                    set_visibility_searchbar(true);
+                    setSearchBarVisibility(true);
                 }
                 else
                 {
@@ -257,7 +259,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             public void onClick(View view) {
                 if(search_toolbar_visible)
                 {
-                    set_visibility_searchbar(false);
+                    setSearchBarVisibility(false);
                 }
                 finish();
             }
@@ -290,7 +292,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, storageAnalyserFragment.fileObjectType, storageAnalyserFragment.fileclickselected,true);
                 deleteFileAlertDialog.show(fm, "delete_dialog");
-                set_visibility_searchbar(false);
+                setSearchBarVisibility(false);
 
             }
         });
@@ -342,7 +344,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         }
     }
 
-    public void set_visibility_searchbar(boolean visible)
+    public void setSearchBarVisibility(boolean visible)
     {
         StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
         if(storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE && visible)
@@ -375,10 +377,76 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         Global.CLEAR_CACHE();
     }
 
+    @Override
+    public void onScrollRecyclerView(boolean showToolBar) {
+
+        if(showToolBar)
+        {
+            switch (toolbar_shown) {
+                case "bottom":
+                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    break;
+                case "actionmode":
+                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    break;
+
+            }
+
+        }
+        else {
+            switch (toolbar_shown) {
+                case "bottom":
+                    bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    break;
+                case "actionmode":
+                    actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    break;
+            }
+
+        }
+
+
+    }
+
+    @Override
+    public void actionModeFinish(Fragment fragment, String fileclickeselected) {
+        if(fragment instanceof StorageAnalyserFragment)DeselectAllAndAdjustToolbars((StorageAnalyserFragment) fragment,fileclickeselected);
+    }
+
+    @Override
+    public void onLongClickItem(int size) {
+        bottom_toolbar.setVisibility(View.GONE);
+        actionmode_toolbar.setVisibility(View.VISIBLE);
+        toolbar_shown="actionmode";
+        actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+    }
+
+    @Override
+    public void setFileNumberView(String file_number_string) {
+
+        file_number.setText(file_number_string);
+    }
+
+    @Override
+    public MainActivity.SearchParameters getSearchParameters() {
+        return null;
+    }
+
     public void clearCache(String file_path, FileObjectType fileObjectType)
     {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
     }
+
+    @Override
+    public void setCurrentDirText(String current_dir_name) {
+        current_dir.setText(current_dir_name);
+    }
+
+    @Override
+    public void enableParentDirImageButton(boolean enable) {
+
+    }
+
 
 
     @Override
@@ -412,7 +480,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         }
         else if(search_toolbar_visible)
         {
-            set_visibility_searchbar(false);
+            setSearchBarVisibility(false);
         }
         else
         {
@@ -483,7 +551,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         return filePOJOS;
     }
 
-    public void createFileAnalyserFragmentTransaction(FilePOJO filePOJO)
+    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType)
     {
         String fragment_tag;
         String existingFilePOJOkey="";
@@ -494,8 +562,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             existingFilePOJOkey= storageAnalyserFragment.fileObjectType+fragment_tag;
             DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.getTag());
         }
-        FileObjectType fileObjectType=filePOJO.getFileObjectType();
-        String file_path=filePOJO.getPath();
+
         if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
             fm.beginTransaction().replace(R.id.storage_analyser_container, StorageAnalyserFragment.getInstance(fileObjectType),file_path).addToBackStack(file_path)
@@ -511,6 +578,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         bottom_toolbar.setVisibility(View.VISIBLE);
         actionmode_toolbar.setVisibility(View.GONE);
         toolbar_shown="bottom";
+        viewModel.tool_bar_shown="bottom";
         bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
         if(sad!=null)
         {
@@ -592,21 +660,21 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
 
 
-    interface DetailFragmentCommunicationListener
-    {
-        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-        void onSettingUsbFileRootNull();
-    }
-
-    public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-    {
-        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
-    }
-
-    public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-    {
-        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
-    }
+//    interface DetailFragmentCommunicationListener
+//    {
+//        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
+//        void onSettingUsbFileRootNull();
+//    }
+//
+//    public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
+//    {
+//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
+//    }
+//
+//    public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
+//    {
+//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
+//    }
 
     interface RecentDialogListener
     {

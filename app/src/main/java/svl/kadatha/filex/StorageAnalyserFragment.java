@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 
-public class StorageAnalyserFragment extends Fragment implements StorageAnalyserActivity.DetailFragmentCommunicationListener, FileModifyObserver.FileObserverListener
+public class StorageAnalyserFragment extends Fragment implements FileModifyObserver.FileObserverListener
 {
     private RecyclerView recycler_view;
     private TextView folder_empty_textview;
@@ -48,7 +48,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
     public StorageAnalyserAdapter adapter;
     public List<FilePOJO> filePOJO_list,totalFilePOJO_list;
     public int totalFilePOJO_list_Size;
-    public StorageAnalyserActivity storageAnalyserActivity;
+
     public String fileclickselected;
     public FileObjectType fileObjectType;
     public UsbFile currentUsbFile;
@@ -63,22 +63,25 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     private final static String SAF_PERMISSION_REQUEST_CODE="storage_analyser_dialog_saf_permission_request_code";
-
+    public DetailFragmentListener detailFragmentListener;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        storageAnalyserActivity=(StorageAnalyserActivity)context;
-        storageAnalyserActivity.addFragmentCommunicationListener(this);
+
+        AppCompatActivity activity= (AppCompatActivity) context;
+        if(activity instanceof DetailFragmentListener)
+        {
+            detailFragmentListener= (DetailFragmentListener) activity;
+        }
 
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        storageAnalyserActivity.removeFragmentCommunicationListener(this);
-        storageAnalyserActivity=null;
+        detailFragmentListener=null;
     }
 
     @Override
@@ -160,13 +163,8 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                 super.onScrolled(rv,dx,dy);
                 if(scroll_distance>threshold && is_toolbar_visible)
                 {
-                    switch (storageAnalyserActivity.toolbar_shown) {
-                        case "bottom":
-                            storageAnalyserActivity.bottom_toolbar.animate().translationY(storageAnalyserActivity.bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                            break;
-                        case "actionmode":
-                            storageAnalyserActivity.actionmode_toolbar.animate().translationY(storageAnalyserActivity.actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                            break;
+                    if(detailFragmentListener!=null){
+                        detailFragmentListener.onScrollRecyclerView(false);
                     }
 
                     is_toolbar_visible=false;
@@ -174,15 +172,10 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                 }
                 else if(scroll_distance<-threshold && !is_toolbar_visible)
                 {
-                    switch (storageAnalyserActivity.toolbar_shown) {
-                        case "bottom":
-                            storageAnalyserActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                            break;
-                        case "actionmode":
-                            storageAnalyserActivity.actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                            break;
-
+                    if(detailFragmentListener!=null){
+                        detailFragmentListener.onScrollRecyclerView(false);
                     }
+
                     is_toolbar_visible=true;
                     scroll_distance=0;
                 }
@@ -271,17 +264,21 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             filePOJO_list=viewModel.filePOJOS;
             totalFilePOJO_list_Size=totalFilePOJO_list.size();
             file_list_size=filePOJO_list.size();
-            if(storageAnalyserActivity!=null)
+            if(detailFragmentListener!=null)
             {
-                storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
-                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+                detailFragmentListener.setCurrentDirText(new File(fileclickselected).getName());
+                detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
             }
+
             Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
             adapter.notifyDataSetChanged();
         }
         else if(modification_observed)
         {
-            storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
+            if (detailFragmentListener != null) {
+                detailFragmentListener.actionModeFinish(this,fileclickselected);
+            }
+
             modification_observed=false;
             local_activity_delete=false;
             progress_bar.setVisibility(View.VISIBLE);
@@ -305,14 +302,14 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         filePOJO_list=viewModel.filePOJOS;
         totalFilePOJO_list_Size=totalFilePOJO_list.size();
         file_list_size=filePOJO_list.size();
-        if(storageAnalyserActivity!=null)
+        if(detailFragmentListener!=null)
         {
-            storageAnalyserActivity.current_dir.setText(new File(fileclickselected).getName());
-            storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+            detailFragmentListener.setCurrentDirText(new File(fileclickselected).getName());
+            detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
         }
 
         Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
-        adapter=new StorageAnalyserAdapter();
+        adapter=new StorageAnalyserAdapter(this);
         set_adapter();
         progress_bar.setVisibility(View.GONE);
 
@@ -334,38 +331,32 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         fileModifyObserver.setFileObserverListener(null);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        storageAnalyserActivity.removeFragmentCommunicationListener(this);
-    }
-
     public void notifyDataSetChanged()
     {
         after_filledFilePojos_procedure();
     }
 
-    @Override
-    public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-        if(file_path==null || fileObjectType==null)
-        {
-            //cache_cleared=true;
-        }
-        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
-        {
-            //cache_cleared=true;
-        }
-        else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
-        {
-            //cache_cleared=true;
-        }
-
-    }
-
-    @Override
-    public void onSettingUsbFileRootNull() {
-        currentUsbFile=null;
-    }
+//    @Override
+//    public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
+//        if(file_path==null || fileObjectType==null)
+//        {
+//            //cache_cleared=true;
+//        }
+//        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
+//        {
+//            //cache_cleared=true;
+//        }
+//        else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
+//        {
+//            //cache_cleared=true;
+//        }
+//
+//    }
+//
+//    @Override
+//    public void onSettingUsbFileRootNull() {
+//        currentUsbFile=null;
+//    }
 
 
     @Override
@@ -392,6 +383,10 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
 
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder> implements Filterable
     {
+        StorageAnalyserFragment storageAnalyserFragment;
+        StorageAnalyserAdapter(StorageAnalyserFragment storageAnalyserFragment){
+            this.storageAnalyserFragment=storageAnalyserFragment;
+        }
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
@@ -456,7 +451,10 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                         folder_empty_textview.setVisibility(View.GONE);
                     }
 
-                    storageAnalyserActivity.file_number.setText(""+t);
+                    if(detailFragmentListener!=null)
+                    {
+                        detailFragmentListener.setFileNumberView(""+t);
+                    }
 
                 }
             };
@@ -467,6 +465,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         {
             final StorageAnalyserRecyclerViewLayout v;
             FileObjectType fileObjectType;
+
             int pos;
             ViewHolder(StorageAnalyserRecyclerViewLayout v)
             {
@@ -493,7 +492,10 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                     fileObjectType=filePOJO.getFileObjectType();
                     if(filePOJO.getIsDirectory())
                     {
-                        storageAnalyserActivity.createFileAnalyserFragmentTransaction(filePOJO);
+                        if(detailFragmentListener!=null)
+                        {
+                            detailFragmentListener.createFragmentTransaction(filePOJO.getPath(),fileObjectType);
+                        }
                     }
                     else
                     {
@@ -520,22 +522,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                     ((StorageAnalyserRecyclerViewLayout)v).set_selected(false);
                     --size;
 
-                    if(size==1)
-                    {
-
-                        onLongClickAdjustToolbars();
-                    }
-                    else if(size>1)
-                    {
-
-                        onLongClickAdjustToolbars();
-                    }
-
-                    if(size==0)
-                    {
-                        final StorageAnalyserFragment sad=(StorageAnalyserFragment) storageAnalyserActivity.fm.findFragmentById(R.id.storage_analyser_container);
-                        storageAnalyserActivity.DeselectAllAndAdjustToolbars(sad,sad.fileclickselected);
-                    }
+                    onLongClickAdjustToolbars(size);
                 }
                 else
                 {
@@ -557,9 +544,14 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
                         //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
                     }
 
-                    onLongClickAdjustToolbars();
+                    onLongClickAdjustToolbars(size);
                 }
-                storageAnalyserActivity.file_number.setText(size+"/"+file_list_size);
+
+                if(detailFragmentListener!=null)
+                {
+                    detailFragmentListener.setFileNumberView(size+"/"+file_list_size);
+                }
+
             }
         }
 
@@ -575,29 +567,36 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         for(int i=0;i<size;++i)
         {
             viewModel.mselecteditems.put(i,filePOJO_list.get(i).getPath());
-            //viewModel.mselecteditemsFilePath.put(i,filePOJO_list.get(i).getPath());
+
         }
 
         int s=viewModel.mselecteditems.size();
-        storageAnalyserActivity.file_number.setText(s+"/"+size);
+
+        if(detailFragmentListener!=null)
+        {
+            detailFragmentListener.setFileNumberView(s+"/"+size);
+        }
         notifyDataSetChanged();
 
-        onLongClickAdjustToolbars();
+        onLongClickAdjustToolbars(size);
     }
 
     public void deselectAll()
     {
-        storageAnalyserActivity.DeselectAllAndAdjustToolbars(this,fileclickselected);
+        if(detailFragmentListener!=null)
+        {
+            detailFragmentListener.actionModeFinish(this,fileclickselected);
+        }
     }
 
 
-    private void onLongClickAdjustToolbars()
+    private void onLongClickAdjustToolbars(int size)
     {
-        storageAnalyserActivity.bottom_toolbar.setVisibility(View.GONE);
-        storageAnalyserActivity.actionmode_toolbar.setVisibility(View.VISIBLE);
-
-        storageAnalyserActivity.toolbar_shown="actionmode";
-        storageAnalyserActivity.actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+        if(detailFragmentListener!=null)
+        {
+            detailFragmentListener.onLongClickItem(size);
+        }
+        
         is_toolbar_visible=true;
     }
 
@@ -629,7 +628,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
             FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
-            fileTypeSelectFragment.show(storageAnalyserActivity.fm, "");
+            fileTypeSelectFragment.show(getParentFragmentManager(), "");
         }
         else
         {
@@ -637,7 +636,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (!storageAnalyserActivity.getPackageManager().canRequestPackageInstalls()) {
+                    if (!context.getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
                         unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
                         activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
@@ -676,7 +675,11 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
             {
                 adapter.notifyDataSetChanged();
                 file_list_size=filePOJO_list.size();
-                storageAnalyserActivity.file_number.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
+                if(detailFragmentListener!=null)
+                {
+                    detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
+                }
+
                 totalFilePOJO_list_Size=totalFilePOJO_list.size();
 
                 if(file_list_size==0)
@@ -699,8 +702,11 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
     public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType)
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-        //viewModel.mselecteditemsFilePath=new SparseArray<>();
-        storageAnalyserActivity.clearCache(file_path,fileObjectType);
+        if(detailFragmentListener!=null)
+        {
+            detailFragmentListener.clearCache(file_path,fileObjectType);
+        }
+
         modification_observed=true;
         Global.WORKOUT_AVAILABLE_SPACE();
     }
@@ -722,7 +728,7 @@ public class StorageAnalyserFragment extends Fragment implements StorageAnalyser
         if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-            safpermissionhelper.show(storageAnalyserActivity.fm, "saf_permission_dialog");
+            safpermissionhelper.show(getParentFragmentManager(), "saf_permission_dialog");
             return false;
         }
         else

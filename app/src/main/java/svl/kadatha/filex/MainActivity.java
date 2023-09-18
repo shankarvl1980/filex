@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -45,6 +46,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -62,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +77,8 @@ import me.jahnen.libaums.core.fs.FileSystem;
 import me.jahnen.libaums.core.fs.UsbFile;
 
 
-public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DeleteFileAlertDialog.OKButtonClickListener
+public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,
+		DeleteFileAlertDialog.OKButtonClickListener,DetailFragmentListener
 {
 	DrawerLayout drawerLayout;
     public Button rename,working_dir_add_btn,working_dir_remove_btn;
@@ -129,7 +133,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public static UsbFile usbFileRoot;
 	public static FileSystem usbCurrentFs;
 	public static boolean USB_ATTACHED;
-	private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
+	//private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
 	public boolean clear_cache;
 	public RecentDialogListener recentDialogListener;
 	private ListView listView;
@@ -221,7 +225,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onClick(View v) {
 
-				set_visibility_searchbar(false);
+				setSearchBarVisibility(false);
 				SearchDialog searchDialog=new SearchDialog();
 				searchDialog.show(fm,"search_dialog");
 			}
@@ -232,7 +236,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			@Override
 			public void onClick(View v) {
 
-				set_visibility_searchbar(false);
+				setSearchBarVisibility(false);
 			}
 		});
 		search_view=search_toolbar.findViewById(R.id.search_bar_view);
@@ -902,7 +906,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	}
 
 
-	public void set_visibility_searchbar(boolean visible)
+	public void setSearchBarVisibility(boolean visible)
 	{
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		if(df.progress_bar.getVisibility()==View.VISIBLE)
@@ -922,6 +926,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			actionmode_finish(df, df.fileclickselected);
 		}
 
+	}
+
+	@Override
+	public SearchParameters getSearchParameters() {
+		return new SearchParameters(search_file_name,search_in_dir,search_file_type,search_whole_word,search_case_sensitive,search_regex,search_lower_limit_size,search_upper_limit_size);
 	}
 
 	@Override
@@ -1077,7 +1086,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		super.onStop();
 		if(search_toolbar_visible)
 		{
-			set_visibility_searchbar(false);
+			setSearchBarVisibility(false);
 		}
 
 		if(!isChangingConfigurations() && clear_cache)
@@ -1094,6 +1103,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public void clearCache(String file_path, FileObjectType fileObjectType)
 	{
 		FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
+	}
+
+	@Override
+	public void setCurrentDirText(String current_dir_name) {
+
+	}
+
+	@Override
+	public void enableParentDirImageButton(boolean enable) {
+
 	}
 
 
@@ -1287,7 +1306,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		else if(search_toolbar_visible)
 		{
-			set_visibility_searchbar(false);
+			setSearchBarVisibility(false);
 		}
 		else if(df.viewModel.library_filter_path!=null)
 		{
@@ -1506,6 +1525,87 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		actionmode_finish(df,df.fileclickselected);
 	}
 
+	@Override
+	public void onScrollRecyclerView(boolean showToolBar) {
+		if(showToolBar)
+		{
+			switch (viewModel.toolbar_shown) {
+				case "bottom":
+					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+					break;
+				case "actionmode":
+					actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+					break;
+				case "paste":
+					paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+					break;
+
+			}
+		}
+		else {
+			switch (viewModel.toolbar_shown) {
+				case "bottom":
+					bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+					break;
+				case "actionmode":
+					actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+					break;
+				case "paste":
+					paste_toolbar.animate().translationY(paste_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+					break;
+
+			}
+		}
+	}
+
+	@Override
+	public void actionModeFinish(Fragment fragment, String fileclickeselected) {
+		if(fragment instanceof DetailFragment) actionmode_finish((DetailFragment) fragment,fileclickeselected);
+	}
+
+	@Override
+	public void onLongClickItem( int size) {
+		if(!viewModel.toolbar_shown.equals("paste"))
+		{
+			actionmode_toolbar.setVisibility(View.VISIBLE);
+			paste_toolbar.setVisibility(View.GONE);
+			bottom_toolbar.setVisibility(View.GONE);
+			viewModel.toolbar_shown ="actionmode";
+			actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+		}
+		else {
+			paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+		}
+
+		if(size==1)
+		{
+			rename.setEnabled(true);
+			rename.setAlpha(Global.ENABLE_ALFA);
+		}
+		else if(size>1)
+		{
+			rename.setEnabled(false);
+			rename.setAlpha(Global.DISABLE_ALFA);
+		}
+
+		final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+		if(size==df.file_list_size)
+		{
+			all_select.setImageResource(R.drawable.deselect_icon);
+		}
+		if(size==0)
+		{
+			DeselectAllAndAdjustToolbars(df,df.fileclickselected);
+		}
+
+	}
+
+	@Override
+	public void setFileNumberView(String file_number_string) {
+		file_number_view.setText(file_number_string);
+	}
+
+
 
 	private class TopToolbarClickListener implements View.OnClickListener
 	{
@@ -1578,7 +1678,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			if (id == R.id.toolbar_btn_1) {
 				if(!search_toolbar_visible)
 				{
-					set_visibility_searchbar(true);
+					setSearchBarVisibility(true);
 				}
 				else
 				{
@@ -1589,7 +1689,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				if(search_toolbar_visible)
 				{
-					set_visibility_searchbar(false);
+					setSearchBarVisibility(false);
 				}
 				if(df.progress_bar.getVisibility()==View.VISIBLE)
 				{
@@ -1624,14 +1724,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			} else if (id == R.id.toolbar_btn_4) {
 				if(search_toolbar_visible)
 				{
-					set_visibility_searchbar(false);
+					setSearchBarVisibility(false);
 				}
 				ViewDialog viewDialog = new ViewDialog();
 				viewDialog.show(fm, "view_dialog");
 			} else if (id == R.id.toolbar_btn_5) {
 				if(search_toolbar_visible)
 				{
-					set_visibility_searchbar(false);
+					setSearchBarVisibility(false);
 				}
 				finish();
 			}
@@ -2335,15 +2435,27 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						onbackpressed(false);
 					}
 
-					int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-					for(int i=0;i<size;++i)
+					int entry_count=fm.getBackStackEntryCount();
+					for(int i=0;i<entry_count;++i)
 					{
-						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-						if(listener!=null)
+						Fragment frag=fm.findFragmentByTag(fm.getBackStackEntryAt(i).getName());
+						if(frag instanceof DetailFragment)
 						{
-							listener.setUsbFileRootNull();
+							df= (DetailFragment)frag;
+							df.currentUsbFile=null;
 						}
+
 					}
+
+//					int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
+//					for(int i=0;i<size;++i)
+//					{
+//						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
+//						if(listener!=null)
+//						{
+//							listener.setUsbFileRootNull();
+//						}
+//					}
 
 					Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
 					while (iterator1.hasNext())
@@ -2434,26 +2546,52 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	}
 
 
-	interface DetailFragmentCommunicationListener
-	{
-		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-		void setUsbFileRootNull();
-	}
-
-	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-	{
-		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
-	}
-
-	public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-	{
-		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
-	}
+//	interface DetailFragmentCommunicationListener
+//	{
+//		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
+//		void setUsbFileRootNull();
+//	}
+//
+//	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
+//	{
+//		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
+//	}
+//
+//	public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
+//	{
+//		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
+//	}
 
 
 	interface RecentDialogListener
 	{
 		void onMediaAttachedAndRemoved();
+	}
+
+	static class SearchParameters
+	{
+		String search_file_name;
+		Set<FilePOJO> search_in_dir;
+		String search_file_type;
+		boolean search_whole_word,search_case_sensitive,search_regex;
+		long search_lower_limit_size;
+		long search_upper_limit_size;
+
+		SearchParameters(String search_file_name,Set<FilePOJO> search_in_dir,String search_file_type,boolean search_whole_word,
+						 boolean search_case_sensitive, boolean search_regex,long search_lower_limit_size,long search_upper_limit_size)
+		{
+			this.search_file_name = search_file_name;
+			this.search_in_dir = search_in_dir;
+			this.search_file_type = search_file_type;
+			this.search_whole_word = search_whole_word;
+			this.search_case_sensitive = search_case_sensitive;
+			this.search_regex = search_regex;
+			this.search_lower_limit_size = search_lower_limit_size;
+			this.search_upper_limit_size = search_upper_limit_size;
+
+		}
+
+
 	}
 
 }

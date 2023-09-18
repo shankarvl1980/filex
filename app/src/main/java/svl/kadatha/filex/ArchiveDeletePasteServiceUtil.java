@@ -316,18 +316,22 @@ public class ArchiveDeletePasteServiceUtil {
                 Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 DetailFragment.TO_BE_MOVED_TO_FILE_POJO=filePOJO;
 
-                if(destFileObjectType== FileObjectType.FILE_TYPE)
-                {
-                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
+                if (df.detailFragmentListener != null) {
+
+                    if(destFileObjectType== FileObjectType.FILE_TYPE)
+                    {
+                        df.detailFragmentListener.createFragmentTransaction(dest_folder,FileObjectType.FILE_TYPE);
+                    }
+                    else if(destFileObjectType== FileObjectType.USB_TYPE && MainActivity.usbFileRoot!=null)
+                    {
+                        df.detailFragmentListener.createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
+                    }
+                    else if (destFileObjectType==FileObjectType.FTP_TYPE)
+                    {
+                        df.detailFragmentListener.createFragmentTransaction(dest_folder,FileObjectType.FTP_TYPE);
+                    }
                 }
-                else if(destFileObjectType== FileObjectType.USB_TYPE && MainActivity.usbFileRoot!=null)
-                {
-                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.USB_TYPE);
-                }
-                else if (destFileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    df.mainActivity.createFragmentTransaction(dest_folder,FileObjectType.FTP_TYPE);
-                }
+
             }
             else
             {

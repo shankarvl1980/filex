@@ -8,7 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import java.util.HashMap;
 
 public class StorageAnalyserActivityViewModel extends AndroidViewModel {
-
+    String tool_bar_shown;
 
     public StorageAnalyserActivityViewModel(@NonNull Application application) {
         super(application);

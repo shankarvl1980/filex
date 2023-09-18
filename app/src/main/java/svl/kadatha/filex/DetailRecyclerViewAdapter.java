@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,71 +22,59 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 {
 
 	private final DetailFragment df;
-	private final MainActivity mainActivity;
 
 	private CardViewClickListener cardViewClickListener;
 
 	DetailRecyclerViewAdapter(Context context)
 	{
-		mainActivity=(MainActivity)context;
-		df=(DetailFragment)mainActivity.fm.findFragmentById(R.id.detail_fragment);
-		mainActivity.current_dir_textview.setText(df.file_click_selected_name);
-		mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
-		if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
+		df=(DetailFragment)((AppCompatActivity)context).getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
+		if(df.detailFragmentListener!=null)
 		{
-			File f=new File(df.fileclickselected);
-			File parent_file=f.getParentFile();
-			if(parent_file!=null)
+			df.detailFragmentListener.setCurrentDirText(df.file_click_selected_name);
+			df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size()+"/"+df.file_list_size);
+			if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
 			{
-				mainActivity.parent_dir_image_button.setEnabled(true);
-				mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
+				File f=new File(df.fileclickselected);
+				File parent_file=f.getParentFile();
+				if(parent_file!=null)
+				{
+					df.detailFragmentListener.enableParentDirImageButton(true);
+				}
+				else
+				{
+					df.detailFragmentListener.setCurrentDirText(String.valueOf(R.string.root_directory));
+					df.detailFragmentListener.enableParentDirImageButton(false);
+				}
 			}
-			else
+			else if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
-				mainActivity.current_dir_textview.setText(R.string.root_directory);
-				mainActivity.parent_dir_image_button.setEnabled(false);
-				mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+				df.detailFragmentListener.enableParentDirImageButton(false);
 			}
-		}
-		else if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			mainActivity.parent_dir_image_button.setEnabled(false);
-			mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+			else if(df.fileObjectType== FileObjectType.USB_TYPE)
+			{
+				UsbFile f=df.currentUsbFile;
+				UsbFile parent_file=null;
+				if (f != null) {
+					parent_file=f.getParent();
+				}
 
-			boolean show_file_path;
-			if(df.fileclickselected.equals(DetailFragment.SEARCH_RESULT))
+				if(parent_file!=null)
+				{
+					df.detailFragmentListener.enableParentDirImageButton(true);
+				}
+				else
+				{
+					df.detailFragmentListener.setCurrentDirText(DetailFragment.USB_FILE_PREFIX+File.separator);
+					df.detailFragmentListener.enableParentDirImageButton(false);
+				}
+			}
+			else if(df.fileObjectType==FileObjectType.FTP_TYPE)
 			{
-				show_file_path =true;
-			}
-			else
-			{
-				show_file_path =Global.SHOW_FILE_PATH;
-			}
-		}
-		else if(df.fileObjectType== FileObjectType.USB_TYPE)
-		{
-			UsbFile f=df.currentUsbFile;
-			UsbFile parent_file=null;
-			if (f != null) {
-				parent_file=f.getParent();
-			}
 
-			if(parent_file!=null)
-			{
-				mainActivity.parent_dir_image_button.setEnabled(true);
-				mainActivity.parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
 			}
-			else
-			{
-				mainActivity.current_dir_textview.setText(DetailFragment.USB_FILE_PREFIX+File.separator);
-				mainActivity.parent_dir_image_button.setEnabled(false);
-				mainActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
-			}
-		}
-		else if(df.fileObjectType==FileObjectType.FTP_TYPE)
-		{
 
 		}
+
 
 	}
 
@@ -128,70 +117,32 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 			if(df.viewModel.mselecteditems.containsKey(pos))
 			{
 				df.viewModel.mselecteditems.remove(pos);
-				//df.viewModel.mselecteditemsFilePath.delete(pos);
 				v.setSelected(false);
 				((RecyclerViewLayout)v).set_selected(false);
 				--size;
 
-				if(size==1)
+				if(cardViewClickListener!=null)
 				{
-					mainActivity.rename.setEnabled(true);
-					mainActivity.rename.setAlpha(Global.ENABLE_ALFA);
-
-					if(cardViewClickListener!=null)
-					{
-						FilePOJO filePOJO=df.filePOJO_list.get(pos);
-						cardViewClickListener.onLongClick(filePOJO);
-					}
-				}
-				else if(size>1)
-				{
-					mainActivity.rename.setEnabled(false);
-					mainActivity.rename.setAlpha(Global.DISABLE_ALFA);
-
-					if(cardViewClickListener!=null)
-					{
-						FilePOJO filePOJO=df.filePOJO_list.get(pos);
-						cardViewClickListener.onLongClick(filePOJO);
-					}
+					FilePOJO filePOJO=df.filePOJO_list.get(pos);
+					cardViewClickListener.onLongClick(filePOJO,size);
 				}
 
-				if(size==0)
-				{
-					mainActivity.DeselectAllAndAdjustToolbars(df,df.fileclickselected);
-				}
+
 			}
 			else
 			{
 				df.viewModel.mselecteditems.put(pos,df.filePOJO_list.get(pos).getPath());
-				//df.viewModel.mselecteditemsFilePath.put(pos,df.filePOJO_list.get(pos).getPath());
 				v.setSelected(true);
 				((RecyclerViewLayout)v).set_selected(true);
 				++size;
 
-				if(size==1)
-				{
-					mainActivity.rename.setEnabled(true);
-					mainActivity.rename.setAlpha(Global.ENABLE_ALFA);
-				}
-				else if(size>1)
-				{
-					mainActivity.rename.setEnabled(false);
-					mainActivity.rename.setAlpha(Global.DISABLE_ALFA);
-				}
-
-				if(size==df.file_list_size)
-				{
-					mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
-				}
-
 				if(cardViewClickListener!=null)
 				{
 					FilePOJO filePOJO=df.filePOJO_list.get(pos);
-					cardViewClickListener.onLongClick(filePOJO);
+					cardViewClickListener.onLongClick(filePOJO,size);
 				}
 			}
-			mainActivity.file_number_view.setText(size+"/"+df.file_list_size);
+			df.detailFragmentListener.setFileNumberView(size+"/"+df.file_list_size);
 		}
 		
 		@Override
@@ -264,7 +215,7 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 					df.recyclerView.setVisibility(View.VISIBLE);
 					df.folder_empty.setVisibility(View.GONE);
 				}
-				mainActivity.file_number_view.setText(df.viewModel.mselecteditems.size() + "/" + t);
+				df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + t);
 			}
 		};
 	}
@@ -288,7 +239,11 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 		{
 			df.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
 			//df.viewModel.mselecteditemsFilePath=new SparseArray<>();
-			df.mainActivity.clearCache(file_path,fileObjectType);
+			if(df.detailFragmentListener!=null)
+			{
+				df.detailFragmentListener.clearCache(file_path,fileObjectType);
+			}
+
 			df.modification_observed=true;
 		}
 		Global.WORKOUT_AVAILABLE_SPACE();
@@ -298,47 +253,39 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 	public void selectAll()
 	{
 		df.viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-		//df.viewModel.mselecteditemsFilePath=new SparseArray<>();
 		int size=df.filePOJO_list.size();
 
 		for(int i=0;i<size;++i)
 		{
 			df.viewModel.mselecteditems.put(i,df.filePOJO_list.get(i).getPath());
-			//df.viewModel.mselecteditemsFilePath.put(i,df.filePOJO_list.get(i).getPath());
 		}
 
 		int s=df.viewModel.mselecteditems.size();
-		if(s==1)
+
+		if(df.detailFragmentListener!=null)
 		{
-			mainActivity.rename.setEnabled(true);
-			mainActivity.rename.setAlpha(Global.ENABLE_ALFA);
+			df.detailFragmentListener.setFileNumberView(s+"/"+size);
+			df.detailFragmentListener.onLongClickItem(s);
 		}
-		else if(s>1)
-		{
-			mainActivity.rename.setEnabled(false);
-			mainActivity.rename.setAlpha(Global.DISABLE_ALFA);
-		}
-		mainActivity.file_number_view.setText(s+"/"+size);
+
 		notifyDataSetChanged();
-		if(!mainActivity.viewModel.toolbar_shown.equals("paste") && !mainActivity.viewModel.toolbar_shown.equals("extract"))
-		{
-			mainActivity.actionmode_toolbar.setVisibility(View.VISIBLE);
-			mainActivity.paste_toolbar.setVisibility(View.GONE);
-			mainActivity.bottom_toolbar.setVisibility(View.GONE);
-			mainActivity.viewModel.toolbar_shown ="actionmode";
-		}
+
 	}
 	
 	public void deselectAll()
 	{
-		mainActivity.DeselectAllAndAdjustToolbars(df,df.fileclickselected);
+		if(df.detailFragmentListener!=null)
+		{
+			df.detailFragmentListener.actionModeFinish(df,df.fileclickselected);
+		}
+
 	}
 
 
 	interface CardViewClickListener
 	{
 		void onClick(FilePOJO filePOJO);
-		void onLongClick(FilePOJO filePOJO);
+		void onLongClick(FilePOJO filePOJO, int size);
 	}
 	
 	
