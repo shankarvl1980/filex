@@ -52,22 +52,30 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	private RecyclerView recent_recyclerview;
 	private TextView recent_label;
 	private FilePOJO clicked_filepojo;
-	private FragmentManager fragmentManager;
 	private final static String SAF_PERMISSION_REQUEST_CODE="recent_dialog_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		((MainActivity)context).recentDialogListener=this;
-		fragmentManager=((MainActivity)context).getSupportFragmentManager();
+		AppCompatActivity activity= (AppCompatActivity) getActivity();
+		if(activity instanceof MainActivity)
+		{
+			((MainActivity)activity).recentDialogListener=this;
+		}
+
 
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		((MainActivity)context).recentDialogListener=null;
+		AppCompatActivity activity= (AppCompatActivity) getActivity();
+		if(activity instanceof MainActivity)
+		{
+			((MainActivity)activity).recentDialogListener=null;
+		}
+
 	}
 
 	@Override
@@ -215,7 +223,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
 			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,false,file_size);
-			fileTypeSelectFragment.show(fragmentManager,"");
+			fileTypeSelectFragment.show(getParentFragmentManager(),"");
 		}
 
 		else
@@ -263,7 +271,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	{
 		LinkedList<FilePOJO> dir_linkedlist;
 		final boolean storage_dir;
-		PackageInfo pi;
 
 		RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir)
 		{
@@ -297,7 +304,12 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 							clicked_filepojo=filePOJO;
 							if(filePOJO.getIsDirectory())
 							{
-								((MainActivity)context).createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
+								AppCompatActivity activity= (AppCompatActivity) getActivity();
+								if(activity instanceof MainActivity)
+								{
+									((MainActivity)activity).createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
+								}
+
 							}
 							else
 							{

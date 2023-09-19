@@ -2546,23 +2546,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	}
 
 
-//	interface DetailFragmentCommunicationListener
-//	{
-//		void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-//		void setUsbFileRootNull();
-//	}
-//
-//	public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//	{
-//		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
-//	}
-//
-//	public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//	{
-//		DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
-//	}
-
-
 	interface RecentDialogListener
 	{
 		void onMediaAttachedAndRemoved();

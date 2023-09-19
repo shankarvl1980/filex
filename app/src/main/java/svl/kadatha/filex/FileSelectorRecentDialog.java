@@ -202,7 +202,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     {
         LinkedList<FilePOJO> dir_linkedlist;
         final boolean storage_dir;
-        PackageInfo pi;
 
         RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir)
         {
@@ -269,7 +268,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             FilePOJO filePOJO = dir_linkedlist.get(p2);
             if(storage_dir)
             {
-
                 FileObjectType fileObjectType=filePOJO.getFileObjectType();
                 String space="";
                 SpacePOJO spacePOJO=Global.SPACE_ARRAY.get(fileObjectType+filePOJO.getPath());

@@ -419,6 +419,22 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         actionmode_toolbar.setVisibility(View.VISIBLE);
         toolbar_shown="actionmode";
         actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+        if(size==1)
+        {
+        }
+        else if(size>1)
+        {
+        }
+
+        StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(size==storageAnalyserFragment.file_list_size)
+        {
+            //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
+        }
+        if(size==0){
+
+        }
+
     }
 
     @Override

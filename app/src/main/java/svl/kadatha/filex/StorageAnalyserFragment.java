@@ -486,7 +486,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
                 else
                 {
-                    int pos=getBindingAdapterPosition();
                     FilePOJO filePOJO=filePOJO_list.get(pos);
                     clicked_filepojo=filePOJO;
                     fileObjectType=filePOJO.getFileObjectType();
@@ -517,33 +516,17 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 if(viewModel.mselecteditems.containsKey(pos))
                 {
                     viewModel.mselecteditems.remove(pos);
-                    //viewModel.mselecteditemsFilePath.delete(pos);
                     v.setSelected(false);
                     ((StorageAnalyserRecyclerViewLayout)v).set_selected(false);
                     --size;
-
                     onLongClickAdjustToolbars(size);
                 }
                 else
                 {
                     viewModel.mselecteditems.put(pos,filePOJO_list.get(pos).getPath());
-                    //viewModel.mselecteditemsFilePath.put(pos,filePOJO_list.get(pos).getPath());
                     v.setSelected(true);
                     ((StorageAnalyserRecyclerViewLayout)v).set_selected(true);
                     ++size;
-
-                    if(size==1)
-                    {
-                    }
-                    else if(size>1)
-                    {
-                    }
-
-                    if(size==file_list_size)
-                    {
-                        //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
-                    }
-
                     onLongClickAdjustToolbars(size);
                 }
 
@@ -561,13 +544,11 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     public void selectAll()
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         int size=filePOJO_list.size();
 
         for(int i=0;i<size;++i)
         {
             viewModel.mselecteditems.put(i,filePOJO_list.get(i).getPath());
-
         }
 
         int s=viewModel.mselecteditems.size();
@@ -662,7 +643,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     public void clearSelectionAndNotifyDataSetChanged()
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
             if(viewModel.filePOJOS.size()>0 && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null)

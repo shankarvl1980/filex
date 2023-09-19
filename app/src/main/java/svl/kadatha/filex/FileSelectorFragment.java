@@ -427,7 +427,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 				this.v=v;
 				v.setOnClickListener(new View.OnClickListener()
 				{
-
 					public void onClick(View v)
 					{
 						int pos=getBindingAdapterPosition();
