@@ -81,7 +81,7 @@ public class AudioPlayFragment extends Fragment
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
 	private static final String AUDIO_SELECT_REQUEST_CODE="audio_play_audio_select_request_code";
-	private FrameLayout progress_bar;AudioPlayerActivity activity;
+	private FrameLayout progress_bar;AudioPlayerActivity audioPlayerActivity;
 	private AudioPlayViewModel audioPlayViewModel;
 	private AudioSelectListener audioSelectListener;
 
@@ -90,7 +90,14 @@ public class AudioPlayFragment extends Fragment
 		super.onAttach(context);
 		this.context=context;
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		activity=((AudioPlayerActivity)context);
+		audioPlayerActivity =((AudioPlayerActivity)context);
+
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof AudioSelectListener)
+		{
+			audioSelectListener= (AudioSelectListener) activity;
+		}
+
 		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
 		audioPlayViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
@@ -108,8 +115,8 @@ public class AudioPlayFragment extends Fragment
 				{
 					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						activity.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
-						data=activity.data;
+						audioPlayerActivity.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
+						data= audioPlayerActivity.data;
 					}
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
@@ -127,6 +134,13 @@ public class AudioPlayFragment extends Fragment
 		});
 	}
 
+
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		audioSelectListener=null;
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -152,14 +166,14 @@ public class AudioPlayFragment extends Fragment
 
 	public void initiate_audio()
 	{
-		data=activity.data;
+		data= audioPlayerActivity.data;
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
 
-			audioPlayViewModel.fileObjectType= activity.fileObjectType;
-			audioPlayViewModel.fromThirdPartyApp = activity.fromThirdPartyApp;
-			audioPlayViewModel.file_path=activity.file_path;
+			audioPlayViewModel.fileObjectType= audioPlayerActivity.fileObjectType;
+			audioPlayViewModel.fromThirdPartyApp = audioPlayerActivity.fromThirdPartyApp;
+			audioPlayViewModel.file_path= audioPlayerActivity.file_path;
 			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
 
 			String source_folder = new File(audioPlayViewModel.file_path).getParent();
@@ -711,7 +725,7 @@ public class AudioPlayFragment extends Fragment
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
-			data=activity.data;
+			data= audioPlayerActivity.data;
 			switch(p3)
 			{
 				case 0:
@@ -891,15 +905,6 @@ public class AudioPlayFragment extends Fragment
 		}
 
 		Global.print(context,getString(R.string.ringtone_set));
-	}
-	interface AudioSelectListener
-	{
-		void onAudioSelect(Uri data, AudioPOJO audio);
-	}
-
-	public void setAudioSelectListener(AudioSelectListener listener)
-	{
-		audioSelectListener=listener;
 	}
 
 }

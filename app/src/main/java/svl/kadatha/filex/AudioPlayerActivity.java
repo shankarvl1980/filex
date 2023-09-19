@@ -32,8 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class AudioPlayerActivity extends BaseActivity
-{
+public class AudioPlayerActivity extends BaseActivity implements AudioSelectListener {
 
 	private Group search_toolbar;
 	public EditText search_edittext;
@@ -169,106 +168,6 @@ public class AudioPlayerActivity extends BaseActivity
 		albumlf=(AlbumListFragment) adapter.instantiateItem(view_pager,2);
 		aslf=(AudioSavedListFragment) adapter.instantiateItem(view_pager,3);
 		adapter.finishUpdate(view_pager);
-
-		apf.setAudioSelectListener(new AudioPlayFragment.AudioSelectListener()
-		{
-			public void onAudioSelect(Uri data, AudioPOJO audio)
-			{
-				android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
-				service_intent.setData(data);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				{
-					startForegroundService(service_intent);
-				}
-				else
-				{
-					startService(service_intent);
-				}
-
-				AUDIO_FILE=audio;
-				if(apf!=null)
-				{
-					apf.set_audio(audio);
-				}
-
-			}
-		});
-
-
-		albumlf.setAudioSelectListener(new AlbumListFragment.AudioSelectListener()
-		{
-			public void onAudioSelect(Uri data, AudioPOJO audio)
-			{
-				android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
-				service_intent.setData(data);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				{
-					startForegroundService(service_intent);
-				}
-				else
-				{
-					startService(service_intent);
-				}
-
-				AUDIO_FILE=audio;
-				if(apf!=null)
-				{
-					apf.set_audio(audio);
-				}
-
-			}
-		});
-
-		aslf.setAudioSelectListener(new AudioSavedListFragment.AudioSelectListener()
-		{
-			public void onAudioSelect(Uri data, AudioPOJO audio)
-			{
-				if(data==null)
-				{
-					data=AudioPlayerActivity.this.data;
-				}
-				android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
-				service_intent.setData(data);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				{
-					startForegroundService(service_intent);
-				}
-				else
-				{
-					startService(service_intent);
-				}
-
-				AUDIO_FILE=audio;
-				if(apf!=null)
-				{
-					apf.set_audio(audio);
-				}
-			}
-		});
-
-		aalf.setAudioSelectListener(new AllAudioListFragment.AudioSelectListener()
-		{
-			public void onAudioSelect(Uri data, AudioPOJO audio)
-			{
-				android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
-				service_intent.setData(data);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				{
-					startForegroundService(service_intent);
-				}
-				else
-				{
-					startService(service_intent);
-				}
-
-				AUDIO_FILE=audio;
-				if(apf!=null)
-				{
-					apf.set_audio(audio);
-				}
-			}
-		});
-
 
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
@@ -417,6 +316,26 @@ public class AudioPlayerActivity extends BaseActivity
 
 	}
 
+	@Override
+	public void onAudioSelect(Uri data, AudioPOJO audio) {
+		android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
+		service_intent.setData(data);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+		{
+			startForegroundService(service_intent);
+		}
+		else
+		{
+			startService(service_intent);
+		}
+
+		AUDIO_FILE=audio;
+		if(apf!=null)
+		{
+			apf.set_audio(audio);
+		}
+	}
+
 
 	private class ViewPagerFragmentAdapter extends FragmentPagerAdapter
 	{
@@ -558,14 +477,6 @@ public class AudioPlayerActivity extends BaseActivity
 			}
 		}
 
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		aalf.setAudioSelectListener(null);
-		albumlf.setAudioSelectListener(null);
-		aslf.setAudioSelectListener(null);
 	}
 
 	interface AudioCompletionListener

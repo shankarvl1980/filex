@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -58,7 +59,7 @@ public class AudioSavedListFragment extends Fragment
 		audioCompletionListener=new AudioPlayerActivity.AudioCompletionListener() {
 			@Override
 			public void onAudioCompletion() {
-				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) ((AudioPlayerActivity)context).getSupportFragmentManager().findFragmentByTag("audioSavedlistDetailsDialog");
+				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) getParentFragmentManager().findFragmentByTag("audioSavedlistDetailsDialog");
 				if(audioSavedListDetailsDialog!=null)
 				{
 					audioSavedListDetailsDialog.onAudioChange();
@@ -66,14 +67,32 @@ public class AudioSavedListFragment extends Fragment
 
 			}
 		};
-		((AudioPlayerActivity)context).addAudioCompletionListener(audioCompletionListener);
 
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)context).addAudioCompletionListener(audioCompletionListener);
+		}
+
+
+
+		if(activity instanceof AudioSelectListener)
+		{
+			audioSelectListener= (AudioSelectListener) activity;
+		}
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		((AudioPlayerActivity)context).removeAudioCompletionListener(audioCompletionListener);
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)context).removeAudioCompletionListener(audioCompletionListener);
+		}
+
+
+		audioSelectListener=null;
 	}
 
 	@Override
@@ -508,17 +527,6 @@ public class AudioSavedListFragment extends Fragment
 		}
 
 
-	}
-
-	
-	interface AudioSelectListener
-	{
-		void onAudioSelect(Uri data, AudioPOJO audio);
-	}
-
-	public void setAudioSelectListener(AudioSelectListener listener)
-	{
-		audioSelectListener=listener;
 	}
 
 

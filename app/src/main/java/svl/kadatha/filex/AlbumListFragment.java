@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -64,6 +65,17 @@ public class AlbumListFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof svl.kadatha.filex.AudioSelectListener)
+		{
+			audioSelectListener= (AudioSelectListener) activity;
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		audioSelectListener=null;
 	}
 
 	@Override
@@ -513,17 +525,6 @@ public class AlbumListFragment extends Fragment
 	}
 	
 
-	interface AudioSelectListener
-	{
-		void onAudioSelect(Uri data, AudioPOJO audio);
-	}
-
-	public void setAudioSelectListener(AudioSelectListener listener)
-	{
-		audioSelectListener=listener;
-	}
-
-		
 	private static class AlbumListRecyclerViewItem extends ViewGroup
 	{
 		private final Context context;

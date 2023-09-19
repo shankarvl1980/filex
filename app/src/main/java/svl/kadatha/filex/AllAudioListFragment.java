@@ -65,10 +65,22 @@ public class AllAudioListFragment extends Fragment
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="all_audio_save_audio_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="all_audio_file_delete_request_code";
 
+
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		AppCompatActivity activity= (AppCompatActivity) context;
+		if(activity instanceof AudioSelectListener)
+		{
+			audioSelectListener= (AudioSelectListener) activity;
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		audioSelectListener=null;
 	}
 
 	@Override
@@ -343,16 +355,6 @@ public class AllAudioListFragment extends Fragment
 	public void onDestroyView() {
 		super.onDestroyView();
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
-	}
-
-	interface AudioSelectListener
-	{
-		void onAudioSelect(Uri data, AudioPOJO audio);
-	}
-	
-	public void setAudioSelectListener(AudioSelectListener listener)
-	{
-		audioSelectListener=listener;
 	}
 
 	private class ToolBarClickListener implements View.OnClickListener
