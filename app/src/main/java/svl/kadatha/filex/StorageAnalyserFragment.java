@@ -173,7 +173,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 else if(scroll_distance<-threshold && !is_toolbar_visible)
                 {
                     if(detailFragmentListener!=null){
-                        detailFragmentListener.onScrollRecyclerView(false);
+                        detailFragmentListener.onScrollRecyclerView(true);
                     }
 
                     is_toolbar_visible=true;
@@ -335,28 +335,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     {
         after_filledFilePojos_procedure();
     }
-
-//    @Override
-//    public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-//        if(file_path==null || fileObjectType==null)
-//        {
-//            //cache_cleared=true;
-//        }
-//        else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
-//        {
-//            //cache_cleared=true;
-//        }
-//        else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
-//        {
-//            //cache_cleared=true;
-//        }
-//
-//    }
-//
-//    @Override
-//    public void onSettingUsbFileRootNull() {
-//        currentUsbFile=null;
-//    }
 
 
     @Override
@@ -577,8 +555,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         {
             detailFragmentListener.onLongClickItem(size);
         }
-        
-        is_toolbar_visible=true;
     }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

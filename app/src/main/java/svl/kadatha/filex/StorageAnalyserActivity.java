@@ -415,23 +415,24 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     @Override
     public void onLongClickItem(int size) {
-        bottom_toolbar.setVisibility(View.GONE);
-        actionmode_toolbar.setVisibility(View.VISIBLE);
-        toolbar_shown="actionmode";
-        actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-        if(size==1)
-        {
-        }
-        else if(size>1)
-        {
-        }
 
-        StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if(size==storageAnalyserFragment.file_list_size)
+        if(size>=1)
         {
-            //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
+            bottom_toolbar.setVisibility(View.GONE);
+            actionmode_toolbar.setVisibility(View.VISIBLE);
+            toolbar_shown="actionmode";
+            actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
         }
-        if(size==0){
+        else {
+            StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+            if(storageAnalyserFragment!=null)
+            {
+                if(size==storageAnalyserFragment.file_list_size)
+                {
+                    //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
+                }
+                DeselectAllAndAdjustToolbars(storageAnalyserFragment,storageAnalyserFragment.fileclickselected);
+            }
 
         }
 
@@ -589,8 +590,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     public void DeselectAllAndAdjustToolbars(StorageAnalyserFragment sad, String sad_tag)
     {
-
-
         bottom_toolbar.setVisibility(View.VISIBLE);
         actionmode_toolbar.setVisibility(View.GONE);
         toolbar_shown="bottom";
@@ -674,23 +673,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         }
     }
 
-
-
-//    interface DetailFragmentCommunicationListener
-//    {
-//        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-//        void onSettingUsbFileRootNull();
-//    }
-//
-//    public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//    {
-//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
-//    }
-//
-//    public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//    {
-//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
-//    }
 
     interface RecentDialogListener
     {

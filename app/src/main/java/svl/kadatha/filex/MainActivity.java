@@ -1107,12 +1107,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	@Override
 	public void setCurrentDirText(String current_dir_name) {
-
+		current_dir_textview.setText(current_dir_name);
 	}
 
 	@Override
 	public void enableParentDirImageButton(boolean enable) {
-
+		parent_dir_image_button.setEnabled(enable);
+		if(enable)
+		{
+			parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
+		}
+		else {
+			parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+		}
 	}
 
 
