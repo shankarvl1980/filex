@@ -20,8 +20,4 @@ public class VideoViewFragmentViewModel extends AndroidViewModel {
        // mp=new MediaPlayer();
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-    }
 }

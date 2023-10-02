@@ -114,7 +114,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                 if(i>0)
                 {
                     bundle.putString("new_name",new_name);
-                    ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+                    getParentFragmentManager().setFragmentResult(request_code,bundle);
                 }
                 imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();

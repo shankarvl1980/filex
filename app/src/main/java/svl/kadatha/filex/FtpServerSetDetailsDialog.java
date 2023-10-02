@@ -100,7 +100,7 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
             {
                 if(validateInput(false))
                 {
-                    ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,new Bundle());
+                    getParentFragmentManager().setFragmentResult(request_code,new Bundle());
                     dismissAllowingStateLoss();
                 }
 

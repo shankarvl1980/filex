@@ -27,7 +27,6 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -624,20 +623,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
                     if (storageAnalyserFragment != null) storageAnalyserFragment.modification_observed = true;
                     break;
-                    /*
-                case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
-                    int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-                    for(int i=0;i<size;++i)
-                    {
-                        DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-                        if(listener!=null)
-                        {
-                            listener.onFragmentCacheClear(file_path,fileObjectType);
-                        }
-                    }
-                    break;
-
-                     */
             }
         }
     }

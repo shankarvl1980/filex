@@ -147,6 +147,7 @@
 	<string name="audio">Audio</string>
 	<string name="video">Video</string>
 	<string name="apk">APK</string>
+	<string name="large_files">Large Files</string>
 
 	<string name="deleted_selected_files">Deleted selected files at</string>
 	<string name="could_not_delete_selected_files">Could not delete selected files at</string>
@@ -381,6 +382,7 @@
 		<item>@string/video</item>
 		<item>@string/archive</item>
 		<item>@string/apk</item>
+		<item>@string/large_files</item>
 	</string-array>
 
 	<string-array name="network_types">

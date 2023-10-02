@@ -6,14 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 public class VideoViewActivity extends BaseActivity
 {
 	
 	public Uri data;
-	public FragmentManager fm;
 	TinyDB tinyDB;
 	public int current_page_idx;
 	public FileObjectType fileObjectType;
@@ -31,7 +29,6 @@ public class VideoViewActivity extends BaseActivity
  		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		Context context = this;
-		fm=getSupportFragmentManager();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
 		Intent intent=getIntent();
@@ -50,7 +47,7 @@ public class VideoViewActivity extends BaseActivity
 
 			if (savedInstanceState==null)
 			{
-				fm.beginTransaction().replace(R.id.activity_blank_view_container,VideoViewContainerFragment.getNewInstance(file_path, fileObjectType),"").commit();
+				getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container,VideoViewContainerFragment.getNewInstance(file_path, fileObjectType),"").commit();
 			}
 
 		}
@@ -77,7 +74,7 @@ public class VideoViewActivity extends BaseActivity
 		// TODO: Implement this method
 		super.onStart();
 		clear_cache=true;
-		videoViewContainerFragment=(VideoViewContainerFragment)fm.findFragmentById(R.id.activity_blank_view_container);
+		videoViewContainerFragment=(VideoViewContainerFragment)getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
 

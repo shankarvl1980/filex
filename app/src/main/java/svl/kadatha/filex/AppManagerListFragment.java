@@ -86,11 +86,13 @@ public class AppManagerListFragment extends Fragment {
     public static final String APP_ACTION_REQUEST_CODE="app_action_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE="back_up_apk_saf_permission_request_code";
     private final static String APK_REPLACEMENT_REQUEST_CODE="apk_replace_request_code";
+    private AppCompatActivity activity;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
+        activity=(AppCompatActivity) context;
     }
 
     @Override
@@ -241,7 +243,7 @@ public class AppManagerListFragment extends Fragment {
         int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
         listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
-        ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResultListener(APP_ACTION_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(APP_ACTION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(!requestKey.equals(APP_ACTION_REQUEST_CODE)) return;
@@ -281,7 +283,7 @@ public class AppManagerListFragment extends Fragment {
         });
 
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(APK_REPLACEMENT_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(APK_REPLACEMENT_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(APK_REPLACEMENT_REQUEST_CODE))
@@ -291,7 +293,7 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -336,18 +338,27 @@ public class AppManagerListFragment extends Fragment {
                 adapter.getFilter().filter(constraint);
             }
         };
-        ((AppManagerActivity)context).addSearchFilterListener(searchFilterListener);
+        if(activity instanceof AppManagerActivity)
+        {
+            ((AppManagerActivity)activity).addSearchFilterListener(searchFilterListener);
+        }
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(((AppManagerActivity)context).search_toolbar_visible)
+
+        if(activity instanceof AppManagerActivity)
         {
-            ((AppManagerActivity)context).set_visibility_searchbar(false);
+            if(((AppManagerActivity)activity).search_toolbar_visible)
+            {
+                ((AppManagerActivity)activity).setSearchBarVisibility(false);
+            }
+
+            ((AppManagerActivity)activity).removeSearchFilterListener(searchFilterListener);
         }
 
-        ((AppManagerActivity)context).removeSearchFilterListener(searchFilterListener);
     }
 
     @Override
@@ -421,13 +432,16 @@ public class AppManagerListFragment extends Fragment {
                 break;
             }
         }
-        ((AppManagerActivity)context).refresh_fragment_on_uninstall();
+        if(activity instanceof AppManagerActivity)
+        {
+            ((AppManagerActivity)activity).refresh_fragment_on_uninstall();
+        }
+
     }
 
 
     public void clear_selection()
     {
-        //appManagerListFragmentViewModel.app_selected_array=new ArrayList<>();
         appManagerListFragmentViewModel.mselecteditems=new IndexedLinkedHashMap<>();
         if (adapter!=null)
         {
@@ -520,7 +534,6 @@ public class AppManagerListFragment extends Fragment {
                             if (!appManagerListFragmentViewModel.mselecteditems.containsKey(pos)) {
                                 clear_selection();
                                 appManagerListFragmentViewModel.mselecteditems.put(pos,appPOJOList.get(pos));
-                                //appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                                 v.setSelected(true);
                                 //show_app_action_select_dialog(appPOJOList.get(pos));
                             }
@@ -532,7 +545,6 @@ public class AppManagerListFragment extends Fragment {
                         else
                         {
                             appManagerListFragmentViewModel.mselecteditems.put(pos,appPOJOList.get(pos));
-                            //appManagerListFragmentViewModel.app_selected_array.add(appPOJOList.get(pos));
                             v.setSelected(true);
                             //show_app_action_select_dialog(appPOJOList.get(pos));
                         }
@@ -566,12 +578,16 @@ public class AppManagerListFragment extends Fragment {
 
     private void show_app_action_select_dialog(AppPOJO appPOJO)
     {
-        if(((AppManagerActivity)context).search_toolbar_visible)
+        if(activity instanceof AppManagerActivity)
         {
-            ((AppManagerActivity)context).set_visibility_searchbar(false);
+            if(((AppManagerActivity)activity).search_toolbar_visible)
+            {
+                ((AppManagerActivity)activity).setSearchBarVisibility(false);
+            }
         }
+
         AppActionSelectDialog appActionSelectDialog=AppActionSelectDialog.getInstance(appPOJO.getName(),appPOJO.getPackage_name(),appPOJO.getSize(),appPOJO.getVersion(),appPOJO.getPath());
-        appActionSelectDialog.show(((AppManagerActivity)context).fm,"");
+        appActionSelectDialog.show(getParentFragmentManager(),"");
     }
 
 
@@ -610,7 +626,7 @@ public class AppManagerListFragment extends Fragment {
                 if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,file_path,viewModel.destFilePOJOs))
                 {
                     ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);
-                    archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+                    archiveReplaceConfirmationDialog.show(getParentFragmentManager(),null);
                 }
                 else
                 {
@@ -667,7 +683,7 @@ public class AppManagerListFragment extends Fragment {
         if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,bundle);
-            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+            safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
             return false;
         }
         else
@@ -689,7 +705,11 @@ public class AppManagerListFragment extends Fragment {
 
     private void MoveToCopyToProcedure(String file_path, Bundle bundle)
     {
-        ((AppManagerActivity)context).clear_cache=false;
+        if(activity instanceof AppManagerActivity)
+        {
+            ((AppManagerActivity)activity).clear_cache=false;
+        }
+
         ArrayList<String>files_selected_array=new ArrayList<>();
         files_selected_array.add(file_path);
         bundle.putString("source_folder", new File(file_path).getParent());
@@ -748,7 +768,7 @@ public class AppManagerListFragment extends Fragment {
                     }
 
                     PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
-                    propertiesDialog.show(((AppManagerActivity)context).getSupportFragmentManager(),"properties_dialog");
+                    propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
                     break;
                 default:
                     break;
@@ -771,9 +791,12 @@ public class AppManagerListFragment extends Fragment {
             clear_selection();
             if (id == R.id.toolbar_btn_1) {
 
-                if(!((AppManagerActivity)context).search_toolbar_visible)
+                if(activity instanceof AppManagerActivity)
                 {
-                    ((AppManagerActivity) context).set_visibility_searchbar(true);
+                    if(!((AppManagerActivity)activity).search_toolbar_visible)
+                    {
+                        ((AppManagerActivity) activity).setSearchBarVisibility(true);
+                    }
                 }
                 else
                 {
@@ -781,9 +804,13 @@ public class AppManagerListFragment extends Fragment {
                 }
 
             } else if (id == R.id.toolbar_btn_2) {
-                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity) context).search_edittext.getWindowToken(), 0);
+                if(activity instanceof AppManagerActivity)
+                {
+                    ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AppManagerActivity)activity).search_edittext.getWindowToken(), 0);
+                }
+
                 AppManagerSortDialog appManagerSortDialog=new AppManagerSortDialog();
-                appManagerSortDialog.show(((AppManagerActivity)context).fm,"");
+                appManagerSortDialog.show(getParentFragmentManager(),"");
             }
             else if(id==R.id.toolbar_btn_3)
             {
@@ -797,7 +824,11 @@ public class AppManagerListFragment extends Fragment {
 
 
                 repositoryClass.app_pojo_hashmap.clear();
-                ((AppManagerActivity)context).refresh_adapter();
+                if(activity instanceof AppManagerActivity)
+                {
+                    ((AppManagerActivity)activity).refresh_adapter();
+                }
+
 
            }
         }

@@ -94,7 +94,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 			
 			public void onClick(View v)
 			{
-				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(SAF_PERMISSION_CANCEL_REQUEST_CODE,null);
+				getParentFragmentManager().setFragmentResult(SAF_PERMISSION_CANCEL_REQUEST_CODE,null);
 				dismissAllowingStateLoss();
 			}
 		});
@@ -189,7 +189,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 				{
 					bundle.putParcelable("tree_uri",tree_uri);
 					bundle.putString("tree_uri_path",tree_uri_path);
-					((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+					getParentFragmentManager().setFragmentResult(request_code,bundle);
 					dismissAllowingStateLoss();
 				}
 				else

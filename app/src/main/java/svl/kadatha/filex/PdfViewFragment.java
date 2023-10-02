@@ -48,7 +48,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PdfViewFragment_single_view extends Fragment
+public class PdfViewFragment extends Fragment
 {
     private Context context;
     private long availableHeapMemory;
@@ -77,12 +77,14 @@ public class PdfViewFragment_single_view extends Fragment
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
     private static final String DELETE_FILE_REQUEST_CODE="pdf_file_delete_request_code";
+    private AppCompatActivity activity;
 
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
+        activity= activity;
     }
 
     @Override
@@ -145,7 +147,7 @@ public class PdfViewFragment_single_view extends Fragment
                         }
                         files_selected_array.add(viewModel.currently_shown_file.getPath());
                         DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
-                        deleteFileAlertDialogOtherActivity.show(((PdfViewActivity)context).fm,"deletefilealertotheractivity");
+                        deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(),"deletefilealertotheractivity");
                         break;
 
                     case 1:
@@ -185,7 +187,11 @@ public class PdfViewFragment_single_view extends Fragment
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
                         }
-                        ((PdfViewActivity)context).clear_cache=false;
+                        if(activity instanceof PdfViewActivity)
+                        {
+                            ((PdfViewActivity)activity).clear_cache=false;
+                        }
+
                         Intent copy_intent=new Intent(context,CopyToActivity.class);
                         copy_intent.setAction(Intent.ACTION_SEND);
                         copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
@@ -209,7 +215,7 @@ public class PdfViewFragment_single_view extends Fragment
                         }
                         files_selected_array.add(viewModel.currently_shown_file.getPath());
                         PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
-                        propertiesDialog.show(((PdfViewActivity)context).fm,"properties_dialog");
+                        propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
                         break;
 
 
@@ -238,7 +244,7 @@ public class PdfViewFragment_single_view extends Fragment
         {
             public void onClick(View v)
             {
-                ((PdfViewActivity)context).onBackPressed();
+                getActivity().onBackPressed();
             }
 
         });
@@ -317,7 +323,11 @@ public class PdfViewFragment_single_view extends Fragment
         };
 
         viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
-        data=((PdfViewActivity)context).data;
+        if(activity instanceof PdfViewActivity)
+        {
+            data=((PdfViewActivity)activity).data;
+        }
+
         Bundle bundle=getArguments();
         if(bundle!=null)
         {
@@ -346,7 +356,10 @@ public class PdfViewFragment_single_view extends Fragment
                 {
                     if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                     {
-                        ((PdfViewActivity)context).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+                        if(activity instanceof PdfViewActivity)
+                        {
+                            ((PdfViewActivity)activity).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+                        }
                     }
 
                     pdf_view_adapter=new PdfViewPagerAdapter();
@@ -365,7 +378,7 @@ public class PdfViewFragment_single_view extends Fragment
         });
 
 
-        DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment_single_view.this).get(DeleteFileOtherActivityViewModel.class);
+        DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(PdfViewFragment.this).get(DeleteFileOtherActivityViewModel.class);
         deleteFileOtherActivityViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -384,7 +397,7 @@ public class PdfViewFragment_single_view extends Fragment
                     {
                         pdf_view_adapter.notifyDataSetChanged();
                         picture_selector_adapter.notifyDataSetChanged();
-                        ((PdfViewActivity)context).finish();
+                        getActivity().finish();
                     }
                     deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
@@ -399,7 +412,7 @@ public class PdfViewFragment_single_view extends Fragment
         });
 
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -424,9 +437,9 @@ public class PdfViewFragment_single_view extends Fragment
         availableHeapMemory=Global.AVAILABLE_MEMORY_MB();
     }
 
-    public static PdfViewFragment_single_view getNewInstance(String file_path, FileObjectType fileObjectType)
+    public static PdfViewFragment getNewInstance(String file_path, FileObjectType fileObjectType)
     {
-        PdfViewFragment_single_view pdfViewFragment=new PdfViewFragment_single_view();
+        PdfViewFragment pdfViewFragment=new PdfViewFragment();
         Bundle bundle=new Bundle();
         bundle.putString("file_path",file_path);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE,fileObjectType);
@@ -570,7 +583,7 @@ public class PdfViewFragment_single_view extends Fragment
                 catch (OutOfMemoryError error)
                 {
                     Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
-                    ((PdfViewActivity)context).finish();
+                    getActivity().finish();
                 }
                 catch (Exception e)
                 {
@@ -614,8 +627,6 @@ public class PdfViewFragment_single_view extends Fragment
         int pageWidth=page.getWidth();
         int pageHeight=page.getHeight();
 
-        //Bitmap bitmap=Bitmap.createBitmap(2*pageWidth,2*pageHeight, Bitmap.Config.ARGB_8888);
-        //Bitmap bitmap=Global.scaleToFitWidth(Bitmap.createBitmap(pageWidth, pageHeight, Bitmap.Config.ARGB_8888),Global.SCREEN_WIDTH);
         Bitmap bitmap=Global.scaleToFitHeight(Bitmap.createBitmap(pageWidth, pageHeight, Bitmap.Config.ARGB_8888),Global.SCREEN_HEIGHT);
         Canvas canvas=new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);

@@ -231,7 +231,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						else
 						{
 							ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-							archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+							archiveReplaceConfirmationDialog.show(getParentFragmentManager(),null);
 
 						}
 					}
@@ -304,7 +304,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, ArchiveSetUpDialog.this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, ArchiveSetUpDialog.this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
@@ -337,7 +337,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -474,7 +474,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						if (create_folder_checkbox.isChecked() && Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,zip_folder_path,viewModel.destFilePOJOs)) {
 							if (isFilePathDirectory(zip_folder_path, destFileObjectType,viewModel.destFilePOJOs)) {
 								ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-								archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), null);
+								archiveReplaceConfirmationDialog.show(getParentFragmentManager(), null);
 
 							} else {
 								Global.print(context,getString(R.string.a_file_with_folder_name_exists_in_selected_directory));
@@ -530,7 +530,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
-			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			imm.hideSoftInputFromWindow(zip_file_edittext.getWindowToken(),0);
 			return false;
 		}

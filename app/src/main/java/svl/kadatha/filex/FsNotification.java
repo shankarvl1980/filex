@@ -97,7 +97,7 @@ public class FsNotification {
             nm.createNotificationChannel(channel);
         }
 
-        Notification notification = new NotificationCompat.Builder(context,CHANNEL_ID)
+        return new NotificationCompat.Builder(context,CHANNEL_ID)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setContentIntent(contentIntent)
@@ -111,9 +111,6 @@ public class FsNotification {
                 .addAction(stopIcon, stopText, stopPendingIntent)
                 .setShowWhen(false)
                 .build();
-
-        // Pass Notification to NotificationManager
-        return notification;
     }
 
 }

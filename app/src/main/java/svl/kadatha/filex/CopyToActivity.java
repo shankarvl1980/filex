@@ -145,7 +145,7 @@ public class CopyToActivity extends BaseActivity{
                     if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType,viewModel.destFilePOJOs))
                     {
                         ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
-                        archiveReplaceConfirmationDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+                        archiveReplaceConfirmationDialog.show(getSupportFragmentManager(),null);
                     }
                     else
                     {
@@ -185,7 +185,7 @@ public class CopyToActivity extends BaseActivity{
         imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, CopyToActivity.this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, CopyToActivity.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
@@ -206,7 +206,7 @@ public class CopyToActivity extends BaseActivity{
             }
         });
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -348,7 +348,7 @@ public class CopyToActivity extends BaseActivity{
         if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
-            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+            safpermissionhelper.show(getSupportFragmentManager(),"saf_permission_dialog");
             imm.hideSoftInputFromWindow(file_name_edit_text.getWindowToken(),0);
             return false;
         }

@@ -190,7 +190,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -311,29 +311,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		fileModifyObserver.stopWatching();
 		fileModifyObserver.setFileObserverListener(null);
 	}
-
-
-//	@Override
-//	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-//		if(file_path==null || fileObjectType==null)
-//		{
-//			//cache_cleared=true;
-//		}
-//		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
-//		{
-//			//cache_cleared=true;
-//		}
-//		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
-//		{
-//			//cache_cleared=true;
-//		}
-//	}
-//
-//
-//	@Override
-//	public void setUsbFileRootNull() {
-//		currentUsbFile=null;
-//	}
 
 
 	@Override

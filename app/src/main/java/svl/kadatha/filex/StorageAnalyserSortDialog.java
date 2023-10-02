@@ -196,15 +196,14 @@ public class StorageAnalyserSortDialog extends DialogFragment
 
             if(!selected_sort.equals(Global.STORAGE_ANALYSER_SORT))
             {
-                FragmentManager fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
-                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment)fragmentManager.findFragmentById(R.id.storage_analyser_container);
+                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment)getParentFragmentManager().findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserFragment !=null && storageAnalyserFragment.progress_bar.getVisibility()==View.GONE)
                 {
                     Global.STORAGE_ANALYSER_SORT=selected_sort;
                     set_selection();
 
-                    fragmentManager.beginTransaction().detach(storageAnalyserFragment).commit();
-                    fragmentManager.beginTransaction().attach(storageAnalyserFragment).commit();
+                    getParentFragmentManager().beginTransaction().detach(storageAnalyserFragment).commit();
+                    getParentFragmentManager().beginTransaction().attach(storageAnalyserFragment).commit();
                     tinyDB.putString("storage_analyser_sort",Global.STORAGE_ANALYSER_SORT);
                 }
                 else

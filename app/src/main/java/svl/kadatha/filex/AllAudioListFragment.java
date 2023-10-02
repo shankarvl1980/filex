@@ -61,19 +61,25 @@ public class AllAudioListFragment extends Fragment
 	private int num_all_audio;
 	public boolean whether_audios_set_to_current_list, img_btns_enabled;
 	private AudioPlayerActivity.SearchFilterListener searchFilterListener;
+	private AudioFragmentListener audioFragmentListener;
 	public AudioListViewModel audioListViewModel;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="all_audio_save_audio_request_code";
 	private static final String DELETE_FILE_REQUEST_CODE="all_audio_file_delete_request_code";
-
+	private AppCompatActivity activity;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		AppCompatActivity activity= (AppCompatActivity) context;
+		activity= (AppCompatActivity) context;
 		if(activity instanceof AudioSelectListener)
 		{
 			audioSelectListener= (AudioSelectListener) activity;
+		}
+
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
 		}
 	}
 
@@ -81,6 +87,7 @@ public class AllAudioListFragment extends Fragment
 	public void onDetach() {
 		super.onDetach();
 		audioSelectListener=null;
+		audioFragmentListener=null;
 	}
 
 	@Override
@@ -242,8 +249,12 @@ public class AllAudioListFragment extends Fragment
 						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						num_all_audio = total_audio_list.size();
-						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
-						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.onDeleteAudio(deleteAudioViewModel.deleted_audio_files);
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
+
 					}
 
 					deleteAudioViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -265,8 +276,12 @@ public class AllAudioListFragment extends Fragment
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					if(audioFragmentListener!=null)
+					{
+						audioFragmentListener.onAudioSave();
+						audioFragmentListener.refreshAudioPlayNavigationButtons();
+					}
+
 					clear_selection();
 					audioListViewModel.isSavingAudioFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
@@ -274,7 +289,7 @@ public class AllAudioListFragment extends Fragment
 		});
 
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAVE_AUDIO_LIST_REQUEST_CODE))
@@ -287,7 +302,7 @@ public class AllAudioListFragment extends Fragment
 		});
 
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -337,18 +352,28 @@ public class AllAudioListFragment extends Fragment
 				audioListRecyclerViewAdapter.getFilter().filter(constraint);
 			}
 		};
-		((AudioPlayerActivity)context).addSearchFilterListener(searchFilterListener);
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)activity).addSearchFilterListener(searchFilterListener);
+		}
+
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(((AudioPlayerActivity)context).search_toolbar_visible)
+		if(audioFragmentListener!=null)
 		{
-			((AudioPlayerActivity)context).set_visibility_searchbar(false);
+			if(audioFragmentListener.getSearchBarVisibility())
+			{
+				audioFragmentListener.setSearchBarVisibility(false);
+			}
+		}
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)activity).removeSearchFilterListener(searchFilterListener);
 		}
 
-		((AudioPlayerActivity)context).removeSearchFilterListener(searchFilterListener);
 	}
 
 	@Override
@@ -372,13 +397,21 @@ public class AllAudioListFragment extends Fragment
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-				if(!((AudioPlayerActivity)context).search_toolbar_visible)
+				if(audioFragmentListener!=null)
 				{
-					((AudioPlayerActivity) context).set_visibility_searchbar(true);
+					if(!audioFragmentListener.getSearchBarVisibility())
+					{
+						audioFragmentListener.setSearchBarVisibility(true);
+					}
 				}
 
+
 			}  else if (id == R.id.toolbar_btn_2) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
+                if(audioFragmentListener!=null)
+                {
+                    audioFragmentListener.hideKeyBoard();
+                }
+
 				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
@@ -405,19 +438,31 @@ public class AllAudioListFragment extends Fragment
 					audioSelectListener.onAudioSelect(data, audio);
 				}
 				clear_selection();
-				((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+				if(audioFragmentListener!=null)
+				{
+					audioFragmentListener.refreshAudioPlayNavigationButtons();
+				}
+
 			} else if (id == R.id.toolbar_btn_3) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+                if(audioFragmentListener!=null)
+                {
+                    audioFragmentListener.hideKeyBoard();
+                }
+
+                if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
 
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
-				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
+				audioSaveListDialog.show(getParentFragmentManager(), "");
 
 			} else if (id == R.id.toolbar_btn_4) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+                if(audioFragmentListener!=null)
+                {
+                    audioFragmentListener.hideKeyBoard();
+                }
+
+                if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
 					return;
 				}
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
@@ -425,16 +470,18 @@ public class AllAudioListFragment extends Fragment
 
 
 			} else if (id == R.id.toolbar_btn_5) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
-				int size = audio_list.size();
+                if(audioFragmentListener!=null)
+                {
+                    audioFragmentListener.hideKeyBoard();
+                }
+
+                int size = audio_list.size();
 
 				if (audioListViewModel.audio_pojo_selected_items.size() < size) {
 					audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
-					//audioListViewModel.audio_selected_array = new ArrayList<>();
 
 					for (int i = 0; i < size; ++i) {
 						audioListViewModel.audio_pojo_selected_items.put(i, audio_list.get(i));
-						//audioListViewModel.audio_selected_array.add(audio_list.get(i));
 					}
 					all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
 					audioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -464,7 +511,6 @@ public class AllAudioListFragment extends Fragment
 			num_all_audio=total_audio_list.size();
 		}
 
-		//audioListViewModel.audio_selected_array=new ArrayList<>();
 		audioListViewModel.audio_pojo_selected_items =new IndexedLinkedHashMap<>();
 		if (audioListRecyclerViewAdapter!=null) audioListRecyclerViewAdapter.notifyDataSetChanged();
 		enable_disable_buttons(false);
@@ -501,7 +547,7 @@ public class AllAudioListFragment extends Fragment
 
 					}
 					final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);
-					deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
+					deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(), "deletefilealertdialog");
 					break;
 				case 1:
 					ArrayList<File> file_list=new ArrayList<>();
@@ -520,7 +566,7 @@ public class AllAudioListFragment extends Fragment
 					}
 
 					PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
-					propertiesDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"properties_dialog");
+					propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 					break;
 				default:
 					break;
@@ -574,7 +620,11 @@ public class AllAudioListFragment extends Fragment
 					{
 						audioSelectListener.onAudioSelect(data,audio);
 					}
-					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+					if(audioFragmentListener!=null)
+					{
+						audioFragmentListener.refreshAudioPlayNavigationButtons();
+					}
+
 				}
 			}
 
@@ -593,7 +643,6 @@ public class AllAudioListFragment extends Fragment
 					audioListViewModel.audio_pojo_selected_items.remove(pos);
 					v.setSelected(false);
 					((AudioListRecyclerViewItem)v).set_selected(false);
-					//audioListViewModel.audio_selected_array.remove(audio_list.get(pos));
 					--size;
 					if(size>=1)
 					{
@@ -615,7 +664,6 @@ public class AllAudioListFragment extends Fragment
 					audioListViewModel.audio_pojo_selected_items.put(pos,audio_list.get(pos));
 					v.setSelected(true);
 					((AudioListRecyclerViewItem)v).set_selected(true);
-					//audioListViewModel.audio_selected_array.add(audio_list.get(pos));
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=true;
 					scroll_distance=0;
@@ -704,8 +752,5 @@ public class AllAudioListFragment extends Fragment
 				}
 			};
 		}
-
-
 	}
-
 }

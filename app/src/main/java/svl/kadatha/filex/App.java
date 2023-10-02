@@ -60,21 +60,6 @@ public class App extends Application {
     }
 
     /**
-     * @param packageName is the name of the package to check
-     * @return true if packageName is installed on this device
-     */
-    public static boolean isPackageInstalled(String packageName) {
-        try {
-            Context context = getAppContext();
-            PackageManager packageManager = context.getPackageManager();
-            packageManager.getPackageInfo(packageName, 0);
-        } catch (NameNotFoundException e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Get the version from the manifest.
      *
      * @return The version as a String.

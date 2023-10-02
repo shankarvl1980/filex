@@ -190,7 +190,7 @@ public class FileTypeSelectDialog extends DialogFragment
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			safpermissionhelper.show(getActivity().getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
 		else

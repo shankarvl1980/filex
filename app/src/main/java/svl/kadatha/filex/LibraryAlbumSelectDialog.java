@@ -201,7 +201,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment
 
 
                         bundle.putString("parent_file_path",parent_file_path);
-                        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+                        getParentFragmentManager().setFragmentResult(request_code,bundle);
                         dismissAllowingStateLoss();
                     }
                 });

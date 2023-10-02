@@ -160,7 +160,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
             }
         });
 
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(FTP_REPLACE_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(FTP_REPLACE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(FTP_REPLACE_REQUEST_CODE))
@@ -201,7 +201,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
         if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
         {
             YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
-            ftpServerCloseAlertDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
+            ftpServerCloseAlertDialog.show(getParentFragmentManager(),"");
         }
         else
         {
@@ -222,7 +222,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
 
             dismissAllowingStateLoss();
             //request_code gets changed on yesornodialog orientation change. so request_code be hardcoded.
-            ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
+            getParentFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
         }
     }
     private boolean whetherFtpPOJOAlreadyExists(String server,String user_name)

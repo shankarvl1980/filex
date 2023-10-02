@@ -488,7 +488,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         if(uriPOJO==null || tree_uri_path.equals(""))
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
-            safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+            safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
             return false;
         }
         else

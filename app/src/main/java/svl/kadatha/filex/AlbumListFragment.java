@@ -50,6 +50,7 @@ public class AlbumListFragment extends Fragment
 	private RecyclerView recyclerview;
 	private Toolbar bottom_toolbar;
 	private AudioSelectListener audioSelectListener;
+	private AudioFragmentListener audioFragmentListener;
 
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
@@ -60,15 +61,19 @@ public class AlbumListFragment extends Fragment
 	public AudioListViewModel audioListViewModel;
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="album_list_save_audio_request_code";
 	private static final String AUDIO_SELECT_REQUEST_CODE="album_details_audio_select_request_code";
-
+	private AppCompatActivity activity;
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		AppCompatActivity activity= (AppCompatActivity) context;
+		activity= (AppCompatActivity) context;
 		if(activity instanceof svl.kadatha.filex.AudioSelectListener)
 		{
 			audioSelectListener= (AudioSelectListener) activity;
+		}
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
 		}
 	}
 
@@ -76,6 +81,7 @@ public class AlbumListFragment extends Fragment
 	public void onDetach() {
 		super.onDetach();
 		audioSelectListener=null;
+		audioFragmentListener=null;
 	}
 
 	@Override
@@ -197,12 +203,19 @@ public class AlbumListFragment extends Fragment
 							audioSelectListener.onAudioSelect(data, audio);
 						}
 						clear_selection();
-						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
+
 					}
 					else if(audioListViewModel.action.equals("q") || audioListViewModel.action.equals("s"))
 					{
-						((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.onAudioSave();
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
 						clear_selection();
 					}
 
@@ -215,7 +228,7 @@ public class AlbumListFragment extends Fragment
 		enable_disable_buttons(size != 0);
 		file_number_view.setText(size+"/"+num_all_album);
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAVE_AUDIO_LIST_REQUEST_CODE))
@@ -227,7 +240,7 @@ public class AlbumListFragment extends Fragment
 			}
 		});
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
@@ -256,18 +269,27 @@ public class AlbumListFragment extends Fragment
 				albumListRecyclerViewAdapter.getFilter().filter(constraint);
 			}
 		};
-		((AudioPlayerActivity)context).addSearchFilterListener(searchFilterListener);
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)activity).addSearchFilterListener(searchFilterListener);
+		}
+
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(((AudioPlayerActivity)context).search_toolbar_visible)
+		if(audioFragmentListener!=null)
 		{
-			((AudioPlayerActivity)context).set_visibility_searchbar(false);
+			if(audioFragmentListener.getSearchBarVisibility())
+			{
+				audioFragmentListener.setSearchBarVisibility(false);
+			}
 		}
-
-		((AudioPlayerActivity)context).removeSearchFilterListener(searchFilterListener);
+		if(activity instanceof AudioPlayerActivity)
+		{
+			((AudioPlayerActivity)activity).removeSearchFilterListener(searchFilterListener);
+		}
 
 	}
 
@@ -301,12 +323,20 @@ public class AlbumListFragment extends Fragment
 			int id = p1.getId();
 			if (id == R.id.toolbar_btn_1) {
 				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-				if(!((AudioPlayerActivity)context).search_toolbar_visible)
+				if(audioFragmentListener!=null)
 				{
-					((AudioPlayerActivity) context).set_visibility_searchbar(true);
+					if(!audioFragmentListener.getSearchBarVisibility())
+					{
+						audioFragmentListener.setSearchBarVisibility(true);
+					}
 				}
+
 			} else if (id == R.id.toolbar_btn_2) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
+				if(audioFragmentListener!=null)
+				{
+					audioFragmentListener.hideKeyBoard();
+				}
+
 				if (audioListViewModel.album_pojo_selected_items.size() < 1) {
 					return;
 				}
@@ -314,23 +344,30 @@ public class AlbumListFragment extends Fragment
 				audioListViewModel.listAudio(new ArrayList<>(audioListViewModel.album_pojo_selected_items.values()),"p","");
 
 			} else if (id == R.id.toolbar_btn_3) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
+				if(audioFragmentListener!=null)
+				{
+					audioFragmentListener.hideKeyBoard();
+				}
+
 				if (audioListViewModel.album_pojo_selected_items.size() < 1) {
 					return;
 				}
 
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
-				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
+				audioSaveListDialog.show(getParentFragmentManager(), "");
 
 			} else if (id == R.id.toolbar_btn_4) {
-				((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(),0);
+				if(audioFragmentListener!=null)
+				{
+					audioFragmentListener.hideKeyBoard();
+				}
+
 				int size = album_list.size();
 				if (audioListViewModel.album_pojo_selected_items.size() < size) {
 					audioListViewModel.album_pojo_selected_items = new IndexedLinkedHashMap<>();
-					//audioListViewModel.album_selected_array = new ArrayList<>();
+
 					for (int i = 0; i < size; ++i) {
 						audioListViewModel.album_pojo_selected_items.put(i, album_list.get(i));
-						//audioListViewModel.album_selected_array.add(album_list.get(i));
 					}
 					all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.deselect_icon,0,0);
 					albumListRecyclerViewAdapter.notifyDataSetChanged();
@@ -353,7 +390,6 @@ public class AlbumListFragment extends Fragment
 
 	public void clear_selection()
 	{
-		//audioListViewModel.album_selected_array=new ArrayList<>();
 		audioListViewModel.album_pojo_selected_items =new IndexedLinkedHashMap<>();
 		if(albumListRecyclerViewAdapter!=null)albumListRecyclerViewAdapter.notifyDataSetChanged();
 		enable_disable_buttons(false);
@@ -389,7 +425,7 @@ public class AlbumListFragment extends Fragment
 				{
 					AlbumPOJO album=album_list.get(pos);
 					AlbumDetailsDialog albumDetailsDialog=AlbumDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE, album.getId(), album.getAlbumName());
-					albumDetailsDialog.show(((AudioPlayerActivity)context).fm,"");
+					albumDetailsDialog.show(getParentFragmentManager(),"");
 					
 				}
 			}
@@ -412,7 +448,6 @@ public class AlbumListFragment extends Fragment
 					audioListViewModel.album_pojo_selected_items.remove(pos);
 					v.setSelected(false);
 					((AlbumListRecyclerViewItem)v).set_selected(false);
-					//audioListViewModel.album_selected_array.remove(album_list.get(pos));
 					--size;
 					if(size>=1)
 					{

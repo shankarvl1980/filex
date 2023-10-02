@@ -30,7 +30,6 @@ public class AudioSaveListDialog extends DialogFragment
     private final ArrayList<String> create_add_array=new ArrayList<>();
 	private String request_code;
 	private Bundle bundle;
-	private FragmentManager fragmentManager;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -46,7 +45,6 @@ public class AudioSaveListDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		saved_audio_list.addAll(AudioPlayerActivity.AUDIO_SAVED_LIST);
 		setCancelable(false);
 		create_add_array.add(getString(R.string.create_new_list));
@@ -139,12 +137,12 @@ public class AudioSaveListDialog extends DialogFragment
 							if(pos==0)
 							{
 								SaveNewAudioListDialog saveNewAudioListDialog=SaveNewAudioListDialog.getInstance(request_code);
-								saveNewAudioListDialog.show(fragmentManager,"");
+								saveNewAudioListDialog.show(getParentFragmentManager(),"");
 							}
 							else if(pos==1)
 							{
 								bundle.putString("list_name","");
-								fragmentManager.setFragmentResult(request_code,bundle);
+								getParentFragmentManager().setFragmentResult(request_code,bundle);
 							}
 
 							dismissAllowingStateLoss();
@@ -220,7 +218,7 @@ public class AudioSaveListDialog extends DialogFragment
 						{
 							pos=getBindingAdapterPosition();
 							bundle.putString("list_name",audio_list.get(pos));
-							fragmentManager.setFragmentResult(request_code,bundle);
+							getParentFragmentManager().setFragmentResult(request_code,bundle);
 							dismissAllowingStateLoss();
 						}
 

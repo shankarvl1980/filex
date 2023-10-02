@@ -2,9 +2,6 @@ package svl.kadatha.filex;
 
 import androidx.fragment.app.Fragment;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public interface DetailFragmentListener {
     void onScrollRecyclerView(boolean showToolBar);
     void actionModeFinish(Fragment fragment, String fileclickeselected);

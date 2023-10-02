@@ -102,7 +102,7 @@ public class PasteSetUpDialog extends DialogFragment
 			viewModel.setSAFCheckedBoolean();
 		}
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE_DEST))
@@ -119,7 +119,7 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_SOURCE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_SOURCE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE_SOURCE))
@@ -136,7 +136,7 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAFPermissionHelperDialog.SAF_PERMISSION_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAFPermissionHelperDialog.SAF_PERMISSION_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAFPermissionHelperDialog.SAF_PERMISSION_CANCEL_REQUEST_CODE))
@@ -249,7 +249,7 @@ public class PasteSetUpDialog extends DialogFragment
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_DEST,parent_file_path,fileObjectType);
-			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
 		else
@@ -271,7 +271,7 @@ public class PasteSetUpDialog extends DialogFragment
 		if(source_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_SOURCE,parent_file_path,fileObjectType);
-			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
 		else

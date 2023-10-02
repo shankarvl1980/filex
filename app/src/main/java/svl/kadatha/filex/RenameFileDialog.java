@@ -46,7 +46,6 @@ public class RenameFileDialog extends DialogFragment
 	private String filePOJOHashmapKeyPath;
 	private boolean isWritable;
 	private String other_file_permission,existing_file_path,new_file_path;
-	private FragmentManager fragmentManager;
 	public static final String REPLACEMENT_CONFIRMATION="replacement_confirmation";
 	private String new_name;
 	private Handler handler;
@@ -57,7 +56,6 @@ public class RenameFileDialog extends DialogFragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -118,7 +116,7 @@ public class RenameFileDialog extends DialogFragment
 			l=existing_name.length();
 		}
 		new_file_name_edittext.setSelection(0,l);
-		df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+		df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
@@ -143,7 +141,7 @@ public class RenameFileDialog extends DialogFragment
 			}
 		});
 
-		fragmentManager.setFragmentResultListener(REPLACEMENT_CONFIRMATION, RenameFileDialog.this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(REPLACEMENT_CONFIRMATION, RenameFileDialog.this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(REPLACEMENT_CONFIRMATION) && result!=null)
@@ -163,7 +161,7 @@ public class RenameFileDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -230,7 +228,7 @@ public class RenameFileDialog extends DialogFragment
 						if(isWritable)
 						{
 							RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-							renameReplaceConfirmationDialog.show(fragmentManager,"");
+							renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
 						}
 						else
 						{
@@ -243,7 +241,7 @@ public class RenameFileDialog extends DialogFragment
 								if(check_SAF_permission(parent_file_path,fileObjectType))
 								{
 									RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-									renameReplaceConfirmationDialog.show(fragmentManager,"");
+									renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
 								}
 
 							}
@@ -256,12 +254,12 @@ public class RenameFileDialog extends DialogFragment
 					else if(fileObjectType==FileObjectType.ROOT_TYPE)
 					{
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						renameReplaceConfirmationDialog.show(fragmentManager,"");
+						renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
 					}
 					else if(fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						renameReplaceConfirmationDialog.show(fragmentManager,"");
+						renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
 
 					}
 				}
@@ -359,7 +357,7 @@ public class RenameFileDialog extends DialogFragment
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
-			safpermissionhelper.show(fragmentManager,"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 			return false;
 		}

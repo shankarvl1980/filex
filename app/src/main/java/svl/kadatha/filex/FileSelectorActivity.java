@@ -684,20 +684,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
                     if (fileSelectorFragment != null) fileSelectorFragment.modification_observed = true;
                     break;
-                    /*
-                case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
-                    int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-                    for(int i=0;i<size;++i)
-                    {
-                        DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-                        if(listener!=null)
-                        {
-                            listener.onFragmentCacheClear(file_path,fileObjectType);
-                        }
-                    }
-                    break;
 
-                     */
             }
         }
     }
@@ -735,17 +722,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         }
 
                     }
-
-
-//                    int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-//                    for(int i=0;i<size;++i)
-//                    {
-//                        DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-//                        if(listener!=null)
-//                        {
-//                            listener.setUsbFileRootNull();
-//                        }
-//                    }
 
                     Iterator<FilePOJO> iterator1=RECENTS.iterator();
                     while (iterator1.hasNext())
@@ -884,22 +860,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-
-//    interface DetailFragmentCommunicationListener
-//    {
-//        void onFragmentCacheClear(String file_path, FileObjectType fileObjectType);
-//        void setUsbFileRootNull();
-//    }
-//
-//    public void addFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//    {
-//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.add(listener);
-//    }
-//
-//    public void removeFragmentCommunicationListener(DetailFragmentCommunicationListener listener)
-//    {
-//        DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.remove(listener);
-//    }
 
     interface RecentDialogListener
     {

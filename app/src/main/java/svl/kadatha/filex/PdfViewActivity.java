@@ -1,16 +1,13 @@
 package svl.kadatha.filex;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 public class PdfViewActivity extends BaseActivity {
 
-    public FragmentManager fm;
     public Uri data;
     public static final String ACTIVITY_NAME="PDF_VIEW_ACTIVITY";
     public boolean clear_cache;
@@ -18,9 +15,7 @@ public class PdfViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = this;
         setContentView(R.layout.activity_blank_view);
-        fm=getSupportFragmentManager();
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);
     }
@@ -35,7 +30,7 @@ public class PdfViewActivity extends BaseActivity {
             if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);
             if(savedInstanceState==null)
             {
-                fm.beginTransaction().replace(R.id.activity_blank_view_container,PdfViewFragment_single_view.getNewInstance(file_path, fileObjectType),"pdf_view_fragment").commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, PdfViewFragment.getNewInstance(file_path, fileObjectType),"pdf_view_fragment").commit();
             }
         }
     }

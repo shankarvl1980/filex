@@ -51,7 +51,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageViewFragment extends Fragment
+public class
+ImageViewFragment extends Fragment
 {
 
 	private ViewPager view_pager;
@@ -81,11 +82,13 @@ public class ImageViewFragment extends Fragment
 
 	public FrameLayout progress_bar;
 	private static final String DELETE_FILE_REQUEST_CODE="image_file_delete_request_code";
+	private AppCompatActivity activity;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		activity=(AppCompatActivity)context;
 	}
 
 	@Override
@@ -150,7 +153,7 @@ public class ImageViewFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
-							deleteFileAlertDialogOtherActivity.show(((ImageViewActivity)context).fm,"deletefilealertotheractivity");
+							deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(),"deletefilealertotheractivity");
 							break;
 							
 						case 1:
@@ -189,7 +192,12 @@ public class ImageViewFragment extends Fragment
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
-							((ImageViewActivity)context).clear_cache=false;
+
+							if(activity instanceof ImageViewActivity)
+							{
+								((ImageViewActivity)activity).clear_cache=false;
+							}
+
 							Intent copy_intent=new Intent(context,CopyToActivity.class);
 							copy_intent.setAction(Intent.ACTION_SEND);
 							copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
@@ -213,7 +221,7 @@ public class ImageViewFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
-							propertiesDialog.show(((ImageViewActivity)context).fm,"properties_dialog");
+							propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 							break;
 							
 						case 4:
@@ -242,8 +250,12 @@ public class ImageViewFragment extends Fragment
 							} catch (FileNotFoundException e) {
 								//aspect_ratio=0;
 							}
-							((ImageViewActivity)context).clear_cache=false;
-							File tempFile=new File(((ImageViewActivity)context).CacheDir,viewModel.currently_shown_file.getName());
+							if(activity instanceof ImageViewActivity)
+							{
+								((ImageViewActivity)activity).clear_cache=false;
+							}
+
+							File tempFile=new File(context.getExternalCacheDir(),viewModel.currently_shown_file.getName());
 							Intent intent=InstaCropperActivity.getIntent(context,uri,FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",tempFile),viewModel.currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
 							activityResultLauncher_crop_request.launch(intent);
 							break;
@@ -272,7 +284,7 @@ public class ImageViewFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
-					((ImageViewActivity)context).onBackPressed();
+					getActivity().onBackPressed();
 				}
 
 			});
@@ -354,7 +366,11 @@ public class ImageViewFragment extends Fragment
 
 
 		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
-		data=((ImageViewActivity)context).data;
+		if(activity instanceof ImageViewActivity)
+		{
+			data=((ImageViewActivity)activity).data;
+		}
+
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -385,7 +401,11 @@ public class ImageViewFragment extends Fragment
 				{
 					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						((ImageViewActivity)context).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+						if(activity instanceof ImageViewActivity)
+						{
+							((ImageViewActivity)activity).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+						}
+
 					}
 					image_view_adapter=new ImageViewPagerAdapter(viewModel.album_file_pojo_list);
 					view_pager.setAdapter(image_view_adapter);
@@ -425,7 +445,7 @@ public class ImageViewFragment extends Fragment
 						picture_selector_adapter.notifyDataSetChanged();
 						if(viewModel.album_file_pojo_list.size()<1)
 						{
-							((ImageViewActivity)context).finish();
+							getActivity().finish();
 						}
 					}
 					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -441,7 +461,7 @@ public class ImageViewFragment extends Fragment
 		});
 
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -504,7 +524,7 @@ public class ImageViewFragment extends Fragment
 			if(result.getResultCode()== Activity.RESULT_OK)
 			{
 				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.setWallPaper(result,((ImageViewActivity)context).CacheDir);
+				viewModel.setWallPaper(result,context.getExternalCacheDir());
 			}
 			else
 			{
@@ -591,8 +611,11 @@ public class ImageViewFragment extends Fragment
 			f=albumList.get(position);
 			if(viewModel.fromThirdPartyApp)
 			{
-				data=((ImageViewActivity)context).data;
-				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				if(activity instanceof ImageViewActivity)
+				{
+					data=((ImageViewActivity)activity).data;
+					GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				}
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
@@ -657,8 +680,12 @@ public class ImageViewFragment extends Fragment
 			FilePOJO f=picture_list.get(p2);
 			if(viewModel.fromThirdPartyApp)
 			{
-				data=((ImageViewActivity)context).data; //on rotation oncreateview is created first, data is null in oncreate
-				GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				if(activity instanceof ImageViewActivity)
+				{
+					data=((ImageViewActivity)activity).data; //on rotation oncreateview is created first, data is null in oncreate
+					GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				}
+
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{

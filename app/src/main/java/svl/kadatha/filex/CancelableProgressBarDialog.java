@@ -69,13 +69,13 @@ public class CancelableProgressBarDialog extends DialogFragment
 		{
 			public void onClick(View p)
 			{
-				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+				getParentFragmentManager().setFragmentResult(request_code,bundle);
 				dismissAllowingStateLoss();
 			}
 			
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(CPBD_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(CPBD_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(CPBD_CANCEL_REQUEST_CODE))

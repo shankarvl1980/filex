@@ -47,6 +47,16 @@ android:layout_height="match_parent"
 			android:background="@drawable/select_icon_selection"
 			/>
 		<ImageView
+			android:id="@+id/fragment_detail_size_image"
+			android:layout_width="50dp"
+			android:layout_height="34dp"
+			android:padding="@dimen/layout_margin"
+			android:src="@drawable/sort_size_desc_toolbar_icon"
+			android:visibility="gone"
+			android:elevation="6dp"
+			android:background="@drawable/select_icon_selection"
+			/>
+		<ImageView
 			android:id="@+id/fragment_detail_time_image"
 			android:layout_width="50dp"
 			android:layout_height="34dp"

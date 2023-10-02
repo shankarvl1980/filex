@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class AudioPlayerActivity extends BaseActivity implements AudioSelectListener {
+public class AudioPlayerActivity extends BaseActivity implements AudioSelectListener,AudioFragmentListener {
 
 	private Group search_toolbar;
 	public EditText search_edittext;
@@ -40,9 +40,8 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	private final List<AudioCompletionListener> audioCompletionListeners=new ArrayList<>();
 	private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
 	private static final boolean[] alreadyNotificationWarned=new boolean[1];
-    TinyDB tinyDB;
+    public TinyDB tinyDB;
 	static AudioPOJO AUDIO_FILE;
-	public FragmentManager fm;
 	static final int WRITE_SETTINGS_PERMISSION_REQUEST_CODE=59;
 	static ArrayList<String> AUDIO_SAVED_LIST=new ArrayList<>();
 	private Context context;
@@ -83,7 +82,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		audioDatabaseHelper=new AudioDatabaseHelper(context);
 		db=audioDatabaseHelper.getDatabase();
 
-		fm=getSupportFragmentManager();
         View containerLayout = findViewById(R.id.activity_audio_container_layout);
 		keyBoardUtil=new KeyBoardUtil(containerLayout);
 		search_toolbar=findViewById(R.id.all_audio_search_toolbar);
@@ -120,7 +118,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		search_cancel_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				set_visibility_searchbar(false);
+				setSearchBarVisibility(false);
 			}
 		});
 
@@ -134,7 +132,8 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 				onBackPressed();
 			}
 		});
-        ViewPagerFragmentAdapter adapter = new ViewPagerFragmentAdapter(fm);
+
+        ViewPagerFragmentAdapter adapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 		view_pager.setAdapter(adapter);
 		view_pager.setOffscreenPageLimit(3);
 
@@ -281,7 +280,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	}
 
 
-	public void set_visibility_searchbar(boolean visible)
+	public void setSearchBarVisibility(boolean visible)
 	{
 		if(!AllAudioListFragment.FULLY_POPULATED)
 		{
@@ -317,6 +316,21 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	}
 
 	@Override
+	public boolean getSearchBarVisibility() {
+		return search_toolbar_visible;
+	}
+
+	@Override
+	public void hideKeyBoard() {
+		((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+	}
+
+	@Override
+	public boolean getKeyBoardVisibility() {
+		return keyBoardUtil.getKeyBoardVisibility();
+	}
+
+	@Override
 	public void onAudioSelect(Uri data, AudioPOJO audio) {
 		android.content.Intent service_intent=new android.content.Intent(context,AudioPlayerService.class);
 		service_intent.setData(data);
@@ -334,6 +348,44 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		{
 			apf.set_audio(audio);
 		}
+	}
+
+	@Override
+	public void onAudioSave() {
+		aslf.onSaveAudioList();
+	}
+
+	@Override
+	public void refreshAudioPlayNavigationButtons() {
+		apf.enable_disable_previous_next_btn();
+	}
+
+	@Override
+	public void onDeleteAudio(ArrayList<AudioPOJO> list) {
+		aalf.clear_selection();
+		int size=list.size();
+		for(int i=0;i<size;++i)
+		{
+			String path=list.get(i).getData();
+			for(AudioPOJO audio : AudioPlayerService.AUDIO_QUEUED_ARRAY)
+			{
+				if(audio.getData().equals(path))
+				{
+					AudioPlayerService.AUDIO_QUEUED_ARRAY.remove(audio);
+					break;
+				}
+			}
+		}
+
+		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
+		{
+			AudioPlayerService.CURRENT_PLAY_NUMBER=0;
+		}
+		else if(AudioPlayerService.CURRENT_PLAY_NUMBER>AudioPlayerService.AUDIO_QUEUED_ARRAY.size()-1)
+		{
+			AudioPlayerService.CURRENT_PLAY_NUMBER=AudioPlayerService.AUDIO_QUEUED_ARRAY.size()-1;
+		}
+
 	}
 
 
@@ -403,7 +455,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		}
 		else if(search_toolbar_visible)
 		{
-			set_visibility_searchbar(false);
+			setSearchBarVisibility(false);
 		}
 		else
 		 {
@@ -510,47 +562,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	{
 		searchFilterListeners.remove(listener);
 	}
-	
-	public void trigger_audio_list_saved_listener()
-	{
-		aslf.onSaveAudioList();
-	}
-	
-	
-	public void trigger_enable_disable_previous_next_btns()
-	{
-		apf.enable_disable_previous_next_btn();
-	}
-	
-	public void update_all_audio_list_and_audio_queued_array_and_current_play_number(ArrayList<AudioPOJO> list)
-	{
-		aalf.clear_selection();
-		int size=list.size();
-		for(int i=0;i<size;++i)
-		{
-			String path=list.get(i).getData();
-			for(AudioPOJO audio : AudioPlayerService.AUDIO_QUEUED_ARRAY)
-			{
-				if(audio.getData().equals(path))
-				{
-					AudioPlayerService.AUDIO_QUEUED_ARRAY.remove(audio);
-					break;
-				}
-			}
-		}
-
-		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
-		{
-			AudioPlayerService.CURRENT_PLAY_NUMBER=0;
-		}
-		else if(AudioPlayerService.CURRENT_PLAY_NUMBER>AudioPlayerService.AUDIO_QUEUED_ARRAY.size()-1)
-		{
-			AudioPlayerService.CURRENT_PLAY_NUMBER=AudioPlayerService.AUDIO_QUEUED_ARRAY.size()-1;
-		}
-
-	}
-
-
 
 	public void on_completion_audio()
 	{
@@ -562,7 +573,5 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 			}
 		}
 	}
-
-
 
 }

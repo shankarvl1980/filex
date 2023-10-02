@@ -64,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -554,7 +553,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		RecyclerView libraryRecyclerView = findViewById(R.id.library_recyclerview);
 		libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon};
+		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon,R.drawable.lib_doc_icon};
 		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES,icon_image_array));
 
 
@@ -828,7 +827,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		executorService.execute(new Runnable() {
 			@Override
 			public void run() {
-				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
+				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false,largeFile_removed=false;
 				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
 				while(iterator.hasNext())
 				{
@@ -868,7 +867,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						iterator.remove();
 						apk_removed=true;
 					}
-					if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed)
+					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"LargeFiles"))
+					{
+						iterator.remove();
+						largeFile_removed=true;
+					}
+					if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed && largeFile_removed)
 					{
 						break;
 					}
@@ -881,6 +885,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				viewModel.getVideoList(false);
 				viewModel.getArchiveList(false);
 				viewModel.getApkList(false);
+				viewModel.getLargeFileList(false);
 
 				fm.beginTransaction().detach(df).commit();
 				fm.beginTransaction().attach(df).commit();
@@ -898,6 +903,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewModel.getVideoList(false);
 		viewModel.getArchiveList(false);
 		viewModel.getApkList(false);
+		viewModel.getLargeFileList(false);
 
 		viewModel.getAppList();
 
@@ -1402,7 +1408,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		h.removeCallbacksAndMessages(null);
 	}
 
-	public void DeselectAllAndAdjustToolbars(DetailFragment df,String detailfrag_tag)
+	public void DeselectAllAndAdjustToolbars(DetailFragment df)
 	{
 		listPopWindow.dismiss();
 		if(DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED)
@@ -1434,7 +1440,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void actionmode_finish(DetailFragment df, String detailgfrag_tag)
 	{
-		DeselectAllAndAdjustToolbars(df,detailgfrag_tag);
+		DeselectAllAndAdjustToolbars(df);
 		imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 		search_view.setText("");
 		search_view.clearFocus();
@@ -1602,7 +1608,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 		if(size==0)
 		{
-			DeselectAllAndAdjustToolbars(df,df.fileclickselected);
+			DeselectAllAndAdjustToolbars(df);
 		}
 
 	}
@@ -2240,6 +2246,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								case 6:
 									name="APK";
 									break;
+								case 7:
+									name="Large Files";
+									break;
 							}
 							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
 							drawerLayout.closeDrawer(drawer);
@@ -2454,15 +2463,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 					}
 
-//					int size=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-//					for(int i=0;i<size;++i)
-//					{
-//						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-//						if(listener!=null)
-//						{
-//							listener.setUsbFileRootNull();
-//						}
-//					}
 
 					Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
 					while (iterator1.hasNext())
@@ -2533,20 +2533,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
 					if (df != null) df.modification_observed = true;
 					break;
-					/*
-				case Global.LOCAL_BROADCAST_FILE_POJO_CACHE_CLEARED_ACTION:
-					int size = DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.size();
-					for(int i=0;i<size;++i)
-					{
-						DetailFragmentCommunicationListener listener=DETAIL_FRAGMENT_COMMUNICATION_LISTENERS.get(i);
-						if(listener!=null)
-						{
-							listener.onFragmentCacheClear(file_path,fileObjectType);
-						}
-					}
-					break;
-
-					 */
 
 			}
 		}
@@ -2560,12 +2546,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	static class SearchParameters
 	{
-		String search_file_name;
-		Set<FilePOJO> search_in_dir;
-		String search_file_type;
-		boolean search_whole_word,search_case_sensitive,search_regex;
-		long search_lower_limit_size;
-		long search_upper_limit_size;
+		final String search_file_name;
+		final Set<FilePOJO> search_in_dir;
+		final String search_file_type;
+		final boolean search_whole_word;
+		final boolean search_case_sensitive;
+		final boolean search_regex;
+		final long search_lower_limit_size;
+		final long search_upper_limit_size;
 
 		SearchParameters(String search_file_name,Set<FilePOJO> search_in_dir,String search_file_type,boolean search_whole_word,
 						 boolean search_case_sensitive, boolean search_regex,long search_lower_limit_size,long search_upper_limit_size)

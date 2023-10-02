@@ -5,9 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-
-import java.io.File;
 
 
 public class ImageViewActivity extends BaseActivity
@@ -15,9 +12,9 @@ public class ImageViewActivity extends BaseActivity
 	
 	public Uri data;
 	public FileObjectType fileObjectType;
-	public FragmentManager fm;
+
 	TinyDB tinyDB;
-	public File CacheDir;
+
 	public static final String ACTIVITY_NAME="IMAGE_VIEW_ACTIVITY";
 	public boolean clear_cache;
 
@@ -27,8 +24,6 @@ public class ImageViewActivity extends BaseActivity
  		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		Context context = this;
-		fm=getSupportFragmentManager();
-		CacheDir=getExternalCacheDir();
 		setContentView(R.layout.activity_blank_view);
 		tinyDB=new TinyDB(context);
 
@@ -48,7 +43,7 @@ public class ImageViewActivity extends BaseActivity
 			if(file_path ==null) file_path =RealPathUtil.getLastSegmentPath(data);
 			if(savedInstanceState==null)
 			{
-				fm.beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fileObjectType),"picture_fragment").commit();
+				getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fileObjectType),"picture_fragment").commit();
 			}
 
 		}

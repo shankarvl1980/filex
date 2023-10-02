@@ -30,14 +30,12 @@ public class PreferencesDialog extends DialogFragment
     private DefaultAppDatabaseHelper defaultAppDatabaseHelper;
     public static String THEME;
     private boolean light_rb_checked,dark_rb_checked,system_rb_checked;
-    private FragmentManager fragmentManager;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
-        df=(DetailFragment) fragmentManager.findFragmentById(R.id.detail_fragment);
+        df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
         tinyDB=new TinyDB(context);
         defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
     }
@@ -149,7 +147,7 @@ public class PreferencesDialog extends DialogFragment
             @Override
             public void onClick(View view) {
                 DefaultAppsDialog defaultAppsDialog =new DefaultAppsDialog();
-                defaultAppsDialog.show(fragmentManager,"");
+                defaultAppsDialog.show(getParentFragmentManager(),"");
             }
         });
 
@@ -164,11 +162,11 @@ public class PreferencesDialog extends DialogFragment
                     public void run() {
                         Global.SHOW_FILE_PATH=b;
                         tinyDB.putBoolean("show_file_path",Global.SHOW_FILE_PATH);
-                        DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+                        DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
                         if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
                         {
-                            fragmentManager.beginTransaction().detach(df).commit();
-                            fragmentManager.beginTransaction().attach(df).commit();
+                            getParentFragmentManager().beginTransaction().detach(df).commit();
+                            getParentFragmentManager().beginTransaction().attach(df).commit();
                         }
                     }
                 },500);

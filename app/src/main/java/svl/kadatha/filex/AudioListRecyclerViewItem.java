@@ -188,14 +188,6 @@ public class AudioListRecyclerViewItem extends ViewGroup
 
 	}
 
-	public void set_background_color(int color)
-	{
-		titletextview.setBackgroundColor(color);
-		albumtextview.setBackgroundColor(color);
-		durationtextview.setBackgroundColor(color);
-		artisttextview.setBackgroundColor(color);
-	}
-
 	public void set_selected(boolean item_selected)
 	{
 		audio_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);

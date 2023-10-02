@@ -227,7 +227,7 @@ public class AppSelectorDialog extends DialogFragment
                             bundle.putBoolean("remember_app_check_box",remember_app_check_box.isChecked());
                             AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
                             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
-                            appInstallAlertDialog.show(appCompatActivity.getSupportFragmentManager(),"");
+                            appInstallAlertDialog.show(getParentFragmentManager(),"");
                         }
                         else
                         {

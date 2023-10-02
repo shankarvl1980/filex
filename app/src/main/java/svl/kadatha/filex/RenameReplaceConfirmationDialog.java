@@ -21,7 +21,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 {
 
     private String rename_file_name;
-	private FragmentManager fragmentManager;
 	private Context context;
 	private Bundle bundle;
 
@@ -38,7 +37,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 		this.context = context;
 	}
 
@@ -70,8 +68,7 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 			{
 				public void onClick(View v)
 				{
-
-					fragmentManager.setFragmentResult(RenameFileDialog.REPLACEMENT_CONFIRMATION, bundle);
+					getParentFragmentManager().setFragmentResult(RenameFileDialog.REPLACEMENT_CONFIRMATION, bundle);
 					dismissAllowingStateLoss();
 				}
 

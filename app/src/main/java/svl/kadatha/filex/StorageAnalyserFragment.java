@@ -10,8 +10,6 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
@@ -75,7 +73,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         {
             detailFragmentListener= (DetailFragmentListener) activity;
         }
-
     }
 
     @Override
@@ -227,8 +224,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             }
         });
 
-
-        ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -361,7 +357,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
 
     public class StorageAnalyserAdapter extends RecyclerView.Adapter<StorageAnalyserAdapter.ViewHolder> implements Filterable
     {
-        StorageAnalyserFragment storageAnalyserFragment;
+        final StorageAnalyserFragment storageAnalyserFragment;
         StorageAnalyserAdapter(StorageAnalyserFragment storageAnalyserFragment){
             this.storageAnalyserFragment=storageAnalyserFragment;
         }

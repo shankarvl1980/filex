@@ -25,7 +25,6 @@ public class SaveNewAudioListDialog extends DialogFragment
     private EditText new_file_name_edittext;
     private Context context;
 	private InputMethodManager imm;
-	private FragmentManager fragmentManager;
 	private String request_code;
 	Bundle bundle;
 
@@ -35,7 +34,6 @@ public class SaveNewAudioListDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
 	}
 
 	@Override
@@ -115,7 +113,7 @@ public class SaveNewAudioListDialog extends DialogFragment
 					}
 
 					bundle.putString("list_name",new_name);
-					fragmentManager.setFragmentResult(request_code,bundle);
+					getParentFragmentManager().setFragmentResult(request_code,bundle);
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					dismissAllowingStateLoss();
 				}	

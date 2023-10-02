@@ -41,6 +41,7 @@ public class AudioSavedListFragment extends Fragment
 	private TextView file_number_view;
 	private Toolbar bottom_toolbar;
 	private AudioSelectListener audioSelectListener;
+	private AudioFragmentListener audioFragmentListener;
 	private boolean toolbar_visible=true;
 	private int scroll_distance;
 	private int num_all_audio_list;
@@ -48,6 +49,7 @@ public class AudioSavedListFragment extends Fragment
 	public FrameLayout progress_bar;
 	private static final String AUDIO_SELECT_REQUEST_CODE="audio_saved_list_audio_select_request_code";
 	private AudioPlayerActivity.AudioCompletionListener audioCompletionListener;
+	private AppCompatActivity activity;
 
 
 	@Override
@@ -68,10 +70,10 @@ public class AudioSavedListFragment extends Fragment
 			}
 		};
 
-		AppCompatActivity activity= (AppCompatActivity) context;
+		activity= (AppCompatActivity) context;
 		if(activity instanceof AudioPlayerActivity)
 		{
-			((AudioPlayerActivity)context).addAudioCompletionListener(audioCompletionListener);
+			((AudioPlayerActivity)activity).addAudioCompletionListener(audioCompletionListener);
 		}
 
 
@@ -80,19 +82,25 @@ public class AudioSavedListFragment extends Fragment
 		{
 			audioSelectListener= (AudioSelectListener) activity;
 		}
+
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
+		}
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		AppCompatActivity activity= (AppCompatActivity) context;
+
 		if(activity instanceof AudioPlayerActivity)
 		{
-			((AudioPlayerActivity)context).removeAudioCompletionListener(audioCompletionListener);
+			((AudioPlayerActivity)activity).removeAudioCompletionListener(audioCompletionListener);
 		}
 
 
 		audioSelectListener=null;
+		audioFragmentListener=null;
 	}
 
 	@Override
@@ -198,14 +206,18 @@ public class AudioSavedListFragment extends Fragment
 						audioSelectListener.onAudioSelect(data,audio);
 
 					}
-					((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+					if(audioFragmentListener!=null)
+					{
+						audioFragmentListener.refreshAudioPlayNavigationButtons();
+					}
+
 					clear_selection();
 					audioListViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
@@ -318,9 +330,13 @@ public class AudioSavedListFragment extends Fragment
 					{
 						AudioPlayerActivity.AUDIO_SAVED_LIST.remove(list_name);
 						saved_audio_list.remove(list_name);
-						((AudioPlayerActivity)context).audioDatabaseHelper.deleteTable(list_name);
+						if(activity instanceof AudioPlayerActivity)
+						{
+							((AudioPlayerActivity)activity).audioDatabaseHelper.deleteTable(list_name);
+						}
+
 					}
-					((AudioPlayerActivity)context).tinyDB.putListString("audio_saved_list",AudioPlayerActivity.AUDIO_SAVED_LIST);
+
 					num_all_audio_list=saved_audio_list.size();
 					clear_selection();
 				}
@@ -361,8 +377,11 @@ public class AudioSavedListFragment extends Fragment
 				clear_selection();
 			}
 
+			if(audioFragmentListener!=null)
+			{
+				audioFragmentListener.refreshAudioPlayNavigationButtons();
+			}
 
-			((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
 		}
 
 	}
@@ -412,7 +431,7 @@ public class AudioSavedListFragment extends Fragment
 							else
 							{
 								AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,pos,saved_audio_list.get(pos));
-								audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).fm,"audioSavedlistDetailsDialog");
+								audioSavedListDetailsDialog.show(getParentFragmentManager(),"audioSavedlistDetailsDialog");
 							}
 						}
 

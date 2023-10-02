@@ -49,7 +49,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public int totalFilePOJO_list_Size;
 	public RecyclerView filepath_recyclerview;
 	public RecyclerView recyclerView;
-	public ImageView layout_image_view,filter_image_view,time_image_view;
+	public ImageView layout_image_view,filter_image_view,time_image_view, size_image_view;
 	LinearLayoutManager llm;
 	GridLayoutManager glm;
 	public boolean grid_layout;
@@ -78,7 +78,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	
 	static final String SEARCH_RESULT="Search";
 
-	//public MainActivity mainActivity;
 	private Context context;
 
 	public FileObjectType fileObjectType;
@@ -204,13 +203,32 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				adapter.notifyDataSetChanged();
 			}
 		});
+
+		size_image_view=v.findViewById(R.id.fragment_detail_size_image);
+		size_image_view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(viewModel.library_size_desc)
+				{
+					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
+					viewModel.library_size_desc=false;
+				}
+				else
+				{
+					Collections.sort(filePOJO_list,FileComparator.FilePOJOComparate("f_size_desc",false));
+					viewModel.library_size_desc=true;
+				}
+				size_image_view.setSelected(viewModel.library_size_desc);
+				adapter.notifyDataSetChanged();
+			}
+		});
+
 		filter_image_view=v.findViewById(R.id.fragment_detail_filter_image);
 		filter_image_view.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				if(viewModel.filePOJOS.size()==0)
 				{
-					//Global.print(context,"No files to filter");
 					return;
 				}
 				if(detailFragmentListener!=null)detailFragmentListener.setSearchBarVisibility(false);
@@ -567,33 +585,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		if(adapter!=null)adapter.setCardViewClickListener(null);
 	}
 
-//	@Override
-//	public void onFragmentCacheClear(String file_path, FileObjectType fileObjectType) {
-//
-//		if(file_path==null || fileObjectType==null)
-//		{
-//			//cache_cleared=true;
-//		}
-//		else if(Global.IS_CHILD_FILE(this.fileObjectType+fileclickselected,fileObjectType+file_path))
-//		{
-//			//cache_cleared=true;
-//		}
-//		else if((this.fileObjectType+fileclickselected).equals(fileObjectType+new File(file_path).getParent()))
-//		{
-//			//cache_cleared=true;
-//		}
-//		else if(this.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-//		{
-//			//cache_cleared=true;
-//		}
-//
-//	}
-//
-//	@Override
-//	public void setUsbFileRootNull() {
-//		currentUsbFile=null;
-//	}
-
 
 	@Override
 	public void onFileModified() {
@@ -682,12 +673,20 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	{
 		if(file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
 				|| file_click_selected_name.equals("Audio")|| file_click_selected_name.equals("Video")
+				|| file_click_selected_name.equals("Large Files")
 		)
 		{
 			filter_image_view.setVisibility(View.VISIBLE);
+			if(fileclickselected.equals("Large Files"))
+			{
+				size_image_view.setVisibility(View.VISIBLE);
+				size_image_view.setSelected(viewModel.library_size_desc);
+			}
+			else {
+				time_image_view.setVisibility(View.VISIBLE);
+				time_image_view.setSelected(viewModel.library_time_desc);
+			}
 
-			time_image_view.setVisibility(View.VISIBLE);
-			time_image_view.setSelected(viewModel.library_time_desc);
 			if(viewModel.library_filter_path!=null)
 			{
 				adapter.getFilter().filter(null);
@@ -780,7 +779,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
-			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
 		else

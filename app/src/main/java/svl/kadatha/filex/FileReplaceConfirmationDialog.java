@@ -92,7 +92,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					fileDuplicationViewModel.overwritten_file_path_list.addAll(fileDuplicationViewModel.destination_duplicate_file_path_array);
 					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
-					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
+					pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
 					dismissAllowingStateLoss();
 				}
 				else
@@ -104,7 +104,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 						fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
-						pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
+						pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
 						dismissAllowingStateLoss();
 					}
 					else
@@ -127,7 +127,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.source_duplicate_file_path_array);
 					PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 							fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
-					pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
+					pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
 					dismissAllowingStateLoss();
 				}
 				else
@@ -139,7 +139,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
-						pasteSetUpDialog.show(((AppCompatActivity)context).getSupportFragmentManager(), "paste_dialog");
+						pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
 						dismissAllowingStateLoss();
 					}
 					else

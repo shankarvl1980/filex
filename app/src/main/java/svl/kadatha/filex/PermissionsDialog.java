@@ -135,7 +135,7 @@ public class PermissionsDialog extends DialogFragment
 				}
 				catch(IOException | InterruptedException e){}
 
-				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(PropertiesDialog.PROPERTIES_DIALOG_REQUEST_CODE,bundle);
+				getParentFragmentManager().setFragmentResult(PropertiesDialog.PROPERTIES_DIALOG_REQUEST_CODE,bundle);
 				dismissAllowingStateLoss();
 			}
 		});

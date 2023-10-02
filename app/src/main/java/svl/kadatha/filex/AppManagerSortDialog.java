@@ -48,7 +48,6 @@ public class AppManagerSortDialog extends DialogFragment
     {
         // TODO: Implement this method
         View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
-        FragmentManager fragmentManager = ((AppManagerActivity) context).getSupportFragmentManager();
         RadioGroup rg = v.findViewById(R.id.storage_analyser_dialog_view_layout_rg);
         list_rb=v.findViewById(R.id.storage_analyser_view_rb_list);
         grid_rb=v.findViewById(R.id.storage_analyser_dialog_rb_grid);

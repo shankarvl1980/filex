@@ -211,7 +211,7 @@ public class PropertiesDialog extends DialogFragment
 							}
 
 							PermissionsDialog permissionsDialog=PermissionsDialog.getInstance(file_path_str,file_permissions_str,symbolic_link_str);
-							permissionsDialog.show(((AppCompatActivity)context).getSupportFragmentManager().beginTransaction(),"permissions_dialog");
+							permissionsDialog.show(getParentFragmentManager().beginTransaction(),"permissions_dialog");
 						}
 					});
 
@@ -259,7 +259,7 @@ public class PropertiesDialog extends DialogFragment
 			
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(PROPERTIES_DIALOG_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(PROPERTIES_DIALOG_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(PROPERTIES_DIALOG_REQUEST_CODE))

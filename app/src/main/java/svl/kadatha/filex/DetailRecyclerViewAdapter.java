@@ -72,10 +72,7 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 			{
 
 			}
-
 		}
-
-
 	}
 
 	class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnLongClickListener

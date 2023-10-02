@@ -97,7 +97,7 @@ public class DeleteFtpAlertDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
-                ((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(request_code,null);
+                getParentFragmentManager().setFragmentResult(request_code,null);
                 dismissAllowingStateLoss();
             }
 

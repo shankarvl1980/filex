@@ -81,21 +81,26 @@ public class AudioPlayFragment extends Fragment
 	private AudioManager audioManager;
 	private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
 	private static final String AUDIO_SELECT_REQUEST_CODE="audio_play_audio_select_request_code";
-	private FrameLayout progress_bar;AudioPlayerActivity audioPlayerActivity;
+	private FrameLayout progress_bar;
 	private AudioPlayViewModel audioPlayViewModel;
 	private AudioSelectListener audioSelectListener;
+	private AppCompatActivity activity;
+	private AudioFragmentListener audioFragmentListener;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
 		audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		audioPlayerActivity =((AudioPlayerActivity)context);
-
-		AppCompatActivity activity= (AppCompatActivity) context;
+		activity=((AppCompatActivity)context);
 		if(activity instanceof AudioSelectListener)
 		{
 			audioSelectListener= (AudioSelectListener) activity;
+		}
+
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
 		}
 
 		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
@@ -115,8 +120,12 @@ public class AudioPlayFragment extends Fragment
 				{
 					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						audioPlayerActivity.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
-						data= audioPlayerActivity.data;
+						if(activity instanceof AudioPlayerActivity)
+						{
+							((AudioPlayerActivity)activity).data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
+							data= ((AudioPlayerActivity)activity).data;
+						}
+
 					}
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
@@ -140,6 +149,7 @@ public class AudioPlayFragment extends Fragment
 	public void onDetach() {
 		super.onDetach();
 		audioSelectListener=null;
+		audioFragmentListener=null;
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -166,14 +176,22 @@ public class AudioPlayFragment extends Fragment
 
 	public void initiate_audio()
 	{
-		data= audioPlayerActivity.data;
+		if(activity instanceof AudioPlayerActivity)
+		{
+			data= ((AudioPlayerActivity)activity).data;
+		}
+
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
 
-			audioPlayViewModel.fileObjectType= audioPlayerActivity.fileObjectType;
-			audioPlayViewModel.fromThirdPartyApp = audioPlayerActivity.fromThirdPartyApp;
-			audioPlayViewModel.file_path= audioPlayerActivity.file_path;
+			if(activity instanceof AudioPlayerActivity)
+			{
+				audioPlayViewModel.fileObjectType= ((AudioPlayerActivity)activity).fileObjectType;
+				audioPlayViewModel.fromThirdPartyApp = ((AudioPlayerActivity)activity).fromThirdPartyApp;
+				audioPlayViewModel.file_path= ((AudioPlayerActivity)activity).file_path;
+			}
+
 			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
 
 			String source_folder = new File(audioPlayViewModel.file_path).getParent();
@@ -309,7 +327,7 @@ public class AudioPlayFragment extends Fragment
 			@Override
 			public void onClick(View v) {
 				AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,0,AudioPlayerActivity.CURRENT_PLAY_LIST);
-				audioSavedListDetailsDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"");
+				audioSavedListDetailsDialog.show(getParentFragmentManager(),"");
 			}
 		});
 
@@ -460,7 +478,11 @@ public class AudioPlayFragment extends Fragment
 						{
 							audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
 						}
-						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteFileOtherActivityViewModel.deleted_audio_files);
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.onDeleteAudio(deleteFileOtherActivityViewModel.deleted_audio_files);
+						}
+
 						AudioPlayerActivity.AUDIO_FILE=null;
 					}
 
@@ -470,7 +492,7 @@ public class AudioPlayFragment extends Fragment
 		});
 
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -486,7 +508,7 @@ public class AudioPlayFragment extends Fragment
 			}
 		});
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(AUDIO_SELECT_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(AUDIO_SELECT_REQUEST_CODE))
@@ -725,7 +747,11 @@ public class AudioPlayFragment extends Fragment
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
-			data= audioPlayerActivity.data;
+			if(activity instanceof AudioPlayerActivity)
+			{
+				data= ((AudioPlayerActivity)activity).data;
+			}
+
 			switch(p3)
 			{
 				case 0:
@@ -741,7 +767,7 @@ public class AudioPlayFragment extends Fragment
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
 					DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-					deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"deletefilealertotheractivity");
+					deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(),"deletefilealertotheractivity");
 					break;
 				case 1:
 					Uri src_uri=null;
@@ -769,7 +795,7 @@ public class AudioPlayFragment extends Fragment
 
 					break;
 				case 2:
-					Uri copy_uri=null;
+					Uri copy_uri;
 					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null)
 					{
 						copy_uri=data;
@@ -787,7 +813,11 @@ public class AudioPlayFragment extends Fragment
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;
 					}
-					((AudioPlayerActivity)context).clear_cache=false;
+					if(activity instanceof AudioPlayerActivity)
+					{
+						((AudioPlayerActivity)activity).clear_cache=false;
+					}
+
 					Intent copy_intent=new Intent(context,CopyToActivity.class);
 					copy_intent.setAction(Intent.ACTION_SEND);
 					copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
@@ -811,7 +841,7 @@ public class AudioPlayFragment extends Fragment
 					}
 					files_selected_array.add(AudioPlayerActivity.AUDIO_FILE.getData());
 					PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,AudioPlayerActivity.AUDIO_FILE.getFileObjectType());
-					propertiesDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"properties_dialog");
+					propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 					break;
 				case 4:
 					boolean permission;

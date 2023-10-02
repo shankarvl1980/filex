@@ -71,11 +71,23 @@ public class AlbumDetailsDialog extends DialogFragment
 	private FrameLayout progress_bar;
 	private String request_code;
 	private Bundle bundle;
+	private AudioFragmentListener audioFragmentListener;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		AppCompatActivity activity = (AppCompatActivity) context;
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		audioFragmentListener=null;
 	}
 
 	@Override
@@ -233,7 +245,7 @@ public class AlbumDetailsDialog extends DialogFragment
 				{
 					clear_selection();
 				}
-				else if(((AudioPlayerActivity)context).keyBoardUtil.getKeyBoardVisibility())
+				else if(audioFragmentListener!=null && audioFragmentListener.getKeyBoardVisibility())
 				{
 					((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
 				}
@@ -328,8 +340,11 @@ public class AlbumDetailsDialog extends DialogFragment
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					((AudioPlayerActivity) context).trigger_audio_list_saved_listener();
-					((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+					if (audioFragmentListener != null) {
+						audioFragmentListener.onAudioSave();
+						audioFragmentListener.refreshAudioPlayNavigationButtons();
+					}
+
 					clear_selection();
 					audioListViewModel.isSavingAudioFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
@@ -351,7 +366,11 @@ public class AlbumDetailsDialog extends DialogFragment
 		file_number_view.setText(size+"/"+num_all_audio);
 
 		//hide keyboard when coming from search list of albumlist dialog
-		((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
+		if(audioFragmentListener!=null)
+		{
+			audioFragmentListener.hideKeyBoard();
+		}
+
 
 		DeleteAudioViewModel deleteAudioViewModel=new ViewModelProvider(AlbumDetailsDialog.this).get(DeleteAudioViewModel.class);
 		deleteAudioViewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -377,8 +396,12 @@ public class AlbumDetailsDialog extends DialogFragment
 							empty_audio_list_tv.setVisibility(View.VISIBLE);
 						}
 
-						((AudioPlayerActivity) context).update_all_audio_list_and_audio_queued_array_and_current_play_number(deleteAudioViewModel.deleted_audio_files);
-						((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.onDeleteAudio(deleteAudioViewModel.deleted_audio_files);
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
+
 					}
 					clear_selection();
 					deleteAudioViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -387,7 +410,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		});
 
 
-		((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAVE_AUDIO_LIST_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAVE_AUDIO_LIST_REQUEST_CODE))
@@ -400,7 +423,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		});
 
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -553,7 +576,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					}
 
 					PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
-					propertiesDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"properties_dialog");
+					propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 					break;
 
 				default:
@@ -576,7 +599,6 @@ public class AlbumDetailsDialog extends DialogFragment
 		@Override
 		public void onBindViewHolder(AudioListRecyclerViewAdapter.ViewHolder p1, int p2)
 		{
-
 			AudioPOJO audio=audio_list.get(p2);
 			String title=audio.getTitle();
 			String album=getString(R.string.album_colon)+" "+audio.getAlbum();
@@ -664,13 +686,10 @@ public class AlbumDetailsDialog extends DialogFragment
 				}
 				else
 				{
-
 					AudioPOJO audio=audio_list.get(pos);
 					File f=new File(audio.getData());
 					if(f.exists())
 					{
-
-
 						if(!audioListViewModel.whether_audios_set_to_current_list)
 						{
 							AudioPlayerService.AUDIO_QUEUED_ARRAY=audio_list;
@@ -678,8 +697,12 @@ public class AlbumDetailsDialog extends DialogFragment
 						}
 						AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
 						bundle.putParcelable("audio",audio);
-						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-						((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+						getParentFragmentManager().setFragmentResult(request_code,bundle);
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
+
 
 					}
 
@@ -783,7 +806,7 @@ public class AlbumDetailsDialog extends DialogFragment
 
 				}
 				final DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity = DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,FileObjectType.SEARCH_LIBRARY_TYPE);
-				deleteFileAlertDialogOtherActivity.show(((AudioPlayerActivity) context).fm, "deletefilealertdialog");
+				deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(), "deletefilealertdialog");
 
 			} else if (id == R.id.toolbar_btn_2) {
 				AudioPlayerService.AUDIO_QUEUED_ARRAY = new ArrayList<>(audioListViewModel.audio_pojo_selected_items.values());
@@ -794,17 +817,20 @@ public class AlbumDetailsDialog extends DialogFragment
 					if(f.exists())
 					{
 						bundle.putParcelable("audio",audio);
-						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+						getParentFragmentManager().setFragmentResult(request_code,bundle);
 					}
 
 				}
+				if(audioFragmentListener!=null)
+				{
+					audioFragmentListener.refreshAudioPlayNavigationButtons();
+				}
 
-				((AudioPlayerActivity) context).trigger_enable_disable_previous_next_btns();
 				clear_selection();
 			} else if (id == R.id.toolbar_btn_3) {
 
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
-				audioSaveListDialog.show(((AudioPlayerActivity) context).getSupportFragmentManager(), "");
+				audioSaveListDialog.show(getParentFragmentManager(), "");
 			} else if (id == R.id.toolbar_btn_4) {
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
 				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);

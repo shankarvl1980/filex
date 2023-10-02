@@ -31,7 +31,6 @@ public class ViewDialog extends DialogFragment
     private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
     private RadioButton list_rb, grid_rb;
     private Context context;
-    private FragmentManager fragmentManager;
 	private AppCompatActivity appCompatActivity;
 
 
@@ -40,7 +39,6 @@ public class ViewDialog extends DialogFragment
 		super.onAttach(context);
 		this.context=context;
 		appCompatActivity=(AppCompatActivity)context;
-		fragmentManager=appCompatActivity.getSupportFragmentManager();
 		tinyDB=new TinyDB(context);
 	}
 
@@ -62,7 +60,7 @@ public class ViewDialog extends DialogFragment
 		grid_rb=v.findViewById(R.id.dialog_view_rb_grid);
 		if(appCompatActivity instanceof MainActivity)
 		{
-			DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+			DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 			if(df.grid_layout)
 			{
 				grid_rb.setChecked(true);
@@ -97,9 +95,9 @@ public class ViewDialog extends DialogFragment
 						}
 					}
 
-					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-					fragmentManager.beginTransaction().detach(df).commit();
-					fragmentManager.beginTransaction().attach(df).commit();
+					DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
+					getParentFragmentManager().beginTransaction().detach(df).commit();
+					getParentFragmentManager().beginTransaction().attach(df).commit();
 					if(df.file_click_selected_name.equals("Image") || df.file_click_selected_name.equals("Video"))
 					{
 						tinyDB.putBoolean("image_video_grid_layout",Global.IMAGE_VIDEO_GRID_LAYOUT);
@@ -134,9 +132,9 @@ public class ViewDialog extends DialogFragment
 					{
 						FileSelectorActivity.FILE_GRID_LAYOUT=true;
 					}
-					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
-					fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
-					fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) getParentFragmentManager().findFragmentById(R.id.file_selector_container);
+					getParentFragmentManager().beginTransaction().detach(fileSelectorFragment).commit();
+					getParentFragmentManager().beginTransaction().attach(fileSelectorFragment).commit();
 					tinyDB.putBoolean("file_selector_file_grid_layout",FileSelectorActivity.FILE_GRID_LAYOUT);
 				}
 			});
@@ -174,12 +172,12 @@ public class ViewDialog extends DialogFragment
 						{
 							MainActivity.SHOW_HIDDEN_FILE=isChecked;
 							tinyDB.putBoolean("show_hidden_file",MainActivity.SHOW_HIDDEN_FILE);
-							DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+							DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 							((MainActivity)appCompatActivity).actionmode_finish(df,df.fileclickselected);
 							if(df.fileObjectType==FileObjectType.FILE_TYPE || df.fileObjectType==FileObjectType.ROOT_TYPE)
 							{
-								fragmentManager.beginTransaction().detach(df).commit();
-								fragmentManager.beginTransaction().attach(df).commit();
+								getParentFragmentManager().beginTransaction().detach(df).commit();
+								getParentFragmentManager().beginTransaction().attach(df).commit();
 							}
 
 						}
@@ -200,12 +198,12 @@ public class ViewDialog extends DialogFragment
 						{
 							FileSelectorActivity.SHOW_HIDDEN_FILE=isChecked;
 							tinyDB.putBoolean("file_selector_show_hidden_file",FileSelectorActivity.SHOW_HIDDEN_FILE);
-							FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+							FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) getParentFragmentManager().findFragmentById(R.id.file_selector_container);
 							fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
 							if(fileSelectorFragment.fileObjectType==FileObjectType.FILE_TYPE || fileSelectorFragment.fileObjectType==FileObjectType.ROOT_TYPE)
 							{
-								fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
-								fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
+								getParentFragmentManager().beginTransaction().detach(fileSelectorFragment).commit();
+								getParentFragmentManager().beginTransaction().attach(fileSelectorFragment).commit();
 							}
 
 						}
@@ -241,9 +239,9 @@ public class ViewDialog extends DialogFragment
 				public void onStopTrackingTouch(SeekBar p1)
 				{
 					tinyDB.putInt("recycler_view_font_size_factor",Global.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
-					fragmentManager.beginTransaction().detach(df).commit();
-					fragmentManager.beginTransaction().attach(df).commit();
+					DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
+					getParentFragmentManager().beginTransaction().detach(df).commit();
+					getParentFragmentManager().beginTransaction().attach(df).commit();
 
 				}
 				public void onProgressChanged(SeekBar p1, int progress_value,boolean fromUser)
@@ -280,9 +278,9 @@ public class ViewDialog extends DialogFragment
 				public void onStopTrackingTouch(SeekBar p1)
 				{
 					tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
-					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
-					fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
-					fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) getParentFragmentManager().findFragmentById(R.id.file_selector_container);
+					getParentFragmentManager().beginTransaction().detach(fileSelectorFragment).commit();
+					getParentFragmentManager().beginTransaction().attach(fileSelectorFragment).commit();
 
 				}
 				public void onProgressChanged(SeekBar p1, int progress_value,boolean fromUser)
@@ -432,13 +430,13 @@ public class ViewDialog extends DialogFragment
 				if(!selected_sort.equals(Global.SORT))
 				{
 
-					DetailFragment df=(DetailFragment)fragmentManager.findFragmentById(R.id.detail_fragment);
+					DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 					if(df!=null && df.progress_bar.getVisibility()==View.GONE)
 					{
 						Global.SORT=selected_sort;
 						set_selection();
-						fragmentManager.beginTransaction().detach(df).commit();
-						fragmentManager.beginTransaction().attach(df).commit();
+						getParentFragmentManager().beginTransaction().detach(df).commit();
+						getParentFragmentManager().beginTransaction().attach(df).commit();
 						tinyDB.putString("sort",Global.SORT);
 					}
 					else
@@ -453,13 +451,13 @@ public class ViewDialog extends DialogFragment
 				if(!selected_sort.equals(FileSelectorActivity.SORT))
 				{
 
-					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fragmentManager.findFragmentById(R.id.file_selector_container);
+					FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) getParentFragmentManager().findFragmentById(R.id.file_selector_container);
 					if(fileSelectorFragment!=null && fileSelectorFragment.progress_bar.getVisibility()==View.GONE)
 					{
 						FileSelectorActivity.SORT=selected_sort;
 						set_selection();
-						fragmentManager.beginTransaction().detach(fileSelectorFragment).commit();
-						fragmentManager.beginTransaction().attach(fileSelectorFragment).commit();
+						getParentFragmentManager().beginTransaction().detach(fileSelectorFragment).commit();
+						getParentFragmentManager().beginTransaction().attach(fileSelectorFragment).commit();
 						tinyDB.putString("file_selector_sort",FileSelectorActivity.SORT);
 					}
 					else

@@ -65,7 +65,7 @@ public class CreateFileAlertDialog extends DialogFragment
 				public void onItemClick(AdapterView<?> p1, View p2,int p3,long p4)
 				{
 					CreateFileDialog createFileDialog=CreateFileDialog.getInstance(p3,parent_folder,fileObjectType);
-					createFileDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),null);
+					createFileDialog.show(getParentFragmentManager(),null);
 					dismissAllowingStateLoss();
 				}
 			});

@@ -28,6 +28,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -72,11 +73,23 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 	private FrameLayout progress_bar;
 	private String request_code;
 	private Bundle bundle;
-
+	private AppCompatActivity activity;
+	private AudioFragmentListener audioFragmentListener;
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
+		activity=(AppCompatActivity) context;
+		if(activity instanceof AudioFragmentListener)
+		{
+			audioFragmentListener=(AudioFragmentListener) activity;
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		audioFragmentListener=null;
 	}
 
 	@Override
@@ -259,7 +272,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					{
 						clear_selection();
 					}
-					else if(((AudioPlayerActivity)context).keyBoardUtil.getKeyBoardVisibility())
+					else if(audioFragmentListener!=null && audioFragmentListener.getKeyBoardVisibility())
 					{
 						((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
 					}
@@ -414,7 +427,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		if(whether_saved_play_list)
 		{
-			((AudioPlayerActivity)context).audioDatabaseHelper.delete_by_rowid(list_name,rowid_list);
+			if(activity instanceof AudioPlayerActivity)
+			{
+				((AudioPlayerActivity)activity).audioDatabaseHelper.delete_by_rowid(list_name,rowid_list);
+			}
+
 		}
 		progress_bar.setVisibility(View.GONE);
 	}
@@ -551,7 +568,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					if(f.exists())
 					{
 						bundle.putParcelable("audio",audio);
-						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
+						getParentFragmentManager().setFragmentResult(request_code,bundle);
 					}
 				}
 				clear_selection();
@@ -572,7 +589,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
 			}
 
-			((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+			if(audioFragmentListener!=null)
+			{
+				audioFragmentListener.refreshAudioPlayNavigationButtons();
+			}
+
 		}
 	}
 
@@ -611,7 +632,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 
 					PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
-					propertiesDialog.show(((AudioPlayerActivity)context).getSupportFragmentManager(),"properties_dialog");
+					propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 
 					break;
 				default:
@@ -660,8 +681,12 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 						AudioPlayerService.CURRENT_PLAY_NUMBER=pos;
 						currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
 						bundle.putParcelable("audio",audio);
-						((AudioPlayerActivity)context).getSupportFragmentManager().setFragmentResult(request_code,bundle);
-						((AudioPlayerActivity)context).trigger_enable_disable_previous_next_btns();
+						getParentFragmentManager().setFragmentResult(request_code,bundle);
+						if(audioFragmentListener!=null)
+						{
+							audioFragmentListener.refreshAudioPlayNavigationButtons();
+						}
+
 
 					}
 				}
@@ -681,7 +706,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				if(audioListViewModel.audio_pojo_selected_items.containsKey(pos))
 				{
 					audioListViewModel.audio_pojo_selected_items.remove(pos);
-					audioListViewModel.selected_audio_rowid_list.remove((Long) audioListViewModel.audio_rowid_list.get(pos));
+					audioListViewModel.selected_audio_rowid_list.remove(audioListViewModel.audio_rowid_list.get(pos));
 
 					v.setSelected(false);
 					((AudioListRecyclerViewItem)v).set_selected(false);

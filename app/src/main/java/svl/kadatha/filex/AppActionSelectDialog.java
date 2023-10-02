@@ -165,11 +165,11 @@ public class AppActionSelectDialog extends DialogFragment
                         if(action_list.get(pos).equals(AppManagerListFragment.BACKUP))
                         {
                             ApkBackUpNameDialog apkBackUpNameDialog=ApkBackUpNameDialog.getInstance(bundle);
-                            apkBackUpNameDialog.show(((AppManagerActivity)context).getSupportFragmentManager(),"");
+                            apkBackUpNameDialog.show(getParentFragmentManager(),"");
                         }
                         else
                         {
-                            ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
+                            getParentFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
                         }
 
                         dismissAllowingStateLoss();

@@ -85,7 +85,7 @@ public class ApkBackUpNameDialog extends DialogFragment
 
                 new_name=new_name+".apk";
                 bundle.putString("new_name",new_name);
-                ((AppManagerActivity)context).getSupportFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
+                getParentFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE,bundle);
                 imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
                 dismissAllowingStateLoss();
             }

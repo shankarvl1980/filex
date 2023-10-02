@@ -59,7 +59,7 @@ public class VideoViewContainerFragment extends Fragment
 	private FloatingActionButton floating_back_button;
 	private boolean toolbar_visible;
 
-	private VideoViewActivity videoViewActivity;
+	private AppCompatActivity activity;
 	public FrameLayout progress_bar;
 	public FilteredFilePOJOViewModel viewModel;
 	private static final String DELETE_FILE_REQUEST_CODE="video_file_delete_request_code";
@@ -69,7 +69,7 @@ public class VideoViewContainerFragment extends Fragment
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		videoViewActivity=((VideoViewActivity)context);
+		activity=((AppCompatActivity)context);
 	}
 
 
@@ -133,7 +133,7 @@ public class VideoViewContainerFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
-							deleteFileAlertDialogOtherActivity.show(((VideoViewActivity)context).fm,"deletefilealertotheractivity");
+							deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(),"deletefilealertotheractivity");
 							break;
 						case 1:
 							Uri src_uri=null;
@@ -172,7 +172,11 @@ public class VideoViewContainerFragment extends Fragment
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
 							}
-							((VideoViewActivity)context).clear_cache=false;
+							if(activity instanceof VideoViewActivity)
+							{
+								((VideoViewActivity)activity).clear_cache=false;
+							}
+
 							Intent copy_intent=new Intent(context,CopyToActivity.class);
 							copy_intent.setAction(Intent.ACTION_SEND);
 							copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
@@ -196,7 +200,7 @@ public class VideoViewContainerFragment extends Fragment
 							}
 							files_selected_array.add(viewModel.currently_shown_file.getPath());
 							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
-							propertiesDialog.show(((VideoViewActivity)context).fm,"properties_dialog");
+							propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 							break;
 
 						default:
@@ -223,12 +227,16 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			public void onClick(View p)
 			{
-				((VideoViewActivity)context).onBackPressed();
+				getActivity().onBackPressed();
 			}
 			
 		});
 		viewModel=new ViewModelProvider(requireActivity()).get(FilteredFilePOJOViewModel.class);
-		data=videoViewActivity.data;
+		if(activity instanceof VideoViewActivity)
+		{
+			data=((VideoViewActivity)activity).data;
+		}
+
 		Bundle bundle=getArguments();
 		if(bundle!=null)
 		{
@@ -259,14 +267,22 @@ public class VideoViewContainerFragment extends Fragment
 				{
 					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
-						videoViewActivity.data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+						if(activity instanceof VideoViewActivity)
+						{
+							((VideoViewActivity)activity).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
+						}
+
 					}
 					adapter=new VideoViewPagerAdapter(getChildFragmentManager(),viewModel.video_list);
 					viewpager.setAdapter(adapter);
 					viewpager.setCurrentItem(viewModel.file_selected_idx);
 					if(viewModel.file_selected_idx==0)
 					{
-						((VideoViewActivity)context).current_page_idx=0;
+						if(activity instanceof VideoViewActivity)
+						{
+							((VideoViewActivity)activity).current_page_idx=0;
+						}
+
 					}
 
 				}
@@ -307,7 +323,7 @@ public class VideoViewContainerFragment extends Fragment
 						adapter.notifyDataSetChanged();
 						if(viewModel.video_list.size()<1)
 						{
-							((VideoViewActivity)context).finish();
+							getActivity().finish();
 						}
 					}
 					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -319,7 +335,11 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				public void onPageSelected(int p)
 				{
-					((VideoViewActivity)context).current_page_idx=p;
+					if(activity instanceof VideoViewActivity)
+					{
+						((VideoViewActivity)activity).current_page_idx=p;
+					}
+
 				}
 
 				public void onPageScrollStateChanged(int p)
@@ -352,7 +372,7 @@ public class VideoViewContainerFragment extends Fragment
 		handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(DELETE_FILE_REQUEST_CODE))
@@ -368,7 +388,7 @@ public class VideoViewContainerFragment extends Fragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(REFRESH_VIDEO_CODE, this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(REFRESH_VIDEO_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(REFRESH_VIDEO_CODE))

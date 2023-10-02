@@ -30,7 +30,6 @@ import java.util.List;
 public class AppManagerActivity extends BaseActivity{
 
     private Context context;
-    public FragmentManager fm;
     public ViewPager viewPager;
     private AppManagerListFragment userAppListFragment,systemAppListFragment;
     public static final String APP_TYPE="app_type";
@@ -52,7 +51,6 @@ public class AppManagerActivity extends BaseActivity{
         setContentView(R.layout.activity_app_manager);
         context=this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        fm=getSupportFragmentManager();
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);
         keyBoardUtil=new KeyBoardUtil(containerLayout);
         search_toolbar=findViewById(R.id.app_manager_search_toolbar);
@@ -90,14 +88,14 @@ public class AppManagerActivity extends BaseActivity{
         search_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                set_visibility_searchbar(false);
+                setSearchBarVisibility(false);
             }
         });
 
 
         TabLayout tabLayout = findViewById(R.id.activity_app_manager_tab_layout);
         viewPager=findViewById(R.id.activity_app_manager_viewpager);
-        adapter = new AppManagementFragmentAdapter(fm,context);
+        adapter = new AppManagementFragmentAdapter(getSupportFragmentManager(),context);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -145,7 +143,7 @@ public class AppManagerActivity extends BaseActivity{
     }
 
 
-    public void set_visibility_searchbar(boolean visible)
+    public void setSearchBarVisibility(boolean visible)
     {
         if(userAppListFragment.adapter==null || userAppListFragment.progress_bar.getVisibility()==View.VISIBLE || systemAppListFragment.adapter==null || systemAppListFragment.progress_bar.getVisibility()==View.VISIBLE)
         {
@@ -302,7 +300,7 @@ public class AppManagerActivity extends BaseActivity{
         }
         else if(search_toolbar_visible)
         {
-            set_visibility_searchbar(false);
+            setSearchBarVisibility(false);
         }
         else
         {

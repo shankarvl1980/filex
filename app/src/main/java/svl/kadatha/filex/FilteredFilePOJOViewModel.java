@@ -371,7 +371,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                if(size_per_page_MB*10<(Global.AVAILABLE_MEMORY_MB()-PdfViewFragment_single_view.SAFE_MEMORY_BUFFER))
+                if(size_per_page_MB*10<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER))
                 {
                     pdf_current_position=position;
                     try {

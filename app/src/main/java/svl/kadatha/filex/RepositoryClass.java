@@ -191,6 +191,23 @@ public class RepositoryClass {
         }
     }
 
+    public void getLargeFileList(Context context,boolean isCancelled)
+    {
+        synchronized (document_lock)
+        {
+            String media_category="Large Files";
+            if(hashmap_file_pojo.containsKey(FileObjectType.SEARCH_LIBRARY_TYPE+media_category))
+            {
+                return;
+            }
+            List<FilePOJO>filePOJOS=new ArrayList<>();
+            List<FilePOJO>filePOJOS_filtered=new ArrayList<>();
+            search_file(context,media_category,filePOJOS,filePOJOS_filtered,isCancelled,document_count=0,document_mutable_count);
+            hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
+            hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
+        }
+    }
+
 
     private void search_file(Context context, String media_category, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, Boolean isCancelled, int count, MutableLiveData<Integer> mutable_file_count)
     {
@@ -234,6 +251,13 @@ public class RepositoryClass {
                                  "("+
                                 MediaStore.Files.FileColumns.DATA+" LIKE ?"+")",
                         new String[]{"%.apk"},null);
+                break;
+            case "Large Files":
+                cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
+                        "("+
+                                MediaStore.Files.FileColumns.SIZE+" >=?"+")",
+                        new String[]{"20971520"},null);
+
                 break;
             case "Image":
                 cursor=context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);

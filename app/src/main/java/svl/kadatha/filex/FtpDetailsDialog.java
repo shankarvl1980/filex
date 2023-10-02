@@ -36,8 +36,6 @@ public class FtpDetailsDialog extends DialogFragment {
 
     private Context context;
     private Toolbar bottom_toolbar;
-    private FragmentManager fragmentManager;
-
     private RecyclerView ftp_list_recyclerview;
     private FtpListAdapter ftpListAdapter;
     private List<FtpDetailsDialog.FtpPOJO> ftpPJO_selected_for_delete=new ArrayList<>();
@@ -60,7 +58,6 @@ public class FtpDetailsDialog extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        fragmentManager=((AppCompatActivity)context).getSupportFragmentManager();
         permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context );
     }
 
@@ -321,7 +318,7 @@ public class FtpDetailsDialog extends DialogFragment {
 
 
 
-        fragmentManager.setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(FTP_DELETE_REQUEST_CODE))
@@ -334,7 +331,7 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
-        fragmentManager.setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE))
@@ -353,7 +350,7 @@ public class FtpDetailsDialog extends DialogFragment {
         });
 
 
-        fragmentManager.setFragmentResultListener(FTP_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(FTP_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(FTP_RENAME_REQUEST_CODE))
@@ -565,7 +562,7 @@ public class FtpDetailsDialog extends DialogFragment {
             {
                 clear_selection();
                 FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,null,null);
-                ftpDetailsInputDialog.show(fragmentManager,"");
+                ftpDetailsInputDialog.show(getParentFragmentManager(),"");
             }
             else if(id==R.id.toolbar_btn_2)
             {
@@ -575,7 +572,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     FtpPOJO ftpPOJO=viewModel.mselecteditems.getValueAtIndex(0);
                     String display=ftpPOJO.display;
                     DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.equals("")) ? ftpPOJO.server : display,s);
-                    deleteFtpAlertDialog.show(fragmentManager,"");
+                    deleteFtpAlertDialog.show(getParentFragmentManager(),"");
                 }
             }
             else if(id==R.id.toolbar_btn_3)
@@ -593,7 +590,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     String ftp_server=tobe_replaced_ftp.server;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
                     FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name);
-                    ftpDetailsInputDialog.show(fragmentManager,"");
+                    ftpDetailsInputDialog.show(getParentFragmentManager(),"");
                 }
 
                 clear_selection();

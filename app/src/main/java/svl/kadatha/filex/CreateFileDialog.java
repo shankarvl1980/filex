@@ -94,7 +94,7 @@ public class CreateFileDialog extends DialogFragment
 		okbutton.setText(R.string.ok);
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
-		df=(DetailFragment)((AppCompatActivity)context).getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
+		df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 
 		if(file_type==0)
 		{
@@ -210,7 +210,7 @@ public class CreateFileDialog extends DialogFragment
 			}
 		});
 
-		((AppCompatActivity)context).getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, CreateFileDialog.this, new FragmentResultListener() {
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, CreateFileDialog.this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
@@ -287,7 +287,7 @@ public class CreateFileDialog extends DialogFragment
 		if(uriPOJO==null || tree_uri_path.equals(""))
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
-			safpermissionhelper.show(((AppCompatActivity)context).getSupportFragmentManager(),"saf_permission_dialog");
+			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
 			return false;
 		}
 		else

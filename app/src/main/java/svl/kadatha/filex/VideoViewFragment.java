@@ -64,7 +64,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	private int toolbar_height;
 	private FileObjectType fileObjectType;
 	private boolean fromThirdPartyApp;
-	private VideoViewActivity videoViewActivity;
+	private AppCompatActivity activity;
 	private VideoViewFragmentViewModel viewModel;
 
 	private Group refresh_play_pause_group;
@@ -73,7 +73,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		videoViewActivity=(VideoViewActivity)context;
+		activity=(AppCompatActivity) context;
 		audio_manager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
@@ -139,7 +139,11 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 				}
 
-				videoViewActivity.onClickFragment();
+				if(activity instanceof VideoViewActivity)
+				{
+					((VideoViewActivity)activity).onClickFragment();
+				}
+
 
 			}
 		});
@@ -169,7 +173,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			@Override
 			public void onClick(View v) {
 				mp_stop();
-				((AppCompatActivity)context).getSupportFragmentManager().setFragmentResult(VideoViewContainerFragment.REFRESH_VIDEO_CODE,new Bundle());
+				getParentFragmentManager().setFragmentResult(VideoViewContainerFragment.REFRESH_VIDEO_CODE,new Bundle());
 			}
 		});
 
@@ -258,11 +262,11 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			public void onClick(View view) {
 				if(Global.ORIENTATION==Configuration.ORIENTATION_LANDSCAPE)
 				{
-					((VideoViewActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 				}
 				else
 				{
-					((VideoViewActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 				}
 			}
 		});
@@ -278,7 +282,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 			mp.setDisplay(holder);
 			try {
-				Uri data=((VideoViewActivity)context).data;
+				Uri data = null;
+				if(activity instanceof VideoViewActivity)
+				{
+					data=((VideoViewActivity)activity).data;
+				}
+
+				if(data==null)return;
 				if(fromThirdPartyApp)
 				{
 					mp.setDataSource(context,data);
@@ -449,7 +459,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 		super.onPause();
 		if(mp!=null)
 		{
-			if(viewModel.idx!=((VideoViewActivity)context).current_page_idx)
+			if(activity instanceof VideoViewActivity && viewModel.idx!=((VideoViewActivity)activity).current_page_idx)
 			{
 				viewModel.wasPlaying=false;
 			}
@@ -522,7 +532,11 @@ private String convertSecondsToHMmSs(int milliseconds)
 
 		}
 		viewModel.firststart=false;
-		((VideoViewActivity)context).viewModel.video_refreshed=false;
+		if(activity instanceof VideoViewActivity)
+		{
+			((VideoViewActivity)activity).viewModel.video_refreshed=false;
+		}
+
 
 	}
 	public void mp_start()

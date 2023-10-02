@@ -216,4 +216,16 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
+    public void getLargeFileList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future9=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getLargeFileList(application,isCancelled);
+            }
+        });
+
+    }
 }
