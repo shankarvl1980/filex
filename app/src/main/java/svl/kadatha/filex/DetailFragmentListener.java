@@ -14,5 +14,6 @@ public interface DetailFragmentListener {
 
     void setCurrentDirText(String current_dir_name);
     void enableParentDirImageButton(boolean enable);
+    void rescanLargeFilesLibrary();
 
 }

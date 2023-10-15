@@ -188,7 +188,19 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
         if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+fileclickselected))
         {
-            viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
+            if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE)
+            {
+                if (fileclickselected.equals("Large Files"))
+                {
+                    viewModel.getLibraryList(fileclickselected);
+                }
+
+            }
+            else
+            {
+                viewModel.populateFilePOJO(fileObjectType,fileclickselected,currentUsbFile,false,true);
+            }
+
         }
         else
         {

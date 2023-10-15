@@ -288,8 +288,8 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 								from_textview.setText(archiveDeletePasteFileService.source_folder);
 								current_file.setText(archiveDeletePasteFileService.current_file_name);
 								copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
-								no_files.setText(getString(R.string.deleted) +" "+ archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
-								size_files.setText(getString(R.string.size) +" "+ size_progress);
+								no_files.setText(""+archiveDeletePasteFileService.counter_no_files);
+								size_files.setText(size_progress);
 							}
 
 							break;
@@ -332,7 +332,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity
 
 	private void bind_data()
 	{
-		if ("archive-zip".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action) || "copy_to".equals(intent_action))
+		if ("archive-zip".equals(intent_action) || "delete".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action) || "copy_to".equals(intent_action))
 		{
 			archiveDeletePasteFileService.fileCountSize.mutable_size_of_files_to_be_archived_copied.observe(this, new Observer<String>() {
 				@Override

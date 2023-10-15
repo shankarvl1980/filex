@@ -388,7 +388,7 @@ public class VideoViewContainerFragment extends Fragment
 			}
 		});
 
-		getParentFragmentManager().setFragmentResultListener(REFRESH_VIDEO_CODE, this, new FragmentResultListener() {
+		getActivity().getSupportFragmentManager().setFragmentResultListener(REFRESH_VIDEO_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
 				if(requestKey.equals(REFRESH_VIDEO_CODE))

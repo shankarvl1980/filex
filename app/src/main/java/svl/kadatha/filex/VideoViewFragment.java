@@ -135,7 +135,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
 					}
 					refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-					//play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
 
 				}
 
@@ -173,7 +172,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 			@Override
 			public void onClick(View v) {
 				mp_stop();
-				getParentFragmentManager().setFragmentResult(VideoViewContainerFragment.REFRESH_VIDEO_CODE,new Bundle());
+				getActivity().getSupportFragmentManager().setFragmentResult(VideoViewContainerFragment.REFRESH_VIDEO_CODE,new Bundle());
 			}
 		});
 

@@ -342,7 +342,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
 				}
 
-				if (LIBRARY_CATEGORIES.contains(fileclickselected))
+				if (LIBRARY_CATEGORIES.contains(fileclickselected) || fileclickselected.equals("Large Files"))
 				{
 					viewModel.getLibraryList(fileclickselected);
 				}

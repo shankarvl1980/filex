@@ -35,8 +35,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 public class StorageAnalyserActivity extends  BaseActivity implements MediaMountReceiver.MediaMountListener,DetailFragmentListener, DeleteFileAlertDialog.OKButtonClickListener
 {
@@ -463,6 +466,62 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
     }
 
+    @Override
+    public void rescanLargeFilesLibrary()
+    {
+        StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserFragment==null)return;
+        if(storageAnalyserFragment.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+        {
+            if(storageAnalyserFragment.progress_bar.getVisibility()==View.VISIBLE)
+            {
+                Global.print(context, getString(R.string.please_wait));
+            }
+            else
+            {
+                actionModeFinish(storageAnalyserFragment,storageAnalyserFragment.fileclickselected);
+                rescan_large_files_library();
+            }
+        }
+        else
+        {
+            rescan_large_files_library();
+        }
+    }
+    public void rescan_large_files_library()
+    {
+        Global.print(context,getString(R.string.scanning_started));
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
+                while(iterator.hasNext())
+                {
+                    Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+                    if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"LargeFiles"))
+                    {
+                        iterator.remove();
+                        break;
+                    }
+
+                }
+                //get methods kept below instead of in if block above to avoid likely concurrent modification exception
+
+                viewModel.getLargeFileList(false);
+                StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment==null)return;
+                if(storageAnalyserFragment.fileclickselected.equals("Large Files"))
+                {
+                    fm.beginTransaction().detach(storageAnalyserFragment).commit();
+                    fm.beginTransaction().attach(storageAnalyserFragment).commit();
+
+                }
+
+            }
+        });
+
+    }
 
 
     @Override
@@ -521,7 +580,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 String tag= storageAnalyserFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && storageAnalyserFragment.currentUsbFile == null)
+                while(tag !=null && !new File(tag).exists() && !tag.equals("Large Files") && storageAnalyserFragment.currentUsbFile == null)
                 {
                     fm.popBackStack();
                     ++frag;

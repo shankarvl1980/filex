@@ -553,7 +553,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		RecyclerView libraryRecyclerView = findViewById(R.id.library_recyclerview);
 		libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon,R.drawable.lib_doc_icon};
+		int[]icon_image_array={R.drawable.lib_download_icon,R.drawable.lib_doc_icon,R.drawable.lib_image_icon,R.drawable.lib_audio_icon,R.drawable.lib_video_icon,R.drawable.compress_icon,R.drawable.android_os_outlined_icon};
 		libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES,icon_image_array));
 
 
@@ -570,7 +570,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				h.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						boolean currentDFSearchLibrary=false;
 						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 						if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 						{
@@ -580,14 +579,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							}
 							else
 							{
-								currentDFSearchLibrary=true;
 								actionmode_finish(df,df.fileclickselected);
-								rescan_library(df);
+								rescanLibrary();
 							}
 						}
 						else
 						{
-							rescan_library(df);
+							rescanLibrary();
 						}
 
 						pbf.dismissAllowingStateLoss();
@@ -669,6 +667,27 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
+		View clean_memory_heading_layout=findViewById(R.id.clean_memory_label_background);
+		clean_memory_heading_layout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				clear_cache=false;
+				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
+				pbf.show(fm,"");
+				drawerLayout.closeDrawer(drawer);
+				Handler h=new Handler();
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+						actionmode_finish(df,df.fileclickselected);
+						CleanMemoryDialog cleanMemoryDialog=new CleanMemoryDialog();
+						cleanMemoryDialog.show(fm,"search_dialog");
+						pbf.dismissAllowingStateLoss();
+					}
+				},500);
+			}
+		});
 
 		View app_manager_heading_layout=findViewById(R.id.app_manager_label_background);
 		app_manager_heading_layout.setOnClickListener(new View.OnClickListener() {
@@ -820,14 +839,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		discoverDevice();
 	}
 
-	private void rescan_library(DetailFragment df)
+	private void rescanLibrary()
 	{
 		Global.print(context,getString(R.string.scanning_started));
 		ExecutorService executorService=MyExecutorService.getExecutorService();
 		executorService.execute(new Runnable() {
 			@Override
 			public void run() {
-				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false,largeFile_removed=false;
+				boolean download_removed = false,document_removed = false,image_removed = false,audio_removed = false,video_removed = false,archive_removed = false,apk_removed = false;
 				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
 				while(iterator.hasNext())
 				{
@@ -867,12 +886,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						iterator.remove();
 						apk_removed=true;
 					}
-					else if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"LargeFiles"))
-					{
-						iterator.remove();
-						largeFile_removed=true;
-					}
-					if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed && largeFile_removed)
+
+					if(download_removed && document_removed && image_removed && audio_removed && video_removed && archive_removed && apk_removed)
 					{
 						break;
 					}
@@ -885,10 +900,72 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				viewModel.getVideoList(false);
 				viewModel.getArchiveList(false);
 				viewModel.getApkList(false);
-				viewModel.getLargeFileList(false);
 
-				fm.beginTransaction().detach(df).commit();
-				fm.beginTransaction().attach(df).commit();
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df==null)return;
+				if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+				{
+					fm.beginTransaction().detach(df).commit();
+					fm.beginTransaction().attach(df).commit();
+
+				}
+
+			}
+		});
+
+	}
+
+	public void rescanLargeFilesLibrary()
+	{
+		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+		if(df==null)return;
+		if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			if(df.progress_bar.getVisibility()==View.VISIBLE)
+			{
+				Global.print(context, getString(R.string.please_wait));
+			}
+			else
+			{
+				actionmode_finish(df,df.fileclickselected);
+				rescan_large_files_library();
+			}
+		}
+		else
+		{
+			rescan_large_files_library();
+		}
+	}
+	public void rescan_large_files_library()
+	{
+		Global.print(context,getString(R.string.scanning_started));
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
+				while(iterator.hasNext())
+				{
+					Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+					if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"LargeFiles"))
+					{
+						iterator.remove();
+						break;
+					}
+
+				}
+				//get methods kept below instead of in if block above to avoid likely concurrent modification exception
+
+				viewModel.getLargeFileList(false);
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df==null)return;
+				if(df.fileclickselected.equals("Large Files"))
+				{
+					fm.beginTransaction().detach(df).commit();
+					fm.beginTransaction().attach(df).commit();
+
+				}
+
 			}
 		});
 
@@ -1350,7 +1427,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				int frag=2;
 				df= (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
 				String df_tag=df.getTag();
-				while(!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) &&  df.currentUsbFile == null
+				while(!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files") &&  df.currentUsbFile == null
 				&& !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(df.fileObjectType)) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
 				{
 					fm.popBackStack();
@@ -2245,9 +2322,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									break;
 								case 6:
 									name="APK";
-									break;
-								case 7:
-									name="Large Files";
 									break;
 							}
 							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);

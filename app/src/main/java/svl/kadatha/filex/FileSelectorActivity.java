@@ -513,6 +513,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
+    @Override
+    public void rescanLargeFilesLibrary() {
+
+    }
+
     private final ActivityResultLauncher<Intent>activityResultLauncher_all_files_access_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {

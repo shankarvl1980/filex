@@ -469,7 +469,6 @@ public class AlbumListFragment extends Fragment
 					audioListViewModel.album_pojo_selected_items.put(pos,album_list.get(pos));
 					v.setSelected(true);
 					((AlbumListRecyclerViewItem)v).set_selected(true);
-					//audioListViewModel.album_selected_array.add(album_list.get(pos));
 			
 					bottom_toolbar.setVisibility(View.VISIBLE);
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));

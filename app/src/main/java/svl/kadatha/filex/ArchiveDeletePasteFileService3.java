@@ -41,7 +41,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 	private final ArrayList<String> zipentry_selected_array=new ArrayList<>();
 
 	private NotifManager nm;
-	private final int notification_id=872;
+	private final int notification_id=870;
 	public int counter_no_files;
 	public long counter_size_files;
 	public final long[] total_bytes_read =new long[1];
@@ -161,6 +161,8 @@ public class ArchiveDeletePasteFileService3 extends Service
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					source_folder=bundle.getString("source_folder");
 					storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
+					fileCountSize.fileCount();
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.execute(null);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
@@ -328,7 +330,7 @@ public class ArchiveDeletePasteFileService3 extends Service
 	public class ArchiveAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		final String zip_file_name=zip_folder_name+".zip";
-		UsbFile parentUsbFile,zipUsbFile;
+		UsbFile zipUsbFile;
 		FilePOJO filePOJO;
 
 		@Override
@@ -1005,7 +1007,6 @@ public class ArchiveDeletePasteFileService3 extends Service
 			else {
 
 				sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, tree_uri, tree_uri_path);
-
 				destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
 
 				int size = sourceFileModels.length;

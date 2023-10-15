@@ -128,7 +128,17 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
 
-	<EditText
+		<TextView
+			android:id="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+
+			android:text=" - "
+			android:textSize="17sp"
+			app:layout_constraintStart_toEndOf="@id/dialog_fragment_cut_copy_current_file_label"
+			app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
+
+		<EditText
 		android:id="@+id/dialog_fragment_cut_copy_archive_current_file"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
@@ -136,13 +146,12 @@
 		android:ellipsize="end"
 		android:enabled="false"
 		android:focusable="false"
-		android:layout_marginStart="@dimen/ten_dp"
 		android:layout_marginEnd="@dimen/ten_dp"
 		android:singleLine="true"
 		android:textColor="?attr/edit_text_color"
 		android:textSize="17sp"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label"
+		app:layout_constraintStart_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
 		app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout"
 		/>
 

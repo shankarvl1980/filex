@@ -71,7 +71,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 
 	String size_of_files_copied;
 	String copied_file;
-    FileObjectType sourceFileObjectType, destFileObjectType;
+	FileObjectType sourceFileObjectType, destFileObjectType;
 
 	final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
 	final List<String> copied_source_file_path_list=new ArrayList<>(); //declared here instead of at Asynctask to keep track of copied files in case replacement
@@ -161,6 +161,8 @@ public class ArchiveDeletePasteFileService2 extends Service
 					sourceFileObjectType=(FileObjectType)bundle.getSerializable("sourceFileObjectType");
 					source_folder=bundle.getString("source_folder");
 					storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
+					fileCountSize.fileCount();
 					delete_file_async_task=new DeleteFileAsyncTask();
 					delete_file_async_task.execute(null);
 					notification_content=getString(R.string.deleting_files)+" "+getString(R.string.at)+" "+source_folder;
@@ -182,7 +184,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 					source_uri_path=bundle.getString("source_uri_path");
 					source_uri=bundle.getParcelable("source_uri");
 					cut=bundle.getBoolean("cut");
-                    boolean isWritable = bundle.getBoolean("isWritable");
+					boolean isWritable = bundle.getBoolean("isWritable");
 					source_folder=bundle.getString("source_folder");
 					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
@@ -328,7 +330,7 @@ public class ArchiveDeletePasteFileService2 extends Service
 	public class ArchiveAsyncTask extends AlternativeAsyncTask<Void,Void,Boolean>
 	{
 		final String zip_file_name=zip_folder_name+".zip";
-		UsbFile parentUsbFile,zipUsbFile;
+		UsbFile zipUsbFile;
 		FilePOJO filePOJO;
 
 		@Override
@@ -1005,7 +1007,6 @@ public class ArchiveDeletePasteFileService2 extends Service
 			else {
 
 				sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, tree_uri, tree_uri_path);
-
 				destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
 
 				int size = sourceFileModels.length;

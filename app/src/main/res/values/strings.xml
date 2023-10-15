@@ -382,7 +382,6 @@
 		<item>@string/video</item>
 		<item>@string/archive</item>
 		<item>@string/apk</item>
-		<item>@string/large_files</item>
 	</string-array>
 
 	<string-array name="network_types">
@@ -459,6 +458,8 @@
     <string name="update_ftp_server">Update FTP Server</string>
     <string name="set">Set</string>
     <string name="error_setting_up_device">error setting up device</string>
+    <string name="clean_memory">Clean Memory</string>
+    <string name="duplicates">Duplicates</string>
 
 
 </resources>
