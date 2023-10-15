@@ -49,7 +49,6 @@ public class AppSelectorDialog extends DialogFragment
     private FrameLayout progress_bar;
     public AppSelectorViewModel viewModel;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
