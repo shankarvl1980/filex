@@ -61,7 +61,7 @@ public class AudioSavedListFragment extends Fragment
 		audioCompletionListener=new AudioPlayerActivity.AudioCompletionListener() {
 			@Override
 			public void onAudioCompletion() {
-				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) getParentFragmentManager().findFragmentByTag("audioSavedlistDetailsDialog");
+				AudioSavedListDetailsDialog audioSavedListDetailsDialog= (AudioSavedListDetailsDialog) getParentFragmentManager().findFragmentByTag("audioSavedListDetailsDialog");
 				if(audioSavedListDetailsDialog!=null)
 				{
 					audioSavedListDetailsDialog.onAudioChange();
@@ -431,7 +431,7 @@ public class AudioSavedListFragment extends Fragment
 							else
 							{
 								AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,pos,saved_audio_list.get(pos));
-								audioSavedListDetailsDialog.show(getParentFragmentManager(),"audioSavedlistDetailsDialog");
+								audioSavedListDetailsDialog.show(getParentFragmentManager(),"audioSavedListDetailsDialog");
 							}
 						}
 

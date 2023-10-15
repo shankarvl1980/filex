@@ -9,14 +9,18 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -50,7 +55,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public FragmentManager fm;
     public PackageManager pm;
     public TextView current_dir, file_number;
-   // private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
     public RecentDialogListener recentDialogListener;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
@@ -69,6 +73,8 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
     private StorageAnalyserActivityViewModel viewModel;
+    private PopupWindow listPopWindow;
+    final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos=new ArrayList<>();
 
 
     @Override
@@ -121,6 +127,38 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 fileSelectorRecentDialog.show(fm, "storage_analyser_recent_file_dialog");
             }
         });
+
+        ImageButton overflow_img_btn=findViewById(R.id.storage_analyser_overflow);
+        overflow_img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
+            }
+        });
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.clean_icon,getString(R.string.clean_storage),1));
+        listPopWindow=new PopupWindow(context);
+        ListView listView=new ListView(context);
+        listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
+        listPopWindow.setContentView(listView);
+        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
+        listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        listPopWindow.setFocusable(true);
+        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
+            {
+                if (p1 == 0) {
+                    StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                    actionModeFinish(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
+                    CleanStorageDialog cleanMemoryDialog = new CleanStorageDialog();
+                    cleanMemoryDialog.show(fm, "clean_storage_dialog");
+                }
+                listPopWindow.dismiss();
+            }
+
+        });
+
 
         all_select=findViewById(R.id.storage_analyser_all_select);
         all_select.setOnClickListener(new View.OnClickListener() {
@@ -288,7 +326,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 final ArrayList<String> files_selected_array=new ArrayList<>();
                 int size = storageAnalyserFragment.viewModel.mselecteditems.size();
                 for (int i = 0; i < size; ++i) {
-                    //int key = storageAnalyserFragment.viewModel.mselecteditemsFilePath.keyAt(i);
                     files_selected_array.add(storageAnalyserFragment.viewModel.mselecteditems.getValueAtIndex(i));
                 }
 
@@ -535,6 +572,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         mediaMountReceiver.removeMediaMountListener(this);
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
         context.unregisterReceiver(mediaMountReceiver);
+        listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
     @Override

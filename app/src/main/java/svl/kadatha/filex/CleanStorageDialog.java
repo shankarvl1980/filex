@@ -4,30 +4,21 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TableRow.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 
 
-public class CleanMemoryDialog extends DialogFragment
+public class CleanStorageDialog extends DialogFragment
 {
     private Context context;
-    private AppCompatActivity activity;
     private DetailFragmentListener detailFragmentListener;
 
 
@@ -35,7 +26,7 @@ public class CleanMemoryDialog extends DialogFragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        activity=(AppCompatActivity)context;
+        AppCompatActivity activity = (AppCompatActivity) context;
         if(activity instanceof DetailFragmentListener)
         {
             detailFragmentListener= (DetailFragmentListener) activity;
@@ -60,11 +51,8 @@ public class CleanMemoryDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // TODO: Implement this method
-        View v= inflater.inflate(R.layout.fragment_clean_memory,container,false);
-
-
-
-        Button large_files_btn = v.findViewById(R.id.clean_memory_large_files_button);
+        View v= inflater.inflate(R.layout.fragment_clean_storage,container,false);
+        Button large_files_btn = v.findViewById(R.id.clean_storage_large_files_button);
         large_files_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +61,7 @@ public class CleanMemoryDialog extends DialogFragment
             }
         });
 
-        Button large_files_scan_btn=v.findViewById(R.id.clean_memory_large_files_rescan_button);
+        Button large_files_scan_btn=v.findViewById(R.id.clean_storage_large_files_rescan_button);
         large_files_scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +70,7 @@ public class CleanMemoryDialog extends DialogFragment
         });
 
 
-        Button duplicate_files_btn = v.findViewById(R.id.clean_memory_duplicate_files_button);
+        Button duplicate_files_btn = v.findViewById(R.id.clean_storage_duplicate_files_button);
         duplicate_files_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +78,7 @@ public class CleanMemoryDialog extends DialogFragment
             }
         });
 
-        Button duplicate_files_scan_btn=v.findViewById(R.id.clean_memory_duplicate_files_button);
+        Button duplicate_files_scan_btn=v.findViewById(R.id.clean_storage_duplicate_files_button);
         duplicate_files_scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +87,7 @@ public class CleanMemoryDialog extends DialogFragment
         });
 
 
-        ViewGroup buttons_layout = v.findViewById(R.id.fragment_clean_memory_button_layout);
+        ViewGroup buttons_layout = v.findViewById(R.id.fragment_clean_storage_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
         Button close_button = buttons_layout.findViewById(R.id.first_button);
         close_button.setText(R.string.close);

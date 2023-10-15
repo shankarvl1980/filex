@@ -256,7 +256,7 @@ public class RepositoryClass {
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
                         "("+
                                 MediaStore.Files.FileColumns.SIZE+" >=?"+")",
-                        new String[]{"20971520"},null);
+                        new String[]{"10485760"},null);
 
                 break;
             case "Image":

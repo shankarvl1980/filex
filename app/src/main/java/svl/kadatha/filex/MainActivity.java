@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	public static UsbFile usbFileRoot;
 	public static FileSystem usbCurrentFs;
 	public static boolean USB_ATTACHED;
-	//private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
+
 	public boolean clear_cache;
 	public RecentDialogListener recentDialogListener;
 	private ListView listView;
@@ -667,11 +667,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		});
 
-		View clean_memory_heading_layout=findViewById(R.id.clean_memory_label_background);
-		clean_memory_heading_layout.setOnClickListener(new View.OnClickListener() {
+		View clean_storage_heading_layout=findViewById(R.id.clean_storage_label_background);
+		clean_storage_heading_layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				clear_cache=false;
 				final ProgressBarFragment pbf=ProgressBarFragment.newInstance();
 				pbf.show(fm,"");
 				drawerLayout.closeDrawer(drawer);
@@ -681,8 +680,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					public void run() {
 						DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 						actionmode_finish(df,df.fileclickselected);
-						CleanMemoryDialog cleanMemoryDialog=new CleanMemoryDialog();
-						cleanMemoryDialog.show(fm,"search_dialog");
+						CleanStorageDialog cleanMemoryDialog=new CleanStorageDialog();
+						cleanMemoryDialog.show(fm,"clean_storage_dialog");
 						pbf.dismissAllowingStateLoss();
 					}
 				},500);
@@ -954,6 +953,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 
 				}
+
 				//get methods kept below instead of in if block above to avoid likely concurrent modification exception
 
 				viewModel.getLargeFileList(false);

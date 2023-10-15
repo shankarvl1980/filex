@@ -21,7 +21,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -75,7 +74,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         super.onAttach(context);
         this.context=context;
         archiveViewActivity =(ArchiveViewActivity) context;
-        TinyDB tinyDB = new TinyDB(context);
     }
 
     @Override

@@ -42,8 +42,21 @@
             android:gravity="center"
             app:layout_constraintStart_toEndOf="@id/storage_analyser_back_btn"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/storage_analyser_all_select"
+            app:layout_constraintEnd_toStartOf="@id/storage_analyser_overflow"
             />
+
+
+    <ImageButton
+        android:id="@+id/storage_analyser_overflow"
+        android:layout_width="50dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="?attr/toolbar_background"
+        android:src="@drawable/overflow_icon"
+        app:layout_constraintStart_toEndOf="@id/storage_analyser_current_dir_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 
     <ImageButton
@@ -54,7 +67,7 @@
         android:paddingEnd="10dp"
         android:background="?attr/toolbar_background"
         android:src="@drawable/select_icon"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_current_dir_tv"
+        app:layout_constraintStart_toEndOf="@id/storage_analyser_overflow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

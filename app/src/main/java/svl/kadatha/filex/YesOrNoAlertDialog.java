@@ -12,7 +12,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class YesOrNoAlertDialog extends DialogFragment

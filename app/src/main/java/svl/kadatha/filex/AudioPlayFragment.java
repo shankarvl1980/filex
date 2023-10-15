@@ -327,7 +327,7 @@ public class AudioPlayFragment extends Fragment
 			@Override
 			public void onClick(View v) {
 				AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,0,AudioPlayerActivity.CURRENT_PLAY_LIST);
-				audioSavedListDetailsDialog.show(getParentFragmentManager(),"");
+				audioSavedListDetailsDialog.show(getParentFragmentManager(),"audioSavedListDetailsDialog");
 			}
 		});
 

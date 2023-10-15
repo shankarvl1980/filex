@@ -69,7 +69,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class Global
 {
-	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd-MM-yyyy");
+	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd.MM.yyyy");
 	static String INTERNAL_PRIMARY_STORAGE_PATH="";
 	static String USB_STORAGE_PATH;
 	static File ARCHIVE_EXTRACT_DIR;

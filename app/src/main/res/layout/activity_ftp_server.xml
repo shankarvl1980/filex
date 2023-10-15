@@ -119,7 +119,7 @@
                 android:id="@+id/ftp_server_set_port_pwd_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description"
-                android:button="@null"
+                android:textStyle="bold"
                 android:text="@string/ftp_server_details"
                 android:textSize="17sp"
                 android:layout_marginStart="@dimen/ten_dp"

@@ -13,7 +13,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout.LayoutParams;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.IOException;

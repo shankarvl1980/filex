@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 public class ArchiveReplaceConfirmationDialog extends DialogFragment

@@ -173,13 +173,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					if(audioListViewModel.audio_pojo_selected_items.size()<size)
 					{
 						audioListViewModel.audio_pojo_selected_items =new IndexedLinkedHashMap<>();
-						//audioListViewModel.audio_selected_array=new ArrayList<>();
-						audioListViewModel.selected_audio_rowid_list=new ArrayList<>();
+						if(whether_saved_play_list)audioListViewModel.selected_audio_rowid_list=new ArrayList<>();
 						for(int i=0;i<size;++i)
 						{
 							audioListViewModel.audio_pojo_selected_items.put(i,clicked_audio_list.get(i));
-							//audioListViewModel.audio_selected_array.add(clicked_audio_list.get(i));
-							audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(i));
+							if(whether_saved_play_list)audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(i));
 						}
 						
 						currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -476,7 +474,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 	public void clear_selection()
 	{
-		//audioListViewModel.audio_selected_array=new ArrayList<>();
 		audioListViewModel.audio_pojo_selected_items =new IndexedLinkedHashMap<>();
 		audioListViewModel.selected_audio_rowid_list=new ArrayList<>();
 		if(currentAudioListRecyclerViewAdapter!=null)currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -706,11 +703,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				if(audioListViewModel.audio_pojo_selected_items.containsKey(pos))
 				{
 					audioListViewModel.audio_pojo_selected_items.remove(pos);
-					audioListViewModel.selected_audio_rowid_list.remove(audioListViewModel.audio_rowid_list.get(pos));
+					if(whether_saved_play_list)audioListViewModel.selected_audio_rowid_list.remove(audioListViewModel.audio_rowid_list.get(pos));
 
 					v.setSelected(false);
 					((AudioListRecyclerViewItem)v).set_selected(false);
-					//audioListViewModel.audio_selected_array.remove(clicked_audio_list.get(pos));
 					--size;
 					if(size>=1)
 					{
@@ -731,10 +727,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				else
 				{
 					audioListViewModel.audio_pojo_selected_items.put(pos,clicked_audio_list.get(pos));
-					audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(pos));
+					if(whether_saved_play_list)audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(pos));
 					v.setSelected(true);
 					((AudioListRecyclerViewItem)v).set_selected(true);
-					//audioListViewModel.audio_selected_array.add(clicked_audio_list.get(pos));
 					bottom_toolbar.setVisibility(View.VISIBLE);
 					bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 					toolbar_visible=true;

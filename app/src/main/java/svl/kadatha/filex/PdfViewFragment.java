@@ -84,7 +84,7 @@ public class PdfViewFragment extends Fragment
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        activity= activity;
+        activity=(AppCompatActivity)context;
     }
 
     @Override

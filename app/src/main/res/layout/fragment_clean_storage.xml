@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/clean_memory"
+        android:text="@string/clean_storage"
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
@@ -29,18 +29,18 @@
             >
 
             <View
-                android:id="@+id/clean_memory_background"
+                android:id="@+id/clean_storage_background"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="?attr/dialog_background"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/clean_memory_end_padding"/>
+                app:layout_constraintBottom_toBottomOf="@id/clean_storage_end_padding"/>
 
 
             <Button
-                android:id="@+id/clean_memory_large_files_button"
+                android:id="@+id/clean_storage_large_files_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/large_files"
@@ -49,7 +49,7 @@
                 android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/clean_memory_large_files_rescan_button"
+                app:layout_constraintEnd_toStartOf="@id/clean_storage_large_files_rescan_button"
                 android:background="?attr/dialog_background"
                 android:layout_marginStart="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
@@ -57,7 +57,7 @@
                 />
 
             <Button
-                android:id="@+id/clean_memory_large_files_rescan_button"
+                android:id="@+id/clean_storage_large_files_rescan_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rescan"
@@ -65,13 +65,13 @@
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/clean_memory_large_files_button"
+                app:layout_constraintStart_toEndOf="@id/clean_storage_large_files_button"
                 android:background="?attr/dialog_background"
                 android:layout_margin="@dimen/layout_margin"
                 />
 
             <Button
-                android:id="@+id/clean_memory_duplicate_files_button"
+                android:id="@+id/clean_storage_duplicate_files_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/duplicates"
@@ -79,8 +79,8 @@
                 android:paddingStart="@dimen/layout_margin"
                 android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clean_memory_large_files_button"
-                app:layout_constraintEnd_toStartOf="@id/clean_memory_duplicate_files_rescan_button"
+                app:layout_constraintTop_toBottomOf="@+id/clean_storage_large_files_button"
+                app:layout_constraintEnd_toStartOf="@id/clean_storage_duplicate_files_rescan_button"
                 android:background="?attr/dialog_background"
                 android:layout_marginStart="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
@@ -89,15 +89,15 @@
                 />
 
             <Button
-                android:id="@+id/clean_memory_duplicate_files_rescan_button"
+                android:id="@+id/clean_storage_duplicate_files_rescan_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rescan"
                 android:gravity="center"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clean_memory_large_files_button"
-                app:layout_constraintStart_toEndOf="@id/clean_memory_duplicate_files_button"
+                app:layout_constraintTop_toBottomOf="@+id/clean_storage_large_files_button"
+                app:layout_constraintStart_toEndOf="@id/clean_storage_duplicate_files_button"
                 android:background="?attr/dialog_background"
                 android:layout_margin="@dimen/layout_margin"
                 android:visibility="gone"
@@ -105,20 +105,20 @@
 
 
             <View
-                android:id="@+id/clean_memory_end_padding"
+                android:id="@+id/clean_storage_end_padding"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clean_memory_duplicate_files_button"/>
+                app:layout_constraintTop_toBottomOf="@+id/clean_storage_duplicate_files_button"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_clean_memory_button_layout"
+                android:id="@+id/fragment_clean_storage_button_layout"
                 android:layout_marginTop="@dimen/layout_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clean_memory_end_padding"
+                app:layout_constraintTop_toBottomOf="@+id/clean_storage_end_padding"
 
                 />
 

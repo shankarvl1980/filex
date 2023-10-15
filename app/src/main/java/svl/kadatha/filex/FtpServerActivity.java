@@ -40,7 +40,6 @@ public class FtpServerActivity extends BaseActivity {
     private Button set_button;
     private FtpServerViewModel viewModel;
 
-
     private static final String FTP_SERVER_CLOSE_REQUEST_CODE="ftp_server_close_request_code";
     private static final String FTP_SERVER_DETAILS_SET_REQUEST_CODE="ftp_server_details_set_request_code";
     private static final boolean[] alreadyNotificationWarned=new boolean[1];
