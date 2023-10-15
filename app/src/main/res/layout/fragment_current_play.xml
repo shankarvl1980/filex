@@ -161,7 +161,10 @@
         app:layout_constraintBottom_toTopOf="@+id/audio_player_current_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_volume_seekbar" />
+        app:layout_constraintTop_toBottomOf="@id/current_play_volume_seekbar"
+        android:src="@drawable/woofer_icon"
+        android:background="@drawable/rectangle_border"
+        />
 
     <TextView
         android:id="@+id/audio_player_current_progress"

@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;

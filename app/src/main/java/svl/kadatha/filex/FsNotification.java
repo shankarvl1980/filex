@@ -20,7 +20,6 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 package svl.kadatha.filex;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-
 import static svl.kadatha.filex.Global.TAG;
 
 import android.app.Notification;
@@ -32,8 +31,6 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
-
-
 
 import java.net.InetAddress;
 
