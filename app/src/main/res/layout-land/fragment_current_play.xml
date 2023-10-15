@@ -68,21 +68,15 @@
         app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
         app:layout_constraintWidth_percent="0.5"
         android:src="@drawable/woofer_icon"
-        android:background="@drawable/rectangle_border"
         />
     <View
         android:id="@+id/fragment_current_play_second_half"
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="0dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:paddingTop="@dimen/layout_margin"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fragment_current_play_albumart"
         app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
-        app:layout_constraintWidth_percent="0.5"
-        android:background="@drawable/rectangle_border"
+        android:background="?attr/select_rectangle_shape"
         />
 
 
