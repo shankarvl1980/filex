@@ -946,7 +946,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				while(iterator.hasNext())
 				{
 					Map.Entry<String,List<FilePOJO>> entry=iterator.next();
-					if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"LargeFiles"))
+					if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Large Files"))
 					{
 						iterator.remove();
 						break;

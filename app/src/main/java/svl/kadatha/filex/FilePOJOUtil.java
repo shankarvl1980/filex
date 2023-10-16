@@ -808,7 +808,7 @@ public class FilePOJOUtil {
                 }
             }
 
-            REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "LargeFiles");
+            REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "Large Files");
             REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
 

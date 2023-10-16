@@ -330,7 +330,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     case "APK":
                         repositoryClass.getApkList(application,isCancelled);
                         break;
-                    case "LargeFiles":
+                    case "Large Files":
                         repositoryClass.getLargeFileList(application,isCancelled);
                 }
                 filePOJOS=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
