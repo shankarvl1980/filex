@@ -21,10 +21,11 @@ public class FilePOJO
 	private String totalSize;
 	private double totalSizePercentageDouble;
 	private String totalSizePercentage;
-	
+	private String checksum;
+	private boolean whetherExternal;
 	
 	FilePOJO(FileObjectType fileObjectType,String n,String p_n,String p,boolean dir,long dl,String d,long sl,String s,int t,
-			 String ext,float a,int o,int tf,long tsl,String ts,double tspd,String tsp)
+			 String ext,float a,int o,int tf,long tsl,String ts,double tspd,String tsp,String checksum)
 	{
 		this.fileObjectType=fileObjectType;
 		this.name=n;
@@ -45,6 +46,7 @@ public class FilePOJO
 		this.totalSize=ts;
 		this.totalSizePercentageDouble=tspd;
 		this.totalSizePercentage=tsp;
+		this.checksum=checksum;
 	}
 	
 	public void setFileObjectType(FileObjectType f)
@@ -130,6 +132,13 @@ public class FilePOJO
 	public void setTotalSizePercentage(String totalSizePercentage)
 	{
 		this.totalSizePercentage=totalSizePercentage;
+	}
+
+	public void setChecksum(String checksum){
+		this.checksum=checksum;
+	}
+	public void setWhetherExternal(boolean whetherExternal){
+		this.whetherExternal=whetherExternal;
 	}
 
 	public FileObjectType getFileObjectType()
@@ -225,6 +234,13 @@ public class FilePOJO
 	public String getTotalSizePercentage()
 	{
 		return this.totalSizePercentage;
+	}
+
+	public String getChecksum(){
+		return checksum;
+	}
+	public boolean getWhetherExternal(){
+		return whetherExternal;
 	}
 
 }

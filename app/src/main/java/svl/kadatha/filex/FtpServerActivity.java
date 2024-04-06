@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -189,7 +190,12 @@ public class FtpServerActivity extends BaseActivity {
         filter.addAction(FsService.ACTION_STARTED);
         filter.addAction(FsService.ACTION_STOPPED);
         filter.addAction(FsService.ACTION_FAILEDTOSTART);
-        registerReceiver(mFsActionsReceiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mFsActionsReceiver, filter,RECEIVER_NOT_EXPORTED);
+        }
+        else{
+            registerReceiver(mFsActionsReceiver, filter);
+        }
     }
 
     @Override

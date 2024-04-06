@@ -15,7 +15,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9;
+    private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9,future10;
 
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean checkedSAFPermissionPasteSetUp;
@@ -61,6 +61,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         if(future7!=null) future7.cancel(mayInterruptRunning);
         if(future8!=null) future8.cancel(mayInterruptRunning);
         if(future9!=null) future9.cancel(mayInterruptRunning);
+        if(future10!=null) future10.cancel(mayInterruptRunning);
         isCancelled=true;
     }
 
@@ -96,7 +97,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.populateAppsList(application);
+                repositoryClass.populateAppsList();
             }
         });
     }
@@ -108,7 +109,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioPOJOList(application,isCancelled);
+                repositoryClass.getAudioPOJOList(isCancelled);
             }
         });
     }
@@ -120,7 +121,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAlbumList(application,isCancelled);
+                repositoryClass.getAlbumList(isCancelled);
             }
         });
     }
@@ -133,7 +134,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getDownLoadList(application,isCancelled);
+                repositoryClass.getDownLoadList(isCancelled);
             }
         });
 
@@ -146,7 +147,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getDocumentList(application,isCancelled);
+                repositoryClass.getDocumentList(isCancelled);
             }
         });
 
@@ -159,7 +160,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getImageList(application,isCancelled);
+                repositoryClass.getImageList(isCancelled);
             }
         });
 
@@ -172,7 +173,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getAudioList(application,isCancelled);
+                repositoryClass.getAudioList(isCancelled);
             }
         });
 
@@ -185,7 +186,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getVideoList(application,isCancelled);
+                repositoryClass.getVideoList(isCancelled);
             }
         });
 
@@ -198,7 +199,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getArchiveList(application,isCancelled);
+                repositoryClass.getArchiveList(isCancelled);
             }
         });
 
@@ -211,7 +212,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getApkList(application,isCancelled);
+                repositoryClass.getApkList(isCancelled);
             }
         });
     }
@@ -223,7 +224,20 @@ public class MainActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getLargeFileList(application,isCancelled);
+                repositoryClass.getLargeFileList(isCancelled);
+            }
+        });
+
+    }
+
+    public void getDuplicateFileList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future10=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getDuplicateFileList(isCancelled);
             }
         });
 

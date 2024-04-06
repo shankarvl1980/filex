@@ -197,6 +197,11 @@ public class StorageAnalyserSortDialog extends DialogFragment
                 StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment)getParentFragmentManager().findFragmentById(R.id.storage_analyser_container);
                 if(storageAnalyserFragment !=null && storageAnalyserFragment.progress_bar.getVisibility()==View.GONE)
                 {
+                    if(storageAnalyserFragment.fileclickselected.equals("Duplicate Files") && (id!=R.id.storage_analyser_name_desc && id!=R.id.storage_analyser_name_asc))
+                    {
+                        Global.print(context,getString(R.string.cannot_sort_here));
+                        return;
+                    }
                     Global.STORAGE_ANALYSER_SORT=selected_sort;
                     set_selection();
 

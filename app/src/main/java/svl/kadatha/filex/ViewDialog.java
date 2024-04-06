@@ -32,7 +32,6 @@ public class ViewDialog extends DialogFragment
     private Context context;
 	private AppCompatActivity appCompatActivity;
 
-
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -403,7 +402,6 @@ public class ViewDialog extends DialogFragment
 
 	private class SortButtonClickListener implements View.OnClickListener
 	{
-
 		@Override
 		public void onClick(View button)
 		{
@@ -432,11 +430,21 @@ public class ViewDialog extends DialogFragment
 					DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
 					if(df!=null && df.progress_bar.getVisibility()==View.GONE)
 					{
+						if(df.fileclickselected.equals("Duplicate Files") && (id!=R.id.name_desc && id!=R.id.name_asc))
+						{
+							Global.print(context,getString(R.string.cannot_sort_here));
+							return;
+						}
 						Global.SORT=selected_sort;
 						set_selection();
 						getParentFragmentManager().beginTransaction().detach(df).commit();
 						getParentFragmentManager().beginTransaction().attach(df).commit();
 						tinyDB.putString("sort",Global.SORT);
+
+						df.viewModel.library_size_desc=false;
+						df.viewModel.library_time_desc=false;
+						df.size_image_view.setSelected(false);
+						df.time_image_view.setSelected(false);
 					}
 					else
 					{

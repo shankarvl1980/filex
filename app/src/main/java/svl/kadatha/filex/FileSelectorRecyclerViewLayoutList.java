@@ -274,4 +274,14 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
     }
 
+    @Override
+    void setDivider(boolean set) {
+
+    }
+
+    @Override
+    void setWhetherExternal(FilePOJO filePOJO) {
+
+    }
+
 }

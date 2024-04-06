@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -88,7 +89,11 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
-        context.registerReceiver(mediaMountReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
+        }else {
+            context.registerReceiver(mediaMountReceiver, intentFilter);
+        }
 
         localBroadcastManager= LocalBroadcastManager.getInstance(context);
         otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
@@ -504,7 +509,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     }
 
     @Override
-    public void rescanLargeFilesLibrary()
+    public void rescanLargeDuplicateFilesLibrary(String type)
     {
         StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
         if(storageAnalyserFragment==null)return;
@@ -517,27 +522,36 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             else
             {
                 actionModeFinish(storageAnalyserFragment,storageAnalyserFragment.fileclickselected);
-                rescan_large_files_library();
+                if(type.equals("large")){
+                    rescan_large_files_library();
+                }
+                else if(type.equals("duplicate"))
+                {
+                    rescan_duplicate_files_library();
+                }
             }
         }
         else
         {
-            rescan_large_files_library();
+            if(type.equals("large")){
+                rescan_large_files_library();
+            }
+            else if(type.equals("duplicate"))
+            {
+                rescan_duplicate_files_library();
+            }
         }
     }
-    public void rescan_large_files_library()
-    {
-        Global.print(context,getString(R.string.scanning_started));
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+    public void rescan_large_files_library() {
+        Global.print(context, getString(R.string.scanning_started));
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
-                while(iterator.hasNext())
-                {
-                    Map.Entry<String,List<FilePOJO>> entry=iterator.next();
-                    if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Large Files"))
-                    {
+                Iterator<Map.Entry<String, List<FilePOJO>>> iterator = repositoryClass.hashmap_file_pojo.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, List<FilePOJO>> entry = iterator.next();
+                    if (entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE + "Large Files")) {
                         iterator.remove();
                         break;
                     }
@@ -546,10 +560,9 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 //get methods kept below instead of in if block above to avoid likely concurrent modification exception
 
                 viewModel.getLargeFileList(false);
-                StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserFragment==null)return;
-                if(storageAnalyserFragment.fileclickselected.equals("Large Files"))
-                {
+                StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if (storageAnalyserFragment == null) return;
+                if (storageAnalyserFragment.fileclickselected.equals("Large Files")) {
                     fm.beginTransaction().detach(storageAnalyserFragment).commit();
                     fm.beginTransaction().attach(storageAnalyserFragment).commit();
 
@@ -557,8 +570,43 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
 
             }
         });
-
     }
+
+
+        public void rescan_duplicate_files_library()
+        {
+            Global.print(context,getString(R.string.scanning_started));
+            ExecutorService executorService=MyExecutorService.getExecutorService();
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
+                    while(iterator.hasNext())
+                    {
+                        Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+                        if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Duplicate Files"))
+                        {
+                            iterator.remove();
+                            break;
+                        }
+
+                    }
+                    //get methods kept below instead of in if block above to avoid likely concurrent modification exception
+
+                    viewModel.getDuplicateFileList(false);
+                    StorageAnalyserFragment storageAnalyserFragment=(StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                    if(storageAnalyserFragment==null)return;
+                    if(storageAnalyserFragment.fileclickselected.equals("Duplicate Files"))
+                    {
+                        fm.beginTransaction().detach(storageAnalyserFragment).commit();
+                        fm.beginTransaction().attach(storageAnalyserFragment).commit();
+
+                    }
+
+                }
+            });
+
+        }
 
 
     @Override
@@ -618,7 +666,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
                 storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                 String tag= storageAnalyserFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && !tag.equals("Large Files") && storageAnalyserFragment.currentUsbFile == null)
+                while(tag !=null && !new File(tag).exists() && !tag.equals("Large Files") && !tag.equals("Duplicate Files") && storageAnalyserFragment.currentUsbFile == null)
                 {
                     fm.popBackStack();
                     ++frag;

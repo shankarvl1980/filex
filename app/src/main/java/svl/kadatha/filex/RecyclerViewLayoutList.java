@@ -20,6 +20,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 	private final Context context;
     private ImageView fileimageview,overlay_fileimageview,file_select_indicator;
 	private TextView filenametextview, filesubfilecounttextview, filepermissionstextView,filemoddatetextview,filepathtextview;
+	private View item_separator;
     private int imageview_dimension;
 	public int itemWidth, itemHeight;
 	private final boolean show_file_path;
@@ -65,6 +66,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		//filepermissionstextView=view.findViewById(R.id.text_file_permissions);
 		filemoddatetextview= view.findViewById(R.id.text_file_moddate);
 		filepathtextview=view.findViewById(R.id.text_file_path);
+		item_separator=view.findViewById(R.id.item_separator);
 
         int second_line_font_size;
         int first_line_font_size;
@@ -149,8 +151,10 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		usedWidth+=filesubfilecounttextview.getMeasuredWidth()+Global.TEN_DP;
 
 		measureChildWithMargins(filemoddatetextview,widthMeasureSpec,usedWidth+Global.TEN_DP,heightMeasureSpec,0);
-
 		maxHeight+=filemoddatetextview.getMeasuredHeight();
+
+		measureChildWithMargins(item_separator,widthMeasureSpec,0,heightMeasureSpec,0);
+		maxHeight+=item_separator.getMeasuredHeight();
 
 		maxHeight=Math.max(iconheight,maxHeight);
 
@@ -215,7 +219,15 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		v=filepathtextview;
 		measuredHeight =v.getMeasuredHeight();
 		measuredWidth =v.getMeasuredWidth();
-		v.layout(margin_offset_icon,y+max_height_second_line,margin_offset_icon+ measuredWidth,y+max_height_second_line+ measuredHeight);
+		y+=max_height_second_line;
+		v.layout(margin_offset_icon,y,margin_offset_icon+ measuredWidth,y+ measuredHeight);
+		y+=measuredHeight;
+
+		v=item_separator;
+		measuredHeight=v.getMeasuredHeight();
+		measuredWidth=v.getMeasuredWidth();
+		y+=Global.RECYCLERVIEW_ITEM_SPACING;
+		v.layout(Global.FOURTEEN_DP,y,measuredWidth-Global.FOURTEEN_DP,y+measuredHeight);
 	}
 
 	@Override
@@ -282,4 +294,18 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
 	}
 
+	@Override
+	void setDivider(boolean set) {
+
+		if(set) item_separator.setVisibility(VISIBLE);
+		else item_separator.setVisibility(GONE);
+	}
+
+	@Override
+	void setWhetherExternal(FilePOJO filePOJO){
+		if(!show_file_path){
+			String path_category=filePOJO.getWhetherExternal() ? context.getString(R.string.sd_card) : context.getString(R.string.internal);
+			filesubfilecounttextview.setText(filePOJO.getSize()+"   "+path_category);
+		}
+	}
 }

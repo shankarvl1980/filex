@@ -21,10 +21,11 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout
     private final Context context;
     private ImageView fileimageview,overlay_fileimageview,file_select_indicator;
     private TextView filenametextview, filesubfilecounttextview, filepermissionstextView,filemoddatetextview,filepathtextview;
+    private View item_separator;
     private int imageview_dimension;
     public int itemWidth, itemHeight;
 
-    RecyclerViewLayoutGrid(Context context, boolean show_file_path)
+    RecyclerViewLayoutGrid(Context context,boolean show_file_path)
     {
         super(context);
         this.context=context;
@@ -38,7 +39,6 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout
         if(filePOJO.getType()==0)
         {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+filePOJO.getPackage_name()+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-
         }
         else if(filePOJO.getType()<0)
         {
@@ -63,6 +63,7 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout
         //filepermissionstextView=view.findViewById(R.id.text_file_permissions);
         filemoddatetextview= view.findViewById(R.id.text_file_moddate);
         filepathtextview=view.findViewById(R.id.text_file_path);
+        item_separator=view.findViewById(R.id.item_separator);
 
         int second_line_font_size;
         int first_line_font_size;
@@ -138,6 +139,10 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout
 
         measureChildWithMargins(filesubfilecounttextview,widthMeasureSpec,usedWidth,heightMeasureSpec,0);
         maxHeight+=filesubfilecounttextview.getMeasuredHeight();
+
+        //measureChildWithMargins(item_separator,widthMeasureSpec,0,heightMeasureSpec,0);
+        //maxHeight+=item_separator.getMeasuredHeight();
+
         maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2;//providing top and bottom margin of six dp
         itemHeight=maxHeight;
         setMeasuredDimension(widthMeasureSpec,maxHeight);
@@ -246,6 +251,17 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout
     public void set_selected(boolean item_selected)
     {
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    @Override
+    void setDivider(boolean set) {
+        if(set) item_separator.setVisibility(VISIBLE);
+        else item_separator.setVisibility(GONE);
+    }
+
+    @Override
+    void setWhetherExternal(FilePOJO filePOJO) {
+
     }
 
 }

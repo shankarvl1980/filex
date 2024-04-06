@@ -37,7 +37,7 @@ public class StorageUtil
 		STORAGE_DIR=new ArrayList<>(); //This is to ensure check on duplicate file paths
 		{
 			STORAGE_DIR.add(new File("/"));
-			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null));
+			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null,null));
 		}
 		
 
@@ -221,7 +221,7 @@ public class StorageUtil
 		}
 
 		int type=0;
-		return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+		return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
 	}
 
 

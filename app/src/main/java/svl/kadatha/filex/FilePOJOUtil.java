@@ -88,7 +88,7 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
     static FilePOJO MAKE_FilePOJO_ZIP(File f, boolean extracticon, FileObjectType fileObjectType)
@@ -150,7 +150,7 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
 
@@ -228,7 +228,7 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -311,7 +311,7 @@ public class FilePOJOUtil {
             alfa=Global.DISABLE_ALFA;
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
     static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extracticon)
@@ -374,7 +374,7 @@ public class FilePOJOUtil {
             si=sub_file_count;
         }
 
-        return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
     static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient)
@@ -453,7 +453,7 @@ public class FilePOJOUtil {
 
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
 
@@ -597,7 +597,7 @@ public class FilePOJOUtil {
         }
 
 
-        return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null);
+        return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
 
@@ -634,7 +634,7 @@ public class FilePOJOUtil {
         {
             if(file_path.equals(File.separator))
             {
-                filePOJO=new FilePOJO(fileObjectType,File.separator,null,File.separator,true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null);
+                filePOJO=new FilePOJO(fileObjectType,File.separator,null,File.separator,true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null,null);
             }
             else
             {
@@ -809,6 +809,7 @@ public class FilePOJOUtil {
             }
 
             REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed, "Large Files");
+            REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Duplicate Files");
             REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
 

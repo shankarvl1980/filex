@@ -196,7 +196,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
 		intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
 		intentFilter.addDataScheme("file");
-		context.registerReceiver(mediaMountReceiver, intentFilter);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
+		}
+		else{
+			context.registerReceiver(mediaMountReceiver, intentFilter);
+		}
 
 		otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
 		IntentFilter localBroadcastIntentFilter=new IntentFilter();
@@ -495,7 +500,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				}
 				else
 				{
-					DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.FILE_TYPE,f.getName(),null,f.getAbsolutePath(),true,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
+					DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.FILE_TYPE,f.getName(),null,f.getAbsolutePath(),true,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null,null);
 				}
 
 			}
@@ -914,7 +919,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	}
 
-	public void rescanLargeFilesLibrary()
+	public void rescanLargeDuplicateFilesLibrary(String type)
 	{
 		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
 		if(df==null)return;
@@ -927,12 +932,24 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			else
 			{
 				actionmode_finish(df,df.fileclickselected);
-				rescan_large_files_library();
+				if(type.equals("large")){
+					rescan_large_files_library();
+				}
+				else if(type.equals("duplicate"))
+				{
+					rescan_duplicate_files_library();
+				}
 			}
 		}
 		else
 		{
-			rescan_large_files_library();
+			if(type.equals("large")){
+				rescan_large_files_library();
+			}
+			else if(type.equals("duplicate"))
+			{
+				rescan_duplicate_files_library();
+			}
 		}
 	}
 	public void rescan_large_files_library()
@@ -971,6 +988,43 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	}
 
+	public void rescan_duplicate_files_library()
+	{
+		Global.print(context,getString(R.string.scanning_started));
+		ExecutorService executorService=MyExecutorService.getExecutorService();
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				Iterator<Map.Entry<String, List<FilePOJO>>> iterator=repositoryClass.hashmap_file_pojo.entrySet().iterator();
+				while(iterator.hasNext())
+				{
+					Map.Entry<String,List<FilePOJO>> entry=iterator.next();
+					if(entry.getKey().equals(FileObjectType.SEARCH_LIBRARY_TYPE+"Duplicate Files"))
+					{
+						iterator.remove();
+						break;
+					}
+
+				}
+
+				//get methods kept below instead of in if block above to avoid likely concurrent modification exception
+
+				viewModel.getDuplicateFileList(false);
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df==null)return;
+				if(df.fileclickselected.equals("Duplicate Files"))
+				{
+					fm.beginTransaction().detach(df).commit();
+					fm.beginTransaction().attach(df).commit();
+
+				}
+
+			}
+		});
+
+	}
+
+
 	private void createLibraryCache()
 	{
 		viewModel.getDownloadList(false);
@@ -981,6 +1035,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		viewModel.getArchiveList(false);
 		viewModel.getApkList(false);
 		viewModel.getLargeFileList(false);
+		viewModel.getDuplicateFileList(false);
 
 		viewModel.getAppList();
 
@@ -1427,7 +1482,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				int frag=2;
 				df= (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
 				String df_tag=df.getTag();
-				while(!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files") &&  df.currentUsbFile == null
+				while(!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files") && !df_tag.equals("Duplicate Files") &&  df.currentUsbFile == null
 				&& !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(df.fileObjectType)) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
 				{
 					fm.popBackStack();
@@ -2324,7 +2379,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									name="APK";
 									break;
 							}
-							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null);
+							DRAWER_STORAGE_FILEPOJO_SELECTED=new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE,name,null,name,false,0L,null,0L,null,R.drawable.folder_icon,null,0,0,0,0L,null,0,null,null);
 							drawerLayout.closeDrawer(drawer);
 						}
 					});

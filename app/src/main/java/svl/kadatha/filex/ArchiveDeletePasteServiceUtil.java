@@ -560,9 +560,7 @@ public class ArchiveDeletePasteServiceUtil {
         return notification_content;
     }
 
-    //public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String dest_folder,
-                                                         //List<String> written_file_name_list, FileObjectType destFileObjectType,
-                                                         //List<String> written_file_path_list, String zip_file_path, boolean cancelled)
+
     public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context, int counter_no_files,FilePOJO filePOJO, String dest_folder,
                                                          FileObjectType destFileObjectType,
                                                          String zip_file_path, boolean cancelled)

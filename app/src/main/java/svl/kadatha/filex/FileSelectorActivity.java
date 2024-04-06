@@ -116,7 +116,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
-        context.registerReceiver(mediaMountReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
+        }
+        else{
+            context.registerReceiver(mediaMountReceiver, intentFilter);
+        }
 
         localBroadcastManager= LocalBroadcastManager.getInstance(context);
         otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
@@ -514,7 +519,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     @Override
-    public void rescanLargeFilesLibrary() {
+    public void rescanLargeDuplicateFilesLibrary(String type) {
 
     }
 

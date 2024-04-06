@@ -69,7 +69,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 userAppPOJOList=new ArrayList<>();
                 if(!repositoryClass.app_pojo_hashmap.containsKey("system"))
                 {
-                    repositoryClass.populateAppsList(application);
+                    repositoryClass.populateAppsList();
                 }
 
                 userAppPOJOList=repositoryClass.app_pojo_hashmap.get("user");

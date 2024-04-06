@@ -15,11 +15,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 
+import timber.log.Timber;
+
 public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 {
     private final Context context;
     private ImageView fileimageview,overlay_fileimageview,file_select_indicator;
     private TextView filenametextview, filesizetextview,filesizepercentagetextview,filesubfilecounttextview, itemlinebackground,itemlineforeground;
+    private View item_separator;
     private int imageview_dimension;
     private int itemWidth;
     private int itemHeight;
@@ -64,6 +67,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         filesubfilecounttextview= view.findViewById(R.id.analyser_text_subfile_count);
         itemlinebackground=view.findViewById(R.id.analyser_item_background);
         itemlineforeground=view.findViewById(R.id.analyser_item_foreground);
+        item_separator=view.findViewById(R.id.analyser_item_separator);
 
         int second_line_font_size;
         int first_line_font_size;
@@ -146,6 +150,9 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 
         maxHeight+=filesubfilecounttextview.getMeasuredHeight();
 
+        measureChildWithMargins(item_separator,widthMeasureSpec,Global.TEN_DP*2,heightMeasureSpec,0);
+        maxHeight+=item_separator.getMeasuredHeight();
+
         maxHeight=Math.max(iconheight,maxHeight);
 
         maxHeight+=Global.RECYCLERVIEW_ITEM_SPACING*2; //providing top and bottom margin of four dp
@@ -220,7 +227,12 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
         measuredWidth =v.getMeasuredWidth();
         x=itemWidth- measuredWidth -Global.TEN_DP;
         v.layout(x,y,x+ measuredWidth,y+ measuredHeight);
+        y+=measuredHeight;
 
+        v=item_separator;
+        measuredHeight=v.getMeasuredHeight();
+        measuredWidth=v.getMeasuredWidth();
+        v.layout(Global.FOURTEEN_DP,itemHeight-measuredHeight,Global.FOURTEEN_DP+ measuredWidth,itemHeight);
     }
 
     @Override
@@ -288,13 +300,29 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
             filesizepercentagetextview.setText(filePOJO.getTotalSizePercentage());
             filesubfilecounttextview.setText("");
         }
-        itemlineforeground.getBackground().setLevel((int) (filePOJO.getTotalSizePercentageDouble()*100));
+        Timber.tag(Global.TAG).d("file name "+filePOJO.getName()+"  "+filePOJO.getTotalSizePercentageDouble());
+        if(filePOJO.getTotalSizePercentageDouble()==0){
+            itemlineforeground.getBackground().setLevel(0);
+        }else{
+            itemlineforeground.getBackground().setLevel((int) (filePOJO.getTotalSizePercentageDouble()*100));
+        }
 
     }
 
     public void set_selected(boolean item_selected)
     {
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    void setDivider(boolean set) {
+
+        if(set) item_separator.setVisibility(VISIBLE);
+        else item_separator.setVisibility(GONE);
+    }
+
+    void setWhetherExternal(FilePOJO filePOJO){
+        String path_category=filePOJO.getWhetherExternal() ? context.getString(R.string.sd_card) : context.getString(R.string.internal);
+        filesizetextview.setText(filePOJO.getSize()+"   "+path_category);
     }
 
 }

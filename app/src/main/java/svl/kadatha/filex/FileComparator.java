@@ -155,9 +155,6 @@ public class FileComparator
 	}
 
 
-
-
-
 	private static class SORT_D_FILEPOJO_NAME_ASC implements Comparator<FilePOJO>
 	{
 		@Override
@@ -187,6 +184,7 @@ public class FileComparator
 				return f1.getLowerName().compareTo(f2.getLowerName());
 		}
 	}
+
 
 	private static class SORT_D_FILEPOJO_NAME_DESC implements Comparator<FilePOJO>
 	{

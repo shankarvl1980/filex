@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FilePOJOViewModel extends AndroidViewModel {
     private final Application application;
@@ -56,13 +57,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public FileObjectType ftp_cached_file_fileObjectType;
     public boolean select_app_to_open_ftp;
 
-
-
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
         this.application=application;
     }
-
 
     @Override
     protected void onCleared() {
@@ -235,13 +233,16 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJO.setTotalFiles(total_no_of_files[0]);
                 filePOJO.setTotalSizeLong(total_size_of_files[0]);
                 filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files[0]));
-                double percentage = total_size_of_files[0] * 100.0/ volume_storage_size;
+                double percentage = 0;
+                if(volume_storage_size!=0) percentage= total_size_of_files[0] * 100.0/ volume_storage_size;
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f",percentage) +"%");
             }
             else
             {
-                double percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
+                Timber.tag(Global.TAG).d("volume storage="+volume_storage_size);
+                double percentage = 0;
+                if(volume_storage_size!=0) percentage=filePOJO.getSizeLong() * 100.0 / volume_storage_size;
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f",percentage)+"%");
             }
@@ -310,28 +311,30 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 switch (media_category)
                 {
                     case "Download":
-                        repositoryClass.getDownLoadList(application,isCancelled);
+                        repositoryClass.getDownLoadList(isCancelled);
                         break;
                     case "Document":
-                        repositoryClass.getDocumentList(application,isCancelled);
+                        repositoryClass.getDocumentList(isCancelled);
                         break;
                     case "Image":
-                        repositoryClass.getImageList(application, isCancelled);
+                        repositoryClass.getImageList(isCancelled);
                         break;
                     case "Audio":
-                        repositoryClass.getAudioList(application,isCancelled);
+                        repositoryClass.getAudioList(isCancelled);
                         break;
                     case "Video":
-                        repositoryClass.getVideoList(application,isCancelled);
+                        repositoryClass.getVideoList(isCancelled);
                         break;
                     case "Archive":
-                        repositoryClass.getArchiveList(application,isCancelled);
+                        repositoryClass.getArchiveList(isCancelled);
                         break;
                     case "APK":
-                        repositoryClass.getApkList(application,isCancelled);
+                        repositoryClass.getApkList(isCancelled);
                         break;
                     case "Large Files":
-                        repositoryClass.getLargeFileList(application,isCancelled);
+                        repositoryClass.getLargeFileList(isCancelled);
+                    case "Duplicate Files":
+                        repositoryClass.getDuplicateFileList(isCancelled);
                 }
                 filePOJOS=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 filePOJOS_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);

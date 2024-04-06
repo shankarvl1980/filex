@@ -460,6 +460,9 @@
     <string name="error_setting_up_device">error setting up device</string>
     <string name="clean_storage">Clean Storage</string>
     <string name="duplicates">Duplicates</string>
+    <string name="cannot_sort_here">Cannot sort here</string>
 
+	<string name="sd_card">SD Card</string>
+	<string name="internal">Internal</string>
 
 </resources>

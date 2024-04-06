@@ -12,4 +12,7 @@ public abstract class RecyclerViewLayout extends ViewGroup {
     abstract void setData(FilePOJO filePOJO , boolean item_selected);
     abstract void set_selected(boolean item_selected);
 
+    abstract void setDivider(boolean set);
+
+    abstract void setWhetherExternal(FilePOJO filePOJO);
 }

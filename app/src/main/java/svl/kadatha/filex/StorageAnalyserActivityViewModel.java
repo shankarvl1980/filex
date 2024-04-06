@@ -48,7 +48,20 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.getLargeFileList(application,isCancelled);
+                repositoryClass.getLargeFileList(isCancelled);
+            }
+        });
+
+    }
+
+    public void getDuplicateFileList(boolean isCancelled)
+    {
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future2=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.getDuplicateFileList(isCancelled);
             }
         });
 

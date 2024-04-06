@@ -65,7 +65,7 @@ public class CleanStorageDialog extends DialogFragment
         large_files_scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(detailFragmentListener!=null)detailFragmentListener.rescanLargeFilesLibrary();
+                if(detailFragmentListener!=null)detailFragmentListener.rescanLargeDuplicateFilesLibrary("large");
             }
         });
 
@@ -74,15 +74,16 @@ public class CleanStorageDialog extends DialogFragment
         duplicate_files_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(detailFragmentListener!=null)detailFragmentListener.createFragmentTransaction("Duplicate Files",FileObjectType.SEARCH_LIBRARY_TYPE);
+                dismissAllowingStateLoss();
             }
         });
 
-        Button duplicate_files_scan_btn=v.findViewById(R.id.clean_storage_duplicate_files_button);
+        Button duplicate_files_scan_btn=v.findViewById(R.id.clean_storage_duplicate_files_rescan_button);
         duplicate_files_scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(detailFragmentListener!=null)detailFragmentListener.rescanLargeDuplicateFilesLibrary("duplicate");
             }
         });
 

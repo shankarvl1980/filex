@@ -85,7 +85,7 @@
                 android:layout_marginStart="@dimen/layout_margin"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
 
             <Button
@@ -100,7 +100,7 @@
                 app:layout_constraintStart_toEndOf="@id/clean_storage_duplicate_files_button"
                 android:background="?attr/dialog_background"
                 android:layout_margin="@dimen/layout_margin"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
 
 

@@ -243,7 +243,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             totalFilePOJO_list_Size=totalFilePOJO_list.size();
             file_list_size=totalFilePOJO_list_Size;
             archiveViewActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
-            Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
+            Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
             time_image_view.setSelected(viewModel.library_time_desc);
             adapter.notifyDataSetChanged();
         }
@@ -280,7 +280,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         }
         totalFilePOJO_list_Size=totalFilePOJO_list.size();
         file_list_size=totalFilePOJO_list_Size;
-        Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("f_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
+        Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
         adapter=new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context);
         set_adapter();
         progress_bar.setVisibility(View.GONE);
