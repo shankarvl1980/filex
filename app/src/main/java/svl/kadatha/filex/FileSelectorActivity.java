@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -116,7 +117,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
         }
         else{
@@ -320,6 +321,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                onbackpressed(true);
+            }
+        });
     }
 
     private void on_intent(Intent intent, Bundle savedInstanceState )
@@ -579,11 +586,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
         localBroadcastManager.unregisterReceiver(usbReceiver);
         context.unregisterReceiver(mediaMountReceiver);
-    }
-
-    @Override
-    public void onBackPressed() {
-        onbackpressed(true);
     }
 
     private void onbackpressed(boolean onBackPressed)

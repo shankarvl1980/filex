@@ -50,7 +50,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		context=this;
 		setContentView(R.layout.fragment_cut_copy_delete_archive_progress);
@@ -230,7 +229,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	@Override
 	protected void onResume()
 	{
-		// TODO: Implement this method
 		super.onResume();
 		getWindow().setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		PROGRESS_ACTIVITY_SHOWN=true;
@@ -349,7 +347,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
 	{
-		// TODO: Implement this method
 		super.onSaveInstanceState(outState);
 		outState.putString("intent_action",intent_action);
 		outState.putSerializable("sourceFileObjectType",sourceFileObjectType);
@@ -359,7 +356,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		// TODO: Implement this method
 		super.onPause();
 		if(serviceConnection!=null)unbindService(serviceConnection);
 		PROGRESS_ACTIVITY_SHOWN=false;
@@ -369,7 +365,6 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity
 	@Override
 	protected void onStart()
 	{
-		// TODO: Implement this method
 		super.onStart();
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();

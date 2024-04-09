@@ -90,7 +90,7 @@
         android:id="@+id/analyser_item_separator"
         android:layout_height="4dp"
         android:layout_width="match_parent"
-        android:background="?attr/toolbar_icon_color"
+        android:background="?attr/recycler_main_text_color"
         android:visibility="gone"
         />
 

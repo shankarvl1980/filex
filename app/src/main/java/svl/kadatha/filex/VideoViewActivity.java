@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,6 +35,14 @@ public class VideoViewActivity extends BaseActivity
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
 		viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+		getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				clear_cache=false;
+				remove();
+				getOnBackPressedDispatcher().onBackPressed();
+			}
+		});
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)
@@ -104,11 +113,6 @@ public class VideoViewActivity extends BaseActivity
 		Global.CLEAR_CACHE();
 	}
 
-	@Override
-	public void onBackPressed() {
-		clear_cache=false;
-		super.onBackPressed();
-	}
 
 	public void onClickFragment()
 	{

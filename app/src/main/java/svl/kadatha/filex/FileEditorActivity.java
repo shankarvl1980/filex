@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -132,7 +133,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			public void onClick(View v)
 			{
-				onBackPressed();
+				getOnBackPressedDispatcher().onBackPressed();
 			}
 		});
 		
@@ -515,6 +516,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 
 		onClick_edit_button();
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				file_close_procedure();
+			}
+		});
 	}
 
 	private void on_intent(Intent intent, @Nullable Bundle savedInstanceState)
@@ -710,13 +717,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 	}
 
-
-	@Override
-	public void onBackPressed()
-	{
-		// TODO: Implement this method
-		file_close_procedure();
-	}
 
 	@Override
 	public void next_action(boolean save) {

@@ -87,14 +87,12 @@ public class AlbumListFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_album_list,container,false);
 		file_number_view=v.findViewById(R.id.album_list_file_number);
 		bottom_toolbar=v.findViewById(R.id.album_list_bottom_toolbar);
@@ -314,7 +312,6 @@ public class AlbumListFragment extends Fragment
 		@Override
 		public void onClick(View p1)
 		{
-			// TODO: Implement this method
 			if(progress_bar.getVisibility()==View.VISIBLE)
 			{
 				Global.print(context,getString(R.string.please_wait));
@@ -673,7 +670,6 @@ public class AlbumListFragment extends Fragment
 		@Override
 		protected void onLayout(boolean p1, int l, int t, int r, int b)
 		{
-			// TODO: Implement this method
 			int x=Global.FOURTEEN_DP,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
 			View v=albumimageview;

@@ -59,11 +59,10 @@ public class PropertiesDialog extends DialogFragment
 		size=files_selected_array.size();
 		source_folder=new File(files_selected_array.get(0)).getParent();
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-		if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) fileObjectType=FileObjectType.FILE_TYPE;
 
 		if(files_selected_array.size()==1)
 		{
-			if(fileObjectType==FileObjectType.FILE_TYPE)
+			if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 			{
 				File file=new File(files_selected_array.get(0));
 				filename_str=file.getName();
@@ -110,6 +109,7 @@ public class PropertiesDialog extends DialogFragment
 		{
 			filename_str=files_selected_array.size()+" "+ getString(R.string.files);
 			file_path_str=new File(files_selected_array.get(0)).getParent();
+			if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)file_path_str="NA";
 			file_date_str="NA";
 			file_type_str="NA";
 			symbolic_link_str="NA";

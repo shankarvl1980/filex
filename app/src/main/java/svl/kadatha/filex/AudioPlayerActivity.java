@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
@@ -66,7 +67,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
- 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_audio_player);
 		context=this;
@@ -129,7 +129,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		{
 			public void onClick(View p)
 			{
-				onBackPressed();
+				getOnBackPressedDispatcher().onBackPressed();
 			}
 		});
 
@@ -171,6 +171,92 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		Intent intent=getIntent();
 		on_intent(intent,savedInstanceState);
 		AUDIO_SAVED_LIST=audioDatabaseHelper.getTables();
+
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				if(keyBoardUtil.getKeyBoardVisibility())
+				{
+					((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+				}
+				else if(search_toolbar_visible)
+				{
+					setSearchBarVisibility(false);
+				}
+				else
+				{
+					int current_item=view_pager.getCurrentItem();
+					switch (current_item)
+					{
+						case 1:
+							if(aalf.audioListViewModel.audio_pojo_selected_items.size()>0)
+							{
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+							}
+							else
+							{
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+
+								clear_cache=false;
+								finish();
+							}
+							break;
+						case 2:
+							if(albumlf.audioListViewModel.album_pojo_selected_items.size()>0)
+							{
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+
+							}
+							else
+							{
+
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+
+								clear_cache=false;
+								finish();
+							}
+							break;
+						case 3:
+							if(aslf.audioListViewModel.audio_saved_list_selected_items.size()>0)
+							{
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+
+							}
+							else
+							{
+								aalf.clear_selection();
+								albumlf.clear_selection();
+								aslf.clear_selection();
+
+								clear_cache=false;
+								finish();
+							}
+
+							break;
+						default:
+
+							aalf.clear_selection();
+							albumlf.clear_selection();
+							aslf.clear_selection();
+
+							clear_cache=false;
+							finish();
+							break;
+					}
+				}
+
+			}
+		});
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState)
@@ -443,92 +529,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 					return getString(R.string.all_songs);
 			}
 		}
-	}
-
-	@Override
-	public void onBackPressed()
-	{
-		// TODO: Implement this method
-		if(keyBoardUtil.getKeyBoardVisibility())
-		{
-			((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-		}
-		else if(search_toolbar_visible)
-		{
-			setSearchBarVisibility(false);
-		}
-		else
-		 {
-			int current_item=view_pager.getCurrentItem();
-			switch (current_item)
-			{
-				case 1:
-					if(aalf.audioListViewModel.audio_pojo_selected_items.size()>0)
-					{
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-					}
-					else
-					{
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-
-						clear_cache=false;
-						finish();
-					}
-					break;
-				case 2:
-					if(albumlf.audioListViewModel.album_pojo_selected_items.size()>0)
-					{
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-
-					}
-					else
-					{
-
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-
-						clear_cache=false;
-						finish();
-					}
-					break;
-				case 3:
-					if(aslf.audioListViewModel.audio_saved_list_selected_items.size()>0)
-					{
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-
-					}
-					else
-					{
-						aalf.clear_selection();
-						albumlf.clear_selection();
-						aslf.clear_selection();
-
-						clear_cache=false;
-						finish();
-					}
-
-					break;
-				default:
-
-					aalf.clear_selection();
-					albumlf.clear_selection();
-					aslf.clear_selection();
-
-					clear_cache=false;
-					finish();
-					break;
-			}
-		}
-
 	}
 
 	interface AudioCompletionListener

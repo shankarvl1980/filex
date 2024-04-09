@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -841,6 +842,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 		discoverDevice();
+
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				onbackpressed(true);
+			}
+		});
 	}
 
 	private void rescanLibrary()
@@ -1018,7 +1026,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					fm.beginTransaction().attach(df).commit();
 
 				}
-
 			}
 		});
 
@@ -1426,12 +1433,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		// TODO: Implement this method
-		onbackpressed(true);
-	}
 
 	private void onbackpressed(boolean onBackPressed)
 	{
@@ -2040,7 +2041,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								break;
 
 						}
-						actionmode_finish(df,df.fileclickselected);
+						if(item_id!=2)actionmode_finish(df,df.fileclickselected);
 						listPopWindow.dismiss();
 					}
 				});

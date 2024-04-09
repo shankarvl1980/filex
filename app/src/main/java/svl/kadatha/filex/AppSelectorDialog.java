@@ -167,7 +167,6 @@ public class AppSelectorDialog extends DialogFragment
     @Override
     public void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
@@ -281,7 +280,6 @@ public class AppSelectorDialog extends DialogFragment
         @Override
         public AppRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
-            // TODO: Implement this method
             View v= LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
             return new AppRecyclerAdapter.ViewHolder(v);
         }
@@ -289,7 +287,6 @@ public class AppSelectorDialog extends DialogFragment
         @Override
         public void onBindViewHolder(AppRecyclerAdapter.ViewHolder p1, int p2)
         {
-            // TODO: Implement this method
             AvailableAppPOJO appPOJO=appPOJOList.get(p2);
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath()+File.separator+appPOJO.app_package_name+".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.app_icon_image_view);
             p1.app_name_text_view.setText(appPOJO.app_name);
@@ -299,7 +296,6 @@ public class AppSelectorDialog extends DialogFragment
         @Override
         public int getItemCount()
         {
-            // TODO: Implement this method
             return appPOJOList.size();
         }
     }

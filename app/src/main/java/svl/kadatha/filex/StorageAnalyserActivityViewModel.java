@@ -10,13 +10,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class StorageAnalyserActivityViewModel extends AndroidViewModel {
-    private final Application application;
     String tool_bar_shown;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
     public StorageAnalyserActivityViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
     @Override

@@ -34,6 +34,7 @@ import java.util.List;
 
 import svl.kadatha.filex.App;
 import svl.kadatha.filex.FsNotification;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.ftpserver.server.SessionThread;
 import svl.kadatha.filex.ftpserver.server.TcpListener;
@@ -220,7 +221,9 @@ public class FsService extends Service implements Runnable {
         if (!isConnectedToLocalNetwork()) {
             Timber.tag(TAG).w( "run: There is no local network, bailing out");
             stopSelf();
-            sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
+            Intent intent=new Intent(ACTION_FAILEDTOSTART);
+            intent.setPackage(Global.FILEX_PACKAGE);
+            sendBroadcast(intent);
             return;
         }
 
@@ -230,7 +233,9 @@ public class FsService extends Service implements Runnable {
         } catch (IOException e) {
             Timber.tag(TAG).w( "run: Unable to open port, bailing out.");
             stopSelf();
-            sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
+            Intent intent=new Intent(ACTION_FAILEDTOSTART);
+            intent.setPackage(Global.FILEX_PACKAGE);
+            sendBroadcast(intent);
             return;
         }
 
@@ -240,7 +245,9 @@ public class FsService extends Service implements Runnable {
 
         // A socket is open now, so the FTP server is started, notify rest of world
         Timber.tag(TAG).i( "Ftp Server up and running, broadcasting ACTION_STARTED");
-        sendBroadcast(new Intent(ACTION_STARTED));
+        Intent intent=new Intent(ACTION_STARTED);
+        intent.setPackage(Global.FILEX_PACKAGE);
+        sendBroadcast(intent);
 
         while (!shouldExit) {
             if (wifiListener != null) {
@@ -278,7 +285,9 @@ public class FsService extends Service implements Runnable {
         Timber.tag(TAG).d( "Exiting cleanly, returning from run()");
 
         stopSelf();
-        sendBroadcast(new Intent(ACTION_STOPPED));
+        Intent intent_stop=new Intent(ACTION_STOPPED);
+        intent_stop.setPackage(Global.FILEX_PACKAGE);
+        sendBroadcast(intent_stop);
     }
 
     private void terminateAllSessions() {

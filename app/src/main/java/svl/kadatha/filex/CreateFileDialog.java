@@ -271,7 +271,6 @@ public class CreateFileDialog extends DialogFragment
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		new_file_name_edittext.requestFocus();
-		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 	}
 
 	private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)

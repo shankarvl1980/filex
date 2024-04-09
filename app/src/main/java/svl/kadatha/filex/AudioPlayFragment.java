@@ -316,7 +316,7 @@ public class AudioPlayFragment extends Fragment
 				{
 					((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
 				}
-				((AudioPlayerActivity)context).onBackPressed();
+				((AudioPlayerActivity)context).getOnBackPressedDispatcher().onBackPressed();
 				audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
 
 			}

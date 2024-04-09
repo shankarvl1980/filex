@@ -290,7 +290,7 @@ public class RepositoryClass {
                 cursor=context.getContentResolver().query(MediaStore.Files.getContentUri("external"),new String[]{MediaStore.Files.FileColumns.DATA},
                         "("+MediaStore.Files.FileColumns.MIME_TYPE+" NOT LIKE ?"+")"+" AND "+
                                 "("+MediaStore.Files.FileColumns.SIZE+" >= ?"+")"
-                        , new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"1048576"},null);
+                        , new String[]{DocumentsContract.Document.MIME_TYPE_DIR,"524288"},null);
                 break;
             case "Image":
                 cursor=context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Images.Media.DATA},null,null,null);
@@ -361,7 +361,7 @@ public class RepositoryClass {
                             {
                                 FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                                 filePOJO.setChecksum(checksum);
-                                filePOJO.setWhetherExternal(filePOJO.getPath().startsWith(Global.INTERNAL_PRIMARY_STORAGE_PATH));
+                                filePOJO.setWhetherExternal(!filePOJO.getPath().startsWith(Global.INTERNAL_PRIMARY_STORAGE_PATH));
                                 f_pojos.add(filePOJO);
                                 f_pojos_filtered.add(filePOJO);
                                 parent_directory.add(f.getParent());

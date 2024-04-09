@@ -129,7 +129,6 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b)
     {
-        // TODO: Implement this method
         int x=0,y=Global.RECYCLERVIEW_ITEM_SPACING;
 
         int measuredHeight;

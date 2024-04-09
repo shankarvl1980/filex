@@ -93,7 +93,6 @@ public class AlbumDetailsDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();

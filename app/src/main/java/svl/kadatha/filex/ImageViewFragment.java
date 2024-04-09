@@ -284,7 +284,7 @@ ImageViewFragment extends Fragment
 			{
 				public void onClick(View v)
 				{
-					getActivity().onBackPressed();
+					getActivity().getOnBackPressedDispatcher().onBackPressed();
 				}
 
 			});

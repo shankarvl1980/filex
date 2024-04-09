@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.FragmentResultListener;
@@ -153,7 +154,7 @@ public class FtpServerActivity extends BaseActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
 
@@ -176,6 +177,20 @@ public class FtpServerActivity extends BaseActivity {
             }
         });
         disable_ftp_username_pwd_tv(true);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(FsService.isRunning())
+                {
+                    YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_SERVER_CLOSE_REQUEST_CODE,R.string.want_to_stop_ftp_server_service,new Bundle());
+                    ftpServerCloseAlertDialog.show(getSupportFragmentManager(),"");
+                }
+                else
+                {
+                    remove();
+                }
+            }
+        });
     }
 
 
@@ -211,19 +226,6 @@ public class FtpServerActivity extends BaseActivity {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    @Override
-    public void onBackPressed() {
-        if(FsService.isRunning())
-        {
-            YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_SERVER_CLOSE_REQUEST_CODE,R.string.want_to_stop_ftp_server_service,new Bundle());
-            ftpServerCloseAlertDialog.show(getSupportFragmentManager(),"");
-        }
-        else
-        {
-            super.onBackPressed();
-        }
-
-    }
 
     private boolean validateInput(boolean correctIfNotValid) {
 

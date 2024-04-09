@@ -50,8 +50,7 @@ public class ViewModelFileCount extends ViewModel {
             public void run()
             {
                 Global.SET_OTHER_FILE_PERMISSION("rwx",source_folder);
-
-                if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
+                if(sourceFileObjectType==FileObjectType.FILE_TYPE || sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE || sourceFileObjectType==FileObjectType.ROOT_TYPE)
                 {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
                     {
@@ -88,17 +87,6 @@ public class ViewModelFileCount extends ViewModel {
                         f_array[i]=f;
                     }
                     populate(f_array,include_folder);
-                }
-                else if(sourceFileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
-                {
-                    File[] f_array=new File[size];
-                    for(int i=0;i<size;++i)
-                    {
-                        File f=new File(source_list_files.get(i));
-                        f_array[i]=f;
-                    }
-                    populate(f_array,include_folder);
-
                 }
                 else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
                 {

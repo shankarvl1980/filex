@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.Group;
@@ -120,7 +121,7 @@ public class AppManagerActivity extends BaseActivity{
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
 
@@ -134,6 +135,25 @@ public class AppManagerActivity extends BaseActivity{
         viewModel.populateApps();
         Intent intent=getIntent();
         on_intent(intent,savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(keyBoardUtil.getKeyBoardVisibility())
+                {
+                    ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+                }
+                else if(search_toolbar_visible)
+                {
+                    setSearchBarVisibility(false);
+                }
+                else
+                {
+                    userAppListFragment.clear_selection();
+                    systemAppListFragment.clear_selection();
+                    finish();
+                }
+            }
+        });
 
     }
 
@@ -291,27 +311,6 @@ public class AppManagerActivity extends BaseActivity{
             appManagerListFragment.clear_selection();
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        if(keyBoardUtil.getKeyBoardVisibility())
-        {
-            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-        }
-        else if(search_toolbar_visible)
-        {
-            setSearchBarVisibility(false);
-        }
-        else
-        {
-            userAppListFragment.clear_selection();
-            systemAppListFragment.clear_selection();
-            finish();
-        }
-
-    }
-
-
 
     interface SearchFilterListener
     {

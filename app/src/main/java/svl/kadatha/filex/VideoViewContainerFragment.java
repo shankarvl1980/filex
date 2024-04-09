@@ -227,7 +227,7 @@ public class VideoViewContainerFragment extends Fragment
 		{
 			public void onClick(View p)
 			{
-				getActivity().onBackPressed();
+				getActivity().getOnBackPressedDispatcher().onBackPressed();
 			}
 			
 		});

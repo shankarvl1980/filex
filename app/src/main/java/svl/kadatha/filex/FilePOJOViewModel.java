@@ -333,8 +333,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         break;
                     case "Large Files":
                         repositoryClass.getLargeFileList(isCancelled);
+                        break;
                     case "Duplicate Files":
                         repositoryClass.getDuplicateFileList(isCancelled);
+                        break;
                 }
                 filePOJOS=repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);
                 filePOJOS_filtered=repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE+media_category);

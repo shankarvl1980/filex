@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -89,7 +90,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
         }else {
             context.registerReceiver(mediaMountReceiver, intentFilter);
@@ -111,7 +112,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
         current_dir=findViewById(R.id.storage_analyser_current_dir_tv);
@@ -310,9 +311,9 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         });
 
-        tb_layout =new EquallyDistributedButtonsWithTextLayout(this,1,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] actionmode_drawables ={R.drawable.delete_icon};
-        titles=new String[]{getString(R.string.delete)};
+        tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] actionmode_drawables ={R.drawable.delete_icon,R.drawable.properties_icon};
+        titles=new String[]{getString(R.string.delete),getString(R.string.properties)};
         tb_layout.setResourceImageDrawables(actionmode_drawables,titles);
 
         actionmode_toolbar=findViewById(R.id.storage_analyser_actionmode_toolbar);
@@ -341,7 +342,34 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         });
 
+        Button properties_btn=actionmode_toolbar.findViewById(R.id.toolbar_btn_2);
+        properties_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if(storageAnalyserFragment.viewModel.mselecteditems.size()==0)
+                {
+                    Global.print(context,getString(R.string.could_not_perform_action));
+                    DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
+                    return;
+                }
+                final ArrayList<String> files_selected_array=new ArrayList<>();
+                int size = storageAnalyserFragment.viewModel.mselecteditems.size();
+                for (int i = 0; i < size; ++i) {
+                    files_selected_array.add(storageAnalyserFragment.viewModel.mselecteditems.getValueAtIndex(i));
+                }
+                PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,storageAnalyserFragment.fileObjectType);
+                propertiesDialog.show(fm,"properties_dialog");
+            }
+        });
+
         storage_filePOJO_list=getFilePOJO_list();
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                onbackpressed(true);
+            }
+        });
     }
 
      @Override
@@ -621,11 +649,6 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
         context.unregisterReceiver(mediaMountReceiver);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
-    }
-
-    @Override
-    public void onBackPressed() {
-        onbackpressed(true);
     }
 
     private void onbackpressed(boolean onBackPressed)

@@ -377,7 +377,6 @@ public class RenameFileDialog extends DialogFragment
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
 		new_file_name_edittext.requestFocus();
-		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 	}
 
 	@Override

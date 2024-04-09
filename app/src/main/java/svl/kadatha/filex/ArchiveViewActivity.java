@@ -28,6 +28,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -286,6 +287,12 @@ public class ArchiveViewActivity extends BaseActivity{
             }
         }
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                onbackpressed(true);
+            }
+        });
     }
 
 
@@ -598,13 +605,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        // TODO: Implement this method
-        onbackpressed(true);
     }
 
     private void onbackpressed(boolean onBackPressed)
