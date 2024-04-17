@@ -19,7 +19,7 @@ public class PlayerScreenMotionLayout extends MotionLayout {
     private Listener listener;
     private final Rect viewRect = new Rect();
     private final List<TransitionListener> transitionListenerList = new ArrayList<>();
-    private final Context context;
+    private Context context = null;
     private boolean hasTouchStarted=false;
     public PlayerScreenMotionLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
