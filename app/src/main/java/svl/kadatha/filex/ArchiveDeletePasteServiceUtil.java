@@ -879,7 +879,7 @@ public class ArchiveDeletePasteServiceUtil {
                     no_of_files++;
                     size_of_files+=f.getSize();
                 }
-                Timber.tag(Global.TAG).d("number of files "+no_of_files+"  and size "+size_of_files);
+
                 total_no_of_files+=no_of_files;
                 total_size_of_files+=size_of_files;
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));

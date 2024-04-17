@@ -56,8 +56,6 @@ public class IndexedLinkedHashMap<K,V> extends LinkedHashMap<K,V> {
 
 	public V removeKey(K key)
 	{
-		// TODO: Implement this method
-		//Timber.tag(Global.TAG).d("removed-"+removed);
 		if(al_Index.remove(key)){
 			return super.remove(key);
 		}

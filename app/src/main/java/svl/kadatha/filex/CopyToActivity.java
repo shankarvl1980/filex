@@ -303,7 +303,6 @@ public class CopyToActivity extends BaseActivity{
         super.onStop();
         if(!isFinishing() && !isChangingConfigurations() && clear_cache)
         {
-            //Timber.tag(Global.TAG).d("cleared cached in copy to activity");
             clearCache();
         }
     }

@@ -418,8 +418,6 @@ private String convertSecondsToHMmSs(int milliseconds)
 	@Override
 	public void onStart() {
 		super.onStart();
-		//Timber.tag(Global.TAG).d("started "+file_path);
-
 
 		if(viewModel.orientation!=0)
 		{
@@ -733,7 +731,6 @@ private String convertSecondsToHMmSs(int milliseconds)
 			initiateMediaPlayer();
 		}
 
-		Timber.tag(Global.TAG).d("video error");
 		return true;
 	}
 

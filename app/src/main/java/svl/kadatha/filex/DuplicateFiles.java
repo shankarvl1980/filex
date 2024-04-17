@@ -26,15 +26,13 @@ public class DuplicateFiles {
                 checksum=getMD5Sum(file,digest);
 
             } catch (IOException e) {
-                Timber.tag(Global.TAG).d("returning in the middle ");
                 return fileMap;
             }
             List<String> map = fileMap.get(checksum);
             if (map == null)
                 fileMap.put(checksum, map = new ArrayList<>());
             map.add(file_path);
-//            Timber.tag(Global.TAG).d("file path "+file_path);
-//            Timber.tag(Global.TAG).d("count "+i);
+
         }
 
 

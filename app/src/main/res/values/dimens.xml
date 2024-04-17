@@ -14,6 +14,7 @@
 	<dimen name="drawer_width">260dp</dimen>
 	<dimen name="drawer_width_with_padding">262dp</dimen>
 	<dimen name="floating_button_margin_bottom">90dp</dimen>
+	<dimen name="floating_button_margin_botton_audio">155dp</dimen>
 	<dimen name="floating_button_margin_end">15dp</dimen>
 
 	<dimen name="higher_floating_button_margin_bottom">180dp</dimen>

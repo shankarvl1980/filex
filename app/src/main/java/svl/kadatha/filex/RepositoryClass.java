@@ -352,11 +352,9 @@ public class RepositoryClass {
 
                     if (v.size()>1)
                     {
-                        //Timber.tag(Global.TAG).d("entry list string size "+v.size()+"  checksum "+checksum);
                         for(String file_path:v)
                         {
                             File f=new File(file_path);
-                            //Timber.tag(Global.TAG).d("name "+f.getName()+" checksum "+checksum+" size "+f.length()+" path "+file_path);
                             if(f.exists())
                             {
                                 FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);

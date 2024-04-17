@@ -300,7 +300,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup
             filesizepercentagetextview.setText(filePOJO.getTotalSizePercentage());
             filesubfilecounttextview.setText("");
         }
-        Timber.tag(Global.TAG).d("file name "+filePOJO.getName()+"  "+filePOJO.getTotalSizePercentageDouble());
+
         if(filePOJO.getTotalSizePercentageDouble()==0){
             itemlineforeground.getBackground().setLevel(0);
         }else{

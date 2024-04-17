@@ -103,7 +103,7 @@ public class AudioPlayFragment extends Fragment
 			audioFragmentListener=(AudioFragmentListener) activity;
 		}
 
-		audioPlayViewModel=new ViewModelProvider(AudioPlayFragment.this).get(AudioPlayViewModel.class);
+		audioPlayViewModel=new ViewModelProvider(requireActivity()).get(AudioPlayViewModel.class);
 		audioPlayViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -184,18 +184,18 @@ public class AudioPlayFragment extends Fragment
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
+//
+//			if(activity instanceof AudioPlayerActivity)
+//			{
+//				audioPlayViewModel.fileObjectType= ((AudioPlayerActivity)activity).fileObjectType;
+//				audioPlayViewModel.fromThirdPartyApp = ((AudioPlayerActivity)activity).fromThirdPartyApp;
+//				audioPlayViewModel.file_path= ((AudioPlayerActivity)activity).file_path;
+//			}
+//
+//			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
 
-			if(activity instanceof AudioPlayerActivity)
-			{
-				audioPlayViewModel.fileObjectType= ((AudioPlayerActivity)activity).fileObjectType;
-				audioPlayViewModel.fromThirdPartyApp = ((AudioPlayerActivity)activity).fromThirdPartyApp;
-				audioPlayViewModel.file_path= ((AudioPlayerActivity)activity).file_path;
-			}
-
-			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
-
-			String source_folder = new File(audioPlayViewModel.file_path).getParent();
-			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp);
+//			String source_folder = new File(audioPlayViewModel.file_path).getParent();
+//			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp);
 		}
 
 	}

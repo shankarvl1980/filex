@@ -22,6 +22,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -63,6 +64,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	String file_path;
 	public static final String ACTIVITY_NAME="AUDIO_PLAYER_ACTIVITY";
 	public boolean clear_cache;
+	private AudioPlayViewModel audioPlayViewModel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -160,7 +162,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
 		tab_layout.setupWithViewPager(view_pager);
 
-
+		audioPlayViewModel=new ViewModelProvider(AudioPlayerActivity.this).get(AudioPlayViewModel.class);
 		adapter.startUpdate(view_pager);
 		apf=(AudioPlayFragment) adapter.instantiateItem(view_pager,0);
 		aalf=(AllAudioListFragment) adapter.instantiateItem(view_pager,1);
@@ -279,6 +281,13 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 				{
 					String name=new File(file_path).getName();
 					AUDIO_FILE=new AudioPOJO(0,file_path,name,null,null,null,"0",(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+
+					audioPlayViewModel.fileObjectType=fileObjectType;
+					audioPlayViewModel.fromThirdPartyApp = fromThirdPartyApp;
+					audioPlayViewModel.file_path= file_path;
+					audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
+					String source_folder = new File(audioPlayViewModel.file_path).getParent();
+					audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp);
 					apf.initiate_audio();
 				}
 				if(AUDIO_FILE==null)

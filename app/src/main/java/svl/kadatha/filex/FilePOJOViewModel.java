@@ -240,7 +240,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
             }
             else
             {
-                Timber.tag(Global.TAG).d("volume storage="+volume_storage_size);
                 double percentage = 0;
                 if(volume_storage_size!=0) percentage=filePOJO.getSizeLong() * 100.0 / volume_storage_size;
                 filePOJO.setTotalSizePercentageDouble(percentage);
