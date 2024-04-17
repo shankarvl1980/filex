@@ -15,8 +15,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 
-import timber.log.Timber;
-
 public class StorageAnalyserRecyclerViewLayout extends ViewGroup
 {
     private final Context context;

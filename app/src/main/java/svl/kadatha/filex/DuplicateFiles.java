@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import timber.log.Timber;
-
 public class DuplicateFiles {
     public static TreeMap<String, List<String>> fillDuplicateFiles(List<String> file_path_list, MessageDigest digest) {
         TreeMap<String, List<String>> fileMap=new TreeMap<>();

@@ -2,7 +2,6 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,14 +14,12 @@ import androidx.constraintlayout.motion.widget.MotionLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 public class PlayerScreenMotionLayout extends MotionLayout {
 
     private Listener listener;
     private final Rect viewRect = new Rect();
     private final List<TransitionListener> transitionListenerList = new ArrayList<>();
-    private Context context;
+    private final Context context;
     private boolean hasTouchStarted=false;
     public PlayerScreenMotionLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -90,7 +87,7 @@ public class PlayerScreenMotionLayout extends MotionLayout {
     }
 
     //This ensures the Mini Player is maximised on single tap
-    GestureDetector gestureDetector=new GestureDetector(context ,new GestureDetector.SimpleOnGestureListener(){
+    final GestureDetector gestureDetector=new GestureDetector(context ,new GestureDetector.SimpleOnGestureListener(){
         @Override
         public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
             transitionToEnd();
