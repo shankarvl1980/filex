@@ -259,7 +259,7 @@ public class FtpServerActivity extends BaseActivity {
             }
 
             if (directory==null) {
-                if(viewModel.chroot_list.size()>0)
+                if(!viewModel.chroot_list.isEmpty())
                 {
                     chroot_host.setText(viewModel.chroot_list.get(0));
                 }

@@ -472,7 +472,7 @@ public class AudioPlayFragment extends Fragment
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
+					if(!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty())
 					{
 						if(audio_player_service!=null)
 						{
@@ -590,7 +590,7 @@ public class AudioPlayFragment extends Fragment
 
 	public void enable_disable_previous_next_btn()
 	{
-		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
+		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())
 		{
 			previous_btn.setEnabled(false);
 			previous_btn.setAlpha(Global.DISABLE_ALFA);

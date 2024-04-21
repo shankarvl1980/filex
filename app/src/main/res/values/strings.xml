@@ -464,5 +464,6 @@
 
 	<string name="sd_card">SD Card</string>
 	<string name="internal">Internal</string>
+    <string name="default_choices_can_removed_from_the_settings">Default choices can removed from the Settings</string>
 
 </resources>

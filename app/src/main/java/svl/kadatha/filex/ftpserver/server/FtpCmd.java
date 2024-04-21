@@ -85,7 +85,7 @@ public abstract class FtpCmd implements Runnable {
             return;
         }
         String verb = strings[0];
-        if (verb.length() < 1) {
+        if (verb.isEmpty()) {
             Timber.tag(TAG).i( "Invalid command verb");
             session.writeString(unrecognizedCmdMsg);
             return;

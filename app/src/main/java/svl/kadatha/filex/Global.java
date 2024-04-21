@@ -218,7 +218,7 @@ public class Global
 	{
 		URI_PERMISSION_LIST=new ArrayList<>();
 		List<UriPermission> permission_list=context.getContentResolver().getPersistedUriPermissions();
-		if(permission_list.size()>0)
+		if(!permission_list.isEmpty())
 		{
 			for(UriPermission permission : permission_list)
 			{
@@ -314,7 +314,7 @@ public class Global
 			}
 		}
 
-		if(URI_PERMISSION_LIST.size()==0)
+		if(URI_PERMISSION_LIST.isEmpty())
 		{
 			final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 			try
@@ -668,7 +668,7 @@ public class Global
 	static void GET_STORAGE_DIR(Context context)
 	{
 		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-		if(repositoryClass.storage_dir.size()==0)
+		if(repositoryClass.storage_dir.isEmpty())
 		{
 			repositoryClass.storage_dir =new ArrayList<>(StorageUtil.getSdCardPaths(context,true));
 			INTERNAL_PRIMARY_STORAGE_PATH=GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath();
@@ -805,7 +805,7 @@ public class Global
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type,"",file_extn,null,false,uri);
 		List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
-		return resolveInfoList.size() != 0;
+		return !resolveInfoList.isEmpty();
 	}
 
 	public static void REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, String dest_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType)

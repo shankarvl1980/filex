@@ -191,7 +191,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 					switch (current_item)
 					{
 						case 1:
-							if(aalf.audioListViewModel.audio_pojo_selected_items.size()>0)
+							if(!aalf.audioListViewModel.audio_pojo_selected_items.isEmpty())
 							{
 								aalf.clear_selection();
 								albumlf.clear_selection();
@@ -208,7 +208,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 							}
 							break;
 						case 2:
-							if(albumlf.audioListViewModel.album_pojo_selected_items.size()>0)
+							if(!albumlf.audioListViewModel.album_pojo_selected_items.isEmpty())
 							{
 								aalf.clear_selection();
 								albumlf.clear_selection();
@@ -227,7 +227,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 							}
 							break;
 						case 3:
-							if(aslf.audioListViewModel.audio_saved_list_selected_items.size()>0)
+							if(!aslf.audioListViewModel.audio_saved_list_selected_items.isEmpty())
 							{
 								aalf.clear_selection();
 								albumlf.clear_selection();
@@ -472,7 +472,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 			}
 		}
 
-		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
+		if(AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())
 		{
 			AudioPlayerService.CURRENT_PLAY_NUMBER=0;
 		}
@@ -574,7 +574,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
 	public void on_completion_audio()
 	{
-		if(audioCompletionListeners.size()>0)
+		if(!audioCompletionListeners.isEmpty())
 		{
 			for(AudioCompletionListener listener:audioCompletionListeners)
 			{

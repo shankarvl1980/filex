@@ -393,7 +393,7 @@ public class PdfViewFragment extends Fragment
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+                    if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
                     {
                         pdf_view_adapter.notifyDataSetChanged();
                         picture_selector_adapter.notifyDataSetChanged();

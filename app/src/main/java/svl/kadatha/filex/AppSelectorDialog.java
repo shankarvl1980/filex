@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,6 +19,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -121,6 +125,20 @@ public class AppSelectorDialog extends DialogFragment
             }
         });
 
+        ImageView contextualInfo_btn=v.findViewById(R.id.select_app_remember_choice_info_image);
+        contextualInfo_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View popup_view=inflater.inflate(R.layout.popup_window,null);
+                int width=600;
+                int height=ViewGroup.LayoutParams.WRAP_CONTENT;
+                boolean focusable=true;
+
+                PopupWindow popupWindow=new PopupWindow(popup_view,width,height,focusable);
+                popupWindow.setElevation(20);
+                popupWindow.showAtLocation( contextualInfo_btn,Gravity.NO_GRAVITY, (int) contextualInfo_btn.getX()-400, (int) contextualInfo_btn.getY()-remember_app_check_box.getHeight());
+            }
+        });
         if(mime_type.equals("*/*"))
         {
             remember_app_check_box.setVisibility(View.GONE);

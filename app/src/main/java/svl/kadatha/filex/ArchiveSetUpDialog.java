@@ -170,7 +170,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					viewModel.isRecursiveFilesRemoved.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-					if(viewModel.files_selected_array.size()==0)
+					if(viewModel.files_selected_array.isEmpty())
 					{
 						Global.print(context,getString(R.string.could_not_perform_action));
 						dismissAllowingStateLoss();
@@ -583,7 +583,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			String file_name=f.getName();
 			if(filePOJOs!=null)
 			{
-				if(filePOJOs.size()==0)return true; //folder is blank, so folder can be created
+				if(filePOJOs.isEmpty())return true; //folder is blank, so folder can be created
 				for(FilePOJO filePOJO:filePOJOs)
 				{
 					if(filePOJO.getName().equals(file_name))

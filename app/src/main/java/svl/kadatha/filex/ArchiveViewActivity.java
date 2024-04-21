@@ -624,7 +624,7 @@ public class ArchiveViewActivity extends BaseActivity{
 
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
         }
-        else if(archiveViewFragment.viewModel.mselecteditems.size()>0)
+        else if(!archiveViewFragment.viewModel.mselecteditems.isEmpty())
         {
             actionmode_finish(archiveViewFragment,archiveViewFragment.fileclickselected);
 

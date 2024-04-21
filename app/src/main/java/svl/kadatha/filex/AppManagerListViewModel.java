@@ -182,7 +182,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     ++count;
                 }
 
-                if(copied_files_name.size()>0)
+                if(!copied_files_name.isEmpty())
                 {
                     List<String> overwritten_copied_file_path_list=new ArrayList<>();
                     overwritten_copied_file_name_list.retainAll(copied_files_name);

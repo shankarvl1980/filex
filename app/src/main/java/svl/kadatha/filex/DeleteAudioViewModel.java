@@ -74,7 +74,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                 }
 
 
-                if(deleted_audio_files.size()>0)
+                if(!deleted_audio_files.isEmpty())
                 {
                     if(whetherFromAlbum)
                     {

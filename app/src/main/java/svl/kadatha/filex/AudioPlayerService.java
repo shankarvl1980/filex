@@ -407,7 +407,7 @@ public class AudioPlayerService extends Service
 		private void goto_next()
 		{
 			CURRENT_PLAY_NUMBER++;
-			if(AUDIO_QUEUED_ARRAY.size()==0 || CURRENT_PLAY_NUMBER>AUDIO_QUEUED_ARRAY.size()-1 || CURRENT_PLAY_NUMBER<0)
+			if(AUDIO_QUEUED_ARRAY.isEmpty() || CURRENT_PLAY_NUMBER>AUDIO_QUEUED_ARRAY.size()-1 || CURRENT_PLAY_NUMBER<0)
 			{
 				CURRENT_PLAY_NUMBER=AUDIO_QUEUED_ARRAY.size()-1;
 				return;
@@ -445,7 +445,7 @@ public class AudioPlayerService extends Service
 		private void goto_previous()
 		{
 			CURRENT_PLAY_NUMBER--;
-			if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0 || CURRENT_PLAY_NUMBER<0 || CURRENT_PLAY_NUMBER> AUDIO_QUEUED_ARRAY.size()-1)
+			if(AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty() || CURRENT_PLAY_NUMBER<0 || CURRENT_PLAY_NUMBER> AUDIO_QUEUED_ARRAY.size()-1)
 			{
 				CURRENT_PLAY_NUMBER=0;
 				return;

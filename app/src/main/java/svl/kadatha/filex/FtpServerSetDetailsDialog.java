@@ -118,7 +118,7 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
         port_input.setText(String.valueOf(port));
         user_input.setText(username);
         password_input.setText(password);
-        if(viewModel.chroot_list.size()>0)
+        if(!viewModel.chroot_list.isEmpty())
         {
             for(int i=0; i<viewModel.chroot_list.size();++i)
             {
@@ -193,7 +193,7 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
             }
 
             if (directory==null) {
-                if(viewModel.chroot_list.size()>0)
+                if(!viewModel.chroot_list.isEmpty())
                 {
                     chroot_spinner.setSelection(0);
                     directory=chroot_spinner.getSelectedItem().toString();

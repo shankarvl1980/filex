@@ -79,7 +79,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 	private String source_other_file_permission,dest_other_file_permission;
 	private boolean storage_analyser_delete;
 	final List<String> overwritten_file_path_list=new ArrayList<>();
-	private Uri data;
+	private List<Uri> data_list;
 
 	private FileModel[] sourceFileModels;
 	private FileModel destFileModel;
@@ -198,17 +198,22 @@ public class ArchiveDeletePasteFileService1 extends Service
 			case "copy_to":
 				if(bundle!=null)
 				{
-					data=bundle.getParcelable("data");
+					//data=bundle.getParcelable("data");
+					data_list=bundle.getParcelableArrayList("data_list");
+					overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
 					file_name=bundle.getString("file_name");
 					dest_folder=bundle.getString("dest_folder");
 					destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
 					tree_uri_path=bundle.getString("tree_uri_path");
 					tree_uri=bundle.getParcelable("tree_uri");
-					counter_no_files ++;
-					counter_size_files += getLengthUri(data);
-					size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files);
+					long uri_size = 0;
+					for(Uri data:data_list){
+						uri_size += getLengthUri(data);
+					}
 
-					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(1,counter_size_files);
+					size_of_files_copied = FileUtil.humanReadableByteCount(uri_size);
+
+					fileCountSize=new ArchiveDeletePasteServiceUtil.FileCountSize(data_list.size(),counter_size_files);
 					fileCountSize.fileCount();
 					copyToAsyncTask=new CopyToAsyncTask();
 					copyToAsyncTask.execute(null);
@@ -649,7 +654,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			}
 
 
-			if(zipentry_selected_array.size()!=0)
+			if(!zipentry_selected_array.isEmpty())
 			{
 				for(String s:zipentry_selected_array)
 				{
@@ -859,7 +864,7 @@ public class ArchiveDeletePasteFileService1 extends Service
 			sourceFileModels= FileModelFactory.getFileModelArray(files_selected_array,sourceFileObjectType,source_uri,source_uri_path);
 			success=deleteFileModelArray();
 
-			if(deleted_file_names.size()>0)
+			if(!deleted_file_names.isEmpty())
 			{
 				if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 				{
@@ -1187,24 +1192,34 @@ public class ArchiveDeletePasteFileService1 extends Service
 			{
 				return false;
 			}
-			if (isCancelled() || data == null) {
+			if (isCancelled() || data_list == null || data_list.isEmpty()) {
 				return false;
 			}
 
 			FileModel destFileModel=FileModelFactory.getFileModel(dest_folder,destFileObjectType,tree_uri,tree_uri_path);
-			copy_result=FileUtil.CopyUriFileModel(data,destFileModel,file_name,total_bytes_read);
-
-			if (copy_result) {
-				String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
-				copied_files_name.add(file_name);
-				copied_source_file_path_list.add(dest_file_path);
-
-				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType, Collections.singletonList(dest_file_path));
-
-				copied_files_name.clear();
-				copied_source_file_path_list.clear();
+			boolean onlyOneUri=data_list.size()==1;
+			for(Uri data:data_list){
+				if(!onlyOneUri) {
+					file_name=CopyToActivity.getFileNameOfUri(context,data);
+				}else{
+					if(file_name.equals(""))file_name=CopyToActivity.getFileNameOfUri(context,data);
+				}
+				copy_result=FileUtil.CopyUriFileModel(data,destFileModel,file_name,total_bytes_read);
+				if (copy_result) {
+					String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
+					copied_files_name.add(file_name);
+					copied_source_file_path_list.add(dest_file_path);
+					counter_no_files++;
+					counter_size_files+=getLengthUri(data);
+					size_of_files_copied=FileUtil.humanReadableByteCount(counter_size_files);
+					copied_file=file_name;
+				}
 
 			}
+			filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_file_path_list);
+
+			copied_files_name.clear();
+			copied_source_file_path_list.clear();
 
 			return copy_result;
 		}

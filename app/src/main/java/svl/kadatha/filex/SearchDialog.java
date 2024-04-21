@@ -258,7 +258,7 @@ public class SearchDialog extends DialogFragment
 					}
 
 				}
-				if(dir_selected_items.size()==0)
+				if(dir_selected_items.isEmpty())
 				{
 					Global.print(context,getString(R.string.select_directories_to_search_in));
 					return;
@@ -388,7 +388,7 @@ public class SearchDialog extends DialogFragment
 			{
 				p1.iv.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
 				p1.tv.setText(storage_list.get(p2).getName());
-				if(dir_selected_items.size()==0)
+				if(dir_selected_items.isEmpty())
 				{
 					p1.cb.setChecked(true);
 				}

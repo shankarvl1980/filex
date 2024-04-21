@@ -505,7 +505,7 @@ public class AppManagerListFragment extends Fragment {
                         }
                     }
                     int t=appPOJOList.size();
-                    if(appManagerListFragmentViewModel.mselecteditems.size()>0)
+                    if(!appManagerListFragmentViewModel.mselecteditems.isEmpty())
                     {
                         clear_selection();
                     }
@@ -529,7 +529,7 @@ public class AppManagerListFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         pos=getBindingAdapterPosition();
-                        if(appManagerListFragmentViewModel.mselecteditems.size()>0)
+                        if(!appManagerListFragmentViewModel.mselecteditems.isEmpty())
                         {
                             if (!appManagerListFragmentViewModel.mselecteditems.containsKey(pos)) {
                                 clear_selection();
@@ -749,7 +749,7 @@ public class AppManagerListFragment extends Fragment {
             // TODO: Implement this method
             final Bundle bundle=new Bundle();
             final ArrayList<String> files_selected_array=new ArrayList<>();
-            if (appManagerListFragmentViewModel.mselecteditems.size() < 1) {
+            if (appManagerListFragmentViewModel.mselecteditems.isEmpty()) {
                 return;
             }
 

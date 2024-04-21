@@ -344,7 +344,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
         if(activity_catering.equals(STORAGE_ANALYSER))
         {
-            if(StorageAnalyserActivity.RECENTS.size()!=0)
+            if(!StorageAnalyserActivity.RECENTS.isEmpty())
             {
                 if((!StorageAnalyserActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
                 {
@@ -364,7 +364,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         }
         else
         {
-            if(FileSelectorActivity.RECENTS.size()!=0)
+            if(!FileSelectorActivity.RECENTS.isEmpty())
             {
                 if((!FileSelectorActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
                 {

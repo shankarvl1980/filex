@@ -412,7 +412,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 	public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO)
 	{
-		if(MainActivity.RECENTS.size()!=0)
+		if(!MainActivity.RECENTS.isEmpty())
 		{
 			if((!MainActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
 			{

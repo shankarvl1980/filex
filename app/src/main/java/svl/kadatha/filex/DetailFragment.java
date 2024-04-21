@@ -227,7 +227,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		filter_image_view.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if(viewModel.filePOJOS.size()==0)
+				if(viewModel.filePOJOS.isEmpty())
 				{
 					return;
 				}

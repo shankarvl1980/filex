@@ -21,12 +21,9 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -38,8 +35,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -506,7 +501,7 @@ public class PlayScreenFragment extends Fragment {
 
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
-                    if(deleteFileOtherActivityViewModel.deleted_audio_files.size()>0)
+                    if(!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty())
                     {
                         if(audio_player_service!=null)
                         {
@@ -626,7 +621,7 @@ public class PlayScreenFragment extends Fragment {
 
     public void enable_disable_previous_next_btn()
     {
-        if(AudioPlayerService.AUDIO_QUEUED_ARRAY.size()==0)
+        if(AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())
         {
             previous_btn.setEnabled(false);
             previous_btn.setAlpha(Global.DISABLE_ALFA);

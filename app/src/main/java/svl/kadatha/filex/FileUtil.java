@@ -292,11 +292,10 @@ public final class FileUtil
 				FtpClientRepository.getInstance().ftpClientMain.completePendingCommand();
 			}
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
-		// ignore exception
-		// ignore exception
 		return true;
 	}
 	@SuppressWarnings("null")
@@ -309,8 +308,7 @@ public final class FileUtil
 		} catch (Exception e) {
 			return false;
 		}
-		// ignore exception
-		// ignore exception
+
 		return true;
 	}
 
@@ -1813,7 +1811,7 @@ public final class FileUtil
 			documentPath = documentPath.substring(0, documentPath.length() - 1);
 		}
 
-		if (documentPath.length() > 0)
+		if (!documentPath.isEmpty())
 		{
 			if (documentPath.startsWith(File.separator))
 			{

@@ -1,5 +1,8 @@
 package svl.kadatha.filex;
 
+import android.content.Context;
+import android.net.Uri;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,6 +18,7 @@ import java.util.concurrent.Future;
 public class FileDuplicationViewModel extends ViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> filterSelectedArrayAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
 
@@ -28,6 +32,8 @@ public class FileDuplicationViewModel extends ViewModel {
     public FileObjectType sourceFileObjectType,destFileObjectType;
     boolean cut;
     public ArrayList<String>files_selected_array;
+    public ArrayList<Uri> data_list=new ArrayList<>();
+    public boolean yes,apply_to_all;
 
 
     @Override
@@ -114,4 +120,57 @@ public class FileDuplicationViewModel extends ViewModel {
             }
         });
     }
+
+    public void filterFileSelectedArray(Context context,boolean yes,boolean apply_to_all,ArrayList<Uri>data_list){
+        if(filterSelectedArrayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        this.data_list=data_list;
+        this.yes=yes;this.apply_to_all=apply_to_all;
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                if(yes){
+                    if(apply_to_all){
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        overwritten_file_path_list.addAll(destination_duplicate_file_path_array);
+                        removeNotTobeCopiedUris(context,data_list,not_to_be_replaced_files_path_array);
+                    }
+                    else{
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context,data_list,not_to_be_replaced_files_path_array);
+                    }
+                }
+                else{
+                    if(apply_to_all){
+                        files_selected_array.removeAll(source_duplicate_file_path_array);
+                        removeNotTobeCopiedUris(context,data_list,source_duplicate_file_path_array);
+                    }
+                    else{
+                        not_to_be_replaced_files_path_array.add(source_duplicate_file_path_array.remove(0));
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        destination_duplicate_file_path_array.remove(0);
+                        removeNotTobeCopiedUris(context,data_list,not_to_be_replaced_files_path_array);
+                    }
+                }
+                filterSelectedArrayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    private void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list){
+        if(data_list==null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        Iterator<Uri> iterator=data_list.iterator();
+        while (iterator.hasNext()){
+            String name=CopyToActivity.getFileNameOfUri(context,iterator.next());
+            for(String f_name:file_path_list){
+                if(name.equals(f_name)) {
+                    iterator.remove();
+                    break;
+                }
+
+            }
+        }
+    }
+
 }

@@ -51,7 +51,7 @@ public class CmdPWD extends FtpCmd implements Runnable {
             }
             // The root directory requires special handling to restore its
             // leading slash
-            if (currentDir.length() == 0) {
+            if (currentDir.isEmpty()) {
                 currentDir = "/";
             }
             sessionThread.writeString("257 \"" + currentDir + "\"\r\n");

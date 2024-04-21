@@ -76,7 +76,7 @@ public abstract class ExecuteAsRootBase
         try
         {
             ArrayList<String> commands = getCommandsToExecute();
-            if (null != commands && commands.size() > 0)
+            if (null != commands && !commands.isEmpty())
             {
                 Process suProcess = Runtime.getRuntime().exec("su");
 

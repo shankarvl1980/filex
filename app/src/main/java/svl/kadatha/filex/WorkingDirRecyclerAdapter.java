@@ -57,7 +57,7 @@ public class WorkingDirRecyclerAdapter extends RecyclerView.Adapter<WorkingDirRe
 					public void onClick(View p)
 					{
 						pos=getBindingAdapterPosition();
-						if(custom_dir_selected_array.size()>0)
+						if(!custom_dir_selected_array.isEmpty())
 						{
 							onLongClickProcedure(p);
 						}

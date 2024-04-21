@@ -46,7 +46,7 @@ public class CmdMKD extends FtpCmd implements Runnable {
         {
             // If the param is an absolute path, use it as is. If it's a
             // relative path, prepend the current working directory.
-            if (param.length() < 1) {
+            if (param.isEmpty()) {
                 errString = "550 Invalid name\r\n";
                 break mainblock;
             }

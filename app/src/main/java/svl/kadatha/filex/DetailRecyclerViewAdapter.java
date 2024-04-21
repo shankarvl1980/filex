@@ -204,7 +204,7 @@ public abstract class DetailRecyclerViewAdapter extends  RecyclerView.Adapter <D
 
 
 				int t = df.filePOJO_list.size();
-				if (df.viewModel.mselecteditems.size() > 0) {
+				if (!df.viewModel.mselecteditems.isEmpty()) {
 					deselectAll();
 				} else {
 					notifyDataSetChanged();

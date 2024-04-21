@@ -45,7 +45,7 @@ public class CmdRMD extends FtpCmd implements Runnable {
         String errString = null;
         mainblock:
         {
-            if (param.length() < 1) {
+            if (param.isEmpty()) {
                 errString = "550 Invalid argument\r\n";
                 break mainblock;
             }

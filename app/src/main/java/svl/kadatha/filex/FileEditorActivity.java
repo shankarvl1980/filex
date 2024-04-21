@@ -470,7 +470,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						viewModel.textViewUndoRedo.disconnect();
 						clear_cache=false;

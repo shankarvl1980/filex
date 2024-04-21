@@ -41,7 +41,7 @@
         />
     <CheckBox
         android:id="@+id/select_app_remember_choice_checkbox"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/dialog_background"
         android:padding="@dimen/ten_dp"
@@ -51,9 +51,19 @@
         android:textSize="19sp"
         android:minHeight="36dp"
         app:layout_constraintBottom_toTopOf="@id/fragment_app_selector_button_layout"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_select_app_recyclerview" />
+    <ImageView
+        android:id="@+id/select_app_remember_choice_info_image"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        app:layout_constraintStart_toEndOf="@id/select_app_remember_choice_checkbox"
+        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
+        android:src="@drawable/dialog_properties_icon"
+        />
+
 
     <FrameLayout
         android:id="@+id/fragment_app_selector_progressbar"

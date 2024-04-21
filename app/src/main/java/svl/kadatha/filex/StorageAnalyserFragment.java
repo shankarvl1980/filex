@@ -211,7 +211,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 after_filledFilePojos_procedure();
             }
             else {
-                if(viewModel.filePOJOS.size()>0 && (viewModel.filePOJOS.get(0).getTotalSizePercentage()==null || viewModel.filePOJOS.get(viewModel.filePOJOS.size()-1).getTotalSizePercentage()==null))
+                if(!viewModel.filePOJOS.isEmpty() && (viewModel.filePOJOS.get(0).getTotalSizePercentage()==null || viewModel.filePOJOS.get(viewModel.filePOJOS.size()-1).getTotalSizePercentage()==null))
                 {
                     viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     viewModel.fill_filePOJOs_size(fileObjectType,fileclickselected,currentUsbFile);
@@ -497,7 +497,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
 
                     int t=filePOJO_list.size();
 
-                    if(viewModel.mselecteditems.size()>0)
+                    if(!viewModel.mselecteditems.isEmpty())
                     {
                         deselectAll();
                     }
@@ -704,7 +704,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
         if(adapter!=null)
         {
-            if(viewModel.filePOJOS.size()>0 && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null && !fileclickselected.equals("Large Files") && !fileclickselected.equals("Duplicate Files"))
+            if(!viewModel.filePOJOS.isEmpty() && viewModel.filePOJOS.get(0).getTotalSizePercentage()==null && !fileclickselected.equals("Large Files") && !fileclickselected.equals("Duplicate Files"))
             {
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);

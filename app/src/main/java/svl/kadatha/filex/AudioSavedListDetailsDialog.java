@@ -244,7 +244,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 					else if(scroll_distance<-threshold && !toolbar_visible)
 					{
-						if(audioListViewModel.audio_pojo_selected_items.size()>0)
+						if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 						{
 							bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 							toolbar_visible=true;
@@ -265,7 +265,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			{
 				public void onClick(View p1)
 				{
-					if(audioListViewModel.audio_pojo_selected_items.size()>0)
+					if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						clear_selection();
 					}
@@ -538,7 +538,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				return;
 			}
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-			if(audioListViewModel.audio_pojo_selected_items.size()<1)
+			if(audioListViewModel.audio_pojo_selected_items.isEmpty())
 			{
 				return;
 			}
@@ -557,7 +557,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
 				}
 
-				if (AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
+				if (!AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
 					File f = new File(audio.getData());
@@ -604,7 +604,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 			switch(p3)
 			{
 				case 0:
-					if(audioListViewModel.audio_pojo_selected_items.size()<1)
+					if(audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						break;
 					}
@@ -618,7 +618,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					break;
 
 				case 1:
-					if(audioListViewModel.audio_pojo_selected_items.size()<1)
+					if(audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						break;
 					}
@@ -821,7 +821,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					}
 
 					int t=clicked_audio_list.size();
-					if(audioListViewModel.audio_pojo_selected_items.size()>0)
+					if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						clear_selection();
 					}

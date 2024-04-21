@@ -192,7 +192,7 @@ public class AudioSavedListFragment extends Fragment
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_list;
-					if(audioSelectListener!=null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()!=0)
+					if(audioSelectListener!=null && !AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())
 					{
 						AudioPlayerService.CURRENT_PLAY_NUMBER=0;
 						AudioPOJO audio=AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
@@ -297,7 +297,7 @@ public class AudioSavedListFragment extends Fragment
 			int id=p1.getId();
 			if(id==R.id.toolbar_btn_1)
 			{
-				if (audioListViewModel.audio_saved_list_selected_items.size() >= 1) {
+				if (!audioListViewModel.audio_saved_list_selected_items.isEmpty()) {
 					{
 						progress_bar.setVisibility(View.VISIBLE);
 						audioListViewModel.fetch_saved_audio_list(new ArrayList<>(audioListViewModel.audio_saved_list_selected_items.values()));
@@ -309,7 +309,7 @@ public class AudioSavedListFragment extends Fragment
 			}
 			else if(id==R.id.toolbar_btn_2)
 			{
-				if (audioListViewModel.audio_saved_list_selected_items.size() >= 1) {
+				if (!audioListViewModel.audio_saved_list_selected_items.isEmpty()) {
 					if(audioListViewModel.audio_saved_list_selected_items.containsValue(AudioPlayerActivity.CURRENT_PLAY_LIST))
 					{
 						AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>();

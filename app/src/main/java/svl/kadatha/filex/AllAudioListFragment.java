@@ -244,7 +244,7 @@ public class AllAudioListFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(deleteAudioViewModel.deleted_audio_files.size()>0)
+					if(!deleteAudioViewModel.deleted_audio_files.isEmpty())
 					{
 						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
@@ -412,7 +412,7 @@ public class AllAudioListFragment extends Fragment
                     audioFragmentListener.hideKeyBoard();
                 }
 
-				if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+				if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 					return;
 				}
 				AudioPlayerService.AUDIO_QUEUED_ARRAY=new ArrayList<>(audioListViewModel.audio_pojo_selected_items.values());
@@ -430,7 +430,7 @@ public class AllAudioListFragment extends Fragment
 					}
 				}
 
-				if (audioSelectListener != null && AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
+				if (audioSelectListener != null && !AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
 					Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -449,7 +449,7 @@ public class AllAudioListFragment extends Fragment
                     audioFragmentListener.hideKeyBoard();
                 }
 
-                if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+                if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 					return;
 				}
 
@@ -462,7 +462,7 @@ public class AllAudioListFragment extends Fragment
                     audioFragmentListener.hideKeyBoard();
                 }
 
-                if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+                if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 					return;
 				}
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
@@ -531,7 +531,7 @@ public class AllAudioListFragment extends Fragment
 		{
 			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
-			if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+			if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 				return;
 			}
 			switch(p3)
@@ -740,7 +740,7 @@ public class AllAudioListFragment extends Fragment
 					}
 
 					int t=audio_list.size();
-					if(audioListViewModel.audio_pojo_selected_items.size()>0)
+					if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						clear_selection();
 					}

@@ -323,7 +323,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserFragment.viewModel.mselecteditems.size()==0)
+                if(storageAnalyserFragment.viewModel.mselecteditems.isEmpty())
                 {
                     Global.print(context,getString(R.string.could_not_perform_action));
                     DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
@@ -347,7 +347,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             @Override
             public void onClick(View view) {
                 final StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserFragment.viewModel.mselecteditems.size()==0)
+                if(storageAnalyserFragment.viewModel.mselecteditems.isEmpty())
                 {
                     Global.print(context,getString(R.string.could_not_perform_action));
                     DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
@@ -658,7 +658,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         {
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
         }
-        else if(storageAnalyserFragment.viewModel.mselecteditems.size()>0)
+        else if(!storageAnalyserFragment.viewModel.mselecteditems.isEmpty())
         {
             DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
         }

@@ -425,7 +425,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					{
 						Global.print(context,context.getString(R.string.not_supported));
 					}
-					else if(fileDuplicationViewModel.source_duplicate_file_path_array.size()==0)
+					else if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,
@@ -435,7 +435,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					else
 					{
 						FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
-								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array,fileDuplicationViewModel.cut);
+								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array,null,fileDuplicationViewModel.cut);
 						fileReplaceConfirmationDialog.show(fm, "paste_dialog");
 					}
 					fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -1446,7 +1446,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 		}
-		else if(df.viewModel.mselecteditems.size()>0)
+		else if(!df.viewModel.mselecteditems.isEmpty())
 		{
 			actionmode_finish(df,df.fileclickselected);
 		}
@@ -1610,12 +1610,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	public void workingDirRemove()
 	{
-		if(working_dir_arraylist==null || working_dir_arraylist.size()==0)
+		if(working_dir_arraylist==null || working_dir_arraylist.isEmpty())
 		{
 			return;
 		}
 
-		if(workingDirRecyclerAdapter.custom_dir_selected_array.size()<1)
+		if(workingDirRecyclerAdapter.custom_dir_selected_array.isEmpty())
 		{
 			Global.print(context,getString(R.string.select_directories_by_long_pressing));
 		}
@@ -1892,7 +1892,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		{
 			imm.hideSoftInputFromWindow(search_view.getWindowToken(),0);
 			final DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
-			if(df.viewModel.mselecteditems.size()==0)
+			if(df.viewModel.mselecteditems.isEmpty())
 			{
 				Global.print(context,getString(R.string.could_not_perform_action));
 				actionmode_finish(df,df.fileclickselected);
@@ -1956,7 +1956,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								if ((df.fileObjectType == FileObjectType.FILE_TYPE) || (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE)) {
 									ArrayList<File> file_list_excluding_dir;
 									file_list_excluding_dir = iterate_to_attach_file(df.viewModel.mselecteditems);
-									if (file_list_excluding_dir.size() == 0) {
+									if (file_list_excluding_dir.isEmpty()) {
 										Global.print(context,getString(R.string.directories_can_not_be_sent_select_one_file));
 										break;
 									}
@@ -1969,7 +1969,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									{
 										ArrayList<Uri> uri_list_excluding_dir;
 										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditems,df);
-										if (uri_list_excluding_dir.size() == 0) {
+										if (uri_list_excluding_dir.isEmpty()) {
 											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
 											break;
 										}
@@ -2179,7 +2179,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				DetailFragment.CUT_COPY_FILECLICKSELECTED="";
 				paste_pastecancel_view_procedure(df);
 			} else if (id == R.id.toolbar_btn_4) {
-				if (df.viewModel.mselecteditems.size() > 0) {
+				if (!df.viewModel.mselecteditems.isEmpty()) {
 					size = df.viewModel.mselecteditems.size();
 					for (int i = 0; i < size; ++i) {
 						files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
@@ -2499,7 +2499,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			UsbMassStorageDevice device=UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
 			try {
 				device.init();
-				if(device.getPartitions().size()==0)
+				if(device.getPartitions().isEmpty())
 				{
 					Global.print(context, getString(R.string.error_setting_up_device));
 					return;
@@ -2537,7 +2537,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	private void discoverDevice()
 	{
-		if(UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.size()>0)
+		if(!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty())
 		{
 			setupDevice();
 		}

@@ -161,7 +161,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
         Timber.tag(TAG).d( "discoverDevice() " + device.toString());
         Context context = getContext();
         assert context != null;
-        if(USB_MASS_STORAGE_DEVICES.size()>0)return;
+        if(!USB_MASS_STORAGE_DEVICES.isEmpty())return;
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {

@@ -57,7 +57,7 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 		}
 
-		if(files_selected_array.size()==0)dismissAllowingStateLoss();
+		if(files_selected_array.isEmpty())dismissAllowingStateLoss();
 	}
 
 	public static PasteSetUpDialog getInstance(String source_folder,FileObjectType sourceFileObjectType,String dest_folder,FileObjectType destFileObjectType,
@@ -283,7 +283,7 @@ public class PasteSetUpDialog extends DialogFragment
 
 	private void initiate_startActivity()
 	{
-		if(files_selected_array.size()==0)
+		if(files_selected_array.isEmpty())
 		{
 			Global.print(context,getString(R.string.could_not_perform_action));
 			dismissAllowingStateLoss();

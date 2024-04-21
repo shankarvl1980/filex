@@ -303,7 +303,7 @@ public class VideoViewContainerFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
 						for(FilePOJO filePOJO:deleteFileOtherActivityViewModel.deleted_files)
@@ -321,7 +321,7 @@ public class VideoViewContainerFragment extends Fragment
 						}
 
 						adapter.notifyDataSetChanged();
-						if(viewModel.video_list.size()<1)
+						if(viewModel.video_list.isEmpty())
 						{
 							getActivity().finish();
 						}

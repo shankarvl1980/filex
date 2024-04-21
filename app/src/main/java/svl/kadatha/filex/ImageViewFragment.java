@@ -437,13 +437,13 @@ ImageViewFragment extends Fragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(deleteFileOtherActivityViewModel.deleted_files.size()>0)
+					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						viewModel.album_file_pojo_list.removeAll(deleteFileOtherActivityViewModel.deleted_files);
 						viewModel.total_images=viewModel.album_file_pojo_list.size();
 						image_view_adapter.notifyDataSetChanged();
 						picture_selector_adapter.notifyDataSetChanged();
-						if(viewModel.album_file_pojo_list.size()<1)
+						if(viewModel.album_file_pojo_list.isEmpty())
 						{
 							getActivity().finish();
 						}

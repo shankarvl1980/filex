@@ -120,7 +120,7 @@ public class FtpDetailsDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
 
-                if(viewModel.mselecteditems.size()>0)
+                if(!viewModel.mselecteditems.isEmpty())
                 {
                     clear_selection();
                 }

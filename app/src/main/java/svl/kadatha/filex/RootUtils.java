@@ -14,7 +14,7 @@ public class RootUtils {
 
         try
         {
-            if (null != commands && commands.size() > 0)
+            if (null != commands && !commands.isEmpty())
             {
                 Process suProcess = Runtime.getRuntime().exec("su");
 

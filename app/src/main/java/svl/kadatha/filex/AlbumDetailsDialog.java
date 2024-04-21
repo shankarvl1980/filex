@@ -220,7 +220,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					}
 					else if(scroll_distance<-threshold && !toolbar_visible)
 					{
-						if(audioListViewModel.audio_pojo_selected_items.size()>0)
+						if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 						{
 							bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 							toolbar_visible=true;
@@ -240,7 +240,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		{
 			public void onClick(View p1)
 			{
-				if(audioListViewModel.audio_pojo_selected_items.size()>0)
+				if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 				{
 					clear_selection();
 				}
@@ -386,7 +386,7 @@ public class AlbumDetailsDialog extends DialogFragment
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if (deleteAudioViewModel.deleted_audio_files.size() > 0) {
+					if (!deleteAudioViewModel.deleted_audio_files.isEmpty()) {
 						audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
 						num_all_audio = total_audio_list.size();
@@ -551,7 +551,7 @@ public class AlbumDetailsDialog extends DialogFragment
 			switch(p3)
 			{
 				case 0:
-					if(audioListViewModel.audio_pojo_selected_items.size()<1)
+					if(audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						break;
 					}
@@ -565,7 +565,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					break;
 
 				case 1:
-					if(audioListViewModel.audio_pojo_selected_items.size()<1)
+					if(audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						break;
 					}
@@ -646,7 +646,7 @@ public class AlbumDetailsDialog extends DialogFragment
 					}
 
 					int t=audio_list.size();
-					if(audioListViewModel.audio_pojo_selected_items.size()>0)
+					if(!audioListViewModel.audio_pojo_selected_items.isEmpty())
 					{
 						clear_selection();
 					}
@@ -781,7 +781,7 @@ public class AlbumDetailsDialog extends DialogFragment
 				return;
 			}
 			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-			if (audioListViewModel.audio_pojo_selected_items.size() < 1) {
+			if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 				return;
 			}
 			final Bundle bundle=new Bundle();
@@ -809,7 +809,7 @@ public class AlbumDetailsDialog extends DialogFragment
 
 			} else if (id == R.id.toolbar_btn_2) {
 				AudioPlayerService.AUDIO_QUEUED_ARRAY = new ArrayList<>(audioListViewModel.audio_pojo_selected_items.values());
-				if (AudioPlayerService.AUDIO_QUEUED_ARRAY.size() != 0) {
+				if (!AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
 					AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
 					AudioPOJO audio = AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER);
 					File f=new File(audio.getData());
