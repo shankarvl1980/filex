@@ -56,7 +56,7 @@ public class CopyToActivity extends BaseActivity{
     private final ArrayList<String> file_name_list=new ArrayList<>();
     private FrameLayout progress_bar;
     public final static String DUPLICATE_FILE_NAMES_REQUEST_CODE="copy_to_duplicate_file_names_request_code";
-    private ArrayList<String> overwritten_file_path_list;
+    private ArrayList<String> overwritten_file_path_list=new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,7 +129,6 @@ public class CopyToActivity extends BaseActivity{
         {
             public void onClick(View v)
             {
-
                 if(data_list==null)
                 {
                     Global.print(context,getString(R.string.could_not_perform_action)+" - "+"Uri is null");
@@ -139,10 +138,8 @@ public class CopyToActivity extends BaseActivity{
                 if(data_list.size()!=1){
                     file_name_edit_text.setText("");
                     file_name_edit_text.setEnabled(false);
+                    file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
                 }
-//                else {
-//                    file_name_edit_text.setEnabled(true);
-//                }
 
                 String file_name=file_name_edit_text.getText().toString().trim();
                 if(CheckString.whetherStringContainsSpecialCharacters(file_name))
@@ -151,7 +148,10 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
-
+                if(!file_name.isEmpty()){
+                    file_name_list.clear();
+                    file_name_list.add(file_name);
+                }
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 viewModel.destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+folderclickselected);
                 final String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected,file_name);
@@ -179,8 +179,31 @@ public class CopyToActivity extends BaseActivity{
                     Global.print(context,getString(R.string.maximum_3_services_processed));
                     return;
                 }
-                progress_bar.setVisibility(View.VISIBLE);
-                fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false);
+                if(data_list.size()==1){
+                    if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path,viewModel.destFilePOJOs))
+                    {
+                        if(!ArchiveSetUpDialog.isFilePathDirectory(full_path,destFileObjectType,viewModel.destFilePOJOs))
+                        {
+                            final Bundle bundle=new Bundle();
+                            bundle.putString("file_name",file_name);
+                            bundle.putString("new_name",file_name);
+                            ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE,bundle);
+                            archiveReplaceConfirmationDialog.show(getSupportFragmentManager(),null);
+                        }
+                        else
+                        {
+                            Global.print(context,getString(R.string.a_directory_with_output_file_name_already_exists)+" '"+file_name+"'");
+                        }
+                    }
+                    else{
+                        launchService();
+                    }
+                }
+                else{
+                    progress_bar.setVisibility(View.VISIBLE);
+                    fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false);
+                }
+
             }
 
         });
@@ -215,27 +238,16 @@ public class CopyToActivity extends BaseActivity{
             }
         });
 
-
-//        getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, CopyToActivity.this, new FragmentResultListener() {
-//            @Override
-//            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-//                if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
-//                {
-//                    emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
-//                    if(emptyService==null)
-//                    {
-//                        Global.print(context,getString(R.string.maximum_3_services_processed));
-//                        return;
-//                    }
-//                    Intent intent=new Intent(context,emptyService);
-//                    intent.setAction(COPY_TO_ACTION);
-//                    intent.putExtra("bundle",result);
-//                    context.startActivity(intent);
-//                    imm.hideSoftInputFromWindow(file_name_edit_text.getWindowToken(), 0);
-//                    finish();
-//                }
-//            }
-//        });
+        getSupportFragmentManager().setFragmentResultListener(ARCHIVE_REPLACE_REQUEST_CODE, CopyToActivity.this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE))
+                {
+                    overwritten_file_path_list=file_name_list;
+                    launchService();
+                }
+            }
+        });
 
         getSupportFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
@@ -297,6 +309,8 @@ public class CopyToActivity extends BaseActivity{
             if(action.equals(Intent.ACTION_SEND_MULTIPLE))
             {
                 data_list = (List<Uri>) bundle.get(Intent.EXTRA_STREAM);
+                file_name_edit_text.setEnabled(false);
+                file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
             }
             else if(action.equals(Intent.ACTION_SEND))
             {
@@ -307,6 +321,7 @@ public class CopyToActivity extends BaseActivity{
                 file_name_list.add(getFileNameOfUri(context,data));
             }
 
+
             if(savedInstanceState==null)
             {
                 if(data_list!=null && !data_list.isEmpty())
@@ -314,9 +329,6 @@ public class CopyToActivity extends BaseActivity{
                     if(data_list.size()==1){
                         String f_name=file_name_list.get(0);
                         file_name_edit_text.setText(f_name==null ? "" : f_name);
-                    }
-                    else {
-                        file_name_edit_text.setEnabled(false);
                     }
 
                     browse_button.callOnClick();

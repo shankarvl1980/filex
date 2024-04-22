@@ -198,7 +198,6 @@ public class ArchiveDeletePasteFileService1 extends Service
 			case "copy_to":
 				if(bundle!=null)
 				{
-					//data=bundle.getParcelable("data");
 					data_list=bundle.getParcelableArrayList("data_list");
 					overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
 					file_name=bundle.getString("file_name");
@@ -1216,7 +1215,10 @@ public class ArchiveDeletePasteFileService1 extends Service
 				}
 
 			}
-			filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_file_path_list);
+			if(counter_no_files>0){
+				filePOJO=FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_file_path_list);
+			}
+
 
 			copied_files_name.clear();
 			copied_source_file_path_list.clear();

@@ -68,8 +68,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
-
 		View v=inflater.inflate(R.layout.fragment_replace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);

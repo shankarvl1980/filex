@@ -277,8 +277,7 @@ public final class FileUtil
 		} catch (Exception e) {
 			return false;
 		}
-		// ignore exception
-		// ignore exception
+
 		return true;
 	}
 
