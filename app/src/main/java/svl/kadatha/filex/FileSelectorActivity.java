@@ -712,7 +712,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
                 if (!MainActivity.USB_ATTACHED) {
                     FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);

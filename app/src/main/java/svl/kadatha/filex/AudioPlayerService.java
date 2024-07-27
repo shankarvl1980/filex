@@ -798,7 +798,7 @@ public class AudioPlayerService extends Service
 		private final android.app.NotificationManager nManager;
 		private final androidx.core.app.NotificationCompat.Builder nBuilder;
 		private Notification notification;
-		int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+		final int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
 
 
 		public NotificationPanel(Context parent)

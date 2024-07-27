@@ -1433,7 +1433,7 @@ public final class FileUtil
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+
 		}
 
 		return false;
