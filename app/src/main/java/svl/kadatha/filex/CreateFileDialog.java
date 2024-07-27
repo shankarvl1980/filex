@@ -120,11 +120,8 @@ public class CreateFileDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					final String new_name=new_file_name_edittext.getText().toString().trim();
-					if(viewModel.filePOJO!=null)
+					if(viewModel.file_created)
 					{
 						Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 						df.clearSelectionAndNotifyDataSetChanged();
@@ -148,6 +145,7 @@ public class CreateFileDialog extends DialogFragment
 					imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(),0);
 					dismissAllowingStateLoss();
 				}
+
 			}
 		});
 

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
@@ -176,7 +177,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
                     localBroadcastManager.sendBroadcast(intent);
 
                 } else {
-                    int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;
+                    int pending_intent_flag= Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
                     PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
                             ACTION_USB_PERMISSION), pending_intent_flag);
                     usbManager.requestPermission(device, permissionIntent);

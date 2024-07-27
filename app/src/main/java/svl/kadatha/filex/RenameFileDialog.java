@@ -134,7 +134,7 @@ public class RenameFileDialog extends DialogFragment
 				}
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					onRenameResult(viewModel.filePOJO != null,new_name,viewModel.filePOJO);
+					onRenameResult(viewModel.fileNameChanged,new_name,viewModel.filePOJO);
 				}
 			}
 		});

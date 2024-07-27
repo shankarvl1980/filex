@@ -37,6 +37,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
+                file_created=false;
                 if(file_type==0)
                 {
                     if(fileObjectType==FileObjectType.ROOT_TYPE)
@@ -88,6 +89,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
+                fileNameChanged=false;
                 if (fileObjectType==FileObjectType.ROOT_TYPE)
                 {
                     if(RootUtils.CAN_RUN_ROOT_COMMANDS())
