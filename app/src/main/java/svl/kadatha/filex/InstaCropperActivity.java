@@ -160,23 +160,34 @@ public class InstaCropperActivity extends AppCompatActivity {
                 return;
             }
 
-            try {
-                OutputStream os = getContentResolver().openOutputStream(mOutputUri);
+            try (OutputStream os = getContentResolver().openOutputStream(mOutputUri)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            } catch (IOException e) {
 
-                bitmap.compress(Bitmap.CompressFormat.JPEG, mOutputQuality, os);
-
-                os.flush();
-                os.close();
-
-                Intent data = new Intent();
-                data.setData(mOutputUri);
-                data.putExtra(EXTRA_FILE_NAME,file_name);
-                setResult(RESULT_OK, data);
-            } catch (IOException e)
-            {
-                setResult(RESULT_CANCELED);
             }
+            Intent data = new Intent();
+            data.setData(mOutputUri);
+            data.putExtra(EXTRA_FILE_NAME,file_name);
+            setResult(RESULT_OK, data);
             finish();
+
+//            try {
+//                OutputStream os = getContentResolver().openOutputStream(mOutputUri);
+//
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, mOutputQuality, os);
+//
+//                os.flush();
+//                os.close();
+//
+//                Intent data = new Intent();
+//                data.setData(mOutputUri);
+//                data.putExtra(EXTRA_FILE_NAME,file_name);
+//                setResult(RESULT_OK, data);
+//            } catch (IOException e)
+//            {
+//                setResult(RESULT_CANCELED);
+//            }
+//            finish();
         }
 
     };
