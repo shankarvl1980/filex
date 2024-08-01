@@ -106,7 +106,7 @@ public class InstaCropperActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.crop_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
         int[] bottom_drawables ={R.drawable.wallpaper_icon,R.drawable.no_icon};
-        String [] titles=new String[]{getString(R.string.set_as_wallpaper),getString(R.string.cancel)};
+        String [] titles=new String[]{getString(R.string.set_wallpaper),getString(R.string.cancel)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
 
         toolbar.addView(tb_layout);

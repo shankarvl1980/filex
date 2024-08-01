@@ -101,7 +101,7 @@ ImageViewFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
-		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_as_wallpaper),5));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_wallpaper),5));
 
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
@@ -526,7 +526,7 @@ ImageViewFragment extends Fragment
 				progress_bar.setVisibility(View.VISIBLE);
 				viewModel.setWallPaper(result,context.getExternalCacheDir());
 			}
-			else
+			else if(result.getResultCode()==Activity.RESULT_CANCELED)
 			{
 				Global.print(context,getString(R.string.could_not_be_set_as_wallpaper));
 			}

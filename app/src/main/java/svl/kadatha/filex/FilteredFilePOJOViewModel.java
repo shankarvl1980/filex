@@ -248,7 +248,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         try
                         {
                             wm.setStream(application.getContentResolver().openInputStream(uri));
-                            Global.print_background_thread(application,application.getString(R.string.set_as_wallpaper));
+                            Global.print_background_thread(application,application.getString(R.string.set_wallpaper));
                         }
                         catch(IOException e){}
                         finally

@@ -69,7 +69,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup
 
 		int icon_dimension=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,36,getResources().getDisplayMetrics());
 
-		toppadding=(Global.ACTION_BAR_HEIGHT-icon_dimension)/2;
+		toppadding=(Global.ACTION_BAR_HEIGHT-icon_dimension)/4;
 
 		child_count=Math.min(child_count,getChildCount());
 		int w= toolbar_width /child_count;
@@ -86,16 +86,12 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup
 		for(int i=0; i<child_count; ++i)
 		{
 			View child=getChildAt(i);
-
 			child.setLayoutParams(params);
 			child.setPadding(0,toppadding,0,toppadding);
-
 			measureChildWithMargins(child,widthMeasureSpec,widthUsed,Global.ACTION_BAR_HEIGHT,heightUsed);
 			widthUsed+=child.getMeasuredWidth()+child.getPaddingStart()+child.getPaddingEnd();
 			heightUsed=child.getMeasuredHeight()+child.getPaddingTop()+child.getPaddingBottom();
 			maxHeight=Math.max(maxHeight,heightUsed);
-
-
 		}
 		setMeasuredDimension(widthMeasureSpec,Global.ACTION_BAR_HEIGHT);
 
