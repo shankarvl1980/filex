@@ -383,7 +383,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 */
 		Global.WARN_NOTIFICATIONS_DISABLED(context,NotifManager.CHANNEL_ID,alreadyNotificationWarned);
 
-
 		viewModel.isDeletionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -2078,10 +2077,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				}
 				popupWindowAdapter.notifyDataSetChanged();
+				int offset=actionmode_toolbar.getHeight()+Global.FOUR_DP;//Global.SCREEN_HEIGHT-action_bar_location[1]-Global.GET_NAVIGATION_STATUS_BAR_HEIGHT(context)-Global.ACTION_BAR_HEIGHT;
 
-				//listPopWindow.showAsDropDown(v,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0, (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
+				//listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0, (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
 
+				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,offset);
 			}
 		}
 	}

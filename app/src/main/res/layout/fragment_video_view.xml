@@ -89,7 +89,7 @@
 		android:layout_width="?android:attr/actionBarSize"
 		android:layout_height="?android:attr/actionBarSize"
 		android:background="@null"
-		android:src="@drawable/backward_icon"
+		android:src="@drawable/backward_10_icon"
 		android:adjustViewBounds="true"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/video_player_seekbar"
@@ -116,7 +116,7 @@
 		android:layout_height="?android:attr/actionBarSize"
 
 		android:background="@null"
-		android:src="@drawable/forward_icon"
+		android:src="@drawable/forward_10_icon"
 		android:adjustViewBounds="true"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/video_player_orientation_change"

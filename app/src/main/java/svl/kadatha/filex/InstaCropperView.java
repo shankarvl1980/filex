@@ -16,9 +16,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-/**
- * Created by Yashar on 3/8/2017.
- */
 
 public class InstaCropperView extends View {
 
@@ -363,6 +360,34 @@ public class InstaCropperView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        float screenRatio = (float) Global.SCREEN_WIDTH / Global.SCREEN_HEIGHT;
+        int targetWidth = (int) (Global.SCREEN_WIDTH * 0.6f);
+        int targetHeight = (int) (targetWidth / screenRatio);
+
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int width, height;
+
+        if (widthMode == MeasureSpec.EXACTLY) {
+            width = Math.min(widthSize, targetWidth);
+            height = (int) (width / screenRatio);
+        } else if (heightMode == MeasureSpec.EXACTLY) {
+            height = Math.min(heightSize, targetHeight);
+            width = (int) (height * screenRatio);
+        } else {
+            width = targetWidth;
+            height = targetHeight;
+        }
+
+        setMeasuredDimension(width, height);
+    }
+
+    /*
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -432,7 +457,7 @@ public class InstaCropperView extends View {
 
         setMeasuredDimension(targetWidth, targetHeight);
     }
-
+*/
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -831,7 +856,8 @@ public class InstaCropperView extends View {
         float maximumAllowedWidth = mImageRawWidth;
         float maximumAllowedHeight = mImageRawHeight;
 
-        return Math.min(maximumAllowedWidth / (float) mWidth, maximumAllowedHeight / (float) mHeight);
+        float baseScale=Math.min(maximumAllowedWidth / (float) mWidth, maximumAllowedHeight / (float) mHeight);
+        return baseScale*2.0f;
     }
 
     private float getMinimumAllowedScale() {

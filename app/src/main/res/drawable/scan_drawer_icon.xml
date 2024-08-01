@@ -9,7 +9,7 @@
       android:strokeWidth="0.262"
       android:strokeColor="?attr/drawer_icon_color"/>
 </vector-->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
+<!--vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="30dp"
     android:height="30dp"
     android:viewportWidth="24"
@@ -29,4 +29,46 @@
   <path
       android:fillColor="?attr/drawer_icon_color"
       android:pathData="M6.85,11h10.3v2h-10.3z" />
+</vector-->
+<!--vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M5.905,2.66C3.2968,2.66 1.18,4.7768 1.18,7.385V10.51h2.52V7.385C3.7,6.1528 4.6728,5.18 5.905,5.18H9.03v-2.52H5.905z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M18.095,2.66H14.97v2.52h3.125C19.3272,5.18 20.3,6.1528 20.3,7.385V10.51h2.52V7.385C22.82,4.7768 20.7032,2.66 18.095,2.66z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M5.905,21.34C3.2968,21.34 1.18,19.2232 1.18,16.615V13.49h2.52v3.125C3.7,17.8472 4.6728,18.82 5.905,18.82H9.03v2.52H5.905z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M18.095,21.34H14.97v-2.52h3.125c1.2322,0 2.205,-0.9728 2.205,-2.205V13.49h2.52v3.125C22.82,19.2232 20.7032,21.34 18.095,21.34z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M6.22,11.1h11.56v2.4h-11.56z" />
+</vector-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M5.905,2.894C3.5671,2.894 1.714,4.7471 1.714,7.085V9.91h2.268V7.085C3.982,6.0375 4.8575,5.162 5.905,5.162H8.73v-2.268H5.905z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M18.095,2.894H15.27v2.268h2.825C19.1425,5.162 20.018,6.0375 20.018,7.085V9.91h2.268V7.085C22.286,4.7471 20.4329,2.894 18.095,2.894z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M5.905,21.106C3.5671,21.106 1.714,19.2529 1.714,16.915V14.09h2.268v2.825C3.982,17.9625 4.8575,18.838 5.905,18.838H8.73v2.268H5.905z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M18.095,21.106H15.27v-2.268h2.825c1.0475,0 1.923,-0.8755 1.923,-1.923V14.09h2.268v2.825C22.286,19.2529 20.4329,21.106 18.095,21.106z" />
+  <path
+      android:fillColor="?attr/drawer_icon_color"
+      android:pathData="M6.598,11.34h10.804v2.16h-10.804z" />
 </vector>

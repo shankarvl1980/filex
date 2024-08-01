@@ -576,13 +576,14 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					clear_selection();
 				} else {
 					//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-					listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
+					//listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
+					listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,bottom_toolbar.getHeight()+Global.FOUR_DP);
 
 				}
 			} else if (id == R.id.toolbar_btn_4) {
 
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height));
-				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
+				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,bottom_toolbar.getHeight()+Global.FOUR_DP);
 			}
 
 			if(audioFragmentListener!=null)

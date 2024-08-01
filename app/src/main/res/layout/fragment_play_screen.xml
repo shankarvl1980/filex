@@ -156,7 +156,7 @@
             app:layout_constraintStart_toEndOf="@id/prev_image_view"
             app:layout_constraintEnd_toStartOf="@id/play_pause_layout"
             app:layout_constraintTop_toTopOf="@id/play_pause_layout"
-            android:src="@drawable/backward_icon"
+            android:src="@drawable/backward_10_icon"
             android:background="@drawable/select_detail_recyclerview"
             />
         <Space
@@ -210,7 +210,7 @@
             app:layout_constraintEnd_toStartOf="@+id/next_image_view"
             app:layout_constraintStart_toEndOf="@+id/play_pause_layout"
             app:layout_constraintTop_toTopOf="@+id/play_pause_layout"
-            android:src="@drawable/forward_icon"
+            android:src="@drawable/forward_10_icon"
             android:background="@drawable/select_detail_recyclerview"
             />
 

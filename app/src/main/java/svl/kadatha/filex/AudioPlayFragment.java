@@ -343,7 +343,7 @@ public class AudioPlayFragment extends Fragment
 
 
 		EquallyDistributedImageButtonsLayout tb_layout =new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-		int[] drawables ={R.drawable.previous_icon,R.drawable.backward_icon,R.drawable.play_icon,R.drawable.forward_icon,R.drawable.next_icon};
+		int[] drawables ={R.drawable.previous_icon,R.drawable.backward_10_icon,R.drawable.play_icon,R.drawable.forward_10_icon,R.drawable.next_icon};
 		tb_layout.setResourceImageDrawables(drawables);
 
 		Toolbar bottom_toolbar = v.findViewById(R.id.current_play_bottom_toolbar);

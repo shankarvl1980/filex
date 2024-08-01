@@ -466,8 +466,8 @@ public class AllAudioListFragment extends Fragment
 					return;
 				}
 				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,  (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
-
+				//listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,  (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
+				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,  bottom_toolbar.getHeight()+Global.FOUR_DP);
 
 			} else if (id == R.id.toolbar_btn_5) {
                 if(audioFragmentListener!=null)

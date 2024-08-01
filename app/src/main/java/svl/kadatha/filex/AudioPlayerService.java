@@ -523,7 +523,7 @@ public class AudioPlayerService extends Service
 		{
 			if(prepared)
 			{
-				int backward_pos=mp.getCurrentPosition()-5000;
+				int backward_pos=mp.getCurrentPosition()-10000;
 				mp.seekTo(Math.max(backward_pos, 0));
 			}
 
@@ -533,7 +533,7 @@ public class AudioPlayerService extends Service
 		{
 			if(prepared)
 			{
-				int forward_pos=mp.getCurrentPosition()+5000;
+				int forward_pos=mp.getCurrentPosition()+10000;
 				mp.seekTo(Math.min(forward_pos, total_duration));
 			}
 		}
