@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -33,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -856,7 +859,13 @@ public class AudioPlayerService extends Service
 }
 
 			if (albumArt == null) {
-    			albumArt = BitmapFactory.decodeResource(context.getResources(), R.drawable.woofer_icon);
+				Drawable wooferDrawable = ContextCompat.getDrawable(context, R.drawable.woofer_icon);
+				albumArt = Bitmap.createBitmap(wooferDrawable.getIntrinsicWidth(),
+						wooferDrawable.getIntrinsicHeight(),
+						Bitmap.Config.ARGB_8888);
+				Canvas canvas = new Canvas(albumArt);
+				wooferDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+				wooferDrawable.draw(canvas);
 			}
 
 
