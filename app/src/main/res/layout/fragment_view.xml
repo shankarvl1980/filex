@@ -106,7 +106,7 @@
 				app:layout_constraintTop_toTopOf="@id/seekbar_layout"
 				/>
 
-			<SeekBar
+			<svl.kadatha.filex.TickSeekBar
 				android:id="@+id/seekbar_fontsize"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -115,8 +115,12 @@
 				android:max="2"
 				android:paddingStart="38dp"
 				android:paddingEnd="38dp"
-				android:progressDrawable="@drawable/seek_bar"
 				android:progressTint="@null"
+				app:tickCount="3"
+				app:seekBarLineWidth="3dp"
+				app:seekBarColor="?attr/seek_bar_progress"
+				app:tickWidth="3dp"
+				app:tickColor="?attr/seek_bar_progress"
 				android:thumb="@drawable/seek_thumb"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"

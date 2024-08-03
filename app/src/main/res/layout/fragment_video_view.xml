@@ -102,7 +102,7 @@
 		android:layout_height="?android:attr/actionBarSize"
 		android:maxHeight="?attr/actionBarSize"
 		android:minHeight="?attr/actionBarSize"
-		android:progressDrawable="@drawable/seek_bar"
+		android:progressDrawable="@drawable/seek_bar_progress"
 		android:thumb="@drawable/seek_thumb"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/video_player_forward"

@@ -17,6 +17,8 @@ import androidx.appcompat.widget.Toolbar;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import timber.log.Timber;
+
 /**
  * Created by Yashar on 3/11/2017.
  */
@@ -156,6 +158,7 @@ public class InstaCropperActivity extends AppCompatActivity {
         public void onBitmapReady(final Bitmap bitmap) {
             if (bitmap == null) {
                 setResult(RESULT_CANCELED);
+                Timber.tag(Global.TAG).d("result is set with result_canceled");
                 finish();
                 return;
             }
@@ -171,23 +174,6 @@ public class InstaCropperActivity extends AppCompatActivity {
             setResult(RESULT_OK, data);
             finish();
 
-//            try {
-//                OutputStream os = getContentResolver().openOutputStream(mOutputUri);
-//
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, mOutputQuality, os);
-//
-//                os.flush();
-//                os.close();
-//
-//                Intent data = new Intent();
-//                data.setData(mOutputUri);
-//                data.putExtra(EXTRA_FILE_NAME,file_name);
-//                setResult(RESULT_OK, data);
-//            } catch (IOException e)
-//            {
-//                setResult(RESULT_CANCELED);
-//            }
-//            finish();
         }
 
     };

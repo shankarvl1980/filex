@@ -41,4 +41,15 @@
 
     <attr name="storage_analyser_item_background" format="reference"/>
 
+
+
+
+        <declare-styleable name="TickSeekBar">
+            <attr name="tickCount" format="integer" />
+            <attr name="seekBarColor" format="color" />
+            <attr name="seekBarLineWidth" format="dimension" />
+            <attr name="tickColor" format="color" />
+            <attr name="tickWidth" format="dimension" />
+        </declare-styleable>
+
 </resources>

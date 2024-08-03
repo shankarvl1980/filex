@@ -176,7 +176,7 @@
         android:layout_marginBottom="@dimen/layout_margin"
         android:elevation="6dp"
         android:padding="@dimen/layout_margin"
-        android:progressDrawable="@drawable/seek_bar"
+        android:progressDrawable="@drawable/seek_bar_progress"
         android:thumb="@drawable/seek_thumb"
 
         />
@@ -203,7 +203,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:elevation="6dp"
-        android:progressDrawable="@drawable/seek_bar"
+        android:progressDrawable="@drawable/seek_bar_progress"
         android:thumb="@drawable/seek_thumb"
         app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_total_time"

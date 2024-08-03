@@ -35,6 +35,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -844,8 +846,8 @@ public class AudioPlayerService extends Service
         		albumArt = GlideApp.with(context)
             		.asBitmap()
             		.load(albumArtUri)
-            		.placeholder(R.drawable.woofer_icon)
             		.error(R.drawable.woofer_icon)
+					.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             		.submit()
             		.get();
     		} catch (Exception e) {

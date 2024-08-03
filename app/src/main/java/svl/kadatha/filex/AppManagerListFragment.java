@@ -274,9 +274,9 @@ public class AppManagerListFragment extends Fragment {
                     }
                 } else if (SHARE.equals(app_action)) {
 
-                    Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(app_path));
-                    FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
-
+                    //Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(app_path));
+                    //FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
+                    FileIntentDispatch.sendFile(requireContext(), new ArrayList<>(Collections.singletonList(new File(app_path))) );
                 }
                 clear_selection();
             }
