@@ -83,6 +83,9 @@ ImageViewFragment extends Fragment
 	public FrameLayout progress_bar;
 	private static final String DELETE_FILE_REQUEST_CODE="image_file_delete_request_code";
 	private AppCompatActivity activity;
+	private String tree_uri_path;
+	private Uri tree_uri;
+	private final static String SAF_PERMISSION_REQUEST_CODE="image_view_fragment_saf_permission_request_code";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -102,6 +105,7 @@ ImageViewFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_wallpaper),5));
+		//list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon,getString(R.string.rotate),6));
 
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
@@ -244,12 +248,7 @@ ImageViewFragment extends Fragment
 							{
 								context=getContext();
 							}
-							float aspect_ratio;
-							try {
-								aspect_ratio=Global.GET_BITMAP_ASPECT_RATIO(context.getContentResolver().openInputStream(uri));
-							} catch (FileNotFoundException e) {
-								//aspect_ratio=0;
-							}
+
 							if(activity instanceof ImageViewActivity)
 							{
 								((ImageViewActivity)activity).clear_cache=false;
@@ -259,7 +258,28 @@ ImageViewFragment extends Fragment
 							Intent intent=InstaCropperActivity.getIntent(context,uri,FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",tempFile),viewModel.currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
 							activityResultLauncher_crop_request.launch(intent);
 							break;
+						case 5:
+							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
+							{
+								TouchImageView currentImageView = (TouchImageView) view_pager.findViewWithTag("image_" + view_pager.getCurrentItem());
+								if (currentImageView != null) {
+									float currentRotation = currentImageView.getRotation();
+									currentImageView.setRotation(currentRotation + 90);
+								}
+							}
+							else{
+								if(!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(),viewModel.currently_shown_file.getPath()))
+								{
+									if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) return;
+								}
+								else{
+									progress_bar.setVisibility(View.VISIBLE);
+									viewModel.rotate(tree_uri,tree_uri_path);
+								}
 
+							}
+
+							break;
 						default:
 							break;
 
@@ -453,6 +473,25 @@ ImageViewFragment extends Fragment
 			}
 		});
 
+		viewModel.isRotated.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+			@Override
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+
+					image_view_adapter.notifyDataSetChanged();
+					picture_selector_adapter.notifyDataSetChanged();
+					progress_bar.setVisibility(View.GONE);
+					viewModel.isRotated.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+			}
+		});
+
+
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -476,6 +515,27 @@ ImageViewFragment extends Fragment
 			}
 		});
 
+		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
+				{
+					tree_uri=result.getParcelable("tree_uri");
+					tree_uri_path=result.getString("tree_uri_path");
+					if(!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(),viewModel.currently_shown_file.getPath()))
+					{
+						if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) return;
+					}
+					else{
+						progress_bar.setVisibility(View.VISIBLE);
+						viewModel.rotate(tree_uri,tree_uri_path);
+					}
+				}
+
+			}
+		});
+
+
 		viewModel.hasWallPaperSet.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -498,6 +558,25 @@ ImageViewFragment extends Fragment
 		return v;
 	}
 
+	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
+	{
+		UriPOJO  uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
+		if(uriPOJO!=null)
+		{
+			tree_uri_path=uriPOJO.get_path();
+			tree_uri=uriPOJO.get_uri();
+		}
+
+		if(uriPOJO==null || tree_uri_path.equals("")) {
+			SAFPermissionHelperDialog safpermissionhelper = SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
+			safpermissionhelper.show(getParentFragmentManager(), "saf_permission_dialog");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();

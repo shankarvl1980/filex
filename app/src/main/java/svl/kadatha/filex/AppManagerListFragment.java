@@ -273,9 +273,6 @@ public class AppManagerListFragment extends Fragment {
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
                     }
                 } else if (SHARE.equals(app_action)) {
-
-                    //Uri uri= FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(app_path));
-                    //FileIntentDispatch.sendUri(context, new ArrayList<>(Collections.singletonList(uri)));
                     FileIntentDispatch.sendFile(requireContext(), new ArrayList<>(Collections.singletonList(new File(app_path))) );
                 }
                 clear_selection();

@@ -2,21 +2,29 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.app.WallpaperManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.pdf.PdfRenderer;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,13 +33,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import timber.log.Timber;
+
 public class FilteredFilePOJOViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
-    private Future<?> future1,future2,future3,future4, future5;
+    private Future<?> future1,future2,future3,future4, future5,future6;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> hasWallPaperSet=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> isPdfBitmapFetched=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isRotated = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final List<FilePOJO> album_file_pojo_list=new ArrayList<>();
     public final IndexedLinkedHashMap<FilePOJO,Integer> video_list=new IndexedLinkedHashMap<>();
     public int total_images;
@@ -64,6 +75,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.TEMP_ROTATE_CACHE_DIR);
     }
 
     public void cancel(boolean mayInterruptRunning){
@@ -72,6 +84,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         if(future3!=null) future3.cancel(mayInterruptRunning);
         if(future4!=null) future4.cancel(mayInterruptRunning);
         if(future5!=null) future5.cancel(mayInterruptRunning);
+        if(future6!=null) future6.cancel(mayInterruptRunning);
         isCancelled=true;
     }
 
@@ -410,4 +423,75 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         return bitmap;
     }
 
+    public void rotate(Uri tree_uri, String tree_uri_path) {
+    if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+    isRotated.setValue(AsyncTaskStatus.STARTED);
+    ExecutorService executorService = MyExecutorService.getExecutorService();
+    future5 = executorService.submit(new Runnable() {
+        @Override
+        public void run() {
+            double size= (double) currently_shown_file.getSizeLong() /1024 / 1024;
+            if(size*2<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER)){
+                String file_path = currently_shown_file.getPath();
+                String name=currently_shown_file.getName();
+                long[] bytes_read=new long[1];
+                File file = new File(file_path);
+                String parent_path = file.getParent();
+                File file_temp=new File(parent_path,"temp_"+name);
+
+                try {
+                    Bitmap originalBitmap = BitmapFactory.decodeFile(file_path);
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
+                            originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+
+                    // Use a temporary file to ensure complete write
+                    File tempFile = new File(Global.TEMP_ROTATE_CACHE_DIR, name);
+                    FileOutputStream out = new FileOutputStream(tempFile);
+                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    out.flush();
+                    out.close();
+
+                    // Replace the original file with the temp file
+
+
+                    if (tempFile.exists() && tempFile.length() > 0) {
+                        if(FileUtil.isWritable(currently_shown_file.getFileObjectType(),file_path)){
+                            FileUtil.copy_File_File(tempFile, file,true, bytes_read);
+                        }
+                        else{
+                            FileUtil.copy_File_SAFFile(App.getAppContext(),tempFile,parent_path,name,tree_uri,tree_uri_path,true,bytes_read);
+                        }
+
+                    }
+
+                    originalBitmap.recycle();
+                    rotatedBitmap.recycle();
+                } catch (Exception e) {
+
+                }
+            }
+            isRotated.postValue(AsyncTaskStatus.COMPLETED);
+        }
+    });
+}
+
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 }

@@ -74,6 +74,7 @@ public class Global
 	static String USB_STORAGE_PATH;
 	static File ARCHIVE_EXTRACT_DIR;
 	static File USB_CACHE_DIR;
+	static File TEMP_ROTATE_CACHE_DIR;
 	static File FTP_CACHE_DIR;
 	static File APK_ICON_DIR;
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
@@ -457,6 +458,7 @@ public class Global
 		//cache directory setting
 		ARCHIVE_EXTRACT_DIR=new File(context.getFilesDir(),"Archive");
 		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
+		TEMP_ROTATE_CACHE_DIR=context.getExternalFilesDir(".temp_rotate_cache");
 		FTP_CACHE_DIR=context.getExternalFilesDir(".ftp_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
