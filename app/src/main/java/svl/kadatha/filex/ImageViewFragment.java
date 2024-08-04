@@ -105,7 +105,7 @@ ImageViewFragment extends Fragment
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon,getString(R.string.set_wallpaper),5));
-		//list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon,getString(R.string.rotate),6));
+		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon,getString(R.string.rotate),6));
 
 		DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
 		float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
@@ -482,7 +482,8 @@ ImageViewFragment extends Fragment
 				}
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-
+					GlideApp.get(context).clearMemory();
+					view_pager.invalidate();
 					image_view_adapter.notifyDataSetChanged();
 					picture_selector_adapter.notifyDataSetChanged();
 					progress_bar.setVisibility(View.GONE);

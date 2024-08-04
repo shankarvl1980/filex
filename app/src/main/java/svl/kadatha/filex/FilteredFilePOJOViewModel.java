@@ -23,6 +23,8 @@ import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -446,15 +448,12 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     Bitmap rotatedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
                             originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
 
-                    // Use a temporary file to ensure complete write
+
                     File tempFile = new File(Global.TEMP_ROTATE_CACHE_DIR, name);
                     FileOutputStream out = new FileOutputStream(tempFile);
                     rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.flush();
                     out.close();
-
-                    // Replace the original file with the temp file
-
 
                     if (tempFile.exists() && tempFile.length() > 0) {
                         if(FileUtil.isWritable(currently_shown_file.getFileObjectType(),file_path)){
@@ -463,7 +462,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         else{
                             FileUtil.copy_File_SAFFile(App.getAppContext(),tempFile,parent_path,name,tree_uri,tree_uri_path,true,bytes_read);
                         }
-
+                        GlideApp.get(App.getAppContext()).clearDiskCache();
                     }
 
                     originalBitmap.recycle();

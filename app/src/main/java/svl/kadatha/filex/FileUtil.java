@@ -66,16 +66,6 @@ public final class FileUtil
 
 
 
-/**
- * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
- * existing, it is created.
- *
- * @param file              The file.
- * @param isDirectory       flag indicating if the file should be a directory.
- * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
- * @return The DocumentFile
- */
-
 
 
 
