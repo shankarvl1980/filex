@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.File;
 
@@ -45,7 +46,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		}
 		else if(filePOJO.getType()<0)
 		{
-			GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
+			GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(System.currentTimeMillis())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
 		}
 		else
 		{
@@ -275,7 +276,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		}
 		else if(filePOJO.getType()<0)
 		{
-			GlideApp.with(context).load(filePOJO.getPath()).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
+			GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(System.currentTimeMillis())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
 		}
 		else
 		{

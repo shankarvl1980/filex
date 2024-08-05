@@ -462,7 +462,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         else{
                             FileUtil.copy_File_SAFFile(App.getAppContext(),tempFile,parent_path,name,tree_uri,tree_uri_path,true,bytes_read);
                         }
-                        GlideApp.get(App.getAppContext()).clearDiskCache();
+
                     }
 
                     originalBitmap.recycle();

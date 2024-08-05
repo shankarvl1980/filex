@@ -44,6 +44,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -261,7 +262,7 @@ ImageViewFragment extends Fragment
 						case 5:
 							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 							{
-								TouchImageView currentImageView = (TouchImageView) view_pager.findViewWithTag("image_" + view_pager.getCurrentItem());
+								TouchImageView currentImageView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
 								if (currentImageView != null) {
 									float currentRotation = currentImageView.getRotation();
 									currentImageView.setRotation(currentRotation + 90);
@@ -482,8 +483,6 @@ ImageViewFragment extends Fragment
 				}
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					GlideApp.get(context).clearMemory();
-					view_pager.invalidate();
 					image_view_adapter.notifyDataSetChanged();
 					picture_selector_adapter.notifyDataSetChanged();
 					progress_bar.setVisibility(View.GONE);
@@ -699,15 +698,32 @@ ImageViewFragment extends Fragment
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				//GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				GlideApp.with(context)
+						.load(new File(f.getPath()))
+						.signature(new ObjectKey(System.currentTimeMillis()))
+						.placeholder(R.drawable.picture_icon)
+						.error(R.drawable.picture_icon)
+						.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+						.dontAnimate()
+						.into(image_view);
 			}
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
 				GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+
 			}
 			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				//GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
+				GlideApp.with(context)
+						.load(new File(f.getPath()))
+						.signature(new ObjectKey(System.currentTimeMillis()))
+						.placeholder(R.drawable.picture_icon)
+						.error(R.drawable.picture_icon)
+						.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+						.dontAnimate()
+						.into(image_view);
 			}
 
 			container.addView(v);
@@ -734,6 +750,8 @@ ImageViewFragment extends Fragment
 			// TODO: Implement this method
 			return albumList.get(position).getName();
 		}
+
+
 	}
 
 
@@ -769,7 +787,15 @@ ImageViewFragment extends Fragment
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				//GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				GlideApp.with(context)
+						.load(new File(f.getPath()))
+						.signature(new ObjectKey(System.currentTimeMillis()))
+						.placeholder(R.drawable.picture_icon)
+						.error(R.drawable.picture_icon)
+						.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+						.dontAnimate()
+						.into(p1.imageview);
 			}
 			else if(f.getFileObjectType()==FileObjectType.USB_TYPE)
 			{
@@ -777,7 +803,15 @@ ImageViewFragment extends Fragment
 			}
 			else if(f.getFileObjectType()==FileObjectType.ROOT_TYPE)
 			{
-				GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				//GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
+				GlideApp.with(context)
+						.load(new File(f.getPath()))
+						.signature(new ObjectKey(System.currentTimeMillis()))
+						.placeholder(R.drawable.picture_icon)
+						.error(R.drawable.picture_icon)
+						.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+						.dontAnimate()
+						.into(p1.imageview);
 			}
 
 			p1.v.setSelected(viewModel.mselecteditems.containsKey(p2));
