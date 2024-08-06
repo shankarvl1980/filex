@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -100,11 +101,12 @@ public class AudioPlayerService extends Service
 		handler_broadcast=new Handler();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(audioPlayerServiceHandlerThread).build();
+			mediaSession = new MediaSessionCompat(this, "AudioPlayerService");
+			mediaSession.setCallback(new MediaSessionCallback());
+			mediaSession.setActive(true);
 		}
 
-		mediaSession = new MediaSessionCompat(this, "AudioPlayerService");
-		mediaSession.setCallback(new MediaSessionCallback());
-		mediaSession.setActive(true);
+
 
 	}
 
@@ -169,16 +171,16 @@ public class AudioPlayerService extends Service
 	private class AudioPlayerServiceHandlerThread extends HandlerThread implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,MediaPlayer.OnSeekCompleteListener,
 			MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,AudioManager.OnAudioFocusChangeListener
 	{
-        private AudioManager audio_manager;
+		private AudioManager audio_manager;
 		private final AudioPlayerService audioPlayerService;
 		private MediaPlayer mp;
 
-        AudioPlayerServiceHandlerThread(AudioPlayerService audioPlayerService) {
+		AudioPlayerServiceHandlerThread(AudioPlayerService audioPlayerService) {
 			super("handlerthread");
 			this.audioPlayerService=audioPlayerService;
 
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1)
+			TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+			if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1)
 			{
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 					if(isReadPermissionGranted)
@@ -379,9 +381,11 @@ public class AudioPlayerService extends Service
 					});
 				}
 			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				updatePlaybackState();
+				nPanel.updatePlayPauseAction(true);
+			}
 
-			updatePlaybackState();
-			nPanel.updatePlayPauseAction(true);
 		}
 
 		private void pause()
@@ -401,8 +405,11 @@ public class AudioPlayerService extends Service
 						}
 					}
 				});
-				updatePlaybackState();
-				nPanel.updatePlayPauseAction(false);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					updatePlaybackState();
+					nPanel.updatePlayPauseAction(false);
+				}
+
 
 			}
 		}
@@ -520,7 +527,10 @@ public class AudioPlayerService extends Service
 			if(prepared)
 			{
 				mp.seekTo(counter);
-				updatePlaybackState();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					updatePlaybackState();
+				}
+
 			}
 		}
 
@@ -566,7 +576,10 @@ public class AudioPlayerService extends Service
 			prepared=true;
 			stopped=false;
 			total_duration=mp.getDuration();
-			updateMediaSessionMetadata(mp);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				updateMediaSessionMetadata(mp);
+			}
+
 			handler.obtainMessage(START).sendToTarget();
 			handler_media_preparation.post(new Runnable() {
 				@Override
@@ -784,7 +797,10 @@ public class AudioPlayerService extends Service
 		}
 		audioPlayerServiceHandlerThread.releaseAudioFocus();
 		audioPlayerServiceHandlerThread.quit();
-		mediaSession.release();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			mediaSession.release();
+		}
+
 
 	}
 
@@ -815,124 +831,130 @@ public class AudioPlayerService extends Service
 			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
 			{
 				String description = "This is to operate the audio player controls";
-                NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
+				NotificationChannel notification_channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
 				notification_channel.setDescription(description);
 				notification_channel.setSound(null,null);
 				nManager.createNotificationChannel(notification_channel);
 			}
 
-			Intent previous = new Intent(parent,AudioPlayerService.class);
-			previous.putExtra("DO", GOTO_PREVIOUS);
-			PendingIntent previousPendingIntent = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				Intent previous = new Intent(parent,AudioPlayerService.class);
+				previous.putExtra("DO", GOTO_PREVIOUS);
+				PendingIntent previousPendingIntent = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
 
-			Intent next = new Intent(parent, AudioPlayerService.class);
-			next.putExtra("DO", GOTO_NEXT);
-			PendingIntent nextPendingIntent = PendingIntent.getService(parent, 2, next, pending_intent_flag);
+				Intent next = new Intent(parent, AudioPlayerService.class);
+				next.putExtra("DO", GOTO_NEXT);
+				PendingIntent nextPendingIntent = PendingIntent.getService(parent, 2, next, pending_intent_flag);
 
-			int playPauseIcon = playmode ? R.drawable.pause_icon : R.drawable.play_icon;
-			String playPauseTitle = playmode ? "Pause" : "Play";
-			PendingIntent playPausePendingIntent = PendingIntent.getService(parent, 1,
-					new Intent(parent, AudioPlayerService.class).putExtra("DO", PAUSE),
-					pending_intent_flag);
+				int playPauseIcon = playmode ? R.drawable.pause_icon : R.drawable.play_icon;
+				String playPauseTitle = playmode ? "Pause" : "Play";
+				PendingIntent playPausePendingIntent = PendingIntent.getService(parent, 1,
+						new Intent(parent, AudioPlayerService.class).putExtra("DO", PAUSE),
+						pending_intent_flag);
 
-			NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
-					playPauseIcon, playPauseTitle, playPausePendingIntent);
+				NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
+						playPauseIcon, playPauseTitle, playPausePendingIntent);
 
 
-			Intent intent = new Intent(parent, AudioPlayerActivity.class);
-			PendingIntent pIntent = PendingIntent.getActivity(parent, 0, intent, pending_intent_flag);
+				Intent intent = new Intent(parent, AudioPlayerActivity.class);
+				PendingIntent pIntent = PendingIntent.getActivity(parent, 0, intent, pending_intent_flag);
 
-			Bitmap albumArt = null;
-			if (current_audio != null && current_audio.getAlbumId() != null) {
-    		Uri albumArtUri = Global.GET_ALBUM_ART_URI(current_audio.getAlbumId());
-    		try {
-        		albumArt = GlideApp.with(context)
-            		.asBitmap()
-            		.load(albumArtUri)
-            		.error(R.drawable.woofer_icon)
-					.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            		.submit()
-            		.get();
-    		} catch (Exception e) {
-        	// Handle exception
-    		}
-}
+				Bitmap albumArt = null;
+				if (current_audio != null && current_audio.getAlbumId() != null) {
+					Uri albumArtUri = Global.GET_ALBUM_ART_URI(current_audio.getAlbumId());
+					try {
+						albumArt = GlideApp.with(context)
+								.asBitmap()
+								.load(albumArtUri)
+								.error(R.drawable.woofer_icon)
+								.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+								.submit()
+								.get();
+					} catch (Exception e) {
+						// Handle exception
+					}
+				}
 
-			if (albumArt == null) {
-				Drawable wooferDrawable = ContextCompat.getDrawable(context, R.drawable.woofer_icon);
-				albumArt = Bitmap.createBitmap(wooferDrawable.getIntrinsicWidth(),
-						wooferDrawable.getIntrinsicHeight(),
-						Bitmap.Config.ARGB_8888);
-				Canvas canvas = new Canvas(albumArt);
-				wooferDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-				wooferDrawable.draw(canvas);
+				if (albumArt == null) {
+					Drawable wooferDrawable = ContextCompat.getDrawable(context, R.drawable.woofer_icon);
+					albumArt = Bitmap.createBitmap(wooferDrawable.getIntrinsicWidth(),
+							wooferDrawable.getIntrinsicHeight(),
+							Bitmap.Config.ARGB_8888);
+					Canvas canvas = new Canvas(albumArt);
+					wooferDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+					wooferDrawable.draw(canvas);
+				}
+
+
+				nBuilder = new NotificationCompat.Builder(parent, CHANNEL_ID)
+						.setSmallIcon(R.drawable.app_icon_notification)
+						.setContentTitle(current_audio.getTitle())
+						.setContentText(current_audio.getArtist())
+						.setLargeIcon(albumArt)
+						.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+								.setMediaSession(mediaSession.getSessionToken())
+								.setShowActionsInCompactView(0, 1, 2))
+						.addAction(R.drawable.previous_icon, "Previous", previousPendingIntent)
+						.addAction(playPauseAction)
+						.addAction(R.drawable.next_icon, "Next", nextPendingIntent)
+						.setContentIntent(pIntent)
+						.setOngoing(true)
+
+
+						.setAutoCancel(false)
+						.setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+						.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+				notification = nBuilder.build();
+
+			}
+			else{
+				nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
+				nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
+						.setSmallIcon(R.drawable.app_icon_notification)
+						.setAutoCancel(true)
+						.setPriority(priority)
+						.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+						.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+
+				RemoteViews remoteView = new RemoteViews(parent.getPackageName(), R.layout.audio_notification_view);
+				if(playmode)
+				{
+					remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_pause_icon);
+				}
+				else
+				{
+					remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_play_icon);
+				}
+
+				if(CURRENT_PLAY_NUMBER==0)
+				{
+					remoteView.setBoolean(R.id.audio_notification_previous,"setEnabled",false);
+					remoteView.setInt(R.id.audio_notification_previous,"setAlpha",100);
+				}
+				if(CURRENT_PLAY_NUMBER==AUDIO_QUEUED_ARRAY.size()-1)
+				{
+					remoteView.setBoolean(R.id.audio_notification_next,"setEnabled",false);
+					remoteView.setInt(R.id.audio_notification_next,"setAlpha",100);
+				}
+
+				String name="";
+				if(current_audio!=null)
+				{
+					name=current_audio.getTitle();
+				}
+				else if(AudioPlayerActivity.AUDIO_FILE!=null)
+				{
+					name=AudioPlayerActivity.AUDIO_FILE.getTitle();
+				}
+
+				remoteView.setTextViewText(R.id.audio_notification_audio_name,name);
+
+				//set the button listeners
+				setListeners(remoteView);
+				nBuilder.setCustomBigContentView(remoteView);
 			}
 
-
-			nBuilder = new NotificationCompat.Builder(parent, CHANNEL_ID)
-					.setSmallIcon(R.drawable.app_icon_notification)
-					.setContentTitle(current_audio.getTitle())
-					.setContentText(current_audio.getArtist())
-					.setLargeIcon(albumArt)
-					.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-							.setMediaSession(mediaSession.getSessionToken())
-							.setShowActionsInCompactView(0, 1, 2))
-					.addAction(R.drawable.previous_icon, "Previous", previousPendingIntent)
-					.addAction(playPauseAction)
-					.addAction(R.drawable.next_icon, "Next", nextPendingIntent)
-					.setContentIntent(pIntent)
-					.setOngoing(true);
-
-			notification = nBuilder.build();
-
-
-
-
-
-//			nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
-//			nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
-//				.setSmallIcon(R.drawable.app_icon_notification)
-//				.setAutoCancel(true)
-//				.setPriority(priority)
-//				.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//				.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
-
-//            RemoteViews remoteView = new RemoteViews(parent.getPackageName(), R.layout.audio_notification_view);
-//			if(playmode)
-//			{
-//				remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_pause_icon);
-//			}
-//			else
-//			{
-//				remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_play_icon);
-//			}
-//
-//			if(CURRENT_PLAY_NUMBER==0)
-//			{
-//				remoteView.setBoolean(R.id.audio_notification_previous,"setEnabled",false);
-//				remoteView.setInt(R.id.audio_notification_previous,"setAlpha",100);
-//			}
-//			if(CURRENT_PLAY_NUMBER==AUDIO_QUEUED_ARRAY.size()-1)
-//			{
-//				remoteView.setBoolean(R.id.audio_notification_next,"setEnabled",false);
-//				remoteView.setInt(R.id.audio_notification_next,"setAlpha",100);
-//			}
-//
-//			String name="";
-//			if(current_audio!=null)
-//			{
-//				name=current_audio.getTitle();
-//			}
-//			else if(AudioPlayerActivity.AUDIO_FILE!=null)
-//			{
-//				name=AudioPlayerActivity.AUDIO_FILE.getTitle();
-//			}
-//
-//			remoteView.setTextViewText(R.id.audio_notification_audio_name,name);
-//
-//			//set the button listeners
-//			setListeners(remoteView);
-//			nBuilder.setCustomBigContentView(remoteView);
 		}
 
 		public void updatePlayPauseAction(boolean isPlaying) {
@@ -1040,11 +1062,11 @@ public class AudioPlayerService extends Service
 	}
 
 	private void updateMediaSessionMetadata(MediaPlayer mp) {
-    MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
-        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mp.getDuration());
-    // Add other metadata like title, artist, etc.
-    mediaSession.setMetadata(metadataBuilder.build());
-}
+		MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
+				.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mp.getDuration());
+		// Add other metadata like title, artist, etc.
+		mediaSession.setMetadata(metadataBuilder.build());
+	}
 
 
 
