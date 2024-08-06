@@ -117,7 +117,6 @@
 			android:choiceMode="singleChoice"
 			android:clipToPadding="false"
 			android:layoutAnimation="@anim/layout_animation_fall_down"
-
 			android:scrollbarThumbVertical="@drawable/scrollbar"
 			android:scrollbars="vertical"
 			app:layout_constraintStart_toStartOf="parent"
@@ -126,6 +125,19 @@
 			app:layout_constraintBottom_toBottomOf="@id/album_details_background"
 
 			/>
+
+			<svl.kadatha.filex.FastScrollerView
+				android:id="@+id/fastScroller_album_detail"
+				android:layout_width="20dp"
+				android:layout_height="0dp"
+				android:layout_gravity="end"
+				android:layout_margin="@dimen/layout_margin"
+				android:paddingBottom="?attr/actionBarSize"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/album_details_background"
+				app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+
+				/>
 	<TextView
 		android:id="@+id/album_details_file_number"
 		android:layout_width="wrap_content"

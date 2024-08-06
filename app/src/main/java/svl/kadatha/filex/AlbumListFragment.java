@@ -114,6 +114,8 @@ public class AlbumListFragment extends Fragment
 		all_select_btn.setOnClickListener(toolbarClickListener);
 		
 		recyclerview=v.findViewById(R.id.fragment_album_list_container);
+		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_list);
+		fastScrollerView.setRecyclerView(recyclerview);
 		recyclerview.setLayoutManager(new LinearLayoutManager(context));
 		recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 			{

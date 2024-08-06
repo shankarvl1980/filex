@@ -205,6 +205,8 @@ public class AlbumDetailsDialog extends DialogFragment
 
 		empty_audio_list_tv=v.findViewById(R.id.album_details_empty_list_tv);
 		selected_album_recyclerview=v.findViewById(R.id.album_details_recyclerview);
+		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
+		fastScrollerView.setRecyclerView(selected_album_recyclerview);
 		selected_album_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 		selected_album_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{

@@ -82,7 +82,7 @@ android:layout_height="match_parent"
 	style="@style/my_scrollbar"/>
 
 	<svl.kadatha.filex.FastScrollerView
-		android:id="@+id/fastScroller"
+		android:id="@+id/fastScroller_detail_fragment"
 		android:layout_width="20dp"
 		android:layout_height="match_parent"
 		android:layout_gravity="end"

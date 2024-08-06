@@ -320,8 +320,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
 		});
 
-		FastScrollerView fastScroller = v.findViewById(R.id.fastScroller);
-		//fastScroller.setThumbDrawable(ContextCompat.getDrawable(context,R.drawable.scroll_thumb_icon));
+		FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_detail_fragment);
 		fastScroller.setRecyclerView(recyclerView);
 		folder_empty=v.findViewById(R.id.empty_folder);
 		filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected);

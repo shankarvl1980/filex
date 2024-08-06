@@ -4,8 +4,8 @@
     android:viewportWidth="44"
     android:viewportHeight="44">
     <group
-        android:translateX="-2.1"
-        android:translateY="-2.1"
+        android:translateX="-2.0"
+        android:translateY="-2.0"
         >
         <path
             android:pathData="M31.853,17.406L24.052,17.406L22.102,15.2L16.251,15.2c-1.073,0 -1.95,0.993 -1.95,2.206L14.301,30.643c0,1.213 0.878,2.206 1.95,2.206l15.602,0c1.073,0 1.95,-0.993 1.95,-2.206L33.803,19.613c0,-1.213 -0.878,-2.206 -1.95,-2.206z"

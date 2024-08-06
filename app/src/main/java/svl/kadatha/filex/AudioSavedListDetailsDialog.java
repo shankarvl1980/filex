@@ -229,6 +229,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		file_number_view=v.findViewById(R.id.album_details_file_number);
 		CurrentAudioListRecyclerview=v.findViewById(R.id.album_details_recyclerview);
+		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
+		fastScrollerView.setRecyclerView(CurrentAudioListRecyclerview);
 		CurrentAudioListRecyclerview.setLayoutManager(new LinearLayoutManager(context));
 		CurrentAudioListRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{
@@ -336,7 +338,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-		int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
 

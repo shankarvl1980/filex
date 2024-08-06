@@ -139,6 +139,8 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		current_folder_label.setText(R.string.current_folder);
         folder_selected_textview = v.findViewById(R.id.file_selector_folder_selected);
 		recycler_view=v.findViewById(R.id.file_selectorRecyclerView);
+		FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_file_selector);
+		fastScroller.setRecyclerView(recycler_view);
 		folder_empty_textview=v.findViewById(R.id.file_selector_folder_empty);
 		progress_bar=v.findViewById(R.id.file_selector_progressbar);
 
