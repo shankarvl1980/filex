@@ -257,37 +257,37 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 String file_name=result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
                 File f=new File(temporaryDir,file_name);
                 WallpaperManager wm= WallpaperManager.getInstance(application);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if(wm.isWallpaperSupported() && wm.isSetWallpaperAllowed())
-                        try
-                        {
-                            wm.setStream(application.getContentResolver().openInputStream(uri));
-                            Global.print_background_thread(application,application.getString(R.string.set_wallpaper));
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        if (wm.isWallpaperSupported() && wm.isSetWallpaperAllowed()) {
+                            set_wallpaper(wm, uri);
                         }
-                        catch(IOException e){}
-                        finally
-                        {
-                            if(f.exists())
-                            {
-                                f.delete();
-                            }
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (wm.isWallpaperSupported()) {
+                            set_wallpaper(wm, uri);
                         }
-                    else
-                    {
-
-                        if(f.exists())
-                        {
-                            f.delete();
-                        }
-
+                    } else {
+                        set_wallpaper(wm, uri);
+                    }
+                } finally {
+                    if (f.exists()) {
+                        f.delete();
                     }
                 }
+
                 hasWallPaperSet.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
+    private void set_wallpaper(WallpaperManager wm, Uri uri) {
+        try {
+            wm.setStream(application.getContentResolver().openInputStream(uri));
+            Global.print_background_thread(application, application.getString(R.string.set_wallpaper));
+        } catch (IOException e) {
+            // Handle exception
+        }
+    }
 
     public void initializePdfRenderer(FileObjectType fileObjectType,String file_path,Uri data,boolean fromThirdPartyApp)
     {
@@ -321,8 +321,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
-
-
 
                 try {
 
@@ -439,7 +437,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 long[] bytes_read=new long[1];
                 File file = new File(file_path);
                 String parent_path = file.getParent();
-                File file_temp=new File(parent_path,"temp_"+name);
 
                 try {
                     Bitmap originalBitmap = BitmapFactory.decodeFile(file_path);

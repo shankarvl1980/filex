@@ -271,13 +271,19 @@ ImageViewFragment extends Fragment
 							else{
 								if(!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(),viewModel.currently_shown_file.getPath()))
 								{
-									if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) return;
+									if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())){
+										listPopWindow.dismiss();
+										return;
+									}
+									else{
+										progress_bar.setVisibility(View.VISIBLE);
+										viewModel.rotate(tree_uri,tree_uri_path);
+									}
 								}
 								else{
 									progress_bar.setVisibility(View.VISIBLE);
 									viewModel.rotate(tree_uri,tree_uri_path);
 								}
-
 							}
 
 							break;
@@ -546,12 +552,9 @@ ImageViewFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					viewModel.hasWallPaperSet.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
+
 			}
 		});
 

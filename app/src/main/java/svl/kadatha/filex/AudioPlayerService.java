@@ -885,8 +885,6 @@ public class AudioPlayerService extends Service
 					.setCategory(NotificationCompat.CATEGORY_TRANSPORT)
 					.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-			//notification = nBuilder.build();
-
 		}
 
 		public void updatePlayPauseAction(boolean isPlaying) {
