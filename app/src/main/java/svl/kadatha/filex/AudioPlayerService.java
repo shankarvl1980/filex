@@ -101,13 +101,11 @@ public class AudioPlayerService extends Service
 		handler_broadcast=new Handler();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			audioFocusRequest=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(audioPlayerServiceHandlerThread).build();
-			mediaSession = new MediaSessionCompat(this, "AudioPlayerService");
-			mediaSession.setCallback(new MediaSessionCallback());
-			mediaSession.setActive(true);
+
 		}
-
-
-
+		mediaSession = new MediaSessionCompat(this, "AudioPlayerService");
+		mediaSession.setCallback(new MediaSessionCallback());
+		mediaSession.setActive(true);
 	}
 
 	@Override
@@ -381,11 +379,8 @@ public class AudioPlayerService extends Service
 					});
 				}
 			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				updatePlaybackState();
-				nPanel.updatePlayPauseAction(true);
-			}
-
+			updatePlaybackState();
+			nPanel.updatePlayPauseAction(true);
 		}
 
 		private void pause()
@@ -405,12 +400,8 @@ public class AudioPlayerService extends Service
 						}
 					}
 				});
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					updatePlaybackState();
-					nPanel.updatePlayPauseAction(false);
-				}
-
-
+				updatePlaybackState();
+				nPanel.updatePlayPauseAction(false);
 			}
 		}
 
@@ -527,10 +518,7 @@ public class AudioPlayerService extends Service
 			if(prepared)
 			{
 				mp.seekTo(counter);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					updatePlaybackState();
-				}
-
+				updatePlaybackState();
 			}
 		}
 
@@ -576,10 +564,7 @@ public class AudioPlayerService extends Service
 			prepared=true;
 			stopped=false;
 			total_duration=mp.getDuration();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				updateMediaSessionMetadata(mp);
-			}
-
+			updateMediaSessionMetadata(mp);
 			handler.obtainMessage(START).sendToTarget();
 			handler_media_preparation.post(new Runnable() {
 				@Override
@@ -797,11 +782,7 @@ public class AudioPlayerService extends Service
 		}
 		audioPlayerServiceHandlerThread.releaseAudioFocus();
 		audioPlayerServiceHandlerThread.quit();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			mediaSession.release();
-		}
-
-
+		mediaSession.release();
 	}
 
 	class AudioBinder extends Binder
@@ -837,128 +818,79 @@ public class AudioPlayerService extends Service
 				nManager.createNotificationChannel(notification_channel);
 			}
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				Intent previous = new Intent(parent,AudioPlayerService.class);
-				previous.putExtra("DO", GOTO_PREVIOUS);
-				PendingIntent previousPendingIntent = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
+			Intent previous = new Intent(parent,AudioPlayerService.class);
+			previous.putExtra("DO", GOTO_PREVIOUS);
+			PendingIntent previousPendingIntent = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
 
-				Intent next = new Intent(parent, AudioPlayerService.class);
-				next.putExtra("DO", GOTO_NEXT);
-				PendingIntent nextPendingIntent = PendingIntent.getService(parent, 2, next, pending_intent_flag);
+			Intent next = new Intent(parent, AudioPlayerService.class);
+			next.putExtra("DO", GOTO_NEXT);
+			PendingIntent nextPendingIntent = PendingIntent.getService(parent, 2, next, pending_intent_flag);
 
-				int playPauseIcon = playmode ? R.drawable.pause_icon : R.drawable.play_icon;
-				String playPauseTitle = playmode ? "Pause" : "Play";
-				PendingIntent playPausePendingIntent = PendingIntent.getService(parent, 1,
-						new Intent(parent, AudioPlayerService.class).putExtra("DO", PAUSE),
-						pending_intent_flag);
+			int playPauseIcon = playmode ? R.drawable.dark_pause_icon : R.drawable.dark_play_icon;
+			String playPauseTitle = playmode ? "Pause" : "Play";
+			PendingIntent playPausePendingIntent = PendingIntent.getService(parent, 1,
+					new Intent(parent, AudioPlayerService.class).putExtra("DO", PAUSE),
+					pending_intent_flag);
 
-				NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
-						playPauseIcon, playPauseTitle, playPausePendingIntent);
+			NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
+					playPauseIcon, playPauseTitle, playPausePendingIntent);
 
 
-				Intent intent = new Intent(parent, AudioPlayerActivity.class);
-				PendingIntent pIntent = PendingIntent.getActivity(parent, 0, intent, pending_intent_flag);
+			Intent intent = new Intent(parent, AudioPlayerActivity.class);
+			PendingIntent pIntent = PendingIntent.getActivity(parent, 0, intent, pending_intent_flag);
 
-				Bitmap albumArt = null;
-				if (current_audio != null && current_audio.getAlbumId() != null) {
-					Uri albumArtUri = Global.GET_ALBUM_ART_URI(current_audio.getAlbumId());
-					try {
-						albumArt = GlideApp.with(context)
-								.asBitmap()
-								.load(albumArtUri)
-								.error(R.drawable.woofer_icon)
-								.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-								.submit()
-								.get();
-					} catch (Exception e) {
-						// Handle exception
-					}
+			Bitmap albumArt = null;
+			if (current_audio != null && current_audio.getAlbumId() != null) {
+				Uri albumArtUri = Global.GET_ALBUM_ART_URI(current_audio.getAlbumId());
+				try {
+					albumArt = GlideApp.with(context)
+							.asBitmap()
+							.load(albumArtUri)
+							.error(R.drawable.woofer_icon)
+							.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+							.submit()
+							.get();
+				} catch (Exception e) {
+					// Handle exception
 				}
-
-				if (albumArt == null) {
-					Drawable wooferDrawable = ContextCompat.getDrawable(context, R.drawable.woofer_icon);
-					albumArt = Bitmap.createBitmap(wooferDrawable.getIntrinsicWidth(),
-							wooferDrawable.getIntrinsicHeight(),
-							Bitmap.Config.ARGB_8888);
-					Canvas canvas = new Canvas(albumArt);
-					wooferDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-					wooferDrawable.draw(canvas);
-				}
-
-
-				nBuilder = new NotificationCompat.Builder(parent, CHANNEL_ID)
-						.setSmallIcon(R.drawable.app_icon_notification)
-						.setContentTitle(current_audio.getTitle())
-						.setContentText(current_audio.getArtist())
-						.setLargeIcon(albumArt)
-						.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-								.setMediaSession(mediaSession.getSessionToken())
-								.setShowActionsInCompactView(0, 1, 2))
-						.addAction(R.drawable.previous_icon, "Previous", previousPendingIntent)
-						.addAction(playPauseAction)
-						.addAction(R.drawable.next_icon, "Next", nextPendingIntent)
-						.setContentIntent(pIntent)
-						.setOngoing(true)
-
-
-						.setAutoCancel(false)
-						.setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-						.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-				notification = nBuilder.build();
-
 			}
-			else{
-				nBuilder = new NotificationCompat.Builder(parent,CHANNEL_ID);
-				nBuilder.setContentTitle(AudioPlayerActivity.AUDIO_FILE==null ? "FileX Manager":AudioPlayerActivity.AUDIO_FILE.getTitle())
-						.setSmallIcon(R.drawable.app_icon_notification)
-						.setAutoCancel(true)
-						.setPriority(priority)
-						.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-						.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
 
-				RemoteViews remoteView = new RemoteViews(parent.getPackageName(), R.layout.audio_notification_view);
-				if(playmode)
-				{
-					remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_pause_icon);
-				}
-				else
-				{
-					remoteView.setImageViewResource(R.id.audio_notification_play_pause,R.drawable.dark_play_icon);
-				}
-
-				if(CURRENT_PLAY_NUMBER==0)
-				{
-					remoteView.setBoolean(R.id.audio_notification_previous,"setEnabled",false);
-					remoteView.setInt(R.id.audio_notification_previous,"setAlpha",100);
-				}
-				if(CURRENT_PLAY_NUMBER==AUDIO_QUEUED_ARRAY.size()-1)
-				{
-					remoteView.setBoolean(R.id.audio_notification_next,"setEnabled",false);
-					remoteView.setInt(R.id.audio_notification_next,"setAlpha",100);
-				}
-
-				String name="";
-				if(current_audio!=null)
-				{
-					name=current_audio.getTitle();
-				}
-				else if(AudioPlayerActivity.AUDIO_FILE!=null)
-				{
-					name=AudioPlayerActivity.AUDIO_FILE.getTitle();
-				}
-
-				remoteView.setTextViewText(R.id.audio_notification_audio_name,name);
-
-				//set the button listeners
-				setListeners(remoteView);
-				nBuilder.setCustomBigContentView(remoteView);
+			if (albumArt == null) {
+				Drawable wooferDrawable = ContextCompat.getDrawable(context, R.drawable.woofer_icon);
+				albumArt = Bitmap.createBitmap(wooferDrawable.getIntrinsicWidth(),
+						wooferDrawable.getIntrinsicHeight(),
+						Bitmap.Config.ARGB_8888);
+				Canvas canvas = new Canvas(albumArt);
+				wooferDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+				wooferDrawable.draw(canvas);
 			}
+
+
+			nBuilder = new NotificationCompat.Builder(parent, CHANNEL_ID)
+					.setSmallIcon(R.drawable.app_icon_notification)
+					.setContentTitle(current_audio.getTitle())
+					.setContentText(current_audio.getArtist())
+					.setLargeIcon(albumArt)
+					.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+							.setMediaSession(mediaSession.getSessionToken())
+							.setShowActionsInCompactView(0, 1, 2))
+					.addAction(R.drawable.dark_previous_icon, "Previous", previousPendingIntent)
+					.addAction(playPauseAction)
+					.addAction(R.drawable.dark_next_icon, "Next", nextPendingIntent)
+					.setContentIntent(pIntent)
+					.setOngoing(true)
+
+
+					.setAutoCancel(false)
+					.setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+					.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+			//notification = nBuilder.build();
 
 		}
 
 		public void updatePlayPauseAction(boolean isPlaying) {
-			int icon = isPlaying ? R.drawable.pause_icon : R.drawable.play_icon;
+			int icon = isPlaying ? R.drawable.dark_pause_icon : R.drawable.dark_play_icon;
 			String title = isPlaying ? "Pause" : "Play";
 
 			Intent pause = new Intent(parent, AudioPlayerService.class);
@@ -977,9 +909,9 @@ public class AudioPlayerService extends Service
 			NotificationCompat.Action action = new NotificationCompat.Action(icon, title, playPausePendingIntent);
 
 			nBuilder.clearActions()
-					.addAction(R.drawable.previous_icon, "Previous", previousPendingIntent)
+					.addAction(R.drawable.dark_previous_icon, "Previous", previousPendingIntent)
 					.addAction(action)
-					.addAction(R.drawable.next_icon, "Next", nextPendingIntent);
+					.addAction(R.drawable.dark_next_icon, "Next", nextPendingIntent);
 
 			notification = nBuilder.build();
 			nManager.notify(notification_id, notification);
@@ -994,39 +926,7 @@ public class AudioPlayerService extends Service
 			nManager.notify(notification_id, nBuilder.build());
 		}
 
-		public void setListeners(RemoteViews view)
-		{
-			int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
 
-			//listener 1
-			Intent previous = new Intent(parent,AudioPlayerService.class);
-			previous.putExtra("DO", GOTO_PREVIOUS);
-			PendingIntent prev = PendingIntent.getService(parent, 0, previous, pending_intent_flag);
-			view.setOnClickPendingIntent(R.id.audio_notification_previous, prev);
-
-			//listener 2
-			Intent pause = new Intent(parent, AudioPlayerService.class);
-			pause.putExtra("DO", PAUSE);
-			PendingIntent start = PendingIntent.getService(parent, 1, pause, pending_intent_flag);
-			view.setOnClickPendingIntent(R.id.audio_notification_play_pause, start);
-
-			//listener 3
-			Intent next = new Intent(parent, AudioPlayerService.class);
-			next.putExtra("DO", GOTO_NEXT);
-			PendingIntent nxt = PendingIntent.getService(parent, 2, next, pending_intent_flag);
-			view.setOnClickPendingIntent(R.id.audio_notification_next, nxt);
-
-			//listener 4
-			Intent cancel = new Intent(parent, AudioPlayerService.class);
-			cancel.putExtra("DO", STOP);
-			PendingIntent close = PendingIntent.getService(parent, 3, cancel, pending_intent_flag);
-			view.setOnClickPendingIntent(R.id.audio_notification_close, close);
-
-			Intent back=new Intent(parent, AudioPlayerActivity.class);
-			back.putExtra("Do",BACK);
-			PendingIntent bck=PendingIntent.getActivity(parent,4,back,pending_intent_flag);
-			view.setOnClickPendingIntent(R.id.audio_notification_back,bck);
-		}
 		public void notificationCancel()
 		{
 			nManager.cancel(notification_id);
