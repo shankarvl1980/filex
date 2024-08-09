@@ -158,8 +158,10 @@ public class AllAudioListFragment extends Fragment
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
-		
+
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false);
 		recyclerview=v.findViewById(R.id.fragment_audio_list_container);
+		recyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_all_audio);
 		fastScrollerView.setRecyclerView(recyclerview);
 		recyclerview.setLayoutManager(new LinearLayoutManager(context));

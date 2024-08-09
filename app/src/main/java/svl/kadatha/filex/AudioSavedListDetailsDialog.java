@@ -228,7 +228,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		});
 
 		file_number_view=v.findViewById(R.id.album_details_file_number);
+
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false);
 		CurrentAudioListRecyclerview=v.findViewById(R.id.album_details_recyclerview);
+		CurrentAudioListRecyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
 		fastScrollerView.setRecyclerView(CurrentAudioListRecyclerview);
 		CurrentAudioListRecyclerview.setLayoutManager(new LinearLayoutManager(context));

@@ -112,8 +112,10 @@ public class AlbumListFragment extends Fragment
 		play_btn.setOnClickListener(toolbarClickListener);
 		save_btn.setOnClickListener(toolbarClickListener);
 		all_select_btn.setOnClickListener(toolbarClickListener);
-		
+
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false);
 		recyclerview=v.findViewById(R.id.fragment_album_list_container);
+		recyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_list);
 		fastScrollerView.setRecyclerView(recyclerview);
 		recyclerview.setLayoutManager(new LinearLayoutManager(context));

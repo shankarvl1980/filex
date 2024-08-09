@@ -428,6 +428,12 @@ public class PdfViewFragment extends Fragment
             }
         });
 
+        getChildFragmentManager().setFragmentResultListener(PdfPasswordDialog.PASSWORD_REQUEST_CODE, this,
+                (requestKey, result) -> {
+                    String password = result.getString("password");
+
+                });
+
         return v;
     }
 
