@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.media.AudioFocusRequest;
@@ -30,7 +29,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyManager;
-import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -799,8 +797,7 @@ public class AudioPlayerService extends Service
 		private final Context parent;
 		private final android.app.NotificationManager nManager;
 		private final androidx.core.app.NotificationCompat.Builder nBuilder;
-		private Notification notification;
-		final int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+        final int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
 
 
 		public NotificationPanel(Context parent)
@@ -911,7 +908,7 @@ public class AudioPlayerService extends Service
 					.addAction(action)
 					.addAction(R.drawable.dark_next_icon, "Next", nextPendingIntent);
 
-			notification = nBuilder.build();
+            Notification notification = nBuilder.build();
 			nManager.notify(notification_id, notification);
 		}
 

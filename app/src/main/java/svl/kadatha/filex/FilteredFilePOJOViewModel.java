@@ -2,28 +2,21 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.app.WallpaperManager;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.pdf.PdfRenderer;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,8 +27,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import timber.log.Timber;
 
 public class FilteredFilePOJOViewModel extends AndroidViewModel {
     private final Application application;

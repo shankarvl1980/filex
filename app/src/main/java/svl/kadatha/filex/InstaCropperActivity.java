@@ -93,7 +93,6 @@ public class InstaCropperActivity extends BaseActivity {
 
     private int mWidthSpec;
     private int mHeightSpec;
-    private int mOutputQuality;
 
     private Uri mOutputUri;
     private String file_name;
@@ -144,7 +143,7 @@ public class InstaCropperActivity extends BaseActivity {
 
         mWidthSpec = intent.getIntExtra(EXTRA_WIDTH_SPEC, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         mHeightSpec = intent.getIntExtra(EXTRA_HEIGHT_SPEC, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        mOutputQuality = intent.getIntExtra(EXTRA_OUTPUT_QUALITY, DEFAULT_OUTPUT_QUALITY);
+        int mOutputQuality = intent.getIntExtra(EXTRA_OUTPUT_QUALITY, DEFAULT_OUTPUT_QUALITY);
 
         mOutputUri = intent.getParcelableExtra(EXTRA_OUTPUT);
         file_name=intent.getStringExtra(EXTRA_FILE_NAME);

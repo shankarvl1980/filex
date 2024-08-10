@@ -37,7 +37,6 @@ public class InstaCropperView extends View {
 
     private float mMinimumRatio = DEFAULT_MINIMUM_RATIO;
     private float mMaximumRatio = DEFAULT_MAXIMUM_RATIO;
-    private float mDefaultRatio = DEFAULT_RATIO;
 
     private Uri mImageUri = null;
     private int mImageRawWidth;
@@ -122,7 +121,6 @@ public class InstaCropperView extends View {
     };
 
     public void setRatios(float defaultRatio, float minimumRatio, float maximumRatio) {
-        mDefaultRatio = defaultRatio;
         mMinimumRatio = minimumRatio;
         mMaximumRatio = maximumRatio;
 

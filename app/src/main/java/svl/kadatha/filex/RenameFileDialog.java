@@ -26,7 +26,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
-import java.util.Collections;
 
 public class RenameFileDialog extends DialogFragment
 {

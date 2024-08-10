@@ -73,11 +73,9 @@ public class PlayScreenFragment extends Fragment {
     private boolean service_bound;
     private Context context;
     private PopupWindow listPopWindow;
-    private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<AudioPOJO> files_selected_for_delete;
     private boolean isDurationMoreThanHour;
     private Uri data;
-    private AudioManager audioManager;
     private static final String DELETE_FILE_REQUEST_CODE="audio_play_file_delete_request_code";
     private static final String AUDIO_SELECT_REQUEST_CODE="audio_play_audio_select_request_code";
     private FrameLayout progress_bar;
@@ -91,7 +89,7 @@ public class PlayScreenFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        audioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         activity=((AppCompatActivity)context);
 
         if(activity instanceof AudioSelectListener)
@@ -168,7 +166,7 @@ public class PlayScreenFragment extends Fragment {
     {
         // TODO: Implement this method
         super.onCreate(savedInstanceState);
-        list_popupwindowpojos=new ArrayList<>();
+        ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));

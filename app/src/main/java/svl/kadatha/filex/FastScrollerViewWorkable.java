@@ -19,7 +19,7 @@ public class FastScrollerViewWorkable extends View {
     private int thumbHeight;
     private boolean isDragging;
     private boolean isThumbVisible = false;
-    private Handler hideHandler = new Handler();
+    private final Handler hideHandler = new Handler();
     private static final long HIDE_DELAY = 3000; // 3 seconds
 
     public FastScrollerViewWorkable(Context context) {
@@ -123,7 +123,7 @@ public class FastScrollerViewWorkable extends View {
         hideHandler.postDelayed(hideRunnable, HIDE_DELAY);
     }
 
-    private Runnable hideRunnable = new Runnable() {
+    private final Runnable hideRunnable = new Runnable() {
         @Override
         public void run() {
             isThumbVisible = false;

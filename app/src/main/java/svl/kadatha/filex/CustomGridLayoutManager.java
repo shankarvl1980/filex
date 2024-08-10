@@ -1,11 +1,8 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomGridLayoutManager extends GridLayoutManager {

@@ -39,7 +39,6 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            resValue "string", "app_version_name", "${defaultConfig.versionName}"
             signingConfig signingConfigs.debug
         }
 
@@ -48,7 +47,6 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            resValue "string", "app_version_name", "${defaultConfig.versionName}"
             signingConfig signingConfigs.release_config
         }
     }
