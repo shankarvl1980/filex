@@ -23,7 +23,7 @@ import timber.log.Timber;
  * Created by Yashar on 3/11/2017.
  */
 
-public class InstaCropperActivity extends AppCompatActivity {
+public class InstaCropperActivity extends BaseActivity {
 
     private static final int DEFAULT_OUTPUT_QUALITY = 50;
 
@@ -40,7 +40,7 @@ public class InstaCropperActivity extends AppCompatActivity {
 
     public static final String EXTRA_FILE_NAME="file_name";
 
-    private boolean clear_cache;
+    public boolean clear_cache;
 
     public static Intent getIntent(Context context, Uri src, Uri dst, String file_name, int maxWidth, int outputQuality) {
         return getIntent(

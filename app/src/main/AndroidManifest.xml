@@ -149,7 +149,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".InstaCropperActivity" />
+        <activity android:name=".InstaCropperActivity"
+            android:exported="false">
+        </activity>
 
         <activity
             android:name=".FileSelectorActivity"

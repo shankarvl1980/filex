@@ -66,6 +66,10 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 ((ArchiveViewActivity)context).clear_cache=false;
             }
+            else if(appCompatActivity instanceof InstaCropperActivity)
+            {
+                ((InstaCropperActivity)context).clear_cache=false;
+            }
         }
 
         return emptyService;

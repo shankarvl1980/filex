@@ -145,6 +145,10 @@ class FileIntentDispatch
 							{
 								((ArchiveViewActivity)context).clear_cache=false;
 							}
+							else if(appCompatActivity instanceof InstaCropperActivity)
+							{
+								((InstaCropperActivity)context).clear_cache=false;
+							}
 						}
 
 						intent.setComponent(new ComponentName(package_name,app_component_name));

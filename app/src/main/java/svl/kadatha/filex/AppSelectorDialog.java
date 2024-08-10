@@ -268,6 +268,10 @@ public class AppSelectorDialog extends DialogFragment
                                 {
                                     ((ArchiveViewActivity)context).clear_cache=false;
                                 }
+                                else if(appCompatActivity instanceof InstaCropperActivity)
+                                {
+                                    ((InstaCropperActivity)context).clear_cache=false;
+                                }
                             }
 
                             intent.setComponent(new ComponentName(app_package_name,app_component_name));
