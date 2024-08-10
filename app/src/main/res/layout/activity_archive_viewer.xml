@@ -139,7 +139,7 @@
         android:elevation="6dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
-        android:src="@drawable/no_icon"
+        android:src="@drawable/cancel_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/archive_viewer_search_view_edit_text"
         app:layout_constraintTop_toTopOf="parent" />

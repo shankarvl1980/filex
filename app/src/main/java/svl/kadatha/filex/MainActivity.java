@@ -312,7 +312,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		
 		
 		tb_layout =new EquallyDistributedButtonsWithTextLayout(this,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-		int[] paste_drawables ={R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.paste_icon,R.drawable.delete_icon,R.drawable.no_icon};
+		int[] paste_drawables ={R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.paste_icon,R.drawable.delete_icon,R.drawable.cancel_icon};
 		titles=new String[]{getString(R.string.new_),getString(R.string.refresh),getString(R.string.paste),getString(R.string.delete),getString(R.string.cancel)};
 		tb_layout.setResourceImageDrawables(paste_drawables,titles);
 		paste_toolbar=findViewById(R.id.paste_toolbar);

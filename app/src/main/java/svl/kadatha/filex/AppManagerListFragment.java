@@ -169,7 +169,7 @@ public class AppManagerListFragment extends Fragment {
 
         bottom_toolbar=v.findViewById(R.id.fragment_app_list_bottom_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.view_icon,R.drawable.scan_icon};
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.view_icon,R.drawable.scan_tool_bar_icon};
         String [] titles={getString(R.string.search),getString(R.string.view),getString(R.string.rescan)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
         bottom_toolbar.addView(tb_layout);

@@ -207,7 +207,7 @@ public class ArchiveViewActivity extends BaseActivity{
 
 
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] drawables ={R.drawable.search_icon,R.drawable.refresh_icon,R.drawable.extract_icon,R.drawable.no_icon};
+        int[] drawables ={R.drawable.search_icon,R.drawable.refresh_icon,R.drawable.extract_icon,R.drawable.cancel_icon};
         String [] titles=new String[]{getString(R.string.search),getString(R.string.refresh),getString(R.string.extract),getString(R.string.close)};
         tb_layout.setResourceImageDrawables(drawables,titles);
         bottom_toolbar=findViewById(R.id.archive_bottom_toolbar);

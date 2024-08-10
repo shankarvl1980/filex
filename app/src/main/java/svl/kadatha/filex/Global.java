@@ -660,13 +660,8 @@ public class Global
 		int toolbarTop = location[1];
 		int rootHeight = rootView.getHeight();
 
-		// Calculate the space above the toolbar
 		int offset = rootHeight - toolbarTop + desiredDistanceFromToolbar;
 
-		// Set the width of the popup if needed
-		// listPopWindow.setWidth(desiredWidth);
-
-		// Show the popup window
 		listPopWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.END, 0, offset);
 	}
 

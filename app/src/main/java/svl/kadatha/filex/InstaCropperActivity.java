@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.IOException;
@@ -107,7 +106,7 @@ public class InstaCropperActivity extends BaseActivity {
         setContentView(R.layout.activity_instacropper);
         Toolbar toolbar = findViewById(R.id.crop_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,2,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.wallpaper_icon,R.drawable.no_icon};
+        int[] bottom_drawables ={R.drawable.wallpaper_icon,R.drawable.cancel_icon};
         String [] titles=new String[]{getString(R.string.set_wallpaper),getString(R.string.cancel)};
         tb_layout.setResourceImageDrawables(bottom_drawables,titles);
 
