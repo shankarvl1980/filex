@@ -24,11 +24,13 @@ import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -678,24 +680,23 @@ public class Global
 		}
 	}
 
-	public static boolean HAS_NAVBAR(WindowManager windowManager){
-		Display d = windowManager.getDefaultDisplay();
+	static void SHOW_LIST_POPUP_WINDOW_BOTTOM(Context context, View bottom_toolbar, PopupWindow listPopWindow) {
+		View rootView = bottom_toolbar.getRootView();
+		int[] location = new int[2];
+		bottom_toolbar.getLocationInWindow(location);
 
-		DisplayMetrics realDisplayMetrics = new DisplayMetrics();
-		d.getRealMetrics(realDisplayMetrics);
+		int toolbarTop = location[1];
+		int rootHeight = rootView.getHeight();
 
-		int realHeight = realDisplayMetrics.heightPixels;
-		int realWidth = realDisplayMetrics.widthPixels;
+		// Calculate the space above the toolbar
+		int offset = rootHeight - toolbarTop + Global.FOUR_DP;
 
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		d.getMetrics(displayMetrics);
+		// Set the width of the popup if needed
+		// listPopWindow.setWidth(desiredWidth);
 
-		int displayHeight = displayMetrics.heightPixels;
-		int displayWidth = displayMetrics.widthPixels;
-
-		return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
+		// Show the popup window
+		listPopWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.END, 0, offset);
 	}
-
 
 	public static int GET_NAVIGATION_STATUS_BAR_HEIGHT(Context context) {
 		Point appUsableSize = getAppUsableScreenSize(context);

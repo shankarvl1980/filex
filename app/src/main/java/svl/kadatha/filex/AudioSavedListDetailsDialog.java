@@ -579,15 +579,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					Global.print(context,getString(R.string.added_audios_current_play_list));
 					clear_selection();
 				} else {
-					//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height+Global.FOUR_DP));
-					//listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,Global.ACTION_BAR_HEIGHT+Global.FOUR_DP);
-					listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,bottom_toolbar.getHeight()+Global.FOUR_DP);
-
+					Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
 				}
 			} else if (id == R.id.toolbar_btn_4) {
-
-				//listPopWindow.showAsDropDown(p1,0,-(Global.ACTION_BAR_HEIGHT+listview_height));
-				listPopWindow.showAtLocation(bottom_toolbar,Gravity.BOTTOM|Gravity.END,0,bottom_toolbar.getHeight()+Global.FOUR_DP);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
 			}
 
 			if(audioFragmentListener!=null)

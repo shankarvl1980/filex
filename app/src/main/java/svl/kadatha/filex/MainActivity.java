@@ -2077,11 +2077,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				}
 				popupWindowAdapter.notifyDataSetChanged();
-				int offset=actionmode_toolbar.getHeight()+Global.FOUR_DP;//Global.SCREEN_HEIGHT-action_bar_location[1]-Global.GET_NAVIGATION_STATUS_BAR_HEIGHT(context)-Global.ACTION_BAR_HEIGHT;
-
-				//listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0, (Global.NAVIGATION_STATUS_BAR_HEIGHT-Global.GET_STATUS_BAR_HEIGHT(context)+Global.FOUR_DP));
-
-				listPopWindow.showAtLocation(actionmode_toolbar,Gravity.BOTTOM|Gravity.END,0,offset);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,actionmode_toolbar,listPopWindow);
 			}
 		}
 	}
