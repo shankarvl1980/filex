@@ -583,7 +583,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 	{
 		if(prepared)
 		{
-			int backward_pos=mp.getCurrentPosition()-5000;
+			int backward_pos=mp.getCurrentPosition()-10000;
 			//if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				//mp.seekTo(Math.min(backward_pos, total_duration),MediaPlayer.SEEK_PREVIOUS_SYNC);
 			//}
@@ -601,7 +601,7 @@ private String convertSecondsToHMmSs(int milliseconds)
 	{
 		if(prepared)
 		{
-			int forward_pos=mp.getCurrentPosition()+5000;
+			int forward_pos=mp.getCurrentPosition()+10000;
 
 			//if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			//	mp.seekTo(Math.min(forward_pos, total_duration),MediaPlayer.SEEK_NEXT_SYNC);
