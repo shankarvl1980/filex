@@ -234,7 +234,6 @@ public class ArchiveDeletePasteServiceUtil {
             String tag=df.getTag();
             if(tag.equals(dest_folder) && df.fileObjectType==destFileObjectType)
             {
-                Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
                 int idx=df.filePOJO_list.indexOf(filePOJO);
                 if(df.llm!=null)
@@ -255,7 +254,6 @@ public class ArchiveDeletePasteServiceUtil {
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && df.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -272,7 +270,6 @@ public class ArchiveDeletePasteServiceUtil {
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && fileSelectorFragment.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(fileSelectorFragment.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -289,7 +286,6 @@ public class ArchiveDeletePasteServiceUtil {
             // in case of cut, to take care of instances of destfolder is also parent of source folder, it is put in separate if block
             if(Global.IS_CHILD_FILE(tag,parent_source_folder) && storageAnalyserFragment.fileObjectType==sourceFileObjectType)
             {
-                Collections.sort(storageAnalyserFragment.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                 storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -312,7 +308,6 @@ public class ArchiveDeletePasteServiceUtil {
         {
             if(Global.AFTER_ARCHIVE_GOTO_DEST_FOLDER)
             {
-                Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 DetailFragment.TO_BE_MOVED_TO_FILE_POJO=filePOJO;
 
                 if (df.detailFragmentListener != null) {
@@ -339,7 +334,6 @@ public class ArchiveDeletePasteServiceUtil {
 
                 if(Global.IS_CHILD_FILE(tag,parent_dest_folder)  && df.fileObjectType==destFileObjectType)
                 {
-                    Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                     df.clearSelectionAndNotifyDataSetChanged();
                     int idx=df.filePOJO_list.indexOf(filePOJO);
                     if(df.llm!=null)
@@ -361,7 +355,6 @@ public class ArchiveDeletePasteServiceUtil {
 
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
-                Collections.sort(fileSelectorFragment.filePOJO_list,FileComparator.FilePOJOComparate(FileSelectorActivity.SORT,false));
                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -372,7 +365,6 @@ public class ArchiveDeletePasteServiceUtil {
 
             if(Global.IS_CHILD_FILE(tag,parent_dest_folder))
             {
-                Collections.sort(storageAnalyserFragment.filePOJO_list,FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT,true));
                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
         }
@@ -398,7 +390,6 @@ public class ArchiveDeletePasteServiceUtil {
             String tag=df.getTag();
             if(tag.equals(dest_folder) && df.fileObjectType==destFileObjectType)
             {
-                Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
                 df.clearSelectionAndNotifyDataSetChanged();
                 int idx=df.filePOJO_list.indexOf(filePOJO);
                 if(df.llm!=null)

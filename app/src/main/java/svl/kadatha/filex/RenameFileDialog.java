@@ -318,7 +318,6 @@ public class RenameFileDialog extends DialogFragment
 	{
 		if(fileNameChanged)
 		{
-			Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 			df.clearSelectionAndNotifyDataSetChanged();
 			int idx=df.filePOJO_list.indexOf(filePOJO);
 			if(df.llm!=null)

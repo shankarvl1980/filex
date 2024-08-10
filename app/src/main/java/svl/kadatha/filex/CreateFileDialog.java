@@ -123,7 +123,6 @@ public class CreateFileDialog extends DialogFragment
 					final String new_name=new_file_name_edittext.getText().toString().trim();
 					if(viewModel.file_created)
 					{
-						Collections.sort(df.filePOJO_list,FileComparator.FilePOJOComparate(Global.SORT,false));
 						df.clearSelectionAndNotifyDataSetChanged();
 						int idx=df.filePOJO_list.indexOf(viewModel.filePOJO);
 						if(df.llm!=null)

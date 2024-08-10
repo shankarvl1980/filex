@@ -464,35 +464,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		super.onResume();
 		if(local_activity_delete)
 		{
-			modification_observed=false;
-			local_activity_delete=false;
-			if(MainActivity.SHOW_HIDDEN_FILE)
-			{
-				filePOJO_list=viewModel.filePOJOS;
-				totalFilePOJO_list=viewModel.filePOJOS;
-			}
-			else
-			{
-				filePOJO_list=viewModel.filePOJOS_filtered;
-				totalFilePOJO_list=viewModel.filePOJOS_filtered;
-			}
-			totalFilePOJO_list_Size=totalFilePOJO_list.size();
-			file_list_size=totalFilePOJO_list_Size;
-            if(detailFragmentListener!=null)detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
-			if(fileclickselected.equals("Large Files"))
-			{
-				Collections.sort(filePOJO_list, viewModel.library_size_desc ? FileComparator.FilePOJOComparate("d_size_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-			}
-			else if(fileclickselected.equals("Duplicate Files"))
-			{
-				Collections.sort(filePOJO_list, Global.SORT.equals("d_name_desc") ? FileComparator.FilePOJOComparate(Global.SORT, false) : FileComparator.FilePOJOComparate("d_name_asc", false));
-			}
-			else {
-				Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-			}
-			time_image_view.setSelected(viewModel.library_time_desc);
-			size_image_view.setSelected(viewModel.library_size_desc);
-			adapter.notifyDataSetChanged();
+			clearSelectionAndNotifyDataSetChanged();
 		}
 
 		else if(modification_observed)
@@ -532,6 +504,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			});
 		}
 	}
+
+
 
 	private void after_filledFilePojos_procedure()
 	{
@@ -788,10 +762,36 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		viewModel.mselecteditems=new IndexedLinkedHashMap<>();
 		if(adapter!=null)
 		{
-			adapter.notifyDataSetChanged();
-			file_list_size=filePOJO_list.size();
-            if(detailFragmentListener!=null) detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
+			modification_observed=false;
+			local_activity_delete=false;
+			if(MainActivity.SHOW_HIDDEN_FILE)
+			{
+				filePOJO_list=viewModel.filePOJOS;
+				totalFilePOJO_list=viewModel.filePOJOS;
+			}
+			else
+			{
+				filePOJO_list=viewModel.filePOJOS_filtered;
+				totalFilePOJO_list=viewModel.filePOJOS_filtered;
+			}
 			totalFilePOJO_list_Size=totalFilePOJO_list.size();
+			file_list_size=totalFilePOJO_list_Size;
+			if(detailFragmentListener!=null)detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
+			if(fileclickselected.equals("Large Files"))
+			{
+				Collections.sort(filePOJO_list, viewModel.library_size_desc ? FileComparator.FilePOJOComparate("d_size_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
+			}
+			else if(fileclickselected.equals("Duplicate Files"))
+			{
+				Collections.sort(filePOJO_list, Global.SORT.equals("d_name_desc") ? FileComparator.FilePOJOComparate(Global.SORT, false) : FileComparator.FilePOJOComparate("d_name_asc", false));
+			}
+			else {
+				Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
+			}
+			time_image_view.setSelected(viewModel.library_time_desc);
+			size_image_view.setSelected(viewModel.library_size_desc);
+			adapter.notifyDataSetChanged();
+
 
 			if(file_list_size==0)
 			{
