@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -579,10 +578,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					Global.print(context,getString(R.string.added_audios_current_play_list));
 					clear_selection();
 				} else {
-					Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
+					Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(bottom_toolbar,listPopWindow,Global.FOUR_DP);
 				}
 			} else if (id == R.id.toolbar_btn_4) {
-				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(bottom_toolbar,listPopWindow,Global.FOUR_DP);
 			}
 
 			if(audioFragmentListener!=null)

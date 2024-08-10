@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -365,7 +364,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-        int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
 
 		actionModeListener=new ActionModeListener();
 		cut.setOnClickListener(actionModeListener);
@@ -2077,7 +2075,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				}
 				popupWindowAdapter.notifyDataSetChanged();
-				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,actionmode_toolbar,listPopWindow);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(actionmode_toolbar,listPopWindow,Global.FOUR_DP);
 			}
 		}
 	}

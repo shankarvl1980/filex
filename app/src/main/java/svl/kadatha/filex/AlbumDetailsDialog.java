@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -294,7 +293,6 @@ public class AlbumDetailsDialog extends DialogFragment
 		listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-		int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
 		audioListViewModel=new ViewModelProvider(this).get(AudioListViewModel.class);
@@ -836,7 +834,7 @@ public class AlbumDetailsDialog extends DialogFragment
 				AudioSaveListDialog audioSaveListDialog = AudioSaveListDialog.getInstance(SAVE_AUDIO_LIST_REQUEST_CODE);
 				audioSaveListDialog.show(getParentFragmentManager(), "");
 			} else if (id == R.id.toolbar_btn_4) {
-				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(bottom_toolbar,listPopWindow,Global.FOUR_DP);
 			}
 		}
 

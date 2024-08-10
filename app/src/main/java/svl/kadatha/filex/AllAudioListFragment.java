@@ -3,7 +3,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -468,7 +467,7 @@ public class AllAudioListFragment extends Fragment
                 if (audioListViewModel.audio_pojo_selected_items.isEmpty()) {
 					return;
 				}
-				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(context,bottom_toolbar,listPopWindow);
+				Global.SHOW_LIST_POPUP_WINDOW_BOTTOM(bottom_toolbar,listPopWindow,Global.FOUR_DP);
 			} else if (id == R.id.toolbar_btn_5) {
                 if(audioFragmentListener!=null)
                 {

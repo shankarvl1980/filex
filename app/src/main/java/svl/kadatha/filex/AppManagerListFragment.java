@@ -240,7 +240,6 @@ public class AppManagerListFragment extends Fragment {
         listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         listPopWindow.setFocusable(true);
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-        int listview_height = Global.GET_HEIGHT_LIST_VIEW(listView);
         listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
         getParentFragmentManager().setFragmentResultListener(APP_ACTION_REQUEST_CODE, this, new FragmentResultListener() {

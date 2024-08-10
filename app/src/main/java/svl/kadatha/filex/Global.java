@@ -9,12 +9,8 @@ import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -23,18 +19,12 @@ import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -44,8 +34,6 @@ import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -204,8 +192,6 @@ public class Global
 	static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION=FILEX_PACKAGE+".FILE_DELETE";
 	static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION=FILEX_PACKAGE+".MODIFICATION_OBSERVED";
 
-
-	static public int NAVIGATION_STATUS_BAR_HEIGHT;
 
 	static final LinkedHashMap<String,SpacePOJO> SPACE_ARRAY=new LinkedHashMap<>();
 
@@ -612,20 +598,6 @@ public class Global
 		}
 	}
 
-	static int GET_HEIGHT_LIST_VIEW(ListView listView) {
-
-		ListAdapter mAdapter= listView.getAdapter();
-		int listViewElementsHeight = 0;
-		for (int i = 0; i < mAdapter.getCount(); i++) {
-			View mView = mAdapter.getView(i, null, listView);
-			mView.measure(
-					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-			listViewElementsHeight += mView.getMeasuredHeight()+ONE_DP;
-		}
-		return listViewElementsHeight;
-	}
-
 	static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name)
 	{
 		Intent intent=new Intent();
@@ -680,7 +652,7 @@ public class Global
 		}
 	}
 
-	static void SHOW_LIST_POPUP_WINDOW_BOTTOM(Context context, View bottom_toolbar, PopupWindow listPopWindow) {
+	static void SHOW_LIST_POPUP_WINDOW_BOTTOM(View bottom_toolbar, PopupWindow listPopWindow, int desiredDistanceFromToolbar) {
 		View rootView = bottom_toolbar.getRootView();
 		int[] location = new int[2];
 		bottom_toolbar.getLocationInWindow(location);
@@ -689,7 +661,7 @@ public class Global
 		int rootHeight = rootView.getHeight();
 
 		// Calculate the space above the toolbar
-		int offset = rootHeight - toolbarTop + Global.FOUR_DP;
+		int offset = rootHeight - toolbarTop + desiredDistanceFromToolbar;
 
 		// Set the width of the popup if needed
 		// listPopWindow.setWidth(desiredWidth);
@@ -698,54 +670,6 @@ public class Global
 		listPopWindow.showAtLocation(rootView, Gravity.BOTTOM | Gravity.END, 0, offset);
 	}
 
-	public static int GET_NAVIGATION_STATUS_BAR_HEIGHT(Context context) {
-		Point appUsableSize = getAppUsableScreenSize(context);
-		Point realScreenSize = getRealScreenSize(context);
-		Point point;
-		// navigation bar on the side
-//		if (appUsableSize.x < realScreenSize.x) {
-//			return new Point(realScreenSize.x - appUsableSize.x, appUsableSize.y);
-//		}
-
-		// navigation bar at the bottom
-		if (appUsableSize.y < realScreenSize.y) {
-			point=new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
-			return NAVIGATION_STATUS_BAR_HEIGHT= point.y;
-
-		}
-
-		// navigation bar is not present
-		return NAVIGATION_STATUS_BAR_HEIGHT=0;
-	}
-
-	public static Point getAppUsableScreenSize(Context context) {
-		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = windowManager.getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		return size;
-	}
-
-	public static Point getRealScreenSize(Context context) {
-		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = windowManager.getDefaultDisplay();
-		Point size = new Point();
-
-		display.getRealSize(size);
-
-		return size;
-	}
-
-	public static int GET_STATUS_BAR_HEIGHT(Context context)
-	{
-		Rect rectangle = new Rect();
-		Window window = ((AppCompatActivity)context).getWindow();
-		window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
-		int statusBarHeight = rectangle.top;
-		int contentViewTop =
-				window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
-		return contentViewTop - statusBarHeight;
-	}
 
 	public static String GET_FILE_PERMISSION(String file_path)
 	{
@@ -842,50 +766,6 @@ public class Global
 			}
 		}
 
-	}
-
-
-	public static Bitmap GET_RESIZED_BITMAP(String path,int required_image_view_dimension){
-		if(path==null) return null;
-		File f=new File(path);
-		Bitmap b = null;
-
-		//Decode image size
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(f);
-			BitmapFactory.decodeStream(fis, null, o);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-
-
-		int scale = 1;
-		if (o.outHeight > required_image_view_dimension || o.outWidth > required_image_view_dimension) {
-			scale = (int)Math.pow(2, (int) Math.ceil(Math.log(required_image_view_dimension /
-					(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
-		}
-
-		//Decode with inSampleSize
-		BitmapFactory.Options o2 = new BitmapFactory.Options();
-		o2.inSampleSize = scale;
-		try {
-			fis = new FileInputStream(f);
-			b = BitmapFactory.decodeStream(fis, null, o2);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-		finally {
-			try {
-				fis.close();
-			} catch (IOException e) {
-				return null;
-			}
-		}
-		return b;
 	}
 
 
@@ -1072,24 +952,6 @@ public class Global
 		return size;
 	}
 
-	public static float GET_BITMAP_ASPECT_RATIO(InputStream inputStream)
-	{
-		BitmapFactory.Options options=new BitmapFactory.Options();
-		options.inJustDecodeBounds=true;
-		BitmapFactory.decodeStream(inputStream,null,options);
-		int width=options.outWidth;
-		int height=options.outHeight;
-		if(width==0 || height==0)
-		{
-			return 0;
-		}
-		else
-		{
-			return (float) (width/height);
-		}
-
-	}
-
 	public static void print(Context context,String msg)
 	{
 		Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
@@ -1107,45 +969,6 @@ public class Global
 		});
 	}
 
-
-	private static int calculateInSampleSize(
-			BitmapFactory.Options options, int reqWidth, int reqHeight) {
-		// Raw height and width of image
-		final int height = options.outHeight;
-		final int width = options.outWidth;
-		int inSampleSize = 1;
-
-		if (height > reqHeight || width > reqWidth) {
-
-			final int halfHeight = height / 2;
-			final int halfWidth = width / 2;
-
-			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
-			// height and width larger than the requested height and width.
-			while ((halfHeight / inSampleSize) >= reqHeight
-					&& (halfWidth / inSampleSize) >= reqWidth) {
-				inSampleSize *= 2;
-			}
-		}
-
-		return inSampleSize;
-	}
-
-	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-														 int reqWidth, int reqHeight) {
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeResource(res, resId, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeResource(res, resId, options);
-	}
 
 	public static String CONCATENATE_PARENT_CHILD_PATH(String parent_file_path, String child_file_name)
 	{
@@ -1309,33 +1132,9 @@ public class Global
 		return cache_file;
 	}
 
-	public static Bitmap scaleToFitWidth(Bitmap bitmap,int width){
-		float factor=width/(float)bitmap.getWidth();
-		return Bitmap.createScaledBitmap(bitmap,width,(int)(bitmap.getHeight()*factor),true);
-	}
-
 
 	public static Bitmap scaleToFitHeight(Bitmap bitmap,int height){
 		float factor=height/(float)bitmap.getHeight();
 		return Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*factor),height,true);
 	}
 }
-
-//		GET_URI_PERMISSIONS_LIST(App.getAppContext());
-//		Iterator<UriPOJO> iterator=URI_PERMISSION_LIST.iterator();
-//
-//		while(iterator.hasNext())
-//		{
-//			UriPOJO uriPOJO=iterator.next();
-//			String uri_authority= uriPOJO.get_authority();
-//			if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
-//			{
-//				final int takeFlags = (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//				try
-//				{
-//					App.getAppContext().getContentResolver().releasePersistableUriPermission(uriPOJO.get_uri(),takeFlags);
-//				}
-//				catch (SecurityException e){}
-//				iterator.remove();
-//			}
-//		}

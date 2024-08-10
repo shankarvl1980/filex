@@ -23,7 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         Global.GET_PREFERENCES(tinyDB);
         Global.GET_ACTION_BAR_HEIGHT(context);
         Global.GET_STORAGE_DIR(context);
-        Global.GET_NAVIGATION_STATUS_BAR_HEIGHT(context);
 
        switch (Global.THEME)
        {
