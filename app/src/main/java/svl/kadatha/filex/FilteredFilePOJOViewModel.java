@@ -4,8 +4,6 @@ import android.app.Application;
 import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class FilteredFilePOJOViewModel extends AndroidViewModel {
@@ -367,52 +364,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
     }
 
-    public synchronized void fetchBitmapFromPDF(int position)
-    {
-        if(isPdfBitmapFetched.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        isPdfBitmapFetched.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=Executors.newSingleThreadExecutor();//MyExecutorService.getExecutorService();
-        future4=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                if(size_per_page_MB*10<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER))
-                {
-                    pdf_current_position=position;
-                    try {
-                        bitmap=getBitmap(pdfRenderer,position);
-                    }
-                    catch (SecurityException e)
-                    {
-                      Global.print_background_thread(application,application.getString(R.string.security_exception_thrown));
-
-                    }
-                    catch (OutOfMemoryError error)
-                    {
-                        Global.print_background_thread(application,application.getString(R.string.outofmemory_exception_thrown));
-                        out_of_memory_exception_thrown=true;
-                    }
-                    catch (Exception e)
-                    {
-                        Global.print_background_thread(application,application.getString(R.string.exception_thrown));
-                    }
-                }
-                isPdfBitmapFetched.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
-    }
-
-    private Bitmap getBitmap(PdfRenderer pdfRenderer, int i)
-    {
-        PdfRenderer.Page page= pdfRenderer.openPage(i);
-        Bitmap bitmap=Bitmap.createBitmap(page.getWidth(),page.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas=new Canvas(bitmap);
-        canvas.drawColor(Color.WHITE);
-        canvas.drawBitmap(bitmap,0f,0f,null);
-        page.render(bitmap,null,null,PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-        page.close();
-        return bitmap;
-    }
 
     public void rotate(Uri tree_uri, String tree_uri_path) {
     if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -422,7 +373,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         @Override
         public void run() {
             double size= (double) currently_shown_file.getSizeLong() /1024 / 1024;
-            if(size*2<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER)){
+            if(size*5<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER)){
                 String file_path = currently_shown_file.getPath();
                 String name=currently_shown_file.getName();
                 long[] bytes_read=new long[1];

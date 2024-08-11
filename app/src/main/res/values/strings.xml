@@ -467,5 +467,6 @@
     <string name="default_choices_can_be_removed_from_the_settings">Default choices can be removed from the Settings</string>
     <string name="rotate">Rotate</string>
     <string name="enter_pdf_password">Enter Pdf password</string>
+	<string name="could_not_be_rotated">could not be rotated</string>
 
 </resources>

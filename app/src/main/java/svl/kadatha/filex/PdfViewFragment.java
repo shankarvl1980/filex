@@ -249,10 +249,10 @@ public class PdfViewFragment extends Fragment
                                 // Force layout update
                                 imageView.requestLayout();
                             } else {
-                                Global.print(context,"could not be rotated");
+                                Global.print(context,getString(R.string.could_not_be_rotated));
                             }
                         } else {
-                            Global.print(context,"could not be rotated");
+                            Global.print(context,getString(R.string.could_not_be_rotated));
                         }
                         break;
                     default:
@@ -613,7 +613,7 @@ public class PdfViewFragment extends Fragment
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if(viewModel.size_per_page_MB*10<(availableHeapMemory-SAFE_MEMORY_BUFFER)) {
+            if(viewModel.size_per_page_MB*5<(availableHeapMemory-SAFE_MEMORY_BUFFER)) {
 
                 try {
                     bitmap=getBitmap(viewModel.pdfRenderer,position);
