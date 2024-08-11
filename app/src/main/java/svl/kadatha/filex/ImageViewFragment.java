@@ -727,7 +727,7 @@ ImageViewFragment extends Fragment
 						.dontAnimate()
 						.into(image_view);
 			}
-
+			v.setTag(position);
 			container.addView(v);
 			return v;
 		}

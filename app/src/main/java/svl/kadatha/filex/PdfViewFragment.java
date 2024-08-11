@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class PdfViewFragment extends Fragment
 {
     private Context context;
@@ -80,6 +83,7 @@ public class PdfViewFragment extends Fragment
     private AppCompatActivity activity;
 
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -95,6 +99,8 @@ public class PdfViewFragment extends Fragment
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon,getString(R.string.send),2));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon,getString(R.string.copy_to),3));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon,getString(R.string.rotate),5));
+
         DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
         float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
         floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,height,displayMetrics);
@@ -217,8 +223,38 @@ public class PdfViewFragment extends Fragment
                         PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,FileObjectType.FILE_TYPE);
                         propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
                         break;
+                    case 4: // Rotate
+                        int currentItem = view_pager.getCurrentItem();
+                        View currentView = null;
+                        for (int i = 0; i < view_pager.getChildCount(); i++)
+                        {
+                            View child = view_pager.getChildAt(i);
+                            if (child.getTag() != null && child.getTag().equals(currentItem)) {
+                                currentView = child;
+                                break;
+                            }
+                        }
+
+                        if (currentView != null) {
+                            TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
+                            if (imageView != null) {
+                                float currentRotation = imageView.getRotation();
+                                float newRotation = (currentRotation + 90) % 360;
+                                imageView.setRotation(newRotation);
 
 
+                                // Reset zoom and center the image
+                                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                                // Force layout update
+                                imageView.requestLayout();
+                            } else {
+                                Global.print(context,"could not be rotated");
+                            }
+                        } else {
+                            Global.print(context,"could not be rotated");
+                        }
+                        break;
                     default:
                         break;
 
@@ -323,6 +359,7 @@ public class PdfViewFragment extends Fragment
         };
 
         viewModel=new ViewModelProvider(this).get(FilteredFilePOJOViewModel.class);
+
         if(activity instanceof PdfViewActivity)
         {
             data=((PdfViewActivity)activity).data;
@@ -615,7 +652,7 @@ public class PdfViewFragment extends Fragment
                 ImageView imageView= frameLayout.findViewById(R.id.picture_viewpager_layout_imageview);
                 try{
                     GlideApp.with(context).load(bitmap).placeholder(R.drawable.pdf_water_icon).error(R.drawable.pdf_water_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(imageView);
-                    view.setTag("loaded");
+                    view.setTag(position);
                 }
                 catch (IllegalArgumentException e){ cancel(true);}
 
