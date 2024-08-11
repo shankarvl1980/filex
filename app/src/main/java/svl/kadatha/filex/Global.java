@@ -232,8 +232,6 @@ public class Global
 						}
 					}
 
-
-					//Timber.tag(TAG).d("path-"+uri_path+"   uri-"+uri);
 				}
 			}
 		}
