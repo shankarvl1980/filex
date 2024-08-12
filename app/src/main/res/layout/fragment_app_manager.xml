@@ -18,6 +18,13 @@
         android:clipToPadding="false"
 
         />
+
+    <svl.kadatha.filex.FastScrollerView
+        android:id="@+id/fastScroller_app_manager"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:paddingBottom="?attr/actionBarSize"/>
     <TextView
         android:id="@+id/fragment_app_list_number"
         android:layout_width="wrap_content"

@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -289,7 +290,6 @@ public class InstaCropperView extends View {
                         break;
                 }
 
-                //return cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
                 Bitmap bitmap=cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
                 callback.onBitmapReady(bitmap);
                 return bitmap;
@@ -362,24 +362,22 @@ public class InstaCropperView extends View {
         int targetWidth = (int) (Global.SCREEN_WIDTH * 0.6f);
         int targetHeight = (int) (targetWidth / screenRatio);
 
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         int width, height;
 
-        if (widthMode == MeasureSpec.EXACTLY) {
-            width = Math.min(widthSize, targetWidth);
-            height = (int) (width / screenRatio);
-        } else if (heightMode == MeasureSpec.EXACTLY) {
-            height = Math.min(heightSize, targetHeight);
+        // Calculate dimensions as if always in portrait
+        width = Math.min(widthSize, targetWidth);
+        height = (int) (width / screenRatio);
+
+        // Ensure it fits within the height (important for portrait mode)
+        if (height > heightSize) {
+            height = heightSize;
             width = (int) (height * screenRatio);
-        } else {
-            width = targetWidth;
-            height = targetHeight;
         }
 
+        // In landscape, these dimensions might not fit, but we'll keep them anyway
         setMeasuredDimension(width, height);
     }
 
