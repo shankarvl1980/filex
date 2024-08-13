@@ -129,7 +129,10 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             llm=new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
         }
-
+        ItemSeparatorDecoration itemSeparatorDecoration=new ItemSeparatorDecoration(context,1,false,recyclerView);
+        recyclerView.addItemDecoration(itemSeparatorDecoration);
+        FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_archive_detail_fragment);
+        fastScroller.setRecyclerView(recyclerView);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
             int scroll_distance=0;

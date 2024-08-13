@@ -255,8 +255,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		});
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 
-
-
 		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));

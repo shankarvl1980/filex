@@ -30,7 +30,13 @@
         android:clipToPadding="false"
         style="@style/my_scrollbar"/>
 
-
+    <svl.kadatha.filex.FastScrollerView
+        android:id="@+id/fastScroller_archive_detail_fragment"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:paddingTop="40sp"
+        android:paddingBottom="100dp"/>
 
     <TextView
         android:id="@+id/fragment_archive_empty_folder"
