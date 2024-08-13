@@ -180,6 +180,7 @@ public class Global
 
 	static public final int LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY=4000;
 	static public int ACTION_BAR_HEIGHT;
+	static public int ACTION_BAR_HEIGHT_IN_DP;
 
 	static public final boolean AFTER_ARCHIVE_GOTO_DEST_FOLDER=true;
 
@@ -593,6 +594,8 @@ public class Global
 		if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
 		{
 			ACTION_BAR_HEIGHT = TypedValue.complexToDimensionPixelSize(tv.data,context.getResources().getDisplayMetrics());
+			float density = context.getResources().getDisplayMetrics().density;
+			ACTION_BAR_HEIGHT_IN_DP = (int) (ACTION_BAR_HEIGHT / density);
 		}
 	}
 

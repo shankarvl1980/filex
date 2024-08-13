@@ -85,9 +85,10 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup
 
 		for(int i=0; i<child_count; ++i)
 		{
-			View child=getChildAt(i);
+			Button child= (Button) getChildAt(i);
 			child.setLayoutParams(params);
 			child.setPadding(0,toppadding,0,toppadding);
+			child.setTextSize((float) Global.ACTION_BAR_HEIGHT_IN_DP /4);
 			measureChildWithMargins(child,widthMeasureSpec,widthUsed,Global.ACTION_BAR_HEIGHT,heightUsed);
 			widthUsed+=child.getMeasuredWidth()+child.getPaddingStart()+child.getPaddingEnd();
 			heightUsed=child.getMeasuredHeight()+child.getPaddingTop()+child.getPaddingBottom();
