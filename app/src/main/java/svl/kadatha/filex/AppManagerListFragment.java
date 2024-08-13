@@ -122,8 +122,7 @@ public class AppManagerListFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_app_manager,container,false);
         app_count_textview=v.findViewById(R.id.fragment_app_list_number);
         recyclerView=v.findViewById(R.id.fragment_app_list_recyclerview);
-        ItemSeparatorDecoration itemSeparatorDecoration=new ItemSeparatorDecoration(context,1,false);
-        recyclerView.addItemDecoration(itemSeparatorDecoration);
+
         if(AppManagerActivity.FILE_GRID_LAYOUT)
         {
             GridLayoutManager glm = new GridLayoutManager(context, Global.GRID_COUNT);
@@ -137,6 +136,8 @@ public class AppManagerListFragment extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
         }
+        ItemSeparatorDecoration itemSeparatorDecoration=new ItemSeparatorDecoration(context,1,false,recyclerView);
+        recyclerView.addItemDecoration(itemSeparatorDecoration);
         FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_app_manager);
         fastScroller.setRecyclerView(recyclerView);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

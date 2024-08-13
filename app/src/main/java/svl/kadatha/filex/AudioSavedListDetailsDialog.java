@@ -47,7 +47,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 {
 	private CurrentListRecyclerViewAdapter currentAudioListRecyclerViewAdapter;
 	private Context context;
-	private RecyclerView CurrentAudioListRecyclerview;
+	private RecyclerView currentAudioListRecyclerview;
 	private TextView file_number_view;
 	private ImageButton all_select_btn;
 	private TextView empty_audio_list_tv;
@@ -228,13 +228,13 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 
 		file_number_view=v.findViewById(R.id.album_details_file_number);
 
-		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false);
-		CurrentAudioListRecyclerview=v.findViewById(R.id.album_details_recyclerview);
-		CurrentAudioListRecyclerview.addItemDecoration(itemSeparatorDecoration);
+		currentAudioListRecyclerview=v.findViewById(R.id.album_details_recyclerview);
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false,currentAudioListRecyclerview);
+		currentAudioListRecyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
-		fastScrollerView.setRecyclerView(CurrentAudioListRecyclerview);
-		CurrentAudioListRecyclerview.setLayoutManager(new LinearLayoutManager(context));
-		CurrentAudioListRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
+		fastScrollerView.setRecyclerView(currentAudioListRecyclerview);
+		currentAudioListRecyclerview.setLayoutManager(new LinearLayoutManager(context));
+		currentAudioListRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{
 				final int threshold=5;
 				public void onScrolled(RecyclerView rv, int dx, int dy)
@@ -361,15 +361,15 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 					clicked_audio_list=audioListViewModel.audio_list;
 					total_audio_list=audioListViewModel.audio_list;
 					currentAudioListRecyclerViewAdapter=new CurrentListRecyclerViewAdapter();
-					CurrentAudioListRecyclerview.setAdapter(currentAudioListRecyclerViewAdapter);
+					currentAudioListRecyclerview.setAdapter(currentAudioListRecyclerViewAdapter);
 					num_all_audio=total_audio_list.size();
 					if(num_all_audio==0)
 					{
-						CurrentAudioListRecyclerview.setVisibility(View.GONE);
+						currentAudioListRecyclerview.setVisibility(View.GONE);
 						empty_audio_list_tv.setVisibility(View.VISIBLE);
 					}
 					file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size()+"/"+num_all_audio);
-					if(!whether_saved_play_list)CurrentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
+					if(!whether_saved_play_list)currentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
 				}
 			}
 		});
@@ -414,7 +414,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		num_all_audio=total_audio_list.size();
 		if(num_all_audio==0)
 		{
-			CurrentAudioListRecyclerview.setVisibility(View.GONE);
+			currentAudioListRecyclerview.setVisibility(View.GONE);
 			empty_audio_list_tv.setVisibility(View.VISIBLE);
 		}
 		file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size()+"/"+num_all_audio);

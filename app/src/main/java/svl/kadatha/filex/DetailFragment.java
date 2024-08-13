@@ -256,10 +256,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		progress_bar=v.findViewById(R.id.fragment_detail_progressbar);
 
 
-		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context, 1,false);
-		recyclerView=v.findViewById(R.id.fragment_detail_container);
-		recyclerView.addItemDecoration(dividerItemDecoration);
 
+		recyclerView=v.findViewById(R.id.fragment_detail_container);
 		DividerItemDecoration itemdecor=new DividerItemDecoration(context,DividerItemDecoration.HORIZONTAL);
 		itemdecor.setDrawable(ContextCompat.getDrawable(context,R.drawable.right_private_icon));
 		filepath_recyclerview.addItemDecoration(itemdecor );
@@ -288,6 +286,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			llm=new LinearLayoutManager(context);
 			recyclerView.setLayoutManager(llm);
 		}
+
+		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context, 1,false,recyclerView);
+		recyclerView.addItemDecoration(dividerItemDecoration);
 
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
 		{

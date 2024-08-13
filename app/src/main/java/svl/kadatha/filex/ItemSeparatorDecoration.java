@@ -2,14 +2,11 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.TypedValue;
 import android.view.View;
 
-import androidx.recyclerview.widget.RecyclerView;
-
-
-import android.util.TypedValue;
-
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
     private final int spacingPx;
@@ -17,28 +14,29 @@ public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
     private int spanCount = 1;
     private boolean isGrid = false;
 
-    public ItemSeparatorDecoration(Context context, int spacingDp, boolean includeEdge) {
+    public ItemSeparatorDecoration(Context context, int spacingDp, boolean includeEdge, RecyclerView recyclerView) {
         this.spacingPx = dpToPx(context, spacingDp);
         this.includeEdge = includeEdge;
+        setupLayoutManager(recyclerView.getLayoutManager());
     }
 
     private int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+    private void setupLayoutManager(RecyclerView.LayoutManager layoutManager) {
         if (layoutManager instanceof GridLayoutManager) {
-            if (!isGrid) {
-                isGrid = true;
-                spanCount = ((GridLayoutManager) layoutManager).getSpanCount();
-            }
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            spanCount = gridLayoutManager.getSpanCount();
+            isGrid = true;
         } else {
             isGrid = false;
-            spanCount = 1;
+            spanCount = 1; // Default span count for non-grid layouts
         }
+    }
 
+    @Override
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
         int column = position % spanCount;
 
@@ -58,4 +56,3 @@ public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
         }
     }
 }
-
