@@ -21,7 +21,7 @@ import android.view.animation.DecelerateInterpolator;
 public class InstaCropperView extends View {
 
     public Context context;
-    public static final float DEFAULT_MINIMUM_RATIO = 4F/5F;
+    public static final float DEFAULT_MINIMUM_RATIO = 3F/5F;
     public static final float DEFAULT_MAXIMUM_RATIO = 1.91F;
     public static final float DEFAULT_RATIO = 1F;
 
@@ -379,11 +379,11 @@ public class InstaCropperView extends View {
             int heightSize = MeasureSpec.getSize(heightMeasureSpec);
             // Calculate 60% of the screen size
             if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
-                targetHeight = (int) (screenHeight * 0.6f)-Global.ACTION_BAR_HEIGHT;
+                targetHeight = (int) (screenHeight * 0.7f)-Global.ACTION_BAR_HEIGHT;
                 targetWidth = (int) (targetHeight * screenRatio);
                 heightSize -= Global.ACTION_BAR_HEIGHT;
             } else {
-                targetWidth = (int) (screenWidth * 0.6f);
+                targetWidth = (int) (screenWidth * 0.7f);
                 targetHeight = (int) (targetWidth / screenRatio);
 
             }
@@ -402,16 +402,16 @@ public class InstaCropperView extends View {
         else {
 
             screenRatio = (float) Global.SCREEN_WIDTH / Global.SCREEN_HEIGHT;
-            int targetWidth = (int) (Global.SCREEN_WIDTH * 0.6f);
-            int targetHeight = (int) (Global.SCREEN_HEIGHT * 0.6f);
+            int targetWidth = (int) (Global.SCREEN_WIDTH * 0.7f);
+            int targetHeight = (int) (Global.SCREEN_HEIGHT * 0.7f);
 
             int widthSize = MeasureSpec.getSize(widthMeasureSpec);
             int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
             if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
                 // Landscape mode
-                heightSize-=Global.ACTION_BAR_HEIGHT*2;
-                targetHeight-=Global.ACTION_BAR_HEIGHT*2;
+                heightSize-=(Global.ACTION_BAR_HEIGHT+Global.EIGHT_DP);
+                targetHeight-=(Global.ACTION_BAR_HEIGHT+Global.EIGHT_DP);
                 height = Math.min(heightSize, targetHeight);
                 width = (int) (height * screenRatio);
 
