@@ -131,7 +131,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		});
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
-		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true);
+		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true,false);
 		fileDuplicationViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
