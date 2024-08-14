@@ -468,5 +468,7 @@
     <string name="rotate">Rotate</string>
     <string name="enter_pdf_password">Enter Pdf password</string>
 	<string name="could_not_be_rotated">could not be rotated</string>
+    <string name="removed_directories">Removed directories</string>
+	<string name="there_are_no_files_to_copy">There are no files to copy</string>
 
 </resources>
