@@ -48,6 +48,10 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             {
                 ((ArchiveViewActivity)appCompatActivity).clearCache();
             }
+            else if(appCompatActivity instanceof AppManagerActivity)
+            {
+                ((AppManagerActivity)appCompatActivity).clear_cache=false;
+            }
             else if(appCompatActivity instanceof InstaCropperActivity)
             {
                 ((InstaCropperActivity)context).clear_cache=false;
