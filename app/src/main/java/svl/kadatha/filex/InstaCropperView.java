@@ -358,28 +358,85 @@ public class InstaCropperView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        float screenRatio = (float) Global.SCREEN_WIDTH / Global.SCREEN_HEIGHT;
-        int targetWidth = (int) (Global.SCREEN_WIDTH * 0.6f);
-        int targetHeight = (int) (targetWidth / screenRatio);
-
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
+        float screenRatio;
         int width, height;
+        if(Global.IS_TABLET)
+        {
+            int screenWidth, screenHeight;
+            int targetWidth, targetHeight;
 
-        // Calculate dimensions as if always in portrait
-        width = Math.min(widthSize, targetWidth);
-        height = (int) (width / screenRatio);
+            if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+                screenWidth = Math.max(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+                screenHeight = Math.min(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+            } else {
+                screenWidth = Math.min(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+                screenHeight = Math.max(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+            }
 
-        // Ensure it fits within the height (important for portrait mode)
-        if (height > heightSize) {
-            height = heightSize;
-            width = (int) (height * screenRatio);
+            screenRatio = (float) screenWidth / screenHeight;
+
+            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            // Calculate 60% of the screen size
+            if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+                targetHeight = (int) (screenHeight * 0.6f)-Global.ACTION_BAR_HEIGHT;
+                targetWidth = (int) (targetHeight * screenRatio);
+                heightSize -= Global.ACTION_BAR_HEIGHT;
+            } else {
+                targetWidth = (int) (screenWidth * 0.6f);
+                targetHeight = (int) (targetWidth / screenRatio);
+
+            }
+
+            // Ensure the view fits within the available space
+            width = Math.min(widthSize, targetWidth);
+            height = Math.min(heightSize, targetHeight);
+
+            // Adjust to maintain aspect ratio if necessary
+            if (width / screenRatio > height) {
+                width = (int) (height * screenRatio);
+            } else {
+                height = (int) (width / screenRatio);
+            }
+        }
+        else {
+
+            screenRatio = (float) Global.SCREEN_WIDTH / Global.SCREEN_HEIGHT;
+            int targetWidth = (int) (Global.SCREEN_WIDTH * 0.6f);
+            int targetHeight = (int) (Global.SCREEN_HEIGHT * 0.6f);
+
+            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+            if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+                // Landscape mode
+                heightSize-=Global.ACTION_BAR_HEIGHT*2;
+                targetHeight-=Global.ACTION_BAR_HEIGHT*2;
+                height = Math.min(heightSize, targetHeight);
+                width = (int) (height * screenRatio);
+
+                // Ensure it fits within the width
+                if (width > widthSize) {
+                    width = widthSize;
+                    height = (int) (width / screenRatio);
+                }
+            } else {
+                // Portrait mode
+                width = Math.min(widthSize, targetWidth);
+                height = (int) (width / screenRatio);
+
+                // Ensure it fits within the height
+                if (height > heightSize) {
+                    height = heightSize;
+                    width = (int) (height * screenRatio);
+                }
+            }
+
         }
 
-        // In landscape, these dimensions might not fit, but we'll keep them anyway
         setMeasuredDimension(width, height);
     }
+
 
     /*
     @Override
