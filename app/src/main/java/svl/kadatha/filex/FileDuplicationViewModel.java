@@ -1,8 +1,12 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.DocumentsContract;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -15,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import timber.log.Timber;
 
 public class FileDuplicationViewModel extends ViewModel {
 
@@ -82,7 +88,7 @@ public class FileDuplicationViewModel extends ViewModel {
                         Iterator<Uri> data_list_iterator=data_list.iterator();
                         while(data_list_iterator.hasNext()){
                             Uri data=data_list_iterator.next();
-                            if(isDirectory(App.getAppContext(),data)){
+                            if(isDirectoryUri(App.getAppContext(),data)){
                                 data_list_iterator.remove();
                                 directoriesRemoved=true;
                             }
@@ -187,10 +193,60 @@ public class FileDuplicationViewModel extends ViewModel {
         }
     }
 
-    private static boolean isDirectory(Context context, Uri uri) {
+    public static boolean isDirectoryUri(Context context, @NonNull Uri uri) {
+        // First, try to get the mime type
+        String mimeType = null;
+        try {
+            mimeType = context.getContentResolver().getType(uri);
+        } catch (Exception e) {
+            Timber.tag("isDirectoryUri").e(e, "Error getting mime type: " + uri);
+        }
 
-        DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
-        return documentFile != null && documentFile.isDirectory();
+        // Check if it's a directory based on mime type
+        if (mimeType != null) {
+            if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
+                return true;
+            } else {
+                // If we have a non-null MIME type that isn't a directory, it's likely a file
+                return false;
+            }
+        }
+
+        // If mime type is null or check fails, try to list children
+        try {
+            Uri childrenUri = uri;
+            // If it's a DocumentsProvider URI, build the children URI
+            if ("com.android.externalstorage.documents".equals(uri.getAuthority()) ||
+                    "com.android.providers.downloads.documents".equals(uri.getAuthority()) ||
+                    "com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String docId = DocumentsContract.getDocumentId(uri);
+                childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, docId);
+            }
+
+            try (Cursor cursor = context.getContentResolver().query(childrenUri,
+                    new String[]{"document_id"}, null, null, null)) {
+                return (cursor != null && cursor.getCount() > 0);
+            }
+        } catch (Exception e) {
+            Timber.tag("isDirectoryUri").e(e, "Error listing children: " + uri);
+        }
+
+        // If all checks fail, try one last method
+        try {
+            String[] projection = {"_data"};
+            try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    String path = cursor.getString(0);
+                    if (path != null) {
+                        return new File(path).isDirectory();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.tag("isDirectoryUri").e(e, "Error checking file path: " + uri);
+        }
+
+        // If all checks fail, assume it's not a directory
+        return false;
     }
-
 }
