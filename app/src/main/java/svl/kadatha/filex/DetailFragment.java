@@ -285,7 +285,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			recyclerView.setLayoutManager(llm);
 		}
 
-		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context, 1,false,recyclerView);
+		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context, 1, recyclerView);
 		recyclerView.addItemDecoration(dividerItemDecoration);
 
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()

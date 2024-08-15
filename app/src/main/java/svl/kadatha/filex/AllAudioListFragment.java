@@ -159,7 +159,7 @@ public class AllAudioListFragment extends Fragment
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
 		recyclerview=v.findViewById(R.id.fragment_audio_list_container);
-		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false,recyclerview);
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1, recyclerview);
 		recyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_all_audio);
 		fastScrollerView.setRecyclerView(recyclerview);

@@ -229,7 +229,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 		file_number_view=v.findViewById(R.id.album_details_file_number);
 
 		currentAudioListRecyclerview=v.findViewById(R.id.album_details_recyclerview);
-		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false,currentAudioListRecyclerview);
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1, currentAudioListRecyclerview);
 		currentAudioListRecyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
 		fastScrollerView.setRecyclerView(currentAudioListRecyclerview);

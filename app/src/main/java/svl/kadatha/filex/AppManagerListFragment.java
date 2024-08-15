@@ -136,7 +136,7 @@ public class AppManagerListFragment extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
         }
-        ItemSeparatorDecoration itemSeparatorDecoration=new ItemSeparatorDecoration(context,1,false,recyclerView);
+        ItemSeparatorDecoration itemSeparatorDecoration=new ItemSeparatorDecoration(context,1, recyclerView);
         recyclerView.addItemDecoration(itemSeparatorDecoration);
         FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_app_manager);
         fastScroller.setRecyclerView(recyclerView);

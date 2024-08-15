@@ -199,7 +199,7 @@ public class FileDuplicationViewModel extends ViewModel {
         try {
             mimeType = context.getContentResolver().getType(uri);
         } catch (Exception e) {
-            Timber.tag("isDirectoryUri").e(e, "Error getting mime type: " + uri);
+
         }
 
         // Check if it's a directory based on mime type
@@ -228,7 +228,7 @@ public class FileDuplicationViewModel extends ViewModel {
                 return (cursor != null && cursor.getCount() > 0);
             }
         } catch (Exception e) {
-            Timber.tag("isDirectoryUri").e(e, "Error listing children: " + uri);
+
         }
 
         // If all checks fail, try one last method
@@ -243,7 +243,7 @@ public class FileDuplicationViewModel extends ViewModel {
                 }
             }
         } catch (Exception e) {
-            Timber.tag("isDirectoryUri").e(e, "Error checking file path: " + uri);
+
         }
 
         // If all checks fail, assume it's not a directory

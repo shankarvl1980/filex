@@ -10,13 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
     private final int spacingPx;
-    private final boolean includeEdge;
     private int spanCount = 1;
-    private boolean isGrid = false;
 
-    public ItemSeparatorDecoration(Context context, int spacingDp, boolean includeEdge, RecyclerView recyclerView) {
+    public ItemSeparatorDecoration(Context context, int spacingDp, RecyclerView recyclerView) {
         this.spacingPx = dpToPx(context, spacingDp);
-        this.includeEdge = includeEdge;
         setupLayoutManager(recyclerView.getLayoutManager());
     }
 
@@ -28,9 +25,7 @@ public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
         if (layoutManager instanceof GridLayoutManager) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             spanCount = gridLayoutManager.getSpanCount();
-            isGrid = true;
         } else {
-            isGrid = false;
             spanCount = 1; // Default span count for non-grid layouts
         }
     }
@@ -40,19 +35,26 @@ public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
         int position = parent.getChildAdapterPosition(view);
         int column = position % spanCount;
 
-        if (includeEdge) {
-            outRect.left = spacingPx - column * spacingPx / spanCount;
-            outRect.right = (column + 1) * spacingPx / spanCount;
-            if (position < spanCount) {
-                outRect.top = spacingPx;
-            }
-            outRect.bottom = spacingPx;
-        } else {
-            outRect.left = column * spacingPx / spanCount;
-            outRect.right = spacingPx - (column + 1) * spacingPx / spanCount;
-            if (position >= spanCount) {
-                outRect.top = spacingPx;
-            }
+        outRect.left = column * spacingPx / spanCount;
+        outRect.right = spacingPx - (column + 1) * spacingPx / spanCount;
+        if (position >= spanCount) {
+            outRect.top = spacingPx;
         }
     }
 }
+
+//
+//        if (includeEdge) {
+//outRect.left = spacingPx - column * spacingPx / spanCount;
+//outRect.right = (column + 1) * spacingPx / spanCount;
+//            if (position < spanCount) {
+//outRect.top = spacingPx;
+//            }
+//outRect.bottom = spacingPx;
+//        } else {
+//outRect.left = column * spacingPx / spanCount;
+//outRect.right = spacingPx - (column + 1) * spacingPx / spanCount;
+//            if (position >= spanCount) {
+//outRect.top = spacingPx;
+//            }
+//                    }

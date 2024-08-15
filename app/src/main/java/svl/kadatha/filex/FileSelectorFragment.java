@@ -158,7 +158,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 			LinearLayoutManager llm = new LinearLayoutManager(context);
 			recycler_view.setLayoutManager(llm);
 		}
-		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context,1,false,recycler_view);
+		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context,1, recycler_view);
 		recycler_view.addItemDecoration(dividerItemDecoration);
 
 		folder_selected_textview.setText(fileclickselected);

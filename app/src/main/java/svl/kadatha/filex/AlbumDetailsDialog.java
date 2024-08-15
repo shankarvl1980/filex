@@ -205,7 +205,7 @@ public class AlbumDetailsDialog extends DialogFragment
 		empty_audio_list_tv=v.findViewById(R.id.album_details_empty_list_tv);
 
 		selected_album_recyclerview=v.findViewById(R.id.album_details_recyclerview);
-		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1,false,selected_album_recyclerview);
+		ItemSeparatorDecoration itemSeparatorDecoration =new ItemSeparatorDecoration(context,1, selected_album_recyclerview);
 		selected_album_recyclerview.addItemDecoration(itemSeparatorDecoration);
 		FastScrollerView fastScrollerView=v.findViewById(R.id.fastScroller_album_detail);
 		fastScrollerView.setRecyclerView(selected_album_recyclerview);
