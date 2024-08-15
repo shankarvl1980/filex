@@ -27,8 +27,10 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class CopyToActivity extends BaseActivity{
@@ -44,7 +46,7 @@ public class CopyToActivity extends BaseActivity{
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
     private String folderclickselected;
-    private List<Uri> data_list=new ArrayList<>();
+    private ArrayList<Uri> data_list=new ArrayList<>();
     private final static String ARCHIVE_REPLACE_REQUEST_CODE="activity_copy_to_replace_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE="activity_copy_to_saf_permission_request_code";
     private final static String COPY_TO_ACTION="copy_to";
@@ -125,6 +127,7 @@ public class CopyToActivity extends BaseActivity{
                 }
             }
         });
+
         ok_button.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
@@ -196,12 +199,13 @@ public class CopyToActivity extends BaseActivity{
                         }
                     }
                     else{
-                        launchService();
+                        progress_bar.setVisibility(View.VISIBLE);
+                        fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false,data_list);
                     }
                 }
                 else{
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false);
+                    fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false,data_list);
                 }
 
             }
@@ -231,6 +235,9 @@ public class CopyToActivity extends BaseActivity{
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if(requestKey.equals(DUPLICATE_FILE_NAMES_REQUEST_CODE))
                 {
+                    if(fileDuplicationViewModel.directoriesRemoved){
+                        Global.print(context,getString(R.string.removed_directories));
+                    }
                     overwritten_file_path_list=result.getStringArrayList("overwritten_file_path_list");
                     data_list=result.getParcelableArrayList("data_list");
                     launchService();
@@ -263,6 +270,11 @@ public class CopyToActivity extends BaseActivity{
     }
 
     private void launchService(){
+        if(data_list.isEmpty())
+        {
+            Global.print(context,getString(R.string.there_are_no_files_to_copy));
+            finish();
+        }
         emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
         if(emptyService==null)
         {
@@ -308,7 +320,7 @@ public class CopyToActivity extends BaseActivity{
             String action=intent.getAction();
             if(action.equals(Intent.ACTION_SEND_MULTIPLE))
             {
-                data_list = (List<Uri>) bundle.get(Intent.EXTRA_STREAM);
+                data_list = (ArrayList<Uri>) bundle.get(Intent.EXTRA_STREAM);
                 file_name_edit_text.setEnabled(false);
                 file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
             }
@@ -356,6 +368,7 @@ public class CopyToActivity extends BaseActivity{
         }
         return result;
     }
+
     @Override
     protected void onResume()
     {
@@ -470,4 +483,20 @@ public class CopyToActivity extends BaseActivity{
             }
         }
     });
+
+    private void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list){
+        if(data_list==null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        Iterator<Uri> iterator=data_list.iterator();
+        while (iterator.hasNext()){
+            String name=getFileNameOfUri(context,iterator.next());
+            for(String f_name:file_path_list){
+                if(name.equals(new File(f_name).getName())) {
+                    iterator.remove();
+                    break;
+                }
+
+            }
+        }
+    }
+
 }

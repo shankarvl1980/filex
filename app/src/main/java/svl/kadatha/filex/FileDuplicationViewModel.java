@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -27,6 +28,7 @@ public class FileDuplicationViewModel extends ViewModel {
     public List<String> destination_duplicate_file_path_array;
     public ArrayList<String> not_to_be_replaced_files_path_array;
     public ArrayList<String> overwritten_file_path_list;
+    public boolean directoriesRemoved;
 
     public String source_folder,dest_folder;
     public FileObjectType sourceFileObjectType,destFileObjectType;
@@ -55,7 +57,7 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
 
-    public void checkForExistingFileWithSameName(String source_folder,FileObjectType sourceFileObjectType, String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array, boolean cut ,boolean findAllDuplicates)
+    public void checkForExistingFileWithSameName(String source_folder,FileObjectType sourceFileObjectType, String dest_folder,FileObjectType destFileObjectType,ArrayList<String>files_selected_array, boolean cut ,boolean findAllDuplicates, ArrayList<Uri> data_list)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -75,16 +77,30 @@ public class FileDuplicationViewModel extends ViewModel {
             public void run() {
                 if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
                 {
+                    boolean to_remove_directories = data_list != null;
+                    if(to_remove_directories){
+                        Iterator<Uri> data_list_iterator=data_list.iterator();
+                        while(data_list_iterator.hasNext()){
+                            Uri data=data_list_iterator.next();
+                            if(isDirectory(App.getAppContext(),data)){
+                                data_list_iterator.remove();
+                                directoriesRemoved=true;
+                            }
+                        }
+                    }
+
                     //process to have only files with unique file names
                     Set<String> file_name_set=new HashSet<>();
                     Iterator<String> iterator=files_selected_array.iterator();
+
                     while(iterator.hasNext())
                     {
                         String file_path=iterator.next();
                         boolean inserted=file_name_set.add(new File(file_path).getName());
-                        if(!inserted) iterator.remove();
+                        if(!inserted) {
+                            iterator.remove();
+                        }
                     }
-
                 }
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array,dest_folder,destFileObjectType,sourceFileObjectType);
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
@@ -147,9 +163,7 @@ public class FileDuplicationViewModel extends ViewModel {
                         removeNotTobeCopiedUris(context,data_list,source_duplicate_file_path_array);
                     }
                     else{
-                        not_to_be_replaced_files_path_array.add(source_duplicate_file_path_array.remove(0));
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        destination_duplicate_file_path_array.remove(0);
                         removeNotTobeCopiedUris(context,data_list,not_to_be_replaced_files_path_array);
                     }
                 }
@@ -171,6 +185,12 @@ public class FileDuplicationViewModel extends ViewModel {
 
             }
         }
+    }
+
+    private static boolean isDirectory(Context context, Uri uri) {
+
+        DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
+        return documentFile != null && documentFile.isDirectory();
     }
 
 }

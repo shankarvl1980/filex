@@ -155,7 +155,13 @@ public final class FileUtil
 			cursor.moveToFirst();
 			mime_type=cursor.getString(0);
 			cursor.close();
-			return mime_type.equals(DocumentsContract.Document.MIME_TYPE_DIR);
+			if(mime_type==null){
+				return false;
+			}
+			else{
+				return mime_type.equals(DocumentsContract.Document.MIME_TYPE_DIR);
+			}
+
 		}
 		return false;
 	}

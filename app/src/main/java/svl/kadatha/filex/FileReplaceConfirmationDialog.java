@@ -121,9 +121,16 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				}
 				else
 				{
-					progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.filterFileSelectedArray(context,false,false,data_list);
-
+					fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
+					fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+					fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()){
+						progress_bar.setVisibility(View.VISIBLE);
+						fileDuplicationViewModel.filterFileSelectedArray(context,false,false,data_list);
+					}
+					else{
+						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName()+"'");
+					}
 				}
 
 			}
@@ -131,7 +138,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 		});
 
 		fileDuplicationViewModel=new ViewModelProvider(this).get(FileDuplicationViewModel.class);
-		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true,false);
+		fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,files_selected_array,cut,true,data_list);
 		fileDuplicationViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
 			@Override
 			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
