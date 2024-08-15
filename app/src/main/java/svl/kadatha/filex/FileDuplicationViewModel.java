@@ -4,10 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -19,8 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import timber.log.Timber;
 
 public class FileDuplicationViewModel extends ViewModel {
 
