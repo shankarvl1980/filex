@@ -208,39 +208,6 @@ public class FileDuplicationViewModel extends ViewModel {
             }
         }
 
-        // If mime type is null or check fails, try to list children
-        try {
-            Uri childrenUri = uri;
-            // If it's a DocumentsProvider URI, build the children URI
-            if ("com.android.externalstorage.documents".equals(uri.getAuthority()) ||
-                    "com.android.providers.downloads.documents".equals(uri.getAuthority()) ||
-                    "com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String docId = DocumentsContract.getDocumentId(uri);
-                childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, docId);
-            }
-
-            try (Cursor cursor = context.getContentResolver().query(childrenUri,
-                    new String[]{"document_id"}, null, null, null)) {
-                return (cursor != null && cursor.getCount() > 0);
-            }
-        } catch (Exception e) {
-
-        }
-
-        // If all checks fail, try one last method
-        try {
-            String[] projection = {"_data"};
-            try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    String path = cursor.getString(0);
-                    if (path != null) {
-                        return new File(path).isDirectory();
-                    }
-                }
-            }
-        } catch (Exception e) {
-
-        }
 
         // If all checks fail, assume it's not a directory
         return false;
