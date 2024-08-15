@@ -27,11 +27,8 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class CopyToActivity extends BaseActivity{
 
@@ -483,20 +480,5 @@ public class CopyToActivity extends BaseActivity{
             }
         }
     });
-
-    private void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list){
-        if(data_list==null || data_list.isEmpty() || file_path_list.isEmpty()) return;
-        Iterator<Uri> iterator=data_list.iterator();
-        while (iterator.hasNext()){
-            String name=getFileNameOfUri(context,iterator.next());
-            for(String f_name:file_path_list){
-                if(name.equals(new File(f_name).getName())) {
-                    iterator.remove();
-                    break;
-                }
-
-            }
-        }
-    }
 
 }
