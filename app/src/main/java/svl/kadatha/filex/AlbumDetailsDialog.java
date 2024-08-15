@@ -839,7 +839,5 @@ public class AlbumDetailsDialog extends DialogFragment
 		}
 
 	}
-	
-
 
 }
