@@ -62,7 +62,7 @@ public class Global
 	static public final SimpleDateFormat SDF=new SimpleDateFormat("dd.MM.yyyy");
 	static String INTERNAL_PRIMARY_STORAGE_PATH="";
 	static String USB_STORAGE_PATH;
-	static File ARCHIVE_EXTRACT_DIR;
+	public static File ARCHIVE_EXTRACT_DIR;
 	static File USB_CACHE_DIR;
 	static File TEMP_ROTATE_CACHE_DIR;
 	static File FTP_CACHE_DIR;
@@ -767,34 +767,34 @@ public class Global
 
 	public static boolean CHECK_FTP_SERVER_CONNECTED()
 	{
-		return CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientMain);
+		return FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();//FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).ftpClientMain.isConnected();//CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientMain);
 	}
 
-	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
-	{
-		int reply_code=ftpClient.getReplyCode();
-		//if(FTPReply.isPositiveCompletion(reply_code))
-		try {
-			if(ftpClient.isAvailable())
-			{
-				return true;
-			}
-			else
-			{
-				try {
-					return FtpClientRepository.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
-				} catch (IOException ioe) {
-					return false;
-				}
-			}
-		} catch (Exception e) {
-			try {
-				return FtpClientRepository.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
-			} catch (IOException ie) {
-				return false;
-			}
-		}
-	}
+//	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
+//	{
+//		int reply_code=ftpClient.getReplyCode();
+//		//if(FTPReply.isPositiveCompletion(reply_code))
+//		try {
+//			if(ftpClient.isAvailable())
+//			{
+//				return true;
+//			}
+//			else
+//			{
+//				try {
+//					return FtpClientRepository_old.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
+//				} catch (IOException ioe) {
+//					return false;
+//				}
+//			}
+//		} catch (Exception e) {
+//			try {
+//				return FtpClientRepository_old.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
+//			} catch (IOException ie) {
+//				return false;
+//			}
+//		}
+//	}
 
 
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
@@ -1110,17 +1110,25 @@ public class Global
 			{
 				FileUtil.mkdirsNative(parent_file);
 				FileUtil.createNativeNewFile(cache_file);
-				if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForCopyView))
+				//if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForCopyView))
 				{
-					try (InputStream inputStream=FtpClientRepository.getInstance().ftpClientForCopyView.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-						FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
-						FtpClientRepository.getInstance().ftpClientForCopyView.completePendingCommand();
-						return cache_file;
+					FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                    try {
+                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+						try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+							FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
+							ftpClient.completePendingCommand();
+							ftpClientRepository.releaseFtpClient(ftpClient);
+							return cache_file;
 
-					} catch (Exception e) {
+						} catch (Exception e) {
 
-						return cache_file;
-					}
+							return cache_file;
+						}
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
 				}
 			}
 

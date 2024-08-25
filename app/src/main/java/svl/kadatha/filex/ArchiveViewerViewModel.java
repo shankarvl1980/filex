@@ -23,7 +23,6 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean zipFileExtracted;
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public boolean checkedSAFPermissionPasteSetUp;
 
     public ArchiveViewerViewModel(@NonNull Application application) {
         super(application);
@@ -111,10 +110,5 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
         });
     }
 
-
-    public void setSAFCheckedBoolean()
-    {
-        checkedSAFPermissionPasteSetUp=true;
-    }
 
 }

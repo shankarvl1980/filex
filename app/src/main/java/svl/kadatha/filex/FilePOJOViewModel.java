@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -247,38 +248,69 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-    private void get_size_non_nio(File f, int[]total_no_of_files, long[]total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap)
-    {
-        int no_of_files=0;
-        long size_of_files=0L;
-        if(isCancelled()) return;
-        if(f.isDirectory())
-        {
-            total_no_of_files[0]=0;total_size_of_files[0]=0;
-            File[] files_array=f.listFiles();
-            if(files_array!=null && files_array.length!=0)
-            {
-                for(File file:files_array)
-                {
-                    get_size_non_nio(file,total_no_of_files,total_size_of_files,include_folder,storage_hashmap);
-                }
-                if(include_folder)
-                {
-                    ++no_of_files;
-                }
-                storage_hashmap.put(f.getAbsolutePath(),new FileStoragePOJO(++total_no_of_files[0], total_size_of_files[0]));
-                total_no_of_files[0]=0;total_size_of_files[0]=0;
-            }
-        }
-        else
-        {
-            ++no_of_files;
-            size_of_files+=f.length();
+    private void get_size_non_nio(File f, int[] total_no_of_files, long[] total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap) {
+        Stack<File> stack = new Stack<>();
+        stack.push(f);
 
+        while (!stack.isEmpty() && !isCancelled()) {
+            File current = stack.pop();
+            int no_of_files = 0;
+            long size_of_files = 0L;
+
+            if (current.isDirectory()) {
+                File[] files_array = current.listFiles();
+                if (files_array != null && files_array.length != 0) {
+                    for (File file : files_array) {
+                        stack.push(file);
+                    }
+                    if (include_folder) {
+                        ++no_of_files;
+                    }
+                    storage_hashmap.put(current.getAbsolutePath(), new FileStoragePOJO(total_no_of_files[0] + 1, total_size_of_files[0]));
+                }
+            } else {
+                ++no_of_files;
+                size_of_files += current.length();
+            }
+
+            total_no_of_files[0] += no_of_files;
+            total_size_of_files[0] += size_of_files;
         }
-        total_no_of_files[0]+=no_of_files;
-        total_size_of_files[0]+=size_of_files;
     }
+
+
+//    private void get_size_non_nio(File f, int[]total_no_of_files, long[]total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap)
+//    {
+//        int no_of_files=0;
+//        long size_of_files=0L;
+//        if(isCancelled()) return;
+//        if(f.isDirectory())
+//        {
+//            total_no_of_files[0]=0;total_size_of_files[0]=0;
+//            File[] files_array=f.listFiles();
+//            if(files_array!=null && files_array.length!=0)
+//            {
+//                for(File file:files_array)
+//                {
+//                    get_size_non_nio(file,total_no_of_files,total_size_of_files,include_folder,storage_hashmap);
+//                }
+//                if(include_folder)
+//                {
+//                    ++no_of_files;
+//                }
+//                storage_hashmap.put(f.getAbsolutePath(),new FileStoragePOJO(++total_no_of_files[0], total_size_of_files[0]));
+//                total_no_of_files[0]=0;total_size_of_files[0]=0;
+//            }
+//        }
+//        else
+//        {
+//            ++no_of_files;
+//            size_of_files+=f.length();
+//
+//        }
+//        total_no_of_files[0]+=no_of_files;
+//        total_size_of_files[0]+=size_of_files;
+//    }
 
     public void copyFtpToDevice(String file_path, FileObjectType fileObjectType,boolean select_app)
     {

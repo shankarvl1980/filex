@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -115,19 +117,24 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             public void run() {
                 loggedInStatus=false;
                 try {
-                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
-                    ftpClientRepository.instantiate();
-                    //ftpClientRepository.disconnect_ftp_clients();
+                    //FtpClientRepository_old ftpClientRepository= FtpClientRepository_old.getInstance();
+                    //ftpClientRepository.instantiate();
+                   FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
+
+                    loggedInStatus=true;
+                    //ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)
                     {
-                        FTP_WORKING_DIR_PATH = ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();//ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        ftpClientRepository.releaseFtpClient(ftpClient);
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH,ftpClientRepository.ftpClientForCreatingFilePojo));
+                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
                         }
+
                     }
                 }
                 catch (IOException e) {
@@ -205,19 +212,22 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 loggedInStatus=false;
                 try {
 
-                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance();
-                    ftpClientRepository.instantiate();
-                    //ftpClientRepository.disconnect_ftp_clients();
+                    //FtpClientRepository_old ftpClientRepository= FtpClientRepository_old.getInstance();
+                    //ftpClientRepository.instantiate();
+                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
+                    loggedInStatus=true;//ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
                     if(loggedInStatus)
                     {
-                        FTP_WORKING_DIR_PATH = ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        ftpClientRepository.releaseFtpClient(ftpClient);
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH, ftpClientRepository.ftpClientForCreatingFilePojo));
+                            repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
                         }
+
                     }
                 }
                 catch (IOException e) {

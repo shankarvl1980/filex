@@ -18,7 +18,6 @@ public class MainActivityViewModel extends AndroidViewModel {
     private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9,future10;
 
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public boolean checkedSAFPermissionPasteSetUp;
     private final TinyDB tinyDB;
 
     public boolean archive_view,working_dir_open,library_or_search_shown,network_shown;
@@ -35,10 +34,9 @@ public class MainActivityViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
-        Global.REMOVE_USB_URI_PERMISSIONS();
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
-        FtpClientRepository.getInstance().disconnect_ftp_clients();
+
         if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
         {
             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());
@@ -83,11 +81,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 isDeletionCompleted.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-    }
-
-    public void setSAFCheckedBoolean()
-    {
-        checkedSAFPermissionPasteSetUp=true;
     }
 
     public void getAppList()

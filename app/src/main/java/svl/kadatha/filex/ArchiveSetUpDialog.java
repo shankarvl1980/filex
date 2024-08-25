@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.asynctasks.ArchiveAsyncTask;
+import svl.kadatha.filex.asynctasks.UnarchiveAsyncTask;
 
 
 public class ArchiveSetUpDialog extends DialogFragment
@@ -58,8 +60,8 @@ public class ArchiveSetUpDialog extends DialogFragment
 	private FileObjectType current_dir_fileObjectType,destFileObjectType;
 	private InputMethodManager imm;
 	private String first_file_name,parent_file_name,parent_file_path;
-	public final static String ARCHIVE_ACTION_ZIP="archive-zip";
-	public final static String ARCHIVE_ACTION_UNZIP="archive-unzip";
+	public final static String ARCHIVE_ACTION_ZIP= ArchiveAsyncTask.TASK_TYPE;
+	public final static String ARCHIVE_ACTION_UNZIP= UnarchiveAsyncTask.TASK_TYPE;
 	private final static String ARCHIVE_REPLACE_REQUEST_CODE="archive_replace_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="archive_set_up_saf_permission_request_code";
 	private Class emptyService;

@@ -33,17 +33,17 @@ public class FtpClientNoopHandlerThread extends HandlerThread {
         runnable=new Runnable() {
             @Override
             public void run() {
-                if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForNoop))
-                {
-                    try {
-                        FtpClientRepository.getInstance().ftpClientForNoop.sendNoOp();
-                    } catch (IOException e) {
-                        noopHandler.removeCallbacks(this);
-                    }
-                }
-                else {
-                    noopHandler.removeCallbacks(this);
-                }
+                //if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForNoop))
+//                {
+//                    try {
+//                        FtpClientRepository_old.getInstance().ftpClientForNoop.sendNoOp();
+//                    } catch (IOException e) {
+//                        noopHandler.removeCallbacks(this);
+//                    }
+//                }
+//                else {
+//                    noopHandler.removeCallbacks(this);
+//                }
             }
         };
         noopHandler=new Handler();

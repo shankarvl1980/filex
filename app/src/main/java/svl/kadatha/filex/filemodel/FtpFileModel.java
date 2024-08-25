@@ -1,5 +1,7 @@
 package svl.kadatha.filex.filemodel;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import svl.kadatha.filex.FileUtil;
+//import svl.kadatha.filex.FtpClientRepository_old;
 import svl.kadatha.filex.FtpClientRepository;
+import svl.kadatha.filex.FtpDetailsViewModel;
 import svl.kadatha.filex.Global;
+import timber.log.Timber;
 
 public class FtpFileModel implements FileModel {
 
@@ -54,17 +59,21 @@ public class FtpFileModel implements FileModel {
     @Override
     public boolean rename(String new_name,boolean overwrite) {
         String new_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(),new_name);
-        if(Global.CHECK_FTP_SERVER_CONNECTED())
+        //if(Global.CHECK_FTP_SERVER_CONNECTED())
         {
             try {
-                return FtpClientRepository.getInstance().ftpClientMain.rename(path,new_file_path);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                boolean renamed= ftpClient.rename(path,new_file_path);//FtpClientRepository_old.getInstance().ftpClientMain.rename(path,new_file_path);
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                return renamed;
             } catch (IOException e) {
                 return false;
             }
         }
-        else {
-            return false;
-        }
+//        else {
+//            return false;
+//        }
     }
 
     @Override
@@ -74,49 +83,61 @@ public class FtpFileModel implements FileModel {
 
     @Override
     public InputStream getInputStream() {
-        if(Global.CHECK_FTP_SERVER_CONNECTED())
+        //if(Global.CHECK_FTP_SERVER_CONNECTED())
         {
             try {
-                return FtpClientRepository.getInstance().ftpClientMain.retrieveFileStream(path);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                InputStream inputStream=ftpClient.retrieveFileStream(path);//FtpClientRepository_old.getInstance().ftpClientMain.retrieveFileStream(path);
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                return inputStream;
             } catch (Exception e) {
 
                 return null;
             }
         }
-        else {
-            return null;
-        }
+//        else {
+//            return null;
+//        }
     }
 
     @Override
     public OutputStream getChildOutputStream(String child_name,long source_length) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path,child_name);
-        if(Global.CHECK_FTP_SERVER_CONNECTED())
+        //if(Global.CHECK_FTP_SERVER_CONNECTED())
         {
             try {
-                return FtpClientRepository.getInstance().ftpClientMain.storeFileStream(file_path);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                OutputStream outputStream=ftpClient.storeFileStream(file_path);
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                return outputStream;
             } catch (Exception e) {
                 return null;
             }
         }
-        else {
-            return null;
-        }
+//        else {
+//            return null;
+//        }
     }
 
     @Override
     public FileModel[] list() {
         String[] inner_source_list;
-        if(Global.CHECK_FTP_SERVER_CONNECTED())
+        //if(Global.CHECK_FTP_SERVER_CONNECTED())
         {
             try {
-                inner_source_list = FtpClientRepository.getInstance().ftpClientMain.listNames(path);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                inner_source_list = ftpClient.listNames(path);//FtpClientRepository_old.getInstance().ftpClientMain.listNames(path);
+                ftpClientRepository.releaseFtpClient(ftpClient);
                 int size=inner_source_list.length;
                 FileModel[] fileModels=new FileModel[size];
                 for (int i=0;i<size;++i)
                 {
-                    String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(path,inner_source_list[i]);
-                    fileModels[i]=new FtpFileModel(full_path);
+                    Timber.tag(Global.TAG).d("path - "+inner_source_list[i]);
+                    //String full_path=Global.CONCATENATE_PARENT_CHILD_PATH(path,inner_source_list[i]);
+                    fileModels[i]=new FtpFileModel(inner_source_list[i]);//new FtpFileModel(full_path);
                 }
                 return fileModels;
 
@@ -124,27 +145,33 @@ public class FtpFileModel implements FileModel {
                 return null;
             }
         }
-        else {
-            return null;
-        }
+//        else {
+//            return null;
+//        }
     }
 
     @Override
     public boolean createFile(String name) {
-        if(Global.CHECK_FTP_SERVER_CONNECTED())
+        //if(Global.CHECK_FTP_SERVER_CONNECTED())
         {
             InputStream bin = new ByteArrayInputStream(new byte[0]);
             try {
-                return FtpClientRepository.getInstance().ftpClientMain.storeFile(Global.CONCATENATE_PARENT_CHILD_PATH(path,name), bin);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                boolean created=ftpClient.storeFile(Global.CONCATENATE_PARENT_CHILD_PATH(path,name), bin);// FtpClientRepository_old.getInstance().ftpClientMain.storeFile(Global.CONCATENATE_PARENT_CHILD_PATH(path,name), bin);
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                return created;
             } catch (IOException e) {
                 return false;
             }
         }
-        else
-        {
-            return false;
-        }
+        //else
+        //{
+            //return false;
+        //}
     }
+
+
 
     @Override
     public boolean makeDirIfNotExists(String dir_name) {

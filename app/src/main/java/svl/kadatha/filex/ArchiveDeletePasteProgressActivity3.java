@@ -22,6 +22,12 @@ import androidx.lifecycle.Observer;
 
 import java.io.File;
 
+import svl.kadatha.filex.asynctasks.ArchiveAsyncTask;
+import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
+import svl.kadatha.filex.asynctasks.CutCopyAsyncTask;
+import svl.kadatha.filex.asynctasks.DeleteAsyncTask;
+import svl.kadatha.filex.asynctasks.UnarchiveAsyncTask;
+
 public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 {
 
@@ -41,7 +47,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	private FileObjectType sourceFileObjectType;
 	private ProgressBar progressBar;
 	private boolean clear_cache;
-	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_3";
+	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_1";
 	private TextView dialog_title,from_label,to_label;
 	private TableRow to_table_row;
 	private Handler handler;
@@ -115,24 +121,24 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 					{
 						switch(service_action)
 						{
-							case "archive-zip":
+							case ArchiveAsyncTask.TASK_TYPE:
 								Global.print(context,result ? getString(R.string.created)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_create)+" '"+target_file+"'");
 								break;
 
-							case "archive-unzip":
+							case UnarchiveAsyncTask.TASK_TYPE:
 								Global.print(context,result ? getString(R.string.unzipped)+" '"+target_file+"' "+getString(R.string.at)+" "+dest_folder : getString(R.string.could_not_extract)+" '"+target_file+"'");
 								break;
 
-							case "delete":
+							case DeleteAsyncTask.TASK_TYPE:
 								Global.print(context,result ? getString(R.string.deleted_selected_files)+" "+dest_folder : getString(R.string.could_not_delete_selected_files)+" "+dest_folder);
 								break;
 
-							case "paste-cut":
+							case CutCopyAsyncTask.TASK_TYPE_CUT:
 								Global.print(context,result ? getString(R.string.moved_selected_files)+" "+dest_folder : getString(R.string.could_not_move_selected_files)+" "+dest_folder);
 								break;
 
-							case "paste-copy":
-							case "copy_to":
+							case CutCopyAsyncTask.TASK_TYPE_COPY:
+							case CopyToAsyncTask.TASK_TYPE:
 								Global.print(context,result ? getString(R.string.copied_selected_files)+" "+dest_folder : getString(R.string.could_not_copy_selected_files)+" "+dest_folder);
 								break;
 						}
@@ -194,24 +200,24 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 
 			switch(intent_action)
 			{
-				case "archive-zip":
+				case ArchiveAsyncTask.TASK_TYPE:
 					dialog_title.setText(R.string.archiving);
 					to_label.setText(R.string.archive_file);
 					break;
-				case "archive-unzip":
+				case UnarchiveAsyncTask.TASK_TYPE:
 					dialog_title.setText(R.string.extracting);
 					from_label.setText(R.string.archive_file);
 					to_label.setText(R.string.output_folder);
 					break;
-				case "delete":
+				case DeleteAsyncTask.TASK_TYPE:
 					dialog_title.setText(R.string.deleting);
 					to_table_row.setVisibility(View.GONE);
 					break;
-				case "paste-cut":
+				case CutCopyAsyncTask.TASK_TYPE_CUT:
 					dialog_title.setText(R.string.moving);
 					break;
-				case "paste-copy":
-				case "copy_to":
+				case CutCopyAsyncTask.TASK_TYPE_COPY:
+				case CopyToAsyncTask.TASK_TYPE:
 					dialog_title.setText(R.string.copying);
 					break;
 			}
@@ -243,10 +249,10 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 				{
 					if(archiveDeletePasteFileService!=null)
 					{
-						String size_progress=FileUtil.humanReadableByteCount(archiveDeletePasteFileService.total_bytes_read[0]);
+						String size_progress=FileUtil.humanReadableByteCount(archiveDeletePasteFileService.counter_size_files);
 						if(archiveDeletePasteFileService.fileCountSize!=null)
 						{
-							int percentage=(int)(archiveDeletePasteFileService.total_bytes_read[0]*100.0/archiveDeletePasteFileService.fileCountSize.total_size_of_files+0.5);
+							int percentage=(int)(archiveDeletePasteFileService.counter_size_files*100.0/archiveDeletePasteFileService.fileCountSize.total_size_of_files+0.5);
 							progressBar.setProgress(percentage);
 							size_progress_text_view.setText(percentage+"%");
 						}
@@ -257,7 +263,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 
 						switch(intent_action)
 						{
-							case "archive-zip":
+							case ArchiveAsyncTask.TASK_TYPE:
 
 							{
 								current_file.setText(archiveDeletePasteFileService.zip_folder_name);
@@ -271,7 +277,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 							}
 							break;
 
-							case "archive-unzip":
+							case UnarchiveAsyncTask.TASK_TYPE:
 
 							{
 								from_textview.setText(archiveDeletePasteFileService.zip_file_path);
@@ -283,19 +289,19 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 							}
 							break;
 
-							case "delete":
+							case DeleteAsyncTask.TASK_TYPE:
 							{
 								from_textview.setText(archiveDeletePasteFileService.source_folder);
 								current_file.setText(archiveDeletePasteFileService.current_file_name);
-								copied_textview.setText(archiveDeletePasteFileService.deleted_file_name);
+								copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
 								no_files.setText(""+archiveDeletePasteFileService.counter_no_files);
 								size_files.setText(size_progress);
 							}
 
 							break;
 
-							case "paste-cut":
-							case "paste-copy":
+							case CutCopyAsyncTask.TASK_TYPE_CUT:
+							case CutCopyAsyncTask.TASK_TYPE_COPY:
 							{
 								from_textview.setText(archiveDeletePasteFileService.source_folder);
 								to_textview.setText(archiveDeletePasteFileService.dest_folder);
@@ -309,7 +315,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 							break;
 
 
-							case "copy_to":
+							case CopyToAsyncTask.TASK_TYPE:
 							{
 								to_textview.setText(archiveDeletePasteFileService.dest_folder);
 
@@ -332,7 +338,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 
 	private void bind_data()
 	{
-		if ("archive-zip".equals(intent_action) || "delete".equals(intent_action) || "paste-cut".equals(intent_action) || "paste-copy".equals(intent_action) || "copy_to".equals(intent_action))
+		if (ArchiveAsyncTask.TASK_TYPE.equals(intent_action) || DeleteAsyncTask.TASK_TYPE.equals(intent_action) || CutCopyAsyncTask.TASK_TYPE_CUT.equals(intent_action) || CutCopyAsyncTask.TASK_TYPE_COPY.equals(intent_action) || CopyToAsyncTask.TASK_TYPE.equals(intent_action))
 		{
 			archiveDeletePasteFileService.fileCountSize.mutable_size_of_files_to_be_archived_copied.observe(this, new Observer<String>() {
 				@Override

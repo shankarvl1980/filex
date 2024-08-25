@@ -30,6 +30,8 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
+
 public class CopyToActivity extends BaseActivity{
 
     private Context context;
@@ -46,7 +48,7 @@ public class CopyToActivity extends BaseActivity{
     private ArrayList<Uri> data_list=new ArrayList<>();
     private final static String ARCHIVE_REPLACE_REQUEST_CODE="activity_copy_to_replace_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE="activity_copy_to_saf_permission_request_code";
-    private final static String COPY_TO_ACTION="copy_to";
+    private final static String COPY_TO_ACTION= CopyToAsyncTask.TASK_TYPE;
     private Class emptyService;
     private Button ok_button;
     private boolean first_start;

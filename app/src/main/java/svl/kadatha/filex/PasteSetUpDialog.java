@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 
+import svl.kadatha.filex.asynctasks.CutCopyAsyncTask;
+
 public class PasteSetUpDialog extends DialogFragment
 {
 	private Context context;
@@ -27,6 +29,9 @@ public class PasteSetUpDialog extends DialogFragment
 	private int size;
 	private final static String SAF_PERMISSION_REQUEST_CODE_SOURCE="paste_set_up_saf_permission_request_code_source";
 	private final static String SAF_PERMISSION_REQUEST_CODE_DEST="paste_set_up_saf_permission_request_code_dest";
+	private static final String KEY_CHECKED_SAF_PERMISSION = "checked_saf_permission";
+	private boolean checkedSAFPermissionPasteSetUp = false;
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -88,18 +93,20 @@ public class PasteSetUpDialog extends DialogFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
-		MainActivityViewModel viewModel=new ViewModelProvider(this).get(MainActivityViewModel.class);
-		if(!viewModel.checkedSAFPermissionPasteSetUp)
-		{
-			if(check_permission_for_source(source_folder,sourceFileObjectType))
-			{
-				if(check_permission_for_destination(dest_folder,destFileObjectType))
-				{
+
+		if (savedInstanceState != null) {
+			checkedSAFPermissionPasteSetUp = savedInstanceState.getBoolean(KEY_CHECKED_SAF_PERMISSION, false);
+		}
+
+		if (!checkedSAFPermissionPasteSetUp) {
+			if (check_permission_for_source(source_folder, sourceFileObjectType)) {
+				if (check_permission_for_destination(dest_folder, destFileObjectType)) {
 					initiate_startActivity();
 				}
 			}
-			viewModel.setSAFCheckedBoolean();
+			checkedSAFPermissionPasteSetUp = true;
 		}
+
 
 		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
 			@Override
@@ -150,6 +157,13 @@ public class PasteSetUpDialog extends DialogFragment
 
 
 		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(KEY_CHECKED_SAF_PERMISSION, checkedSAFPermissionPasteSetUp);
 	}
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
@@ -315,7 +329,7 @@ public class PasteSetUpDialog extends DialogFragment
 
 
 		Intent intent=new Intent(context,emptyService);
-		intent.setAction(cut ? "paste-cut" : "paste-copy");
+		intent.setAction(cut ? CutCopyAsyncTask.TASK_TYPE_CUT : CutCopyAsyncTask.TASK_TYPE_COPY);
 		bundle.putString("tree_uri_path",tree_uri_path);
 		bundle.putString("source_uri_path",source_uri_path);
 		bundle.putParcelable("tree_uri",tree_uri);

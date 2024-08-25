@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 import me.jahnen.libaums.core.fs.FileSystem;
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,
@@ -155,6 +157,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private Handler h;
 	private NestedScrollView nestedScrollView;
 	private RepositoryClass repositoryClass;
+	private NetworkStateReceiver networkStateReceiver;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -214,6 +217,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
 		localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
+		networkStateReceiver = new NetworkStateReceiver();
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(networkStateReceiver, filter);
 
 		drawerLayout=findViewById(R.id.drawer_layout);
 		drawer=findViewById(R.id.drawer_navigation_layout);
@@ -418,11 +424,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
-					{
-						Global.print(context,context.getString(R.string.not_supported));
-					}
-					else if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
+//					if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
+//					{
+//						Global.print(context,context.getString(R.string.not_supported));
+//					}
+//					else
+						if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,
@@ -1533,9 +1540,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		mediaMountReceiver.removeMediaMountListener(this);
 		localBroadcastManager.unregisterReceiver(usbReceiver);
 		localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+		unregisterReceiver(networkStateReceiver);
 		context.unregisterReceiver(mediaMountReceiver);
 		listPopWindow.dismiss(); // to avoid memory leak on orientation change
 		h.removeCallbacksAndMessages(null);
+		Timber.tag(Global.TAG).d("main activity destroyed");
 	}
 
 	public void DeselectAllAndAdjustToolbars(DetailFragment df)
@@ -2597,7 +2606,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						}
 					}
 					Global.REMOVE_USB_URI_PERMISSIONS();
-
 				}
 				//usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
 

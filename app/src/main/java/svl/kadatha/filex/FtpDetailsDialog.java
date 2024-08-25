@@ -576,7 +576,8 @@ public class FtpDetailsDialog extends DialogFragment {
             }
             else if(id==R.id.toolbar_btn_3)
             {
-                FtpClientRepository.getInstance().disconnect_ftp_clients();
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                ftpClientRepository.shutdown();//FtpClientRepository_old.getInstance().disconnect_ftp_clients();
                 Global.print(context, "ftp connection disconnected");
 
             }

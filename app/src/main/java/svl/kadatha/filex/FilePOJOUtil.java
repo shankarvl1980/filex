@@ -30,6 +30,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FilePOJOUtil {
 
@@ -314,7 +315,7 @@ public class FilePOJOUtil {
         return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
-    static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extracticon)
+    static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extract_icon)
     {
         String name=f.getName();
         String path=f.getAbsolutePath();
@@ -352,7 +353,7 @@ public class FilePOJOUtil {
                 {
                     overlay_visible=View.VISIBLE;
                 }
-                else if(extracticon && type==0)
+                else if(extract_icon && type==0)
                 {
                     package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
                 }
@@ -461,7 +462,7 @@ public class FilePOJOUtil {
     {
         String[] command_line_long = {"ls", "-ld", file_path};
         try {
-            java.lang.Process process_long = Runtime.getRuntime().exec(command_line_long);
+            Process process_long = Runtime.getRuntime().exec(command_line_long);
             //java.lang.Process process_long = Runtime.getRuntime().exec("ls -ld "+file_path);
             BufferedReader bf_long = new BufferedReader(new InputStreamReader(process_long.getInputStream()));
             String line_long=bf_long.readLine(); //consume first line as not required
@@ -576,7 +577,7 @@ public class FilePOJOUtil {
         {
             String[] command_line = {"ls", "-l", path};
             try {
-                java.lang.Process process = Runtime.getRuntime().exec(command_line);
+                Process process = Runtime.getRuntime().exec(command_line);
                 BufferedReader bf_long = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 int count=0;
                 while(bf_long.readLine()!=null)
@@ -602,7 +603,7 @@ public class FilePOJOUtil {
 
 
 
-    static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path,FTPClient ftpClient)
+    static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)
     {
         FilePOJO filePOJO=null;
         if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
@@ -638,10 +639,23 @@ public class FilePOJOUtil {
             }
             else
             {
-                FTPFile f=FileUtil.getFTPFileFromOtherFTPClient(ftpClient,file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
-                if(f!=null)
-                {
-                    filePOJO=MAKE_FilePOJO(f,false, fileObjectType,file_path,ftpClient);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient= null;
+                try {
+                    ftpClient = ftpClientRepository.getFtpClient();
+                    FTPFile f=FileUtil.getFTPFileFromOtherFTPClient(ftpClient,file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
+                    if(f!=null)
+                    {
+                        filePOJO=MAKE_FilePOJO(f,false, fileObjectType,file_path,ftpClient);
+                    }
+
+                } catch (IOException e) {
+
+                }
+                finally {
+                    if (ftpClientRepository != null && ftpClient != null) {
+                        ftpClientRepository.releaseFtpClient(ftpClient);
+                    }
                 }
 
             }
@@ -940,7 +954,7 @@ public class FilePOJOUtil {
             for(int i=0;i<size;++i)
             {
                 file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,added_file_name_list.get(i));
-                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,FtpClientRepository.getInstance().ftpClientForAddPojo);
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
                 if(filePOJO!=null)
                 {
                     filePOJOs.add(filePOJO);
@@ -996,7 +1010,7 @@ public class FilePOJOUtil {
             filePOJO=ADD_TO_HASHMAP_FILE_POJO(parent_file_path, file_name_list,fileObjectType,overwritten_file_path_list); //single file is added, the last file pojo returned is the only filepojo
             if(filePOJO==null)
             {
-                filePOJO=MAKE_FilePOJO(fileObjectType,file_path,FtpClientRepository.getInstance().ftpClientForCreatingFilePojo);
+                filePOJO=MAKE_FilePOJO(fileObjectType,file_path);
             }
             if(filePOJO!=null)
             {
@@ -1028,7 +1042,7 @@ public class FilePOJOUtil {
         String name=new File(dest_folder).getName();
         FilePOJO removed_filePOJO=remove_from_FilePOJO(name,filePOJOs);
         remove_from_FilePOJO(name,filePOJOs_filtered);
-        FilePOJO filePOJO =MAKE_FilePOJO(fileObjectType,dest_folder,FtpClientRepository.getInstance().ftpClientForCreatingFilePojo);
+        FilePOJO filePOJO =MAKE_FilePOJO(fileObjectType,dest_folder);
         if(filePOJO==null)filePOJO=removed_filePOJO;
         if(filePOJO!=null)
         {
@@ -1156,7 +1170,7 @@ public class FilePOJOUtil {
  */
         if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             {
                 try(DirectoryStream<Path> directoryStream= Files.newDirectoryStream(Paths.get(fileclickselected)))
                 {
@@ -1237,31 +1251,35 @@ public class FilePOJOUtil {
         }
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
-            if(!Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository.getInstance().ftpClientForListing))
-            {
-                return;
-            }
-            else
+//            if(!Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForListing))
+//            {
+//                return;
+//            }
+//            else
             {
                 FTPFile[] file_array;
                 try {
 
-                    file_array=FtpClientRepository.getInstance().ftpClientForListing.listFiles(fileclickselected);
+                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                    FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                    file_array= ftpClient.listFiles(fileclickselected);
                     int size=file_array.length;
                     for(int i=0;i<size;++i)
                     {
                         FTPFile f=file_array[i];
                         String name=f.getName();
                         String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
-                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path,FtpClientRepository.getInstance().ftpClientForListing);
+                        Timber.tag(Global.TAG).d("path - "+path);
+                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path, ftpClient);
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
 
                     }
-
+                    ftpClientRepository.releaseFtpClient(ftpClient);
                 } catch (Exception e) {
                     return;
                 }
+
             }
         }
         /*

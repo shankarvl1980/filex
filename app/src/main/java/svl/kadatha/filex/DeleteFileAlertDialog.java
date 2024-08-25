@@ -24,6 +24,8 @@ import androidx.lifecycle.ViewModelProvider;
 import java.io.File;
 import java.util.ArrayList;
 
+import svl.kadatha.filex.asynctasks.DeleteAsyncTask;
+
 public class DeleteFileAlertDialog extends DialogFragment
 {
 
@@ -274,7 +276,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 		bundle.putString("source_uri_path",tree_uri_path);
 		bundle.putParcelable("source_uri",tree_uri);
 		Intent intent=new Intent(context,service);
-		intent.setAction("delete");
+		intent.setAction(DeleteAsyncTask.TASK_TYPE);
 		intent.putExtra("bundle",bundle);
 		context.startActivity(intent);
 

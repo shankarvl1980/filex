@@ -38,13 +38,13 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     protected void onCancelled(Result result) {}
 
-    protected void onProgressUpdate(@NotNull Progress value) {}
+    protected void onProgressUpdate() {}
 
-    public void publishProgress(@NotNull Progress value) {
+    public void publishProgress() {
         getHandler().post(new Runnable() {
             @Override
             public void run() {
-                onProgressUpdate(value);
+                onProgressUpdate();
             }
         });
     }
