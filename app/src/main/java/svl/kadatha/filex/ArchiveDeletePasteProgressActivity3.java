@@ -47,7 +47,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity
 	private FileObjectType sourceFileObjectType;
 	private ProgressBar progressBar;
 	private boolean clear_cache;
-	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_1";
+	public static final String ACTIVITY_NAME="ADPP_ACTIVITY_3";
 	private TextView dialog_title,from_label,to_label;
 	private TableRow to_table_row;
 	private Handler handler;
