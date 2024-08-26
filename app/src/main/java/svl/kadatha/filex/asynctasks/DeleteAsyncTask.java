@@ -78,8 +78,8 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     }
 
     @Override
-    protected void onProgressUpdate() {
-        super.onProgressUpdate();
+    protected void onProgressUpdate(Void value) {
+        super.onProgressUpdate(value);
         if (listener != null) {
             listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, current_file_name,deleted_file_name);
         }
@@ -152,7 +152,7 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         counter_no_files++;
         counter_size_files += (!file.isDirectory()) ? file.getLength() : 0;
         deleted_file_name = file.getName();
-        publishProgress();
+        publishProgress(null);
         return file.delete();
     }
 }

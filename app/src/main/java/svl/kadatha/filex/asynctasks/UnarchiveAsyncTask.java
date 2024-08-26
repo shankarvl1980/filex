@@ -111,7 +111,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     return false;
                 }
                 ZipEntry zipEntry=zipfile.getEntry(s.substring(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length()+1));
-                success=read_zipentry(zipEntry,zip_dest_path,isWritable,tree_uri,tree_uri_path);
+                success=read_zipentry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
             }
         }
         else
@@ -124,7 +124,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     return false;
                 }
                 ZipEntry zipEntry=zip_entries.nextElement();
-                success=read_zipentry(zipEntry,zip_dest_path,isWritable,tree_uri,tree_uri_path);
+                success=read_zipentry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
             }
 
         }
@@ -143,8 +143,8 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     }
 
     @Override
-    protected void onProgressUpdate() {
-        super.onProgressUpdate();
+    protected void onProgressUpdate(Void value) {
+        super.onProgressUpdate(value);
         if (listener != null) {
             listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, current_file_name, current_file_name);
         }
@@ -167,7 +167,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     }
 
 
-    private boolean read_zipentry(ZipEntry zipEntry, String zip_dest_path, boolean isWritable, Uri uri, String uri_path)
+    private boolean read_zipentry(ZipEntry zipEntry, String zip_dest_path, Uri uri, String uri_path)
     {
         InputStream inStream;
         BufferedInputStream bufferedInputStream=null;
@@ -179,7 +179,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             counter_no_files++;
             counter_size_files+=zipEntry.getSize();
             current_file_name=zip_entry_name;
-            publishProgress();
+            publishProgress(null);
             int idx=zip_entry_name.indexOf(File.separator);
             if(idx!=-1)
             {
@@ -238,7 +238,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 counter_size_files+=zipEntry.getSize();
                 current_file_name=zip_entry_name;
                 String entry_name=zipEntry.getName();
-                publishProgress();
+                publishProgress(null);
                 int idx=entry_name.indexOf(File.separator);
                 if(idx!=-1)
                 {

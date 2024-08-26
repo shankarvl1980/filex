@@ -135,7 +135,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                         counter_no_files++;
                         counter_size_files+=(!fileModel.isDirectory()) ? fileModel.getLength() : 0;
                         copied_file_name=fileModel.getName();
-                        publishProgress();
+                        publishProgress(null);
                         String zip_entry_path;
                         if(lengthParentPath==1)
                         {
@@ -164,7 +164,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                             {
                                 zipOutputStream.write(b,0,bytesread);
                                 counter_size_files+=bytesread;
-                                publishProgress();
+                                publishProgress(null);
                             }
 
                             bufferedInputStream.close();
@@ -215,8 +215,8 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
 
     @Override
-    protected void onProgressUpdate() {
-        super.onProgressUpdate();
+    protected void onProgressUpdate(Void value) {
+        super.onProgressUpdate(value);
         if (listener != null) {
             listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files,zip_file_name ,copied_file_name);
         }
@@ -260,7 +260,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             File file=file_array.get(i);
             counter_no_files++;
             copied_file_name=file.getName();
-            publishProgress();
+            publishProgress(null);
             String zip_entry_path;
             if(lengthParentPath==1)
             {
@@ -289,7 +289,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 {
                     zipOutputStream.write(b,0,bytesread);
                     counter_size_files+=bytesread;
-                    publishProgress();
+                    publishProgress(null);
                 }
 
                 bufferedInputStream.close();

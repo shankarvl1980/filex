@@ -1040,8 +1040,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									viewModel.current_page_end_point=fileSaveService1.pagePointerHashmap.get(viewModel.current_page);
-									viewModel.page_pointer_hashmap=fileSaveService1.pagePointerHashmap;
+									if(result){
+										viewModel.current_page_end_point=fileSaveService1.pagePointerHashmap.get(viewModel.current_page);
+										viewModel.page_pointer_hashmap=fileSaveService1.pagePointerHashmap;
+									}
 									viewModel.updated=result;
 
 									if(result)
@@ -1087,8 +1089,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								{
 									save_button.setEnabled(false);
 									save_button.setAlpha(Global.DISABLE_ALFA);
-									viewModel.current_page_end_point=fileSaveService2.pagePointerHashmap.get(viewModel.current_page);
-									viewModel.page_pointer_hashmap=fileSaveService2.pagePointerHashmap;
+									if(result){
+										viewModel.current_page_end_point=fileSaveService2.pagePointerHashmap.get(viewModel.current_page);
+										viewModel.page_pointer_hashmap=fileSaveService2.pagePointerHashmap;
+									}
 									viewModel.updated=result;
 
 									if(result)

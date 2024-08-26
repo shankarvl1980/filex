@@ -132,8 +132,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     }
 
     @Override
-    protected void onProgressUpdate() {
-        super.onProgressUpdate();
+    protected void onProgressUpdate(Void value) {
+        super.onProgressUpdate(value);
         if (listener != null) {
             listener.onProgressUpdate(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY, counter_no_files, counter_size_files,current_file_name ,copied_file_name);
         }
@@ -196,13 +196,13 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
 
                 ++counter_no_files;
-                publishProgress();
+                publishProgress(null);
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
                 counter_no_files++;
                 counter_size_files += source.getLength();
                 copied_file_name = source.getName();
-                publishProgress();
+                publishProgress(null);
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, bytes_read);
                 if (!success) {
                     Timber.tag("CopyFileModel").e("Failed to copy file: " + source.getPath());

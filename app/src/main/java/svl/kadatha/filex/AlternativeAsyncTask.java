@@ -30,21 +30,19 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     protected void onPreExecute() {}
 
-    //protected abstract Result doInBackground()
-
     protected abstract Result doInBackground(Params[] params);
 
     protected void onPostExecute(Result result) {}
 
     protected void onCancelled(Result result) {}
 
-    protected void onProgressUpdate() {}
+    protected void onProgressUpdate(Progress value) {}
 
-    public void publishProgress() {
+    public void publishProgress(Progress value) {
         getHandler().post(new Runnable() {
             @Override
             public void run() {
-                onProgressUpdate();
+                onProgressUpdate(value);
             }
         });
     }

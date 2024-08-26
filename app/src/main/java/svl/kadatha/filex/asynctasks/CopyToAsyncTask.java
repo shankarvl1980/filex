@@ -83,7 +83,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
                 counter_no_files++;
                 counter_size_files+=getLengthUri(context,data);
                 copied_file=file_name;
-                publishProgress();
+                publishProgress(null);
             }
 
         }
@@ -99,8 +99,8 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     }
 
     @Override
-    protected void onProgressUpdate() {
-        super.onProgressUpdate();
+    protected void onProgressUpdate(Void value) {
+        super.onProgressUpdate(value);
         if (listener != null) {
             listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, file_name,copied_file);
         }
