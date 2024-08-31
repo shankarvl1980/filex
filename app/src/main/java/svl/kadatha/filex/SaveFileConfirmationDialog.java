@@ -18,29 +18,24 @@ import androidx.fragment.app.DialogFragment;
 
 public class SaveFileConfirmationDialog extends DialogFragment
 {
-    private SaveFileListener saveFileListener;
 	private Context context;
+	private String request_code;
 	private boolean whether_closing;
+	private Bundle bundle;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
-		saveFileListener=((FileEditorActivity)context);
 	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		saveFileListener=null;
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		Bundle bundle=getArguments();
+		bundle=getArguments();
+		request_code=bundle.getString("request_code");
         whether_closing = bundle.getBoolean("whether_closing");
 		setCancelable(false);
 	}
@@ -75,18 +70,15 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-				if(saveFileListener!=null)
+				if(whether_closing)
 				{
-					if(whether_closing)
-					{
-						saveFileListener.on_being_closed(true);
-					}
-					else
-					{
-						saveFileListener.next_action(true);
-					}
-
+					bundle.putBoolean("to_close",true);
 				}
+				else
+				{
+					bundle.putBoolean("next_action",true);
+				}
+				getParentFragmentManager().setFragmentResult(request_code,bundle);
 				dismissAllowingStateLoss();
 			}
 		});
@@ -97,12 +89,13 @@ public class SaveFileConfirmationDialog extends DialogFragment
 			{
 				if(whether_closing)
 				{
-					saveFileListener.on_being_closed(false);
+					bundle.putBoolean("to_close",false);
 				}
 				else
 				{
-					saveFileListener.next_action(false);
+					bundle.putBoolean("next_action",false);
 				}
+				getParentFragmentManager().setFragmentResult(request_code,bundle);
 				dismissAllowingStateLoss();
 			}
 		});
@@ -110,10 +103,11 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		return v;
 	}
 	
-	public static SaveFileConfirmationDialog getInstance(boolean whether_closing)
+	public static SaveFileConfirmationDialog getInstance(String request_code,boolean whether_closing)
 	{
 		SaveFileConfirmationDialog dialog=new SaveFileConfirmationDialog();
 		Bundle bundle=new Bundle();
+		bundle.putString("request_code",request_code);
 		bundle.putBoolean("whether_closing",whether_closing);
 		dialog.setArguments(bundle);
 		return dialog;
@@ -129,12 +123,6 @@ public class SaveFileConfirmationDialog extends DialogFragment
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		
-	}
-
-	interface SaveFileListener
-	{
-		void next_action(boolean save);
-		void on_being_closed(boolean to_close_after_save);
 	}
 
 }

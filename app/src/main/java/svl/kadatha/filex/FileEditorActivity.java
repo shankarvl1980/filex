@@ -51,23 +51,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import timber.log.Timber;
 
 
-public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener, SaveFileConfirmationDialog.SaveFileListener
+public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener
 {
 	FileSaveServiceConnection serviceConnection;
 	private List<FilePOJO> files_selected_for_delete;
 	private String tree_uri_path="";
 	private Uri tree_uri;
-	EditText filetext_container_edittext;
+	//EditText filetext_container_edittext;
+	LineNumberedEditText filetext_container_edittext;
 	private Button edit_button,undo_button,redo_button,save_button,up_button,down_button;
 	static boolean NOT_WRAP=true;
-	static final int EOL_N = 0;
-	static final int EOL_R = 1;
-	static final int EOL_RN = 2;
+	public static final int EOL_N = 0;
+	public static final int EOL_R = 1;
+	public static final int EOL_RN = 2;
 	static float FILE_EDITOR_TEXT_SIZE;
-	private TextView file_name;
+	private TextView file_name, page_number;
 	private SaveFileConfirmationDialog saveConfirmationAlertDialog;
     private svl.kadatha.filex.ObservableScrollView scrollview;
 	private FileEditorSettingsDialog fileEditorSettingsDialog;
@@ -87,6 +92,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	public boolean clear_cache;
 	private static final String DELETE_FILE_REQUEST_CODE="text_file_delete_request_code";
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_editor_saf_permission_request_code";
+	private final static String SAVE_CONFIRMATION_REQUEST_CODE="file_editor_save_confirmation_request_code";
 	private FrameLayout progress_bar;
 	public FileEditorViewModel viewModel;
 
@@ -312,7 +318,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		filetext_container_edittext=findViewById(R.id.textfile_edittext);
 		filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
-		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext);
+		page_number=findViewById(R.id.file_editor_page_number);
+
+		viewModel.textViewUndoRedo=new TextViewUndoRedoBatch(filetext_container_edittext.getEditText());
 		viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
 			@Override
 			public void onEditTextChange() {
@@ -352,7 +360,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						}
 						viewModel.eol=viewModel.altered_eol=getEOL(viewModel.data);
 
-						if(!openFile(viewModel.current_page_end_point))
+						if(!openFile(0,1))
 						{
 							viewModel.textViewUndoRedo.disconnect();
 							clear_cache=false;
@@ -384,7 +392,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 									}
 									else
 									{
-										viewModel.temporary_file_for_save=getExternalFilesDir("file_save_temp");
+										//viewModel.temporary_file_for_save=getExternalFilesDir("file_save_temp");
 										viewModel.isFileBig=false;
 										break;
 									}
@@ -420,6 +428,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 					viewModel.file_format_supported=viewModel.fileRead;
 					viewModel.textViewUndoRedo.stopListening();
+
+					edit_button.setSelected(viewModel.edit_mode);
+
 					undo_button.setEnabled(false);
 					undo_button.setAlpha(Global.DISABLE_ALFA);
 					redo_button.setEnabled(false);
@@ -446,15 +457,32 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						down_button.setEnabled(true);
 						down_button.setAlpha(Global.ENABLE_ALFA);
 					}
-
-					filetext_container_edittext.setText(viewModel.stringBuilder.toString());
+					viewModel.updated=true;
+					page_number.setText(String.valueOf(viewModel.current_page));
+					filetext_container_edittext.setContent(viewModel.stringBuilder.toString(),viewModel.current_page,FileEditorViewModel.MAX_LINES_TO_DISPLAY);
 					scrollview.smoothScrollTo(0,0);
 					viewModel.textViewUndoRedo.startListening();
-					viewModel.initializedSetUp.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
 
+		viewModel.saveContentInTempFile.observe(this, new Observer<AsyncTaskStatus>() {
+			@Override
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED){
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
+					if(viewModel.whether_temp_content_saved){
+						viewModel.edit_mode = false;
+						start_file_save_service();
+					}
+					viewModel.saveContentInTempFile.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+			}
+		});
 
 		DeleteFileOtherActivityViewModel deleteFileOtherActivityViewModel=new ViewModelProvider(FileEditorActivity.this).get(DeleteFileOtherActivityViewModel.class);
 		deleteFileOtherActivityViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -506,6 +534,24 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					start_file_save_service();
 				}
 
+			}
+		});
+
+		fm.setFragmentResultListener(SAVE_CONFIRMATION_REQUEST_CODE, this, new FragmentResultListener() {
+			@Override
+			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+				if(requestKey.equals(SAVE_CONFIRMATION_REQUEST_CODE)){
+					boolean whether_closing=result.getBoolean("whether_closing");
+					if(whether_closing){
+						boolean to_close=result.getBoolean("to_close");
+						on_being_closed(to_close);
+					}else{
+						boolean next_action=result.getBoolean("next_action");
+						next_action(next_action);
+					}
+
+
+				}
 			}
 		});
 
@@ -636,71 +682,46 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	}
 
 
-	private void go_previous()
-	{
-		if(viewModel.file_start)// || viewModel.file_loading_started)
-		{
+	private void go_previous() {
+		if (viewModel.current_page <= 1) {
 			return;
 		}
-		if(viewModel.data!=null)
-		{
-			long prev_page_end_point=0L;
-			viewModel.current_page=viewModel.current_page-2;
-			if(viewModel.current_page<=0)
-			{
-				viewModel.current_page=0;
-			}
-			else
-			{
-				prev_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page);
-				viewModel.current_page--;
-			}
-			openFile(prev_page_end_point);
-		}
-	}
+		viewModel.edit_mode = false;
+		onClick_edit_button();
+		int previousPage = viewModel.current_page - 1;
+        FileEditorViewModel.PagePointer prevPagePointer = viewModel.page_pointer_hashmap.get(previousPage);
 
-	private void go_next()
-	{
-		if(viewModel.file_end)// || viewModel.file_loading_started)
-		{
+        if (prevPagePointer != null) {
+            openFile(prevPagePointer.startPoint,previousPage);
+        }
+    }
+
+	private void go_next() {
+		if (viewModel.file_end) {
 			return;
 		}
-
-		if(viewModel.data!=null)
-		{
-			if(viewModel.current_page!=0 )
-			{
-				viewModel.current_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page);
-				openFile(viewModel.current_page_end_point);
-			}
-
-		}
+		viewModel.edit_mode = false;
+		onClick_edit_button();
+		int nextPage = viewModel.current_page + 1;
+		openFile(viewModel.current_page_end_point,nextPage);
 	}
 
-	private boolean openFile(long pointer)
-	{
-		try
-		{
-            ParcelFileDescriptor pfd=getContentResolver().openFileDescriptor(viewModel.data,"r");
-			FileDescriptor fd=pfd.getFileDescriptor();
+	private boolean openFile(long pointer, int pageNumber) {
+		try {
+			ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(viewModel.data, "r");
+			FileDescriptor fd = pfd.getFileDescriptor();
 			progress_bar.setVisibility(View.VISIBLE);
 			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-			viewModel.openFile(new FileInputStream(fd),pointer);
+			viewModel.openFile(new FileInputStream(fd), pointer,pageNumber);
 			return true;
-		}
-		catch(FileNotFoundException e)
-		{
-			Global.print(context,getString(R.string.file_not_found));
+		} catch (FileNotFoundException e) {
+			Global.print(context, getString(R.string.file_not_found));
+			return false;
+		} catch (IllegalArgumentException e) {
+			Global.print(context, getString(R.string.file_could_not_be_opened));
 			return false;
 		}
-		catch (IllegalArgumentException e)
-		{
-			Global.print(context,getString(R.string.file_could_not_be_opened));
-			return false;
-		}
-
 	}
-
 	@Override
 	public void onEOLchanged(int eol)
 	{
@@ -718,14 +739,14 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	}
 
 
-	@Override
 	public void next_action(boolean save) {
 		if (save) {
-			start_file_save_service();
+			progress_bar.setVisibility(View.VISIBLE);
+			viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
 		} else {
 			save_button.setEnabled(false);
 			save_button.setAlpha(Global.DISABLE_ALFA);
-			viewModel.updated = true;
+			viewModel.updated=true;
 			if(viewModel.action_after_save.equals("go_previous"))
 			{
 				go_previous();
@@ -737,12 +758,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 	}
 
-	@Override
 	public void on_being_closed(boolean to_close_after_save) {
 		if(to_close_after_save)
 		{
 			viewModel.to_be_closed_after_save=to_close_after_save;
-			start_file_save_service();
+			progress_bar.setVisibility(View.VISIBLE);
+			viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
 		}
 		else
 		{
@@ -782,14 +803,14 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					viewModel.textViewUndoRedo.undo();
 					save_button.setEnabled(true);
 					save_button.setAlpha(Global.ENABLE_ALFA);
-					viewModel.updated = false;
+					viewModel.updated=false;
 					if (!viewModel.textViewUndoRedo.getCanUndo()) {
 						undo_button.setEnabled(false);
 						undo_button.setAlpha(Global.DISABLE_ALFA);
 
 						save_button.setEnabled(false);
 						save_button.setAlpha(Global.DISABLE_ALFA);
-						viewModel.updated = true;
+						viewModel.updated=true;
 					}
 
 					if (viewModel.textViewUndoRedo.getCanRedo()) {
@@ -800,7 +821,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			} else if (id == R.id.toolbar_btn_3) {
 				if (viewModel.textViewUndoRedo.getCanRedo()) {
 					viewModel.textViewUndoRedo.redo();
-					viewModel.updated = false;
+					viewModel.updated=false;
 					if (!viewModel.textViewUndoRedo.getCanRedo()) {
 						redo_button.setEnabled(false);
 						redo_button.setAlpha(Global.DISABLE_ALFA);
@@ -814,12 +835,13 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 				}
 			} else if (id == R.id.toolbar_btn_4) {
-				viewModel.edit_mode = false;
-				start_file_save_service();
+				progress_bar.setVisibility(View.VISIBLE);
+				viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
+
 			} else if (id == R.id.toolbar_btn_5) {
 				if (!viewModel.updated) {
 					viewModel.action_after_save="go_previous";
-					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
+					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(SAVE_CONFIRMATION_REQUEST_CODE,false);
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 				} else {
 					viewModel.action_after_save="";
@@ -828,7 +850,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			} else if (id == R.id.toolbar_btn_6) {
 				if (!viewModel.updated) {
 					viewModel.action_after_save="go_next";
-					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(false);
+					saveConfirmationAlertDialog = SaveFileConfirmationDialog.getInstance(SAVE_CONFIRMATION_REQUEST_CODE,false);
 					saveConfirmationAlertDialog.show(fm, "saveconfirmationalert_dialog");
 
 				} else {
@@ -852,7 +874,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else if(!viewModel.updated)
 		{
-			saveConfirmationAlertDialog=SaveFileConfirmationDialog.getInstance(true);
+			saveConfirmationAlertDialog=SaveFileConfirmationDialog.getInstance(SAVE_CONFIRMATION_REQUEST_CODE,true);
 			saveConfirmationAlertDialog.show(fm,"saveconfirmationalert_dialog");
 		}
 		else
@@ -957,199 +979,118 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 
 
-	private void start_file_save_service()
-	{
-
-		if(!viewModel.file.exists() || viewModel.temporary_file_for_save==null)
+	private void start_file_save_service() {
+		if (!viewModel.file.exists())// || viewModel.temporary_file_for_save == null) {
 		{
 			return;
 		}
 
-		long prev_page_end_point=0L;
-		if(viewModel.current_page>1)
-		{
-			prev_page_end_point=viewModel.page_pointer_hashmap.get(viewModel.current_page-1);
-		}
-		Bundle bundle=new Bundle();
-		bundle.putBoolean("isWritable",viewModel.isWritable);
-		bundle.putString("file_path",viewModel.file_path);
-		bundle.putString("content",filetext_container_edittext.getText().toString());
 
-		bundle.putInt("eol",viewModel.eol);
-		bundle.putInt("altered_eol",viewModel.altered_eol);
-		bundle.putLong("prev_page_end_point",prev_page_end_point);
-		bundle.putLong("current_page_end_point",viewModel.current_page_end_point);
-		bundle.putSerializable("page_pointer_hashmap",viewModel.page_pointer_hashmap);
-		bundle.putString("temporary_file_path",viewModel.temporary_file_for_save.getAbsolutePath());
-		bundle.putInt("current_page",viewModel.current_page);
+		Bundle bundle = new Bundle();
+		bundle.putBoolean("isWritable", viewModel.isWritable);
+		bundle.putString("file_path", viewModel.file_path);
+		bundle.putString("temp_file_path", new File(getExternalCacheDir(), FileEditorViewModel.temp_content_file_name).getAbsolutePath());
+		bundle.putInt("eol", viewModel.eol);
+		bundle.putInt("altered_eol", viewModel.altered_eol);
+		bundle.putSerializable("page_pointer_hashmap", new LinkedHashMap<>(viewModel.page_pointer_hashmap));
+		bundle.putInt("current_page", viewModel.current_page);
 
 		if (!viewModel.isWritable) {
-			if(!check_SAF_permission(viewModel.file_path,viewModel.fileObjectType))
-			{
+			if(!check_SAF_permission(viewModel.file_path, viewModel.fileObjectType)) {
 				return;
 			}
 		}
-		bundle.putString("tree_uri_path",tree_uri_path);
-		bundle.putParcelable("tree_uri",tree_uri);
+		bundle.putString("tree_uri_path", tree_uri_path);
+		bundle.putParcelable("tree_uri", tree_uri);
 		progress_bar.setVisibility(View.VISIBLE);
-		emptyService=getEmptyService();
-		if(emptyService==null)
-		{
-			Global.print(context,getString(R.string.maximum_2_services_only_be_processed_at_a_time));
+		emptyService = getEmptyService();
+		if(emptyService == null) {
+			Global.print(context, getString(R.string.maximum_2_services_only_be_processed_at_a_time));
 			return;
 		}
-		serviceConnection=new FileSaveServiceConnection(emptyService);
-		Intent file_save_service_intent=new Intent(context,emptyService);
-		bindService(file_save_service_intent,serviceConnection,Context.BIND_AUTO_CREATE);
+		serviceConnection = new FileSaveServiceConnection(emptyService);
+		Intent file_save_service_intent = new Intent(context, emptyService);
+		bindService(file_save_service_intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		file_save_service_intent.putExtra("bundle",bundle);
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
-		{
+		file_save_service_intent.putExtra("bundle", bundle);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			startForegroundService(file_save_service_intent);
-		}
-		else
-		{
+		} else {
 			startService(file_save_service_intent);
 		}
-
 	}
 
-	private class FileSaveServiceConnection implements ServiceConnection
-	{
+	private class FileSaveServiceConnection implements ServiceConnection {
 		Class service;
-		FileSaveService1 fileSaveService1;
 		FileSaveService2 fileSaveService2;
-		FileSaveServiceConnection(Class service)
-		{
-			this.service=service;
+
+		FileSaveServiceConnection(Class service) {
+			this.service = service;
 		}
 
 		@Override
-		public void onServiceConnected(ComponentName p1, IBinder binder)
-		{
-			// TODO: Implement this method
-			switch(service.getName())
-			{
-				case "svl.kadatha.filex.FileSaveService1":
-					fileSaveService1=((FileSaveService1.FileSaveServiceBinder)binder).getService();
-					if(fileSaveService1!=null)
-					{
-						fileSaveService1.setFileSaveServiceCompletionListener(new FileSaveService1.FileSaveServiceCompletionListener()
-						{
-								public void onServiceCompletion(boolean result)
-								{
-									save_button.setEnabled(false);
-									save_button.setAlpha(Global.DISABLE_ALFA);
-									if(result){
-										viewModel.current_page_end_point=fileSaveService1.pagePointerHashmap.get(viewModel.current_page);
-										viewModel.page_pointer_hashmap=fileSaveService1.pagePointerHashmap;
-									}
-									viewModel.updated=result;
+		public void onServiceConnected(ComponentName p1, IBinder binder) {
+			if (service.getName().equals("svl.kadatha.filex.FileSaveService2")) {
+				fileSaveService2 = ((FileSaveService2.FileSaveServiceBinder) binder).getService();
+				if (fileSaveService2 != null) {
+					fileSaveService2.setFileSaveServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener() {
+						public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
+							if (saveResult.success) {
+								viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
+								viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
+								viewModel.updated=true;
+								viewModel.eol = viewModel.altered_eol;
 
-									if(result)
-									{
-										viewModel.eol=viewModel.altered_eol;
-										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
-									}
-									else
-									{
-										Global.print(context,getString(R.string.file_could_not_be_saved));
-									}
+								save_button.setEnabled(false);
+								save_button.setAlpha(Global.DISABLE_ALFA);
 
-									if(viewModel.to_be_closed_after_save)
-									{
-										viewModel.textViewUndoRedo.disconnect();
-										clear_cache=false;
-										finish();
-									}
-									else if(viewModel.action_after_save.equals("go_previous"))
-									{
-										go_previous();
-									}
-									else if(viewModel.action_after_save.equals("go_next"))
-									{
-										go_next();
-									}
+								Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
 
-									progress_bar.setVisibility(View.GONE);
-								}
-						});
-					}
+								Timber.tag(Global.TAG).d("File saved successfully");
+								reloadCurrentChunk();
+							} else {
+								viewModel.updated=false;
+								Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
+								Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
+							}
 
+							if (viewModel.to_be_closed_after_save) {
+								viewModel.textViewUndoRedo.disconnect();
+								clear_cache = false;
+								finish();
+							} else if (viewModel.action_after_save.equals("go_previous")) {
+								go_previous();
+							} else if (viewModel.action_after_save.equals("go_next")) {
+								go_next();
+							}
 
-					break;
-
-				case "svl.kadatha.filex.FileSaveService2":
-					final FileSaveService2 fileSaveService2=((FileSaveService2.FileSaveServiceBinder)binder).getService();
-					if(fileSaveService2!=null)
-					{
-						fileSaveService2.setFileSaveServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener()
-							{
-								public void onServiceCompletion(boolean result)
-								{
-									save_button.setEnabled(false);
-									save_button.setAlpha(Global.DISABLE_ALFA);
-									if(result){
-										viewModel.current_page_end_point=fileSaveService2.pagePointerHashmap.get(viewModel.current_page);
-										viewModel.page_pointer_hashmap=fileSaveService2.pagePointerHashmap;
-									}
-									viewModel.updated=result;
-
-									if(result)
-									{
-										viewModel.eol=viewModel.altered_eol;
-										Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION,localBroadcastManager,ACTIVITY_NAME);
-									}
-									else
-									{
-										Global.print(context,getString(R.string.file_could_not_be_saved));
-									}
-
-									if(viewModel.to_be_closed_after_save)
-									{
-										viewModel.textViewUndoRedo.disconnect();
-										clear_cache=false;
-										finish();
-									}
-									else if(viewModel.action_after_save.equals("go_previous"))
-									{
-										go_previous();
-									}
-									else if(viewModel.action_after_save.equals("go_next"))
-									{
-										go_next();
-									}
-
-									progress_bar.setVisibility(View.GONE);
-								}
-							});
-					}
-					break;
-				default:
-					break;
+							progress_bar.setVisibility(View.GONE);
+						}
+					});
+				}
 			}
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName p1)
-		{
-			// TODO: Implement this method
-			if(service!=null)service=null;
-			if(fileSaveService1!=null)fileSaveService1.setFileSaveServiceCompletionListener(null);
-			if(fileSaveService2!=null)fileSaveService2.setFileSaveServiceCompletionListener(null);
-
+		public void onServiceDisconnected(ComponentName p1) {
+			if (service != null) service = null;
+			if (fileSaveService2 != null) fileSaveService2.setFileSaveServiceCompletionListener(null);
 		}
-
 	}
 
+	private void reloadCurrentChunk() {
+		long startPoint = viewModel.page_pointer_hashmap.get(viewModel.current_page).startPoint;
+		openFile(startPoint,viewModel.current_page);
+	}
 	static Class getEmptyService()
 	{
 		Class emptyService=null;
-		if(FileSaveService1.SERVICE_COMPLETED)
-		{
-			emptyService=FileSaveService1.class;
-		}
-		else if(FileSaveService2.SERVICE_COMPLETED)
+//		if(FileSaveService1.SERVICE_COMPLETED)
+//		{
+//			emptyService=FileSaveService1.class;
+//		}
+//		else
+			if(FileSaveService2.SERVICE_COMPLETED)
 		{
 			emptyService=FileSaveService2.class;
 		}

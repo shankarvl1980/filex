@@ -25,7 +25,7 @@
 			android:scrollbarThumbVertical="@drawable/scrollbar"
 			android:fillViewport="true">
 
-			<EditText
+			<svl.kadatha.filex.LineNumberedEditText
 				android:id="@+id/textfile_edittext"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
@@ -44,7 +44,18 @@
 		</HorizontalScrollView>
 
 	</svl.kadatha.filex.ObservableScrollView>
-
+	<TextView
+		android:id="@+id/file_editor_page_number"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top|end"
+		android:layout_marginTop="?attr/actionBarSize"
+		android:layout_marginEnd="@dimen/layout_margin"
+		android:background="@drawable/rounded_rectangle_shape"
+		android:padding="@dimen/layout_margin"
+		android:textColor="?attr/recycler_text_color"
+		android:elevation="7dp"
+		/>
 
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/file_editor_top_toolbar"

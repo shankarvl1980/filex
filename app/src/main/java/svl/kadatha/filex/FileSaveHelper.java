@@ -3,81 +3,241 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+
+import androidx.annotation.NonNull;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
+
+import timber.log.Timber;
 
 public class FileSaveHelper {
 
+    private static final String TAG = "FileSaveHelper";
+
     public static class SaveResult {
         public boolean success;
-        public LinkedHashMap<Integer, Long> pagePointerHashmap;
+        public LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
+        public String errorMessage;
 
-        public SaveResult(boolean success, LinkedHashMap<Integer, Long> pagePointerHashmap) {
+        public SaveResult(boolean success, LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap, String errorMessage) {
             this.success = success;
             this.pagePointerHashmap = pagePointerHashmap;
+            this.errorMessage = errorMessage;
         }
     }
 
     public static SaveResult saveFile(Context context, Bundle bundle) {
         if (bundle == null) {
-            return new SaveResult(false, new LinkedHashMap<>());
+            return new SaveResult(false, new LinkedHashMap<>(), "Bundle is null");
         }
 
-        boolean isWritable = bundle.getBoolean("isWritable");
-        File file = new File(bundle.getString("file_path"));
-        String content = bundle.getString("content");
-        String treeUriPath = bundle.getString("tree_uri_path");
-        Uri treeUri = bundle.getParcelable("tree_uri");
+        String filePath = bundle.getString("file_path");
+        String tempFilePath = bundle.getString("temp_file_path");
         int eol = bundle.getInt("eol");
         int alteredEol = bundle.getInt("altered_eol");
-        long prevPageEndPoint = bundle.getLong("prev_page_end_point");
-        long currentPageEndPoint = bundle.getLong("current_page_end_point");
-        HashMap<Integer, Long> temp = (HashMap<Integer, Long>) bundle.getSerializable("page_pointer_hashmap");
-        LinkedHashMap<Integer, Long> pagePointerHashmap = new LinkedHashMap<>(temp);
-        File temporaryFileForSave = new File(bundle.getString("temporary_file_path"));
         int currentPage = bundle.getInt("current_page");
+        boolean isWritable = bundle.getBoolean("isWritable");
+        Uri treeUri = bundle.getParcelable("tree_uri");
+        String treeUriPath = bundle.getString("tree_uri_path");
 
-        String eolString = getEolString(alteredEol);
+        LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap = getPagePointerHashmap(bundle);
 
-        if (file == null || !file.exists()) {
-            return new SaveResult(false, pagePointerHashmap);
+        FileEditorViewModel.PagePointer currentPagePointer = pagePointerHashmap.get(currentPage);
+        FileEditorViewModel.PagePointer prevPagePointer = pagePointerHashmap.get(currentPage - 1);
+
+        if (currentPagePointer == null) {
+            return new SaveResult(false, pagePointerHashmap, "Current page pointer is null");
         }
 
-        if (!eolString.equals("\n")) {
-            content = content.replaceAll("\n", eolString);
+        long prevPageEndPoint = (prevPagePointer != null) ? prevPagePointer.endPoint : 0L;
+        long currentPageEndPoint = currentPagePointer.endPoint;
+
+        File file = new File(filePath);
+        File modifiedChunkFile = new File(tempFilePath);
+        File intermediaryTempFile = new File(context.getCacheDir(), "temp_" + file.getName());
+
+        if (!file.exists()) {
+            Timber.tag(TAG).e("File does not exist: %s", filePath);
+            return new SaveResult(false, pagePointerHashmap, "File does not exist");
         }
 
-        boolean result;
-        FileOutputStream fileOutputStream;
-        if (isWritable) {
-            if (eol == alteredEol) {
-                result = saveFile(null, prevPageEndPoint, currentPageEndPoint, content.getBytes(), file, temporaryFileForSave);
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            // Open input stream for the original file
+            if (isWritable) {
+                inputStream = new FileInputStream(file);
             } else {
-                result = saveFileWithAlteredEol(null, prevPageEndPoint, currentPageEndPoint, content, eolString, file, temporaryFileForSave);
+                Uri documentUri = FileUtil.getDocumentUri(filePath, treeUri, treeUriPath);
+                inputStream = context.getContentResolver().openInputStream(documentUri);
             }
-        } else {
-            fileOutputStream = FileUtil.get_file_outputstream(context, file.getAbsolutePath(), treeUri, treeUriPath);
-            if (fileOutputStream != null) {
-                if (eol == alteredEol) {
-                    result = saveFile(fileOutputStream, prevPageEndPoint, currentPageEndPoint, content.getBytes(), file, temporaryFileForSave);
-                } else {
-                    result = saveFileWithAlteredEol(fileOutputStream, prevPageEndPoint, currentPageEndPoint, content, eolString, file, temporaryFileForSave);
+
+            if (inputStream == null) {
+                return new SaveResult(false, pagePointerHashmap, "Failed to open input stream");
+            }
+
+            // Use the intermediary temp file for writing
+            outputStream = new FileOutputStream(intermediaryTempFile);
+
+            try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                 BufferedReader contentReader = new BufferedReader(new FileReader(modifiedChunkFile))) {
+
+                // Copy content before the edited chunk
+                copyBytes(bufferedInputStream, bufferedOutputStream, prevPageEndPoint);
+
+                // Write new content
+                String line;
+                while ((line = contentReader.readLine()) != null) {
+                    byte[] lineBytes = convertLineToBytes(line, eol, alteredEol);
+                    bufferedOutputStream.write(lineBytes);
                 }
+
+                // Skip the old content in the original file
+                long bytesToSkip = currentPageEndPoint - prevPageEndPoint;
+                long actualSkipped = 0;
+                while (actualSkipped < bytesToSkip) {
+                    long skipped = bufferedInputStream.skip(bytesToSkip - actualSkipped);
+                    if (skipped == 0) {
+                        int byteRead = bufferedInputStream.read();
+                        if (byteRead == -1) {
+                            // End of stream reached
+                            break;
+                        }
+                        actualSkipped++;
+                    } else {
+                        actualSkipped += skipped;
+                    }
+                }
+
+                if (actualSkipped < bytesToSkip) {
+                    Timber.tag(TAG).w("Skipped fewer bytes than expected: %d/%d", actualSkipped, bytesToSkip);
+                }
+
+                // Copy remaining content after the edited chunk
+                copyBytes(bufferedInputStream, bufferedOutputStream, Long.MAX_VALUE);
+            }
+
+            // Close streams before copying the intermediary file to the final destination
+            inputStream.close();
+            outputStream.close();
+            inputStream = null;
+            outputStream = null;
+
+            // Now copy the intermediary file to the final destination
+            if (isWritable) {
+                copyFile(intermediaryTempFile, file);
             } else {
-                result = false;
+                Uri documentUri = FileUtil.getDocumentUri(filePath, treeUri, treeUriPath);
+                outputStream = context.getContentResolver().openOutputStream(documentUri, "wt");
+                if (outputStream == null) {
+                    throw new IOException("Failed to open output stream for SAF file");
+                }
+                copyFile(intermediaryTempFile, outputStream);
+            }
+
+            // Update page pointers
+            updatePagePointers(pagePointerHashmap, currentPage);
+
+            Timber.tag(TAG).d("File saved successfully");
+            return new SaveResult(true, pagePointerHashmap, null);
+
+        } catch (IOException e) {
+            Timber.tag(TAG).e(e, "Error saving file: %s", e.getMessage());
+            return new SaveResult(false, pagePointerHashmap, "Error saving file: " + e.getMessage());
+        } finally {
+            try {
+                if (inputStream != null) inputStream.close();
+                if (outputStream != null) outputStream.close();
+            } catch (IOException e) {
+                Timber.tag(TAG).e(e, "Error closing streams");
+            }
+            deleteTempFile(modifiedChunkFile);
+            deleteTempFile(intermediaryTempFile);
+        }
+    }
+    private static void copyFile(File source, File dest) throws IOException {
+        try (InputStream is = new FileInputStream(source);
+             OutputStream os = new FileOutputStream(dest)) {
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
             }
         }
+    }
 
-        if (result) {
-            pagePointerHashmap.put(currentPage, currentPageEndPoint);
+    private static void copyFile(File source, OutputStream os) throws IOException {
+        try (InputStream is = new FileInputStream(source)) {
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        }
+    }
+
+    private static void copyBytes(InputStream in, OutputStream out, long bytesToCopy) throws IOException {
+        byte[] buffer = new byte[8192];
+        long totalBytesCopied = 0;
+        int bytesRead;
+
+        while (totalBytesCopied < bytesToCopy) {
+            int bytesToRead = (int) Math.min(buffer.length, bytesToCopy - totalBytesCopied);
+            bytesRead = in.read(buffer, 0, bytesToRead);
+
+            if (bytesRead == -1) {
+                break;
+            }
+
+            out.write(buffer, 0, bytesRead);
+            totalBytesCopied += bytesRead;
         }
 
-        return new SaveResult(result, pagePointerHashmap);
+        if (totalBytesCopied < bytesToCopy && bytesToCopy != Long.MAX_VALUE) {
+            Timber.tag(TAG).w("Copied fewer bytes than requested: %d/%d", totalBytesCopied, bytesToCopy);
+        }
+    }
+
+    private static void deleteTempFile(File file) {
+        if (file.exists()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                Timber.tag(TAG).w("Failed to delete temp file: %s", file.getPath());
+            } else {
+                Timber.tag(TAG).d("Temp file deleted successfully: %s", file.getPath());
+            }
+        }
+    }
+
+
+    private static LinkedHashMap<Integer, FileEditorViewModel.PagePointer> getPagePointerHashmap(Bundle bundle) {
+        LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap = new LinkedHashMap<>();
+        try {
+            Object obj = bundle.getSerializable("page_pointer_hashmap");
+            if (obj instanceof HashMap) {
+                @SuppressWarnings("unchecked")
+                HashMap<Integer, FileEditorViewModel.PagePointer> hashMap = (HashMap<Integer, FileEditorViewModel.PagePointer>) obj;
+                pagePointerHashmap = new LinkedHashMap<>(hashMap);
+            }
+        } catch (Exception e) {
+            // Handle or ignore exception as per your error handling strategy
+        }
+        return pagePointerHashmap;
+    }
+
+    private static byte[] convertLineToBytes(String line, int eol, int alteredEol) {
+        String eolString = getEolString(alteredEol);
+        return (line + eolString).getBytes(StandardCharsets.UTF_8);
     }
 
     private static String getEolString(int alteredEol) {
@@ -93,142 +253,18 @@ public class FileSaveHelper {
         }
     }
 
-    private static boolean saveFile(FileOutputStream fileOutputStream, long prevPageEndPoint, long currentPageEndPoint, byte[] content, File file, File temporaryFileForSave) {
-        FileChannel sourceFC = null, tempFC = null, rFC = null;
-        try {
-            long length = file.length();
-
-            RandomAccessFile rRaf = new RandomAccessFile(file, "r");
-            File tempFile = new File(temporaryFileForSave, file.getName());
-            RandomAccessFile tempRaf = new RandomAccessFile(tempFile, "rw");
-
-            rFC = rRaf.getChannel();
-            tempFC = tempRaf.getChannel();
-
-            if (length == currentPageEndPoint) {
-                rFC.transferTo(prevPageEndPoint, 0, tempFC);
-            } else {
-                rFC.transferTo(currentPageEndPoint, length - currentPageEndPoint, tempFC);
-            }
-            rRaf.close();
-
-            if (fileOutputStream == null) {
-                sourceFC = new FileOutputStream(file, true).getChannel();
-            } else {
-                sourceFC = fileOutputStream.getChannel();
-            }
-
-            sourceFC.truncate(prevPageEndPoint);
-            sourceFC.position(prevPageEndPoint);
-            ByteBuffer buf = ByteBuffer.wrap(content);
-            long writtenBytes = sourceFC.write(buf);
-
-            buf.compact();
-            buf.flip();
-            if (buf.hasRemaining()) {
-                writtenBytes += sourceFC.write(buf);
-            }
-            long newOffset = sourceFC.position();
-
-            tempFC.position(0L);
-            sourceFC.transferFrom(tempFC, newOffset, tempFC.size());
-            currentPageEndPoint = newOffset;
-
-            tempFC.close();
-
-            if (tempFile.exists()) {
-                tempFile.delete();
-            }
-
-            return true;
-
-        } catch (IOException | NullPointerException | IllegalArgumentException e) {
-            return false;
-        } finally {
-            try {
-                if (tempFC != null) tempFC.close();
-                if (rFC != null) rFC.close();
-                if (fileOutputStream != null) fileOutputStream.close();
-                if (sourceFC != null) sourceFC.close();
-            } catch (IOException | NullPointerException e) {
-                // Handle or log the exception
+    private static void updatePagePointers(LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap,
+                                           int currentPage) {
+        Iterator<Map.Entry<Integer, FileEditorViewModel.PagePointer>> iterator = pagePointerHashmap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, FileEditorViewModel.PagePointer> entry = iterator.next();
+            if (entry.getKey() > currentPage) {
+                iterator.remove();
             }
         }
+
+        // Log the updated hashmap
+        Timber.tag(Global.TAG).d("Updated page pointers. Current page: %d, Total pages: %d", currentPage, pagePointerHashmap.size());
     }
 
-    private static boolean saveFileWithAlteredEol(FileOutputStream fileOutputStream, long prevPageEndPoint, long currentPageEndPoint, String content, String eolString, File file, File temporaryFileForSave) {
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
-        FileChannel fc = null;
-
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-
-            bufferedReader.skip(currentPageEndPoint);
-            File tempFile2 = new File(temporaryFileForSave, file.getName() + "_2");
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile2, true), StandardCharsets.UTF_8));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                bufferedWriter.write(line + eolString);
-                bufferedWriter.flush();
-            }
-
-            bufferedWriter.close();
-            bufferedReader.close();
-
-            if (fileOutputStream == null) {
-                fc = new FileOutputStream(file, true).getChannel();
-            } else {
-                fc = fileOutputStream.getChannel();
-            }
-
-            fc.truncate(prevPageEndPoint);
-
-            fileInputStream = new FileInputStream(file);
-            bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-
-            File tempFile1 = new File(temporaryFileForSave, file.getName() + "_1");
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile1, true), StandardCharsets.UTF_8));
-            while ((line = bufferedReader.readLine()) != null) {
-                bufferedWriter.write(line + eolString);
-                bufferedWriter.flush();
-            }
-
-            bufferedWriter.write(content);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-
-            bufferedReader.close();
-
-            fc.truncate(0L);
-
-            currentPageEndPoint = tempFile1.length();
-            FileChannel firstPartFC = new FileInputStream(tempFile1).getChannel();
-            fc.transferFrom(firstPartFC, 0, currentPageEndPoint);
-
-            FileChannel secondPartFC = new FileInputStream(tempFile2).getChannel();
-            fc.transferFrom(secondPartFC, currentPageEndPoint, tempFile2.length());
-
-            firstPartFC.close();
-            secondPartFC.close();
-
-            tempFile1.delete();
-            tempFile2.delete();
-
-            return true;
-
-        } catch (IOException e) {
-            return false;
-        } finally {
-            try {
-                if (bufferedWriter != null) bufferedWriter.close();
-                if (bufferedReader != null) bufferedReader.close();
-                if (fc != null) fc.close();
-                if (fileOutputStream != null) fileOutputStream.close();
-            } catch (IOException e) {
-                // Handle or log the exception
-            }
-        }
-    }
 }

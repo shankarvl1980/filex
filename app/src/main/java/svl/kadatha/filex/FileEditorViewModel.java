@@ -2,6 +2,8 @@ package svl.kadatha.filex;
 
 import android.app.Application;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -10,17 +12,23 @@ import androidx.lifecycle.MutableLiveData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import timber.log.Timber;
+
 public class FileEditorViewModel extends AndroidViewModel {
 
-    private Future<?> future1,future2,future3;
+    private final Application application;
+    private Future<?> future1,future2,future3,future4;
     public File file;
     public String source_folder;
     public boolean isWritable,isFileBig;
@@ -29,28 +37,29 @@ public class FileEditorViewModel extends AndroidViewModel {
     public FileObjectType fileObjectType;
     public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> initializedSetUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> saveContentInTempFile=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public int eol,altered_eol;
-    public LinkedHashMap<Integer, Long> page_pointer_hashmap=new LinkedHashMap<>();
+    public LinkedHashMap<Integer, PagePointer> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;
     public long current_page_end_point=0L;
     public boolean file_start,file_end;
-    public File temporary_file_for_save;
     public String file_path;
     public boolean file_format_supported=true;
     public boolean updated=true,to_be_closed_after_save;
     public String action_after_save="";
     public FilePOJO currently_shown_file;
     public TextViewUndoRedoBatch textViewUndoRedo;
-    private BufferedReader bufferedReader;
-    private long file_pointer;
     public boolean fileRead;
     public StringBuilder stringBuilder;
     private boolean isCancelled;
     public boolean edit_mode;
     public boolean is_eol_group_visible;
+    public final static String temp_content_file_name="temp_content.txt";
+    public boolean whether_temp_content_saved;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);
+        this.application=application;
     }
 
 
@@ -64,6 +73,7 @@ public class FileEditorViewModel extends AndroidViewModel {
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
+        if(future4!=null) future4.cancel(mayInterruptRunning);
         isCancelled = true;
     }
 
@@ -72,131 +82,65 @@ public class FileEditorViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void openFile(FileInputStream fileInputStream, long f_pointer)
-    {
-        if(isReadingFinished.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+
+
+    private static final int CHUNK_SIZE = 1024 * 1024; // 1 MB chunks
+    public static final int MAX_LINES_TO_DISPLAY = 200;
+
+    public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
+        if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isReadingFinished.setValue(AsyncTaskStatus.STARTED);
-        fileRead=false;
-        this.file_pointer=f_pointer;
-        stringBuilder=new StringBuilder();
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                textViewUndoRedo.clearHistory();
-                file_start= file_pointer == 0L;
-                boolean line_limit_exceeded;
-                try
-                {
-                    FileChannel fc=fileInputStream.getChannel();
-                    fc.position(file_pointer);
 
-                    ByteBuffer buf=ByteBuffer.allocate(FileEditorActivity.BUFFER_SIZE);
-                    int bytes_read;
-                    if(file_pointer!=0L)
-                    {
-                        boolean to_break=false;
-                        while((bytes_read=fc.read(buf))!=-1)
-                        {
-                            buf.flip();
-                            for(int i=0;i<bytes_read;++i)
-                            {
-                                char m=(char)buf.get(i);
-                                char n=0;
-                                if(i+1<bytes_read)
-                                {
-                                    n=(char)buf.get(i+1);
-                                }
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future1 = executorService.submit(() -> {
+            try (FileChannel fc = fileInputStream.getChannel()) {
+                fc.position(filePointer);
+                ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
+                StringBuilder chunk = new StringBuilder();
+                int linesRead = 0;
+                long totalBytesRead = filePointer;
 
-                                file_pointer++;
-                                if(m==10)
-                                {
-                                    to_break=true;
-                                    eol=altered_eol=FileEditorActivity.EOL_N;
-                                    break;
-                                }
-                                else if(m==13)
-                                {
-                                    if(n==10)
-                                    {
-                                        file_pointer++;
-                                        eol=altered_eol=FileEditorActivity.EOL_RN;
-
-                                    }
-                                    else
-                                    {
-                                        eol=altered_eol=FileEditorActivity.EOL_R;
-                                    }
-                                    to_break=true;
-                                    break;
-                                }
-                            }
-
-                            if(to_break)
-                            {
-                                break;
-                            }
-                        }
-                        page_pointer_hashmap.put(current_page,file_pointer);
-                    }
-
-                    buf.clear();
-                    fc.position(file_pointer);
-                    String utf="UTF-8";
-                    bufferedReader=new BufferedReader(Channels.newReader(fc, utf));
-                    String line;
-                    int count=0;
-                    long br=0,total_bytes_read=0,line_length;
-                    int eol_len=(eol==FileEditorActivity.EOL_RN) ? 2 : 1;
-                    int max_lines_to_display = 500;
-                    while((line=bufferedReader.readLine())!=null)
-                    {
-                        line_length=line.getBytes().length+eol_len;
-                        if(line_length>100000)throw new IOException("Line length limit exceeded, could not be opened fully");
-                        br+=line_length;
-                        stringBuilder.append(line).append("\n");
-                        count++;
-                        if(count>= max_lines_to_display)
-                        {
-                            file_end=false;
-                            total_bytes_read=file_pointer+br;
-                            break;
+                while (fc.read(buffer) != -1 && linesRead < MAX_LINES_TO_DISPLAY) {
+                    buffer.flip();
+                    while (buffer.hasRemaining() && linesRead < MAX_LINES_TO_DISPLAY) {
+                        char c = (char) buffer.get();
+                        chunk.append(c);
+                        if (c == '\n') {
+                            linesRead++;
                         }
                     }
-                    
-                    if(count< max_lines_to_display)
-                    {
-                        file_end=true;
-                        total_bytes_read=file.length();
-                    }
-
-                    current_page++;
-                    current_page_end_point=total_bytes_read;
-                    page_pointer_hashmap.put(current_page,current_page_end_point);
-                    fileRead=true;
-
-                } catch(IOException e)
-                {
-                    stringBuilder.setLength(0);
-                    fileRead=false;
-                } finally
-                {
-                    try
-                    {
-                        fileInputStream.close();
-                        if(bufferedReader!=null)
-                        {
-                            bufferedReader.close();
-                        }
-
-                    }
-                    catch(IOException e){}
+                    totalBytesRead += buffer.position();
+                    buffer.compact();
                 }
 
+                stringBuilder = chunk;
+                fileRead = true;
+                file_start = (filePointer == 0);
+                file_end = (linesRead < MAX_LINES_TO_DISPLAY);
+
+
+                current_page = pageNumber;
+                current_page_end_point = totalBytesRead;
+                page_pointer_hashmap.put(current_page, new PagePointer(filePointer, current_page_end_point));
+
+                Iterator<Map.Entry<Integer, PagePointer>> iterator = page_pointer_hashmap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<Integer, PagePointer> entry = iterator.next();
+                    if (entry.getKey() > current_page) {
+                        iterator.remove();
+                    }
+                }
+
+            } catch (IOException e) {
+                Timber.e(e, "Error reading file");
+                stringBuilder = new StringBuilder();
+                fileRead = false;
+            } finally {
                 isReadingFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
+
 
     public synchronized void setUpInitialization(FileObjectType fileObjectType,String file_path)
     {
@@ -234,6 +178,67 @@ public class FileEditorViewModel extends AndroidViewModel {
                 initializedSetUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    public synchronized void saveContentInTempFile(String content){
+        if (saveContentInTempFile.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        saveContentInTempFile.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future3=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                File tempFile = new File(application.getExternalCacheDir(), temp_content_file_name);
+                whether_temp_content_saved=false;
+                try (FileWriter writer = new FileWriter(tempFile)) {
+                    writer.write(content);
+                    whether_temp_content_saved=true;
+                } catch (IOException e) {
+
+                }
+                saveContentInTempFile.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+
+
+
+    public static class PagePointer implements Parcelable {
+        long startPoint;
+        long endPoint;
+
+        PagePointer(long startPoint, long endPoint) {
+            this.startPoint = startPoint;
+            this.endPoint = endPoint;
+        }
+
+        protected PagePointer(Parcel in) {
+            startPoint = in.readLong();
+            endPoint = in.readLong();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(startPoint);
+            dest.writeLong(endPoint);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<PagePointer> CREATOR = new Creator<PagePointer>() {
+            @Override
+            public PagePointer createFromParcel(Parcel in) {
+                return new PagePointer(in);
+            }
+
+            @Override
+            public PagePointer[] newArray(int size) {
+                return new PagePointer[size];
+            }
+        };
     }
 
 }

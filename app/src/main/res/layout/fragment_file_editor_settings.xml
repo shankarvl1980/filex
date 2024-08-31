@@ -147,6 +147,7 @@
 				android:paddingEnd="@dimen/ten_dp"
 				android:paddingTop="@dimen/layout_margin"
 				android:paddingBottom="@dimen/layout_margin"
+				android:visibility="gone"
 				/>
 			<ImageButton
 				android:layout_width="30dp"
@@ -157,7 +158,7 @@
 				android:src="@drawable/down_arrow_dialog_icon"
 				app:layout_constraintStart_toEndOf="@id/file_editor_settings_advanced_label"
 				app:layout_constraintTop_toTopOf="@id/file_editor_settings_advanced_label"
-
+				android:visibility="gone"
 				/>
 			<View
 				android:layout_width="0dp"

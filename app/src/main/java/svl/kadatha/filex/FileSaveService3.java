@@ -7,11 +7,14 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import timber.log.Timber;
 
 public class FileSaveService3 extends Service {
 	private FileSaveServiceBinder binder = new FileSaveServiceBinder();
@@ -20,7 +23,7 @@ public class FileSaveService3 extends Service {
 	private NotifManager nm;
 	static boolean SERVICE_COMPLETED = true;
 	private Handler handler;
-	public LinkedHashMap<Integer, Long> pagePointerHashmap;
+	public LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
 
 	@Override
 	public void onCreate() {
@@ -36,7 +39,7 @@ public class FileSaveService3 extends Service {
 		Bundle bundle = intent.getBundleExtra("bundle");
 		if (bundle != null) {
 			filesave(bundle);
-			int notification_id = 982;
+			int notification_id = 981;
 			File file = new File(bundle.getString("file_path"));
 			startForeground(notification_id, nm.build(getString(R.string.being_updated) + "-" + "'" + file.getName() + "'", notification_id));
 		} else {
@@ -67,20 +70,21 @@ public class FileSaveService3 extends Service {
 		SERVICE_COMPLETED = true;
 	}
 
+	interface FileSaveServiceCompletionListener {
+		void onServiceCompletion(FileSaveHelper.SaveResult result);
+	}
+
 	private void filesave(final Bundle bundle) {
 		ExecutorService executorService = MyExecutorService.getExecutorService();
 		Future future = executorService.submit(new Runnable() {
 			@Override
 			public void run() {
 				final FileSaveHelper.SaveResult saveResult = FileSaveHelper.saveFile(context, bundle);
-
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						pagePointerHashmap=saveResult.pagePointerHashmap;
-						boolean result=saveResult.success;
 						if (fileSaveServiceCompletionListener != null) {
-							fileSaveServiceCompletionListener.onServiceCompletion(result);
+							fileSaveServiceCompletionListener.onServiceCompletion(saveResult);
 						}
 						stopForeground(true);
 						stopSelf();
@@ -89,10 +93,6 @@ public class FileSaveService3 extends Service {
 				});
 			}
 		});
-	}
-
-	interface FileSaveServiceCompletionListener {
-		void onServiceCompletion(boolean result);
 	}
 
 	public void setFileSaveServiceCompletionListener(FileSaveServiceCompletionListener listener) {
