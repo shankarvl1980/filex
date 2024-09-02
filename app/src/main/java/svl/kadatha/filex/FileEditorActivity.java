@@ -348,17 +348,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
-					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
-					{
-						viewModel.data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
-					}
 					if(viewModel.data!=null)
 					{
 						if(viewModel.file!=null)
 						{
 							file_name.setText(viewModel.file.getName());
 						}
-						viewModel.eol=viewModel.altered_eol=getEOL(viewModel.data);
 
 						if(!openFile(0,1))
 						{
@@ -1096,61 +1091,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 
 		return emptyService;
-	}
-	
-	
-	private int getEOL(Uri data)
-	{
-		int eol=EOL_N;
-		BufferedReader bufferedReader=null;
-		try
-		{
-
-            bufferedReader=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(data), StandardCharsets.UTF_8), BUFFER_SIZE);
-			String line;
-			line=bufferedReader.readLine();
-			bufferedReader.close();
-			if(line!=null)
-			{
-				bufferedReader=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(data), StandardCharsets.UTF_8), BUFFER_SIZE);
-				int length=line.length();
-				char [] c=new char[2];
-				bufferedReader.skip(length);
-				bufferedReader.read(c);
-				int i=c[0];
-				int o=c[1];
-				if(i==10)
-				{
-					eol=EOL_N;
-				}
-				else if(i==13)
-				{
-					if(o==10)
-					{
-						eol=EOL_RN;
-					}
-					else
-					{
-						eol=EOL_R;
-					}
-				}
-			}
-			bufferedReader.close();
-		}
-		catch(IOException e)
-		{
-			
-		}
-		finally
-		{
-			try
-			{
-				if(bufferedReader!=null)bufferedReader.close();
-			}
-			catch(IOException e){}
-			return eol;
-		}
-		
 	}
 
 }

@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -14,9 +15,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,7 +31,7 @@ import timber.log.Timber;
 public class FileEditorViewModel extends AndroidViewModel {
 
     private final Application application;
-    private Future<?> future1,future2,future3,future4;
+    private Future<?> future1,future2,future3,future4,future5;
     public File file;
     public String source_folder;
     public boolean isWritable,isFileBig;
@@ -38,6 +41,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> initializedSetUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> saveContentInTempFile=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> gotEOLofFile=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public int eol,altered_eol;
     public LinkedHashMap<Integer, PagePointer> page_pointer_hashmap=new LinkedHashMap<>();
     public int current_page=0;
@@ -74,6 +78,7 @@ public class FileEditorViewModel extends AndroidViewModel {
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
         if(future4!=null) future4.cancel(mayInterruptRunning);
+        if(future5!=null) future5.cancel(mayInterruptRunning);
         isCancelled = true;
     }
 
@@ -175,6 +180,12 @@ public class FileEditorViewModel extends AndroidViewModel {
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
+
+                if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
+                {
+                    data = FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
+                }
+                determineEOL(data);
                 initializedSetUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -200,6 +211,41 @@ public class FileEditorViewModel extends AndroidViewModel {
         });
     }
 
+    private void determineEOL(Uri data) {
+        eol = FileEditorActivity.EOL_N; // Default to \n
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(application.getContentResolver().openInputStream(data), StandardCharsets.UTF_8))) {
+            int firstChar = reader.read();
+            if (firstChar != -1) {
+                if (firstChar == 13) { // \r
+                    int secondChar = reader.read();
+                    if (secondChar == 10) { // \n
+                        eol = FileEditorActivity.EOL_RN;
+                    } else {
+                        eol = FileEditorActivity.EOL_R;
+                    }
+                } else if (firstChar != 10) { // Not \n
+                    // Read until we find a line ending or EOF
+                    int c;
+                    while ((c = reader.read()) != -1) {
+                        if (c == 10) { // \n
+                            eol = FileEditorActivity.EOL_N;
+                            break;
+                        } else if (c == 13) { // \r
+                            int nextChar = reader.read();
+                            if (nextChar == 10) { // \n
+                                eol = FileEditorActivity.EOL_RN;
+                            } else {
+                                eol = FileEditorActivity.EOL_R;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Timber.e(e, "Error determining EOL");
+        }
+    }
 
 
 
