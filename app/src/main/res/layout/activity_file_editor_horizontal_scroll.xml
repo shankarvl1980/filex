@@ -31,7 +31,7 @@
 				android:layout_height="match_parent"
 				android:inputType="text|textMultiLine"
 				android:background="?attr/activity_background"
-				android:paddingStart="@dimen/ten_dp"
+				android:paddingStart="2dp"
 				android:paddingEnd="@dimen/ten_dp"
 				android:paddingTop="@dimen/layout_margin"
 				android:paddingBottom="@dimen/layout_margin"

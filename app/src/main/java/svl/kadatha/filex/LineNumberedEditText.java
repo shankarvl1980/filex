@@ -13,17 +13,15 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 public class LineNumberedEditText extends LinearLayout {
     private EditText editText;
     private LineNumberView lineNumberView;
     private int startingLineNumber = 1;
     private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp
+
 
     public LineNumberedEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,7 +53,7 @@ public class LineNumberedEditText extends LinearLayout {
             }
         });
         LayoutParams editTextParams = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
-        editTextParams.setMargins(dpToPx(context, 5), 0, 0, 0);  // Add left margin
+        editTextParams.setMargins(dpToPx(context, 5), 0, 0, 0);
         addView(editText, editTextParams);
 
         setTextSize(16f); // Default size, can be changed later
@@ -93,63 +91,90 @@ public class LineNumberedEditText extends LinearLayout {
         lineNumberView.updateLineNumbers();
     }
 
-    public void setTextSize(int unit, float size) {
-        editText.setTextSize(unit, size);
-        lineNumberView.updateLineNumbers();
-    }
-
     private class LineNumberView extends View {
         private Paint paint;
-        private int lastLineCount = 0;
-        private int startingLineNumber = 1;
+        private int[] lineStartIndexes;
 
         public LineNumberView(Context context) {
             super(context);
             paint = new Paint();
-            paint.setTextSize(dpToPx(context, LINE_NUMBER_TEXT_SIZE));
+            paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, LINE_NUMBER_TEXT_SIZE, getResources().getDisplayMetrics()));
             paint.setColor(Color.GRAY);
             paint.setTextAlign(Paint.Align.RIGHT);
-        }
-
-        public void setStartingLineNumber(int startingLineNumber) {
-            this.startingLineNumber = startingLineNumber;
-            invalidate();
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             Layout layout = editText.getLayout();
-            if (layout != null) {
-                int lineCount = layout.getLineCount();
-                int actualLineNumber = startingLineNumber;
-                for (int i = 0; i < lineCount; i++) {
-                    int baseline = layout.getLineBaseline(i);
-                    if (i == 0 || layout.getLineStart(i) == 0 || editText.getText().charAt(layout.getLineStart(i) - 1) == '\n') {
-                        //canvas.drawText(String.valueOf(actualLineNumber), getWidth() - dpToPx(getContext(), 5), baseline, paint);
-                        float yPosition = baseline - paint.ascent();
-                        canvas.drawText(String.valueOf(actualLineNumber), getWidth() - dpToPx(getContext(), 5), yPosition, paint);
-                        actualLineNumber++;
+            if (layout != null && lineStartIndexes != null) {
+                int scrollY = editText.getScrollY();
+                int firstVisibleLine = layout.getLineForVertical(scrollY);
+                int lastVisibleLine = layout.getLineForVertical(scrollY + getHeight()) + 1;
+
+                for (int i = 0; i < lineStartIndexes.length; i++) {
+                    int lineStartIndex = lineStartIndexes[i];
+                    int layoutLine = layout.getLineForOffset(lineStartIndex);
+
+                    if (layoutLine >= firstVisibleLine && layoutLine <= lastVisibleLine) {
+                        int baseline = layout.getLineBaseline(layoutLine) - scrollY;
+                        int lineNumber = startingLineNumber + i;
+                        String lineNumberStr = String.valueOf(lineNumber);
+
+                        float y = baseline - paint.ascent();
+                        canvas.drawText(lineNumberStr, getWidth(), y, paint);
                     }
                 }
             }
         }
 
         public void updateLineNumbers() {
+            String text = editText.getText().toString();
+            lineStartIndexes = getLineStartIndexes(text);
             invalidate();
         }
 
+        private int[] getLineStartIndexes(String text) {
+            java.util.ArrayList<Integer> indexes = new java.util.ArrayList<>();
+            indexes.add(0);  // First line always starts at index 0
+            for (int i = 0; i < text.length(); i++) {
+                if (text.charAt(i) == '\n') {
+                    indexes.add(i + 1);  // Start of next line is after the newline
+                }
+            }
+
+            // Convert ArrayList<Integer> to int[] without using streams
+            int[] result = new int[indexes.size()];
+            for (int i = 0; i < indexes.size(); i++) {
+                result[i] = indexes.get(i);
+            }
+            return result;
+        }
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            int maxNumber = startingLineNumber + Math.max(99, editText.getLineCount() - 1);  // Assume at least 100 lines
+            int maxNumber = startingLineNumber + (lineStartIndexes != null ? lineStartIndexes.length - 1 : 999);
             setMeasuredDimension(
                     (int) (paint.measureText(String.valueOf(maxNumber)) + dpToPx(getContext(), 10)),
                     MeasureSpec.getSize(heightMeasureSpec)
             );
+        }
+
+        public void setStartingLineNumber(int startingLineNumber) {
+            LineNumberedEditText.this.startingLineNumber = startingLineNumber;
+            invalidate();
         }
     }
 
     private int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                sp,
+                context.getResources().getDisplayMetrics()
+        );
+    }
+
 }
