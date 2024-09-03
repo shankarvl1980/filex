@@ -1018,6 +1018,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 	private class FileSaveServiceConnection implements ServiceConnection {
 		Class service;
+		FileSaveService1 fileSaveService1;
 		FileSaveService2 fileSaveService2;
 
 		FileSaveServiceConnection(Class service) {
@@ -1026,51 +1027,96 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
 		@Override
 		public void onServiceConnected(ComponentName p1, IBinder binder) {
-			if (service.getName().equals("svl.kadatha.filex.FileSaveService2")) {
-				fileSaveService2 = ((FileSaveService2.FileSaveServiceBinder) binder).getService();
-				if (fileSaveService2 != null) {
-					fileSaveService2.setFileSaveServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener() {
-						public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
-							if (saveResult.success) {
-								viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
-								viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
-								viewModel.updated=true;
-								viewModel.eol = viewModel.altered_eol;
+			switch (service.getName()){
+				case "svl.kadatha.filex.FileSaveService1":
+					fileSaveService1=((FileSaveService1.FileSaveServiceBinder)binder).getService();
+					if (fileSaveService1 != null) {
+						fileSaveService1.setFileSaveServiceCompletionListener(new FileSaveService1.FileSaveServiceCompletionListener() {
+							public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
+								if (saveResult.success) {
+									viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
+									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
+									viewModel.updated=true;
+									viewModel.eol = viewModel.altered_eol;
 
-								save_button.setEnabled(false);
-								save_button.setAlpha(Global.DISABLE_ALFA);
+									save_button.setEnabled(false);
+									save_button.setAlpha(Global.DISABLE_ALFA);
 
-								Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
 
-								Timber.tag(Global.TAG).d("File saved successfully");
-								reloadCurrentChunk();
-							} else {
-								viewModel.updated=false;
-								Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
-								Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
+									Timber.tag(Global.TAG).d("File saved successfully");
+									reloadCurrentChunk();
+								} else {
+									viewModel.updated=false;
+									Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
+									Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
+								}
+
+								if (viewModel.to_be_closed_after_save) {
+									viewModel.textViewUndoRedo.disconnect();
+									clear_cache = false;
+									finish();
+								} else if (viewModel.action_after_save.equals("go_previous")) {
+									go_previous();
+								} else if (viewModel.action_after_save.equals("go_next")) {
+									go_next();
+								}
+
+								progress_bar.setVisibility(View.GONE);
 							}
+						});
+					}
+					break;
+				case "svl.kadatha.filex.FileSaveService2":
+					final FileSaveService2 fileSaveService2=((FileSaveService2.FileSaveServiceBinder)binder).getService();
+					if (fileSaveService2 != null) {
+						fileSaveService2.setFileSaveServiceCompletionListener(new FileSaveService2.FileSaveServiceCompletionListener() {
+							public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
+								if (saveResult.success) {
+									viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
+									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
+									viewModel.updated=true;
+									viewModel.eol = viewModel.altered_eol;
 
-							if (viewModel.to_be_closed_after_save) {
-								viewModel.textViewUndoRedo.disconnect();
-								clear_cache = false;
-								finish();
-							} else if (viewModel.action_after_save.equals("go_previous")) {
-								go_previous();
-							} else if (viewModel.action_after_save.equals("go_next")) {
-								go_next();
+									save_button.setEnabled(false);
+									save_button.setAlpha(Global.DISABLE_ALFA);
+
+									Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
+
+									Timber.tag(Global.TAG).d("File saved successfully");
+									reloadCurrentChunk();
+								} else {
+									viewModel.updated=false;
+									Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
+									Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
+								}
+
+								if (viewModel.to_be_closed_after_save) {
+									viewModel.textViewUndoRedo.disconnect();
+									clear_cache = false;
+									finish();
+								} else if (viewModel.action_after_save.equals("go_previous")) {
+									go_previous();
+								} else if (viewModel.action_after_save.equals("go_next")) {
+									go_next();
+								}
+
+								progress_bar.setVisibility(View.GONE);
 							}
-
-							progress_bar.setVisibility(View.GONE);
-						}
-					});
-				}
+						});
+					}
 			}
+
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName p1) {
-			if (service != null) service = null;
-			if (fileSaveService2 != null) fileSaveService2.setFileSaveServiceCompletionListener(null);
+		public void onServiceDisconnected(ComponentName p1)
+		{
+			// TODO: Implement this method
+			if(service!=null)service=null;
+			if(fileSaveService1!=null)fileSaveService1.setFileSaveServiceCompletionListener(null);
+			if(fileSaveService2!=null)fileSaveService2.setFileSaveServiceCompletionListener(null);
+
 		}
 	}
 
@@ -1081,11 +1127,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	static Class getEmptyService()
 	{
 		Class emptyService=null;
-//		if(FileSaveService1.SERVICE_COMPLETED)
-//		{
-//			emptyService=FileSaveService1.class;
-//		}
-//		else
+		if(FileSaveService1.SERVICE_COMPLETED)
+		{
+			emptyService=FileSaveService1.class;
+		}
+		else
 			if(FileSaveService2.SERVICE_COMPLETED)
 		{
 			emptyService=FileSaveService2.class;
