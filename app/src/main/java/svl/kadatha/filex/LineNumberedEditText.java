@@ -53,7 +53,7 @@ public class LineNumberedEditText extends LinearLayout {
             }
         });
         LayoutParams editTextParams = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
-        editTextParams.setMargins(dpToPx(context, 5), 0, 0, 0);
+        editTextParams.setMargins(dpToPx(context, 4), 0, 0, 0);
         addView(editText, editTextParams);
 
         setTextSize(16f); // Default size, can be changed later
@@ -74,10 +74,6 @@ public class LineNumberedEditText extends LinearLayout {
         return editText.getText().toString();
     }
 
-    public void setShowSoftInputOnFocus(boolean show) {
-        editText.setShowSoftInputOnFocus(show);
-    }
-
     public void setEditable(boolean editable) {
         editText.setFocusable(editable);
         editText.setFocusableInTouchMode(editable);
@@ -92,7 +88,7 @@ public class LineNumberedEditText extends LinearLayout {
     }
 
     private class LineNumberView extends View {
-        private Paint paint;
+        private final Paint paint;
         private int[] lineStartIndexes;
 
         public LineNumberView(Context context) {
@@ -154,7 +150,7 @@ public class LineNumberedEditText extends LinearLayout {
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int maxNumber = startingLineNumber + (lineStartIndexes != null ? lineStartIndexes.length - 1 : 999);
             setMeasuredDimension(
-                    (int) (paint.measureText(String.valueOf(maxNumber)) + dpToPx(getContext(), 10)),
+                    (int) (paint.measureText(String.valueOf(maxNumber)) + dpToPx(getContext(), 6)),
                     MeasureSpec.getSize(heightMeasureSpec)
             );
         }

@@ -932,7 +932,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			}
 
 			// API 21
-			filetext_container_edittext.setShowSoftInputOnFocus(true);
+			//filetext_container_edittext.setShowSoftInputOnFocus(true);
+			filetext_container_edittext.setEditable(true);
 			filetext_container_edittext.requestFocus();
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 			viewModel.textViewUndoRedo.startListening();
@@ -946,8 +947,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			redo_button.setEnabled(false);
 
 			// API 21
-			filetext_container_edittext.setShowSoftInputOnFocus(false);
-
+			//filetext_container_edittext.setShowSoftInputOnFocus(false);
+			filetext_container_edittext.setEditable(false);
 			imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(),0);
 			viewModel.textViewUndoRedo.stopListening();
 		}
