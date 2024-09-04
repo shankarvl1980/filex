@@ -769,7 +769,7 @@ public class Global
 
 	public static boolean CHECK_FTP_SERVER_CONNECTED()
 	{
-		return FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();//FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).ftpClientMain.isConnected();//CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientMain);
+		return FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();
 	}
 
 

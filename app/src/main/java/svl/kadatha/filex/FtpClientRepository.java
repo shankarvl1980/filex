@@ -24,6 +24,7 @@ public class FtpClientRepository {
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
     private int initialClients;
+    private static final String TAG = "Ftp-ftpClientRepository";
 
     private FtpClientRepository(FtpDetailsDialog.FtpPOJO ftpPOJO) {
         this.ftpClients = new ConcurrentLinkedQueue<>();
@@ -41,7 +42,7 @@ public class FtpClientRepository {
                 ftpClients.offer(client);
                 lastUsedTimes.put(client, System.currentTimeMillis());
             } catch (IOException e) {
-                Timber.tag(Global.TAG).e("Failed to initialize FTP client: %s", e.getMessage());
+                Timber.tag(TAG).e("Failed to initialize FTP client: %s", e.getMessage());
             }
         }
     }
@@ -61,7 +62,7 @@ public class FtpClientRepository {
                     return client;
                 }
             } catch (IOException e) {
-                Timber.tag(Global.TAG).w("FTP connection attempt %d failed: %s", attempt + 1, e.getMessage());
+                Timber.tag(TAG).w("FTP connection attempt %d failed: %s", attempt + 1, e.getMessage());
                 if (attempt == MAX_RETRIES - 1) {
                     throw e; // Rethrow on last attempt
                 }
@@ -163,14 +164,14 @@ public class FtpClientRepository {
                 client.disconnect();
             }
         } catch (IOException e) {
-            Timber.tag(Global.TAG).e("Error disconnecting FTP client: %s", e.getMessage());
+            Timber.tag(TAG).e("Error disconnecting FTP client: %s", e.getMessage());
         } finally {
             lastUsedTimes.remove(client);
         }
     }
 
     public void shutdown() {
-        Timber.tag(Global.TAG).d("Shutting down FTP client repository");
+        Timber.tag(TAG).d("Shutting down FTP client repository");
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
         while (iterator.hasNext()) {
