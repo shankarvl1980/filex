@@ -17,8 +17,6 @@ import org.apache.commons.net.ftp.FTPFileFilter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,10 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -315,47 +309,6 @@ public final class FileUtil
 	}
 
 
-
-	@SuppressWarnings("null")
-	public static boolean copy_SAFFile_File(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, File target_file, long[] bytes_read)
-	{
-		InputStream inStream=null;
-		try(FileOutputStream fileOutputStream=new FileOutputStream(target_file))
-		{
-			Uri uri = getDocumentUri(source_file_path, source_uri,source_uri_path);
-			if (uri != null)
-			{
-				inStream = context.getContentResolver().openInputStream(uri);
-				if (inStream != null)
-				{
-					bufferedCopy(inStream,fileOutputStream,false,bytes_read);
-				}
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch (Exception e) {
-
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(inStream!=null)inStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
-
 	@SuppressWarnings("null")
 	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
 	{
@@ -372,303 +325,6 @@ public final class FileUtil
 		// ignore exception
 
 		// ignore exception
-		return true;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_FtpFile_File(String src_file_path, File target_file,boolean cut,long[] bytes_read)
-	{
-		boolean success = false;
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient= null;
-            try {
-                ftpClient = ftpClientRepository.getFtpClient();
-				try (InputStream inputStream= ftpClient.retrieveFileStream(src_file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target_file))) {
-					//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
-					bufferedCopy(inputStream, outputStream, false, bytes_read);
-					ftpClient.completePendingCommand();
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					if (cut) {
-						deleteFTPFile(src_file_path);
-					}
-
-					return true;
-
-				} catch (Exception e) {
-
-					return false;
-				}
-            } catch (IOException e) {
-                return false;
-            }
-
-			// ignore exception
-
-			// ignore exception
-
-		}
-		return success;
-	}
-
-	public static boolean copy_FtpFile_FtpFile(String src_file_path, String target_file_path,String name,boolean cut,long[] bytes_read)
-	{
-		boolean success = false;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            try {
-                FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				try {
-					if(cut)
-					{
-						ftpClient.rename(src_file_path,file_path);
-					}
-					else {
-						ftpClient.retrieveFile(src_file_path,byteArrayOutputStream);
-						inputStream= new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-						outputStream= ftpClient.storeFileStream(file_path);
-						bufferedCopy(inputStream, outputStream, false, bytes_read);
-						ftpClient.completePendingCommand();
-					}
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					return true;
-
-				} catch (Exception e) {
-
-					return false;
-				}
-				finally
-				{
-					try
-					{
-						if(byteArrayOutputStream!=null)byteArrayOutputStream.close();
-						if(inputStream!=null)inputStream.close();
-						if(outputStream!=null)outputStream.close();
-
-					}
-					catch (Exception e)
-					{
-						// ignore exception
-					}
-
-				}
-            } catch (IOException e) {
-                return  false;
-            }
-
-		}
-		return success;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_FtpFile_UsbFile(String src_file_path, String target_file_path,String name,boolean cut,long[] bytes_read)
-	{
-		boolean success = false;
-		OutputStream outputStream=null;
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            try {
-                FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				try (InputStream inputStream= ftpClient.retrieveFileStream(src_file_path)) {
-					//success=MainActivity.FTP_CLIENT.retrieveFile(src_file_path,outputStream);
-					UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-					if (parentUsbFile != null) {
-						UsbFile targetUsbFile = getUsbFile(MainActivity.usbFileRoot, Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path, name));
-						if (targetUsbFile != null && targetUsbFile.getLength() == 0)
-							deleteUsbFile(targetUsbFile);
-						targetUsbFile = parentUsbFile.createFile(name);
-						outputStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
-						bufferedCopy(inputStream, outputStream, false, bytes_read);
-						ftpClient.completePendingCommand();
-						ftpClientRepository.releaseFtpClient(ftpClient);
-						if (cut) {
-							deleteFTPFile(src_file_path);
-						}
-
-						return true;
-					}
-
-				} catch (Exception e) {
-
-					return false;
-				}
-				finally
-				{
-					try
-					{
-						if(outputStream!=null)outputStream.close();
-					}
-					catch (Exception e)
-					{
-						// ignore exception
-					}
-
-				}
-            } catch (IOException e) {
-                return false;
-            }
-
-
-		}
-		return success;
-	}
-
-
-	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_UsbFile(@NonNull final UsbFile source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
-	{
-		if(source==null) return false;
-		OutputStream outStream=null;
-
-		try(InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(source,MainActivity.usbCurrentFs))
-		{
-			UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-			if (parentUsbFile != null)
-			{
-				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
-				if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
-				targetUsbFile = parentUsbFile.createFile(name);
-				long length=source.getLength();
-				if(length>0) targetUsbFile.setLength(length); // causes problem
-				outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
-
-				bufferedCopy(inStream,outStream,true,bytes_read);
-				if(cut)
-				{
-					//move in usb is attempted and does not work, hence copy first and cut
-					deleteUsbFile(source);
-				}
-
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-
-
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_FtpFile(UsbFile src_usbfile, String target_file_path,String name, boolean cut, long[] bytes_read)
-	{
-		if(src_usbfile==null)return false;
-		String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            try {
-                FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = ftpClient.storeFileStream(file_path)) {
-					bufferedCopy(inStream, outputStream,true,bytes_read);
-					ftpClient.completePendingCommand();
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					if (cut) {
-						deleteUsbFile(src_usbfile);
-					}
-
-					return true;
-
-				} catch (Exception e) {
-					return false;
-				}
-            } catch (IOException e) {
-                return false;
-            }
-
-		}
-
-		// ignore exception
-
-		// ignore exception
-		return false;
-	}
-
-
-
-	@SuppressWarnings({"null", "IOStreamConstructor"})
-	public static boolean copy_SAFFile_SAFFile(Context context, @NonNull final String source_file_path, Uri source_uri, String source_uri_path, String target_file_path, String name, Uri tree_uri, String tree_uri_path, long[] bytes_read)
-	{
-		InputStream inStream = null;
-		OutputStream outStream=null;
-		try 
-		{
-			if(FileUtil.isFromInternal(FileObjectType.FILE_TYPE,source_file_path))
-			{
-				inStream = new FileInputStream(source_file_path);
-
-			}
-			else
-			{
-				Uri uri=getDocumentUri(source_file_path,source_uri,source_uri_path);
-				inStream=context.getContentResolver().openInputStream(uri);
-			}
-
-			Uri uri = createDocumentUri(context, target_file_path,name, false,tree_uri,tree_uri_path);
-			if (uri != null)
-			{
-				outStream = context.getContentResolver().openOutputStream(uri);
-			}
-			else
-			{
-				return false;
-			}
-
-
-			if (outStream != null && inStream!=null)
-			{
-				//fastChannelCopy(Channels.newChannel(inStream),Channels.newChannel(outStream),false,bytes_read);
-				bufferedCopy(inStream,outStream,false,bytes_read);
-			}
-
-		}
-		catch (Exception e) {
-			return false;
-		}
-		finally 
-		{
-			try 
-			{
-				if(inStream!=null)inStream.close();
-			}
-			catch (Exception e) 
-			{
-				// ignore exception
-			}
-		
-			try {
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e) 
-			{
-				// ignore exception
-			}
-
-		}
 		return true;
 	}
 
@@ -720,319 +376,6 @@ public final class FileUtil
 		return true;
 	}
 
-	@SuppressWarnings("null")
-	public static boolean copy_to_SAFFile(Context context, @NonNull final Uri data, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, long[] bytes_read)
-	{
-		OutputStream outStream=null;
-		try(InputStream inStream = context.getContentResolver().openInputStream(data))
-		{
-			Uri uri = createDocumentUri(context,target_file_path,name,false,tree_uri,tree_uri_path);
-			if (uri != null)
-			{
-				outStream = context.getContentResolver().openOutputStream(uri);
-				if (outStream != null)
-				{
-					bufferedCopy(inStream,outStream,false,bytes_read);
-				}
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
-
-
-	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_SAFFile(Context context, @NonNull final UsbFile source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
-	{
-		if(source==null)return false;
-		OutputStream outStream=null;
-		try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(source,MainActivity.usbCurrentFs))
-		{
-			Uri uri = createDocumentUri(context,target_file_path,name,false,tree_uri,tree_uri_path);
-			if (uri != null)
-			{
-				outStream = context.getContentResolver().openOutputStream(uri);
-				if (outStream != null)
-				{
-					bufferedCopy(inStream,outStream,true,bytes_read);
-				}
-
-				if(cut)
-				{
-					deleteUsbFile(source);
-				}
-
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch(IOException e)
-		{
-			return false;
-		}
-
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_FtpFile_SAFFile(Context context,@NonNull final String source_file_path, @NonNull String target_file_path,String name,Uri tree_uri, String tree_uri_path, boolean cut,long[] bytes_read)
-	{
-		boolean success = false;
-		InputStream inStream=null;
-		OutputStream outStream=null;
-
-		try
-		{
-			Uri uri = createDocumentUri(context,target_file_path,name,false,tree_uri,tree_uri_path);
-			if (uri != null)
-			{
-				outStream = context.getContentResolver().openOutputStream(uri);
-				if (outStream != null)
-				{
-					if(Global.CHECK_FTP_SERVER_CONNECTED())
-					{
-						FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-						FTPClient ftpClient=ftpClientRepository.getFtpClient();
-						//success=MainActivity.FTP_CLIENT.retrieveFile(source_file_path,outStream);
-						inStream= ftpClient.retrieveFileStream(source_file_path);
-						bufferedCopy(inStream,outStream,false,bytes_read);
-						ftpClient.completePendingCommand();
-						ftpClientRepository.releaseFtpClient(ftpClient);
-						if(cut)
-						{
-							deleteFTPFile(source_file_path);
-						}
-						return true;
-					}
-					else {
-						return false;
-					}
-
-				}
-				else
-				{
-					return false;
-				}
-
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch(IOException e)
-		{
-			return false;
-		}
-
-		finally
-		{
-			try
-			{
-				if(inStream!=null)inStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-		}
-		//return success;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_File_UsbFile(@NonNull final File source, @NonNull String target_file_path, String name, boolean cut, long[] bytes_read)
-	{
-		OutputStream outStream=null;
-		try(FileInputStream fileInStream = new FileInputStream(source))
-		{
-			UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-			if (parentUsbFile != null)
-			{
-				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
-				if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
-				targetUsbFile = parentUsbFile.createFile(name);
-				long length=source.length();
-				if(length>0) targetUsbFile.setLength(length); // dont set length causes problems
-				outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
-				bufferedCopy(fileInStream,outStream,false,bytes_read);
-				if(cut)
-				{
-					deleteNativeFile(source);
-				}
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
-
-
-	@SuppressWarnings("null")
-	public static boolean copy_to_UsbFile(Context context, @NonNull final Uri data, @NonNull String target_file_path, String name, long[] bytes_read)
-	{
-		OutputStream outStream=null;
-		try(InputStream inStream = context.getContentResolver().openInputStream(data))
-		{
-			UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,target_file_path);
-			if (parentUsbFile != null)
-			{
-				UsbFile targetUsbFile=getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name));
-				if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
-				targetUsbFile = parentUsbFile.createFile(name);
-				outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
-				bufferedCopy(inStream,outStream,false,bytes_read);
-			}
-			else
-			{
-				return false;
-			}
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
-
-
-	@SuppressWarnings("null")
-	public static boolean copy_File_FtpFile(@NonNull final File source, @NonNull String target_file_path,String name, boolean cut,long[] bytes_read)
-	{
-		boolean success = false;
-		String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-		//OutputStream outStream = null;
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            try {
-                FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				try (FileInputStream fileInStream = new FileInputStream(source);OutputStream outStream= ftpClient.storeFileStream(file_path)) {
-
-					bufferedCopy(fileInStream,outStream,false,bytes_read);
-					ftpClient.completePendingCommand();
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					if (cut) {
-						deleteNativeFile(source);
-					}
-
-					return true;
-				} catch (Exception e) {
-					return false;
-				}
-            } catch (IOException e) {
-                return false;
-            }
-
-
-		}
-
-		return success;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_to_FtpFile(Context context,@NonNull final Uri data, @NonNull String target_file_path,String name,long[] bytes_read)
-	{
-		boolean success;
-
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(target_file_path,name);
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            try {
-                FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				try (InputStream inStream = context.getContentResolver().openInputStream(data); OutputStream outStream= ftpClient.storeFileStream(file_path)) {
-					bufferedCopy(inStream,outStream,false,bytes_read);
-					ftpClient.completePendingCommand();
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					return true;
-				} catch (Exception e) {
-					return false;
-				}
-            } catch (IOException e) {
-                return false;
-            }
-
-		}
-		else {
-			return false;
-		}
-	}
 
 	public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
 	{
@@ -1088,9 +431,10 @@ public final class FileUtil
 
 	public static boolean isFtpFileExists(String file_path) {
 		Timber.tag(TAG).d("Checking if FTP file exists: %s", file_path);
+		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+		FTPClient ftpClient=null;
 		try {
-			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-			FTPClient ftpClient = ftpClientRepository.getFtpClient();
+			ftpClient = ftpClientRepository.getFtpClient();
 			ftpClient.enterLocalPassiveMode();
 
 			String parentDir = new File(file_path).getParent();
@@ -1101,13 +445,18 @@ public final class FileUtil
 			FTPFile[] files = ftpClient.listFiles(parentDir, filter);
 
 			boolean exists = files.length > 0;
-			ftpClientRepository.releaseFtpClient(ftpClient);
 
 			Timber.tag(TAG).d("FTP file exists result: %b for path: %s", exists, file_path);
 			return exists;
 		} catch (IOException e) {
 			Timber.tag(TAG).e("Error checking if FTP file exists: %s", e.getMessage());
 			return false;
+		}
+		finally {
+			if (ftpClientRepository != null && ftpClient != null) {
+				ftpClientRepository.releaseFtpClient(ftpClient);
+				Timber.tag(TAG).d("FTP client released");
+			}
 		}
 	}
 
@@ -1179,22 +528,29 @@ public final class FileUtil
 
 	public static boolean mkdirFtp(String file_path) {
 		Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
+		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+		FTPClient ftpClient=null;
 		try {
-			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+
 			boolean dirExists = FileUtil.isFtpPathDirectory(file_path);
 			if (dirExists) {
 				Timber.tag(TAG).d("FTP directory already exists: %s", file_path);
 				return true;
 			} else {
-				FTPClient ftpClient = ftpClientRepository.getFtpClient();
+				ftpClient = ftpClientRepository.getFtpClient();
 				boolean success = ftpClient.makeDirectory(file_path);
-				ftpClientRepository.releaseFtpClient(ftpClient);
 				Timber.tag(TAG).d("FTP directory creation result: %b for path: %s", success, file_path);
 				return success;
 			}
 		} catch (IOException e) {
 			Timber.tag(TAG).e("Error creating FTP directory: %s", e.getMessage());
 			return false;
+		}
+		finally {
+			if (ftpClientRepository != null && ftpClient != null) {
+				ftpClientRepository.releaseFtpClient(ftpClient);
+				Timber.tag(TAG).d("FTP client released");
+			}
 		}
 	}
 
@@ -1290,16 +646,22 @@ public final class FileUtil
 	private static boolean deleteFTPFile(String file_path) {
 		Timber.tag(TAG).d("Attempting to delete FTP file: %s", file_path);
 		if (Global.CHECK_FTP_SERVER_CONNECTED()) {
+			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+			FTPClient ftpClient=null;
 			try {
-				FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-				FTPClient ftpClient = ftpClientRepository.getFtpClient();
+				ftpClient = ftpClientRepository.getFtpClient();
 				boolean success = ftpClient.deleteFile(file_path);
-				ftpClientRepository.releaseFtpClient(ftpClient);
 				Timber.tag(TAG).d("FTP file deletion result: %b for path: %s", success, file_path);
 				return success;
 			} catch (IOException e) {
 				Timber.tag(TAG).e("Error deleting FTP file: %s", e.getMessage());
 				return false;
+			}
+			finally {
+				if (ftpClientRepository != null && ftpClient != null) {
+					ftpClientRepository.releaseFtpClient(ftpClient);
+					Timber.tag(TAG).d("FTP client released");
+				}
 			}
 		}
 		Timber.tag(TAG).w("FTP server not connected, cannot delete file: %s", file_path);
@@ -1405,9 +767,10 @@ public final class FileUtil
 	public static boolean deleteFtpDirectory(final String file_path) {
 		Timber.tag(TAG).d("Attempting to delete FTP directory: %s", file_path);
 		boolean success = true;
+		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+		FTPClient ftpClient=null;
 		try {
-			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-			FTPClient ftpClient = ftpClientRepository.getFtpClient();
+			ftpClient = ftpClientRepository.getFtpClient();
 			if (FileUtil.isFtpPathDirectory(file_path)) {
 				String[] list = ftpClient.listNames(file_path);
 				if (list != null) {
@@ -1426,11 +789,16 @@ public final class FileUtil
 					success = ftpClient.deleteFile(file_path);
 				}
 			}
-			ftpClientRepository.releaseFtpClient(ftpClient);
 			Timber.tag(TAG).d("FTP directory deletion result: %b for path: %s", success, file_path);
 		} catch (IOException e) {
 			Timber.tag(TAG).e("Error deleting FTP directory: %s", e.getMessage());
 			return false;
+		}
+		finally {
+			if (ftpClientRepository != null && ftpClient != null) {
+				ftpClientRepository.releaseFtpClient(ftpClient);
+				Timber.tag(TAG).d("FTP client released");
+			}
 		}
 		return success;
 	}
@@ -1612,87 +980,6 @@ public final class FileUtil
 		}
 		Timber.tag(TAG).d("Successfully created multiple FTP directories");
 		return success;
-	}
-
-
-
-	/**
-	 * Delete a folder.
-	 *
-	 * @param file The folder name.
-	 * @return true if successful.
-	 */
-	public static boolean rmdirNative(@NonNull final File file)
-	{
-		if (!file.exists())
-		{
-			return true;
-		}
-		if (!file.isDirectory())
-		{
-			return false;
-		}
-		String[] fileList = file.list();
-		if (fileList != null && fileList.length > 0)
-		{
-			// Delete only empty folder.
-			return false;
-		}
-
-		// Try the normal way
-		if (file.delete())
-		{
-			return true;
-		}
-		return !file.exists();
-	}
-
-
-	public static boolean rmdirSAF(Context context,String target_file_path, Uri tree_uri, String tree_uri_path)
-	{
-
-		// Try with Storage Access Framework.
-		Uri uri  = getDocumentUri(target_file_path,tree_uri,tree_uri_path);
-		try {
-			return uri != null && DocumentsContract.deleteDocument(context.getContentResolver(),uri);
-		} catch (FileNotFoundException e) {
-
-		}
-		return false;
-	}
-		
-		
-	/**
-	 * Delete all files in a folder.
-	 *
-	 * @param folder the folder
-	 * @return true if successful.
-	 */
-	public static boolean deleteNativeFilesInFolder(@NonNull final File folder)
-	{
-		boolean totalSuccess = true;
-
-		String[] children = folder.list();
-		if (children != null)
-		{
-			int size=children.length;
-			for(int i=0;i<size;++i)
-			//for (String child : children)
-			{
-				String child=children[i];
-				File file = new File(folder, child);
-				if (!file.isDirectory())
-				{
-					boolean success =FileUtil.deleteNativeFile(file);
-					if (!success)
-					{
-						//Timber.w(Application.TAG, "Failed to delete file" + child);
-						totalSuccess = false;
-					}
-				}
-			}
-		}
-		return totalSuccess;
 	}
 
 
@@ -1971,38 +1258,6 @@ public final class FileUtil
 	}
 
 
-	public static void fastChannelCopyy(final ReadableByteChannel src, final WritableByteChannel dest, boolean fromUsbFile, long[] bytes_read) throws IOException
-	{
-		final ByteBuffer buffer = (fromUsbFile) ? ByteBuffer.allocate(USB_CHUNK_SIZE) : ByteBuffer.allocateDirect(16384);
-		while (src.read(buffer) != -1)
-		{
-			bytes_read[0]+= buffer.capacity();
-			// prepare the buffer to be drained
-			buffer.flip();
-			// write to the channel, may block
-			dest.write(buffer);
-			// If partial transfer, shift remainder down
-			// If buffer is empty, same as doing clear()
-			buffer.compact();
-		}
-		// EOF will leave buffer in fill state
-		buffer.flip();
-		// make sure the buffer is fully drained.
-		while (buffer.hasRemaining())
-		{
-			dest.write(buffer);
-		}
-
-	}
-
-	public static void channelCopyy(final FileChannel src, final WritableByteChannel dest, long[] bytes_read) throws IOException
-	{
-		long size=src.size();
-		src.transferTo(0,size,dest);
-		bytes_read[0]+=size;
-		src.close();
-	}
-
 	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read)
 	{
 		byte[] buffer=(fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
@@ -2016,35 +1271,6 @@ public final class FileUtil
 
 		}
 
-	}
-
-	public static void channelCopyY(FileChannel srcChannel, FileChannel destChannel, long[] bytes_read)
-	{
-		try
-		{
-			long size=srcChannel.size();
-			srcChannel.transferTo(0,size,destChannel);
-			bytes_read[0]+=size;
-
-		}
-		catch(IOException e){}
-	
-		finally
-		{
-			try
-			{
-				if(srcChannel!=null)
-				{
-					srcChannel.close();
-				}
-				if(destChannel!=null)
-				{
-					destChannel.close();
-				}
-			}
-			catch(IOException e){}
-			
-		}
 	}
 
 }

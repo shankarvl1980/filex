@@ -257,20 +257,26 @@ public class FileCountSize {
 
             if (f.isDirectory()) {
                 Timber.tag(TAG).d("Processing FTP directory: %s", f.getName());
+                FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient=null;
                 try {
                     String name = f.getName();
                     String newPath = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
-                    FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-                    FTPClient ftpClient = ftpClientRepository.getFtpClient();
+                    ftpClient = ftpClientRepository.getFtpClient();
                     Timber.tag(TAG).d("Listing files in FTP directory: %s", newPath);
                     FTPFile[] subFiles = ftpClient.listFiles(newPath);
                     Timber.tag(TAG).d("Found %d files in FTP directory: %s", subFiles.length, newPath);
                     for (FTPFile subFile : subFiles) {
                         stack.push(new Pair<>(subFile, newPath));
                     }
-                    ftpClientRepository.releaseFtpClient(ftpClient);
                 } catch (Exception e) {
                     Timber.tag(TAG).e("Error processing FTP directory: %s", e.getMessage());
+                }
+                finally {
+                    if (ftpClientRepository != null && ftpClient != null) {
+                        ftpClientRepository.releaseFtpClient(ftpClient);
+                        Timber.tag(TAG).d("FTP client released");
+                    }
                 }
                 if (include_folder) {
                     no_of_files++;

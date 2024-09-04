@@ -63,17 +63,25 @@ public class FtpFileModel implements FileModel {
     public boolean rename(String new_name, boolean overwrite) {
         String new_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(), new_name);
         Timber.tag(TAG).d("Attempting to rename from %s to %s", path, new_file_path);
+        FtpClientRepository ftpClientRepository = null;
+        FTPClient ftpClient = null;
         try {
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient = ftpClientRepository.getFtpClient();
+            ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            ftpClient = ftpClientRepository.getFtpClient();
             boolean renamed = ftpClient.rename(path, new_file_path);
-            ftpClientRepository.releaseFtpClient(ftpClient);
             Timber.tag(TAG).d("Rename operation result: %b", renamed);
             return renamed;
         } catch (IOException e) {
             Timber.tag(TAG).e("Rename operation failed: %s", e.getMessage());
             return false;
         }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            } 
+        }
+        
     }
 
     @Override
@@ -86,16 +94,22 @@ public class FtpFileModel implements FileModel {
     @Override
     public InputStream getInputStream() {
         Timber.tag(TAG).d("Attempting to get InputStream for path: %s", path);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FTPClient ftpClient=null;
         try {
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient = ftpClientRepository.getFtpClient();
+            ftpClient = ftpClientRepository.getFtpClient();
             InputStream inputStream = ftpClient.retrieveFileStream(path);
-            ftpClientRepository.releaseFtpClient(ftpClient);
             Timber.tag(TAG).d("Successfully retrieved InputStream for path: %s", path);
             return inputStream;
         } catch (Exception e) {
             Timber.tag(TAG).e("Failed to get InputStream: %s", e.getMessage());
             return null;
+        }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
         }
     }
 
@@ -103,28 +117,33 @@ public class FtpFileModel implements FileModel {
     public OutputStream getChildOutputStream(String child_name, long source_length) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
         Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", file_path);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FTPClient ftpClient=null;
         try {
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient = ftpClientRepository.getFtpClient();
+            ftpClient = ftpClientRepository.getFtpClient();
             OutputStream outputStream = ftpClient.storeFileStream(file_path);
-            ftpClientRepository.releaseFtpClient(ftpClient);
             Timber.tag(TAG).d("Successfully retrieved OutputStream for path: %s", file_path);
             return outputStream;
         } catch (Exception e) {
             Timber.tag(TAG).e("Failed to get OutputStream: %s", e.getMessage());
             return null;
         }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
+        }
     }
 
     @Override
     public FileModel[] list() {
         Timber.tag(TAG).d("Attempting to list files for path: %s", path);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FTPClient ftpClient=null;
         try {
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient = ftpClientRepository.getFtpClient();
+            ftpClient = ftpClientRepository.getFtpClient();
             String[] inner_source_list = ftpClient.listNames(path);
-            ftpClientRepository.releaseFtpClient(ftpClient);
-
             if (inner_source_list == null) {
                 Timber.tag(TAG).w("No files listed or directory is empty for path: %s", path);
                 return new FileModel[0];
@@ -142,6 +161,12 @@ public class FtpFileModel implements FileModel {
             Timber.tag(TAG).e("Failed to list files: %s", e.getMessage());
             return null;
         }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
+        }
     }
 
     @Override
@@ -149,16 +174,22 @@ public class FtpFileModel implements FileModel {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
         Timber.tag(TAG).d("Attempting to create file: %s", file_path);
         InputStream bin = new ByteArrayInputStream(new byte[0]);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FTPClient ftpClient=null;
         try {
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-            FTPClient ftpClient = ftpClientRepository.getFtpClient();
+            ftpClient = ftpClientRepository.getFtpClient();
             boolean created = ftpClient.storeFile(file_path, bin);
-            ftpClientRepository.releaseFtpClient(ftpClient);
             Timber.tag(TAG).d("File creation result: %b for path: %s", created, file_path);
             return created;
         } catch (IOException e) {
             Timber.tag(TAG).e("Failed to create file: %s", e.getMessage());
             return false;
+        }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
         }
     }
 

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import timber.log.Timber;
+
 public class FtpDetailsViewModel extends AndroidViewModel {
 
     private final Application application;
@@ -40,7 +42,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public static FtpDetailsDialog.FtpPOJO FTP_POJO;
     public static String FTP_WORKING_DIR_PATH;
 
-
+    private static final String TAG = "Ftp-FtpDetailsViewModel";
 
     public FtpDetailsViewModel(@NonNull Application application) {
         super(application);
@@ -116,19 +118,19 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 loggedInStatus=false;
+                FtpClientRepository ftpClientRepository = null;
+                FTPClient ftpClient = null;
                 try {
-                    //FtpClientRepository_old ftpClientRepository= FtpClientRepository_old.getInstance();
-                    //ftpClientRepository.instantiate();
-                   FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
+                    
+                   ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                     FTP_POJO=ftpPOJO;
 
                     loggedInStatus=true;
-                    //ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
+                   
                     if(loggedInStatus)
                     {
-                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                        ftpClient=ftpClientRepository.getFtpClient();
                         FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();//ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
-                        ftpClientRepository.releaseFtpClient(ftpClient);
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
@@ -141,9 +143,12 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
                 }
                 finally {
+                    if (ftpClientRepository != null && ftpClient != null) {
+                        ftpClientRepository.releaseFtpClient(ftpClient);
+                        Timber.tag(TAG).d("FTP client released");
+                    }
                     ftpConnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-
             }
         });
     }
@@ -210,18 +215,15 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 String user_name=bundle.getString("user_name");
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
                 loggedInStatus=false;
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
+                FTPClient ftpClient=null;
                 try {
-
-                    //FtpClientRepository_old ftpClientRepository= FtpClientRepository_old.getInstance();
-                    //ftpClientRepository.instantiate();
-                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                     FTP_POJO=ftpPOJO;
-                    loggedInStatus=true;//ftpClientRepository.connect_all_ftp_clients(ftpPOJO);
+                    loggedInStatus=true;
                     if(loggedInStatus)
                     {
-                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                        ftpClient=ftpClientRepository.getFtpClient();
                         FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
-                        ftpClientRepository.releaseFtpClient(ftpClient);
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
@@ -234,6 +236,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
                 }
                 finally {
+                    if (ftpClientRepository != null && ftpClient != null) {
+                        ftpClientRepository.releaseFtpClient(ftpClient);
+                        Timber.tag(TAG).d("FTP client released");
+                    }
                     replaceAndConnectFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             }

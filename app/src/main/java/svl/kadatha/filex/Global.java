@@ -56,6 +56,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class Global
 {
@@ -203,6 +204,7 @@ public class Global
 	static final long CACHE_FILE_MAX_LIMIT=1024*1024*10;
 	static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
 	static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
+	private static final String FTP_TAG = "Ftp-Global";
 
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
@@ -770,32 +772,6 @@ public class Global
 		return FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();//FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).ftpClientMain.isConnected();//CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientMain);
 	}
 
-//	public static boolean CHECK_OTHER_FTP_SERVER_CONNECTED(FTPClient ftpClient)
-//	{
-//		int reply_code=ftpClient.getReplyCode();
-//		//if(FTPReply.isPositiveCompletion(reply_code))
-//		try {
-//			if(ftpClient.isAvailable())
-//			{
-//				return true;
-//			}
-//			else
-//			{
-//				try {
-//					return FtpClientRepository_old.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
-//				} catch (IOException ioe) {
-//					return false;
-//				}
-//			}
-//		} catch (Exception e) {
-//			try {
-//				return FtpClientRepository_old.getInstance().connect_ftp_client(ftpClient,FtpDetailsViewModel.FTP_POJO);
-//			} catch (IOException ie) {
-//				return false;
-//			}
-//		}
-//	}
-
 
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
@@ -1113,22 +1089,28 @@ public class Global
 				//if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForCopyView))
 				{
 					FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+					FTPClient ftpClient=null;
                     try {
-                        FTPClient ftpClient=ftpClientRepository.getFtpClient();
+                        ftpClient=ftpClientRepository.getFtpClient();
 						try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
 							FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
 							ftpClient.completePendingCommand();
-							ftpClientRepository.releaseFtpClient(ftpClient);
 							return cache_file;
 
 						} catch (Exception e) {
 
 							return cache_file;
 						}
+
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-
+					finally {
+						if (ftpClientRepository != null && ftpClient != null) {
+							ftpClientRepository.releaseFtpClient(ftpClient);
+							Timber.tag(FTP_TAG).d("FTP client released");
+						}
+					}
 				}
 			}
 

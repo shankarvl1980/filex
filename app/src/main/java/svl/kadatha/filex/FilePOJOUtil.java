@@ -1234,9 +1234,10 @@ public class FilePOJOUtil {
         else if (fileObjectType == FileObjectType.FTP_TYPE) {
             Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
             FTPFile[] file_array;
+            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            FTPClient ftpClient=null;
             try {
-                FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-                FTPClient ftpClient = ftpClientRepository.getFtpClient();
+                ftpClient = ftpClientRepository.getFtpClient();
                 file_array = ftpClient.listFiles(fileclickselected);
                 Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
@@ -1249,11 +1250,16 @@ public class FilePOJOUtil {
                     filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
-                ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("Successfully filled FilePOJO for FTP directory: %s", fileclickselected);
             } catch (Exception e) {
                 Timber.tag(TAG).e("Error filling FilePOJO for FTP directory: %s", e.getMessage());
                 return;
+            }
+            finally {
+                if (ftpClientRepository != null && ftpClient != null) {
+                    ftpClientRepository.releaseFtpClient(ftpClient);
+                    Timber.tag(TAG).d("FTP client released");
+                }
             }
         }
         /*
