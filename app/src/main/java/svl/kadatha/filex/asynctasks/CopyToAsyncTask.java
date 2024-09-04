@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import svl.kadatha.filex.AlternativeAsyncTask;
@@ -24,21 +23,21 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
     public static final String TASK_TYPE = "copy_to";
     private final TaskProgressListener listener;
-    private List<Uri> data_list;
-    private FileObjectType destFileObjectType;
-    private String dest_folder;
-    private Uri tree_uri;
-    private String tree_uri_path;
-    private List<String> copied_files_name;
-    private Context context;
-    private List<String> copied_source_file_path_list;
+    private final List<Uri> data_list;
+    private final FileObjectType destFileObjectType;
+    private final String dest_folder;
+    private final Uri tree_uri;
+    private final String tree_uri_path;
+    private final List<String> copied_files_name;
+    private final Context context;
+    private final List<String> copied_source_file_path_list;
     private int counter_no_files;
     private long counter_size_files;
     private FilePOJO filePOJO;
     private String file_name;
     private String copied_file;
     final long[] bytes_read = new long[1];
-    private List<String> overwritten_file_path_list;
+    private final List<String> overwritten_file_path_list;
 
     public CopyToAsyncTask(Context context,List<Uri>data_list,String file_name,String dest_folder,FileObjectType destFileObjectType,Uri tree_uri,String tree_uri_path,List<String>overwritten_file_path_list, TaskProgressListener listener) {
         this.context=context;

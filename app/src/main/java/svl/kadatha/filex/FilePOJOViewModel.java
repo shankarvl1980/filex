@@ -455,7 +455,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         what_to_find = ".*((?i)\\.png|\\.jpg|\\.jpeg|\\.gif|\\.tif|\\.svg|\\.webp|\\.avif)$";
                         media_category="Image";
                     } else if (application.getString(R.string.audio).equals(library_or_search)) {
-                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus|\\.m4r|\\.m4a)$";
+                        what_to_find = ".*((?i)\\.mp3|\\.ogg|\\.wav|\\.aac|\\.wma|\\.opus|\\.m4r|\\.m4a|\\.awb)$";
                         media_category="Audio";
                     } else if (application.getString(R.string.video).equals(library_or_search)) {
                         what_to_find = ".*((?i)\\.3gp|\\.mp4|\\.avi|\\.mov|\\.flv|\\.wmv|\\.webm)$";

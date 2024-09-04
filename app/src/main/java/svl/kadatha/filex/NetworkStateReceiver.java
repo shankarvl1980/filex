@@ -14,6 +14,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             );
 
             if (noConnectivity) {
+                if(FtpDetailsViewModel.FTP_POJO==null)return;
                 FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
                 ftpClientRepository.shutdown();
             }

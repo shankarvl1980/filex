@@ -32,19 +32,19 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private final String zip_dest_path;
     private String current_file_name;
     private FilePOJO filePOJO;
-    private String dest_folder;
-    private FileObjectType destFileObjectType;
-    private Uri tree_uri;
-    private String tree_uri_path;
-    private List<String> written_file_name_list;
-    private List<String> written_file_path_list;
+    private final String dest_folder;
+    private final FileObjectType destFileObjectType;
+    private final Uri tree_uri;
+    private final String tree_uri_path;
+    private final List<String> written_file_name_list;
+    private final List<String> written_file_path_list;
     private ZipFile zipfile;
-    private Set<String> first_part_entry_name_set;
-    private Set<String> first_part_entry_path_set;
-    private List<String> zipentry_selected_array;
+    private final Set<String> first_part_entry_name_set;
+    private final Set<String> first_part_entry_path_set;
+    private final List<String> zipentry_selected_array;
     private int counter_no_files;
     private long counter_size_files;
-    private String zip_file_path;
+    private final String zip_file_path;
 
 
     public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zipentry_selected_array , FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, TaskProgressListener listener) {

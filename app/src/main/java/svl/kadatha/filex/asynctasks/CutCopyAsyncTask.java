@@ -30,15 +30,16 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private String copied_file_name;
     private String current_file_name;
     private FilePOJO filePOJO;
-    private List<String> files_selected_array;
-    private FileObjectType sourceFileObjectType;
-    private Uri tree_uri;
-    private String tree_uri_path;
-    private String source_folder,dest_folder;
-    private FileObjectType destFileObjectType;
-    private boolean cut;
-    private Uri source_uri;
-    private String source_uri_path;
+    private final List<String> files_selected_array;
+    private final FileObjectType sourceFileObjectType;
+    private final Uri tree_uri;
+    private final String tree_uri_path;
+    private final String source_folder;
+    private final String dest_folder;
+    private final FileObjectType destFileObjectType;
+    private final boolean cut;
+    private final Uri source_uri;
+    private final String source_uri_path;
 
 
     public CutCopyAsyncTask(ArrayList<String> files_selected_array, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,

@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 

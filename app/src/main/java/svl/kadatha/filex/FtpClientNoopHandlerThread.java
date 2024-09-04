@@ -6,8 +6,6 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import java.io.IOException;
-
 public class FtpClientNoopHandlerThread extends HandlerThread {
 
     public Handler handler;

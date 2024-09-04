@@ -7,14 +7,11 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import timber.log.Timber;
 
 public class FileSaveService2 extends Service {
 	private FileSaveServiceBinder binder = new FileSaveServiceBinder();

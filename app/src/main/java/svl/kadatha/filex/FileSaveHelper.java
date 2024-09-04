@@ -3,13 +3,8 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-
-import androidx.annotation.NonNull;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;

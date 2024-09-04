@@ -1,30 +1,19 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Pair;
-import androidx.lifecycle.MutableLiveData;
-
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 
-import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 

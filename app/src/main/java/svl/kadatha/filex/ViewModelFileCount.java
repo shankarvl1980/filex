@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
