@@ -35,7 +35,7 @@ import timber.log.Timber;
 public class FilePOJOUtil {
 
     static final SimpleDateFormat SDF_FTP=new SimpleDateFormat("yyyyMMddHHmmss");
-
+    private static final String TAG = "Ftp-FilePOJOUtil";
     static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, FileObjectType fileObjectType)
     {
         String name=f.getName();
@@ -378,85 +378,67 @@ public class FilePOJOUtil {
         return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
-    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient)
-    {
-        String h;
-        String name=f.getName();
-        String path=file_path;
-        boolean isDirectory=f.isDirectory();
-        long dateLong= 0L;
-        String date="";
+    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient) {
+        Timber.tag(TAG).d("Creating FilePOJO for FTP file: %s", file_path);
+        String name = f.getName();
+        String path = file_path;
+        boolean isDirectory = f.isDirectory();
+        long dateLong = 0L;
+        String date = "";
         try {
-            String str=ftpClient.getModificationTime(file_path);
-            if(str!=null)
-            {
-                if(str.contains(" "))
-                {
-                    str=str.substring(str.indexOf(" "));
+            String str = ftpClient.getModificationTime(file_path);
+            if (str != null) {
+                if (str.contains(" ")) {
+                    str = str.substring(str.indexOf(" "));
                 }
-
-                Date d =SDF_FTP.parse(str);
-                date=Global.SDF.format(d);
+                Date d = SDF_FTP.parse(str);
+                date = Global.SDF.format(d);
             }
-
         } catch (Exception e) {
-
+            Timber.tag(TAG).e("Error getting modification time for FTP file: %s", e.getMessage());
         }
 
-        long sizeLong=0L;
-        String si="";
+        long sizeLong = 0L;
+        String si = "";
 
-        String file_ext="";
-        int overlay_visible= View.INVISIBLE;
-        float alfa=Global.ENABLE_ALFA;
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
         String package_name = null;
-        int type=R.drawable.folder_icon;
+        int type = R.drawable.folder_icon;
 
-        if(!isDirectory)
-        {
-            type=R.drawable.unknown_file_icon;
-            int idx=name.lastIndexOf(".");
-            if(idx!=-1)
-            {
-                file_ext=name.substring(idx+1);
-                type=GET_FILE_TYPE(isDirectory,file_ext);
-                if(type==-2)
-                {
-                    overlay_visible=View.VISIBLE;
-                }
-                else if(extracticon && type==0)
-                {
-                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(isDirectory, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                } else if (extracticon && type == 0) {
+                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
 
-            sizeLong=f.getSize();
-            si=FileUtil.humanReadableByteCount(sizeLong);
-        }
-        else
-        {
-
-            String sub_file_count=null;
-            String [] file_list;
-            try
-            {
-                if((file_list=ftpClient.listNames(file_path))!=null)
-                {
-                    sub_file_count="("+file_list.length+")";
-
+            sizeLong = f.getSize();
+            si = FileUtil.humanReadableByteCount(sizeLong);
+        } else {
+            String sub_file_count = null;
+            String[] file_list;
+            try {
+                if ((file_list = ftpClient.listNames(file_path)) != null) {
+                    sub_file_count = "(" + file_list.length + ")";
                 }
-                si=sub_file_count;
+                si = sub_file_count;
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error listing FTP directory contents: %s", e.getMessage());
             }
-            catch (IOException e)
-            {
-
-            }
-
         }
 
-        return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
+        FilePOJO filePOJO = new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
+        Timber.tag(TAG).d("Created FilePOJO for FTP file: %s, isDirectory: %b, size: %d", name, isDirectory, sizeLong);
+        return filePOJO;
     }
-
 
     static FilePOJO MAKE_FilePOJO_ROOT(String file_path)
     {
@@ -1249,37 +1231,29 @@ public class FilePOJOUtil {
                 }
             }
         }
-        else if(fileObjectType==FileObjectType.FTP_TYPE)
-        {
-//            if(!Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForListing))
-//            {
-//                return;
-//            }
-//            else
-            {
-                FTPFile[] file_array;
-                try {
-
-                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-                    FTPClient ftpClient=ftpClientRepository.getFtpClient();
-                    file_array= ftpClient.listFiles(fileclickselected);
-                    int size=file_array.length;
-                    for(int i=0;i<size;++i)
-                    {
-                        FTPFile f=file_array[i];
-                        String name=f.getName();
-                        String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
-                        Timber.tag(Global.TAG).d("path - "+path);
-                        FilePOJO filePOJO=MAKE_FilePOJO(f,false, fileObjectType,path, ftpClient);
-                        filePOJOS_filtered.add(filePOJO);
-                        filePOJOS.add(filePOJO);
-
-                    }
-                    ftpClientRepository.releaseFtpClient(ftpClient);
-                } catch (Exception e) {
-                    return;
+        else if (fileObjectType == FileObjectType.FTP_TYPE) {
+            Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
+            FTPFile[] file_array;
+            try {
+                FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FTPClient ftpClient = ftpClientRepository.getFtpClient();
+                file_array = ftpClient.listFiles(fileclickselected);
+                Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
+                int size = file_array.length;
+                for (int i = 0; i < size; ++i) {
+                    FTPFile f = file_array[i];
+                    String name = f.getName();
+                    String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                    Timber.tag(TAG).d("Processing FTP file: %s", path);
+                    FilePOJO filePOJO = MAKE_FilePOJO(f, false, fileObjectType, path, ftpClient);
+                    filePOJOS_filtered.add(filePOJO);
+                    filePOJOS.add(filePOJO);
                 }
-
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("Successfully filled FilePOJO for FTP directory: %s", fileclickselected);
+            } catch (Exception e) {
+                Timber.tag(TAG).e("Error filling FilePOJO for FTP directory: %s", e.getMessage());
+                return;
             }
         }
         /*

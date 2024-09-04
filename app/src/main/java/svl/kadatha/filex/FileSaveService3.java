@@ -39,7 +39,7 @@ public class FileSaveService3 extends Service {
 		Bundle bundle = intent.getBundleExtra("bundle");
 		if (bundle != null) {
 			filesave(bundle);
-			int notification_id = 981;
+			int notification_id = 982;
 			File file = new File(bundle.getString("file_path"));
 			startForeground(notification_id, nm.build(getString(R.string.being_updated) + "-" + "'" + file.getName() + "'", notification_id));
 		} else {

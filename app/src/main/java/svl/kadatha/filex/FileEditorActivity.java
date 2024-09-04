@@ -422,6 +422,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						Global.print(context,getString(R.string.file_could_not_be_opened));
 					}
 					viewModel.file_format_supported=viewModel.fileRead;
+					viewModel.textViewUndoRedo.clearHistory();
 					viewModel.textViewUndoRedo.stopListening();
 
 					edit_button.setSelected(viewModel.edit_mode);

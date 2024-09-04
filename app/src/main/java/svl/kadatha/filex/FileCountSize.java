@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FileCountSize {
     Context context;
@@ -33,7 +34,7 @@ public class FileCountSize {
     String source_folder;
     private boolean isCancelled;
     private Future<?> future1,future2,future3, future4;
-
+    private static final String TAG = "Ftp-FileCountSize";
 
     FileCountSize(Context context,List<String> files_selected_array, Uri source_uri,String source_uri_path, FileObjectType sourceFileObjectType)
     {
@@ -117,33 +118,30 @@ public class FileCountSize {
                     }
                     populate(f_array,include_folder);
                 }
-                else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    //if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForProgress))
-                    {
-                        FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-                        FTPClient ftpClient= null;
-                        try {
-                            ftpClient = ftpClientRepository.getFtpClient();
-                            FTPFile[] f_array=new FTPFile[size];
-                            for(int i=0;i<size;++i)
-                            {
-
-                                FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(ftpClient,files_selected_array.get(i));
-                                f_array[i]=f;
-
-                            }
-                            populate(f_array,include_folder,source_folder);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                else if (sourceFileObjectType == FileObjectType.FTP_TYPE) {
+                    Timber.tag(TAG).d("Starting file count for FTP files");
+                    FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                    FTPClient ftpClient = null;
+                    try {
+                        ftpClient = ftpClientRepository.getFtpClient();
+                        Timber.tag(TAG).d("FTP client acquired");
+                        FTPFile[] f_array = new FTPFile[size];
+                        for (int i = 0; i < size; ++i) {
+                            Timber.tag(TAG).d("Getting FTP file info for: %s", files_selected_array.get(i));
+                            FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(ftpClient, files_selected_array.get(i));
+                            f_array[i] = f;
                         }
-                        finally {
-                            if (ftpClientRepository != null && ftpClient != null) {
-                                ftpClientRepository.releaseFtpClient(ftpClient);
-                            }
+                        Timber.tag(TAG).d("Starting populate method for FTP files");
+                        populate(f_array, include_folder, source_folder);
+                    } catch (IOException e) {
+                        Timber.tag(TAG).e("Error during FTP file count: %s", e.getMessage());
+                        throw new RuntimeException(e);
+                    } finally {
+                        if (ftpClientRepository != null && ftpClient != null) {
+                            ftpClientRepository.releaseFtpClient(ftpClient);
+                            Timber.tag(TAG).d("FTP client released");
                         }
                     }
-
                 }
                 else
                 {
@@ -233,6 +231,7 @@ public class FileCountSize {
     }
 
     private void populate(FTPFile[] source_list_files, boolean include_folder, String initialPath) {
+        Timber.tag(TAG).d("Starting populate method for FTP files. Initial path: %s", initialPath);
         Stack<Pair<FTPFile, String>> stack = new Stack<>();
         for (FTPFile f : source_list_files) {
             stack.push(new Pair<>(f, initialPath));
@@ -240,6 +239,7 @@ public class FileCountSize {
 
         while (!stack.isEmpty()) {
             if (isCancelled()) {
+                Timber.tag(TAG).d("FTP file count cancelled");
                 return;
             }
 
@@ -247,39 +247,47 @@ public class FileCountSize {
             FTPFile f = pair.first;
             String path = pair.second;
 
-            if (f == null) continue;
+            if (f == null) {
+                Timber.tag(TAG).w("Null FTPFile encountered. Skipping.");
+                continue;
+            }
 
             int no_of_files = 0;
             long size_of_files = 0L;
 
             if (f.isDirectory()) {
+                Timber.tag(TAG).d("Processing FTP directory: %s", f.getName());
                 try {
                     String name = f.getName();
                     String newPath = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
                     FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
                     FTPClient ftpClient = ftpClientRepository.getFtpClient();
+                    Timber.tag(TAG).d("Listing files in FTP directory: %s", newPath);
                     FTPFile[] subFiles = ftpClient.listFiles(newPath);
+                    Timber.tag(TAG).d("Found %d files in FTP directory: %s", subFiles.length, newPath);
                     for (FTPFile subFile : subFiles) {
                         stack.push(new Pair<>(subFile, newPath));
                     }
                     ftpClientRepository.releaseFtpClient(ftpClient);
                 } catch (Exception e) {
-                    // Handle exception
+                    Timber.tag(TAG).e("Error processing FTP directory: %s", e.getMessage());
                 }
                 if (include_folder) {
                     no_of_files++;
                 }
             } else {
+                Timber.tag(TAG).d("Processing FTP file: %s, Size: %d", f.getName(), f.getSize());
                 no_of_files++;
                 size_of_files += f.getSize();
             }
 
             total_no_of_files += no_of_files;
             total_size_of_files += size_of_files;
+            Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
+        Timber.tag(TAG).d("FTP file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
-
     private void populate(List<String> source_list_files, boolean include_folder) {
         Stack<String> stack = new Stack<>();
         for (String filePath : source_list_files) {
@@ -320,165 +328,5 @@ public class FileCountSize {
             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
     }
-
-
-//        private void populate(File[] source_list_files,boolean include_folder)
-//        {
-//            int size=source_list_files.length;
-//            for(int i=0;i<size;++i)
-//            {
-//                File f=source_list_files[i];
-//                if(isCancelled())
-//                {
-//                    return;
-//                }
-//                int no_of_files=0;
-//                long size_of_files=0L;
-//                if(f.isDirectory())
-//                {
-//                    if(f.list()!=null)
-//                    {
-//                        populate(f.listFiles(),include_folder);
-//                    }
-//                    if(include_folder)
-//                    {
-//                        no_of_files++;
-//                    }
-//                }
-//                else
-//                {
-//                    no_of_files++;
-//                    size_of_files+=f.length();
-//                }
-//                total_no_of_files+=no_of_files;
-//                total_size_of_files+=size_of_files;
-//
-//                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-//            }
-//        }
-//
-//        private void populate(UsbFile[] source_list_files, boolean include_folder)
-//        {
-//            int size=source_list_files.length;
-//            for(int i=0;i<size;++i)
-//            {
-//                UsbFile f=source_list_files[i];
-//                if(isCancelled())
-//                {
-//                    return;
-//                }
-//                int no_of_files=0;
-//                long size_of_files=0L;
-//                if(f.isDirectory())
-//                {
-//                    try {
-//                        populate(f.listFiles(),include_folder);
-//                    } catch (IOException e) {
-//
-//                    }
-//                    if(include_folder)
-//                    {
-//                        no_of_files++;
-//                    }
-//                }
-//                else
-//                {
-//                    no_of_files++;
-//                    size_of_files+=f.getLength();
-//                }
-//                total_no_of_files+=no_of_files;
-//                total_size_of_files+=size_of_files;
-//                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-//            }
-//        }
-//
-//        private void populate(FTPFile[] source_list_files, boolean include_folder,String path)
-//        {
-//            int size=source_list_files.length;
-//            for(int i=0;i<size;++i)
-//            {
-//                FTPFile f=source_list_files[i];
-//                if(isCancelled())
-//                {
-//                    return;
-//                }
-//                int no_of_files=0;
-//                long size_of_files=0L;
-//                if(f==null)continue;
-//                if(f.isDirectory())
-//                {
-//                    try {
-//                        String name=f.getName();
-//                        path=Global.CONCATENATE_PARENT_CHILD_PATH(path,name);
-//                        FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-//                        FTPClient ftpClient= ftpClientRepository.getFtpClient();
-//                        populate(ftpClient.listFiles(path),include_folder,path);
-//                        ftpClientRepository.releaseFtpClient(ftpClient);
-//
-//                    } catch (Exception e) {
-//
-//                    }
-//                    if(include_folder)
-//                    {
-//                        no_of_files++;
-//                    }
-//                }
-//                else
-//                {
-//                    no_of_files++;
-//                    size_of_files+=f.getSize();
-//                }
-//
-//                total_no_of_files+=no_of_files;
-//                total_size_of_files+=size_of_files;
-//                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-//            }
-//        }
-//
-//        private void populate(List<String> source_list_files,boolean include_folder)
-//        {
-//            int size=source_list_files.size();
-//            for(int i=0;i<size;++i)
-//            {
-//                if(isCancelled())
-//                {
-//                    return;
-//                }
-//                int no_of_files=0;
-//                long size_of_files=0L;
-//                String parent_file_path=source_list_files.get(i);
-//                Uri uri=FileUtil.getDocumentUri(parent_file_path,target_uri,target_uri_path);
-//                if(FileUtil.isDirectoryUri(context,uri))
-//                {
-//                    Uri children_uri= DocumentsContract.buildChildDocumentsUriUsingTree(target_uri,FileUtil.getDocumentID(parent_file_path,target_uri,target_uri_path));
-//                    Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
-//                    if(cursor!=null && cursor.getCount()>0)
-//                    {
-//                        List<String>inner_source_list_files=new ArrayList<>();
-//                        while(cursor.moveToNext())
-//                        {
-//                            String displayName=cursor.getString(0);
-//                            inner_source_list_files.add(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,displayName));
-//                        }
-//                        cursor.close();
-//                        populate(inner_source_list_files,include_folder);
-//                    }
-//
-//                    if(include_folder)
-//                    {
-//                        no_of_files++;
-//                    }
-//                }
-//                else
-//                {
-//                    no_of_files++;
-//                    size_of_files+=FileUtil.getSizeUri(context,uri);
-//                }
-//                total_no_of_files+=no_of_files;
-//                total_size_of_files+=size_of_files;
-//                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-//
-//            }
-//        }
 
 }

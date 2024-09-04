@@ -7,11 +7,6 @@ import org.apache.commons.net.ftp.FTPReply;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,10 +21,11 @@ public class FtpClientRepository {
     private final FtpDetailsDialog.FtpPOJO ftpPOJO;
     private static final long IDLE_TIMEOUT = 300000; // 5 minutes
     private static final int MAX_IDLE_CONNECTIONS = 5;
+    private static final int MAX_RETRIES = 3;
+    private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
     private int initialClients;
 
     private FtpClientRepository(FtpDetailsDialog.FtpPOJO ftpPOJO) {
-
         this.ftpClients = new ConcurrentLinkedQueue<>();
         this.inUseClients = new ConcurrentLinkedQueue<>();
         this.lastUsedTimes = new ConcurrentHashMap<>();
@@ -45,7 +41,7 @@ public class FtpClientRepository {
                 ftpClients.offer(client);
                 lastUsedTimes.put(client, System.currentTimeMillis());
             } catch (IOException e) {
-                // Log error, but continue
+                Timber.tag(Global.TAG).e("Failed to initialize FTP client: %s", e.getMessage());
             }
         }
     }
@@ -58,24 +54,64 @@ public class FtpClientRepository {
     }
 
     public synchronized FTPClient getFtpClient() throws IOException {
-        FTPClient client = ftpClients.poll();
-        if (client == null || !isClientValid(client)) {
-            if (client != null) {
-                disconnectAndCloseClient(client);
-            }
-            client = createAndConnectFtpClient();
-        } else {
-            // Warm-up check
+        for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             try {
-                client.sendNoOp();
+                FTPClient client = getOrCreateClient();
+                if (validateAndPrepareClient(client)) {
+                    return client;
+                }
             } catch (IOException e) {
-                disconnectAndCloseClient(client);
-                client = createAndConnectFtpClient();
+                Timber.tag(Global.TAG).w("FTP connection attempt %d failed: %s", attempt + 1, e.getMessage());
+                if (attempt == MAX_RETRIES - 1) {
+                    throw e; // Rethrow on last attempt
+                }
+                try {
+                    Thread.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted while retrying FTP connection", ie);
+                }
             }
         }
+        throw new IOException("Failed to get a valid FTP client after " + MAX_RETRIES + " attempts");
+    }
+
+    private FTPClient getOrCreateClient() throws IOException {
+        FTPClient client = ftpClients.poll();
+        if (client == null) {
+            return createAndConnectFtpClient();
+        }
+        return client;
+    }
+
+    private boolean validateAndPrepareClient(FTPClient client) throws IOException {
+        if (!client.isConnected()) {
+            reconnectClient(client);
+        }
+
+        if (!testConnection(client)) {
+            disconnectAndCloseClient(client);
+            client = createAndConnectFtpClient();
+        }
+
+        // Ensure we're in the correct mode and have the right settings
+        client.setFileType(FTP.BINARY_FILE_TYPE);
+        client.enterLocalPassiveMode();
+
         lastUsedTimes.put(client, System.currentTimeMillis());
         inUseClients.offer(client);
-        return client;
+        return true;
+    }
+
+    private void reconnectClient(FTPClient client) throws IOException {
+        disconnectAndCloseClient(client);
+        client.connect(ftpPOJO.server, ftpPOJO.port);
+        if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
+            throw new IOException("Failed to connect to the FTP server");
+        }
+        if (!client.login(ftpPOJO.user_name, ftpPOJO.password)) {
+            throw new IOException("Failed to log in to the FTP server");
+        }
     }
 
     public synchronized void releaseFtpClient(FTPClient client) {
@@ -127,7 +163,7 @@ public class FtpClientRepository {
                 client.disconnect();
             }
         } catch (IOException e) {
-            // Log the exception
+            Timber.tag(Global.TAG).e("Error disconnecting FTP client: %s", e.getMessage());
         } finally {
             lastUsedTimes.remove(client);
         }
@@ -135,7 +171,7 @@ public class FtpClientRepository {
 
     public void shutdown() {
         Timber.tag(Global.TAG).d("Shutting down FTP client repository");
-        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
@@ -152,7 +188,6 @@ public class FtpClientRepository {
 
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
-
 
         for (FTPClient client : ftpClients) {
             disconnectAndCloseClient(client);
@@ -171,11 +206,11 @@ public class FtpClientRepository {
         }
 
         try {
+            client.setControlKeepAliveTimeout(10);
             if (!client.sendNoOp()) {
                 return false;
             }
-            boolean changed = client.changeWorkingDirectory("/");
-            return changed;
+            return client.changeWorkingDirectory("/");
         } catch (IOException e) {
             return false;
         }

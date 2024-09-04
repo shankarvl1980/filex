@@ -56,7 +56,7 @@ public final class FileUtil
 	private static final String PRIMARY_VOLUME_NAME = "primary";
 	public final static int BUFFER_SIZE=8192;
 	public static int USB_CHUNK_SIZE;
-
+	private static final String TAG = "Ftp-FileUtil";
 	/**
 	 * Hide default constructor.
 	 */
@@ -221,6 +221,12 @@ public final class FileUtil
 		}
 		return  list;
 	}
+
+
+
+
+
+
 
 	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name ,boolean cut, long[] bytes_read)
 	{
@@ -1080,48 +1086,43 @@ public final class FileUtil
 		return usbFile;
 	}
 
-	public static boolean isFtpFileExists(String file_path)
-	{
-		//if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			try {
-				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-				FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				ftpClient.enterLocalPassiveMode();
+	public static boolean isFtpFileExists(String file_path) {
+		Timber.tag(TAG).d("Checking if FTP file exists: %s", file_path);
+		try {
+			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+			FTPClient ftpClient = ftpClientRepository.getFtpClient();
+			ftpClient.enterLocalPassiveMode();
 
-				String parentDir = new File(file_path).getParent();
-				String fileName = new File(file_path).getName();
+			String parentDir = new File(file_path).getParent();
+			String fileName = new File(file_path).getName();
 
-				FTPFileFilter filter = new FTPFileFilter() {
-                    @Override
-                    public boolean accept(FTPFile ftpFile) {
-                        return ftpFile.getName().equals(fileName);
-                    }
-                };
+			FTPFileFilter filter = ftpFile -> ftpFile.getName().equals(fileName);
 
-				FTPFile[] files = ftpClient.listFiles(parentDir, filter);
+			FTPFile[] files = ftpClient.listFiles(parentDir, filter);
 
-				boolean exists=files.length > 0;
-				//String status= ftpClient.getStatus(file_path);//FtpClientRepository_old.getInstance().ftpClientMain.getStatus(file_path);
-				ftpClientRepository.releaseFtpClient(ftpClient);
-				return exists;
-			} catch (IOException e) {
-				return false;
-			}
+			boolean exists = files.length > 0;
+			ftpClientRepository.releaseFtpClient(ftpClient);
 
+			Timber.tag(TAG).d("FTP file exists result: %b for path: %s", exists, file_path);
+			return exists;
+		} catch (IOException e) {
+			Timber.tag(TAG).e("Error checking if FTP file exists: %s", e.getMessage());
+			return false;
 		}
-
 	}
 
 	public static boolean isFtpPathDirectory(String filePath) {
+		Timber.tag(TAG).d("Checking if FTP path is directory: %s", filePath);
 		FtpClientRepository ftpClientRepository = null;
 		FTPClient ftpClient = null;
 		try {
 			ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
 			ftpClient = ftpClientRepository.getFtpClient();
-			return ftpClient.changeWorkingDirectory(filePath);
+			boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
+			Timber.tag(TAG).d("FTP path is directory result: %b for path: %s", isDirectory, filePath);
+			return isDirectory;
 		} catch (IOException e) {
-			Timber.tag(Global.TAG).e("Error checking if path is directory: %s", e.getMessage());
+			Timber.tag(TAG).e("Error checking if FTP path is directory: %s", e.getMessage());
 			return false;
 		} finally {
 			if (ftpClientRepository != null && ftpClient != null) {
@@ -1130,34 +1131,26 @@ public final class FileUtil
 		}
 	}
 
-	public static FTPFile getFTPFileFromOtherFTPClient(FTPClient ftpClient,String file_path)
-	{
-		//if(Global.CHECK_OTHER_FTP_SERVER_CONNECTED(ftpClient))
-		{
-			FTPFile ftpFile;
-			File file=new File(file_path);
-			String parent_path=file.getParent();
-			String name=file.getName();
-			try {
-
-				FTPFile[] ftpFiles_array=ftpClient.listFiles(parent_path);
-				int size= ftpFiles_array.length;
-				for(int i=0;i<size;++i)
-				{
-					ftpFile=ftpFiles_array[i];
-					if(ftpFile.getName().equals(name))
-					{
-						return ftpFile;
-					}
+	public static FTPFile getFTPFileFromOtherFTPClient(FTPClient ftpClient, String file_path) {
+		Timber.tag(TAG).d("Getting FTP file from other FTP client: %s", file_path);
+		File file = new File(file_path);
+		String parent_path = file.getParent();
+		String name = file.getName();
+		try {
+			FTPFile[] ftpFiles_array = ftpClient.listFiles(parent_path);
+			int size = ftpFiles_array.length;
+			for (int i = 0; i < size; ++i) {
+				FTPFile ftpFile = ftpFiles_array[i];
+				if (ftpFile.getName().equals(name)) {
+					Timber.tag(TAG).d("Found FTP file: %s", ftpFile.getName());
+					return ftpFile;
 				}
-
-			} catch (Exception e) {
-				Timber.tag(Global.TAG).d("exception thrown while getting ftpfile - "+e.getMessage());
-				return null;
 			}
-
-
+		} catch (Exception e) {
+			Timber.tag(TAG).e("Error getting FTP file: %s", e.getMessage());
+			return null;
 		}
+		Timber.tag(TAG).d("FTP file not found: %s", file_path);
 		return null;
 	}
 
@@ -1184,33 +1177,25 @@ public final class FileUtil
 		}
 	}
 
-	public static boolean mkdirFtp(String file_path)
-	{
-		boolean dirExists,fileExists;
-		//if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
-			try {
-				//fileExists=FileUtil.isFtpFileExists(file_path);
-				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-				FTPClient ftpClient;
-				dirExists=FileUtil.isFtpPathDirectory(file_path);
-				if(dirExists)
-				{
-					return true;
-				}
-				else {
-					ftpClient=ftpClientRepository.getFtpClient();
-					boolean success=ftpClient.makeDirectory(file_path);
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					return success;
-				}
-
-
-			} catch (IOException e) {
-				return false;
+	public static boolean mkdirFtp(String file_path) {
+		Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
+		try {
+			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+			boolean dirExists = FileUtil.isFtpPathDirectory(file_path);
+			if (dirExists) {
+				Timber.tag(TAG).d("FTP directory already exists: %s", file_path);
+				return true;
+			} else {
+				FTPClient ftpClient = ftpClientRepository.getFtpClient();
+				boolean success = ftpClient.makeDirectory(file_path);
+				ftpClientRepository.releaseFtpClient(ftpClient);
+				Timber.tag(TAG).d("FTP directory creation result: %b for path: %s", success, file_path);
+				return success;
 			}
+		} catch (IOException e) {
+			Timber.tag(TAG).e("Error creating FTP directory: %s", e.getMessage());
+			return false;
 		}
-		//return false;
 	}
 
 
@@ -1302,20 +1287,22 @@ public final class FileUtil
 		return false;
 	}
 
-	private static boolean deleteFTPFile(String file_path)
-	{
-		if(Global.CHECK_FTP_SERVER_CONNECTED())
-		{
+	private static boolean deleteFTPFile(String file_path) {
+		Timber.tag(TAG).d("Attempting to delete FTP file: %s", file_path);
+		if (Global.CHECK_FTP_SERVER_CONNECTED()) {
 			try {
-				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-				FTPClient ftpClient=ftpClientRepository.getFtpClient();
-				boolean success= ftpClient.deleteFile(file_path);//FtpClientRepository_old.getInstance().ftpClientMain.deleteFile(file_path);
+				FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+				FTPClient ftpClient = ftpClientRepository.getFtpClient();
+				boolean success = ftpClient.deleteFile(file_path);
 				ftpClientRepository.releaseFtpClient(ftpClient);
+				Timber.tag(TAG).d("FTP file deletion result: %b for path: %s", success, file_path);
 				return success;
 			} catch (IOException e) {
+				Timber.tag(TAG).e("Error deleting FTP file: %s", e.getMessage());
 				return false;
 			}
 		}
+		Timber.tag(TAG).w("FTP server not connected, cannot delete file: %s", file_path);
 		return false;
 	}
 
@@ -1415,39 +1402,36 @@ public final class FileUtil
 		return success;
 	}
 
-	public static boolean deleteFtpDirectory(final String file_path)
-	{
-		boolean success=true;
-
+	public static boolean deleteFtpDirectory(final String file_path) {
+		Timber.tag(TAG).d("Attempting to delete FTP directory: %s", file_path);
+		boolean success = true;
 		try {
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-			FTPClient ftpClient=ftpClientRepository.getFtpClient();
-			if(FileUtil.isFtpPathDirectory(file_path))
-			{
-				String[] list = ftpClient.listNames(file_path); //Storing all file name within array
-				if(list!=null)
-				{
-					int size=list.length;
-					for (int i = 0; i < size; ++i)
-					{
-						success=deleteFtpDirectory(list[i]);
+			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+			FTPClient ftpClient = ftpClientRepository.getFtpClient();
+			if (FileUtil.isFtpPathDirectory(file_path)) {
+				String[] list = ftpClient.listNames(file_path);
+				if (list != null) {
+					int size = list.length;
+					for (int i = 0; i < size; ++i) {
+						success = deleteFtpDirectory(list[i]);
+						if (!success) break;
 					}
 				}
 			}
 
-			if(FileUtil.isFtpPathDirectory(file_path))
-			{
-				success= ftpClient.removeDirectory(file_path);
-			}
-			else {
-				success= ftpClient.deleteFile(file_path);
+			if (success) {
+				if (FileUtil.isFtpPathDirectory(file_path)) {
+					success = ftpClient.removeDirectory(file_path);
+				} else {
+					success = ftpClient.deleteFile(file_path);
+				}
 			}
 			ftpClientRepository.releaseFtpClient(ftpClient);
-
+			Timber.tag(TAG).d("FTP directory deletion result: %b for path: %s", success, file_path);
 		} catch (IOException e) {
+			Timber.tag(TAG).e("Error deleting FTP directory: %s", e.getMessage());
 			return false;
 		}
-
 		return success;
 	}
 
@@ -1609,29 +1593,26 @@ public final class FileUtil
 		return success;
 	}
 
-	public static boolean mkdirsFTP(String parent_file_path, @NonNull String path)
-	{
-		boolean success=true;
-		String [] file_path_substring=path.split("/");
-		int size=file_path_substring.length;
-		for (int i=0; i<size;++i)
-		{
-			String path_string=file_path_substring[i];
-			if(!path_string.equals(""))
-			{
-				String new_dir_path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,path_string);
-				success=mkdirFtp(new_dir_path);
-				parent_file_path+=File.separator+path_string;
-				if(!success)
-				{
+	public static boolean mkdirsFTP(String parent_file_path, @NonNull String path) {
+		Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", path, parent_file_path);
+		boolean success = true;
+		String[] file_path_substring = path.split("/");
+		int size = file_path_substring.length;
+		for (int i = 0; i < size; ++i) {
+			String path_string = file_path_substring[i];
+			if (!path_string.equals("")) {
+				String new_dir_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, path_string);
+				success = mkdirFtp(new_dir_path);
+				parent_file_path += File.separator + path_string;
+				if (!success) {
+					Timber.tag(TAG).w("Failed to create FTP directory: %s", new_dir_path);
 					return false;
 				}
 			}
-
 		}
+		Timber.tag(TAG).d("Successfully created multiple FTP directories");
 		return success;
 	}
-
 
 
 
