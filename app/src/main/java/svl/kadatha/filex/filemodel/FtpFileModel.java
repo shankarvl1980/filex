@@ -1,6 +1,7 @@
 package svl.kadatha.filex.filemodel;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -212,6 +213,26 @@ public class FtpFileModel implements FileModel {
     @Override
     public long getLength() {
         Timber.tag(TAG).d("getLength() called, but always returns 0 for FTP files");
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FTPClient ftpClient=null;
+        try {
+            ftpClient = ftpClientRepository.getFtpClient();
+            FTPFile[] files = ftpClient.listFiles(path);
+
+            if (files.length == 1) {
+                FTPFile file = files[0];
+                return file.getSize();
+            }
+        } catch (IOException e) {
+            return 0;
+        }
+        finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
+        }
+
         return 0;
     }
 

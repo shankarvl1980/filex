@@ -2701,7 +2701,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 		}
 
-
 	}
 
 }

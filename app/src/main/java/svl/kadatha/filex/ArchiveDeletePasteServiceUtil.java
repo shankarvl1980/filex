@@ -127,21 +127,21 @@ public class ArchiveDeletePasteServiceUtil {
     public static boolean WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
     {
         boolean noOperation=true;
-        if(noOperation && sourceFileObjectType!=null)
-        {
-            if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
-            }
-        }
-
-        if(noOperation && destFileObjectType!=null)
-        {
-            if(destFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
-            }
-        }
+//        if(noOperation && sourceFileObjectType!=null)
+//        {
+//            if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+//            {
+//                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
+//            }
+//        }
+//
+//        if(noOperation && destFileObjectType!=null)
+//        {
+//            if(destFileObjectType==FileObjectType.FTP_TYPE)
+//            {
+//                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
+//            }
+//        }
 
         return noOperation;
     }
