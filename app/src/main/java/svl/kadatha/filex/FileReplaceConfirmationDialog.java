@@ -149,15 +149,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
 					{
 						confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it)+" '"+new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName()+"'");
 					}
 				}
-
 			}
 		});
 
@@ -171,9 +167,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(getActivity() instanceof CopyToActivity){
 						if(!fileDuplicationViewModel.yes && !fileDuplicationViewModel.apply_to_all){
 							if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
@@ -205,7 +198,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 
 					dismissAllowingStateLoss();
 				}
-
 			}
 		});
 
