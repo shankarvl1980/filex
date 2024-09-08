@@ -235,9 +235,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     after_filledFilePojos_procedure();
                 }
             }

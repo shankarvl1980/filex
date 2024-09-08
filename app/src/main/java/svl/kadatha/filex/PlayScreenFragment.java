@@ -469,9 +469,6 @@ public class PlayScreenFragment extends Fragment {
                 {
                     progress_bar.setVisibility(View.GONE);
                     Timber.tag(Global.TAG).d("progress bar is made invisible - album art fetching");
-                }
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(audio_name_min_tv!=null){
                         audio_name_tv.setText(audioPlayViewModel.audio_file_name);
                         audio_name_min_tv.setText(audioPlayViewModel.audio_file_name);
@@ -495,10 +492,6 @@ public class PlayScreenFragment extends Fragment {
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty())
                     {
                         if(audio_player_service!=null)

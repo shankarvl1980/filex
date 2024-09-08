@@ -130,9 +130,6 @@ public class RenameFileDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					onRenameResult(viewModel.fileNameChanged,new_name,viewModel.filePOJO);
 				}
 			}

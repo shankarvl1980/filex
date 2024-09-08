@@ -385,9 +385,6 @@ public class PdfViewFragment extends Fragment
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
                     {
                         if(activity instanceof PdfViewActivity)
@@ -408,6 +405,7 @@ public class PdfViewFragment extends Fragment
                     current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
 
                 }
+
             }
         });
 
@@ -423,10 +421,6 @@ public class PdfViewFragment extends Fragment
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
                     {
                         pdf_view_adapter.notifyDataSetChanged();

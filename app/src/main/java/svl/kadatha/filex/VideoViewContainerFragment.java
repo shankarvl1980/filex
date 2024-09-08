@@ -262,9 +262,6 @@ public class VideoViewContainerFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						if(activity instanceof VideoViewActivity)
@@ -282,9 +279,7 @@ public class VideoViewContainerFragment extends Fragment
 						{
 							((VideoViewActivity)activity).current_page_idx=0;
 						}
-
 					}
-
 				}
 			}
 		});
@@ -300,9 +295,6 @@ public class VideoViewContainerFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						Iterator<Map.Entry<FilePOJO, Integer>> iterator=viewModel.video_list.entrySet().iterator();
@@ -328,6 +320,7 @@ public class VideoViewContainerFragment extends Fragment
 					}
 					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
+
 			}
 		});
 
