@@ -198,10 +198,6 @@ public class AppManagerListFragment extends Fragment {
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(app_type.equals(AppManagerActivity.SYSTEM_APPS))
                     {
                         appPOJOList=viewModel.systemAppPOJOList;
@@ -315,10 +311,6 @@ public class AppManagerListFragment extends Fragment {
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     viewModel.isBackedUp.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     Global.print(context,getString(R.string.copied_apk_file));
                 }

@@ -167,9 +167,6 @@ public class AppSelectorDialog extends DialogFragment
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     AppRecyclerAdapter appRecyclerAdapter = new AppRecyclerAdapter(viewModel.appPOJOList);
                     app_recycler_view.setAdapter(appRecyclerAdapter);
                     app_recycler_view.setLayoutManager(new LinearLayoutManager(context));

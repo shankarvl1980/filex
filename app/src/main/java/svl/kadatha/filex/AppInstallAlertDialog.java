@@ -144,10 +144,6 @@ public class AppInstallAlertDialog extends DialogFragment
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     String apk_icon_file_path=Global.APK_ICON_DIR.getAbsolutePath()+ File.separator+viewModel.package_name+".png";
                     GlideApp.with(context).load(apk_icon_file_path).placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(app_icon_image_view);
                     app_name_tv.setText(viewModel.app_name);
@@ -164,6 +160,7 @@ public class AppInstallAlertDialog extends DialogFragment
                         message_tv.setText(R.string.do_you_want_update_the_app);
                     }
                 }
+
             }
         });
         
