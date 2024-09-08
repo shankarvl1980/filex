@@ -95,44 +95,41 @@ public class FtpFileModel implements FileModel {
     public InputStream getInputStream() {
         Timber.tag(TAG).d("Attempting to get InputStream for path: %s", path);
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
             InputStream inputStream = ftpClient.retrieveFileStream(path);
+            if (inputStream == null) {
+                throw new IOException("Failed to retrieve file stream");
+            }
             Timber.tag(TAG).d("Successfully retrieved InputStream for path: %s", path);
-            return inputStream;
+            return new FTPInputStreamWrapper(inputStream, ftpClient, ftpClientRepository);
         } catch (Exception e) {
             Timber.tag(TAG).e("Failed to get InputStream: %s", e.getMessage());
-            return null;
-        }
-        finally {
-            if (ftpClientRepository != null && ftpClient != null) {
+            if (ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
-                Timber.tag(TAG).d("FTP client released");
             }
+            return null;
         }
     }
 
-    @Override
+
     public OutputStream getChildOutputStream(String child_name, long source_length) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
         Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", file_path);
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
             OutputStream outputStream = ftpClient.storeFileStream(file_path);
             Timber.tag(TAG).d("Successfully retrieved OutputStream for path: %s", file_path);
-            return outputStream;
-        } catch (Exception e) {
+            return new FTPOutputStreamWrapper(outputStream, ftpClient, ftpClientRepository);
+        } catch (IOException e) {
             Timber.tag(TAG).e("Failed to get OutputStream: %s", e.getMessage());
-            return null;
-        }
-        finally {
-            if (ftpClientRepository != null && ftpClient != null) {
+            if (ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
-                Timber.tag(TAG).d("FTP client released");
             }
+            return null;
         }
     }
 
@@ -140,35 +137,39 @@ public class FtpFileModel implements FileModel {
     public FileModel[] list() {
         Timber.tag(TAG).d("Attempting to list files for path: %s", path);
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
-            String[] inner_source_list = ftpClient.listNames(path);
-            if (inner_source_list == null) {
+            if (ftpClient == null) {
+                throw new IllegalStateException("Failed to obtain FTP client");
+            }
+
+            String[] fullPaths = ftpClient.listNames(path);
+            if (fullPaths == null || fullPaths.length == 0) {
                 Timber.tag(TAG).w("No files listed or directory is empty for path: %s", path);
                 return new FileModel[0];
             }
 
-            int size = inner_source_list.length;
-            FileModel[] fileModels = new FileModel[size];
-            for (int i = 0; i < size; ++i) {
-                Timber.tag(TAG).d("Listed file: %s", inner_source_list[i]);
-                fileModels[i] = new FtpFileModel(inner_source_list[i]);
+            FileModel[] fileModels = new FileModel[fullPaths.length];
+            for (int i = 0; i < fullPaths.length; i++) {
+                fileModels[i] = new FtpFileModel(fullPaths[i]);
+                Timber.tag(TAG).d("Listed file: %s", fullPaths[i]);
             }
-            Timber.tag(TAG).d("Successfully listed %d files", size);
+            Timber.tag(TAG).d("Successfully listed %d files", fullPaths.length);
             return fileModels;
         } catch (IOException e) {
             Timber.tag(TAG).e("Failed to list files: %s", e.getMessage());
-            return null;
-        }
-        finally {
+            return new FileModel[0];
+        } catch (IllegalStateException e) {
+            Timber.tag(TAG).e("Failed to obtain FTP client: %s", e.getMessage());
+            return new FileModel[0];
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
             }
         }
     }
-
     @Override
     public boolean createFile(String name) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
@@ -219,5 +220,111 @@ public class FtpFileModel implements FileModel {
         boolean exists = FileUtil.isFtpFileExists(path);
         Timber.tag(TAG).d("exists() returned: %b for path: %s", exists, path);
         return exists;
+    }
+
+
+    public static class FTPOutputStreamWrapper extends OutputStream {
+        private final OutputStream wrappedStream;
+        private final FTPClient ftpClient;
+        private final FtpClientRepository repository;
+        private boolean isTransferCompleted = false;
+
+        public FTPOutputStreamWrapper(OutputStream wrappedStream, FTPClient ftpClient, FtpClientRepository repository) {
+            this.wrappedStream = wrappedStream;
+            this.ftpClient = ftpClient;
+            this.repository = repository;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            wrappedStream.write(b);
+        }
+
+        @Override
+        public void write(byte[] b) throws IOException {
+            wrappedStream.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            wrappedStream.write(b, off, len);
+        }
+
+        public void completePendingCommand() throws IOException {
+            if (!isTransferCompleted) {
+                wrappedStream.close();
+                if (!ftpClient.completePendingCommand()) {
+                    throw new IOException("FTP file transfer failed");
+                }
+                isTransferCompleted = true;
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                if (!isTransferCompleted) {
+                    completePendingCommand();
+                }
+            } finally {
+                repository.releaseFtpClient(ftpClient);
+            }
+        }
+    }
+
+
+
+    public static class FTPInputStreamWrapper extends InputStream {
+        private final InputStream wrappedStream;
+        private final FTPClient ftpClient;
+        private final FtpClientRepository repository;
+        private boolean isTransferCompleted = false;
+
+        public FTPInputStreamWrapper(InputStream wrappedStream, FTPClient ftpClient, FtpClientRepository repository) {
+            this.wrappedStream = wrappedStream;
+            this.ftpClient = ftpClient;
+            this.repository = repository;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return wrappedStream.read();
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            return wrappedStream.read(b);
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return wrappedStream.read(b, off, len);
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            return wrappedStream.skip(n);
+        }
+
+        @Override
+        public int available() throws IOException {
+            return wrappedStream.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                wrappedStream.close();
+                if (!isTransferCompleted) {
+                    if (!ftpClient.completePendingCommand()) {
+                        throw new IOException("FTP file transfer failed");
+                    }
+                    isTransferCompleted = true;
+                }
+            } finally {
+                repository.releaseFtpClient(ftpClient);
+                Timber.tag("FTPInputStreamWrapper").d("FTP client released");
+            }
+        }
     }
 }

@@ -583,6 +583,12 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         if(detailFragmentListener!=null)detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
 	}
 
+	private void refreshFragment() {
+        getParentFragmentManager().beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
+    }
 
 	@Override
 	public void onStop() {

@@ -128,7 +128,7 @@ public class FileCountSize {
                         FTPFile[] f_array = new FTPFile[size];
                         for (int i = 0; i < size; ++i) {
                             Timber.tag(TAG).d("Getting FTP file info for: %s", files_selected_array.get(i));
-                            FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(ftpClient, files_selected_array.get(i));
+                            FTPFile f = FileUtil.getFtpFile(ftpClient, files_selected_array.get(i));
                             f_array[i] = f;
                         }
                         Timber.tag(TAG).d("Starting populate method for FTP files");

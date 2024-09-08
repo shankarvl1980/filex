@@ -98,6 +98,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             public void run() {
                 filePOJOS=new ArrayList<>(); filePOJOS_filtered=new ArrayList<>();
                 FilePOJOUtil.FILL_FILE_POJO(filePOJOS,filePOJOS_filtered,fileObjectType,fileclickselected,currentUsbFile,archive_view);
+
                 if(fill_file_size_also)
                 {
                     long storage_space=0L;
@@ -278,39 +279,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-
-//    private void get_size_non_nio(File f, int[]total_no_of_files, long[]total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap)
-//    {
-//        int no_of_files=0;
-//        long size_of_files=0L;
-//        if(isCancelled()) return;
-//        if(f.isDirectory())
-//        {
-//            total_no_of_files[0]=0;total_size_of_files[0]=0;
-//            File[] files_array=f.listFiles();
-//            if(files_array!=null && files_array.length!=0)
-//            {
-//                for(File file:files_array)
-//                {
-//                    get_size_non_nio(file,total_no_of_files,total_size_of_files,include_folder,storage_hashmap);
-//                }
-//                if(include_folder)
-//                {
-//                    ++no_of_files;
-//                }
-//                storage_hashmap.put(f.getAbsolutePath(),new FileStoragePOJO(++total_no_of_files[0], total_size_of_files[0]));
-//                total_no_of_files[0]=0;total_size_of_files[0]=0;
-//            }
-//        }
-//        else
-//        {
-//            ++no_of_files;
-//            size_of_files+=f.length();
-//
-//        }
-//        total_no_of_files[0]+=no_of_files;
-//        total_size_of_files[0]+=size_of_files;
-//    }
 
     public void copyFtpToDevice(String file_path, FileObjectType fileObjectType,boolean select_app)
     {
@@ -938,4 +906,23 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
+
+    private static final int MAX_FTP_EMPTY_REFRESH_ATTEMPTS = 3; // You can adjust this value
+    private int ftpEmptyRefreshAttempts = 0;
+
+    public int getFtpEmptyRefreshAttempts() {
+        return ftpEmptyRefreshAttempts;
+    }
+
+    public void incrementFtpEmptyRefreshAttempts() {
+        ftpEmptyRefreshAttempts++;
+    }
+
+    public void resetFtpEmptyRefreshAttempts() {
+        ftpEmptyRefreshAttempts = 0;
+    }
+
+    public boolean canAttemptFtpEmptyRefresh() {
+        return ftpEmptyRefreshAttempts < MAX_FTP_EMPTY_REFRESH_ATTEMPTS;
+    }
 }

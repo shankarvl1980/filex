@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
 
@@ -30,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.Stack;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
@@ -44,9 +44,6 @@ import timber.log.Timber;
 public final class FileUtil
 {
 
-	/**
-	 * The name of the primary volume (LOLLIPOP).
-	 */
 	private static final String PRIMARY_VOLUME_NAME = "primary";
 	public final static int BUFFER_SIZE=8192;
 	public static int USB_CHUNK_SIZE;
@@ -58,10 +55,6 @@ public final class FileUtil
 	{
 		throw new UnsupportedOperationException();
 	}
-
-
-
-
 
 
 	public static Uri getDocumentUri(@NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
@@ -192,74 +185,100 @@ public final class FileUtil
 		return context.getContentResolver().getType(uri) !=null;
 	}
 
-	public static List<String> listUri(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path)
-	{
-		List<String> list=new ArrayList<>();
-		Uri uri=getDocumentUri(target_file_path,tree_uri, tree_uri_path);
-		if(uri!=null)
-		{
-			if(isDirectoryUri(context,uri))
-			{
-				Uri children_uri=DocumentsContract.buildChildDocumentsUriUsingTree(tree_uri,FileUtil.getDocumentID(target_file_path,tree_uri,tree_uri_path));
-				Cursor cursor=context.getContentResolver().query(children_uri,new String[] {DocumentsContract.Document.COLUMN_DISPLAY_NAME},null,null,null);
-				if(cursor!=null && cursor.getCount()>0)
-				{
-					while(cursor.moveToNext())
-					{
-						String displayName=cursor.getString(0);
-						list.add(displayName);
-					}
-					cursor.close();
-				}
+	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
+		FileInputStream fileInputStream = null;
+		OutputStream outputStream = null;
+		boolean success = false;
+
+		try {
+			fileInputStream = new FileInputStream(sourceFile);
+			outputStream = destFileModel.getChildOutputStream(child_name, 0);
+
+			bufferedCopy(fileInputStream, outputStream, false, bytes_read);
+
+			// Ensure FTP transfer is completed if it's an FTP output stream
+			if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+				((FtpFileModel.FTPOutputStreamWrapper) outputStream).completePendingCommand();
 			}
-		}
-		return  list;
-	}
 
-
-
-
-
-
-
-	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name ,boolean cut, long[] bytes_read)
-	{
-		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); OutputStream outputStream = destFileModel.getChildOutputStream(child_name,0)) {
-
-			bufferedCopy(fileInputStream,outputStream,false,bytes_read);
-			if(destFileModel instanceof FtpFileModel)
-			{
-				//FtpClientRepository_old.getInstance().ftpClientMain.completePendingCommand();
-			}
 			if (cut) {
 				sourceFile.delete();
 			}
+
+			success = true;
 		} catch (Exception e) {
-			return false;
+			Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
+		} finally {
+			// Close streams
+			if (fileInputStream != null) {
+				try {
+					fileInputStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the input stream
+				}
+			}
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the output stream
+				}
+			}
 		}
 
-		return true;
+		return success;
 	}
 
-	@SuppressWarnings("null")
-	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name ,boolean cut, long[] bytes_read)
-	{
-		try (InputStream inputStream = sourceFileModel.getInputStream(); OutputStream outputStream = destFileModel.getChildOutputStream(child_name,0)) {
-			boolean fromUsbFile=sourceFileModel instanceof UsbFileModel;
-			bufferedCopy(inputStream,outputStream,fromUsbFile,bytes_read);
-			if(sourceFileModel instanceof FtpFileModel || destFileModel instanceof FtpFileModel)
-			{
-				//FtpClientRepository_old.getInstance().ftpClientMain.completePendingCommand();
+
+	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		boolean success = false;
+
+		try {
+			inputStream = sourceFileModel.getInputStream();
+			outputStream = destFileModel.getChildOutputStream(child_name, 0);
+
+			boolean fromUsbFile = sourceFileModel instanceof UsbFileModel;
+			bufferedCopy(inputStream, outputStream, fromUsbFile, bytes_read);
+
+			// Ensure FTP transfer is completed if it's an FTP output stream
+			if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+				((FtpFileModel.FTPOutputStreamWrapper) outputStream).completePendingCommand();
 			}
+
 			if (cut) {
 				sourceFileModel.delete();
 			}
+
+			success = true;
 		} catch (Exception e) {
-			return false;
+			Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
+		} finally {
+			// Close streams
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the input stream
+				}
+			}
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the output stream
+				}
+			}
 		}
 
-		return true;
+		return success;
 	}
+
 	@SuppressWarnings("null")
 	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
@@ -278,37 +297,47 @@ public final class FileUtil
 		return true;
 	}
 
-	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel,String file_name,long []bytes_read)
-	{
-		try (InputStream inStream=App.getAppContext().getContentResolver().openInputStream(data); OutputStream fileOutStream = destFileModel.getChildOutputStream(file_name,0)) {
+	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
+		InputStream inStream = null;
+		OutputStream fileOutStream = null;
+		boolean success = false;
 
-			bufferedCopy(inStream,fileOutStream,false,bytes_read);
-			if(destFileModel instanceof FtpFileModel)
-			{
-				//FtpClientRepository_old.getInstance().ftpClientMain.completePendingCommand();
+		try {
+			inStream = App.getAppContext().getContentResolver().openInputStream(data);
+			fileOutStream = destFileModel.getChildOutputStream(file_name, 0);
+
+			bufferedCopy(inStream, fileOutStream, false, bytes_read);
+
+			// Ensure FTP transfer is completed if it's an FTP output stream
+			if (fileOutStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+				((FtpFileModel.FTPOutputStreamWrapper) fileOutStream).completePendingCommand();
 			}
 
-		}
-		catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-
-	@SuppressWarnings("null")
-	public static boolean copy_to_File(Context context, @NonNull final Uri data, @NonNull final File target, long[] bytes_read)
-	{
-		try (InputStream inStream=context.getContentResolver().openInputStream(data); FileOutputStream fileOutStream = new FileOutputStream(target)) {
-
-			bufferedCopy(inStream,fileOutStream,false,bytes_read);
-
+			success = true;
 		} catch (Exception e) {
-			return false;
+			Timber.tag(TAG).e("Error during URI to FileModel copy: %s", e.getMessage());
+		} finally {
+			// Close streams
+			if (inStream != null) {
+				try {
+					inStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the input stream
+				}
+			}
+			if (fileOutStream != null) {
+				try {
+					fileOutStream.close();
+				} catch (IOException e) {
+					Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
+					success = false;  // Mark as failed if we couldn't close the output stream
+				}
+			}
 		}
 
-		return true;
+		return success;
 	}
-
 
 	@SuppressWarnings("null")
 	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
@@ -323,9 +352,7 @@ public final class FileUtil
 		} catch (Exception e) {
 			return false;
 		}
-		// ignore exception
 
-		// ignore exception
 		return true;
 	}
 
@@ -343,7 +370,6 @@ public final class FileUtil
 				outStream = context.getContentResolver().openOutputStream(uri);
 				if (outStream != null)
 				{
-					//channelCopy(fileInStream.getChannel(),Channels.newChannel(outStream),bytes_read);
 					bufferedCopy(fileInStream,outStream,false,bytes_read);
 				}
 
@@ -481,7 +507,7 @@ public final class FileUtil
 		}
 	}
 
-	public static FTPFile getFTPFileFromOtherFTPClient(FTPClient ftpClient, String file_path) {
+	public static FTPFile getFtpFile(FTPClient ftpClient, String file_path) {
 		Timber.tag(TAG).d("Getting FTP file from other FTP client: %s", file_path);
 		File file = new File(file_path);
 		String parent_path = file.getParent();
@@ -567,28 +593,6 @@ public final class FileUtil
 		}
 	}
 
-	@SuppressWarnings("null")
-	public static FileOutputStream get_file_outputstream(Context context, @NonNull final String target_file_path, Uri tree_uri, String tree_uri_path)
-	{
-		FileOutputStream fileOutStream=null;
-		try 
-		{
-			// Storage Access Framework
-			Uri uri = getDocumentUri(target_file_path,tree_uri, tree_uri_path);
-			if (uri != null)
-			{
-				ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri,"rw");
-				fileOutStream=new FileOutputStream(pfd.getFileDescriptor());
-			}
-
-			return fileOutStream;
-
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
-
 	/**
 	 * Delete a file. May be even on external SD card.
 	 *
@@ -644,158 +648,264 @@ public final class FileUtil
 		return false;
 	}
 
-	private static boolean deleteFTPFile(String file_path) {
-		Timber.tag(TAG).d("Attempting to delete FTP file: %s", file_path);
-		if (Global.CHECK_FTP_SERVER_CONNECTED()) {
-			FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-			FTPClient ftpClient=null;
-			try {
-				ftpClient = ftpClientRepository.getFtpClient();
-				boolean success = ftpClient.deleteFile(file_path);
-				Timber.tag(TAG).d("FTP file deletion result: %b for path: %s", success, file_path);
-				return success;
-			} catch (IOException e) {
-				Timber.tag(TAG).e("Error deleting FTP file: %s", e.getMessage());
-				return false;
-			}
-			finally {
-				if (ftpClientRepository != null && ftpClient != null) {
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					Timber.tag(TAG).d("FTP client released");
+	public static boolean deleteFileModel(final FileModel fileModel) {
+		if (fileModel == null) {
+			return false;
+		}
+
+		Stack<FileModel> stack = new Stack<>();
+		stack.push(fileModel);
+		boolean success = true;
+
+		while (!stack.isEmpty() && success) {
+			FileModel currentFile = stack.pop();
+
+			if (currentFile.isDirectory()) {
+				FileModel[] list = currentFile.list();
+				if (list != null && list.length > 0) {
+					// Push the current directory back onto the stack
+					stack.push(currentFile);
+					// Push all children onto the stack
+					for (FileModel child : list) {
+						stack.push(child);
+					}
+				} else {
+					// Empty directory, try to delete it
+					success = currentFile.delete();
+					if (!success) {
+						System.err.println("Failed to delete directory: " + currentFile);
+					}
+				}
+			} else {
+				// It's a file, try to delete it
+				success = currentFile.delete();
+				if (!success) {
+					System.err.println("Failed to delete file: " + currentFile);
 				}
 			}
 		}
-		Timber.tag(TAG).w("FTP server not connected, cannot delete file: %s", file_path);
-		return false;
-	}
 
-	public static boolean deleteFileModel(final FileModel fileModel)
-	{
-		boolean success;
-		if (fileModel.isDirectory())            //Check if folder file is a real folder
-		{
-			FileModel[] list = fileModel.list(); //Storing all file name within array
-			if(list!=null)
-			{
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
-				{
-					FileModel tmpF = list[i];
-					success=deleteFileModel(tmpF);
-
-				}
+		// If the original fileModel was a directory and we've successfully deleted all its contents,
+		// we need to delete the directory itself
+		if (success && fileModel.isDirectory() && fileModel.exists()) {
+			success = fileModel.delete();
+			if (!success) {
+				System.err.println("Failed to delete root directory: " + fileModel);
 			}
 		}
-		success=fileModel.delete();
-		return success;
-	}
-	public static boolean deleteNativeDirectory(final File folder)
-	{
-		boolean success=true;
-
-		if (folder.isDirectory())            //Check if folder file is a real folder
-		{
-			File[] list = folder.listFiles(); //Storing all file name within array
-			if (list != null)                //Checking listUri value is null or not to check folder containts atlest one file
-			{
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
-				{
-					File tmpF = list[i];
-					success=deleteNativeDirectory(tmpF);
-
-				}
-			}
-
-		}
-		success=deleteNativeFile(folder);
 
 		return success;
 	}
 
-	public static boolean deleteSAFDirectory(Context context,final String file_path, Uri tree_uri, String tree_uri_path)
-	{
-		boolean success;
-		File folder=new File(file_path);
-		if (folder.isDirectory())            //Check if folder file is a real folder
-		{
-			File[] list = folder.listFiles(); //Storing all file name within array
-			if(list!=null)
-			{
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
-				{
-					File tmpF = list[i];
-					success=deleteSAFDirectory(context,tmpF.getAbsolutePath(),tree_uri,tree_uri_path);
+
+
+	public static boolean deleteNativeDirectory(final File folder) {
+		if (folder == null || !folder.exists()) {
+			return false;
+		}
+
+		Stack<File> stack = new Stack<>();
+		stack.push(folder);
+		boolean success = true;
+
+		while (!stack.isEmpty() && success) {
+			File current = stack.pop();
+
+			if (current.isDirectory()) {
+				File[] list = current.listFiles();
+				if (list != null && list.length > 0) {
+					// Push the current directory back onto the stack
+					stack.push(current);
+					// Push all children onto the stack
+					for (File child : list) {
+						stack.push(child);
+					}
+				} else {
+					// Empty directory, try to delete it
+					success = deleteNativeFile(current);
+					if (!success) {
+						System.err.println("Failed to delete directory: " + current);
+					}
+				}
+			} else {
+				// It's a file, try to delete it
+				success = deleteNativeFile(current);
+				if (!success) {
+					System.err.println("Failed to delete file: " + current);
 				}
 			}
 		}
 
-		success=deleteSAFFile(context,folder.getAbsolutePath(),tree_uri,tree_uri_path);
-		return success;
-	}
-
-	public static boolean deleteUsbDirectory(final UsbFile folder)
-	{
-		if(folder==null)return false;
-		boolean success;
-
-		if (folder.isDirectory())            //Check if folder file is a real folder
-		{
-			UsbFile[] list = new UsbFile[0]; //Storing all file name within array
-			try {
-				list = folder.listFiles();
-			} catch (IOException e) {
+		// If the original folder still exists (it was not empty initially),
+		// we need to delete it now
+		if (success && folder.exists()) {
+			success = deleteNativeFile(folder);
+			if (!success) {
+				System.err.println("Failed to delete root folder: " + folder);
 			}
-			if (list != null)                //Checking listUri value is null or not to check folder contains atlest one file
-			{
-				int size=list.length;
-				for (int i = 0; i < size; ++i)
-				{
-					UsbFile tmpF = list[i];
-					success=deleteUsbDirectory(tmpF);
-				}
-			}
-
 		}
 
+		return success;
+	}
 
-		success=deleteUsbFile(folder);
+
+	public static boolean deleteSAFDirectory(Context context, final String file_path, Uri tree_uri, String tree_uri_path) {
+		File folder = new File(file_path);
+		if (!folder.exists()) {
+			return false;
+		}
+
+		Stack<File> stack = new Stack<>();
+		stack.push(folder);
+		boolean success = true;
+
+		while (!stack.isEmpty() && success) {
+			File current = stack.pop();
+
+			if (current.isDirectory()) {
+				File[] list = current.listFiles();
+				if (list != null && list.length > 0) {
+					// Push the current directory back onto the stack
+					stack.push(current);
+					// Push all children onto the stack
+					for (File child : list) {
+						stack.push(child);
+					}
+				} else {
+					// Empty directory, try to delete it
+					success = deleteSAFFile(context, current.getAbsolutePath(), tree_uri, tree_uri_path);
+					if (!success) {
+						System.err.println("Failed to delete directory: " + current.getAbsolutePath());
+					}
+				}
+			} else {
+				// It's a file, try to delete it
+				success = deleteSAFFile(context, current.getAbsolutePath(), tree_uri, tree_uri_path);
+				if (!success) {
+					System.err.println("Failed to delete file: " + current.getAbsolutePath());
+				}
+			}
+		}
+
+		// If the original folder still exists (it was not empty initially),
+		// we need to delete it now
+		if (success && folder.exists()) {
+			success = deleteSAFFile(context, folder.getAbsolutePath(), tree_uri, tree_uri_path);
+			if (!success) {
+				System.err.println("Failed to delete root folder: " + folder.getAbsolutePath());
+			}
+		}
 
 		return success;
 	}
+
+	public static boolean deleteUsbDirectory(final UsbFile folder) {
+		if (folder == null) {
+			return false;
+		}
+
+		Stack<UsbFile> stack = new Stack<>();
+		stack.push(folder);
+		boolean success = true;
+
+		while (!stack.isEmpty() && success) {
+			UsbFile current = stack.pop();
+
+			if (current.isDirectory()) {
+				UsbFile[] list = new UsbFile[0];
+				try {
+					list = current.listFiles();
+				} catch (IOException e) {
+					System.err.println("Error listing files: " + e.getMessage());
+					success = false;
+					continue;
+				}
+
+				if (list != null && list.length > 0) {
+					// Push the current directory back onto the stack
+					stack.push(current);
+					// Push all children onto the stack
+					for (UsbFile child : list) {
+						stack.push(child);
+					}
+				} else {
+					// Empty directory, try to delete it
+					success = deleteUsbFile(current);
+					if (!success) {
+						System.err.println("Failed to delete directory: " + current.getName());
+					}
+				}
+			} else {
+				// It's a file, try to delete it
+				success = deleteUsbFile(current);
+				if (!success) {
+					System.err.println("Failed to delete file: " + current.getName());
+				}
+			}
+		}
+
+		// If the original folder still exists (it was not empty initially),
+		// we need to delete it now
+		if (success && folder.isDirectory()) {
+			success = deleteUsbFile(folder);
+			if (!success) {
+				System.err.println("Failed to delete root folder: " + folder.getName());
+			}
+		}
+
+		return success;
+	}
+
 
 	public static boolean deleteFtpDirectory(final String file_path) {
 		Timber.tag(TAG).d("Attempting to delete FTP directory: %s", file_path);
-		boolean success = true;
 		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-		FTPClient ftpClient=null;
+		FTPClient ftpClient = null;
+		boolean success = true;
+
 		try {
 			ftpClient = ftpClientRepository.getFtpClient();
-			if (FileUtil.isFtpPathDirectory(file_path)) {
-				String[] list = ftpClient.listNames(file_path);
-				if (list != null) {
-					int size = list.length;
-					for (int i = 0; i < size; ++i) {
-						success = deleteFtpDirectory(list[i]);
-						if (!success) break;
+			if (ftpClient == null) {
+				throw new IllegalStateException("Failed to obtain FTP client");
+			}
+
+			Stack<String> stack = new Stack<>();
+			stack.push(file_path);
+
+			while (!stack.isEmpty() && success) {
+				String currentPath = stack.pop();
+
+				if (FileUtil.isFtpPathDirectory(currentPath)) {
+					String[] list = ftpClient.listNames(currentPath);
+					if (list != null && list.length > 0) {
+						for (String item : list) {
+							stack.push(item);
+						}
+					} else {
+						success = ftpClient.removeDirectory(currentPath);
 					}
+				} else {
+					success = ftpClient.deleteFile(currentPath);
+				}
+
+				if (!success) {
+					Timber.tag(TAG).e("Failed to delete: %s", currentPath);
 				}
 			}
 
-			if (success) {
-				if (FileUtil.isFtpPathDirectory(file_path)) {
-					success = ftpClient.removeDirectory(file_path);
-				} else {
-					success = ftpClient.deleteFile(file_path);
-				}
+			// If the original path was a directory and all contents were successfully deleted, delete the directory itself
+			if (success && FileUtil.isFtpPathDirectory(file_path)) {
+				success = ftpClient.removeDirectory(file_path);
 			}
+
 			Timber.tag(TAG).d("FTP directory deletion result: %b for path: %s", success, file_path);
 		} catch (IOException e) {
 			Timber.tag(TAG).e("Error deleting FTP directory: %s", e.getMessage());
-			return false;
-		}
-		finally {
+			success = false;
+		} catch (IllegalStateException e) {
+			Timber.tag(TAG).e("Failed to obtain FTP client: %s", e.getMessage());
+			success = false;
+		} finally {
 			if (ftpClientRepository != null && ftpClient != null) {
 				ftpClientRepository.releaseFtpClient(ftpClient);
 				Timber.tag(TAG).d("FTP client released");
@@ -803,7 +913,6 @@ public final class FileUtil
 		}
 		return success;
 	}
-
 	/**
 	 * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
 	 *
@@ -1259,19 +1368,20 @@ public final class FileUtil
 	}
 
 
-	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read)
-	{
-		byte[] buffer=(fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
+	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
+		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
-		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream); BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
+		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
 			while ((count = bufferedInputStream.read(buffer)) != -1) {
 				bufferedOutputStream.write(buffer, 0, count);
-				bytes_read[0]+=count;
+				bytes_read[0] += count;
 			}
+			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
 		} catch (IOException e) {
-
+			Timber.tag(TAG).e("Error during buffered copy: %s", e.getMessage());
+			throw e; // Re-throw the exception to be handled by the caller
 		}
-
 	}
 
 }

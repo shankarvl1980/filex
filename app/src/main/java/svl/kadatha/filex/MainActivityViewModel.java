@@ -36,6 +36,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         cancel(true);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 
         if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
         {

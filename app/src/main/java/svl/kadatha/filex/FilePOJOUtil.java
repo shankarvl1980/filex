@@ -625,7 +625,7 @@ public class FilePOJOUtil {
                 FTPClient ftpClient= null;
                 try {
                     ftpClient = ftpClientRepository.getFtpClient();
-                    FTPFile f=FileUtil.getFTPFileFromOtherFTPClient(ftpClient,file_path);//MainActivity.FTP_CLIENT.mlistFile(file_path);
+                    FTPFile f=FileUtil.getFtpFile(ftpClient,file_path);
                     if(f!=null)
                     {
                         filePOJO=MAKE_FilePOJO(f,false, fileObjectType,file_path,ftpClient);
@@ -1238,7 +1238,9 @@ public class FilePOJOUtil {
             FTPClient ftpClient=null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
+                ftpClient.pwd();
                 file_array = ftpClient.listFiles(fileclickselected);
+
                 Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
                 for (int i = 0; i < size; ++i) {
@@ -1349,5 +1351,6 @@ public class FilePOJOUtil {
 
         }
     }
+
 
 }

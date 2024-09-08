@@ -105,7 +105,7 @@ public class ViewModelFileCount extends ViewModel {
                         {
                             for(int i=0;i<size;++i)
                             {
-                                FTPFile f = FileUtil.getFTPFileFromOtherFTPClient(ftpClient,source_list_files.get(i));
+                                FTPFile f = FileUtil.getFtpFile(ftpClient,source_list_files.get(i));
                                 f_array[i]=f;
                             }
                             populate(f_array,include_folder,source_folder);

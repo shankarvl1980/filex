@@ -17,7 +17,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -91,6 +93,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     private static final int CHUNK_SIZE = 1024 * 1024; // 1 MB chunks
     public static final int MAX_LINES_TO_DISPLAY = 200;
 
+
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
         if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isReadingFinished.setValue(AsyncTaskStatus.STARTED);
@@ -100,6 +103,7 @@ public class FileEditorViewModel extends AndroidViewModel {
             try (FileChannel fc = fileInputStream.getChannel()) {
                 fc.position(filePointer);
                 ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
+                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
                 StringBuilder chunk = new StringBuilder();
                 int linesRead = 0;
                 long totalBytesRead = filePointer;
@@ -108,19 +112,23 @@ public class FileEditorViewModel extends AndroidViewModel {
 
                 while (fc.read(buffer) != -1 && linesRead < MAX_LINES_TO_DISPLAY) {
                     buffer.flip();
-                    while (buffer.hasRemaining() && linesRead < MAX_LINES_TO_DISPLAY) {
-                        char c = (char) buffer.get();
+                    CharBuffer charBuffer = CharBuffer.allocate(buffer.limit());
+                    decoder.decode(buffer, charBuffer, false);
+                    charBuffer.flip();
+
+                    while (charBuffer.hasRemaining() && linesRead < MAX_LINES_TO_DISPLAY) {
+                        char c = charBuffer.get();
                         chunk.append(c);
                         currentLineLength++;
                         if (c == '\n') {
                             linesRead++;
-                            currentLineLength=0;
-                        }else if(currentLineLength>MAX_LINE_LENGTH){
-                            lineTooLong=true;
+                            currentLineLength = 0;
+                        } else if (currentLineLength > MAX_LINE_LENGTH) {
+                            lineTooLong = true;
                             break;
                         }
                     }
-                    if(lineTooLong)break;
+                    if (lineTooLong) break;
                     totalBytesRead += buffer.position();
                     buffer.compact();
                 }
@@ -130,7 +138,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                 file_start = (filePointer == 0);
                 file_end = (linesRead < MAX_LINES_TO_DISPLAY);
 
-                if(!lineTooLong){
+                if (!lineTooLong) {
                     current_page = pageNumber;
                     current_page_end_point = totalBytesRead;
                     page_pointer_hashmap.put(current_page, new PagePointer(filePointer, current_page_end_point));
@@ -142,13 +150,11 @@ public class FileEditorViewModel extends AndroidViewModel {
                             iterator.remove();
                         }
                     }
-                }
-                else{
+                } else {
                     stringBuilder = new StringBuilder();
                     fileRead = false;
                     throw new IOException("Line length limit exceeded, could not be opened fully");
                 }
-
 
             } catch (IOException e) {
                 Timber.e(e, "Error reading file");
@@ -159,7 +165,6 @@ public class FileEditorViewModel extends AndroidViewModel {
             }
         });
     }
-
 
     public synchronized void setUpInitialization(FileObjectType fileObjectType,String file_path)
     {

@@ -92,6 +92,7 @@ public class Global
 	static final String VIDEO_REGEX="(?i)3gp|mp4|avi|mov|flv|wmv|webm";
 	static final String ZIP_REGEX="(?i)zip|rar|jar|7z";
 	static final String UNIX_ARCHIVE_REGEX="(?i)tar|gzip|gz";
+	static final String GZIP_REGEX="(?i)gzip|gz";
 	static final String APK_REGEX="(?i)apk";
 	static final String PDF_REGEX="(?i)pdf";
 	static final String DOC_REGEX="(?i)doc|docx";
@@ -168,6 +169,7 @@ public class Global
 			new MimePOJO("MS PowerPoint","application/vnd.ms-powerpoint",PPT_REGEX),
 			new MimePOJO("DB","application/vnd.sqlite3",DB_REGEX),
 			new MimePOJO("Zip","application/zip",ZIP_REGEX),
+			new MimePOJO("GZip","application/gzip",GZIP_REGEX),
 			new MimePOJO("RTF","application/rtf",RTF_REGEX),
 			new MimePOJO("APK","application/vnd.android.package-archive",APK_REGEX),
 
