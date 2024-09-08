@@ -399,10 +399,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					df.progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					viewModel.isDeletionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
@@ -420,16 +416,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					df.progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-//					if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
+					//					if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
 //					{
 //						Global.print(context,context.getString(R.string.not_supported));
 //					}
 //					else
-						if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
+					if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
 					{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder,fileDuplicationViewModel.sourceFileObjectType,
 								fileDuplicationViewModel.dest_folder,fileDuplicationViewModel.destFileObjectType,fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,

@@ -422,9 +422,6 @@ ImageViewFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						if(activity instanceof ImageViewActivity)
@@ -460,9 +457,6 @@ ImageViewFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						viewModel.album_file_pojo_list.removeAll(deleteFileOtherActivityViewModel.deleted_files);

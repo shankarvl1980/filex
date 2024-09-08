@@ -186,9 +186,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					after_filledFilePojos_procedure();
 				}
 			}
