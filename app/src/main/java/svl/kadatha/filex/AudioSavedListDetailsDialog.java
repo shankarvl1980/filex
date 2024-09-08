@@ -355,9 +355,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					clicked_audio_list=audioListViewModel.audio_list;
 					total_audio_list=audioListViewModel.audio_list;
 					currentAudioListRecyclerViewAdapter=new CurrentListRecyclerViewAdapter();
