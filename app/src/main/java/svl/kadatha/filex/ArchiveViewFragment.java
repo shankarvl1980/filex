@@ -187,10 +187,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     after_filledFilePojos_procedure();
                 }
             }
@@ -207,10 +203,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(extractZipFileViewModel.isZipExtracted)
                     {
                         file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
@@ -218,6 +210,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     extractZipFileViewModel.isZipExtracted=false;
                     extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
+
             }
         });
 

@@ -237,10 +237,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     activity_progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(viewModel.zipFileExtracted)
                     {
                         createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(),FileObjectType.FILE_TYPE);
@@ -268,10 +264,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     archiveViewFragment.progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     viewModel.isDeletionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
