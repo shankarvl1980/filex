@@ -187,10 +187,6 @@ public class AudioSavedListFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					AudioPlayerService.AUDIO_QUEUED_ARRAY=audioListViewModel.audio_list;
 					if(audioSelectListener!=null && !AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())
 					{

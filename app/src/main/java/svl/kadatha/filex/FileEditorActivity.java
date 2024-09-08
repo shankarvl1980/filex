@@ -338,10 +338,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(viewModel.data!=null)
 					{
 						if(viewModel.file!=null)
@@ -392,7 +388,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					}
 
 				}
-
 			}
 		});
 
@@ -406,10 +401,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!viewModel.fileRead)
 					{
 						viewModel.file_start=viewModel.file_end=true;
@@ -485,9 +476,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!deleteFileOtherActivityViewModel.deleted_files.isEmpty())
 					{
 						viewModel.textViewUndoRedo.disconnect();

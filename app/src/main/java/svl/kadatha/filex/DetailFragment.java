@@ -378,10 +378,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					after_filledFilePojos_procedure();
 				}
 			}

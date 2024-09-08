@@ -102,10 +102,6 @@ public class CopyToActivity extends BaseActivity{
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
                     {
                         Global.print(context,context.getString(R.string.not_supported));
