@@ -167,10 +167,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					viewModel.isRecursiveFilesRemoved.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 					if(viewModel.files_selected_array.isEmpty())
 					{
