@@ -160,9 +160,6 @@ public class AlbumListFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					album_list=audioListViewModel.album_list;
 					total_album_list=audioListViewModel.album_list;
 					albumListRecyclerViewAdapter=new AlbumListRecyclerViewAdapter();
@@ -177,6 +174,7 @@ public class AlbumListFragment extends Fragment
 
 					file_number_view.setText(audioListViewModel.album_pojo_selected_items.size()+"/"+num_all_album);
 				}
+
 			}
 		});
 
@@ -191,10 +189,6 @@ public class AlbumListFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(audioListViewModel.action.equals("p"))
 					{
 						if (audioSelectListener != null && !AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
