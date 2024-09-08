@@ -121,11 +121,6 @@ public class PlayScreenFragment extends Fragment {
                         progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
                         Timber.tag(Global.TAG).d("asynctask is complete and progress bar made gone");
                     }
-
-                }
-
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-                {
                     Timber.tag(Global.TAG).d("asynctask completed");
                     if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
                     {
