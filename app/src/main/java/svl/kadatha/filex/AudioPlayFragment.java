@@ -114,10 +114,6 @@ public class AudioPlayFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(progress_bar!=null)progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
 					{
 						if(activity instanceof AudioPlayerActivity)
@@ -447,9 +443,6 @@ public class AudioPlayFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					audio_name_tv.setText(audioPlayViewModel.audio_file_name);
 					GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(audioPlayViewModel.album_id)).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(album_art_imageview);
 					audioPlayViewModel.isAlbumArtFetched.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -468,10 +461,6 @@ public class AudioPlayFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-				}
-
-				if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
 					if(!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty())
 					{
 						if(audio_player_service!=null)
