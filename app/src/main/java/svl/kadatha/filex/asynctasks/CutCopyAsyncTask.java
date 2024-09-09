@@ -58,7 +58,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     this.listener = listener;
 
     copied_files_name = new ArrayList<>();
-    copied_source_file_path_list = new ArrayList<String>();
+    copied_source_file_path_list = new ArrayList<>();
 
 }
     @Override
