@@ -36,7 +36,6 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private FilePOJO filePOJO;
     private String file_name;
     private String copied_file;
-    final long[] bytes_read = new long[1];
     private final List<String> overwritten_file_path_list;
 
     public CopyToAsyncTask(Context context,List<Uri>data_list,String file_name,String dest_folder,FileObjectType destFileObjectType,Uri tree_uri,String tree_uri_path,List<String>overwritten_file_path_list, TaskProgressListener listener) {
@@ -69,6 +68,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         boolean onlyOneUri=data_list.size()==1;
         boolean copy_result = false;
         for(Uri data:data_list){
+            final long[] bytes_read = new long[1];
             if(!onlyOneUri) {
                 file_name= CopyToActivity.getFileNameOfUri(context,data);
             }else{
@@ -80,7 +80,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
                 copied_files_name.add(file_name);
                 copied_source_file_path_list.add(dest_file_path);
                 counter_no_files++;
-                counter_size_files+=getLengthUri(context,data);
+                counter_size_files+=bytes_read[0];//getLengthUri(context,data);
                 copied_file=file_name;
                 publishProgress(null);
             }

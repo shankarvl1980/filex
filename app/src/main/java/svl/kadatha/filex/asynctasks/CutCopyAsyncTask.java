@@ -158,7 +158,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     public boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
-        final long[] bytes_read = new long[1];
+
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
         stack.push(new Pair<>(sourceFileModel, destFileModel));
 
@@ -200,11 +200,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 publishProgress(null);
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
+                final long[] bytes_read = new long[1];
                 counter_no_files++;
-                counter_size_files += source.getLength();
                 copied_file_name = source.getName();
                 publishProgress(null);
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, bytes_read);
+                counter_size_files += bytes_read[0];
                 if (!success) {
                     Timber.tag("CopyFileModel").e("Failed to copy file: " + source.getPath());
                     return false;

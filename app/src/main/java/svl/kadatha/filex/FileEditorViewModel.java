@@ -93,7 +93,7 @@ public class FileEditorViewModel extends AndroidViewModel {
 
     private static final String TAG = "FileEditorViewModel";
 
-    public static final int MAX_LINES_TO_DISPLAY = 100;
+    public static final int MAX_LINES_TO_DISPLAY = 200;
     private static final int MAX_LINE_LENGTH = 10000;
 
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
