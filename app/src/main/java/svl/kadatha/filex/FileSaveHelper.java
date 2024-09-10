@@ -52,8 +52,8 @@ public class FileSaveHelper {
             return new SaveResult(false, pagePointerHashmap, "Current page pointer is null");
         }
 
-        long prevPageEndPoint = (prevPagePointer != null) ? prevPagePointer.endPoint : 0L;
-        long currentPageEndPoint = currentPagePointer.endPoint;
+        long prevPageEndPoint = (prevPagePointer != null) ? prevPagePointer.getEndPoint() : 0L;
+        long currentPageEndPoint = currentPagePointer.getEndPoint();
 
         File file = new File(filePath);
         File modifiedChunkFile = new File(tempFilePath);
