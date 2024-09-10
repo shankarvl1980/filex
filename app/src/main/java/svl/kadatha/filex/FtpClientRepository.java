@@ -149,7 +149,9 @@ public class FtpClientRepository {
         client.setControlKeepAliveReplyTimeout(500);
 
         if (!client.login(ftpPOJO.user_name, ftpPOJO.password)) {
-            throw new IOException("Failed to log in to the FTP server");
+            int replyCode = client.getReplyCode();
+            String replyString = client.getReplyString();
+            throw new IOException("Failed to log in to the FTP server. Reply code: " + replyCode + ", Reply string: " + replyString);
         }
 
         client.setFileType(FTP.BINARY_FILE_TYPE);
