@@ -442,6 +442,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					page_number.setText(String.valueOf(viewModel.current_page));
 					filetext_container_edittext.setContent(viewModel.stringBuilder.toString(),viewModel.current_page,FileEditorViewModel.MAX_LINES_TO_DISPLAY);
 					scrollview.smoothScrollTo(0,0);
+					filetext_container_edittext.setEditable(false);
 					viewModel.textViewUndoRedo.startListening();
 				}
 			}
@@ -848,6 +849,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else if(!FileSaveService1.SERVICE_COMPLETED || !FileSaveService2.SERVICE_COMPLETED || !FileSaveService3.SERVICE_COMPLETED)
 		{
+			//Global.print(context,"here stuck");
 			Global.print(context,getString(R.string.please_wait));
 		}
 		else if(!viewModel.updated)

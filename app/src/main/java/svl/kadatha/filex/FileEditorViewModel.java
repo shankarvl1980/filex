@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -89,82 +91,123 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
 
-    private static final int MAX_LINE_LENGTH = 50000;
-    private static final int CHUNK_SIZE = 1024 * 1024; // 1 MB chunks
-    public static final int MAX_LINES_TO_DISPLAY = 200;
+    private static final String TAG = "FileEditorViewModel";
 
+    public static final int MAX_LINES_TO_DISPLAY = 100;
+    private static final int MAX_LINE_LENGTH = 10000;
 
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
-        if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        Timber.tag(TAG).d("Starting openFile: filePointer=%d, pageNumber=%d", filePointer, pageNumber);
+
+        // Check if reading is already in progress
+        if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            Timber.tag(TAG).w("openFile called while reading is already in progress");
+            return;
+        }
+
+        // Set reading status to started
         isReadingFinished.setValue(AsyncTaskStatus.STARTED);
 
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(() -> {
-            try (FileChannel fc = fileInputStream.getChannel()) {
-                fc.position(filePointer);
-                ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
-                CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
+            try {
+                // Skip to the correct byte position before creating the BufferedReader
+                long skippedBytes = 0;
+                while (skippedBytes < filePointer) {
+                    long remainingToSkip = filePointer - skippedBytes;
+                    long actualSkipped = fileInputStream.skip(remainingToSkip);
+                    if (actualSkipped == 0) break;  // In case skipping fails
+                    skippedBytes += actualSkipped;
+                }
+                Timber.tag(TAG).d("Skipped %d bytes to reach filePointer %d", skippedBytes, filePointer);
+
+                // Now create the BufferedReader to start reading from the correct position
+                BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
                 StringBuilder chunk = new StringBuilder();
                 int linesRead = 0;
-                long totalBytesRead = filePointer;
-                int currentLineLength = 0;
-                boolean lineTooLong = false;
+                long totalBytesRead = 0;
+                fileRead = true;
+                file_end = false;
+                int currentLineNumber = 1;
+                long lastValidFilePointer = filePointer;  // Track the last valid file position
 
-                while (fc.read(buffer) != -1 && linesRead < MAX_LINES_TO_DISPLAY) {
-                    buffer.flip();
-                    CharBuffer charBuffer = CharBuffer.allocate(buffer.limit());
-                    decoder.decode(buffer, charBuffer, false);
-                    charBuffer.flip();
-
-                    while (charBuffer.hasRemaining() && linesRead < MAX_LINES_TO_DISPLAY) {
-                        char c = charBuffer.get();
-                        chunk.append(c);
-                        currentLineLength++;
-                        if (c == '\n') {
-                            linesRead++;
-                            currentLineLength = 0;
-                        } else if (currentLineLength > MAX_LINE_LENGTH) {
-                            lineTooLong = true;
-                            break;
-                        }
+                String line;
+                while ((line = reader.readLine()) != null && linesRead < MAX_LINES_TO_DISPLAY) {
+                    // Check if line length exceeds the max allowed length
+                    if (line.length() > MAX_LINE_LENGTH) {
+                        Timber.tag(TAG).w("Line exceeds the maximum allowed length: %d", line.length());
+                        fileRead = false;  // Abort reading
+                        break;
                     }
-                    if (lineTooLong) break;
-                    totalBytesRead += buffer.position();
-                    buffer.compact();
+
+                    // Append the line to the chunk
+                    chunk.append(line).append(System.lineSeparator());
+                    linesRead++;
+                    long bytesRead = line.getBytes(StandardCharsets.UTF_8).length + System.lineSeparator().getBytes(StandardCharsets.UTF_8).length;
+                    totalBytesRead += bytesRead;
+                    lastValidFilePointer = filePointer + totalBytesRead;  // Update the last valid file pointer
+                    Timber.tag(TAG).d("Processed line %d: %s", currentLineNumber, line);
+                    currentLineNumber++;
                 }
 
-                stringBuilder = chunk;
-                fileRead = !lineTooLong;
-                file_start = (filePointer == 0);
-                file_end = (linesRead < MAX_LINES_TO_DISPLAY);
+                // Check if we have more content to read
+                if (line == null) {
+                    file_end = true;
+                }
 
-                if (!lineTooLong) {
+                if (fileRead) {
+                    // Successfully read the content
+                    stringBuilder = chunk;
+                    file_start = (filePointer == 0);
+
+                    Timber.tag(TAG).d("Finished reading: totalBytesRead=%d, linesRead=%d, file_start=%b, file_end=%b, currentPosition=%d",
+                            totalBytesRead, linesRead, file_start, file_end, lastValidFilePointer);
+
+                    // Update current page information
                     current_page = pageNumber;
-                    current_page_end_point = totalBytesRead;
-                    page_pointer_hashmap.put(current_page, new PagePointer(filePointer, current_page_end_point));
+                    current_page_end_point = lastValidFilePointer;
 
+                    page_pointer_hashmap.put(current_page, new PagePointer(filePointer, lastValidFilePointer));
+
+                    // Remove future pages, as new content up to this page has been read
                     Iterator<Map.Entry<Integer, PagePointer>> iterator = page_pointer_hashmap.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        Map.Entry<Integer, PagePointer> entry = iterator.next();
-                        if (entry.getKey() > current_page) {
+                        if (iterator.next().getKey() > current_page) {
                             iterator.remove();
                         }
                     }
+
+                    Timber.tag(TAG).d("Final page_pointer_hashmap: %s", page_pointer_hashmap);
                 } else {
+                    // Reading was aborted due to exceeding line length
+                    Timber.tag(TAG).w("File reading aborted due to exceeding max line length or error");
                     stringBuilder = new StringBuilder();
-                    fileRead = false;
-                    throw new IOException("Line length limit exceeded, could not be opened fully");
                 }
 
             } catch (IOException e) {
-                Timber.e(e, "Error reading file");
+                // Handle IO exceptions during reading
+                Timber.tag(TAG).e(e, "Error reading file: %s", e.getMessage());
                 stringBuilder = new StringBuilder();
                 fileRead = false;
             } finally {
+                try {
+                    // Ensure the FileInputStream is closed properly
+                    if (fileInputStream != null) {
+                        fileInputStream.close();
+                    }
+                } catch (IOException e) {
+                    Timber.tag(TAG).e(e, "Error closing FileInputStream: %s", e.getMessage());
+                }
+
+                // Update the task status and log completion
+                Timber.tag(TAG).d("openFile completed: fileRead=%b, current_page=%d, current_page_end_point=%d",
+                        fileRead, current_page, current_page_end_point);
                 isReadingFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
+
+
 
     public synchronized void setUpInitialization(FileObjectType fileObjectType,String file_path)
     {
@@ -269,10 +312,10 @@ public class FileEditorViewModel extends AndroidViewModel {
 
 
     public static class PagePointer implements Parcelable {
-        long startPoint;
-        long endPoint;
+        private long startPoint;
+        private long endPoint;
 
-        PagePointer(long startPoint, long endPoint) {
+        public PagePointer(long startPoint, long endPoint) {
             this.startPoint = startPoint;
             this.endPoint = endPoint;
         }
@@ -304,6 +347,22 @@ public class FileEditorViewModel extends AndroidViewModel {
                 return new PagePointer[size];
             }
         };
+
+        public long getStartPoint() {
+            return startPoint;
+        }
+
+        public long getEndPoint() {
+            return endPoint;
+        }
+
+        @Override
+        public String toString() {
+            return "PagePointer{" +
+                    "startPoint=" + startPoint +
+                    ", endPoint=" + endPoint +
+                    '}';
+        }
     }
 
 }
