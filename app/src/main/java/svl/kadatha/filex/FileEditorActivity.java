@@ -670,7 +670,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         FileEditorViewModel.PagePointer prevPagePointer = viewModel.page_pointer_hashmap.get(previousPage);
 
         if (prevPagePointer != null) {
-            openFile(prevPagePointer.startPoint,previousPage);
+            openFile(prevPagePointer.getStartPoint(),previousPage);
         }
     }
 
@@ -1018,7 +1018,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
 								if (saveResult.success) {
 									viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
-									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
+									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).getEndPoint();
 									viewModel.updated=true;
 									viewModel.eol = viewModel.altered_eol;
 
@@ -1057,7 +1057,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							public void onServiceCompletion(FileSaveHelper.SaveResult saveResult) {
 								if (saveResult.success) {
 									viewModel.page_pointer_hashmap = saveResult.pagePointerHashmap;
-									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).endPoint;
+									viewModel.current_page_end_point = viewModel.page_pointer_hashmap.get(viewModel.current_page).getEndPoint();
 									viewModel.updated=true;
 									viewModel.eol = viewModel.altered_eol;
 
@@ -1104,7 +1104,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	}
 
 	private void reloadCurrentChunk() {
-		long startPoint = viewModel.page_pointer_hashmap.get(viewModel.current_page).startPoint;
+		long startPoint = viewModel.page_pointer_hashmap.get(viewModel.current_page).getStartPoint();
 		openFile(startPoint,viewModel.current_page);
 	}
 	static Class getEmptyService()
