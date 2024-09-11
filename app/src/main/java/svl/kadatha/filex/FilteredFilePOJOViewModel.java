@@ -376,7 +376,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
             if(size*5<(Global.AVAILABLE_MEMORY_MB()- PdfViewFragment.SAFE_MEMORY_BUFFER)){
                 String file_path = currently_shown_file.getPath();
                 String name=currently_shown_file.getName();
-                long[] bytes_read=new long[1];
+                long bytes_read=0;
                 File file = new File(file_path);
                 String parent_path = file.getParent();
 

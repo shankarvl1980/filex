@@ -1,6 +1,8 @@
 package svl.kadatha.filex.asynctasks;
 
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.core.util.Pair;
 
@@ -156,15 +158,29 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
+
     public boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
 
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
         stack.push(new Pair<>(sourceFileModel, destFileModel));
 
+        boolean allCopiesSuccessful = true;
+
+        // Create a handler for regular progress updates
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
+
         while (!stack.isEmpty()) {
             if (isCancelled()) {
                 Timber.tag("CopyFileModel").d("Operation cancelled");
+                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
                 return false;
             }
 
@@ -181,7 +197,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
                 if (!dest.makeDirIfNotExists(newDirName)) {
                     Timber.tag("CopyFileModel").e("Failed to create directory: " + destPath);
-                    return false;
+                    allCopiesSuccessful = false;
+                    break;
                 }
 
                 FileModel childDestFileModel = FileModelFactory.getFileModel(destPath, destFileObjectType, tree_uri, tree_uri_path);
@@ -200,26 +217,36 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 publishProgress(null);
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
-                final long[] bytes_read = new long[1];
+
                 counter_no_files++;
                 copied_file_name = source.getName();
-                publishProgress(null);
-                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, bytes_read);
-                counter_size_files += bytes_read[0];
+
+                // Start the progress handler
+                progressHandler.post(progressRunnable);
+
+                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
+
+
+                // Stop the progress handler
+                progressHandler.removeCallbacks(progressRunnable);
+
                 if (!success) {
                     Timber.tag("CopyFileModel").e("Failed to copy file: " + source.getPath());
-                    return false;
+                    allCopiesSuccessful = false;
+                    break;
                 }
             }
         }
 
-        if (cut) {
-            Timber.tag("CopyFileModel").d("Deleting source after cut operation: " + sourceFileModel.getPath());
+        if (cut && allCopiesSuccessful) {
+            Timber.tag("CopyFileModel").d("Deleting source after successful cut operation: " + sourceFileModel.getPath());
             FileUtil.deleteFileModel(sourceFileModel);
+        } else if (cut) {
+            Timber.tag("CopyFileModel").d("Not deleting source due to unsuccessful copy during cut operation");
         }
 
-        Timber.tag("CopyFileModel").d("Copy operation completed successfully");
-        return true;
+        Timber.tag("CopyFileModel").d("Copy operation completed. All copies successful: " + allCopiesSuccessful);
+        return allCopiesSuccessful;
     }
 
 }

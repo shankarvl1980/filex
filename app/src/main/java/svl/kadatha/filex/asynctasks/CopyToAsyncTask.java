@@ -3,6 +3,8 @@ package svl.kadatha.filex.asynctasks;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,25 +66,32 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             return false;
         }
 
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
+
         FileModel destFileModel= FileModelFactory.getFileModel(dest_folder,destFileObjectType,tree_uri,tree_uri_path);
         boolean onlyOneUri=data_list.size()==1;
         boolean copy_result = false;
         for(Uri data:data_list){
-            final long[] bytes_read = new long[1];
             if(!onlyOneUri) {
                 file_name= CopyToActivity.getFileNameOfUri(context,data);
             }else{
                 if(file_name.equals(""))file_name=CopyToActivity.getFileNameOfUri(context,data);
             }
-            copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,bytes_read);
+            copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,counter_size_files);
+            progressHandler.post(progressRunnable);
             if (copy_result) {
                 String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
                 copied_files_name.add(file_name);
                 copied_source_file_path_list.add(dest_file_path);
                 counter_no_files++;
-                counter_size_files+=bytes_read[0];//getLengthUri(context,data);
                 copied_file=file_name;
-                publishProgress(null);
             }
 
         }
@@ -93,7 +102,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
         copied_files_name.clear();
         copied_source_file_path_list.clear();
-
+        progressHandler.removeCallbacks(progressRunnable);
         return copy_result;
     }
 

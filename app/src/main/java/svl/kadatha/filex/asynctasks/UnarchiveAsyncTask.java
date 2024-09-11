@@ -1,6 +1,8 @@
 package svl.kadatha.filex.asynctasks;
 
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -111,7 +113,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     return false;
                 }
                 ZipEntry zipEntry=zipfile.getEntry(s.substring(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length()+1));
-                success=read_zipentry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
+                success= read_zip_entry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
             }
         }
         else
@@ -124,7 +126,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     return false;
                 }
                 ZipEntry zipEntry=zip_entries.nextElement();
-                success=read_zipentry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
+                success= read_zip_entry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
             }
 
         }
@@ -167,19 +169,26 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     }
 
 
-    private boolean read_zipentry(ZipEntry zipEntry, String zip_dest_path, Uri uri, String uri_path)
+    private boolean read_zip_entry(ZipEntry zipEntry, String zip_dest_path, Uri uri, String uri_path)
     {
         InputStream inStream;
         BufferedInputStream bufferedInputStream=null;
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
+        progressHandler.post(progressRunnable);
         try
         {
             inStream=zipfile.getInputStream(zipEntry);
             bufferedInputStream=new BufferedInputStream(inStream);
-            String zip_entry_name= ArchiveDeletePasteServiceUtil.UNARCHIVE(zip_dest_path,zipEntry,destFileObjectType,uri,uri_path,bufferedInputStream);
+            String zip_entry_name= ArchiveDeletePasteServiceUtil.UNARCHIVE(zip_dest_path,zipEntry,destFileObjectType,uri,uri_path,bufferedInputStream,counter_size_files);
             counter_no_files++;
-            counter_size_files+=zipEntry.getSize();
             current_file_name=zip_entry_name;
-            publishProgress(null);
             int idx=zip_entry_name.indexOf(File.separator);
             if(idx!=-1)
             {
@@ -202,6 +211,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
 
         finally
         {
+            progressHandler.removeCallbacks(progressRunnable);
             try
             {
                 if(bufferedInputStream!=null)
@@ -228,17 +238,24 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         bufferedInputStream=new BufferedInputStream(inputStream);
         zipInputStream=new ZipInputStream(bufferedInputStream);
 
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
+        progressHandler.post(progressRunnable);
         try
         {
             ZipEntry zipEntry;
             while((zipEntry=zipInputStream.getNextEntry())!=null && !isCancelled())
             {
-                String zip_entry_name=ArchiveDeletePasteServiceUtil.UNARCHIVE(zip_dest_path,zipEntry,destFileObjectType,uri,uri_path,zipInputStream);
+                String zip_entry_name=ArchiveDeletePasteServiceUtil.UNARCHIVE(zip_dest_path,zipEntry,destFileObjectType,uri,uri_path,zipInputStream,counter_size_files);
                 counter_no_files++;
-                counter_size_files+=zipEntry.getSize();
                 current_file_name=zip_entry_name;
                 String entry_name=zipEntry.getName();
-                publishProgress(null);
                 int idx=entry_name.indexOf(File.separator);
                 if(idx!=-1)
                 {
@@ -275,6 +292,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         }
         finally
         {
+            progressHandler.removeCallbacks(progressRunnable);
             try
             {
                 zipInputStream.close();

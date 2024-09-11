@@ -1,6 +1,5 @@
 package svl.kadatha.filex.asynctasks;
 
-import android.content.Context;
 import android.net.Uri;
 
 import java.io.BufferedInputStream;
@@ -21,7 +20,6 @@ import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.Iterate;
-import svl.kadatha.filex.R;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 
@@ -32,7 +30,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final Uri source_uri;
     private final String source_uri_path;
     private final TaskProgressListener listener;
-    private final Context context;
     private final String dest_folder;
     private final String zip_file_path;
     private final String zip_file_name;
@@ -44,13 +41,12 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private FilePOJO filePOJO;
 
 
-    public ArchiveAsyncTask(Context context, ArrayList<String>files_selected_array,String zip_file_name  ,String dest_folder, String zip_file_path, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType,Uri source_uri, String source_uri_path, TaskProgressListener listener) {
+    public ArchiveAsyncTask(ArrayList<String>files_selected_array, String zip_file_name  , String dest_folder, String zip_file_path, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path, TaskProgressListener listener) {
         this.files_selected_array = files_selected_array;
         this.zip_file_name=zip_file_name;
         this.source_uri = source_uri;
         this.source_uri_path = source_uri_path;
         this.listener = listener;
-        this.context=context;
         this.dest_folder=dest_folder;
         this.zip_file_path=zip_file_path;
         this.destFileObjectType=destFileObjectType;
@@ -107,7 +103,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     }
                 }
             }
-            else if(sourceFileObjectType==FileObjectType.USB_TYPE)
+            else if(sourceFileObjectType==FileObjectType.USB_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
             {
                 List<FileModel> fileModels=new ArrayList<>();
                 FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
@@ -130,7 +126,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                         }
                         FileModel fileModel=fileModels.get(i);
                         counter_no_files++;
-                        counter_size_files+=(!fileModel.isDirectory()) ? fileModel.getLength() : 0;
                         copied_file_name=fileModel.getName();
                         publishProgress(null);
                         String zip_entry_path;
@@ -190,20 +185,20 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     }
                 }
             }
-            else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-            {
-                Global.print_background_thread(context,context.getString(R.string.not_supported));
-                try
-                {
-                    zipOutputStream.closeEntry();
-                    zipOutputStream.close();
-                }
-                catch (Exception e)
-                {
-                    // ignore exception
-                }
-                return false;
-            }
+//            else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+//            {
+//                Global.print_background_thread(context,context.getString(R.string.not_supported));
+//                try
+//                {
+//                    zipOutputStream.closeEntry();
+//                    zipOutputStream.close();
+//                }
+//                catch (Exception e)
+//                {
+//                    // ignore exception
+//                }
+//                return false;
+//            }
 
         }
 

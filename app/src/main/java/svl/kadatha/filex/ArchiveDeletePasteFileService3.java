@@ -112,7 +112,7 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
 					zip_file_name=zip_folder_name+".zip";
 					fileCountSize=new FileCountSize(context,files_selected_array,source_uri,source_uri_path,sourceFileObjectType);
 					fileCountSize.fileCount();
-					archiveAsyncTask = new ArchiveAsyncTask(context,files_selected_array,zip_file_name,dest_folder,zip_file_path,destFileObjectType,sourceFileObjectType,tree_uri,tree_uri_path,this);
+					archiveAsyncTask = new ArchiveAsyncTask(files_selected_array,zip_file_name,dest_folder,zip_file_path,destFileObjectType,sourceFileObjectType,tree_uri,tree_uri_path,this);
 					archiveAsyncTask.execute(null);
 					notification_content=getString(R.string.zipping)+" '"+zip_folder_name+".zip "+getString(R.string.at)+" "+dest_folder;
 

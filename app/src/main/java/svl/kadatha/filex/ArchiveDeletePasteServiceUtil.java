@@ -591,7 +591,7 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream
+    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream,long bytes_read
 
     ) throws IOException {
         String zip_entry_name=zipEntry.getName();
@@ -631,8 +631,8 @@ public class ArchiveDeletePasteServiceUtil {
                 while((bytesread=zipInputStream.read(b))!=-1)
                 {
                     bufferedOutStream.write(b,0,bytesread);
+                    bytes_read+=bytesread;
                 }
-
                 bufferedOutStream.close();
             }
         }

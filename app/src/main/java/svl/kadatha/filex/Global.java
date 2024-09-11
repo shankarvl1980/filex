@@ -1060,6 +1060,7 @@ public class Global
 	public static File COPY_TO_USB_CACHE(String file_path)
 	{
 		File cache_file=new File(USB_CACHE_DIR,file_path);
+		long bytes_read=0;
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();
@@ -1070,7 +1071,7 @@ public class Global
 				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 				if(targetUsbFile!=null)
 				{
-					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,new long[]{1});
+					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,bytes_read);
 				}
 			}
 
@@ -1081,6 +1082,7 @@ public class Global
 	public static File COPY_TO_FTP_CACHE(String file_path)
 	{
 		File cache_file=new File(FTP_CACHE_DIR,file_path);
+		long bytes_read=0;
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();
@@ -1095,7 +1097,7 @@ public class Global
                     try {
                         ftpClient=ftpClientRepository.getFtpClient();
 						try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-							FileUtil.bufferedCopy(inputStream, outputStream, false, new long[]{1});
+							FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
 							ftpClient.completePendingCommand();
 							return cache_file;
 

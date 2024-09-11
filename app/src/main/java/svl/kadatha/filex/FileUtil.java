@@ -185,7 +185,7 @@ public final class FileUtil
 		return context.getContentResolver().getType(uri) !=null;
 	}
 
-	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
+	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long bytes_read) {
 		FileInputStream fileInputStream = null;
 		OutputStream outputStream = null;
 		boolean success = false;
@@ -232,7 +232,7 @@ public final class FileUtil
 	}
 
 
-	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
+	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long bytes_read) {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		boolean success = false;
@@ -280,7 +280,7 @@ public final class FileUtil
 	}
 
 	@SuppressWarnings("null")
-	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
+	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long bytes_read)
 	{
 		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
 			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
@@ -297,7 +297,7 @@ public final class FileUtil
 		return true;
 	}
 
-	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
+	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long bytes_read) {
 		InputStream inStream = null;
 		OutputStream fileOutStream = null;
 		boolean success = false;
@@ -340,7 +340,7 @@ public final class FileUtil
 	}
 
 	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
+	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long bytes_read)
 	{
 		if(src_usbfile==null)return false;
 		try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
@@ -359,7 +359,7 @@ public final class FileUtil
 
 
 	@SuppressWarnings("null")
-	public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
+	public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long bytes_read)
 	{
 		OutputStream outStream=null;
 		try (FileInputStream fileInStream = new FileInputStream(source))
@@ -593,16 +593,8 @@ public final class FileUtil
 		}
 	}
 
-	/**
-	 * Delete a file. May be even on external SD card.
-	 *
-	 * @param file the file to be deleted.
-	 * @return True if successfully deleted.
-	 */
 	private static boolean deleteNativeFile(@NonNull final File file)
 	{
-
-		// First try the normal deletion.
 		if(file.delete())
 		{
 			return true;
@@ -913,16 +905,9 @@ public final class FileUtil
 		}
 		return success;
 	}
-	/**
-	 * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
-	 *
-	 * @param source The source folder.
-	 * @param target The target folder.
-	 * @return true if the renaming was successful.
-	 */
+
 	public static boolean renameNativeFile(@NonNull final File source, @NonNull final File target)
 	{
-		// First try the normal rename.
 		if (source.renameTo(target)) return true;
 
 		if (target.exists()) return false;
@@ -933,8 +918,6 @@ public final class FileUtil
 
 	public static boolean renameSAFFile(Context context, String target_file_path, String new_name, Uri tree_uri, String tree_uri_path)
 	{
-	
-		// Try the Storage Access Framework if it is just a rename within the same parent folder.
 		Uri uri = getDocumentUri(target_file_path,tree_uri,tree_uri_path);
 		try {
 			uri=DocumentsContract.renameDocument(context.getContentResolver(),uri,new_name);
@@ -947,7 +930,6 @@ public final class FileUtil
 
 	public static boolean createNativeNewFile(@NonNull final File file) 
 	{
-		
 		if (file.exists()) 
 		{
 			return false;
@@ -976,12 +958,6 @@ public final class FileUtil
 
 	}
 
-	/**
-	 * Create a folder. The folder may even be on external SD card for Kitkat.
-	 *
-	 * @param file The folder to be created.
-	 * @return True if creation was successful.
-	 */
 	public static boolean mkdirNative(@NonNull final File file)
 	{
 		if (file.exists())
@@ -1003,7 +979,6 @@ public final class FileUtil
 
 	public static boolean mkdirSAF(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path)
 	{
-		// Try with Storage Access Framework.
 		Uri uri=createDocumentUri(context,target_file_path,name, true,tree_uri,tree_uri_path);
 		return uri!=null;
 
@@ -1133,17 +1108,10 @@ public final class FileUtil
 	}
 
 
-	
-	/**
-	 * Get the SD card directory.
-	 *
-	 * @return The SD card directory.
-	 */
 	@NonNull
 	public static String getSdCardPath()
 	{
 		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
-
 		try
 		{
 			sdCardDirectory = new File(sdCardDirectory).getCanonicalPath();
@@ -1155,11 +1123,6 @@ public final class FileUtil
 		return sdCardDirectory;
 	}
 
-	/**
-	 * Get a listUri of external SD card paths. (Kitkat or higher.)
-	 *
-	 * @return A listUri of external SD card paths.
-	 */
 	public static String[] getExtSdCardPaths(Context context)
 	{
 		List<String> paths = new ArrayList<>();
@@ -1187,13 +1150,6 @@ public final class FileUtil
 		return paths.toArray(new String[0]);
 	}
 
-	/**
-	 * Determine the main folder of the external SD card containing the given file.
-	 *
-	 * @param file the file.
-	 * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
-	 * null is returned.
-	 */
 	public static String getExtSdCardFolder(@NonNull final File file,Context context)
 	{
 		String[] extSdPaths = getExtSdCardPaths(context);
@@ -1214,24 +1170,12 @@ public final class FileUtil
 		return null;
 	}
 
-	/**
-	 * Determine if a file is on external sd card. (Kitkat or higher.)
-	 *
-	 * @param file The file.
-	 * @return true if on external sd card.
-	 */
 	public static boolean isOnExtSdCard(@NonNull final File file,Context context)
 	{
 		return getExtSdCardFolder(file,context) != null;
 	}
 
 
-	/**
-	 * Get the full path of a document from its tree URI.
-	 *
-	 * @param tree_uri The tree RI.
-	 * @return The path (without trailing file separator).
-	 */
 	@Nullable
 	public static String getFullPathFromTreeUri(@Nullable final Uri tree_uri,Context context)
 	{
@@ -1272,15 +1216,9 @@ public final class FileUtil
 		}
 	}
 
-	/**
-	 * Get the path of a certain volume.
-	 *
-	 * @param volumeId The volume id.
-	 * @return The path.
-	 */
+
 	private static String getVolumePath(final String volumeId,Context context)
 	{
-
 		try
 		{
 			StorageManager mStorageManager =
@@ -1326,12 +1264,6 @@ public final class FileUtil
 		}
 	}
 
-	/**
-	 * Get the volume ID from the tree URI.
-	 *
-	 * @param tree_uri The tree URI.
-	 * @return The volume ID.
-	 */
 	private static String getVolumeIdFromTreeUri(final Uri tree_uri)
 	{
 		final String docId = DocumentsContract.getTreeDocumentId(tree_uri);
@@ -1347,12 +1279,7 @@ public final class FileUtil
 		}
 	}
 
-	/**
-	 * Get the document path (relative to volume name) for a tree URI (LOLLIPOP).
-	 *
-	 * @param tree_uri The tree URI.
-	 * @return the document path.
-	 */
+
 	private static String getDocumentPathFromTreeUri(final Uri tree_uri)
 	{
 		final String docId = DocumentsContract.getTreeDocumentId(tree_uri);
@@ -1368,14 +1295,14 @@ public final class FileUtil
 	}
 
 
-	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
+	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long bytes_read) throws IOException {
 		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
 		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
 			while ((count = bufferedInputStream.read(buffer)) != -1) {
 				bufferedOutputStream.write(buffer, 0, count);
-				bytes_read[0] += count;
+				bytes_read += count;
 			}
 			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
 		} catch (IOException e) {
