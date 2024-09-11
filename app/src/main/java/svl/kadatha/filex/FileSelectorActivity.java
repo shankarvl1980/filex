@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,7 +63,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static final int FOLDER_SELECT_REQUEST_CODE=1564;
     public static final int MOVE_COPY_REQUEST_CODE=351;
     public static final int PICK_FILE_REQUEST_CODE=0;
-    //private static final List<DetailFragmentCommunicationListener> DETAIL_FRAGMENT_COMMUNICATION_LISTENERS=new ArrayList<>();
     public boolean clear_cache;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
     private USBReceiver usbReceiver;
@@ -88,6 +88,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private int countBackPressed=0;
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
+    private NetworkStateReceiver networkStateReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,6 +137,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
         localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
 
+        networkStateReceiver = new NetworkStateReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, filter);
 
         TinyDB tinyDB = new TinyDB(context);
         fm=getSupportFragmentManager();
@@ -585,6 +589,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         mediaMountReceiver.removeMediaMountListener(this);
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
         localBroadcastManager.unregisterReceiver(usbReceiver);
+        unregisterReceiver(networkStateReceiver);
         context.unregisterReceiver(mediaMountReceiver);
     }
 

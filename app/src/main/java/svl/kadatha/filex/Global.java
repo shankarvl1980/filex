@@ -1060,7 +1060,7 @@ public class Global
 	public static File COPY_TO_USB_CACHE(String file_path)
 	{
 		File cache_file=new File(USB_CACHE_DIR,file_path);
-		long bytes_read=0;
+		long[] bytes_read=new long[1];
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();
@@ -1082,7 +1082,7 @@ public class Global
 	public static File COPY_TO_FTP_CACHE(String file_path)
 	{
 		File cache_file=new File(FTP_CACHE_DIR,file_path);
-		long bytes_read=0;
+		long []bytes_read=new long[1];
 		if(!cache_file.exists())
 		{
 			File parent_file=cache_file.getParentFile();

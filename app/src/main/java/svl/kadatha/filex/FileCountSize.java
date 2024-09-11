@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
 import timber.log.Timber;
 
 public class FileCountSize {
@@ -33,6 +34,7 @@ public class FileCountSize {
     final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
     String source_folder;
     private boolean isCancelled;
+    private List<Uri>data_list;
     private Future<?> future1,future2,future3, future4;
     private static final String TAG = "Ftp-FileCountSize";
 
@@ -46,10 +48,13 @@ public class FileCountSize {
         this.sourceFileObjectType=sourceFileObjectType;
 
     }
-    FileCountSize(int total_no_of_files, long total_size_of_files)
+
+    FileCountSize(Context context,List<Uri> data_list)
     {
-        this.total_no_of_files=total_no_of_files;
-        this.total_size_of_files=total_size_of_files;
+        this.context=context;
+        this.data_list=data_list;
+        //this.total_no_of_files=total_no_of_files;
+        //this.total_size_of_files=total_size_of_files;
 
     }
 
@@ -66,10 +71,28 @@ public class FileCountSize {
         return isCancelled;
     }
 
+    public void fileCountDatalist(){
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future1=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                long uri_size = 0;
+                for(Uri data: data_list){
+                    uri_size += CopyToAsyncTask.getLengthUri(context,data);
+                }
+
+                total_no_of_files +=data_list.size();
+                total_size_of_files += uri_size;
+
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+            }
+        });
+    }
+
     public void fileCount()
     {
         ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
+        future2=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 if(context==null)

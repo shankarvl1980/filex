@@ -28,7 +28,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
     private FileObjectType destFileObjectType;
-    private final long bytes_read = 0;
+    private final long[] bytes_read = new long[1];
     public List<FilePOJO> destFilePOJOs;
 
     public AppManagerListViewModel(@NonNull Application application) {
@@ -201,7 +201,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
         });
     }
 
-    private boolean Copy_File_FileModel(File source, String dest_file_path, String name,Uri uri, String uri_path,long bytes_read)
+    private boolean Copy_File_FileModel(File source, String dest_file_path, String name,Uri uri, String uri_path,long[] bytes_read)
     {
         boolean success;
 
@@ -218,7 +218,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
     @SuppressWarnings("null")
-    private boolean Copy_File_File(File source, String dest_file_path, boolean cut, long bytes_read)
+    private boolean Copy_File_File(File source, String dest_file_path, boolean cut, long[] bytes_read)
     {
         boolean success=false;
         File destination=new File(dest_file_path);

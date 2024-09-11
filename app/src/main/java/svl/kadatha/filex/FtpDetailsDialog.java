@@ -41,7 +41,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private boolean toolbar_visible=true;
     private int scroll_distance;
     private int num_all_ftp;
-    private Button delete_btn;
+    private Button delete_btn,disconnect_btn;
     private Button edit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
@@ -49,7 +49,6 @@ public class FtpDetailsDialog extends DialogFragment {
     private FtpDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
     public final static String FTP_INPUT_DETAILS_REQUEST_CODE="ftp_input_details_request_code";
-    //private final static String FTP_INPUT_DETAILS_REQUEST_CODE_NON_NULL="ftp_input_details_request_code_non_null";
     private final static String FTP_RENAME_REQUEST_CODE="ftp_rename_request_code";
 
 
@@ -140,7 +139,7 @@ public class FtpDetailsDialog extends DialogFragment {
         bottom_toolbar.addView(tb_layout);
         Button add_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         delete_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        Button disconnect_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        disconnect_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
 
 
@@ -152,6 +151,13 @@ public class FtpDetailsDialog extends DialogFragment {
 
         viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
         viewModel.fetchFtpPojoList();
+        if(FtpDetailsViewModel.FTP_POJO!=null){
+            if(FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection()){
+                disconnect_btn.setAlpha(Global.ENABLE_ALFA);
+                disconnect_btn.setEnabled(true);
+            }
+        }
+
 
         int size=viewModel.mselecteditems.size();
         ftp_number_text_view.setText(size+"/"+num_all_ftp);
@@ -222,8 +228,19 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
                         {
-                            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                            ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
+                            if(appCompatActivity instanceof MainActivity){
+                                ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            }
+                            else if(appCompatActivity instanceof FileSelectorActivity){
+                                ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                if(((FileSelectorActivity)context).recentDialogListener!=null){
+                                    ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
+                                }
+                                ((FileSelectorActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            }
+
                             dismissAllowingStateLoss();
                         }
                         else {
@@ -255,8 +272,19 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
                         {
-                            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                            ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
+                            if(appCompatActivity instanceof MainActivity){
+                                ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                ((MainActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            }
+                            else if(appCompatActivity instanceof FileSelectorActivity){
+                                ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+                                if(((FileSelectorActivity)context).recentDialogListener!=null){
+                                    ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
+                                }
+                                ((FileSelectorActivity)context).createFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                            }
+
                             dismissAllowingStateLoss();
                         }
                         else {
@@ -579,6 +607,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 if(FtpDetailsViewModel.FTP_POJO==null)return;
                 FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
                 ftpClientRepository.shutdown();
+                disconnect_btn.setAlpha(Global.DISABLE_ALFA);
+                disconnect_btn.setEnabled(false);
                 Global.print(context, "ftp connection disconnected");
 
             }

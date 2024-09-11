@@ -197,15 +197,8 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 					destFileObjectType=(FileObjectType)bundle.getSerializable("destFileObjectType");
 					tree_uri_path=bundle.getString("tree_uri_path");
 					tree_uri=bundle.getParcelable("tree_uri");
-					long uri_size = 0;
-					for(Uri data: data_list){
-						uri_size += CopyToAsyncTask.getLengthUri(context,data);
-					}
-
-					size_of_files_copied = FileUtil.humanReadableByteCount(uri_size);
-
-					fileCountSize=new FileCountSize(data_list.size(),counter_size_files);
-					fileCountSize.fileCount();
+					fileCountSize=new FileCountSize(context, data_list);
+					fileCountSize.fileCountDatalist();
 					copyToAsyncTask=new CopyToAsyncTask(context, data_list,file_name,dest_folder,destFileObjectType,tree_uri,tree_uri_path,overwritten_file_path_list,this);
 					copyToAsyncTask.execute(null);
 					notification_content=(getString(R.string.copying_files)+" "+getString(R.string.to_symbol)+" "+dest_folder);

@@ -28,7 +28,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final List<String> copied_source_file_path_list;
     private final List<String> overwritten_file_path_list;
     private int counter_no_files;
-    private long counter_size_files;
+    private long[] counter_size_files=new long[1];
     private String copied_file_name;
     private String current_file_name;
     private FilePOJO filePOJO;
@@ -138,7 +138,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY, counter_no_files, counter_size_files,current_file_name ,copied_file_name);
+            listener.onProgressUpdate(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY, counter_no_files, counter_size_files[0],current_file_name ,copied_file_name);
         }
     }
 
@@ -218,14 +218,16 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
 
-                counter_no_files++;
                 copied_file_name = source.getName();
 
                 // Start the progress handler
                 progressHandler.post(progressRunnable);
 
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
-
+                if(success){
+                    ++counter_no_files;
+                    publishProgress(null);
+                }
 
                 // Stop the progress handler
                 progressHandler.removeCallbacks(progressRunnable);

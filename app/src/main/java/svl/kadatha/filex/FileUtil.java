@@ -185,7 +185,7 @@ public final class FileUtil
 		return context.getContentResolver().getType(uri) !=null;
 	}
 
-	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long bytes_read) {
+	public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
 		FileInputStream fileInputStream = null;
 		OutputStream outputStream = null;
 		boolean success = false;
@@ -232,7 +232,7 @@ public final class FileUtil
 	}
 
 
-	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long bytes_read) {
+	public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		boolean success = false;
@@ -280,7 +280,7 @@ public final class FileUtil
 	}
 
 	@SuppressWarnings("null")
-	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long bytes_read)
+	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
 		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
 			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
@@ -297,12 +297,11 @@ public final class FileUtil
 		return true;
 	}
 
-	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long bytes_read) {
+	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
 		InputStream inStream = null;
 		OutputStream fileOutStream = null;
-		boolean success = false;
 
-		try {
+        try {
 			inStream = App.getAppContext().getContentResolver().openInputStream(data);
 			fileOutStream = destFileModel.getChildOutputStream(file_name, 0);
 
@@ -313,9 +312,11 @@ public final class FileUtil
 				((FtpFileModel.FTPOutputStreamWrapper) fileOutStream).completePendingCommand();
 			}
 
-			success = true;
+			return true;
 		} catch (Exception e) {
 			Timber.tag(TAG).e("Error during URI to FileModel copy: %s", e.getMessage());
+			return false;
+
 		} finally {
 			// Close streams
 			if (inStream != null) {
@@ -323,24 +324,23 @@ public final class FileUtil
 					inStream.close();
 				} catch (IOException e) {
 					Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
-					success = false;  // Mark as failed if we couldn't close the input stream
-				}
+                    // Mark as failed if we couldn't close the input stream
+                }
 			}
 			if (fileOutStream != null) {
 				try {
 					fileOutStream.close();
 				} catch (IOException e) {
 					Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
-					success = false;  // Mark as failed if we couldn't close the output stream
-				}
+                    // Mark as failed if we couldn't close the output stream
+                }
 			}
 		}
 
-		return success;
-	}
+    }
 
 	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long bytes_read)
+	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
 	{
 		if(src_usbfile==null)return false;
 		try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
@@ -359,7 +359,7 @@ public final class FileUtil
 
 
 	@SuppressWarnings("null")
-	public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long bytes_read)
+	public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read)
 	{
 		OutputStream outStream=null;
 		try (FileInputStream fileInStream = new FileInputStream(source))
@@ -1295,14 +1295,14 @@ public final class FileUtil
 	}
 
 
-	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long bytes_read) throws IOException {
+	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
 		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
 		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
 			while ((count = bufferedInputStream.read(buffer)) != -1) {
 				bufferedOutputStream.write(buffer, 0, count);
-				bytes_read += count;
+				bytes_read[0] += count;
 			}
 			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
 		} catch (IOException e) {

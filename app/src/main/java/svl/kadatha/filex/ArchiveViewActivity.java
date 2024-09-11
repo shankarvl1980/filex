@@ -53,7 +53,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 import java.util.zip.ZipFile;
+
+import timber.log.Timber;
 
 public class ArchiveViewActivity extends BaseActivity{
 
@@ -727,30 +730,57 @@ public class ArchiveViewActivity extends BaseActivity{
         }
     }
 
-    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
-    {
-        int size=file_array.size();
-        for(int i=0;i<size;++i)
-        {
-            File f=file_array.get(i);
-            if(f.isDirectory())
-            {
-                File[] inner_file_array=f.listFiles();
-                if(inner_file_array.length==0)
-                {
-                    file_pathstring_array.add(f.getAbsolutePath()+File.separator);
+    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array) {
+        Stack<File> stack = new Stack<>();
+        for (File f : file_array) {
+            stack.push(f);
+        }
+
+        while (!stack.isEmpty()) {
+            File currentFile = stack.pop();
+
+            if (currentFile.isDirectory()) {
+                File[] innerFiles = currentFile.listFiles();
+                if (innerFiles == null || innerFiles.length == 0) {
+                    Timber.tag("zip_entries").d("zip entries - %s",currentFile.getAbsolutePath() + File.separator);
+                    file_pathstring_array.add(currentFile.getAbsolutePath() + File.separator);
+                } else {
+                    for (File innerFile : innerFiles) {
+                        stack.push(innerFile);
+                    }
                 }
-                else
-                {
-                    recursivefilepath(file_pathstring_array,Arrays.asList(inner_file_array));
-                }
-            }
-            else
-            {
-                file_pathstring_array.add(f.getAbsolutePath());
+            } else {
+                Timber.tag("zip_entries").d("zip entries - %s",currentFile.getAbsolutePath() + File.separator);
+                file_pathstring_array.add(currentFile.getAbsolutePath());
             }
         }
     }
+
+
+//    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
+//    {
+//        int size=file_array.size();
+//        for(int i=0;i<size;++i)
+//        {
+//            File f=file_array.get(i);
+//            if(f.isDirectory())
+//            {
+//                File[] inner_file_array=f.listFiles();
+//                if(inner_file_array.length==0)
+//                {
+//                    file_pathstring_array.add(f.getAbsolutePath()+File.separator);
+//                }
+//                else
+//                {
+//                    recursivefilepath(file_pathstring_array,Arrays.asList(inner_file_array));
+//                }
+//            }
+//            else
+//            {
+//                file_pathstring_array.add(f.getAbsolutePath());
+//            }
+//        }
+//    }
 
 
     private class TopToolbarClickListener implements View.OnClickListener
@@ -995,7 +1025,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 if(archiveViewFragment.viewModel.mselecteditems.containsKey(pos))
                 {
                     archiveViewFragment.viewModel.mselecteditems.remove(pos);
-                    //archiveViewFragment.viewModel.mselecteditemsFilePath.delete(pos);
                     v.setSelected(false);
                     ((RecyclerViewLayout)v).set_selected(false);
                     --size;
@@ -1025,7 +1054,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 else
                 {
                     archiveViewFragment.viewModel.mselecteditems.put(pos,archiveViewFragment.filePOJO_list.get(pos).getPath());
-                    //archiveViewFragment.viewModel.mselecteditemsFilePath.put(pos,archiveViewFragment.filePOJO_list.get(pos).getPath());
                     v.setSelected(true);
                     ((RecyclerViewLayout)v).set_selected(true);
                     ++size;

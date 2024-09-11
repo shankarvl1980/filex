@@ -19,6 +19,7 @@ import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import timber.log.Timber;
 
 public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
@@ -34,7 +35,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private final Context context;
     private final List<String> copied_source_file_path_list;
     private int counter_no_files;
-    private long counter_size_files;
+    private long []counter_size_files=new long[1];
     private FilePOJO filePOJO;
     private String file_name;
     private String copied_file;
@@ -53,7 +54,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         this.copied_files_name=new ArrayList<>();
         this.copied_source_file_path_list=new ArrayList<>();
         this.counter_no_files=0;
-        this.counter_size_files=0;
+        this.counter_size_files[0]=0;
     }
 
     @Override
@@ -84,14 +85,16 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             }else{
                 if(file_name.equals(""))file_name=CopyToActivity.getFileNameOfUri(context,data);
             }
-            copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,counter_size_files);
             progressHandler.post(progressRunnable);
+            copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,counter_size_files);
+
             if (copy_result) {
                 String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
                 copied_files_name.add(file_name);
                 copied_source_file_path_list.add(dest_file_path);
                 counter_no_files++;
                 copied_file=file_name;
+                publishProgress(null);
             }
 
         }
@@ -110,13 +113,14 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, file_name,copied_file);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], file_name,copied_file);
         }
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
+        Timber.tag("copy_to_result").d("copy_to_result in post execute - %s", result);
         if (listener != null) {
             listener.onTaskCompleted(TASK_TYPE, result, filePOJO);
         }

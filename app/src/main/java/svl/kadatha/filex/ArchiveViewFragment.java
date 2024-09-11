@@ -205,7 +205,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     progress_bar.setVisibility(View.GONE);
                     if(extractZipFileViewModel.isZipExtracted)
                     {
-                        file_open_intent_despatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
+                        file_open_intent_dispatch(extractZipFileViewModel.filePOJO.getPath(),extractZipFileViewModel.filePOJO.getFileObjectType(),extractZipFileViewModel.filePOJO.getName(),false,extractZipFileViewModel.filePOJO.getSizeLong());
                     }
                     extractZipFileViewModel.isZipExtracted=false;
                     extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -213,7 +213,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
             }
         });
-
 
         return v;
     }
@@ -285,12 +284,10 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     }
 
 
-
     @Override
     public void onStop() {
         super.onStop();
         fileModifyObserver.startWatching();
-
     }
 
     @Override
@@ -322,7 +319,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode()== Activity.RESULT_OK)
             {
-                if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
+                if(clicked_filepojo!=null) file_open_intent_dispatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
                 clicked_filepojo=null;
             }
             else
@@ -333,7 +330,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     });
 
 
-    public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app,long file_size)
+    public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size)
     {
         int idx=file_name.lastIndexOf(".");
         String file_ext="";
@@ -448,7 +445,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public void clearSelectionAndNotifyDataSetChanged()
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-        //viewModel.mselecteditemsFilePath=new SparseArray<>();
         if(adapter!=null)
         {
             adapter.notifyDataSetChanged();
@@ -606,7 +602,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             return filepath_string_array.length;
         }
     }
-
 
 }
 

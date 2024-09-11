@@ -123,6 +123,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 try {
                     
                    ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
+                   ftpClientRepository.shutdown();
                     FTP_POJO=ftpPOJO;
 
                     loggedInStatus=true;
@@ -216,6 +217,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
                 loggedInStatus=false;
                 FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
+                ftpClientRepository.shutdown();
                 FTPClient ftpClient=null;
                 try {
                     FTP_POJO=ftpPOJO;

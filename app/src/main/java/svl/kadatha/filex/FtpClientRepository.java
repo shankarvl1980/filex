@@ -189,6 +189,13 @@ public class FtpClientRepository {
             }
         }
 
+        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENTS.iterator();
+        while (iterator2.hasNext()) {
+            if (iterator2.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
+                iterator2.remove();
+            }
+        }
+
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 
