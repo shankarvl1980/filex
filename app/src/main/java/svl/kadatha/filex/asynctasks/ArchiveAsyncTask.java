@@ -22,6 +22,7 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.Iterate;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.filemodel.FtpFileModel;
 
 // ArchiveAsyncTask.java
 public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
@@ -77,6 +78,9 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     Iterate.populate(new File(path),file_array,false);
                     try {
                         put_zip_entry_file_type(path,file_array, zipOutputStream);
+                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+                        }
                     } catch (IOException e) {
 
                     }

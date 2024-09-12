@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.filemodel.FtpFileModel;
 
 public class ArchiveDeletePasteServiceUtil {
 
@@ -632,6 +633,9 @@ public class ArchiveDeletePasteServiceUtil {
                 {
                     bufferedOutStream.write(b,0,bytesread);
                     bytes_read+=bytesread;
+                }
+                if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                    ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
                 }
                 bufferedOutStream.close();
             }
