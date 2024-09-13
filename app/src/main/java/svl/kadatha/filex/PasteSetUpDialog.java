@@ -167,7 +167,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 	private boolean check_permission_for_source(String file_path,FileObjectType fileObjectType)
 	{
-
 		if(!cut)
 		{
 			return true;
@@ -324,7 +323,6 @@ public class PasteSetUpDialog extends DialogFragment
 			dismissAllowingStateLoss();
 			return;
 		}
-
 
 
 		Intent intent=new Intent(context,emptyService);

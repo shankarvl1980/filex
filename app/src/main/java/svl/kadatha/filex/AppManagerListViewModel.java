@@ -135,10 +135,9 @@ public class AppManagerListViewModel extends AndroidViewModel {
 
 
                 List<String> overwritten_copied_file_name_list;
-                boolean copy_result = false;
+                boolean copy_result;
                 final boolean cut=false;
                 String current_file_name;
-                boolean isWritable=FileUtil.isWritable(destFileObjectType,dest_folder);
                 final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
 
 
@@ -164,18 +163,13 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     }
 
                     current_file_name = new_name_list.get(count);
-                    String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,current_file_name);
 
-                    if (isWritable) {
-                        copy_result = Copy_File_File(file, dest_file_path, cut,bytes_read);
-                    } else {
-                        copy_result=Copy_File_FileModel(file,dest_folder,current_file_name,tree_uri,tree_uri_path,bytes_read);
+                    FileModel destFileModel= FileModelFactory.getFileModel(dest_folder,destFileObjectType,tree_uri,tree_uri_path);
+                    copy_result=FileUtil.copy_File_FileModel(file,destFileModel,current_file_name,cut,bytes_read);
 
-                    }
                     String f_p = file.getAbsolutePath();
                     if (copy_result) {
                         copied_files_name.add(current_file_name);
-
                     }
 
                     files_selected_array.remove(f_p);
@@ -199,77 +193,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-    }
-
-    private boolean Copy_File_FileModel(File source, String dest_file_path, String name,Uri uri, String uri_path,long[] bytes_read)
-    {
-        boolean success;
-
-        if(isCancelled())
-        {
-            return false;
-        }
-
-        FileModel destFileModel= FileModelFactory.getFileModel(dest_file_path,destFileObjectType,uri,uri_path);
-        success=FileUtil.copy_File_FileModel(source,destFileModel,name,false,bytes_read);
-        return success;
-    }
-
-
-
-    @SuppressWarnings("null")
-    private boolean Copy_File_File(File source, String dest_file_path, boolean cut, long[] bytes_read)
-    {
-        boolean success=false;
-        File destination=new File(dest_file_path);
-        if (source.isDirectory())
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-            if(!destination.exists())// || !destination.isDirectoryUri())
-            {
-                if(!(success=FileUtil.mkdirsNative(destination)))
-                {
-                    return false;
-                }
-            }
-            else {
-                if(destination.isDirectory()) success=true;   //make success true as destination dir existsUri to execute cut directory
-            }
-
-            String[] files_name_array = source.list();
-            if(files_name_array==null)
-            {
-
-                return true;
-            }
-
-            int size=files_name_array.length;
-            for (int i=0;i<size;++i)
-            {
-                String inner_file_name=files_name_array[i];
-                if(isCancelled())
-                {
-                    return false;
-                }
-                File srcFile = new File(source, inner_file_name);
-                String inner_dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_file_path,inner_file_name);
-                success=Copy_File_File(srcFile,inner_dest_file_path,cut,bytes_read);
-            }
-
-        }
-        else
-        {
-            if(isCancelled())
-            {
-                return false;
-            }
-            success=FileUtil.copy_File_File(source,destination,cut,bytes_read);
-        }
-
-        return success;
     }
 
 }

@@ -82,7 +82,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                             ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
                         }
                     } catch (IOException e) {
-
+                        return false;
                     }
                 }
 
@@ -174,7 +174,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
                 catch(Exception e)
                 {
-                    //print("Exception thrown");
+                    return false;
                 }
                 finally
                 {
@@ -218,7 +218,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-   
 
     @Override
     protected void onPostExecute(Boolean result) {
