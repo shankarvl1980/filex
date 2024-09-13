@@ -152,12 +152,13 @@ public class FtpDetailsDialog extends DialogFragment {
         viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
         viewModel.fetchFtpPojoList();
         if(FtpDetailsViewModel.FTP_POJO!=null){
-            if(FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection()){
-                disconnect_btn.setAlpha(Global.ENABLE_ALFA);
-                disconnect_btn.setEnabled(true);
-            }
+            progress_bar.setVisibility(View.VISIBLE);
+            viewModel.testServiceConnection();
         }
-
+        else{
+            disconnect_btn.setAlpha(Global.DISABLE_ALFA);
+            disconnect_btn.setEnabled(false);
+        }
 
         int size=viewModel.mselecteditems.size();
         ftp_number_text_view.setText(size+"/"+num_all_ftp);
@@ -343,7 +344,22 @@ public class FtpDetailsDialog extends DialogFragment {
             }
         });
 
-
+        viewModel.testServiceConnectionAsyncTaskStatus.observe(this,new Observer<AsyncTaskStatus>(){
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED){
+                    progress_bar.setVisibility(View.VISIBLE);
+                }
+                else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
+                    progress_bar.setVisibility(View.GONE);
+                    if(!viewModel.isFtpConnected){
+                        disconnect_btn.setAlpha(Global.DISABLE_ALFA);
+                        disconnect_btn.setEnabled(false);
+                    }
+                    viewModel.testServiceConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                }
+            }
+        });
 
         getParentFragmentManager().setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override

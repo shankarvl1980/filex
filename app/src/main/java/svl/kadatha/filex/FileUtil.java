@@ -279,24 +279,6 @@ public final class FileUtil
 		return success;
 	}
 
-	@SuppressWarnings("null")
-	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
-	{
-		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
-			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
-			if (cut) {
-				// rename method does not work where move is between sd and internal memory. hence copy and cut
-				deleteNativeFile(source);
-			}
-
-
-		} catch (Exception e) {
-			return false;
-		}
-
-		return true;
-	}
-
 	public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
 		InputStream inStream = null;
 		OutputStream fileOutStream = null;
@@ -339,15 +321,17 @@ public final class FileUtil
 
     }
 
+
 	@SuppressWarnings("null")
-	public static boolean copy_UsbFile_File(UsbFile src_usbfile, File target_file, boolean cut, long[] bytes_read)
+	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
 	{
-		if(src_usbfile==null)return false;
-		try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(src_usbfile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(target_file)) {
-			bufferedCopy(inStream, outputStream,true,bytes_read);
+		try (FileInputStream fileInStream = new FileInputStream(source); FileOutputStream fileOutStream = new FileOutputStream(target)) {
+			bufferedCopy(fileInStream,fileOutStream,false,bytes_read);
 			if (cut) {
-				deleteUsbFile(src_usbfile);
+				// rename method does not work where move is between sd and internal memory. hence copy and cut
+				deleteNativeFile(source);
 			}
+
 
 		} catch (Exception e) {
 			return false;
@@ -355,7 +339,6 @@ public final class FileUtil
 
 		return true;
 	}
-
 
 
 	@SuppressWarnings("null")

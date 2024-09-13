@@ -18,7 +18,7 @@ public class FtpClientRepository {
     private final ConcurrentLinkedQueue<FTPClient> ftpClients;
     private final ConcurrentLinkedQueue<FTPClient> inUseClients;
     private final Map<FTPClient, Long> lastUsedTimes;
-    private final FtpDetailsDialog.FtpPOJO ftpPOJO;
+    private FtpDetailsDialog.FtpPOJO ftpPOJO;
     private static final long IDLE_TIMEOUT = 300000; // 5 minutes
     private static final int MAX_IDLE_CONNECTIONS = 5;
     private static final int MAX_RETRIES = 3;
@@ -208,6 +208,8 @@ public class FtpClientRepository {
         ftpClients.clear();
         inUseClients.clear();
         lastUsedTimes.clear();
+//        ftpPOJO=null;
+//        FtpDetailsViewModel.FTP_POJO=null;
     }
 
     public boolean testConnection(FTPClient client) {

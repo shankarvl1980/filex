@@ -56,6 +56,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 import timber.log.Timber;
 
 public class Global
@@ -1060,6 +1061,12 @@ public class Global
 	public static File COPY_TO_USB_CACHE(String file_path)
 	{
 		File cache_file=new File(USB_CACHE_DIR,file_path);
+		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(FileObjectType.USB_TYPE,FileObjectType.FILE_TYPE))
+		{
+			Global.print(App.getAppContext(),App.getAppContext().getString(R.string.wait_till_completion_on_going_operation_on_usb));
+			return cache_file;
+		}
+
 		long[] bytes_read=new long[1];
 		if(!cache_file.exists())
 		{
@@ -1071,7 +1078,13 @@ public class Global
 				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 				if(targetUsbFile!=null)
 				{
-					FileUtil.copy_UsbFile_File(targetUsbFile,cache_file,false,bytes_read);
+                    try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(targetUsbFile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(cache_file)) {
+						FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
+
+					} catch (Exception e) {
+						return cache_file;
+					}
+					return cache_file;
 				}
 			}
 

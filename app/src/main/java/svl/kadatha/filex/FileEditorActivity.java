@@ -444,6 +444,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					scrollview.smoothScrollTo(0,0);
 					filetext_container_edittext.setEditable(false);
 					viewModel.textViewUndoRedo.startListening();
+					viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -690,7 +691,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(viewModel.data, "r");
 			FileDescriptor fd = pfd.getFileDescriptor();
 			progress_bar.setVisibility(View.VISIBLE);
-			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(new FileInputStream(fd), pointer,pageNumber);
 			return true;
 		} catch (FileNotFoundException e) {
