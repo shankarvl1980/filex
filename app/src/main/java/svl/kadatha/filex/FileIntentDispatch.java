@@ -87,7 +87,10 @@ class FileIntentDispatch
 	private static void despatch_intent(final Context context,Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, FileObjectType fileObjectType,boolean select_app, long file_size)
 	{
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
-		mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,clear_top,uri);
+		if(mime_type==null || mime_type.equals("")){
+			mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,clear_top,uri);
+		}
+
 		if(mime_type==null || mime_type.equals("")) return;
 
 		DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
@@ -99,12 +102,6 @@ class FileIntentDispatch
 		}
 		else
 		{
-//			if(fileObjectType!=null && fileObjectType.equals(FileObjectType.USB_TYPE) && package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
-//			{
-//				Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
-//				defaultAppDatabaseHelper.close();
-//				return;
-//			}
 			final List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
 			final int size=resolveInfoList.size();
 			boolean package_found=false;
