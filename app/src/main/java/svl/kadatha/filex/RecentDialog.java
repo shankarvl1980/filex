@@ -105,7 +105,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		root_dir_recyclerview.setAdapter(rootdirrecycleradapter);
 		root_dir_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 
-		recentRecyclerAdapter=new RecentRecyclerAdapter(MainActivity.RECENTS,false);
+		recentRecyclerAdapter=new RecentRecyclerAdapter(MainActivity.RECENT,false);
 		recent_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
 		recent_recyclerview.setAdapter(recentRecyclerAdapter);
 		recent_recyclerview.setLayoutManager(new LinearLayoutManager(context));
@@ -115,7 +115,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			public void onClick(View v)
 			{
 				recentRecyclerAdapter.clear_recents();
-				MainActivity.RECENTS=new LinkedList<>();
+				MainActivity.RECENT =new LinkedList<>();
 			}
 		});
 		
@@ -412,21 +412,21 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 	public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO)
 	{
-		if(!MainActivity.RECENTS.isEmpty())
+		if(!MainActivity.RECENT.isEmpty())
 		{
-			if((!MainActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
+			if((!MainActivity.RECENT.getFirst().getPath().equals(filePOJO.getPath())))
 			{
-				if(MainActivity.RECENTS.size()>=RECENT_SIZE)
+				if(MainActivity.RECENT.size()>=RECENT_SIZE)
 				{
-					MainActivity.RECENTS.removeLast();
+					MainActivity.RECENT.removeLast();
 				}
 
-				MainActivity.RECENTS.addFirst(filePOJO);
+				MainActivity.RECENT.addFirst(filePOJO);
 			}
 		}
 		else
 		{
-			MainActivity.RECENTS.addFirst(filePOJO);
+			MainActivity.RECENT.addFirst(filePOJO);
 		}
 
 

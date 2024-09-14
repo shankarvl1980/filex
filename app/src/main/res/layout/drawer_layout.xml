@@ -629,7 +629,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/network_layout_group"
                 app:constraint_referenced_ids="network_recyclerview"
-
+                android:visibility="gone"
                 />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/network_recyclerview"

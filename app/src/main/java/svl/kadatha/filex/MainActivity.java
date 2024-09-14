@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	static boolean SHOW_HIDDEN_FILE;
 
 	static FilePOJO DRAWER_STORAGE_FILEPOJO_SELECTED;
-	static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
+	static LinkedList<FilePOJO> RECENT =new LinkedList<>();
 
 	public StorageRecyclerAdapter storageRecyclerAdapter;
 	private WorkingDirRecyclerAdapter workingDirRecyclerAdapter;
@@ -250,6 +250,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				setSearchBarVisibility(false);
 			}
 		});
+
 		search_view=search_toolbar.findViewById(R.id.search_bar_view);
 		search_view.setMaxWidth(Integer.MAX_VALUE);
 		search_view.addTextChangedListener(new TextWatcher() {
@@ -2586,7 +2587,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					}
 
 
-					Iterator<FilePOJO> iterator1=MainActivity.RECENTS.iterator();
+					Iterator<FilePOJO> iterator1=MainActivity.RECENT.iterator();
 					while (iterator1.hasNext())
 					{
 						if(iterator1.next().getFileObjectType()==FileObjectType.USB_TYPE)
