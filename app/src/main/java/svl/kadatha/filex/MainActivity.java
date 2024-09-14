@@ -1431,6 +1431,37 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		}
 	}
 
+	public void createNewFragmentTransaction(String file_path,FileObjectType fileObjectType)
+	{
+		String fragment_tag;
+		String existingFilePOJOkey="";
+		DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+		if(df!=null)
+		{
+			fragment_tag=df.getTag();
+			existingFilePOJOkey=df.fileObjectType+fragment_tag;
+			actionmode_finish(df,file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+		}
+
+		if(file_path.equals(DetailFragment.SEARCH_RESULT))
+		{
+			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+
+		}
+		else if(DetailFragment.TO_BE_MOVED_TO_FILE_POJO!=null && !(fileObjectType+file_path).equals(existingFilePOJOkey))
+		{
+			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
+
+		}
+		else // this will force create new fragment despite existence of transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
+		{
+			fm.beginTransaction().replace(R.id.detail_fragment,DetailFragment.getInstance(fileObjectType),file_path)
+					.addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+		}
+	}
+
 
 	private void onbackpressed(boolean onBackPressed)
 	{

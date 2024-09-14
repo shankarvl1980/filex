@@ -445,7 +445,6 @@ public final class FileUtil
 		FTPClient ftpClient=null;
 		try {
 			ftpClient = ftpClientRepository.getFtpClient();
-			ftpClient.enterLocalPassiveMode();
 
 			String parentDir = new File(file_path).getParent();
 			String fileName = new File(file_path).getName();

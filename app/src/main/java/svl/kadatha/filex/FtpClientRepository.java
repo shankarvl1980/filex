@@ -21,7 +21,7 @@ public class FtpClientRepository {
     private final ConcurrentLinkedQueue<FTPClient> inUseClients;
     private final Map<FTPClient, Long> lastUsedTimes;
     private FtpDetailsDialog.FtpPOJO ftpPOJO;
-    private static final long IDLE_TIMEOUT = 300000; // 5 minutes
+    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
     private static final int MAX_IDLE_CONNECTIONS = 5;
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
