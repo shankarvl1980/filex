@@ -57,7 +57,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
     public FragmentManager fm;
     public PackageManager pm;
     public TextView current_dir, file_number;
-    static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
+    static LinkedList<FilePOJO> RECENT =new LinkedList<>();
     public RecentDialogListener recentDialogListener;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
     public boolean clear_cache;

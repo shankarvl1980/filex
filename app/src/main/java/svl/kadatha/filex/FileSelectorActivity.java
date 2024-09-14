@@ -75,7 +75,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static final String ACTION_SOUGHT="action_sought";
     public int action_sought_request_code;
     private Bundle bundle;
-    static LinkedList<FilePOJO> RECENTS=new LinkedList<>();
+    static LinkedList<FilePOJO> RECENT =new LinkedList<>();
     public RecentDialogListener recentDialogListener;
     public FloatingActionButton floatingActionButton;
     public static final String ACTIVITY_NAME="FILE_SELECTOR_ACTIVITY";
@@ -795,7 +795,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
                     }
 
-                    Iterator<FilePOJO> iterator1=RECENTS.iterator();
+                    Iterator<FilePOJO> iterator1= RECENT.iterator();
                     while (iterator1.hasNext())
                     {
                         if(iterator1.next().getFileObjectType()==FileObjectType.USB_TYPE)

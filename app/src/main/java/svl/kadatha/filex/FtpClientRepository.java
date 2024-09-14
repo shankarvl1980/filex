@@ -191,7 +191,7 @@ public class FtpClientRepository {
             }
         }
 
-        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENTS.iterator();
+        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
         while (iterator2.hasNext()) {
             if (iterator2.next().getFileObjectType() == FileObjectType.FTP_TYPE) {
                 iterator2.remove();

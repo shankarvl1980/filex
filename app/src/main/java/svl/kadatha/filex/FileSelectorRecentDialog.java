@@ -115,11 +115,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         root_dir_recyclerview.setLayoutManager(new LinearLayoutManager(context));
         if(activity_catering.equals(STORAGE_ANALYSER))
         {
-            recentRecyclerAdapter=new RecentRecyclerAdapter(StorageAnalyserActivity.RECENTS,false);
+            recentRecyclerAdapter=new RecentRecyclerAdapter(StorageAnalyserActivity.RECENT,false);
         }
         else
         {
-            recentRecyclerAdapter=new RecentRecyclerAdapter(FileSelectorActivity.RECENTS,false);
+            recentRecyclerAdapter=new RecentRecyclerAdapter(FileSelectorActivity.RECENT,false);
         }
 
         recent_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
@@ -133,11 +133,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 recentRecyclerAdapter.clear_recent();
                 if(activity_catering.equals(STORAGE_ANALYSER))
                 {
-                    StorageAnalyserActivity.RECENTS=new LinkedList<>();
+                    StorageAnalyserActivity.RECENT =new LinkedList<>();
                 }
                 else
                 {
-                    FileSelectorActivity.RECENTS=new LinkedList<>();
+                    FileSelectorActivity.RECENT =new LinkedList<>();
                 }
 
             }
@@ -345,41 +345,41 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
         if(activity_catering.equals(STORAGE_ANALYSER))
         {
-            if(!StorageAnalyserActivity.RECENTS.isEmpty())
+            if(!StorageAnalyserActivity.RECENT.isEmpty())
             {
-                if((!StorageAnalyserActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
+                if((!StorageAnalyserActivity.RECENT.getFirst().getPath().equals(filePOJO.getPath())))
                 {
-                    if(StorageAnalyserActivity.RECENTS.size()>=RECENT_SIZE)
+                    if(StorageAnalyserActivity.RECENT.size()>=RECENT_SIZE)
                     {
-                        StorageAnalyserActivity.RECENTS.removeLast();
+                        StorageAnalyserActivity.RECENT.removeLast();
                     }
 
-                    StorageAnalyserActivity.RECENTS.addFirst(filePOJO);
+                    StorageAnalyserActivity.RECENT.addFirst(filePOJO);
                 }
             }
             else
             {
-                StorageAnalyserActivity.RECENTS.addFirst(filePOJO);
+                StorageAnalyserActivity.RECENT.addFirst(filePOJO);
             }
 
         }
         else
         {
-            if(!FileSelectorActivity.RECENTS.isEmpty())
+            if(!FileSelectorActivity.RECENT.isEmpty())
             {
-                if((!FileSelectorActivity.RECENTS.getFirst().getPath().equals(filePOJO.getPath())))
+                if((!FileSelectorActivity.RECENT.getFirst().getPath().equals(filePOJO.getPath())))
                 {
-                    if(FileSelectorActivity.RECENTS.size()>=RECENT_SIZE)
+                    if(FileSelectorActivity.RECENT.size()>=RECENT_SIZE)
                     {
-                        FileSelectorActivity.RECENTS.removeLast();
+                        FileSelectorActivity.RECENT.removeLast();
                     }
 
-                    FileSelectorActivity.RECENTS.addFirst(filePOJO);
+                    FileSelectorActivity.RECENT.addFirst(filePOJO);
                 }
             }
             else
             {
-                FileSelectorActivity.RECENTS.addFirst(filePOJO);
+                FileSelectorActivity.RECENT.addFirst(filePOJO);
             }
         }
 
