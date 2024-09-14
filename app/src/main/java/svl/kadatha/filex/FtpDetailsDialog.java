@@ -650,8 +650,7 @@ public class FtpDetailsDialog extends DialogFragment {
     }
 
 
-    public static class FtpPOJO
-    {
+    public static class FtpPOJO {
         final String server;
         final String mode;
         final String user_name;
@@ -662,17 +661,35 @@ public class FtpDetailsDialog extends DialogFragment {
         final int port;
         final boolean anonymous;
 
-        FtpPOJO(String server,int port,String mode, String user_name,String password,String type,boolean anonymous,String encoding, String display)
-        {
-            this.server=server;
-            this.port=port;
-            this.mode=mode;
-            this.user_name=user_name;
-            this.password=password;
-            this.type=type;
-            this.anonymous=anonymous;
-            this.encoding=encoding;
-            this.display=display;
+        // Constructor
+        FtpPOJO(String server, int port, String mode, String user_name, String password, String type, boolean anonymous, String encoding, String display) {
+            this.server = server;
+            this.port = port;
+            this.mode = mode;
+            this.user_name = user_name;
+            this.password = password;
+            this.type = type;
+            this.anonymous = anonymous;
+            this.encoding = encoding;
+            this.display = display;
+        }
+
+        // Copy Constructor for deep copy
+        public FtpPOJO(FtpPOJO other) {
+            this.server = new String(other.server); // Creating new String instances, though not required due to immutability
+            this.port = other.port;
+            this.mode = new String(other.mode);
+            this.user_name = new String(other.user_name);
+            this.password = new String(other.password);
+            this.type = new String(other.type);
+            this.anonymous = other.anonymous;
+            this.encoding = new String(other.encoding);
+            this.display = new String(other.display);
+        }
+
+        // Method to return a deep copy
+        public FtpPOJO deepCopy() {
+            return new FtpPOJO(this); // Uses the copy constructor
         }
     }
 

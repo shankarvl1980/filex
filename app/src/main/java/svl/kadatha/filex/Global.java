@@ -196,6 +196,7 @@ public class Global
 
 	static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION=FILEX_PACKAGE+".FILE_DELETE";
 	static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION=FILEX_PACKAGE+".MODIFICATION_OBSERVED";
+	static public final String LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION=FILEX_PACKAGE+".STORAGE_DIR_REFRESH";
 
 
 	static final LinkedHashMap<String,SpacePOJO> SPACE_ARRAY=new LinkedHashMap<>();
@@ -770,12 +771,6 @@ public class Global
 	}
 
 
-	public static boolean CHECK_FTP_SERVER_CONNECTED()
-	{
-		return FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();
-	}
-
-
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
 		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
@@ -1061,12 +1056,10 @@ public class Global
 	public static File COPY_TO_USB_CACHE(String file_path)
 	{
 		File cache_file=new File(USB_CACHE_DIR,file_path);
-		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(FileObjectType.USB_TYPE,FileObjectType.FILE_TYPE))
+		if(MainActivity.usbFileRoot==null)
 		{
-			Global.print(App.getAppContext(),App.getAppContext().getString(R.string.wait_till_completion_on_going_operation_on_usb));
 			return cache_file;
 		}
-
 		long[] bytes_read=new long[1];
 		if(!cache_file.exists())
 		{

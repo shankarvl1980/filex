@@ -71,6 +71,8 @@ public class ArchiveDeletePasteServiceUtil {
     private static boolean NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType fileObjectType)
     {
         boolean noOperation=true;
+
+        //checking asynctasks of copying, deleting and archiving are going on
         if(noOperation && ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService1.SOURCE_FILE_OBJECT != fileObjectType;
@@ -99,6 +101,24 @@ public class ArchiveDeletePasteServiceUtil {
         if(noOperation && ArchiveDeletePasteFileService3.DEST_FILE_OBJECT!=null)
         {
             noOperation=ArchiveDeletePasteFileService3.DEST_FILE_OBJECT != fileObjectType;
+        }
+
+        //checking whether creating or renaming file is going on
+        if(noOperation && ViewModelCreateRename.FILE_OBJECT_TYPE!=null)
+        {
+            noOperation=ViewModelCreateRename.FILE_OBJECT_TYPE!=fileObjectType;
+        }
+
+        //check whether app is being backed up
+        if(noOperation && AppManagerListViewModel.FILE_OBJECT_TYPE!=null)
+        {
+            noOperation=AppManagerListViewModel.FILE_OBJECT_TYPE!=fileObjectType;
+        }
+
+        //check whether usb file being copied to cache
+        if(noOperation && FilePOJOViewModel.USB_CACHED_FILE_OBJECT!=null)
+        {
+            noOperation=FilePOJOViewModel.USB_CACHED_FILE_OBJECT!=fileObjectType;
         }
 
         return noOperation;

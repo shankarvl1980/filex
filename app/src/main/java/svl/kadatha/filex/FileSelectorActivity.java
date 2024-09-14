@@ -130,6 +130,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         IntentFilter localBroadcastIntentFilter=new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
         usbReceiver=new USBReceiver();
@@ -701,7 +702,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
                     if (fileSelectorFragment != null) fileSelectorFragment.modification_observed = true;
                     break;
-
+                case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
+                    //storageRecyclerAdapter.notifyDataSetChanged();
+                    break;
             }
         }
     }

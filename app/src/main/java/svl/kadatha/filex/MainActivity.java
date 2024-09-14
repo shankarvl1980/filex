@@ -210,6 +210,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		IntentFilter localBroadcastIntentFilter=new IntentFilter();
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
 		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
+		localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
 		localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
 		usbReceiver=new USBReceiver();
@@ -2264,8 +2265,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public StorageRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
-			// TODO: Implement this method
-
 			View v=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(v);
 		}
@@ -2273,8 +2272,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public void onBindViewHolder(StorageRecyclerAdapter.ViewHolder p1, int p2)
 		{
-			// TODO: Implement this method
-
 			FilePOJO filePOJO=storage_dir_arraylist.get(p2);
 			String file_path=filePOJO.getPath();
 			FileObjectType fileObjectType=filePOJO.getFileObjectType();
@@ -2656,6 +2653,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					break;
 				case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
 					if (df != null) df.modification_observed = true;
+					break;
+				case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
+					storageRecyclerAdapter.notifyDataSetChanged();
 					break;
 
 			}

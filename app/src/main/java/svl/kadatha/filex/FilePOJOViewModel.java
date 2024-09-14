@@ -42,6 +42,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1,future2,future3, future4, future5, future6, future7, future8,future9,future10,future11;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> copyFtpAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> copyUsbAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public IndexedLinkedHashMap<Integer,String> mselecteditems=new IndexedLinkedHashMap<>();
     private String what_to_find=null;
@@ -55,6 +56,10 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public boolean library_time_desc=false,library_size_desc=false;
     public String ftp_cached_file_path;
     public FileObjectType ftp_cached_file_fileObjectType;
+    public String usb_cached_file_path;
+    public FileObjectType usb_cached_file_fileObjectType;
+    public static FileObjectType USB_CACHED_FILE_OBJECT;
+
     public boolean select_app_to_open_ftp;
 
     public FilePOJOViewModel(@NonNull Application application) {
@@ -66,6 +71,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
+        USB_CACHED_FILE_OBJECT=null;
     }
 
     public void cancel(boolean mayInterruptRunning){
@@ -279,7 +285,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-
     public void copyFtpToDevice(String file_path, FileObjectType fileObjectType,boolean select_app)
     {
         if(copyFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -296,6 +301,27 @@ public class FilePOJOViewModel extends AndroidViewModel {
             }
         });
     }
+
+    public void copyUsbToDevice(String file_path, FileObjectType fileObjectType,boolean select_app)
+    {
+        if(copyUsbAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;
+        copyUsbAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        usb_cached_file_path=file_path;
+        usb_cached_file_fileObjectType=fileObjectType;
+        USB_CACHED_FILE_OBJECT=fileObjectType;
+        select_app_to_open_ftp=select_app;
+        ExecutorService executorService=MyExecutorService.getExecutorService();
+        future10=executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                Global.COPY_TO_USB_CACHE(file_path);
+                USB_CACHED_FILE_OBJECT=null;
+                copyUsbAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+
     public synchronized void getLibraryList(String media_category)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED) return;

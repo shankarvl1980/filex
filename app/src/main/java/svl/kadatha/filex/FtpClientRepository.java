@@ -1,5 +1,7 @@
 package svl.kadatha.filex;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -196,6 +198,8 @@ public class FtpClientRepository {
             }
         }
 
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()),"");
+
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
 
@@ -208,8 +212,9 @@ public class FtpClientRepository {
         ftpClients.clear();
         inUseClients.clear();
         lastUsedTimes.clear();
-//        ftpPOJO=null;
-//        FtpDetailsViewModel.FTP_POJO=null;
+        ftpPOJO=null;
+        FtpDetailsViewModel.FTP_POJO=null;
+        instance=null;
     }
 
     public boolean testConnection(FTPClient client) {

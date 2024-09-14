@@ -27,7 +27,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
     private final Application application;
     public final MutableLiveData<AsyncTaskStatus> isBackedUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private boolean isCancelled;
-    private FileObjectType destFileObjectType;
+    public static FileObjectType FILE_OBJECT_TYPE;
     private final long[] bytes_read = new long[1];
     public List<FilePOJO> destFilePOJOs;
 
@@ -41,14 +41,15 @@ public class AppManagerListViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cancel(true);
+        FILE_OBJECT_TYPE=null;
     }
 
     public void cancel(boolean mayInterruptRunning){
         if(future1!=null) future1.cancel(mayInterruptRunning);
         if(future2!=null) future2.cancel(mayInterruptRunning);
         if(future3!=null) future3.cancel(mayInterruptRunning);
-
         isCancelled=true;
+        FILE_OBJECT_TYPE=null;
     }
 
     private boolean isCancelled()
@@ -95,10 +96,10 @@ public class AppManagerListViewModel extends AndroidViewModel {
         }
 
         if(isBackedUp.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        FILE_OBJECT_TYPE=destFileObjectType;
         isBackedUp.setValue(AsyncTaskStatus.STARTED);
-        this.destFileObjectType=destFileObjectType;
-        List<String>dest_file_names=new ArrayList<>();
 
+        List<String>dest_file_names=new ArrayList<>();
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future2=executorService.submit(new Runnable() {
             @Override
@@ -189,7 +190,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AppManagerActivity.ACTIVITY_NAME);
                     copied_files_name.clear();
                 }
-
+                FILE_OBJECT_TYPE=null;
                 isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

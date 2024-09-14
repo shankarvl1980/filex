@@ -131,9 +131,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 FtpClientRepository ftpClientRepository = null;
                 FTPClient ftpClient = null;
                 try {
-                    
-                   ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
-                   ftpClientRepository.shutdown();
+                    FtpDetailsDialog.FtpPOJO ftpPOJOCopy=ftpPOJO.deepCopy();
+                    ftpClientRepository=FtpClientRepository.getInstance(ftpPOJOCopy);
+                    ftpClientRepository.shutdown();
+                    ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                     FTP_POJO=ftpPOJO;
 
                     loggedInStatus=true;
@@ -226,8 +227,10 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 String user_name=bundle.getString("user_name");
                 FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
                 loggedInStatus=false;
-                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
+                FtpDetailsDialog.FtpPOJO ftpPOJOCopy=ftpPOJO.deepCopy();
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJOCopy);
                 ftpClientRepository.shutdown();
+                ftpClientRepository=FtpClientRepository.getInstance(ftpPOJO);
                 FTPClient ftpClient=null;
                 try {
                     FTP_POJO=ftpPOJO;

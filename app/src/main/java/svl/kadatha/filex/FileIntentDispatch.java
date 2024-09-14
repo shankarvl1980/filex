@@ -99,12 +99,12 @@ class FileIntentDispatch
 		}
 		else
 		{
-			if(fileObjectType!=null && fileObjectType.equals(FileObjectType.USB_TYPE) && package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
-			{
-				Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
-				defaultAppDatabaseHelper.close();
-				return;
-			}
+//			if(fileObjectType!=null && fileObjectType.equals(FileObjectType.USB_TYPE) && package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
+//			{
+//				Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+//				defaultAppDatabaseHelper.close();
+//				return;
+//			}
 			final List<ResolveInfo> resolveInfoList=context.getPackageManager().queryIntentActivities(intent,0);
 			final int size=resolveInfoList.size();
 			boolean package_found=false;

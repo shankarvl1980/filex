@@ -98,11 +98,13 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
-                    if(MainActivity.usbFileRoot!=null)
-                    {
-                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
-                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                    }
+//                    if(MainActivity.usbFileRoot!=null)
+//                    {
+//                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
+//                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+//                    }
+                    File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
                 else if(fileObjectType==FileObjectType.ROOT_TYPE)
                 {
@@ -290,11 +292,13 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
-                    if(MainActivity.usbFileRoot!=null)
-                    {
-                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
-                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                    }
+//                    if(MainActivity.usbFileRoot!=null)
+//                    {
+//                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
+//                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+//                    }
+                    File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
                 else if(fileObjectType==FileObjectType.ROOT_TYPE)
                 {

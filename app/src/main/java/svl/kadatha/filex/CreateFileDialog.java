@@ -191,7 +191,7 @@ public class CreateFileDialog extends DialogFragment
 					return;
 				}
 
-				viewModel.createFile(file,fileObjectType,isWritable,file_type,parent_folder,tree_uri_path,tree_uri);
+				viewModel.createFile(file,fileObjectType, file_type,parent_folder,tree_uri_path,tree_uri);
 			}	
 
 		});

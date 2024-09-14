@@ -404,6 +404,25 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			}
 		});
 
+		viewModel.copyUsbAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+			@Override
+			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+				{
+					progress_bar.setVisibility(View.VISIBLE);
+				}
+				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+				{
+					progress_bar.setVisibility(View.GONE);
+					if(viewModel.usb_cached_file_path!=null)
+					{
+						FileIntentDispatch.openFile(context,viewModel.usb_cached_file_path,"",false,viewModel.usb_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
+					}
+					viewModel.copyUsbAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+				}
+			}
+		});
+
 		getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -501,7 +520,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	}
 
 
-
 	private void after_filledFilePojos_procedure()
 	{
 		if(MainActivity.SHOW_HIDDEN_FILE)
@@ -579,13 +597,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         if(detailFragmentListener!=null)detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
 	}
 
-	private void refreshFragment() {
-        getParentFragmentManager().beginTransaction()
-                .detach(this)
-                .attach(this)
-                .commit();
-    }
-
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -630,7 +641,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			Global.print(context,getString(R.string.permission_not_granted));
 		}
 	}
-});
+	});
 
 
 	public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app,long file_size)
@@ -663,10 +674,28 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
 		 	if(fileObjectType==FileObjectType.USB_TYPE)
 			 {
+				 if(file_size>Global.CACHE_FILE_MAX_LIMIT)
+				 {
+					 Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+					 return;
+				 }
+
+				 if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
+				 {
+					 Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+					 return;
+				 }
+
 				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
 				 {
-					 FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+					 progress_bar.setVisibility(View.VISIBLE);
+					 viewModel.copyUsbToDevice(file_path,fileObjectType,select_app);
 				 }
+
+//				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+//				 {
+//					 FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
+//				 }
 			 }
 			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			 {
