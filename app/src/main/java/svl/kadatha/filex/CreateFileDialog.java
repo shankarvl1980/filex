@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
@@ -32,6 +33,7 @@ public class CreateFileDialog extends DialogFragment
     private EditText new_file_name_edittext;
 	private Button okbutton;
     private DetailFragment df;
+	private FileSelectorFragment fileSelectorFragment;
 	private int file_type;
 	private Context context;
 	private InputMethodManager imm;
@@ -43,12 +45,14 @@ public class CreateFileDialog extends DialogFragment
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
 	private FrameLayout progress_bar;
+	private AppCompatActivity appCompatActivity;
 
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		appCompatActivity=(AppCompatActivity)context;
 
 	}
 
@@ -75,8 +79,6 @@ public class CreateFileDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
-
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView file_label_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -93,6 +95,7 @@ public class CreateFileDialog extends DialogFragment
         Button cancelbutton = buttons_layout.findViewById(R.id.second_button);
 		cancelbutton.setText(R.string.cancel);
 		df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
+		fileSelectorFragment=(FileSelectorFragment)getParentFragmentManager().findFragmentById(R.id.file_selector_container);
 
 		if(file_type==0)
 		{
@@ -122,17 +125,30 @@ public class CreateFileDialog extends DialogFragment
 					final String new_name=new_file_name_edittext.getText().toString().trim();
 					if(viewModel.file_created)
 					{
-						df.clearSelectionAndNotifyDataSetChanged();
-						int idx=df.filePOJO_list.indexOf(viewModel.filePOJO);
-						if(df.llm!=null)
-						{
-							df.llm.scrollToPositionWithOffset(idx,0);
+						if(df!=null){
+							df.clearSelectionAndNotifyDataSetChanged();
+							int idx=df.filePOJO_list.indexOf(viewModel.filePOJO);
+							if(df.llm!=null)
+							{
+								df.llm.scrollToPositionWithOffset(idx,0);
+							}
+							else if(df.glm!=null)
+							{
+								df.glm.scrollToPositionWithOffset(idx,0);
+							}
 						}
-						else if(df.glm!=null)
-						{
-							df.glm.scrollToPositionWithOffset(idx,0);
+						else if(fileSelectorFragment!=null){
+							fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+							int idx=fileSelectorFragment.filePOJO_list.indexOf(viewModel.filePOJO);
+							if(fileSelectorFragment.llm!=null)
+							{
+								fileSelectorFragment.llm.scrollToPositionWithOffset(idx,0);
+							}
+							else if(fileSelectorFragment.glm!=null)
+							{
+								fileSelectorFragment.glm.scrollToPositionWithOffset(idx,0);
+							}
 						}
-
 						Global.print(context,"'"+new_name+ "' "+getString(R.string.created));
 					}
 					else

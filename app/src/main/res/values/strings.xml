@@ -470,5 +470,6 @@
 	<string name="could_not_be_rotated">could not be rotated</string>
     <string name="removed_directories">Removed directories</string>
 	<string name="there_are_no_files_to_copy">There are no files to copy</string>
+    <string name="select_a_directory_to_copy">select a directory to copy</string>
 
 </resources>

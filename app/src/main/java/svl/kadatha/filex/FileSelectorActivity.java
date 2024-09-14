@@ -70,6 +70,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private MediaMountReceiver mediaMountReceiver;
     private PopupWindow listPopWindow;
     public List<FilePOJO> storage_filePOJO_list;
+    private Toolbar bottom_toolbar;
     public TextView file_number;
     public static final String ACTION_SOUGHT="action_sought";
     public int action_sought_request_code;
@@ -190,9 +191,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 {
                     fileSelectorFragment.adapter.getFilter().filter(s.toString());
                 }
-
-
-
             }
         });
 
@@ -246,11 +244,28 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-        ViewGroup buttons_layout = findViewById(R.id.file_selector_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
-        Button searchbutton=buttons_layout.findViewById(R.id.first_button);
-        searchbutton.setText(getString(R.string.search));
-        searchbutton.setOnClickListener(new View.OnClickListener() {
+
+        bottom_toolbar=findViewById(R.id.file_selector_bottom_toolbar);
+        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
+        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.yes_icon,R.drawable.cancel_icon};
+        String [] titles={getString(R.string.search),getString(R.string.new_),getString(R.string.refresh),getString(R.string.ok),getString(R.string.cancel)};
+        tb_layout.setResourceImageDrawables(bottom_drawables,titles);
+
+        bottom_toolbar.addView(tb_layout);
+
+        Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+        Button add_folder_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button refresh_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button ok_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
+        Button cancel_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+
+
+//
+//        ViewGroup buttons_layout = findViewById(R.id.file_selector_button_layout);
+//        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
+//        Button searchbutton=buttons_layout.findViewById(R.id.first_button);
+//        searchbutton.setText(getString(R.string.search));
+        search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
@@ -269,11 +284,51 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 }
             }
         });
-        Button okbutton = buttons_layout.findViewById(R.id.second_button);
-        okbutton.setText(R.string.ok);
-        Button cancelbutton = buttons_layout.findViewById(R.id.third_button);
-        cancelbutton.setText(R.string.cancel);
-        okbutton.setOnClickListener(new View.OnClickListener()
+
+        add_folder_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(search_toolbar_visible)
+                {
+                    setSearchBarVisibility(false);
+                }
+                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+
+                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
+
+
+                CreateFileDialog createFileDialog=CreateFileDialog.getInstance(1,fileSelectorFragment.fileclickselected,fileSelectorFragment.fileObjectType);
+                createFileDialog.show(fm,null);
+
+            }
+        });
+
+        refresh_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
+                {
+                    Global.print(context,getString(R.string.please_wait));
+                    return;
+                }
+
+                fm.beginTransaction().detach(fileSelectorFragment).commit();
+                fm.beginTransaction().attach(fileSelectorFragment).commit();
+                Global.WORKOUT_AVAILABLE_SPACE();
+            }
+        });
+
+
+        //Button okbutton = buttons_layout.findViewById(R.id.second_button);
+        //okbutton.setText(R.string.ok);
+        //Button cancelbutton = buttons_layout.findViewById(R.id.third_button);
+        //cancelbutton.setText(R.string.cancel);
+        ok_btn.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
@@ -318,7 +373,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        cancelbutton.setOnClickListener(new View.OnClickListener()
+        cancel_btn.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
@@ -356,7 +411,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
-        // TODO: Implement this method
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         final List<String> permission_not_granted_list=new ArrayList<>();
         if(requestCode==PermissionsUtil.PERMISSIONS_REQUEST_CODE && grantResults.length>0)
@@ -429,7 +483,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     protected void onStart()
     {
-        // TODO: Implement this method
         super.onStart();
         clear_cache=true;
         Global.WORKOUT_AVAILABLE_SPACE();

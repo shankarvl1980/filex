@@ -2034,7 +2034,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									Global.print(context,getString(R.string.select_only_a_file));
 									break;
 								}
-								df.file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true,filePOJO.getSizeLong());
+								df.file_open_intent_dispatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),true,filePOJO.getSizeLong());
 								break;
 							default:
 								break;

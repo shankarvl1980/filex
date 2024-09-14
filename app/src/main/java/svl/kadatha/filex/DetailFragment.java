@@ -633,7 +633,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public void onActivityResult(ActivityResult result) {
 		if (result.getResultCode()== Activity.RESULT_OK)
 		{
-			if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
+			if(clicked_filepojo!=null) file_open_intent_dispatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
 			clicked_filepojo=null;
 		}
 		else
@@ -644,7 +644,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	});
 
 
-	public void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,boolean select_app,long file_size)
+	public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size)
 	{
 		int idx=file_name.lastIndexOf(".");
 		String file_ext="";
@@ -770,7 +770,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 					}
 					else
 					{
-						file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
+						file_open_intent_dispatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
 					}
 					RecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO);
 				}

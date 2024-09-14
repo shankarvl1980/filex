@@ -382,11 +382,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 
-						if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-						{
-							Global.print(context,getString(R.string.not_supported));
-							return;
-						}
+//						if(sourceFileObjectType==FileObjectType.FTP_TYPE)
+//						{
+//							Global.print(context,getString(R.string.not_supported));
+//							return;
+//						}
 						progress_bar.setVisibility(View.VISIBLE);
 						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 						viewModel.removeRecursiveFiles(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);

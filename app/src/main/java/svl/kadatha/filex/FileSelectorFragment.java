@@ -55,6 +55,9 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 	public FilePOJOViewModel viewModel;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_selector_dialog_saf_permission_request_code";
 	public DetailFragmentListener detailFragmentListener;
+	public GridLayoutManager glm;
+	public LinearLayoutManager llm;
+
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -147,7 +150,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
 		if(FileSelectorActivity.FILE_GRID_LAYOUT)
 		{
-			GridLayoutManager glm = new GridLayoutManager(context, FileSelectorActivity.GRID_COUNT);
+			glm = new GridLayoutManager(context, FileSelectorActivity.GRID_COUNT);
 			recycler_view.setLayoutManager(glm);
 			int top_padding=recycler_view.getPaddingTop();
 			int bottom_padding=recycler_view.getPaddingBottom();
@@ -155,7 +158,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		}
 		else
 		{
-			LinearLayoutManager llm = new LinearLayoutManager(context);
+			llm = new LinearLayoutManager(context);
 			recycler_view.setLayoutManager(llm);
 		}
 		ItemSeparatorDecoration dividerItemDecoration = new ItemSeparatorDecoration(context,1, recycler_view);

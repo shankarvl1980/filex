@@ -102,11 +102,12 @@ public class CopyToActivity extends BaseActivity{
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                    if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
-                    {
-                        Global.print(context,context.getString(R.string.not_supported));
-                    }
-                    else if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
+//                    if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
+//                    {
+//                        Global.print(context,context.getString(R.string.not_supported));
+//                    }
+//                    else
+                        if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
                     {
                         overwritten_file_path_list=fileDuplicationViewModel.overwritten_file_path_list;
                         launchService();
@@ -140,9 +141,22 @@ public class CopyToActivity extends BaseActivity{
                 }
 
                 String file_name=file_name_edit_text.getText().toString().trim();
+                if(data_list.size()==1 && file_name.isEmpty())
+                {
+                    Global.print(context,getString(R.string.name_field_cannot_be_empty));
+                    return;
+                }
+
                 if(CheckString.whetherStringContainsSpecialCharacters(file_name))
                 {
                     Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+                    return;
+                }
+
+                String dest_folder=destination_folder_edittext.getText().toString().trim();
+                if(dest_folder.isEmpty())
+                {
+                    Global.print(context,getString(R.string.select_a_directory_to_copy));
                     return;
                 }
 
@@ -177,6 +191,7 @@ public class CopyToActivity extends BaseActivity{
                     Global.print(context,getString(R.string.maximum_3_services_processed));
                     return;
                 }
+
                 if(data_list.size()==1){
                     if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,full_path,viewModel.destFilePOJOs))
                     {

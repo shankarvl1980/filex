@@ -67,8 +67,8 @@
         app:constraint_referenced_ids="file_selector_search_view_edit_text,file_selector_search_view_cancel_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <EditText
 
+    <EditText
         android:id="@+id/file_selector_search_view_edit_text"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -108,7 +108,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_file_selector_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/file_selector_button_layout"
+        app:layout_constraintBottom_toTopOf="@id/file_selector_bottom_toolbar"
 
         />
     <TextView
@@ -123,6 +123,20 @@
         app:layout_constraintTop_toBottomOf="@id/activity_file_selector_toolbar"
 
         />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/file_selector_bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/file_selector_floating_action_button_back"
         android:layout_width="wrap_content"
@@ -140,7 +154,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <FrameLayout
+    <!--FrameLayout
         android:id="@+id/file_selector_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -148,7 +162,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        /-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
