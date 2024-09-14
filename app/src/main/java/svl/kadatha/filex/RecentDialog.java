@@ -135,9 +135,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				{
 					tree_uri=result.getParcelable("tree_uri");
 					tree_uri_path=result.getString("tree_uri_path");
-
 				}
-
 			}
 		});
 		return v;
@@ -149,7 +147,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		public void onActivityResult(ActivityResult result) {
 			if (result.getResultCode()== Activity.RESULT_OK)
 			{
-				if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),clicked_filepojo.getSizeLong());
+				if(clicked_filepojo!=null) file_open_intent_dispatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),clicked_filepojo.getSizeLong());
 				clicked_filepojo=null;
 			}
 			else
@@ -160,31 +158,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	});
 
 
-	private boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType)
-	{
-		if(MainActivity.usbFileRoot==null)
-		{
-			return false;
-		}
-		UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-		if(uriPOJO!=null)
-		{
-			tree_uri_path=uriPOJO.get_path();
-			tree_uri=uriPOJO.get_uri();
-		}
-
-		if(uriPOJO==null || tree_uri_path.equals(""))
-		{
-			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	
 	@Override
 	public void onResume()
 	{
@@ -209,7 +182,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
 
-	private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name,long file_size)
+	private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, long file_size)
 	{
 		int idx=file_name.lastIndexOf(".");
 		String file_ext="";
@@ -228,7 +201,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		{
 			if(file_ext.matches("(?i)apk"))
 			{
-
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
 						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
@@ -239,12 +211,30 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				}
 			}
 
-			if(fileObjectType== FileObjectType.USB_TYPE)
+			if(fileObjectType==FileObjectType.USB_TYPE)
 			{
-				if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{
-					FileIntentDispatch.openUri(context,file_path,"",false,fileObjectType,tree_uri,tree_uri_path,false,file_size);
+					Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+					return;
 				}
+
+				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
+				{
+					Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+					return;
+				}
+				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
+
+			}
+			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			{
+				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
+				{
+					Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+					return;
+				}
+				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 			}
 			else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 			{
@@ -311,7 +301,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 							}
 							else
 							{
-								file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),filePOJO.getSizeLong());
+								file_open_intent_dispatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),filePOJO.getSizeLong());
 							}
 
 							ADD_FILE_POJO_TO_RECENT(filePOJO);

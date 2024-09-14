@@ -47,7 +47,6 @@ public class FileTypeSelectDialog extends DialogFragment
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle = getArguments();
-		mime_type= bundle.getString("mime_type");
 		file_path= bundle.getString("file_path");
 		fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
 		tree_uri= bundle.getParcelable("tree_uri");
@@ -156,17 +155,7 @@ public class FileTypeSelectDialog extends DialogFragment
 						MimePOJO mimePOJO=mimePOJOList.get(pos);
 						mime_type=mimePOJO.getMime_type();
 
-						if(fileObjectType==FileObjectType.USB_TYPE)
-						{
-							if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-							{
-								FileIntentDispatch.openUri(context,file_path,mime_type,false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
-							}
-						}
-						else if(fileObjectType==null || fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-						{
-							FileIntentDispatch.openFile(context,file_path,mime_type,false,fileObjectType,select_app,file_size);
-						}
+						FileIntentDispatch.openFile(context,file_path,mime_type,false,fileObjectType,select_app,file_size);
 						dismissAllowingStateLoss();
 					}
 				});
@@ -174,28 +163,5 @@ public class FileTypeSelectDialog extends DialogFragment
 		}
 		
 	}
-	private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
-	{
-		if(MainActivity.usbFileRoot==null)
-		{
-			return false;
-		}
-		UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-		if(uriPOJO!=null)
-		{
-			tree_uri_path=uriPOJO.get_path();
-			tree_uri=uriPOJO.get_uri();
-		}
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
-		{
-			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
 }

@@ -383,45 +383,45 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			}
 		});
 
-		viewModel.copyFtpAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
-			@Override
-			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.VISIBLE);
-				}
-				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					progress_bar.setVisibility(View.GONE);
-					if(viewModel.ftp_cached_file_path!=null)
-					{
-						FileIntentDispatch.openFile(context,viewModel.ftp_cached_file_path,"",false,viewModel.ftp_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
-					}
+//		viewModel.copyFtpAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+//			@Override
+//			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+//				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+//				{
+//					progress_bar.setVisibility(View.VISIBLE);
+//				}
+//				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+//				{
+//					progress_bar.setVisibility(View.GONE);
+//					if(viewModel.ftp_cached_file_path!=null)
+//					{
+//						FileIntentDispatch.openFile(context,viewModel.ftp_cached_file_path,"",false,viewModel.ftp_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
+//					}
+//
+//					viewModel.copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+//				}
+//
+//			}
+//		});
 
-					viewModel.copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				}
-
-			}
-		});
-
-		viewModel.copyUsbAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
-			@Override
-			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-				{
-					progress_bar.setVisibility(View.VISIBLE);
-				}
-				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-				{
-					progress_bar.setVisibility(View.GONE);
-					if(viewModel.usb_cached_file_path!=null)
-					{
-						FileIntentDispatch.openFile(context,viewModel.usb_cached_file_path,"",false,viewModel.usb_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
-					}
-					viewModel.copyUsbAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-				}
-			}
-		});
+//		viewModel.copyUsbAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
+//			@Override
+//			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+//				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
+//				{
+//					progress_bar.setVisibility(View.VISIBLE);
+//				}
+//				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
+//				{
+//					progress_bar.setVisibility(View.GONE);
+//					if(viewModel.usb_cached_file_path!=null)
+//					{
+//						FileIntentDispatch.openFile(context,viewModel.usb_cached_file_path,"",false,viewModel.usb_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
+//					}
+//					viewModel.copyUsbAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+//				}
+//			}
+//		});
 
 		getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
@@ -685,32 +685,23 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 					 Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
 					 return;
 				 }
-
-				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-				 {
-					 progress_bar.setVisibility(View.VISIBLE);
-					 viewModel.copyUsbToDevice(file_path,fileObjectType,select_app);
-				 }
-
-//				 if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-//				 {
-//					 FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
-//				 }
-			 }
-			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-			 {
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
+
 			 }
-			 else if(fileObjectType==FileObjectType.FTP_TYPE)
+			else if(fileObjectType==FileObjectType.FTP_TYPE)
 			{
 				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{
 					Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
 					return;
 				}
-				progress_bar.setVisibility(View.VISIBLE);
-				viewModel.copyFtpToDevice(file_path,fileObjectType,select_app);
+				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			}
+			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+			 {
+				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
+			 }
+
 		 }
 	}
 
@@ -821,7 +812,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			time_image_view.setSelected(viewModel.library_time_desc);
 			size_image_view.setSelected(viewModel.library_size_desc);
 			adapter.notifyDataSetChanged();
-
 
 			if(file_list_size==0)
 			{

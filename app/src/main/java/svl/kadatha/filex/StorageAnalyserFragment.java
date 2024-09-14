@@ -539,7 +539,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                     }
                     else
                     {
-                        file_open_intent_despatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
+                        file_open_intent_dispatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),false,filePOJO.getSizeLong());
                     }
                     FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO,FileSelectorRecentDialog.STORAGE_ANALYSER);
                 }
@@ -625,7 +625,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode()== Activity.RESULT_OK)
             {
-                if(clicked_filepojo!=null)file_open_intent_despatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
+                if(clicked_filepojo!=null) file_open_intent_dispatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),false,clicked_filepojo.getSizeLong());
                 clicked_filepojo=null;
             }
             else
@@ -636,7 +636,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     });
 
 
-    private void file_open_intent_despatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app,long file_size)
+    private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size)
     {
         int idx=file_name.lastIndexOf(".");
         String file_ext="";
@@ -665,17 +665,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
             }
 
-            if(fileObjectType==FileObjectType.USB_TYPE)
-            {
-                if(check_availability_USB_SAF_permission(file_path,fileObjectType))
-                {
-                    FileIntentDispatch.openUri(context,file_path,"", false,fileObjectType,tree_uri,tree_uri_path,select_app,file_size);
-                }
-            }
-            else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
-            {
-                FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
-            }
+            FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
         }
     }
 
@@ -741,33 +731,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         modification_observed=true;
         Global.WORKOUT_AVAILABLE_SPACE();
     }
-
-
-    private boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
-    {
-        if(MainActivity.usbFileRoot==null)
-        {
-            return false;
-        }
-        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-        if(uriPOJO!=null)
-        {
-            tree_uri_path=uriPOJO.get_path();
-            tree_uri=uriPOJO.get_uri();
-        }
-
-        if(uriPOJO==null || tree_uri_path.equals(""))
-        {
-            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-            safpermissionhelper.show(getParentFragmentManager(), "saf_permission_dialog");
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
 }
 
 

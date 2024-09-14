@@ -62,12 +62,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 if(fileObjectType ==FileObjectType.USB_TYPE)
                 {
-//                    if(MainActivity.usbFileRoot!=null)
-//                    {
-//                        File cache_file=Global.COPY_TO_USB_CACHE(file_path);
-//                        currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-//                    }
-                    File cache_file=new File(Global.USB_CACHE_DIR,file_path);
+                    File cache_file=Global.COPY_TO_USB_CACHE(file_path,fileObjectType);
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
                 else if(fileObjectType==FileObjectType.ROOT_TYPE)
@@ -76,7 +71,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
                 {
-                    File cache_file=new File(Global.FTP_CACHE_DIR,file_path);//Global.COPY_TO_FTP_CACHE(file_path);
+                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
                 else

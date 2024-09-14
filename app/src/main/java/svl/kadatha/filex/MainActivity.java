@@ -1964,17 +1964,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 								}
 								else if(df.fileObjectType==FileObjectType.USB_TYPE)
 								{
-									String file_path=df.viewModel.mselecteditems.getValueAtIndex(0);
-									if(file_path!=null && df.check_availability_USB_SAF_permission(file_path,FileObjectType.USB_TYPE))
-									{
-										ArrayList<Uri> uri_list_excluding_dir;
-										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditems,df);
-										if (uri_list_excluding_dir.isEmpty()) {
-											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
-											break;
-										}
-										FileIntentDispatch.sendUri(MainActivity.this,uri_list_excluding_dir);
-									}
+									Global.print(context,getString(R.string.not_supported));
+//									String file_path=df.viewModel.mselecteditems.getValueAtIndex(0);
+//									if(file_path!=null && df.check_availability_USB_SAF_permission(file_path,FileObjectType.USB_TYPE))
+//									{
+//										ArrayList<Uri> uri_list_excluding_dir;
+//										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditems,df);
+//										if (uri_list_excluding_dir.isEmpty()) {
+//											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
+//											break;
+//										}
+//										FileIntentDispatch.sendUri(MainActivity.this,uri_list_excluding_dir);
+//									}
 								}
 								break;
 							case 2:

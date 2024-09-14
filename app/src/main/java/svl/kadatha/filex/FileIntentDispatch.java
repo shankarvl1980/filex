@@ -29,7 +29,7 @@ class FileIntentDispatch
 
 		File file=new File(file_path);
 		uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);
-		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fileObjectType,select_app,file_size);
+		dispatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fileObjectType,select_app,file_size);
 
 	}
 
@@ -42,7 +42,7 @@ class FileIntentDispatch
 			file_extn=file_path.substring(file_extn_idx+1);
 		}
 		Uri uri=FileUtil.getDocumentUri(file_path,tree_uri,tree_uri_path);
-		despatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fileObjectType,select_app,file_size);
+		dispatch_intent(context,uri,file_path,file_extn,mime_type,clear_top,fileObjectType,select_app,file_size);
 	}
 	
 	public static void sendFile(Context context, ArrayList<File> file_list)
@@ -84,13 +84,10 @@ class FileIntentDispatch
 		}
 	}
 
-	private static void despatch_intent(final Context context,Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, FileObjectType fileObjectType,boolean select_app, long file_size)
+	private static void dispatch_intent(final Context context, Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, FileObjectType fileObjectType, boolean select_app, long file_size)
 	{
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
-		if(mime_type==null || mime_type.equals("")){
-			mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,clear_top,uri);
-		}
-
+		mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,clear_top,uri);
 		if(mime_type==null || mime_type.equals("")) return;
 
 		DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);

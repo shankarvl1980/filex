@@ -116,9 +116,9 @@ public class ArchiveDeletePasteServiceUtil {
         }
 
         //check whether usb file being copied to cache
-        if(noOperation && FilePOJOViewModel.USB_CACHED_FILE_OBJECT!=null)
+        if(noOperation && Global.USB_CACHED_FILE_OBJECT!=null)
         {
-            noOperation=FilePOJOViewModel.USB_CACHED_FILE_OBJECT!=fileObjectType;
+            noOperation=Global.USB_CACHED_FILE_OBJECT!=fileObjectType;
         }
 
         return noOperation;

@@ -209,6 +209,7 @@ public class Global
 	static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
 	static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
 	private static final String FTP_TAG = "Ftp-Global";
+	public static FileObjectType USB_CACHED_FILE_OBJECT;
 
 	static void GET_URI_PERMISSIONS_LIST(Context context)
 	{
@@ -1053,13 +1054,14 @@ public class Global
 	}
 
 
-	public static File COPY_TO_USB_CACHE(String file_path)
+	public static File COPY_TO_USB_CACHE(String file_path,FileObjectType fileObjectType)
 	{
 		File cache_file=new File(USB_CACHE_DIR,file_path);
 		if(MainActivity.usbFileRoot==null)
 		{
 			return cache_file;
 		}
+		USB_CACHED_FILE_OBJECT=fileObjectType;
 		long[] bytes_read=new long[1];
 		if(!cache_file.exists())
 		{
@@ -1075,13 +1077,16 @@ public class Global
 						FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
 
 					} catch (Exception e) {
+						USB_CACHED_FILE_OBJECT=null;
 						return cache_file;
 					}
+					USB_CACHED_FILE_OBJECT=null;
 					return cache_file;
 				}
 			}
 
 		}
+		USB_CACHED_FILE_OBJECT=null;
 		return cache_file;
 	}
 

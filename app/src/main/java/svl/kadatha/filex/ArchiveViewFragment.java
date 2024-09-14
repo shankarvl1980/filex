@@ -357,17 +357,37 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     }
                 }
             }
+
             if(fileObjectType==FileObjectType.USB_TYPE)
             {
-                if(check_availability_USB_SAF_permission(file_path,fileObjectType))
+                if(file_size>Global.CACHE_FILE_MAX_LIMIT)
                 {
-                    FileIntentDispatch.openUri(context,file_path,"", false,null,tree_uri,tree_uri_path,select_app,file_size);
+                    Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+                    return;
                 }
+
+                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
+                {
+                    Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+                    return;
+                }
+                FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
+
+            }
+            else if(fileObjectType==FileObjectType.FTP_TYPE)
+            {
+                if(file_size>Global.CACHE_FILE_MAX_LIMIT)
+                {
+                    Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
+                    return;
+                }
+                FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
             }
             else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
             {
-                FileIntentDispatch.openFile(context,file_path,"",false,null,select_app,file_size);
+                FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
             }
+
         }
     }
 
@@ -479,31 +499,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
             safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    public boolean check_availability_USB_SAF_permission(String file_path,FileObjectType fileObjectType)
-    {
-        if(MainActivity.usbFileRoot==null)
-        {
-            return false;
-        }
-        UriPOJO uriPOJO=Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path,fileObjectType);
-        if(uriPOJO!=null)
-        {
-            tree_uri_path=uriPOJO.get_path();
-            tree_uri=uriPOJO.get_uri();
-        }
-
-        if(uriPOJO==null || tree_uri_path.equals(""))
-        {
-            SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
-            safpermissionhelper.show(archiveViewActivity.fm,"saf_permission_dialog");
             return false;
         }
         else
