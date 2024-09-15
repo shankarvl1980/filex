@@ -34,4 +34,8 @@ public interface FileModel {
 
     boolean exists();
 
+    long lastModified();
+
+    boolean isHidden();
+
 }

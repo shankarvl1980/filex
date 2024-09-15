@@ -37,7 +37,6 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public String getParentName() {
-
         if(usbFile!=null)
         {
             File parentFile=new File(path).getParentFile();
@@ -56,7 +55,6 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public String getPath() {
-
         if(usbFile!=null)
         {
             return path;
@@ -69,7 +67,6 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public String getParentPath() {
-
         if(usbFile!=null){
             return  new File(path).getParent();
         }
@@ -98,7 +95,6 @@ public class UsbFileModel implements FileModel{
             return false;
         }
     }
-
 
     @Override
     public boolean delete() {
@@ -181,15 +177,12 @@ public class UsbFileModel implements FileModel{
             } catch (Exception e) {
                 return null;
             }
-
-
         }
         return null;
     }
 
     @Override
     public FileModel[] list() {
-
         if(usbFile!=null)
         {
             if(!usbFile.isDirectory()) return null;
@@ -262,6 +255,21 @@ public class UsbFileModel implements FileModel{
 
     }
 
+    @Override
+    public long lastModified() {
+        if(usbFile!=null){
+            return usbFile.lastModified();
+        }
+        else{
+            return 0;
+        }
+    }
+
+    @Override
+    public boolean isHidden() {
+        return path.startsWith(".");
+    }
+
     private static boolean mkdirUsb(UsbFile parentUsbFile, String name)
     {
         if(parentUsbFile==null) return false;
@@ -280,7 +288,6 @@ public class UsbFileModel implements FileModel{
         if(parentUsbFile==null)
         {
             return false;
-
         }
         String [] path_substring=path.split("/");
         int size=path_substring.length;
@@ -352,7 +359,6 @@ public class UsbFileModel implements FileModel{
             {
                 return false;
             }
-
         }
         catch (Exception e)
         {

@@ -65,8 +65,6 @@ public class FtpFileModel implements FileModel {
     }
 
 
-
-
     @Override
     public boolean rename(String new_name, boolean overwrite) {
         String new_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(), new_name);
@@ -327,6 +325,16 @@ public class FtpFileModel implements FileModel {
                 Timber.tag(TAG).d("FTP client released");
             }
         }
+    }
+
+    @Override
+    public long lastModified() {
+        return 0;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return path.startsWith(".");
     }
 
 

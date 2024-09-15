@@ -251,6 +251,16 @@ public class JavaFileModel implements FileModel {
         return file.exists();
     }
 
+    @Override
+    public long lastModified() {
+        return file.lastModified();
+    }
+
+    @Override
+    public boolean isHidden() {
+        return file.isHidden();
+    }
+
     private static boolean renameSAFFile(Context context, String target_file_path, String new_name, Uri tree_uri, String tree_uri_path)
     {
         Uri uri = FileUtil.getDocumentUri(target_file_path,tree_uri,tree_uri_path);

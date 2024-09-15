@@ -11,10 +11,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.filemodel.FileModel;
+import timber.log.Timber;
 
 public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private final Application application;
@@ -116,9 +119,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                         deleted_file_name_list.add(current_file_name);
                         deleted_file_path_list.add(filePOJO.getPath());
                     }
-
                 }
-
             }
             else
             {
@@ -139,9 +140,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                         deleted_file_name_list.add(current_file_name);
                         deleted_file_path_list.add(filePOJO.getPath());
                     }
-
                 }
-
             }
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
@@ -169,6 +168,83 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
 
         return success;
     }
+
+//    private boolean deleteFileModelArray(FileModel[] sourceFileModels, List<String> deleted_file_names, List<String> deleted_files_path_list) {
+//        boolean success = false;
+//        int size = sourceFileModels.length;
+//        for (int i = 0; i < size; ++i) {
+//            if (isCancelled()) {
+//                return false;
+//            }
+//
+//            FileModel fileModel = sourceFileModels[i];
+//            String file_path = fileModel.getPath();
+//            current_file_name = fileModel.getName();
+//            success = deleteFileModel(fileModel);
+//
+//            if (success) {
+//                deleted_file_names.add(current_file_name);
+//                deleted_files_path_list.add(file_path);
+//            }
+//        }
+//        return success;
+//    }
+//
+//    public boolean deleteFileModel(final FileModel fileModel) {
+//        Timber.tag("DeleteFileModel").d("Starting deletion of: " + fileModel.getPath());
+//        Stack<FileModel> stack = new Stack<>();
+//        stack.push(fileModel);
+//
+//        boolean success = true;
+//
+//        while (!stack.isEmpty()) {
+//            if (isCancelled()) {
+//                Timber.tag("DeleteFileModel").d("Operation cancelled");
+//                return false;
+//            }
+//
+//            FileModel currentFile = stack.peek();  // Peek instead of pop
+//            Timber.tag("DeleteFileModel").d("Processing: " + currentFile.getPath());
+//
+//            if (currentFile.isDirectory()) {
+//                Timber.tag("DeleteFileModel").d("This is found to be directory: " + currentFile.getPath());
+//                FileModel[] list = currentFile.list();
+//                if (list == null || list.length == 0) {
+//                    // Directory is empty or can't be read, try to delete it
+//                    stack.pop();
+//                    Timber.tag("DeleteFileModel").d("Attempting to delete empty directory: " + currentFile.getPath());
+//                    boolean deleteResult = deleteFile(currentFile);
+//                    success &= deleteResult;
+//                    Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
+//                } else {
+//                    // Add children to the stack
+//                    Timber.tag("DeleteFileModel").d("Adding " + list.length + " children to stack for: " + currentFile.getPath());
+//                    for (FileModel child : list) {
+//                        stack.push(child);
+//                    }
+//                }
+//            } else {
+//                // It's a file, pop and delete it
+//                stack.pop();
+//                Timber.tag("DeleteFileModel").d("Attempting to delete file: " + currentFile.getPath());
+//                boolean deleteResult = deleteFile(currentFile);
+//                success &= deleteResult;
+//                Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
+//            }
+//        }
+//
+//        Timber.tag("DeleteFileModel").d("Deletion process completed. Overall success: " + success);
+//        return success;
+//    }
+//
+//    private boolean deleteFile(FileModel file) {
+//        counter_no_files++;
+//        counter_size_files += (!file.isDirectory()) ? file.getLength() : 0;
+//        deleted_file_name = file.getName();
+//        publishProgress(null);
+//        return file.delete();
+//    }
+
 
 
     public synchronized void deleteAudioPOJO(String source_folder,List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)

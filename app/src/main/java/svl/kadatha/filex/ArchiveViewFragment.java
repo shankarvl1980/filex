@@ -339,6 +339,11 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             file_ext=file_name.substring(idx+1);
         }
 
+        if(file_ext.matches("(?i)zip")){
+            Global.print(context,getString(R.string.can_not_open_file));
+            return;
+        }
+
         if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
             FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,null,tree_uri,tree_uri_path,select_app,file_size);
