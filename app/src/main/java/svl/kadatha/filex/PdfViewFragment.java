@@ -6,6 +6,9 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -223,8 +226,7 @@ public class PdfViewFragment extends Fragment
                     case 4: // Rotate
                         int currentItem = view_pager.getCurrentItem();
                         View currentView = null;
-                        for (int i = 0; i < view_pager.getChildCount(); i++)
-                        {
+                        for (int i = 0; i < view_pager.getChildCount(); i++) {
                             View child = view_pager.getChildAt(i);
                             if (child.getTag() != null && child.getTag().equals(currentItem)) {
                                 currentView = child;
@@ -235,21 +237,33 @@ public class PdfViewFragment extends Fragment
                         if (currentView != null) {
                             TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
                             if (imageView != null) {
-                                float currentRotation = imageView.getRotation();
-                                float newRotation = (currentRotation + 90) % 360;
-                                imageView.setRotation(newRotation);
+                                Drawable drawable = imageView.getDrawable();
+                                if (drawable instanceof BitmapDrawable) {
+                                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
+                                    // Rotate the bitmap
+                                    Matrix matrix = new Matrix();
+                                    matrix.postRotate(90); // Rotate by 90 degrees
+                                    Bitmap rotatedBitmap = Bitmap.createBitmap(
+                                            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
-                                // Reset zoom and center the image
-                                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                                    // Set the rotated bitmap to the ImageView
+                                    imageView.setImageBitmap(rotatedBitmap);
 
-                                // Force layout update
-                                imageView.requestLayout();
+                                    // Reset zoom and center the image
+                                    imageView.resetZoom();
+                                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                                    // Force layout update
+                                    imageView.requestLayout();
+                                } else {
+                                    Global.print(context, getString(R.string.could_not_be_rotated));
+                                }
                             } else {
-                                Global.print(context,getString(R.string.could_not_be_rotated));
+                                Global.print(context, getString(R.string.could_not_be_rotated));
                             }
                         } else {
-                            Global.print(context,getString(R.string.could_not_be_rotated));
+                            Global.print(context, getString(R.string.could_not_be_rotated));
                         }
                         break;
                     default:

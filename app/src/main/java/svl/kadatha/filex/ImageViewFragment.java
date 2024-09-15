@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -261,10 +265,37 @@ ImageViewFragment extends Fragment
 						case 5:
 							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE)
 							{
-								TouchImageView currentImageView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
-								if (currentImageView != null) {
-									float currentRotation = currentImageView.getRotation();
-									currentImageView.setRotation(currentRotation + 90);
+								TouchImageView currentView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
+								if (currentView != null) {
+									TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
+									if (imageView != null) {
+										Drawable drawable = imageView.getDrawable();
+										if (drawable instanceof BitmapDrawable) {
+											Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+											// Rotate the bitmap
+											Matrix matrix = new Matrix();
+											matrix.postRotate(90); // Rotate by 90 degrees
+											Bitmap rotatedBitmap = Bitmap.createBitmap(
+													bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+											// Set the rotated bitmap to the ImageView
+											imageView.setImageBitmap(rotatedBitmap);
+
+											// Reset zoom and center the image
+											imageView.resetZoom();
+											imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+											// Force layout update
+											imageView.requestLayout();
+										} else {
+											Global.print(context, getString(R.string.could_not_be_rotated));
+										}
+									} else {
+										Global.print(context, getString(R.string.could_not_be_rotated));
+									}
+								} else {
+									Global.print(context, getString(R.string.could_not_be_rotated));
 								}
 							}
 							else{
