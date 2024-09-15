@@ -34,13 +34,14 @@ public class FtpDetailsInputDialog extends DialogFragment {
     private Bundle bundle;
     private static final String FTP_REPLACE_REQUEST_CODE="ftp_replace_request_code";
 
-    public static FtpDetailsInputDialog getInstance(String request_code,String server,String user_name)
+    public static FtpDetailsInputDialog getInstance(String request_code,String server,String user_name,String type)
     {
         FtpDetailsInputDialog ftpDetailsInputDialog=new FtpDetailsInputDialog();
         Bundle bundle=new Bundle();
         bundle.putString("request_code",request_code);
         bundle.putString("server",server);
         bundle.putString("user_name",user_name);
+        bundle.putString("type",type);
         ftpDetailsInputDialog.setArguments(bundle);
         return ftpDetailsInputDialog;
     }
@@ -69,6 +70,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
             String request_code = bundle.getString("request_code");
             original_server=bundle.getString("server");
             original_user_name=bundle.getString("user_name");
+            type=bundle.getString("type");
             if(original_server==null)
             {
             }
@@ -80,7 +82,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
             if(original_server!=null && !original_server.equals(""))
             {
                 update=true;
-                FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(original_server,original_user_name);
+                FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(original_server,original_user_name,type);
                 if(ftpPOJO!=null)
                 {
                     port=ftpPOJO.port;
@@ -101,10 +103,21 @@ public class FtpDetailsInputDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_ftp_details_input,container,false);
         TextView title_tv=v.findViewById(R.id.ftp_details_title);
-        if(update)
-        {
-            title_tv.setText(R.string.update_ftp_server);
+        if(type.equals("ftp")){
+            if(update) {
+                title_tv.setText(R.string.update_ftp_server);
+            } else{
+                title_tv.setText(R.string.new_ftp_server);
+            }
         }
+        else if(type.equals("sftp")){
+            if(update) {
+                title_tv.setText(R.string.update_sftp_server);
+            } else{
+                title_tv.setText(R.string.new_sftp_server);
+            }
+        }
+
         server_tv=v.findViewById(R.id.ftp_details_server);
         port_tv=v.findViewById(R.id.ftp_details_port);
         mode_active_radio_btn=v.findViewById(R.id.ftp_details_active_radio_btn);
@@ -194,11 +207,10 @@ public class FtpDetailsInputDialog extends DialogFragment {
         port=Integer.parseInt(port_tv.getText().toString().trim());
         mode=mode_active_radio_btn.isChecked() ? "active" : "passive";
         password=password_tv.getText().toString().trim();
-        type="ftp";
         anonymous=anonymous_check_box.isChecked() ? 1 : 0;
         display=display_tv.getText().toString().trim();
         bundle.putBoolean("whetherToConnect",whetherToConnect);
-        if(!update && whetherFtpPOJOAlreadyExists(server,user_name) && !replace)
+        if(!update && whetherFtpPOJOAlreadyExists(server,user_name,type) && !replace)
         {
             YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(FTP_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
             ftpServerCloseAlertDialog.show(getParentFragmentManager(),"");
@@ -225,9 +237,9 @@ public class FtpDetailsInputDialog extends DialogFragment {
             getParentFragmentManager().setFragmentResult(FtpDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE,bundle);
         }
     }
-    private boolean whetherFtpPOJOAlreadyExists(String server,String user_name)
+    private boolean whetherFtpPOJOAlreadyExists(String server,String user_name,String type)
     {
-        FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
+        FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name,type);
         return ftpPOJO != null;
     }
     @Override

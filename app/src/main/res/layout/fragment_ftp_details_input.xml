@@ -9,7 +9,6 @@
         android:id="@+id/ftp_details_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_ftp_server"
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"

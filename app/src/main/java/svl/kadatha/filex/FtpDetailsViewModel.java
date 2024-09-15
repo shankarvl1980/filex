@@ -47,6 +47,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
     public static FtpDetailsDialog.FtpPOJO FTP_POJO;
     public static String FTP_WORKING_DIR_PATH;
     public boolean isFtpConnected;
+    private String type;
 
     private static final String TAG = "Ftp-FtpDetailsViewModel";
 
@@ -81,7 +82,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void fetchFtpPojoList()
+    public synchronized void fetchFtpPojoList(String type)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -89,7 +90,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist(type);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -108,7 +109,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 for(int i=0;i<size;++i)
                 {
                     FtpDetailsDialog.FtpPOJO ftpPOJO=ftpPOJOS_for_delete.get(i);
-                    int j=ftpDatabaseHelper.delete(ftpPOJO.server,ftpPOJO.user_name);
+                    int j=ftpDatabaseHelper.delete(ftpPOJO.server,ftpPOJO.user_name,type);
                     if(j>0)
                     {
                         ftpPOJOList.remove(ftpPOJO);
@@ -186,7 +187,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         if(original_user_name==null)original_user_name="";
         if(replace)
         {
-            ftpDatabaseHelper.delete(server, user_name);
+            ftpDatabaseHelper.delete(server, user_name,type);
         }
         if(update)
         {
@@ -197,7 +198,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             row_number=ftpDatabaseHelper.insert(server,port,mode,user_name,password,type ,anonymous,encoding,display);
         }
 
-        ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+        ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist(type);
     }
 
     public synchronized void replaceFtpPojoList(Bundle bundle)
@@ -225,7 +226,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                 replaceFtpPojo(bundle);
                 String server=bundle.getString("server");
                 String user_name=bundle.getString("user_name");
-                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name);
+                FtpDetailsDialog.FtpPOJO ftpPOJO=ftpDatabaseHelper.getFtpPOJO(server,user_name,type);
                 loggedInStatus=false;
                 FtpDetailsDialog.FtpPOJO ftpPOJOCopy=ftpPOJO.deepCopy();
                 FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(ftpPOJOCopy);
@@ -261,7 +262,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void changeFtpPojoDisplay(String server,String user_name, String new_name)
+    public synchronized void changeFtpPojoDisplay(String server,String user_name, String new_name,String type)
     {
         if(changeFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -269,8 +270,8 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ftpDatabaseHelper.change_display(server,user_name,new_name);
-                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist();
+                ftpDatabaseHelper.change_display(server,user_name,new_name,type);
+                ftpPOJOList=ftpDatabaseHelper.getFtpPOJOlist(type);
                 changeFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -285,7 +286,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 ftpPOJOAlreadyExists = false;
-                FtpDetailsDialog.FtpPOJO ftpPOJO = ftpDatabaseHelper.getFtpPOJO(server, user_name);
+                FtpDetailsDialog.FtpPOJO ftpPOJO = ftpDatabaseHelper.getFtpPOJO(server, user_name,type);
                 ftpPOJOAlreadyExists = ftpPOJO != null;
                 checkDuplicateFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

@@ -293,7 +293,9 @@
 	<string name="may_be_password_protected">May be password protected</string>
     <string name="ftp_server_is_not_connected">FTP server is not connected</string>
     <string name="ftp">FTP</string>
+	<string name="sftp">SFTP</string>
     <string name="new_ftp_server">New FTP Server</string>
+	<string name="new_sftp_server">New SFTP Server</string>
     <string name="server">Server</string>
 	<string name="port">Port</string>
 	<string name="active">Active</string>
@@ -456,6 +458,7 @@
     <string name="advanced">Advanced</string>
     <string name="not_supported">not supported</string>
     <string name="update_ftp_server">Update FTP Server</string>
+	<string name="update_sftp_server">Update SFTP Server</string>
     <string name="set">Set</string>
     <string name="error_setting_up_device">error setting up device</string>
     <string name="clean_storage">Clean Storage</string>

@@ -21,7 +21,7 @@ import androidx.fragment.app.DialogFragment;
 public class FtpDisplayRenameDialog extends DialogFragment {
 
     private Context context;
-    private String server,user_name, display;
+    private String server,user_name, display,type;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
     private FtpDatabaseHelper ftpDatabaseHelper;
@@ -55,6 +55,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
             server=bundle.getString("server");
             user_name=bundle.getString("user_name");
             display=bundle.getString("display");
+            type=bundle.getString("type");
         }
 
 
@@ -109,7 +110,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     Global.print(context,getString(R.string.enter_file_name));
                     return;
                 }
-                int i=ftpDatabaseHelper.change_display(server,user_name,new_name);
+                int i=ftpDatabaseHelper.change_display(server,user_name,new_name,type);
                 if(i>0)
                 {
                     bundle.putString("new_name",new_name);
@@ -131,7 +132,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         return v;
     }
 
-    public static FtpDisplayRenameDialog getInstance(String request_code,String server,String user_name, String display)
+    public static FtpDisplayRenameDialog getInstance(String request_code,String server,String user_name, String display,String type)
     {
         FtpDisplayRenameDialog ftpDisplayRenameDialog=new FtpDisplayRenameDialog();
         Bundle bundle=new Bundle();
@@ -139,6 +140,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         bundle.putString("server",server);
         bundle.putString("user_name",user_name);
         bundle.putString("display",display);
+        bundle.putString("type",type);
         ftpDisplayRenameDialog.setArguments(bundle);
         return ftpDisplayRenameDialog;
     }

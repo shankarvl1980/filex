@@ -2480,7 +2480,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							actionmode_finish(df,df.fileclickselected);
 							if(position[0]==0)
 							{
-								FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
+								FtpDetailsDialog ftpDetailsDialog=FtpDetailsDialog.getInstance(FtpDetailsDialog.FTP);
+								ftpDetailsDialog.show(fm,"");
+							}
+							else if(position[0]==1){
+								FtpDetailsDialog ftpDetailsDialog=FtpDetailsDialog.getInstance(FtpDetailsDialog.SFTP);
 								ftpDetailsDialog.show(fm,"");
 							}
 							pbf.dismissAllowingStateLoss();

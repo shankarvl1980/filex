@@ -34,6 +34,9 @@ import java.util.List;
 public class FtpDetailsDialog extends DialogFragment {
 
     private Context context;
+    public final static String FTP="ftp";
+    public final static String SFTP="sftp";
+    private String type;
     private Toolbar bottom_toolbar;
     private RecyclerView ftp_list_recyclerview;
     private FtpListAdapter ftpListAdapter;
@@ -59,12 +62,23 @@ public class FtpDetailsDialog extends DialogFragment {
         permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context );
     }
 
+    public static FtpDetailsDialog getInstance(String type){
+        Bundle bundle=new Bundle();
+        bundle.putString("type",type);
+        FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
+        ftpDetailsDialog.setArguments(bundle);
+        return ftpDetailsDialog;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
+        if(getArguments()!=null)
+        {
+            type=getArguments().getString("type");
+        }
     }
 
     @Nullable
@@ -72,6 +86,13 @@ public class FtpDetailsDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_ftp_list,container,false);
         progress_bar=v.findViewById(R.id.fragment_ftp_list_progressbar);
+        TextView heading=v.findViewById(R.id.fragment_ftp_list_heading);
+        if(type.equals(FTP)){
+            heading.setText(R.string.ftp);
+        }
+        else if(type.equals(SFTP)){
+            heading.setText(R.string.sftp);
+        }
         ftp_number_text_view=v.findViewById(R.id.ftp_details_ftp_number);
         empty_ftp_list_tv=v.findViewById(R.id.ftp_details_empty);
         ftp_list_recyclerview=v.findViewById(R.id.fragment_ftp_recyclerview);
@@ -150,7 +171,7 @@ public class FtpDetailsDialog extends DialogFragment {
         edit_btn.setOnClickListener(bottomToolbarClickListener);
 
         viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
-        viewModel.fetchFtpPojoList();
+        viewModel.fetchFtpPojoList(type);
         if(FtpDetailsViewModel.FTP_POJO!=null){
             progress_bar.setVisibility(View.VISIBLE);
             viewModel.testServiceConnection();
@@ -291,8 +312,6 @@ public class FtpDetailsDialog extends DialogFragment {
                         else {
                             Global.print(context,getString(R.string.server_could_not_be_connected));
                         }
-
-
                     }
                     else {
                         viewModel.replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -402,7 +421,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     String new_name=result.getString("new_name");
                     String server=result.getString("server");
                     String user_name=result.getString("user_name");
-                    if(new_name!=null)viewModel.changeFtpPojoDisplay(server,user_name,new_name);
+                    if(new_name!=null)viewModel.changeFtpPojoDisplay(server,user_name,new_name,type);
                 }
             }
         });
@@ -604,7 +623,7 @@ public class FtpDetailsDialog extends DialogFragment {
             if(id==R.id.toolbar_btn_1)
             {
                 clear_selection();
-                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,null,null);
+                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,null,null,type);
                 ftpDetailsInputDialog.show(getParentFragmentManager(),"");
             }
             else if(id==R.id.toolbar_btn_2)
@@ -636,7 +655,7 @@ public class FtpDetailsDialog extends DialogFragment {
                     FtpPOJO tobe_replaced_ftp=viewModel.mselecteditems.getValueAtIndex(0);
                     String ftp_server=tobe_replaced_ftp.server;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
-                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name);
+                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name,type);
                     ftpDetailsInputDialog.show(getParentFragmentManager(),"");
                 }
 

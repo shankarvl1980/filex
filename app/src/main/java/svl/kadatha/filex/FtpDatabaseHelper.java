@@ -29,11 +29,13 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public List<FtpDetailsDialog.FtpPOJO> getFtpPOJOlist() {
+    public List<FtpDetailsDialog.FtpPOJO> getFtpPOJOlist(String type_) {
         List<FtpDetailsDialog.FtpPOJO> ftpPOJOList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         try {
-            Cursor cursor = sqLiteDatabase.query(TABLE, null, null, null, null, null, null);
+            String selection = "type = ?";
+            String[] selectionArgs = { type_ };
+            Cursor cursor = sqLiteDatabase.query(TABLE, null, selection, selectionArgs, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
 
                 while (!cursor.isAfterLast()) {
@@ -63,7 +65,7 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
+        sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{server,user_name,type});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -81,7 +83,6 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         onCreate(sqLiteDatabase);
-        //sqLiteDatabase.delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
         ContentValues contentValues=new ContentValues();
         contentValues.put("server",server);
         contentValues.put("port",port);
@@ -92,11 +93,11 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("anonymous",anonymous ? 1 : 0);
         contentValues.put("encoding",encoding);
         contentValues.put("display",display);
-        Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?",new String[]{original_server,original_user_name},null,null,null);
+        Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{original_server,original_user_name,type},null,null,null);
         if(cursor!=null && cursor.getCount()>0)
         {
             cursor.close();
-            return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?",new String[]{original_server,original_user_name});
+            return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{original_server,original_user_name,type});
         }
         else
         {
@@ -106,24 +107,24 @@ public class FtpDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public int delete(String server, String user_name)
+    public int delete(String server, String user_name, String type)
     {
-        return getWritableDatabase().delete(TABLE,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
+        return getWritableDatabase().delete(TABLE,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{server,user_name,type});
     }
 
-    public int change_display(String server,String user_name, String new_name)
+    public int change_display(String server,String user_name, String new_name, String type)
     {
         SQLiteDatabase sqLiteDatabase=getReadableDatabase();
         ContentValues contentValues=new ContentValues();
         contentValues.put("display",new_name);
-        return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?",new String[]{server,user_name});
+        return sqLiteDatabase.update(TABLE,contentValues,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{server,user_name,type});
     }
 
-    public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string, String user_name_string)
+    public FtpDetailsDialog.FtpPOJO getFtpPOJO(String server_string, String user_name_string,String type_)
     {
         FtpDetailsDialog.FtpPOJO ftpPOJO = null;
         SQLiteDatabase sqLiteDatabase=getReadableDatabase();
-       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?",new String[]{server_string,user_name_string},null,null,null);
+       Cursor cursor=sqLiteDatabase.query(TABLE,null,"server=?"+" AND "+"user_name=?"+" AND "+"type=?",new String[]{server_string,user_name_string,type_},null,null,null);
        if(cursor!=null && cursor.moveToFirst())
        {
            String server = cursor.getString(0);
