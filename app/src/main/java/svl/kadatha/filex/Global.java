@@ -58,6 +58,8 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
 
 public class Global
@@ -812,35 +814,37 @@ public class Global
 	public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType,String file_path,List<FilePOJO> destFilePOJOs)
 	{
 		if(file_path==null || file_path.equals("")) return false;
-		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			File new_file=new File(file_path);
-			return new_file.exists();
+		FileModel fileModel= FileModelFactory.getFileModel(file_path,fileObjectType,null,null);
+		return fileModel.exists();
 
-		}
-		else if(fileObjectType== FileObjectType.USB_TYPE)
-		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-			return usbFile != null;
-
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			return CHECK_EXISTENCE_FILE_IN_FILE_POJO(file_path,destFilePOJOs);
-		}
-		else if(fileObjectType==FileObjectType.ROOT_TYPE)
-		{
-			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
-			{
-				return !RootUtils.WHETHER_FILE_EXISTS(file_path);
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		return false;
+//		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+//		{
+//			File new_file=new File(file_path);
+//			return new_file.exists();
+//		}
+//		else if(fileObjectType== FileObjectType.USB_TYPE)
+//		{
+//			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+//			return usbFile != null;
+//
+//		}
+//		else if(fileObjectType==FileObjectType.FTP_TYPE)
+//		{
+//			return CHECK_EXISTENCE_FILE_IN_FILE_POJO(file_path,destFilePOJOs);
+//		}
+//		else if(fileObjectType==FileObjectType.ROOT_TYPE)
+//		{
+//			if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+//			{
+//				return !RootUtils.WHETHER_FILE_EXISTS(file_path);
+//			}
+//			else
+//			{
+//				return false;
+//			}
+//
+//		}
+//		return false;
 	}
 
 

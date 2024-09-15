@@ -102,12 +102,7 @@ public class CopyToActivity extends BaseActivity{
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-//                    if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
-//                    {
-//                        Global.print(context,context.getString(R.string.not_supported));
-//                    }
-//                    else
-                        if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
+                    if(fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty())
                     {
                         overwritten_file_path_list=fileDuplicationViewModel.overwritten_file_path_list;
                         launchService();
@@ -119,7 +114,6 @@ public class CopyToActivity extends BaseActivity{
                         fileReplaceConfirmationDialog.show(getSupportFragmentManager(), "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-
                 }
             }
         });
@@ -217,9 +211,7 @@ public class CopyToActivity extends BaseActivity{
                     progress_bar.setVisibility(View.VISIBLE);
                     fileDuplicationViewModel.checkForExistingFileWithSameName("",FileObjectType.SEARCH_LIBRARY_TYPE,folderclickselected,destFileObjectType,file_name_list,false,false,data_list);
                 }
-
             }
-
         });
 
         cancel_button.setOnClickListener(new View.OnClickListener()
@@ -308,7 +300,6 @@ public class CopyToActivity extends BaseActivity{
         context.startActivity(intent);
         imm.hideSoftInputFromWindow(file_name_edit_text.getWindowToken(),0);
         finish();
-
     }
 
     @Override
@@ -343,7 +334,6 @@ public class CopyToActivity extends BaseActivity{
                 file_name_list.add(getFileNameOfUri(context,data));
             }
 
-
             if(savedInstanceState==null)
             {
                 if(data_list!=null && !data_list.isEmpty())
@@ -352,10 +342,8 @@ public class CopyToActivity extends BaseActivity{
                         String f_name=file_name_list.get(0);
                         file_name_edit_text.setText(f_name==null ? "" : f_name);
                     }
-
                     browse_button.callOnClick();
                 }
-
             }
         }
     }
@@ -382,7 +370,6 @@ public class CopyToActivity extends BaseActivity{
     @Override
     protected void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         getWindow().setLayout(Global.DIALOG_WIDTH, AbsListView.LayoutParams.WRAP_CONTENT);
     }
@@ -390,7 +377,6 @@ public class CopyToActivity extends BaseActivity{
     @Override
     protected void onStart()
     {
-        // TODO: Implement this method
         super.onStart();
         if(first_start)
         {
@@ -399,7 +385,6 @@ public class CopyToActivity extends BaseActivity{
         else {
             clear_cache=true;
         }
-
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
@@ -421,7 +406,6 @@ public class CopyToActivity extends BaseActivity{
     {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
     }
-
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -477,7 +461,6 @@ public class CopyToActivity extends BaseActivity{
             }
         }
         return true;
-
     }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -493,5 +476,4 @@ public class CopyToActivity extends BaseActivity{
             }
         }
     });
-
 }

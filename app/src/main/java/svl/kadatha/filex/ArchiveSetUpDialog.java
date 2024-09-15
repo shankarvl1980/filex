@@ -40,6 +40,8 @@ import java.util.List;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.asynctasks.ArchiveAsyncTask;
 import svl.kadatha.filex.asynctasks.UnarchiveAsyncTask;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 
 
 public class ArchiveSetUpDialog extends DialogFragment
@@ -204,7 +206,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 						Global.print(context,getString(R.string.maximum_3_services_processed));
 						return;
 					}
-
 
 					final Bundle bundle=new Bundle();
 					bundle.putStringArrayList("files_selected_array", viewModel.files_selected_array);
@@ -382,16 +383,16 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 
-//						if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-//						{
-//							Global.print(context,getString(R.string.not_supported));
-//							return;
-//						}
+						if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
+						{
+							Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+							return;
+						}
+
 						progress_bar.setVisibility(View.VISIBLE);
 						String archivedestfolder=rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 						viewModel.removeRecursiveFiles(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
 					}
-
 				});
 				break;
 			}
@@ -405,7 +406,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				zip_file_edittext.setSelection(zip_file_edittext.getText().length());
 				okbutton.setOnClickListener(new View.OnClickListener()
 				{
-
 					public void onClick(View v) {
 						if(progress_bar.getVisibility()==View.VISIBLE)
 						{
@@ -416,6 +416,11 @@ public class ArchiveSetUpDialog extends DialogFragment
 						if(destFileObjectType==FileObjectType.USB_TYPE || destFileObjectType==FileObjectType.FTP_TYPE)
 						{
 							Global.print(context,getString(R.string.not_supported));
+							return;
+						}
+						if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null,destFileObjectType))
+						{
+							Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
 							return;
 						}
 						String zip_output_folder = zip_file_edittext.getText().toString().trim();
@@ -458,7 +463,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 
-
 						emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if (emptyService == null) {
 							Global.print(context,getString(R.string.maximum_3_services_processed));
@@ -489,7 +493,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 				});
 				break;
 			}
-
 		}
 
 		cancelbutton.setOnClickListener(new View.OnClickListener()
@@ -558,55 +561,54 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 	public static boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType, List<FilePOJO> filePOJOs)
 	{
-
-		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-		{
-			return new File(file_path).isDirectory();
-		}
-		else  if(fileObjectType==FileObjectType.USB_TYPE)
-		{
-			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-			if(usbFile==null)
-			{
-				return false;
-			}
-			else {
-				return usbFile.isDirectory();
-			}
-
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
-			File f=new File(file_path);
-			String file_name=f.getName();
-			if(filePOJOs!=null)
-			{
-				if(filePOJOs.isEmpty())return true; //folder is blank, so folder can be created
-				for(FilePOJO filePOJO:filePOJOs)
-				{
-					if(filePOJO.getName().equals(file_name))
-					{
-						return filePOJO.getIsDirectory();
-					}
-				}
-			}
-			else
-			{
-				return true;
-			}
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		FileModel fileModel= FileModelFactory.getFileModel(file_path,fileObjectType,null,null);
+		return fileModel.isDirectory();
+//		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+//		{
+//			return new File(file_path).isDirectory();
+//		}
+//		else  if(fileObjectType==FileObjectType.USB_TYPE)
+//		{
+//			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+//			if(usbFile==null)
+//			{
+//				return false;
+//			}
+//			else {
+//				return usbFile.isDirectory();
+//			}
+//
+//		}
+//		else if(fileObjectType==FileObjectType.FTP_TYPE)
+//		{
+//			File f=new File(file_path);
+//			String file_name=f.getName();
+//			if(filePOJOs!=null)
+//			{
+//				if(filePOJOs.isEmpty())return true; //folder is blank, so folder can be created
+//				for(FilePOJO filePOJO:filePOJOs)
+//				{
+//					if(filePOJO.getName().equals(file_name))
+//					{
+//						return filePOJO.getIsDirectory();
+//					}
+//				}
+//			}
+//			else
+//			{
+//				return true;
+//			}
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
 	}
-
 
 	@Override
 	public void onResume()
 	{
-		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
@@ -627,5 +629,4 @@ public class ArchiveSetUpDialog extends DialogFragment
 			}
 		}
 	});
-
 }

@@ -107,7 +107,7 @@ public class JavaFileModel implements FileModel {
     public boolean delete() {
        if(writeable)
        {
-           return file.delete();
+           return FileUtil.deleteNativeDirectory(file);
        }
        else {
            return FileUtil.deleteSAFDirectory(App.getAppContext(),path,uri,uri_path);

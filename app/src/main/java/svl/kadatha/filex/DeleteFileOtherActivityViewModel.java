@@ -11,20 +11,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
-import timber.log.Timber;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 
 public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
     private final Application application;
     private boolean isCancelled;
     private Future<?> future1,future2,future3;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    private boolean isFromInternal;
     public List<FilePOJO> deleted_files;
     public List<String> deleted_file_name_list;
     public List<String> deleted_file_path_list;
@@ -36,7 +33,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         super(application);
         this.application=application;
     }
-
 
     @Override
     protected void onCleared() {
@@ -57,7 +53,8 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public synchronized void deleteFilePOJO(String source_folder,List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path,String media_category)
+
+    public synchronized void deleteFilePOJO(String source_folder,List<FilePOJO> src_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -66,185 +63,51 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-
                 deleted_files=new ArrayList<>();
                 deleted_file_name_list=new ArrayList<>();
                 deleted_file_path_list=new ArrayList<>();
-                if(fileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    isFromInternal=FileUtil.isFromInternal(fileObjectType,src_file_list.get(0).getPath());
-                }
                 deleteFromFolder(src_file_list,fileObjectType,tree_uri,tree_uri_path);
                 if(!deleted_files.isEmpty())
                 {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
                     Global.print_background_thread(application,application.getString(R.string.deleted_file));
                 }
                 else
                 {
                     Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
                 }
-                if(!deleted_files.isEmpty())
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),"");
-                }
+
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-
-    private boolean deleteFromFolder(List<FilePOJO> src_file_list, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+    private void deleteFromFolder(List<FilePOJO> src_file_list, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
     {
-        boolean success=false;
+        boolean success;
         int size=src_file_list.size();
         String current_file_name;
-        if(fileObjectType==FileObjectType.FILE_TYPE)
-        {
-            if(isFromInternal)
-            {
-                for(int i=0;i<size;++i)
-                {
-                    if(isCancelled())
-                    {
-                        return false;
-                    }
-                    FilePOJO filePOJO=src_file_list.get(i);
-                    File f=new File(filePOJO.getPath());
-                    current_file_name=f.getName();
-                    success=FileUtil.deleteNativeDirectory(f);
-                    if(success)
-                    {
-                        deleted_files.add(filePOJO);
-                        deleted_file_name_list.add(current_file_name);
-                        deleted_file_path_list.add(filePOJO.getPath());
-                    }
-                }
-            }
-            else
-            {
-                if(tree_uri==null || tree_uri_path== null) return false;
-                for(int i=0;i<size;++i)
-                {
-                    if(isCancelled())
-                    {
-                        return false;
-                    }
-                    FilePOJO filePOJO=src_file_list.get(i);
-                    File file=new File(filePOJO.getPath());
-                    current_file_name=file.getName();
-                    success=FileUtil.deleteSAFDirectory(application,file.getAbsolutePath(),tree_uri,tree_uri_path);
-                    if(success)
-                    {
-                        deleted_files.add(filePOJO);
-                        deleted_file_name_list.add(current_file_name);
-                        deleted_file_path_list.add(filePOJO.getPath());
-                    }
-                }
-            }
-        }
-        else if(fileObjectType==FileObjectType.USB_TYPE)
-        {
-//            for(int i=0;i<size;++i)
-//            {
-//                if(isCancelled())
-//                {
-//                    return false;
-//                }
-//                FilePOJO filePOJO=src_file_list.get(i);
-//                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
-//                if(f==null) return false;
-//                current_file_name=f.getName();
-//                success=FileUtil.deleteUsbDirectory(f);
-//                if(success)
-//                {
-//                    deleted_files.add(filePOJO);
-//                    deleted_file_name_list.add(current_file_name);
-//                    deleted_file_path_list.add(filePOJO.getPath());
-//                }
-//
-//            }
-        }
 
-        return success;
+        for(int i=0;i<size;++i)
+        {
+            if(isCancelled())
+            {
+                return;
+            }
+            FilePOJO filePOJO=src_file_list.get(i);
+            File f=new File(filePOJO.getPath());
+            current_file_name=f.getName();
+            FileModel fileModel= FileModelFactory.getFileModel(filePOJO.getPath(),fileObjectType,tree_uri,tree_uri_path);
+            success=fileModel.delete();
+            if(success)
+            {
+                deleted_files.add(filePOJO);
+                deleted_file_name_list.add(current_file_name);
+                deleted_file_path_list.add(filePOJO.getPath());
+            }
+        }
     }
-
-//    private boolean deleteFileModelArray(FileModel[] sourceFileModels, List<String> deleted_file_names, List<String> deleted_files_path_list) {
-//        boolean success = false;
-//        int size = sourceFileModels.length;
-//        for (int i = 0; i < size; ++i) {
-//            if (isCancelled()) {
-//                return false;
-//            }
-//
-//            FileModel fileModel = sourceFileModels[i];
-//            String file_path = fileModel.getPath();
-//            current_file_name = fileModel.getName();
-//            success = deleteFileModel(fileModel);
-//
-//            if (success) {
-//                deleted_file_names.add(current_file_name);
-//                deleted_files_path_list.add(file_path);
-//            }
-//        }
-//        return success;
-//    }
-//
-//    public boolean deleteFileModel(final FileModel fileModel) {
-//        Timber.tag("DeleteFileModel").d("Starting deletion of: " + fileModel.getPath());
-//        Stack<FileModel> stack = new Stack<>();
-//        stack.push(fileModel);
-//
-//        boolean success = true;
-//
-//        while (!stack.isEmpty()) {
-//            if (isCancelled()) {
-//                Timber.tag("DeleteFileModel").d("Operation cancelled");
-//                return false;
-//            }
-//
-//            FileModel currentFile = stack.peek();  // Peek instead of pop
-//            Timber.tag("DeleteFileModel").d("Processing: " + currentFile.getPath());
-//
-//            if (currentFile.isDirectory()) {
-//                Timber.tag("DeleteFileModel").d("This is found to be directory: " + currentFile.getPath());
-//                FileModel[] list = currentFile.list();
-//                if (list == null || list.length == 0) {
-//                    // Directory is empty or can't be read, try to delete it
-//                    stack.pop();
-//                    Timber.tag("DeleteFileModel").d("Attempting to delete empty directory: " + currentFile.getPath());
-//                    boolean deleteResult = deleteFile(currentFile);
-//                    success &= deleteResult;
-//                    Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
-//                } else {
-//                    // Add children to the stack
-//                    Timber.tag("DeleteFileModel").d("Adding " + list.length + " children to stack for: " + currentFile.getPath());
-//                    for (FileModel child : list) {
-//                        stack.push(child);
-//                    }
-//                }
-//            } else {
-//                // It's a file, pop and delete it
-//                stack.pop();
-//                Timber.tag("DeleteFileModel").d("Attempting to delete file: " + currentFile.getPath());
-//                boolean deleteResult = deleteFile(currentFile);
-//                success &= deleteResult;
-//                Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
-//            }
-//        }
-//
-//        Timber.tag("DeleteFileModel").d("Deletion process completed. Overall success: " + success);
-//        return success;
-//    }
-//
-//    private boolean deleteFile(FileModel file) {
-//        counter_no_files++;
-//        counter_size_files += (!file.isDirectory()) ? file.getLength() : 0;
-//        deleted_file_name = file.getName();
-//        publishProgress(null);
-//        return file.delete();
-//    }
-
 
 
     public synchronized void deleteAudioPOJO(String source_folder,List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
@@ -259,102 +122,45 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 deleted_audio_files=new ArrayList<>();
                 deleted_file_name_list=new ArrayList<>();
                 deleted_file_path_list=new ArrayList<>();
-                if(fileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    isFromInternal=FileUtil.isFromInternal(fileObjectType,src_audio_file_list.get(0).getData());
-                }
+
                 deleteAudioPOJOFromFolder(src_audio_file_list,fileObjectType,tree_uri,tree_uri_path);
                 if(!deleted_audio_files.isEmpty())
                 {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
                     Global.print_background_thread(application,application.getString(R.string.deleted_audio_file));
                 }
                 else
                 {
                     Global.print_background_thread(application,application.getString(R.string.could_not_delete_file));
                 }
-                if(!deleted_audio_files.isEmpty())
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,deleted_file_name_list,fileObjectType);
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application),AudioPlayerActivity.ACTIVITY_NAME);
-                }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    private boolean deleteAudioPOJOFromFolder(List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
+    private void deleteAudioPOJOFromFolder(List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path)
     {
-        boolean success=false;
+        boolean success;
         int size=src_audio_file_list.size();
         String current_file_name;
-        if(fileObjectType==FileObjectType.FILE_TYPE)
-        {
-            if(isFromInternal)
-            {
-                for(int i=0;i<size;++i)
-                {
-                    if(isCancelled())
-                    {
-                        return false;
-                    }
-                    AudioPOJO audioPOJO=src_audio_file_list.get(i);
-                    File f=new File(audioPOJO.getData());
-                    current_file_name=f.getName();
-                    success=FileUtil.deleteNativeDirectory(f);
-                    if(success)
-                    {
-                        deleted_audio_files.add(audioPOJO);
-                        deleted_file_name_list.add(current_file_name);
-                        deleted_file_path_list.add(audioPOJO.getData());
-                    }
-                }
-            }
-            else
-            {
-                if(tree_uri==null || tree_uri_path== null) return false;
-                for(int i=0;i<size;++i)
-                {
-                    if(isCancelled())
-                    {
-                        return false;
-                    }
-                    AudioPOJO audioPOJO=src_audio_file_list.get(i);
-                    File file=new File(audioPOJO.getData());
-                    current_file_name=file.getName();
-                    success=FileUtil.deleteSAFDirectory(application,file.getAbsolutePath(),tree_uri,tree_uri_path);
-                    if(success)
-                    {
-                        deleted_audio_files.add(audioPOJO);
-                        deleted_file_name_list.add(current_file_name);
-                        deleted_file_path_list.add(audioPOJO.getData());
-                    }
-                }
 
+        for(int i=0;i<size;++i)
+        {
+            if(isCancelled())
+            {
+                return;
+            }
+            AudioPOJO audioPOJO=src_audio_file_list.get(i);
+            FileModel fileModel=FileModelFactory.getFileModel(audioPOJO.getData(),fileObjectType,tree_uri,tree_uri_path);
+            current_file_name=fileModel.getName();
+            success=fileModel.delete();
+            if(success)
+            {
+                deleted_audio_files.add(audioPOJO);
+                deleted_file_name_list.add(current_file_name);
+                deleted_file_path_list.add(audioPOJO.getData());
             }
         }
-        else if(fileObjectType==FileObjectType.USB_TYPE)
-        {
-//            for(int i=0;i<size;++i)
-//            {
-//                if(isCancelled())
-//                {
-//                    return false;
-//                }
-//                AudioPOJO audioPOJO=src_audio_file_list.get(i);
-//                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,audioPOJO.getData());
-//                if(f==null)return false;
-//                current_file_name=f.getName();
-//                success=FileUtil.deleteUsbDirectory(f);
-//                if(success)
-//                {
-//                    deleted_audio_files.add(audioPOJO);
-//                    deleted_file_name_list.add(current_file_name);
-//                    deleted_file_path_list.add(audioPOJO.getData());
-//                }
-//            }
-        }
-
-        return success;
     }
-
 }

@@ -268,8 +268,6 @@ public class FtpFileModel implements FileModel {
     }
 
 
-
-
     @Override
     public long getLength() {
         Timber.tag(TAG).d("getLength() called, but always returns 0 for FTP files");

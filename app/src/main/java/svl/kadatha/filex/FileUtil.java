@@ -43,14 +43,11 @@ import timber.log.Timber;
 	 */
 public final class FileUtil
 {
-
 	private static final String PRIMARY_VOLUME_NAME = "primary";
 	public final static int BUFFER_SIZE=8192;
 	public static int USB_CHUNK_SIZE;
 	private static final String TAG = "Ftp-FileUtil";
-	/**
-	 * Hide default constructor.
-	 */
+
 	private FileUtil()
 	{
 		throw new UnsupportedOperationException();
@@ -147,7 +144,6 @@ public final class FileUtil
 			else{
 				return mime_type.equals(DocumentsContract.Document.MIME_TYPE_DIR);
 			}
-
 		}
 		return false;
 	}
@@ -225,7 +221,6 @@ public final class FileUtil
 				}
 			}
 		}
-
 		return success;
 	}
 
@@ -250,7 +245,6 @@ public final class FileUtil
 			if (cut) {
 				sourceFileModel.delete();
 			}
-
 			success = true;
 		} catch (Exception e) {
 			Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
@@ -273,7 +267,6 @@ public final class FileUtil
 				}
 			}
 		}
-
 		return success;
 	}
 
@@ -360,7 +353,6 @@ public final class FileUtil
 			{
 				return false;
 			}
-
 		}
 		catch (Exception e) 
 		{
@@ -376,7 +368,6 @@ public final class FileUtil
 			{
 				// ignore exception
 			}
-
 		}
 		return true;
 	}
@@ -389,7 +380,6 @@ public final class FileUtil
 		{
 			usbFile=rootUsbFile.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
 		}
-
 		catch (IOException | ConcurrentModificationException e)
 		{
 			return usbFile;
@@ -653,7 +643,7 @@ public final class FileUtil
 		}
 		catch (IOException ioe)
 		{
-			//Timber.e(Application.TAG, "Could not get SD directory", ioe);
+			Timber.tag(TAG).e("Could not get SD directory - %s", ioe);
 		}
 		return sdCardDirectory;
 	}
@@ -677,9 +667,9 @@ public final class FileUtil
 						// Keep non-canonical path.
 					}
 					paths.add(path);
-				} //else {
-					//.Timber.w(Application.TAG, "Unexpected external file dir: " + file.getAbsolutePath());
-				//}
+				} else {
+					Timber.tag(TAG).w("Unexpected external file dir: %s", file.getAbsolutePath());
+				}
 			}
 		}
 		return paths.toArray(new String[0]);
