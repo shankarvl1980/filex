@@ -561,49 +561,31 @@ public class ArchiveSetUpDialog extends DialogFragment
 
 	public static boolean isFilePathDirectory(String file_path, FileObjectType fileObjectType, List<FilePOJO> filePOJOs)
 	{
-		FileModel fileModel= FileModelFactory.getFileModel(file_path,fileObjectType,null,null);
-		return fileModel.isDirectory();
-//		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-//		{
-//			return new File(file_path).isDirectory();
-//		}
-//		else  if(fileObjectType==FileObjectType.USB_TYPE)
-//		{
-//			UsbFile usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-//			if(usbFile==null)
-//			{
-//				return false;
-//			}
-//			else {
-//				return usbFile.isDirectory();
-//			}
-//
-//		}
-//		else if(fileObjectType==FileObjectType.FTP_TYPE)
-//		{
-//			File f=new File(file_path);
-//			String file_name=f.getName();
-//			if(filePOJOs!=null)
-//			{
-//				if(filePOJOs.isEmpty())return true; //folder is blank, so folder can be created
-//				for(FilePOJO filePOJO:filePOJOs)
-//				{
-//					if(filePOJO.getName().equals(file_name))
-//					{
-//						return filePOJO.getIsDirectory();
-//					}
-//				}
-//			}
-//			else
-//			{
-//				return true;
-//			}
-//			return true;
-//		}
-//		else
-//		{
-//			return false;
-//		}
+		if((fileObjectType==FileObjectType.FILE_TYPE) || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
+		{
+			return new File(file_path).isDirectory();
+		}
+		else
+		{
+			File f=new File(file_path);
+			String file_name=f.getName();
+			if(filePOJOs!=null)
+			{
+				if(filePOJOs.isEmpty())return true; //folder is blank, so folder can be created
+				for(FilePOJO filePOJO:filePOJOs)
+				{
+					if(filePOJO.getName().equals(file_name))
+					{
+						return filePOJO.getIsDirectory();
+					}
+				}
+			}
+			else
+			{
+				return true;
+			}
+			return true;
+		}
 	}
 
 	@Override
