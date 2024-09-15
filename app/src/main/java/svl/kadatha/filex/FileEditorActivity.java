@@ -58,7 +58,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private List<FilePOJO> files_selected_for_delete;
 	private String tree_uri_path="";
 	private Uri tree_uri;
-	//EditText filetext_container_edittext;
 	LineNumberedEditText filetext_container_edittext;
 	private Button edit_button,undo_button,redo_button,save_button,up_button,down_button;
 	static boolean NOT_WRAP=true;
@@ -384,9 +383,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								}
 							}
 						}
-
 					}
-
+					viewModel.initializedSetUp.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
 			}
 		});
@@ -443,8 +441,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					filetext_container_edittext.setContent(viewModel.stringBuilder.toString(),viewModel.current_page,FileEditorViewModel.MAX_LINES_TO_DISPLAY);
 					scrollview.smoothScrollTo(0,0);
 					filetext_container_edittext.setEditable(false);
+					onClick_edit_button();
 					viewModel.textViewUndoRedo.startListening();
-					viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+
 				}
 			}
 		});
@@ -541,7 +540,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			on_intent(intent, savedInstanceState);
 		}
 
-		onClick_edit_button();
+
 		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
 			@Override
 			public void handleOnBackPressed() {
@@ -691,6 +690,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(viewModel.data, "r");
 			FileDescriptor fd = pfd.getFileDescriptor();
 			progress_bar.setVisibility(View.VISIBLE);
+			viewModel.isReadingFinished.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 			viewModel.openFile(new FileInputStream(fd), pointer,pageNumber);
 			return true;
 		} catch (FileNotFoundException e) {
@@ -849,7 +849,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		}
 		else if(!FileSaveService1.SERVICE_COMPLETED || !FileSaveService2.SERVICE_COMPLETED || !FileSaveService3.SERVICE_COMPLETED)
 		{
-			//Global.print(context,"here stuck");
 			Global.print(context,getString(R.string.please_wait));
 		}
 		else if(!viewModel.updated)
@@ -901,6 +900,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	{
 		if(!viewModel.file_format_supported)
 		{
+			save_button.setEnabled(false);
+			setAlfaFileEditMenuItem();
 			return;
 		}
 
