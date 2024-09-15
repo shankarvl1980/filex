@@ -146,25 +146,25 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
         {
-            for(int i=0;i<size;++i)
-            {
-                if(isCancelled())
-                {
-                    return false;
-                }
-                FilePOJO filePOJO=src_file_list.get(i);
-                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
-                if(f==null) return false;
-                current_file_name=f.getName();
-                success=FileUtil.deleteUsbDirectory(f);
-                if(success)
-                {
-                    deleted_files.add(filePOJO);
-                    deleted_file_name_list.add(current_file_name);
-                    deleted_file_path_list.add(filePOJO.getPath());
-                }
-
-            }
+//            for(int i=0;i<size;++i)
+//            {
+//                if(isCancelled())
+//                {
+//                    return false;
+//                }
+//                FilePOJO filePOJO=src_file_list.get(i);
+//                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,filePOJO.getPath());
+//                if(f==null) return false;
+//                current_file_name=f.getName();
+//                success=FileUtil.deleteUsbDirectory(f);
+//                if(success)
+//                {
+//                    deleted_files.add(filePOJO);
+//                    deleted_file_name_list.add(current_file_name);
+//                    deleted_file_path_list.add(filePOJO.getPath());
+//                }
+//
+//            }
         }
 
         return success;
@@ -258,24 +258,24 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
         {
-            for(int i=0;i<size;++i)
-            {
-                if(isCancelled())
-                {
-                    return false;
-                }
-                AudioPOJO audioPOJO=src_audio_file_list.get(i);
-                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,audioPOJO.getData());
-                if(f==null)return false;
-                current_file_name=f.getName();
-                success=FileUtil.deleteUsbDirectory(f);
-                if(success)
-                {
-                    deleted_audio_files.add(audioPOJO);
-                    deleted_file_name_list.add(current_file_name);
-                    deleted_file_path_list.add(audioPOJO.getData());
-                }
-            }
+//            for(int i=0;i<size;++i)
+//            {
+//                if(isCancelled())
+//                {
+//                    return false;
+//                }
+//                AudioPOJO audioPOJO=src_audio_file_list.get(i);
+//                UsbFile f=FileUtil.getUsbFile(MainActivity.usbFileRoot,audioPOJO.getData());
+//                if(f==null)return false;
+//                current_file_name=f.getName();
+//                success=FileUtil.deleteUsbDirectory(f);
+//                if(success)
+//                {
+//                    deleted_audio_files.add(audioPOJO);
+//                    deleted_file_name_list.add(current_file_name);
+//                    deleted_file_path_list.add(audioPOJO.getData());
+//                }
+//            }
         }
 
         return success;

@@ -92,7 +92,6 @@ public final class FileUtil
 
 	public static String getDocumentID(String file_path,@NonNull Uri tree_uri, @NonNull String tree_uri_path)
 	{
-
 		String relativePath="";
 		if(!file_path.equals(tree_uri_path))
 		{
@@ -135,7 +134,6 @@ public final class FileUtil
 
 	public static boolean isDirectoryUri(Context context, @NonNull Uri uri)
 	{
-
 		String mime_type;
 		Cursor cursor=context.getContentResolver().query(uri,new String[] {DocumentsContract.Document.COLUMN_MIME_TYPE},null,null,null);
 		if(cursor!=null)
@@ -318,7 +316,6 @@ public final class FileUtil
                 }
 			}
 		}
-
     }
 
 
@@ -332,11 +329,9 @@ public final class FileUtil
 				deleteNativeFile(source);
 			}
 
-
 		} catch (Exception e) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -386,43 +381,6 @@ public final class FileUtil
 		return true;
 	}
 
-
-	public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
-	{
-		String string="abcdefghijklmnopqrstuvwxyz";
-		OutputStream outStream=null;
-		try
-		{
-			UsbFile targetUsbFile=  getUsbFile(MainActivity.usbFileRoot,target_file_path);
-			if (targetUsbFile != null)
-			{
-				outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
-				outStream.write(string.getBytes(StandardCharsets.UTF_8));
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			try
-			{
-				if(outStream!=null)outStream.close();
-			}
-			catch (Exception e)
-			{
-				// ignore exception
-			}
-
-		}
-		return true;
-	}
 	public static UsbFile getUsbFile(UsbFile rootUsbFile,String file_path)
 	{
 		if(rootUsbFile==null) return null;
@@ -439,55 +397,6 @@ public final class FileUtil
 		return usbFile;
 	}
 
-	public static boolean isFtpFileExists(String file_path) {
-		Timber.tag(TAG).d("Checking if FTP file exists: %s", file_path);
-		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-		FTPClient ftpClient=null;
-		try {
-			ftpClient = ftpClientRepository.getFtpClient();
-
-			String parentDir = new File(file_path).getParent();
-			String fileName = new File(file_path).getName();
-
-			FTPFileFilter filter = ftpFile -> ftpFile.getName().equals(fileName);
-
-			FTPFile[] files = ftpClient.listFiles(parentDir, filter);
-
-			boolean exists = files.length > 0;
-
-			Timber.tag(TAG).d("FTP file exists result: %b for path: %s", exists, file_path);
-			return exists;
-		} catch (IOException e) {
-			Timber.tag(TAG).e("Error checking if FTP file exists: %s", e.getMessage());
-			return false;
-		}
-		finally {
-			if (ftpClientRepository != null && ftpClient != null) {
-				ftpClientRepository.releaseFtpClient(ftpClient);
-				Timber.tag(TAG).d("FTP client released");
-			}
-		}
-	}
-
-	public static boolean isFtpPathDirectory(String filePath) {
-		Timber.tag(TAG).d("Checking if FTP path is directory: %s", filePath);
-		FtpClientRepository ftpClientRepository = null;
-		FTPClient ftpClient = null;
-		try {
-			ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-			ftpClient = ftpClientRepository.getFtpClient();
-			boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
-			Timber.tag(TAG).d("FTP path is directory result: %b for path: %s", isDirectory, filePath);
-			return isDirectory;
-		} catch (IOException e) {
-			Timber.tag(TAG).e("Error checking if FTP path is directory: %s", e.getMessage());
-			return false;
-		} finally {
-			if (ftpClientRepository != null && ftpClient != null) {
-				ftpClientRepository.releaseFtpClient(ftpClient);
-			}
-		}
-	}
 
 	public static FTPFile getFtpFile(FTPClient ftpClient, String file_path) {
 		Timber.tag(TAG).d("Getting FTP file from other FTP client: %s", file_path);
@@ -512,68 +421,6 @@ public final class FileUtil
 		return null;
 	}
 
-	public static boolean renameUsbFile(UsbFile usbFile,String new_name)
-	{
-		if(usbFile==null) return false;
-		try {
-			usbFile.setName(new_name);
-			return true;
-
-		} catch (IOException e) {
-			return false;
-		}
-	}
-
-	public static boolean mkdirUsb(UsbFile parentUsbFile, String name)
-	{
-		if(parentUsbFile==null) return false;
-		try {
-			parentUsbFile.createDirectory(name);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
-
-	public static boolean mkdirFtp(String file_path) {
-		Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
-		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-		FTPClient ftpClient=null;
-		try {
-
-			boolean dirExists = FileUtil.isFtpPathDirectory(file_path);
-			if (dirExists) {
-				Timber.tag(TAG).d("FTP directory already exists: %s", file_path);
-				return true;
-			} else {
-				ftpClient = ftpClientRepository.getFtpClient();
-				boolean success = ftpClient.makeDirectory(file_path);
-				Timber.tag(TAG).d("FTP directory creation result: %b for path: %s", success, file_path);
-				return success;
-			}
-		} catch (IOException e) {
-			Timber.tag(TAG).e("Error creating FTP directory: %s", e.getMessage());
-			return false;
-		}
-		finally {
-			if (ftpClientRepository != null && ftpClient != null) {
-				ftpClientRepository.releaseFtpClient(ftpClient);
-				Timber.tag(TAG).d("FTP client released");
-			}
-		}
-	}
-
-
-	public static boolean createUsbFile(UsbFile parentUsbFile,String name)
-	{
-		if(parentUsbFile==null) return false;
-		try {
-			parentUsbFile.createFile(name);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
 
 	private static boolean deleteNativeFile(@NonNull final File file)
 	{
@@ -594,32 +441,6 @@ public final class FileUtil
 		} catch (FileNotFoundException | IllegalArgumentException e) {
 			return false;
 		}
-	}
-
-	public static boolean deleteUsbFile(UsbFile usbFile)
-	{
-		if(usbFile==null) return false;
-		try {
-			if(!usbFile.isDirectory() && usbFile.getLength()==0)
-			{
-				boolean madeNonZero=FileUtil.make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
-				if(madeNonZero)
-				{
-					usbFile.delete();
-					return true;
-				}
-			}
-			else
-			{
-				usbFile.delete();
-				return true;
-			}
-
-
-		} catch (IOException e) {
-			return false;
-		}
-		return false;
 	}
 
 	public static boolean deleteFileModel(final FileModel fileModel) {
@@ -670,7 +491,6 @@ public final class FileUtil
 
 		return success;
 	}
-
 
 
 	public static boolean deleteNativeDirectory(final File folder) {
@@ -773,280 +593,14 @@ public final class FileUtil
 		return success;
 	}
 
-	public static boolean deleteUsbDirectory(final UsbFile folder) {
-		if (folder == null) {
-			return false;
-		}
 
-		Stack<UsbFile> stack = new Stack<>();
-		stack.push(folder);
-		boolean success = true;
-
-		while (!stack.isEmpty() && success) {
-			UsbFile current = stack.pop();
-
-			if (current.isDirectory()) {
-				UsbFile[] list = new UsbFile[0];
-				try {
-					list = current.listFiles();
-				} catch (IOException e) {
-					System.err.println("Error listing files: " + e.getMessage());
-					success = false;
-					continue;
-				}
-
-				if (list != null && list.length > 0) {
-					// Push the current directory back onto the stack
-					stack.push(current);
-					// Push all children onto the stack
-					for (UsbFile child : list) {
-						stack.push(child);
-					}
-				} else {
-					// Empty directory, try to delete it
-					success = deleteUsbFile(current);
-					if (!success) {
-						System.err.println("Failed to delete directory: " + current.getName());
-					}
-				}
-			} else {
-				// It's a file, try to delete it
-				success = deleteUsbFile(current);
-				if (!success) {
-					System.err.println("Failed to delete file: " + current.getName());
-				}
-			}
-		}
-
-		// If the original folder still exists (it was not empty initially),
-		// we need to delete it now
-		if (success && folder.isDirectory()) {
-			success = deleteUsbFile(folder);
-			if (!success) {
-				System.err.println("Failed to delete root folder: " + folder.getName());
-			}
-		}
-
-		return success;
-	}
-
-
-	public static boolean deleteFtpDirectory(final String file_path) {
-		Timber.tag(TAG).d("Attempting to delete FTP directory: %s", file_path);
-		FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-		FTPClient ftpClient = null;
-		boolean success = true;
-
-		try {
-			ftpClient = ftpClientRepository.getFtpClient();
-			if (ftpClient == null) {
-				throw new IllegalStateException("Failed to obtain FTP client");
-			}
-
-			Stack<String> stack = new Stack<>();
-			stack.push(file_path);
-
-			while (!stack.isEmpty() && success) {
-				String currentPath = stack.pop();
-
-				if (FileUtil.isFtpPathDirectory(currentPath)) {
-					String[] list = ftpClient.listNames(currentPath);
-					if (list != null && list.length > 0) {
-						for (String item : list) {
-							stack.push(item);
-						}
-					} else {
-						success = ftpClient.removeDirectory(currentPath);
-					}
-				} else {
-					success = ftpClient.deleteFile(currentPath);
-				}
-
-				if (!success) {
-					Timber.tag(TAG).e("Failed to delete: %s", currentPath);
-				}
-			}
-
-			// If the original path was a directory and all contents were successfully deleted, delete the directory itself
-			if (success && FileUtil.isFtpPathDirectory(file_path)) {
-				success = ftpClient.removeDirectory(file_path);
-			}
-
-			Timber.tag(TAG).d("FTP directory deletion result: %b for path: %s", success, file_path);
-		} catch (IOException e) {
-			Timber.tag(TAG).e("Error deleting FTP directory: %s", e.getMessage());
-			success = false;
-		} catch (IllegalStateException e) {
-			Timber.tag(TAG).e("Failed to obtain FTP client: %s", e.getMessage());
-			success = false;
-		} finally {
-			if (ftpClientRepository != null && ftpClient != null) {
-				ftpClientRepository.releaseFtpClient(ftpClient);
-				Timber.tag(TAG).d("FTP client released");
-			}
-		}
-		return success;
-	}
-
-	public static boolean renameNativeFile(@NonNull final File source, @NonNull final File target)
-	{
-		if (source.renameTo(target)) return true;
-
-		if (target.exists()) return false;
-
-		return false;
-	}
-
-
-	public static boolean renameSAFFile(Context context, String target_file_path, String new_name, Uri tree_uri, String tree_uri_path)
-	{
-		Uri uri = getDocumentUri(target_file_path,tree_uri,tree_uri_path);
-		try {
-			uri=DocumentsContract.renameDocument(context.getContentResolver(),uri,new_name);
-		} catch (FileNotFoundException e) {
-
-		}
-		return uri!=null;
-	}
-
-
-	public static boolean createNativeNewFile(@NonNull final File file) 
-	{
-		if (file.exists()) 
-		{
-			return false;
-		}
-
-		try
-		{
-			if (file.createNewFile()) 
-			{
-				return true;
-			}
-		}
-		catch(IOException e)
-		{
-
-		}
-
-		return false;
-	}
-
-
-	public static boolean createSAFNewFile(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path)
-	{
-		Uri uri = createDocumentUri(context, target_file_path,name,false,tree_uri,tree_uri_path);
-		return uri != null;
-
-	}
-
-	public static boolean mkdirNative(@NonNull final File file)
-	{
-		if (file.exists())
-		{
-			return true;
-		}
-
-		return file.mkdir();
-	}
 	public static boolean mkdirsNative(@NonNull final File file)
 	{
 		if (file.exists())
 		{
 			return file.isDirectory();
 		}
-
 		return file.mkdirs();
-	}
-
-	public static boolean mkdirSAF(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path)
-	{
-		Uri uri=createDocumentUri(context,target_file_path,name, true,tree_uri,tree_uri_path);
-		return uri!=null;
-
-	}
-	public static boolean mkdirsSAFFile(Context context, String parent_file_path, @NonNull String path, Uri tree_uri, String tree_uri_path)
-	{
-		boolean success=true;
-		String [] file_path_substring=path.split("/");
-		int size=file_path_substring.length;
-		for (int i=0; i<size;++i)
-		{
-			String path_string=file_path_substring[i];
-			if(!path_string.equals(""))
-			{
-				if(!new File(parent_file_path,path_string).exists())
-				{
-					success=mkdirSAF(context,parent_file_path,path_string,tree_uri,tree_uri_path);
-
-				}
-				parent_file_path+=File.separator+path_string;
-				if(!success)
-				{
-					return false;
-				}
-			}
-
-		}
-		return success;
-	}
-
-	public static boolean mkdirsUsb(String parent_file_path, @NonNull String path)
-	{
-		boolean success=true;
-		UsbFile parentUsbFile=getUsbFile(MainActivity.usbFileRoot,parent_file_path);
-		if(parentUsbFile==null)
-		{
-			return false;
-
-		}
-		String [] path_substring=path.split("/");
-		int size=path_substring.length;
-		for (int i=0; i<size;++i)
-		{
-			String path_string=path_substring[i];
-			if(!path_string.equals(""))
-			{
-				UsbFile usbFile;
-				if((usbFile=getUsbFile(parentUsbFile,path_string))==null)
-				{
-					success=mkdirUsb(parentUsbFile,path_string);
-					parentUsbFile=getUsbFile(parentUsbFile,path_string);
-				}
-				else
-				{
-					parentUsbFile=usbFile;
-				}
-
-				if(!success)
-				{
-					return false;
-				}
-			}
-
-		}
-		return success;
-	}
-
-	public static boolean mkdirsFTP(String parent_file_path, @NonNull String path) {
-		Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", path, parent_file_path);
-		boolean success = true;
-		String[] file_path_substring = path.split("/");
-		int size = file_path_substring.length;
-		for (int i = 0; i < size; ++i) {
-			String path_string = file_path_substring[i];
-			if (!path_string.equals("")) {
-				String new_dir_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, path_string);
-				success = mkdirFtp(new_dir_path);
-				parent_file_path += File.separator + path_string;
-				if (!success) {
-					Timber.tag(TAG).w("Failed to create FTP directory: %s", new_dir_path);
-					return false;
-				}
-			}
-		}
-		Timber.tag(TAG).d("Successfully created multiple FTP directories");
-		return success;
 	}
 
 
@@ -1074,7 +628,6 @@ public final class FileUtil
 		}
 		return false;
 	}
-
 
 
 	public static boolean isWritable(FileObjectType fileObjectType,@NonNull final String file_path)

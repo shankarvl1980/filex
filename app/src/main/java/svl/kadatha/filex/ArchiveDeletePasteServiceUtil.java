@@ -541,7 +541,6 @@ public class ArchiveDeletePasteServiceUtil {
                     }
                 }
 
-
                 Global.WORKOUT_AVAILABLE_SPACE();
             }
         });

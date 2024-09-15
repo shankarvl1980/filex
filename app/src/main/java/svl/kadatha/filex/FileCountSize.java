@@ -317,6 +317,7 @@ public class FileCountSize {
         }
         Timber.tag(TAG).d("FTP file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
+
     private void populate(List<String> source_list_files, boolean include_folder) {
         Stack<String> stack = new Stack<>();
         for (String filePath : source_list_files) {

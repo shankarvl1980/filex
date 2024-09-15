@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
@@ -1069,7 +1070,7 @@ public class Global
 			if(parent_file!=null)
 			{
 				FileUtil.mkdirsNative(parent_file);
-				FileUtil.createNativeNewFile(cache_file);
+				createNativeNewFile(cache_file);
 				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
 				if(targetUsbFile!=null)
 				{
@@ -1090,6 +1091,28 @@ public class Global
 		return cache_file;
 	}
 
+	public static boolean createNativeNewFile(@NonNull final File file)
+	{
+		if (file.exists())
+		{
+			return false;
+		}
+
+		try
+		{
+			if (file.createNewFile())
+			{
+				return true;
+			}
+		}
+		catch(IOException e)
+		{
+
+		}
+
+		return false;
+	}
+
 	public static File COPY_TO_FTP_CACHE(String file_path)
 	{
 		File cache_file=new File(FTP_CACHE_DIR,file_path);
@@ -1100,7 +1123,7 @@ public class Global
 			if(parent_file!=null)
 			{
 				FileUtil.mkdirsNative(parent_file);
-				FileUtil.createNativeNewFile(cache_file);
+				createNativeNewFile(cache_file);
 				//if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForCopyView))
 				{
 					FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);

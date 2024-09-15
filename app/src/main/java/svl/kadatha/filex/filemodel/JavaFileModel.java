@@ -1,12 +1,16 @@
 package svl.kadatha.filex.filemodel;
 
+import android.content.Context;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 
 import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -70,7 +74,11 @@ public class JavaFileModel implements FileModel {
         if(writeable)
         {
             File targetFile=new File(getParentPath(),new_name);
-            return FileUtil.renameNativeFile(file, targetFile);
+            if (file.renameTo(targetFile)) return true;
+
+            if (targetFile.exists()) return false;
+
+            return false;
         }
         else {
             if(overwrite)
@@ -81,18 +89,19 @@ public class JavaFileModel implements FileModel {
                 {
                     if(FileUtil.deleteSAFDirectory(App.getAppContext(),new_file_path,uri,uri_path))
                     {
-                        return FileUtil.renameSAFFile(App.getAppContext(),path,new_name,uri,uri_path);
+                        return renameSAFFile(App.getAppContext(),path,new_name,uri,uri_path);
                     }
                 }
 
             }
             else
             {
-                return FileUtil.renameSAFFile(App.getAppContext(),path,new_name,uri,uri_path);
+                return renameSAFFile(App.getAppContext(),path,new_name,uri,uri_path);
             }
         }
         return false;
     }
+
 
     @Override
     public boolean delete() {
@@ -165,12 +174,35 @@ public class JavaFileModel implements FileModel {
         if(writeable)
         {
             File new_file=new File(path,name);
-            return FileUtil.createNativeNewFile(new_file);
+            if (new_file.exists())
+            {
+                return false;
+            }
+
+            try
+            {
+                if (new_file.createNewFile())
+                {
+                    return true;
+                }
+            }
+            catch(IOException e)
+            {
+                return false;
+            }
+            return false;
         }
         else
         {
-            return FileUtil.createSAFNewFile(App.getAppContext(),path,name,uri,uri_path);
+            return createSAFNewFile(App.getAppContext(),path,name,uri,uri_path);
         }
+    }
+
+
+    private static boolean createSAFNewFile(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path)
+    {
+        Uri uri = FileUtil.createDocumentUri(context, target_file_path,name,false,tree_uri,tree_uri_path);
+        return uri != null;
     }
 
     @Override
@@ -183,15 +215,19 @@ public class JavaFileModel implements FileModel {
         else {
             if(writeable)
             {
-                return FileUtil.mkdirNative(dir);
+                if (dir.exists())
+                {
+                    return true;
+                }
+
+                return dir.mkdir();
             }
             else {
-                return FileUtil.mkdirSAF(App.getAppContext(),path,dir_name,uri,uri_path);
+                return mkdirSAF(App.getAppContext(),path,dir_name,uri,uri_path);
             }
         }
-
-
     }
+
 
     @Override
     public boolean makeDirsRecursively(String extended_path) {
@@ -201,7 +237,7 @@ public class JavaFileModel implements FileModel {
             return FileUtil.mkdirsNative(f);
         }
         else {
-            return FileUtil.mkdirsSAFFile(App.getAppContext(),path,extended_path,uri,uri_path);
+            return mkdirsSAFFile(App.getAppContext(),path,extended_path,uri,uri_path);
         }
     }
 
@@ -214,4 +250,49 @@ public class JavaFileModel implements FileModel {
     public boolean exists() {
         return file.exists();
     }
+
+    private static boolean renameSAFFile(Context context, String target_file_path, String new_name, Uri tree_uri, String tree_uri_path)
+    {
+        Uri uri = FileUtil.getDocumentUri(target_file_path,tree_uri,tree_uri_path);
+        try {
+            uri= DocumentsContract.renameDocument(context.getContentResolver(),uri,new_name);
+        } catch (FileNotFoundException e) {
+
+        }
+        return uri!=null;
+    }
+
+    private static boolean mkdirSAF(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path)
+    {
+        Uri uri=FileUtil.createDocumentUri(context,target_file_path,name, true,tree_uri,tree_uri_path);
+        return uri!=null;
+
+    }
+
+    private static boolean mkdirsSAFFile(Context context, String parent_file_path, @NonNull String path, Uri tree_uri, String tree_uri_path)
+    {
+        boolean success=true;
+        String [] file_path_substring=path.split("/");
+        int size=file_path_substring.length;
+        for (int i=0; i<size;++i)
+        {
+            String path_string=file_path_substring[i];
+            if(!path_string.equals(""))
+            {
+                if(!new File(parent_file_path,path_string).exists())
+                {
+                    success=mkdirSAF(context,parent_file_path,path_string,tree_uri,tree_uri_path);
+
+                }
+                parent_file_path+=File.separator+path_string;
+                if(!success)
+                {
+                    return false;
+                }
+            }
+
+        }
+        return success;
+    }
+
 }

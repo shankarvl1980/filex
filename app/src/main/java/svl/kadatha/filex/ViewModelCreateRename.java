@@ -52,7 +52,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         //file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
                         {
-                            file_created=FileUtil.createNativeNewFile(file);
+                            //file_created=FileUtil.createNativeNewFile(file);
                         }
                     }
                     else {
@@ -68,7 +68,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         //file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
                         {
-                            file_created=FileUtil.mkdirNative(file);
+                            //file_created=FileUtil.mkdirNative(file);
                         }
                     }
                     else {
@@ -106,7 +106,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
                         //fileNameChanged=RootUtils.EXECUTE(Arrays.asList("mv",existing_file.getAbsolutePath(),new_file_path));
                         if(Global.SET_OTHER_FILE_PERMISSION("rwx",existing_file_path))
                         {
-                            fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
+                            //fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
                         }
                     }
                     else
