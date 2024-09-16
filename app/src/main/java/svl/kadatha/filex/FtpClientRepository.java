@@ -133,18 +133,23 @@ public class FtpClientRepository {
 
     private void sendKeepAlive() {
         for (FTPClient client : ftpClients) {
+            if (inUseClients.contains(client)) {
+                // Skip clients that are currently in use
+                continue;
+            }
             try {
                 if (client.isConnected()) {
-                    client.sendNoOp();
+                    client.sendNoOp(); // Send NOOP to keep connection alive
                     Timber.tag(TAG).d("Sent NOOP to keep connection alive for client: %s", client);
                 }
             } catch (IOException e) {
                 Timber.tag(TAG).e("Failed to send NOOP: %s", e.getMessage());
                 disconnectAndCloseClient(client);
-                ftpClients.remove(client);
+                ftpClients.remove(client); // Remove invalid client from pool
             }
         }
     }
+
 
     private boolean isClientValid(FTPClient client) {
         if (!client.isConnected()) {

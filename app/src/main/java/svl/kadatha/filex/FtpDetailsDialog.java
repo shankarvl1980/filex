@@ -250,19 +250,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
                         {
-                            AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
-                            if(appCompatActivity instanceof MainActivity){
-                                ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                                ((MainActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                            }
-                            else if(appCompatActivity instanceof FileSelectorActivity){
-                                ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                                if(((FileSelectorActivity)context).recentDialogListener!=null){
-                                    ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
-                                }
-                                ((FileSelectorActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                            }
-
+                            initiateCreateFragmentTransactions();
                             dismissAllowingStateLoss();
                         }
                         else {
@@ -294,19 +282,7 @@ public class FtpDetailsDialog extends DialogFragment {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
                         {
-                            AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
-                            if(appCompatActivity instanceof MainActivity){
-                                ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                                ((MainActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                            }
-                            else if(appCompatActivity instanceof FileSelectorActivity){
-                                ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
-                                if(((FileSelectorActivity)context).recentDialogListener!=null){
-                                    ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
-                                }
-                                ((FileSelectorActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
-                            }
-
+                            initiateCreateFragmentTransactions();
                             dismissAllowingStateLoss();
                         }
                         else {
@@ -320,6 +296,8 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
             }
         });
+
+
 
         viewModel.replaceFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
@@ -435,13 +413,34 @@ public class FtpDetailsDialog extends DialogFragment {
     @Override
     public void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
         window.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
         window.setBackgroundDrawable(new ColorDrawable(R.attr.dialog_recyclerview_background));
     }
 
+    private void initiateCreateFragmentTransactions(){
+        AppCompatActivity appCompatActivity= (AppCompatActivity) getActivity();
+        if(appCompatActivity instanceof MainActivity){
+            ((MainActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+            if(((MainActivity)context).recentDialogListener!=null){
+                ((MainActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
+            }
+            if(type.equals(FTP)){
+                ((MainActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+            }
+
+        }
+        else if(appCompatActivity instanceof FileSelectorActivity){
+            ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
+            if(((FileSelectorActivity)context).recentDialogListener!=null){
+                ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
+            }
+            if(type.equals(FTP)){
+                ((FileSelectorActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+            }
+        }
+    }
 
     public void clear_selection()
     {

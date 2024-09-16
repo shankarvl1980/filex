@@ -447,7 +447,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onNewIntent(Intent intent)
     {
-        // TODO: Implement this method
         super.onNewIntent(intent);
         if(intent==null)
         {

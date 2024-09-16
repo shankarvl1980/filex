@@ -31,9 +31,7 @@ public class InstaCropperView extends View {
     private static final long SET_BACK_DURATION = 400;
 
     public interface BitmapCallback {
-
         void onBitmapReady(Bitmap bitmap);
-
     }
 
     private float mMinimumRatio = DEFAULT_MINIMUM_RATIO;
@@ -886,6 +884,7 @@ public class InstaCropperView extends View {
 
             };
 
+
     private float measureOverScale() {
         float maximumAllowedScale = getMaximumAllowedScale();
         float minimumAllowedScale = getMinimumAllowedScale();
@@ -896,21 +895,21 @@ public class InstaCropperView extends View {
 
         if (mDrawableScale < minimumAllowedScale) {
             return mDrawableScale / minimumAllowedScale;
-        }
-        else if (mDrawableScale > maximumAllowedScale) {
+        } else if (mDrawableScale > maximumAllowedScale) {
             return mDrawableScale / maximumAllowedScale;
-        }
-        else {
+        } else {
             return 1;
         }
     }
 
-    private float getMaximumAllowedScale() {
-        float maximumAllowedWidth = mImageRawWidth;
-        float maximumAllowedHeight = mImageRawHeight;
 
-        float baseScale=Math.min(maximumAllowedWidth / (float) mWidth, maximumAllowedHeight / (float) mHeight);
-        return baseScale*2.0f;
+    private float getMaximumAllowedScale() {
+//        float maximumAllowedWidth = mImageRawWidth;
+//        float maximumAllowedHeight = mImageRawHeight;
+//
+//        float baseScale=Math.min(maximumAllowedWidth / (float) mWidth, maximumAllowedHeight / (float) mHeight);
+//        return baseScale*2.0f;
+        return getMinimumAllowedScale() * 4.0f;
     }
 
     private float getMinimumAllowedScale() {
