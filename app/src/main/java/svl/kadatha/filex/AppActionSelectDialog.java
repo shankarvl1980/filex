@@ -46,7 +46,6 @@ public class AppActionSelectDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
         bundle=getArguments();
@@ -74,7 +73,6 @@ public class AppActionSelectDialog extends DialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_app_action,container,false);
         ImageView app_image_view=v.findViewById(R.id.fragment_app_action_app_image);
         TextView app_name_tv = v.findViewById(R.id.fragment_app_action_app_name);
@@ -112,7 +110,6 @@ public class AppActionSelectDialog extends DialogFragment
     @Override
     public void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, GridLayout.LayoutParams.WRAP_CONTENT);
@@ -125,7 +122,6 @@ public class AppActionSelectDialog extends DialogFragment
         @Override
         public AppActionRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2)
         {
-            // TODO: Implement this method
             View v=LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout,p1,false);
             return new VH(v);
         }
@@ -133,14 +129,12 @@ public class AppActionSelectDialog extends DialogFragment
         @Override
         public void onBindViewHolder(AppActionRecyclerViewAdapter.VH p1, int p2)
         {
-            // TODO: Implement this method
             p1.file_type_tv.setText(action_list.get(p2));
         }
 
         @Override
         public int getItemCount()
         {
-            // TODO: Implement this method
             return action_list.size();
         }
 
@@ -177,7 +171,5 @@ public class AppActionSelectDialog extends DialogFragment
                 });
             }
         }
-
     }
-
 }

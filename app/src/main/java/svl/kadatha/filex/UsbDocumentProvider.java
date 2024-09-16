@@ -257,7 +257,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
             row.add(DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.FLAG_LOCAL_ONLY |
                     DocumentsContract.Root.FLAG_SUPPORTS_CREATE |
                     DocumentsContract.Root.FLAG_SUPPORTS_IS_CHILD);
-            row.add(DocumentsContract.Root.COLUMN_ICON, R.drawable.sdcard_icon);
+            row.add(DocumentsContract.Root.COLUMN_ICON, R.drawable.usb_icon);
             // These columns are optional
             row.add(DocumentsContract.Root.COLUMN_SUMMARY, volumeLabel);
             row.add(DocumentsContract.Root.COLUMN_AVAILABLE_BYTES, fileSystem.getFreeSpace());

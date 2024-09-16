@@ -917,7 +917,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
             else if(fileObjectType==FileObjectType.USB_TYPE)
             {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
                 vh.textView.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName());
             }
             else if(fileObjectType==FileObjectType.FTP_TYPE)

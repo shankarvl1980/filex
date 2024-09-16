@@ -103,14 +103,14 @@ public class FtpDetailsInputDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_ftp_details_input,container,false);
         TextView title_tv=v.findViewById(R.id.ftp_details_title);
-        if(type.equals("ftp")){
+        if(type.equals(FtpDetailsDialog.FTP)){
             if(update) {
                 title_tv.setText(R.string.update_ftp_server);
             } else{
                 title_tv.setText(R.string.new_ftp_server);
             }
         }
-        else if(type.equals("sftp")){
+        else if(type.equals(FtpDetailsDialog.SFTP)){
             if(update) {
                 title_tv.setText(R.string.update_sftp_server);
             } else{

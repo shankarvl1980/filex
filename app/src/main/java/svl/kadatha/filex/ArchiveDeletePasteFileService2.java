@@ -64,7 +64,6 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 	@Override
 	public void onCreate()
 	{
-		// TODO: Implement this method
 		SERVICE_COMPLETED=false;
 		super.onCreate();
 		context=this;
@@ -89,7 +88,6 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		// TODO: Implement this method
 		String notification_content = null;
 		Bundle bundle=intent.getBundleExtra("bundle");
 		intent_action=intent.getAction();
@@ -228,7 +226,6 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 	@Override
 	public IBinder onBind(Intent p1)
 	{
-		// TODO: Implement this method
 		if(binder==null)
 		{
 			binder=new ArchiveDeletePasteBinder();
@@ -305,7 +302,6 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 	@Override
 	public void onDestroy()
 	{
-		// TODO: Implement this method
 		super.onDestroy();
 		SERVICE_COMPLETED=true;
 		SOURCE_FILE_OBJECT=null;

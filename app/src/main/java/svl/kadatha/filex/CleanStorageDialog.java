@@ -42,7 +42,6 @@ public class CleanStorageDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
     }
@@ -50,7 +49,6 @@ public class CleanStorageDialog extends DialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         View v= inflater.inflate(R.layout.fragment_clean_storage,container,false);
         Button large_files_btn = v.findViewById(R.id.clean_storage_large_files_button);
         large_files_btn.setOnClickListener(new View.OnClickListener() {
@@ -99,8 +97,6 @@ public class CleanStorageDialog extends DialogFragment
                 dismissAllowingStateLoss();
             }
         });
-
-
         return v;
     }
 
@@ -108,7 +104,6 @@ public class CleanStorageDialog extends DialogFragment
     @Override
     public void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);

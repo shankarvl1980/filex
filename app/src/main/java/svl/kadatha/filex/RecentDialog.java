@@ -345,10 +345,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 					p1.textView_recent_dir.setText(filePOJO.getName()+space);
 
 				}
-
 				else if(fileObjectType== FileObjectType.USB_TYPE)
 				{
-					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
+					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
 					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName()+space);
 				}
 				else if(fileObjectType==FileObjectType.ROOT_TYPE)

@@ -293,7 +293,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void testServiceConnection(){
+    public synchronized void testFtpServiceConnection(){
         if(testServiceConnectionAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         testServiceConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         isFtpConnected=false;

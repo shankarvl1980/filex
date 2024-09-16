@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
@@ -26,6 +29,7 @@ public class FtpClientRepository {
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
     private int initialClients;
+    private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
     private static final String TAG = "Ftp-ftpClientRepository";
 
     private FtpClientRepository(FtpDetailsDialog.FtpPOJO ftpPOJO) {
@@ -47,6 +51,7 @@ public class FtpClientRepository {
                 Timber.tag(TAG).e("Failed to initialize FTP client: %s", e.getMessage());
             }
         }
+        keepAliveScheduler.scheduleWithFixedDelay(this::sendKeepAlive, 30, 30, TimeUnit.SECONDS);
     }
 
     public static synchronized FtpClientRepository getInstance(FtpDetailsDialog.FtpPOJO ftpPOJO) {
@@ -126,6 +131,21 @@ public class FtpClientRepository {
         }
     }
 
+    private void sendKeepAlive() {
+        for (FTPClient client : ftpClients) {
+            try {
+                if (client.isConnected()) {
+                    client.sendNoOp();
+                    Timber.tag(TAG).d("Sent NOOP to keep connection alive for client: %s", client);
+                }
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Failed to send NOOP: %s", e.getMessage());
+                disconnectAndCloseClient(client);
+                ftpClients.remove(client);
+            }
+        }
+    }
+
     private boolean isClientValid(FTPClient client) {
         if (!client.isConnected()) {
             return false;
@@ -176,6 +196,15 @@ public class FtpClientRepository {
 
     public void shutdown() {
         Timber.tag(TAG).d("Shutting down FTP client repository");
+        keepAliveScheduler.shutdown();
+        try {
+            if (!keepAliveScheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                keepAliveScheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            keepAliveScheduler.shutdownNow();
+        }
+
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
         while (iterator.hasNext()) {

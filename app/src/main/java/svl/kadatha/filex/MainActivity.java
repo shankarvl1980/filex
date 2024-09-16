@@ -2323,7 +2323,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 			else if(fileObjectType== FileObjectType.USB_TYPE)
 			{
-				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
+				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
 				p1.textView_storage_dir.setText(DetailFragment.USB_FILE_PREFIX+ filePOJO.getName());
 			}
 			else if(fileObjectType==FileObjectType.FTP_TYPE)
@@ -2498,7 +2498,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public NetworkRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
-			// TODO: Implement this method
 			View v=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(v);
 		}
@@ -2506,7 +2505,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public void onBindViewHolder(NetworkRecyclerAdapter.ViewHolder p1, int p2)
 		{
-			// TODO: Implement this method
 			p1.textView_network.setText(network_arraylist.get(p2));
 			p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,icon_image_list[p2]));
 		}
@@ -2514,7 +2512,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return network_arraylist.size();
 		}
 
@@ -2646,7 +2643,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 	@Override
 	public void onMediaMount(String action) {
-
 		switch (action) {
 			case "android.intent.action.MEDIA_MOUNTED":
 				repositoryClass.storage_dir.clear();
@@ -2727,9 +2723,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			this.search_regex = search_regex;
 			this.search_lower_limit_size = search_lower_limit_size;
 			this.search_upper_limit_size = search_upper_limit_size;
-
 		}
-
 	}
-
 }

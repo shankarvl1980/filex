@@ -26,7 +26,6 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();
@@ -48,7 +47,6 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
         Context context = getContext();
 		View v=inflater.inflate(R.layout.fragment_archivereplace_confirmation,container,false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
@@ -98,7 +96,6 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment
 	@Override
 	public void onResume()
 	{
-		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);

@@ -87,10 +87,10 @@ public class FtpDetailsDialog extends DialogFragment {
         View v=inflater.inflate(R.layout.fragment_ftp_list,container,false);
         progress_bar=v.findViewById(R.id.fragment_ftp_list_progressbar);
         TextView heading=v.findViewById(R.id.fragment_ftp_list_heading);
-        if(type.equals(FTP)){
+        if(type.equals(FtpDetailsDialog.FTP)){
             heading.setText(R.string.ftp);
         }
-        else if(type.equals(SFTP)){
+        else if(type.equals(FtpDetailsDialog.SFTP)){
             heading.setText(R.string.sftp);
         }
         ftp_number_text_view=v.findViewById(R.id.ftp_details_ftp_number);
@@ -174,7 +174,7 @@ public class FtpDetailsDialog extends DialogFragment {
         viewModel.fetchFtpPojoList(type);
         if(FtpDetailsViewModel.FTP_POJO!=null){
             progress_bar.setVisibility(View.VISIBLE);
-            viewModel.testServiceConnection();
+            viewModel.testFtpServiceConnection();
         }
         else{
             disconnect_btn.setAlpha(Global.DISABLE_ALFA);
@@ -401,7 +401,10 @@ public class FtpDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.VISIBLE);
                     if(result.getBoolean("whetherToConnect"))
                     {
-                        viewModel.replaceAndConnectFtpPojoList(result);
+                        if(type.equals(FTP)){
+                            viewModel.replaceAndConnectFtpPojoList(result);
+                        }
+
                     }
                     else {
                         viewModel.replaceFtpPojoList(result);
@@ -443,13 +446,11 @@ public class FtpDetailsDialog extends DialogFragment {
     public void clear_selection()
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
-        //viewModel.ftpPOJO_selected_array=new ArrayList<>();
 
         if(ftpListAdapter!=null)ftpListAdapter.notifyDataSetChanged();
         enable_disable_buttons(false,0);
 
         ftp_number_text_view.setText(viewModel.mselecteditems.size()+"/"+num_all_ftp);
-        //all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
     }
 
 
@@ -522,7 +523,10 @@ public class FtpDetailsDialog extends DialogFragment {
                             }
                             progress_bar.setVisibility(View.VISIBLE);
                             FtpPOJO ftpPOJO=viewModel.ftpPOJOList.get(pos);
-                            viewModel.connectFtp(ftpPOJO);
+                            if(type.equals(FTP)){
+                                viewModel.connectFtp(ftpPOJO);
+                            }
+
                         }
                     }
                 });
