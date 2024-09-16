@@ -191,7 +191,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			file_ext=file_name.substring(idx+1);
 		}
 
-		if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
+		if(file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
 		{
 			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 			fileTypeSelectFragment.show(getParentFragmentManager(),"");

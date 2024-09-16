@@ -53,7 +53,7 @@ public class CmdNLST extends CmdAbstractListing implements Runnable {
                 param = "";
             }
             File fileToList = null;
-            if (param.equals("")) {
+            if (param.isEmpty()) {
                 fileToList = sessionThread.getWorkingDir();
             } else {
                 if (param.contains("*")) {

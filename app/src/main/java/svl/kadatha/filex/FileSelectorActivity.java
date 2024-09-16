@@ -70,7 +70,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private MediaMountReceiver mediaMountReceiver;
     private PopupWindow listPopWindow;
     public List<FilePOJO> storage_filePOJO_list;
-    private Toolbar bottom_toolbar;
     public TextView file_number;
     public static final String ACTION_SOUGHT="action_sought";
     public int action_sought_request_code;
@@ -245,7 +244,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        bottom_toolbar=findViewById(R.id.file_selector_bottom_toolbar);
+        Toolbar bottom_toolbar = findViewById(R.id.file_selector_bottom_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
         int[] bottom_drawables ={R.drawable.search_icon,R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.yes_icon,R.drawable.cancel_icon};
         String [] titles={getString(R.string.search),getString(R.string.new_),getString(R.string.refresh),getString(R.string.ok),getString(R.string.cancel)};
@@ -254,10 +253,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         bottom_toolbar.addView(tb_layout);
 
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        Button add_folder_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        Button refresh_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_3);
-        Button ok_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
-        Button cancel_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+        Button add_folder_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button refresh_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button ok_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_4);
+        Button cancel_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_5);
 
 
 //

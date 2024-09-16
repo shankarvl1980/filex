@@ -79,7 +79,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
                 server=bundle.getString("server");
             }
             user_name=bundle.getString("user_name");
-            if(original_server!=null && !original_server.equals(""))
+            if(original_server!=null && !original_server.isEmpty())
             {
                 update=true;
                 FtpDetailsDialog.FtpPOJO ftpPOJO= ftpDatabaseHelper.getFtpPOJO(original_server,original_user_name,type);
@@ -191,7 +191,7 @@ public class FtpDetailsInputDialog extends DialogFragment {
     {
         server=server_tv.getText().toString().trim();
         user_name=user_name_tv.getText().toString().trim();
-        if(server.equals("") || port_tv.getText().toString().trim().equals("")|| user_name.equals(""))
+        if(server.isEmpty() || port_tv.getText().toString().trim().isEmpty() || user_name.isEmpty())
         {
             Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
             return;

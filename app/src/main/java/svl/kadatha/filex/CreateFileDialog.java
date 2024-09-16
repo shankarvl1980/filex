@@ -45,14 +45,13 @@ public class CreateFileDialog extends DialogFragment
 	private Handler handler;
 	private final static String SAF_PERMISSION_REQUEST_CODE="create_file_saf_permission_request_code";
 	private FrameLayout progress_bar;
-	private AppCompatActivity appCompatActivity;
 
-	@Override
+    @Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		appCompatActivity=(AppCompatActivity)context;
+        AppCompatActivity appCompatActivity = (AppCompatActivity) context;
 
 	}
 
@@ -169,7 +168,7 @@ public class CreateFileDialog extends DialogFragment
 			public void onClick(View v)
 			{
 				String new_name=new_file_name_edittext.getText().toString().trim();
-				if(new_name.equals(""))
+				if(new_name.isEmpty())
 				{
 					Global.print(context,getString(R.string.enter_file_name));
 					return;
@@ -294,7 +293,7 @@ public class CreateFileDialog extends DialogFragment
 			tree_uri=uriPOJO.get_uri();
 		}
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");

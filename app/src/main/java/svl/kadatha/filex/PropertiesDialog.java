@@ -204,7 +204,7 @@ public class PropertiesDialog extends DialogFragment
 					{
 						public void onClick(View v)
 						{
-							if(file_permissions_str== null || file_permissions_str.equals(""))
+							if(file_permissions_str== null || file_permissions_str.isEmpty())
 							{
 								return;
 							}

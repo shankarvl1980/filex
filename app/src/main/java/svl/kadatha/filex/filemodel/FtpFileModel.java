@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Stack;
 
-import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.FtpClientRepository;
 import svl.kadatha.filex.FtpDetailsViewModel;
 import svl.kadatha.filex.Global;
@@ -474,7 +473,7 @@ public class FtpFileModel implements FileModel {
         int size = file_path_substring.length;
         for (int i = 0; i < size; ++i) {
             String path_string = file_path_substring[i];
-            if (!path_string.equals("")) {
+            if (!path_string.isEmpty()) {
                 String new_dir_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, path_string);
                 success = mkdirFtp(new_dir_path);
                 parent_file_path += File.separator + path_string;

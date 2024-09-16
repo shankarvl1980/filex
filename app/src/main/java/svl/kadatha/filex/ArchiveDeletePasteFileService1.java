@@ -18,7 +18,6 @@ import svl.kadatha.filex.asynctasks.CutCopyAsyncTask;
 import svl.kadatha.filex.asynctasks.DeleteAsyncTask;
 import svl.kadatha.filex.asynctasks.TaskProgressListener;
 import svl.kadatha.filex.asynctasks.UnarchiveAsyncTask;
-import timber.log.Timber;
 
 public class ArchiveDeletePasteFileService1 extends Service implements TaskProgressListener
 {

@@ -532,7 +532,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 			tree_uri=uriPOJO.get_uri();
 		}
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(), "saf_permission_dialog");

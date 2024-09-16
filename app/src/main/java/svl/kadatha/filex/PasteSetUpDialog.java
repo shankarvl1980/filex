@@ -257,7 +257,7 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_DEST,parent_file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
@@ -279,7 +279,7 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 
 
-		if(source_uri_path.equals(""))
+		if(source_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE_SOURCE,parent_file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");

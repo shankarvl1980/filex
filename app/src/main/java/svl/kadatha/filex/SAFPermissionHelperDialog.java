@@ -222,7 +222,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		}
 
 
-		return !tree_uri_path.equals("");
+		return !tree_uri_path.isEmpty();
 	}
 
 }

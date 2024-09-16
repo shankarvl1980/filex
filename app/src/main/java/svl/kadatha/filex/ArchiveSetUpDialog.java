@@ -37,11 +37,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.asynctasks.ArchiveAsyncTask;
 import svl.kadatha.filex.asynctasks.UnarchiveAsyncTask;
-import svl.kadatha.filex.filemodel.FileModel;
-import svl.kadatha.filex.filemodel.FileModelFactory;
 
 
 public class ArchiveSetUpDialog extends DialogFragment
@@ -178,7 +175,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 					}
 
 					String zip_folder_name=zip_file_edittext.getText().toString().trim();
-					if(zip_folder_name.equals(""))
+					if(zip_folder_name.isEmpty())
 					{
 						Global.print(context,getString(R.string.enter_zip_file_name));
 						return;
@@ -439,7 +436,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 						bundle.putSerializable("destFileObjectType", destFileObjectType); //put destfileobjecttype after deciding which one to put
 
 						if (create_folder_checkbox.isChecked()) {
-							if (zip_output_folder == null || zip_output_folder.equals("")) {
+							if (zip_output_folder == null || zip_output_folder.isEmpty()) {
 								Global.print(context,getString(R.string.enter_output_folder_name));
 								return;
 							}
@@ -528,7 +525,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 			tree_uri=uriPOJO.get_uri();
 		}
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");

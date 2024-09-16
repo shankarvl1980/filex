@@ -88,7 +88,7 @@ class FileIntentDispatch
 	{
 		final Intent intent=new Intent(Intent.ACTION_VIEW);
 		mime_type=SET_INTENT_FOR_VIEW(intent,mime_type,file_path,file_extn,fileObjectType,clear_top,uri);
-		if(mime_type==null || mime_type.equals("")) return;
+		if(mime_type==null || mime_type.isEmpty()) return;
 
 		DefaultAppDatabaseHelper defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
 		final String package_name=defaultAppDatabaseHelper.getPackageName(mime_type);
@@ -184,7 +184,7 @@ class FileIntentDispatch
 	public static String SET_INTENT_FOR_VIEW(Intent intent,String mime_type,String file_path ,String file_extn,FileObjectType fileObjectType,
 	boolean clear_top, Uri uri)
 	{
-		if (mime_type == null || mime_type.equals("")) {
+		if (mime_type == null || mime_type.isEmpty()) {
 			for (MimePOJO mimePOJO : Global.MIME_POJOS) {
 				if (file_extn.matches(mimePOJO.getRegex())) {
 					mime_type = mimePOJO.getMime_type();

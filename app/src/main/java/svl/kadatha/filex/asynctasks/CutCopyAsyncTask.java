@@ -28,7 +28,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final List<String> copied_source_file_path_list;
     private final List<String> overwritten_file_path_list;
     private int counter_no_files;
-    private long[] counter_size_files=new long[1];
+    private final long[] counter_size_files=new long[1];
     private String copied_file_name;
     private String current_file_name;
     private FilePOJO filePOJO;

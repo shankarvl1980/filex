@@ -23,7 +23,7 @@ import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
 import timber.log.Timber;
 
 public class FileCountSize {
-    Context context;
+    final Context context;
     List<String> files_selected_array;
     Uri target_uri;
     String target_uri_path;

@@ -43,7 +43,7 @@ public class CmdMLST extends FtpCmd implements Runnable {
         String param = getParameter(mInput);
         
         File fileToFormat = null;
-        if(param.equals("")){
+        if(param.isEmpty()){
             fileToFormat = sessionThread.getWorkingDir();
             param = "/";
         }else{

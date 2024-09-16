@@ -72,7 +72,7 @@ public class ApkBackUpNameDialog extends DialogFragment
             public void onClick(View v)
             {
                 String new_name=new_file_name_edittext.getText().toString().trim();
-                if(new_name.equals(""))
+                if(new_name.isEmpty())
                 {
                     Global.print(context,getString(R.string.enter_name));
                     return;

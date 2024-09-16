@@ -58,7 +58,7 @@ public class CmdLIST extends CmdAbstractListing implements Runnable {
                 param = getParameter(param);
             }
             File fileToList = null;
-            if (param.equals("")) {
+            if (param.isEmpty()) {
                 fileToList = sessionThread.getWorkingDir();
             } else {
                 if (param.contains("*")) {

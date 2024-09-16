@@ -58,8 +58,6 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
-import svl.kadatha.filex.filemodel.FileModel;
-import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
 
 public class Global

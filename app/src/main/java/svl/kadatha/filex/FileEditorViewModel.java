@@ -16,12 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
-import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -309,8 +303,8 @@ public class FileEditorViewModel extends AndroidViewModel {
 
 
     public static class PagePointer implements Parcelable {
-        private long startPoint;
-        private long endPoint;
+        private final long startPoint;
+        private final long endPoint;
 
         public PagePointer(long startPoint, long endPoint) {
             this.startPoint = startPoint;

@@ -18,9 +18,9 @@ public class FileSaveHelper {
     private static final String TAG = "FileSaveHelper";
 
     public static class SaveResult {
-        public boolean success;
-        public LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
-        public String errorMessage;
+        public final boolean success;
+        public final LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
+        public final String errorMessage;
 
         public SaveResult(boolean success, LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap, String errorMessage) {
             this.success = success;

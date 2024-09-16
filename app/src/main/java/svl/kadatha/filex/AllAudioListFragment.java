@@ -288,7 +288,7 @@ public class AllAudioListFragment extends Fragment
 				{
 					progress_bar.setVisibility(View.VISIBLE);
 					String list_name=result.getString("list_name");
-					audioListViewModel.save_audio(list_name.equals("") ? "q" : "s",list_name);
+					audioListViewModel.save_audio(list_name.isEmpty() ? "q" : "s",list_name);
 				}
 			}
 		});

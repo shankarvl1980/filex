@@ -287,7 +287,7 @@ public class JavaFileModel implements FileModel {
         for (int i=0; i<size;++i)
         {
             String path_string=file_path_substring[i];
-            if(!path_string.equals(""))
+            if(!path_string.isEmpty())
             {
                 if(!new File(parent_file_path,path_string).exists())
                 {

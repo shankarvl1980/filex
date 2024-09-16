@@ -42,8 +42,6 @@ public class AppSelectorDialog extends DialogFragment
     private CheckBox remember_app_check_box;
     private String mime_type;
     private String file_type;
-    private FileObjectType fileObjectType;
-    private long file_size;
     private AsyncTaskStatus asyncTaskStatus=AsyncTaskStatus.NOT_YET_STARTED;
 
     private Intent intent;
@@ -81,10 +79,10 @@ public class AppSelectorDialog extends DialogFragment
                 file_type="Other";
             }
             boolean clear_top = bundle.getBoolean("clear_top");
-            fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-            file_size=bundle.getLong("file_size");
+            FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            long file_size = bundle.getLong("file_size");
             intent=new Intent(Intent.ACTION_VIEW);
-            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"",fileObjectType,clear_top,data);
+            FileIntentDispatch.SET_INTENT_FOR_VIEW(intent,mime_type, file_path,"", fileObjectType,clear_top,data);
         }
 
         if(savedInstanceState!=null)

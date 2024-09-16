@@ -116,7 +116,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 int lengthParentPath=0;
                 try
                 {
-                    if(!zip_file_path.equals(""))
+                    if(!zip_file_path.isEmpty())
                     {
                         lengthParentPath=new File(zip_file_path).getParent().length();
 
@@ -240,7 +240,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     private void put_zip_entry_file_type(String file_path,List<File> file_array, ZipOutputStream zipOutputStream) throws IOException {
         int lengthParentPath = 0;
-        if(!file_path.equals(""))
+        if(!file_path.isEmpty())
         {
             lengthParentPath=new File(file_path).getParent().length(); //should be calculated for each file separately in library_search
 

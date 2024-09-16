@@ -192,7 +192,7 @@ public class RenameFileDialog extends DialogFragment
 					Global.print(context,getString(R.string.avoid_name_involving_special_characters));
 					return;
 				}
-				if(new_name.equals(""))
+				if(new_name.isEmpty())
 				{
 					Global.print(context,getString(R.string.enter_file_name));
 					return;
@@ -347,7 +347,7 @@ public class RenameFileDialog extends DialogFragment
 			tree_uri=uriPOJO.get_uri();
 		}
 
-		if(uriPOJO==null || tree_uri_path.equals(""))
+		if(uriPOJO==null || tree_uri_path.isEmpty())
 		{
 			SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,parent_file_path,fileObjectType);
 			safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");

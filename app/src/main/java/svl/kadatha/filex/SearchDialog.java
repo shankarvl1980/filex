@@ -233,7 +233,7 @@ public class SearchDialog extends DialogFragment
 		{
 			public void onClick(View v)
 			{
-				if(lower_bound_edit_text.getText().toString().trim().equals("") && upper_bound_edit_text.getText().toString().trim().equals("") && search_file_name_edit_text.getText().toString().trim().equals(""))
+				if(lower_bound_edit_text.getText().toString().trim().isEmpty() && upper_bound_edit_text.getText().toString().trim().isEmpty() && search_file_name_edit_text.getText().toString().trim().isEmpty())
 				{
 					Global.print(context,getString(R.string.enter_name_or_size_parameters));
 					return;

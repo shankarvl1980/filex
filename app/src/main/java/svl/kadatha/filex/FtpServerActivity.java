@@ -96,7 +96,7 @@ public class FtpServerActivity extends BaseActivity {
         }
 
 
-        if(viewModel.user_name!=null && !viewModel.user_name.equals(""))
+        if(viewModel.user_name!=null && !viewModel.user_name.isEmpty())
         {
             user_name_host.setText(viewModel.user_name);
         }
@@ -105,7 +105,7 @@ public class FtpServerActivity extends BaseActivity {
             user_name_host.setText(getString(R.string.username_default));
         }
 
-        if(viewModel.password!=null && !viewModel.password.equals(""))
+        if(viewModel.password!=null && !viewModel.password.isEmpty())
         {
             password_host.setText(viewModel.password);
         }
@@ -114,7 +114,7 @@ public class FtpServerActivity extends BaseActivity {
             password_host.setText(getString(R.string.password_default));
         }
 
-        if(viewModel.chroot !=null && !viewModel.chroot.equals(""))
+        if(viewModel.chroot !=null && !viewModel.chroot.isEmpty())
         {
             chroot_host.setText(viewModel.chroot);
         }

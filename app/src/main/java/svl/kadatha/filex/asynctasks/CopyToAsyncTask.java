@@ -35,7 +35,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private final Context context;
     private final List<String> copied_source_file_path_list;
     private int counter_no_files;
-    private long []counter_size_files=new long[1];
+    private final long []counter_size_files=new long[1];
     private FilePOJO filePOJO;
     private String file_name;
     private String copied_file;
@@ -83,7 +83,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             if(!onlyOneUri) {
                 file_name= CopyToActivity.getFileNameOfUri(context,data);
             }else{
-                if(file_name.equals(""))file_name=CopyToActivity.getFileNameOfUri(context,data);
+                if(file_name.isEmpty())file_name=CopyToActivity.getFileNameOfUri(context,data);
             }
             progressHandler.post(progressRunnable);
             copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,counter_size_files);

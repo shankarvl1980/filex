@@ -344,7 +344,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             return;
         }
 
-        if(file_ext.equals("") || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
+        if(file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
         {
             FileTypeSelectDialog fileTypeSelectDialog=FileTypeSelectDialog.getInstance(file_path,null,tree_uri,tree_uri_path,select_app,file_size);
             fileTypeSelectDialog.show(archiveViewActivity.fm,"");
@@ -500,7 +500,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             tree_uri=uriPOJO.get_uri();
         }
 
-        if(uriPOJO==null || tree_uri_path.equals(""))
+        if(uriPOJO==null || tree_uri_path.isEmpty())
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,new_file_path,fileObjectType);
             safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
@@ -585,7 +585,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         public void onBindViewHolder(FilePathRecyclerViewAdapter.ViewHolder p1, int p2)
         {
             // TODO: Implement this method
-            if(filepath_string_array[p2].equals(""))
+            if(filepath_string_array[p2].isEmpty())
             {
                 p1.file_path_string_tv.setText(File.separator);
             }

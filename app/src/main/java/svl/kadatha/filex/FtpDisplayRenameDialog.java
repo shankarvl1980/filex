@@ -105,7 +105,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     dismissAllowingStateLoss();
                     return;
                 }
-                if(new_name.equals(""))
+                if(new_name.isEmpty())
                 {
                     Global.print(context,getString(R.string.enter_file_name));
                     return;

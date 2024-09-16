@@ -231,7 +231,7 @@ public class AlbumListFragment extends Fragment
 				{
 					String list_name=result.getString("list_name");
 					progress_bar.setVisibility(View.VISIBLE);
-					audioListViewModel.listAudio(new ArrayList<>(audioListViewModel.album_pojo_selected_items.values()),list_name.equals("") ? "q" : "s",list_name);
+					audioListViewModel.listAudio(new ArrayList<>(audioListViewModel.album_pojo_selected_items.values()), list_name.isEmpty() ? "q" : "s",list_name);
 				}
 			}
 		});

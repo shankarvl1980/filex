@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPFileFilter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,14 +24,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Stack;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FtpFileModel;
 import svl.kadatha.filex.filemodel.UsbFileModel;

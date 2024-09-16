@@ -467,7 +467,7 @@ public class FtpDetailsDialog extends DialogFragment {
             String display=ftpPOJO.display;
             String server=ftpPOJO.server;
             String user_name=ftpPOJO.user_name;
-            holder.ftp_display.setText((display==null || display.equals("")) ? server : display);
+            holder.ftp_display.setText((display==null || display.isEmpty()) ? server : display);
             holder.ftp_server.setText(server);
             holder.ftp_user_name.setText(getString(R.string.user)+" - "+user_name);
             boolean item_selected=viewModel.mselecteditems.containsKey(position);
@@ -636,7 +636,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     FtpPOJO ftpPOJO=viewModel.mselecteditems.getValueAtIndex(0);
                     String display=ftpPOJO.display;
-                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.equals("")) ? ftpPOJO.server : display,s);
+                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.isEmpty()) ? ftpPOJO.server : display,s);
                     deleteFtpAlertDialog.show(getParentFragmentManager(),"");
                 }
             }

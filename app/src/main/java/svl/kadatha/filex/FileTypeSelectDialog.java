@@ -26,10 +26,10 @@ import java.util.List;
 public class FileTypeSelectDialog extends DialogFragment
 {
 	private Context context;
-	private String mime_type,file_path,tree_uri_path;
-	private long file_size;
-	private Uri tree_uri;
-	private FileObjectType fileObjectType;
+	private String mime_type;
+    private String file_path;
+    private long file_size;
+    private FileObjectType fileObjectType;
 	private boolean select_app;
 	private final static String SAF_PERMISSION_REQUEST_CODE="file_type_selector_dialog_saf_permission_request_code";
 	private List<MimePOJO> mimePOJOList;
@@ -49,8 +49,8 @@ public class FileTypeSelectDialog extends DialogFragment
 		Bundle bundle = getArguments();
 		file_path= bundle.getString("file_path");
 		fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
-		tree_uri= bundle.getParcelable("tree_uri");
-		tree_uri_path= bundle.getString("tree_uri_path");
+        Uri tree_uri = bundle.getParcelable("tree_uri");
+        String tree_uri_path = bundle.getString("tree_uri_path");
 		select_app=bundle.getBoolean("select_app");
 		file_size=bundle.getLong("file_size");
 

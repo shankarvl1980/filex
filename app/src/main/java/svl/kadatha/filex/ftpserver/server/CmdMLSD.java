@@ -49,7 +49,7 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
             String param = getParameter(input);
             Timber.tag(TAG).d( "MLSD parameter: " + param);
             File fileToList = null;
-            if (param.equals("")) {
+            if (param.isEmpty()) {
                 fileToList = sessionThread.getWorkingDir();
             } else {
                 if (param.contains("*")) {

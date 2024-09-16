@@ -406,7 +406,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
         else
         {
             String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName()).toLowerCase();
-            if (!extension.equals(""))
+            if (!extension.isEmpty())
             {
                 String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
                 Timber.tag(TAG).d( "mimeType: " + mimeType);

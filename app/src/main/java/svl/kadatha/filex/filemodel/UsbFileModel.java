@@ -294,7 +294,7 @@ public class UsbFileModel implements FileModel{
         for (int i=0; i<size;++i)
         {
             String path_string=path_substring[i];
-            if(!path_string.equals(""))
+            if(!path_string.isEmpty())
             {
                 UsbFile usbFile;
                 if((usbFile=FileUtil.getUsbFile(parentUsbFile,path_string))==null)

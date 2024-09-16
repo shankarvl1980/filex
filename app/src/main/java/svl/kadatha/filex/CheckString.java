@@ -21,7 +21,7 @@ public class CheckString
 	{
 
 		// If string is empty or null
-		if (str == null || str.equals("")) {
+		if (str == null || str.isEmpty()) {
 
 			// Return false
 			return false;

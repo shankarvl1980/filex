@@ -251,7 +251,7 @@ public class AppManagerListFragment extends Fragment {
                 if (BACKUP.equals(app_action)) {
                     MoveToCopyToProcedure(app_path,result);
                 } else if (UNINSTALL.equals(app_action)) {
-                    if (package_clicked_for_delete.equals("")) {
+                    if (package_clicked_for_delete.isEmpty()) {
                         package_clicked_for_delete = package_name;
                     }
                     Intent uninstall_intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
@@ -671,7 +671,7 @@ public class AppManagerListFragment extends Fragment {
             tree_uri=uriPOJO.get_uri();
         }
 
-        if(uriPOJO==null || tree_uri_path.equals(""))
+        if(uriPOJO==null || tree_uri_path.isEmpty())
         {
             SAFPermissionHelperDialog safpermissionhelper=SAFPermissionHelperDialog.getInstance(SAF_PERMISSION_REQUEST_CODE,bundle);
             safpermissionhelper.show(getParentFragmentManager(),"saf_permission_dialog");
