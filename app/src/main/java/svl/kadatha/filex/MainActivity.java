@@ -1513,7 +1513,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				df= (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
 				String df_tag=df.getTag();
 				while(!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files") && !df_tag.equals("Duplicate Files") &&  df.currentUsbFile == null
-				&& !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(df.fileObjectType)) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
+				&& !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(df.fileObjectType) && !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(df.fileObjectType)) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
 				{
 					fm.popBackStack();
 					++frag;

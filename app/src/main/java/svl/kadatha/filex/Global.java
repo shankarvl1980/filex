@@ -794,6 +794,21 @@ public class Global
 		return false;
 	}
 
+	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(FileObjectType fileObjectType)
+	{
+		if(fileObjectType!=FileObjectType.SFTP_TYPE) return false;
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
+		while(iterator.hasNext())
+		{
+			if(iterator.next().getFileObjectType()==fileObjectType)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType,String file_path,List<FilePOJO> destFilePOJOs)
 	{
 		if(fileObjectType== FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
