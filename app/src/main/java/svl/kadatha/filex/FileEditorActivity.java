@@ -75,7 +75,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	private Class emptyService;
 
 	private KeyBoardUtil keyBoardUtil;
-	public static final int BUFFER_SIZE=8192;
 
 	private PopupWindow listPopWindow;
 	public FragmentManager fm;

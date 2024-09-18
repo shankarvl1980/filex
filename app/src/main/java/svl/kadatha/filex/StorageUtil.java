@@ -54,7 +54,6 @@ public class StorageUtil
 				File f=new File(getRootOfInnerSdCardFolder(file));
 				verify_add_file_path(f,result);
 			}
-
 		}
 
 
@@ -81,14 +80,10 @@ public class StorageUtil
 					if(Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(f)))
 					{
 						verify_add_file_path(f,result);
-
 					}
-
 				}
 			}
 		}
-
-		
 
 		if(result.isEmpty())
 			return null;
@@ -111,11 +106,9 @@ public class StorageUtil
 		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
 		if(isWritable(dummy_file))
 		{
-
 			repositoryClass.internal_storage_path_list.add(f.getAbsolutePath());
 		}
 		if(Environment.isExternalStorageRemovable(f)) repositoryClass.external_storage_path_list.add(f.getAbsolutePath());
-
 	}
 
 	public static boolean isWritable(@NonNull final File file) {
@@ -140,7 +133,6 @@ public class StorageUtil
 			// noinspection ResultOfMethodCallIgnored
 			file.delete();
 		}
-
 		return result;
 	}
 
@@ -175,7 +167,7 @@ public class StorageUtil
         return absolutePath.substring(0,absolutePath.indexOf("Android/data"));
     }
 
-	static FilePOJO MAKE_FilePOJO_ROOT(File f, boolean extracticon)
+	static FilePOJO MAKE_FilePOJO_ROOT(File f, boolean extract_icon)
 	{
 		String name=f.getName();
 		String path=f.getAbsolutePath();
@@ -223,6 +215,4 @@ public class StorageUtil
 		int type=0;
 		return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
 	}
-
-
 }

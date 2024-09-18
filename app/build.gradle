@@ -85,6 +85,6 @@ dependencies {
     implementation 'com.github.qoqa:glide-svg:4.0.2'
     implementation 'com.caverock:androidsvg-aar:1.4'
 
-
+    implementation 'com.github.mwiede:jsch:0.2.9'
 
 }

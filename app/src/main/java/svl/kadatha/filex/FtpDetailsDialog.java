@@ -525,7 +525,6 @@ public class FtpDetailsDialog extends DialogFragment {
                             if(type.equals(FTP)){
                                 viewModel.connectFtp(ftpPOJO);
                             }
-
                         }
                     }
                 });
@@ -549,7 +548,6 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     v.setSelected(false);
                     ftp_select_indicator.setVisibility(View.INVISIBLE);
-                    //viewModel.ftpPOJO_selected_array.remove(viewModel.ftpPOJOList.get(pos));
                     viewModel.mselecteditems.remove(pos);
                     --size;
                     if(size>=1)
@@ -563,14 +561,12 @@ public class FtpDetailsDialog extends DialogFragment {
                     if(size==0)
                     {
                         enable_disable_buttons(false,size);
-                        //all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.select_icon,0,0);
                     }
                 }
                 else
                 {
                     v.setSelected(true);
                     ftp_select_indicator.setVisibility(View.VISIBLE);
-                    //viewModel.ftpPOJO_selected_array.add(viewModel.ftpPOJOList.get(pos));
                     viewModel.mselecteditems.put(pos,viewModel.ftpPOJOList.get(pos));
 
                     bottom_toolbar.setVisibility(View.VISIBLE);
@@ -584,9 +580,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
                 ftp_number_text_view.setText(size+"/"+num_all_ftp);
             }
-
         }
-
     }
 
 
@@ -597,23 +591,19 @@ public class FtpDetailsDialog extends DialogFragment {
             delete_btn.setAlpha(Global.ENABLE_ALFA);
             if(selection_size==1)
             {
-                //rename_btn.setAlpha(Global.ENABLE_ALFA);
                 edit_btn.setAlpha(Global.ENABLE_ALFA);
             }
             else
             {
-                //rename_btn.setAlpha(Global.DISABLE_ALFA);
                 edit_btn.setAlpha(Global.DISABLE_ALFA);
             }
         }
         else
         {
             delete_btn.setAlpha(Global.DISABLE_ALFA);
-            //rename_btn.setAlpha(Global.DISABLE_ALFA);
             edit_btn.setAlpha(Global.DISABLE_ALFA);
         }
         delete_btn.setEnabled(enable);
-        //rename_btn.setEnabled(enable && selection_size==1);
         edit_btn.setEnabled(enable && selection_size==1);
     }
 
@@ -712,6 +702,58 @@ public class FtpDetailsDialog extends DialogFragment {
         // Method to return a deep copy
         public FtpPOJO deepCopy() {
             return new FtpPOJO(this); // Uses the copy constructor
+        }
+    }
+
+
+    public static class SftpPOJO {
+        final String server;
+        final int port;
+        final String user_name;
+        final String password;
+        final boolean useKeyAuth;
+        final String privateKeyPath;
+        final String privateKeyPassphrase;
+        final String encoding;
+        final String display;
+        final int timeout;
+        final boolean strictHostKeyChecking;
+
+        // Constructor
+        SftpPOJO(String server, int port, String user_name, String password,
+                 boolean useKeyAuth, String privateKeyPath, String privateKeyPassphrase,
+                 String encoding, String display, int timeout, boolean strictHostKeyChecking) {
+            this.server = server;
+            this.port = port;
+            this.user_name = user_name;
+            this.password = password;
+            this.useKeyAuth = useKeyAuth;
+            this.privateKeyPath = privateKeyPath;
+            this.privateKeyPassphrase = privateKeyPassphrase;
+            this.encoding = encoding;
+            this.display = display;
+            this.timeout = timeout;
+            this.strictHostKeyChecking = strictHostKeyChecking;
+        }
+
+        // Copy Constructor for deep copy
+        public SftpPOJO(SftpPOJO other) {
+            this.server = new String(other.server);
+            this.port = other.port;
+            this.user_name = new String(other.user_name);
+            this.password = new String(other.password);
+            this.useKeyAuth = other.useKeyAuth;
+            this.privateKeyPath = other.privateKeyPath != null ? new String(other.privateKeyPath) : null;
+            this.privateKeyPassphrase = other.privateKeyPassphrase != null ? new String(other.privateKeyPassphrase) : null;
+            this.encoding = new String(other.encoding);
+            this.display = new String(other.display);
+            this.timeout = other.timeout;
+            this.strictHostKeyChecking = other.strictHostKeyChecking;
+        }
+
+        // Method to return a deep copy
+        public SftpPOJO deepCopy() {
+            return new SftpPOJO(this); // Uses the copy constructor
         }
     }
 

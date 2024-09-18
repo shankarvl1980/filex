@@ -153,8 +153,6 @@ public class PasteSetUpDialog extends DialogFragment
 			}
 		});
 
-
-
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -204,6 +202,20 @@ public class PasteSetUpDialog extends DialogFragment
 		{
 			return true;
 		}
+		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
+		{
+			if(!RootUtils.canRunRootCommands())
+			{
+				Global.print(context,getString(R.string.root_access_not_avaialable));
+				dismissAllowingStateLoss();
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+
+		}
 		return true; //this needs to be true, after success checking of permission of in searchlibrarytype to return true
 
 	}
@@ -232,7 +244,7 @@ public class PasteSetUpDialog extends DialogFragment
 		}
 		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
 		{
-			if(!RootUtils.CAN_RUN_ROOT_COMMANDS())
+			if(!RootUtils.canRunRootCommands())
 			{
 				Global.print(context,getString(R.string.root_access_not_avaialable));
 				dismissAllowingStateLoss();

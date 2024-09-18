@@ -413,8 +413,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 								{
 									Global.print(context,context.getString(R.string.not_supported));
 								}
-								else
-									if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+								else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
 								{
 									File file=new File(filePOJO.getPath());
 									uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);

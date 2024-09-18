@@ -173,10 +173,11 @@ public class CopyToActivity extends BaseActivity{
                     return;
                 }
 
-                if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(null,destFileObjectType))
-                {
-                    Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-                    return;
+                if(destFileObjectType==FileObjectType.ROOT_TYPE){
+                    if(!RootUtils.canRunRootCommands()){
+                        Global.print(context,getString(R.string.root_access_not_avaialable));
+                        return;
+                    }
                 }
 
                 emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);

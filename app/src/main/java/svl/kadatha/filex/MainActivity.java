@@ -2335,15 +2335,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
 				p1.textView_storage_dir.setText(R.string.root_directory);
-
 			}
-
 		}
 
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return storage_dir_arraylist.size();
 		}
 	}

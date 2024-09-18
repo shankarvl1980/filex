@@ -66,52 +66,42 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     @Override
     protected Boolean doInBackground(Void... params) {
         boolean copy_result = false;
-        if(sourceFileObjectType== FileObjectType.ROOT_TYPE || destFileObjectType==FileObjectType.ROOT_TYPE)
-        {
-            if(destFileObjectType==FileObjectType.USB_TYPE || sourceFileObjectType==FileObjectType.USB_TYPE)
-            {
-                return false;
-            }
 
-        }
-        else {
+        FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
+        FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
 
-            FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
-            FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
+        int size = sourceFileModels.length;
+        for (int i = 0; i < size; ++i) {
+            if (isCancelled()) return false;
+            FileModel sourceFileModel = sourceFileModels[i];
+            String file_path = sourceFileModel.getPath();
+            current_file_name = sourceFileModel.getName();
+            boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file_path);
+            if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
+                if (isSourceFromInternal) {
+                    copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, cut);
 
-            int size = sourceFileModels.length;
-            for (int i = 0; i < size; ++i) {
-                if (isCancelled()) return false;
-                FileModel sourceFileModel = sourceFileModels[i];
-                String file_path = sourceFileModel.getPath();
-                current_file_name = sourceFileModel.getName();
-                boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file_path);
-                if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
-                    if (isSourceFromInternal) {
-                        copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, cut);
-
-                    } else // that is cut and paste  from external directory
-                    {
-                        copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
-                        if (copy_result && cut) {
-                            sourceFileModel.delete();
-                        }
-                    }
-                } else {
+                } else // that is cut and paste  from external directory
+                {
                     copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
                     if (copy_result && cut) {
                         sourceFileModel.delete();
                     }
                 }
-
-
-                if (copy_result) {
-                    copied_files_name.add(current_file_name);
-                    copied_source_file_path_list.add(file_path);
+            } else {
+                copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
+                if (copy_result && cut) {
+                    sourceFileModel.delete();
                 }
-
-                files_selected_array.remove(file_path);
             }
+
+
+            if (copy_result) {
+                copied_files_name.add(current_file_name);
+                copied_source_file_path_list.add(file_path);
+            }
+
+            files_selected_array.remove(file_path);
         }
         if(counter_no_files>0)
         {

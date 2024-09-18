@@ -31,6 +31,10 @@ import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
+
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.BufferedOutputStream;
@@ -69,6 +73,7 @@ public class Global
 	static File USB_CACHE_DIR;
 	static File TEMP_ROTATE_CACHE_DIR;
 	static File FTP_CACHE_DIR;
+	static File SFTP_CACHE_DIR;
 	static File APK_ICON_DIR;
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
@@ -455,6 +460,7 @@ public class Global
 		USB_CACHE_DIR=context.getExternalFilesDir(".usb_cache");
 		TEMP_ROTATE_CACHE_DIR=context.getExternalFilesDir(".temp_rotate_cache");
 		FTP_CACHE_DIR=context.getExternalFilesDir(".ftp_cache");
+		SFTP_CACHE_DIR=context.getExternalFilesDir(".sftp_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		SIZE_APK_ICON_LIST=APK_ICON_PACKAGE_NAME_LIST.size();
@@ -1098,30 +1104,27 @@ public class Global
 			{
 				FileUtil.mkdirsNative(parent_file);
 				createNativeNewFile(cache_file);
-				//if(CHECK_OTHER_FTP_SERVER_CONNECTED(FtpClientRepository_old.getInstance().ftpClientForCopyView))
-				{
-					FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-					FTPClient ftpClient=null;
-                    try {
-                        ftpClient=ftpClientRepository.getFtpClient();
-						try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-							FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
-							ftpClient.completePendingCommand();
-							return cache_file;
+				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+				FTPClient ftpClient=null;
+				try {
+					ftpClient=ftpClientRepository.getFtpClient();
+					try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+						FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
+						ftpClient.completePendingCommand();
+						return cache_file;
 
-						} catch (Exception e) {
+					} catch (Exception e) {
 
-							return cache_file;
-						}
+						return cache_file;
+					}
 
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-					finally {
-						if (ftpClientRepository != null && ftpClient != null) {
-							ftpClientRepository.releaseFtpClient(ftpClient);
-							Timber.tag(FTP_TAG).d("FTP client released");
-						}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				finally {
+					if (ftpClientRepository != null && ftpClient != null) {
+						ftpClientRepository.releaseFtpClient(ftpClient);
+						Timber.tag(FTP_TAG).d("FTP client released");
 					}
 				}
 			}
@@ -1130,6 +1133,46 @@ public class Global
 		return cache_file;
 	}
 
+	public static File COPY_TO_SFTP_CACHE(String filePath) {
+		File cacheFile = new File(SFTP_CACHE_DIR, filePath);
+		long[] bytesRead = new long[1];
+
+		if (!cacheFile.exists()) {
+			File parentFile = cacheFile.getParentFile();
+			if (parentFile != null) {
+				FileUtil.mkdirsNative(parentFile);
+				createNativeNewFile(cacheFile);
+
+				SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+				ChannelSftp channelSftp = null;
+
+				try {
+					channelSftp = sftpChannelRepository.getSftpChannel();
+
+					try (InputStream inputStream = channelSftp.get(filePath);
+						 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile))) {
+
+						FileUtil.bufferedCopy(inputStream, outputStream, false, bytesRead);
+						return cacheFile;
+
+					} catch (SftpException | IOException e) {
+						Timber.tag(FTP_TAG).e("Error copying file from SFTP: %s", e.getMessage());
+						return cacheFile;
+					}
+
+				} catch (JSchException e) {
+					Timber.tag(FTP_TAG).e("Error getting SFTP channel: %s", e.getMessage());
+					throw new RuntimeException(e);
+				} finally {
+					if (sftpChannelRepository != null && channelSftp != null) {
+						sftpChannelRepository.releaseChannel(channelSftp);
+						Timber.tag(FTP_TAG).d("SFTP channel released");
+					}
+				}
+			}
+		}
+		return cacheFile;
+	}
 
 	public static Bitmap scaleToFitHeight(Bitmap bitmap,int height){
 		float factor=height/(float)bitmap.getHeight();

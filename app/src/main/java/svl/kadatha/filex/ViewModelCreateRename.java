@@ -47,12 +47,11 @@ public class ViewModelCreateRename extends AndroidViewModel {
                 file_created=false;
                 if(file_type==0)
                 {
-                    if(fileObjectType==FileObjectType.ROOT_TYPE)
+                    if (fileObjectType==FileObjectType.ROOT_TYPE)
                     {
-                        //file_created=RootUtils.EXECUTE(Arrays.asList(">",new_file_path));
-                        if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+                        if(!RootUtils.canRunRootCommands())
                         {
-                            //file_created=FileUtil.createNativeNewFile(file);
+                            file_created=false;
                         }
                     }
                     else {
@@ -63,12 +62,11 @@ public class ViewModelCreateRename extends AndroidViewModel {
                 }
                 else if(file_type==1)
                 {
-                    if(fileObjectType==FileObjectType.ROOT_TYPE)
+                    if (fileObjectType==FileObjectType.ROOT_TYPE)
                     {
-                        //file_created=RootUtils.EXECUTE(Arrays.asList("mkdir","-p",new_file_path));
-                        if(Global.SET_OTHER_FILE_PERMISSION("rwx",parent_folder))
+                        if(!RootUtils.canRunRootCommands())
                         {
-                            //file_created=FileUtil.mkdirNative(file);
+                            file_created=false;
                         }
                     }
                     else {
@@ -101,26 +99,16 @@ public class ViewModelCreateRename extends AndroidViewModel {
                 fileNameChanged=false;
                 if (fileObjectType==FileObjectType.ROOT_TYPE)
                 {
-                    if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+                    if(!RootUtils.canRunRootCommands())
                     {
-                        //fileNameChanged=RootUtils.EXECUTE(Arrays.asList("mv",existing_file.getAbsolutePath(),new_file_path));
-                        if(Global.SET_OTHER_FILE_PERMISSION("rwx",existing_file_path))
-                        {
-                            //fileNameChanged=FileUtil.renameNativeFile(existing_file,new_file);
-                        }
-                    }
-                    else
-                    {
-                        //print(getString(R.string.root_access_not_avaialable));
                         fileNameChanged=false;
                     }
-
                 }
-                else {
-                        FileModel fileModel=FileModelFactory.getFileModel(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),fileObjectType,tree_uri,tree_uri_path);
-                        fileNameChanged=fileModel.rename(new_name,overwrite);
+                else
+                {
+                    FileModel fileModel=FileModelFactory.getFileModel(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,existing_name),fileObjectType,tree_uri,tree_uri_path);
+                    fileNameChanged=fileModel.rename(new_name,overwrite);
                 }
-
 
                 if(fileNameChanged)
                 {

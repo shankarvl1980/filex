@@ -45,6 +45,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
 
     public boolean ftpPOJOAlreadyExists;
     public static FtpDetailsDialog.FtpPOJO FTP_POJO;
+    public static FtpDetailsDialog.SftpPOJO SFTP_POJO;
     public static String FTP_WORKING_DIR_PATH;
     public boolean isFtpConnected;
     private String type;
@@ -143,13 +144,12 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     if(loggedInStatus)
                     {
                         ftpClient=ftpClientRepository.getFtpClient();
-                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();//ftpClientRepository.ftpClientMain.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                             repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
                         }
-
                     }
                 }
                 catch (IOException e) {
@@ -245,7 +245,6 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                             repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
                         }
-
                     }
                 }
                 catch (IOException e) {
@@ -301,7 +300,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
         future8 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                isFtpConnected =FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testServerConnection();
+                isFtpConnected =FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO).testFtpServerConnection();
                 testServiceConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

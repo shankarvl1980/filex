@@ -95,7 +95,6 @@ public class RepositoryClass {
             hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS);
             hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+media_category,filePOJOS_filtered);
         }
-
     }
 
 
@@ -629,7 +628,5 @@ public class RepositoryClass {
                 cursor.close();
             }
         }
-
     }
-
 }

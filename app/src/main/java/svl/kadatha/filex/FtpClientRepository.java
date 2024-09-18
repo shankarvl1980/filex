@@ -1,5 +1,7 @@
 package svl.kadatha.filex;
 
+import android.os.Build;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.net.ftp.FTP;
@@ -7,6 +9,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,13 +45,25 @@ public class FtpClientRepository {
 
     private void initializeClients() {
         initialClients = Math.min(MAX_IDLE_CONNECTIONS, 5);
-        for (int i = 0; i < initialClients; i++) {
+        // Initialize the first client
+        try {
+            FTPClient client = createAndConnectFtpClient();
+            ftpClients.offer(client);
+            lastUsedTimes.put(client, System.currentTimeMillis());
+        } catch (IOException e) {
+            Timber.tag(TAG).e("Failed to initialize the first FTP client: %s", e.getMessage());
+            throw new RuntimeException("Failed to initialize the first FTP client.", e);
+        }
+
+        // Initialize additional clients
+        for (int i = 1; i < initialClients; i++) {
             try {
                 FTPClient client = createAndConnectFtpClient();
                 ftpClients.offer(client);
                 lastUsedTimes.put(client, System.currentTimeMillis());
             } catch (IOException e) {
-                Timber.tag(TAG).e("Failed to initialize FTP client: %s", e.getMessage());
+                Timber.tag(TAG).e("Failed to initialize FTP client %d: %s", i + 1, e.getMessage());
+                // Continue with available clients
             }
         }
         keepAliveScheduler.scheduleWithFixedDelay(this::sendKeepAlive, 30, 30, TimeUnit.SECONDS);
@@ -172,8 +187,19 @@ public class FtpClientRepository {
             throw new IOException("Failed to connect to the FTP server");
         }
 
-        client.setControlKeepAliveTimeout(10);
-        client.setControlKeepAliveReplyTimeout(500);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
+        }else{
+            client.setControlKeepAliveTimeout(10);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            client.setControlKeepAliveReplyTimeout(Duration.ofMillis(500));
+        }else{
+            client.setControlKeepAliveReplyTimeout(500);
+        }
+
 
         if (!client.login(ftpPOJO.user_name, ftpPOJO.password)) {
             int replyCode = client.getReplyCode();
@@ -257,7 +283,12 @@ public class FtpClientRepository {
         }
 
         try {
-            client.setControlKeepAliveTimeout(10);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
+            }else{
+                client.setControlKeepAliveTimeout(10);
+            }
+
             if (!client.sendNoOp()) {
                 return false;
             }
@@ -267,7 +298,7 @@ public class FtpClientRepository {
         }
     }
 
-    public boolean testServerConnection() {
+    public boolean testFtpServerConnection() {
         FTPClient client = null;
         try {
             client = getFtpClient();

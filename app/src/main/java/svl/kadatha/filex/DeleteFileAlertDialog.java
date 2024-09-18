@@ -202,7 +202,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 					}
 					else if(sourceFileObjectType==FileObjectType.ROOT_TYPE)
 					{
-						if(RootUtils.CAN_RUN_ROOT_COMMANDS())
+						if(RootUtils.canRunRootCommands())
 						{
 							Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 							if(emptyService==null)

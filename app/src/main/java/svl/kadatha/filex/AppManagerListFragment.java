@@ -614,6 +614,10 @@ public class AppManagerListFragment extends Fragment {
                 String file_path=file.getAbsolutePath();
                 bundle.putString("file_path",dest_folder);
                 bundle.putSerializable("fileObjectType",destFileObjectType);
+                if(destFileObjectType==FileObjectType.ROOT_TYPE){
+                    Global.print(context,getString(R.string.not_supported));
+                    return;
+                }
                 if(Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType,file_path,viewModel.destFilePOJOs))
                 {
                     ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog=ArchiveReplaceConfirmationDialog.getInstance(APK_REPLACEMENT_REQUEST_CODE,bundle);

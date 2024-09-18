@@ -67,7 +67,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 }
                 else if(fileObjectType==FileObjectType.ROOT_TYPE)
                 {
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.ROOT_TYPE);
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
                 {

@@ -141,7 +141,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 String current_file_name;
                 final List<String> copied_files_name=new ArrayList<>();  //declared here instead of at Asynctask class to keep track of copied files in case replacement
 
-
                 if(destFileObjectType==FileObjectType.ROOT_TYPE)
                 {
                     isBackedUp.postValue(AsyncTaskStatus.COMPLETED);

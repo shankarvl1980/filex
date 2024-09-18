@@ -41,7 +41,7 @@ import timber.log.Timber;
 public final class FileUtil
 {
 	private static final String PRIMARY_VOLUME_NAME = "primary";
-	public final static int BUFFER_SIZE=8192;
+	public final static int BUFFER_SIZE= 16 * 1024;
 	public static int USB_CHUNK_SIZE;
 	private static final String TAG = "Ftp-FileUtil";
 
@@ -307,7 +307,6 @@ public final class FileUtil
 			}
 		}
     }
-
 
 	@SuppressWarnings("null")
 	public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read)
@@ -743,8 +742,7 @@ public final class FileUtil
 	{
 		try
 		{
-			StorageManager mStorageManager =
-				(StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+			StorageManager mStorageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
 
 			Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
 
@@ -816,22 +814,37 @@ public final class FileUtil
 		}
 	}
 
-
 	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
 		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
 		int count;
-		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
-			while ((count = bufferedInputStream.read(buffer)) != -1) {
-				bufferedOutputStream.write(buffer, 0, count);
+		try (InputStream in = inputStream; OutputStream out = outputStream) {
+			while ((count = in.read(buffer)) != -1) {
+				out.write(buffer, 0, count);
 				bytes_read[0] += count;
 			}
-			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
+			out.flush();
 		} catch (IOException e) {
 			Timber.tag(TAG).e("Error during buffered copy: %s", e.getMessage());
-			throw e; // Re-throw the exception to be handled by the caller
+			throw e;
 		}
 	}
+
+
+//	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
+//		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
+//		int count;
+//		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+//			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
+//			while ((count = bufferedInputStream.read(buffer)) != -1) {
+//				bufferedOutputStream.write(buffer, 0, count);
+//				bytes_read[0] += count;
+//			}
+//			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
+//		} catch (IOException e) {
+//			Timber.tag(TAG).e("Error during buffered copy: %s", e.getMessage());
+//			throw e; // Re-throw the exception to be handled by the caller
+//		}
+//	}
 
 }
 	

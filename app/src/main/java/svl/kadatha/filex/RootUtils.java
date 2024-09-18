@@ -1,140 +1,82 @@
 package svl.kadatha.filex;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import timber.log.Timber;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+
 public class RootUtils {
 
-    public static boolean EXECUTE(List<String> commands)
-    {
-        boolean retval = false;
+    public static String executeCommand(String command) {
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(process.getOutputStream());
+            BufferedReader is = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader es = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-        try
-        {
-            if (null != commands && !commands.isEmpty())
-            {
-                Process suProcess = Runtime.getRuntime().exec("su");
+            os.writeBytes(command + "\n");
+            os.flush();
+            os.writeBytes("exit\n");
+            os.flush();
 
-                DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
-
-                // Execute commands that require root access
-                for (String currCommand : commands)
-                {
-                    os.writeBytes(currCommand + "\n");
-                    os.flush();
-                }
-
-                os.writeBytes("exit\n");
-                os.flush();
-
-                try
-                {
-                    int suProcessRetval = suProcess.waitFor();
-                    if (255 != suProcessRetval)
-                    {
-                        // Root access granted
-                        retval = true;
-                        MainActivity.SU="su";
-                    }
-                    else
-                    {
-                        // Root access denied
-                        retval = false;
-                        MainActivity.SU="";
-                        //add listener to disable su toggle
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Timber.tag("ROOT").e( "Error executing root action");
-                }
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = is.readLine()) != null) {
+                output.append(line).append("\n");
             }
-        }
-        catch (IOException | SecurityException ex)
-        {
-            Timber.tag("ROOT").w( "Can't get root access");
-        } catch (Exception ex)
-        {
-            Timber.tag("ROOT").w( "Error executing internal operation");
-        }
 
-        return retval;
-    }
-
-
-    public static boolean CAN_RUN_ROOT_COMMANDS()
-    {
-        return false;
-        /*
-        boolean retval = false;
-        Process suProcess;
-
-        try
-        {
-            suProcess = Runtime.getRuntime().exec("su");
-
-            DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
-            DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
-
-            if (null != os && null != osRes)
-            {
-                // Getting the id of the current user to check if this is root
-                os.writeBytes("id\n");
-                os.flush();
-
-                String currUid = osRes.readLine();
-                boolean exitSu = false;
-                if (null == currUid)
-                {
-                    retval = false;
-                    exitSu = false;
-                    Timber.tag("ROOT").d( "Can't get root access or denied by user");
-                    MainActivity.SU="";
-                }
-                else if (currUid.contains("uid=0"))
-                {
-                    retval = true;
-                    exitSu = true;
-                    Timber.tag("ROOT").d( "Root access granted");
-                    MainActivity.SU="su";
-                }
-                else
-                {
-                    retval = false;
-                    exitSu = true;
-                    Timber.tag("ROOT").d( "Root access rejected: " + currUid);
-                    MainActivity.SU="";
-                    //add listener to disable su toggle
-                }
-
-                if (exitSu)
-                {
-                    os.writeBytes("exit\n");
-                    os.flush();
-                }
+            StringBuilder error = new StringBuilder();
+            while ((line = es.readLine()) != null) {
+                error.append(line).append("\n");
             }
+
+            process.waitFor();
+            if (process.exitValue() == 0) {
+                return output.toString();
+            } else {
+                // Log error if needed
+                return null;
+            }
+
+        } catch (Exception e) {
+            // Log exception if needed
+            return null;
         }
-        catch (Exception e)
-        {
-            // Can't get root !
-            // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
-
-            retval = false;
-            Timber.tag("ROOT").d( "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
-        }
-
-        return retval;
-
-         */
     }
 
-    public static boolean WHETHER_FILE_EXISTS(String file_path)
-    {
-        return false;
+    public static boolean executeCommandBoolean(String command) {
+        String output = executeCommand(command);
+        return output != null;
     }
 
+    public static boolean canRunRootCommands() {
+        String output = executeCommand("id");
+        return output != null && output.contains("uid=0");
+    }
+
+    public static String[] listFilesInDirectory(String parentPath) {
+        // Construct the command
+        String command = "find '" + parentPath + "' -mindepth 1 -maxdepth 1 -print0";
+
+        // Execute the command
+        String output = RootUtils.executeCommand(command);
+
+        if (output == null || output.isEmpty()) {
+            // Handle error or empty directory
+            return null;
+        }
+
+        // Split the output using the null character as the delimiter
+        String[] filePaths = output.split("\0");
+
+        // Return the array of file paths
+        return filePaths;
+    }
 }
-

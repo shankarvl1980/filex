@@ -447,7 +447,7 @@ public class FilePOJOUtil {
         return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
-    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extracticon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient) {
+    static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extract_icon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient) {
         Timber.tag(TAG).d("Creating FilePOJO for FTP file: %s", file_path);
         String name = f.getName();
         String path = file_path;
@@ -484,7 +484,7 @@ public class FilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -509,155 +509,90 @@ public class FilePOJOUtil {
         return filePOJO;
     }
 
-    static FilePOJO MAKE_FilePOJO_ROOT(String file_path)
-    {
-        String[] command_line_long = {"ls", "-ld", file_path};
+
+    static FilePOJO MAKE_FilePOJO_ROOT(String file_path,boolean extract_icon, FileObjectType fileObjectType) {
+        String command = "stat -c '%F|%s|%Y|%n|%a' '" + file_path + "'";
+        String output = RootUtils.executeCommand(command);
+
+        if (output == null || output.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] fields = output.split("\\|", -1); // Include trailing empty strings
+        if (fields.length < 5) {
+            // Output does not have all required fields
+            return null;
+        }
+
+        String fileType = fields[0];
+        String sizeStr = fields[1];
+        String modTimeStr = fields[2];
+        String name = fields[3];
+        String permissions = fields[4];
+
+        boolean isDirectory = fileType.equalsIgnoreCase("directory");
+        long sizeLong;
+        long dateLong;
+
         try {
-            Process process_long = Runtime.getRuntime().exec(command_line_long);
-            //java.lang.Process process_long = Runtime.getRuntime().exec("ls -ld "+file_path);
-            BufferedReader bf_long = new BufferedReader(new InputStreamReader(process_long.getInputStream()));
-            String line_long=bf_long.readLine(); //consume first line as not required
-            if(line_long != null) {
-
-                return PARSE_MAKE_FilePOJO_ROOT(line_long,new File(file_path).getParent());
-
-            }
-            process_long.waitFor();
+            sizeLong = Long.parseLong(sizeStr);
+        } catch (NumberFormatException e) {
+            sizeLong = 0L;
         }
-        catch(Exception e){return  null;}
-        return null;
+
+        try {
+            dateLong = Long.parseLong(modTimeStr) * 1000L; // Convert seconds to milliseconds
+        } catch (NumberFormatException e) {
+            dateLong = 0L;
+        }
+
+        String date = Global.SDF.format(dateLong);
+        String path = name; // 'stat' outputs the full path in %n
+        String si;
+
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(isDirectory, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                }
+                else if(extract_icon && type==0)
+                {
+                    package_name=EXTRACT_ICON(MainActivity.PM,path,file_ext);
+                }
+            }
+            si = FileUtil.humanReadableByteCount(sizeLong);
+        } else {
+            String sub_file_count=null;
+            String [] file_list;
+            if((file_list=RootUtils.listFilesInDirectory(file_path))!=null)
+            {
+                sub_file_count="("+file_list.length+")";
+            }
+            si=sub_file_count;
+        }
+
+        if (name.startsWith(".")) {
+            alfa = Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType,name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null
+        );
     }
-
-    static FilePOJO PARSE_MAKE_FilePOJO_ROOT(String line, String parent_file_path)
-    {
-
-        String [] split_line=line.split("\\s+");
-        int split_count=split_line.length;
-        String permission=split_line[0];
-        String name;
-        String path="";
-        boolean isDirectory=false;
-        long dateLong=0L;
-        String date;
-        long sizeLong = 0;
-
-        if(permission.startsWith("l"))
-        {
-            name=split_line[split_count-3];
-
-            if(split_count<=8)
-            {
-                try {
-                    sizeLong=Long.parseLong(split_line[2]);
-                }
-                catch (NumberFormatException nfe)
-                {
-                    sizeLong=0L;
-                }
-                if(sizeLong==4096) isDirectory=true;
-                date=split_line[3];
-            }
-            else
-            {
-                try {
-                    sizeLong=Long.parseLong(split_line[3]);
-                }
-                catch (NumberFormatException nfe)
-                {
-                    sizeLong=0L;
-                }
-                if(sizeLong==4096) isDirectory=true;
-                date=split_line[4];
-            }
-        }
-        else
-        {
-            name=split_line[split_count-1];
-            isDirectory= permission.startsWith("d");
-
-            if(split_count<=6)
-            {
-                try {
-                    sizeLong=Long.parseLong(split_line[2]);
-                }
-                catch (NumberFormatException nfe)
-                {
-                    sizeLong=0L;
-                }
-                date=split_line[3];
-            }
-            else
-            {
-                try {
-                    sizeLong=Long.parseLong(split_line[3]);
-                }
-                catch (NumberFormatException nfe)
-                {
-                    sizeLong=0L;
-                }
-                date=split_line[4];
-            }
-
-        }
-
-        path=Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,name);
-
-        String si=FileUtil.humanReadableByteCount(sizeLong);
-
-        String file_ext="";
-        int overlay_visible= View.INVISIBLE;
-        float alfa=Global.ENABLE_ALFA;
-        int type=R.drawable.folder_icon;
-
-        if(!isDirectory)
-        {
-            type=R.drawable.unknown_file_icon;
-            int idx=name.lastIndexOf(".");
-            if(idx!=-1)
-            {
-                file_ext=name.substring(idx+1);
-                type=GET_FILE_TYPE(isDirectory,file_ext);
-                if(type==-2)
-                {
-                    overlay_visible=View.VISIBLE;
-                }
-            }
-
-        }
-        else
-        {
-            String[] command_line = {"ls", "-l", path};
-            try {
-                Process process = Runtime.getRuntime().exec(command_line);
-                BufferedReader bf_long = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                int count=0;
-                while(bf_long.readLine()!=null)
-                {
-                    ++count;
-                }
-
-                si="("+count+")";
-                process.waitFor();
-            }
-            catch(Exception e){}
-
-        }
-
-        if(name.startsWith("."))
-        {
-            alfa=Global.DISABLE_ALFA;
-        }
-
-
-        return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
-    }
-
-
 
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)
     {
         FilePOJO filePOJO=null;
-        if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+        if(fileObjectType==FileObjectType.FILE_TYPE)
         {
             File f=new File(file_path);
             filePOJO=MAKE_FilePOJO(f,true,fileObjectType);
@@ -675,13 +610,10 @@ public class FilePOJOUtil {
             catch (IOException e) {
                 return  null;}
         }
-        /*
         else if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            filePOJO=MAKE_FilePOJO_ROOT(file_path);
+            filePOJO=MAKE_FilePOJO_ROOT(file_path,false,fileObjectType);
         }
-
-         */
         else if(fileObjectType==FileObjectType.FTP_TYPE)
         {
             if(file_path.equals(File.separator))
@@ -1191,9 +1123,7 @@ public class FilePOJOUtil {
                 }
                 break;
             }
-
         }
-
     }
 
 
@@ -1201,9 +1131,25 @@ public class FilePOJOUtil {
                                       String fileclickselected, UsbFile usbFile , boolean archive_view)
     {
         filePOJOS.clear(); filePOJOS_filtered.clear();
-        String other_permission_string = null;
         File file=new File(fileclickselected);
-        if(fileObjectType==FileObjectType.FILE_TYPE)
+        if(fileObjectType==FileObjectType.ROOT_TYPE)
+        {
+            if(RootUtils.canRunRootCommands()){
+                String[] child_file_paths_array=RootUtils.listFilesInDirectory(fileclickselected);
+                int size = child_file_paths_array.length;
+                for (int i = 0; i < size; ++i){
+                    String child_file_path = child_file_paths_array[i];
+                    FilePOJO filePOJO =MAKE_FilePOJO_ROOT(child_file_path,true,fileObjectType);
+                    if(!filePOJO.getName().startsWith("."))
+                    {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+            }
+
+        }
+        else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             {
@@ -1307,25 +1253,26 @@ public class FilePOJOUtil {
                                       String fileclickselected, UsbFile usbFile , boolean archive_view)
     {
         filePOJOS.clear(); filePOJOS_filtered.clear();
-        String other_permission_string = null;
         File file=new File(fileclickselected);
-/*
+
         if(fileObjectType==FileObjectType.ROOT_TYPE)
         {
-            String modified_other_permission_string=Global.GET_OTHER_FILE_PERMISSION(fileclickselected);
-            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"   existing other permission string - "+modified_other_permission_string+" permission to read - "+file.canRead());
-            Global.SET_OTHER_FILE_PERMISSION("rwx",fileclickselected);
-            SecurityManager securityManager=new SecurityManager();
-            securityManager.checkRead(fileclickselected);
-
-            file.setExecutable(true,false);
-            file.setReadable(true,false);
-            Timber.tag("Shankar").d("," owner of file - "+file.canRead());
+            if(RootUtils.canRunRootCommands()){
+                String[] child_file_paths_array=RootUtils.listFilesInDirectory(fileclickselected);
+                int size = child_file_paths_array.length;
+                for (int i = 0; i < size; ++i){
+                    String child_file_path = child_file_paths_array[i];
+                    FilePOJO filePOJO =MAKE_FilePOJO_ROOT(child_file_path,true,fileObjectType);
+                    if(!filePOJO.getName().startsWith("."))
+                    {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+            }
 
         }
-
- */
-        if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+        else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             {
@@ -1371,9 +1318,7 @@ public class FilePOJOUtil {
                 else {
                     file_type_fill_filePOJO(file, fileObjectType,filePOJOS,filePOJOS_filtered);
                 }
-
             }
-
         }
         else if(fileObjectType==FileObjectType.USB_TYPE)
         {
@@ -1397,7 +1342,6 @@ public class FilePOJOUtil {
                         FilePOJO filePOJO=MAKE_FilePOJO(f,true);
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
-
                     }
 
                 } catch (IOException e) {
@@ -1439,46 +1383,6 @@ public class FilePOJOUtil {
                 }
             }
         }
-        /*
-        else if(fileObjectType==FileObjectType.ROOT_TYPE) {
-
-            String[] command_line_long = {"ls", "-l", fileclickselected};
-            try {
-                //java.lang.Process process_long = Runtime.getRuntime().exec(command_line_long);
-                java.lang.Process process_long = Runtime.getRuntime().exec("ls -l "+fileclickselected);
-                BufferedReader bf_long = new BufferedReader(new InputStreamReader(process_long.getInputStream()));
-                String line_long;
-
-                //line_long=bf_long.readLine(); //consume first line as not required
-                while ((line_long = bf_long.readLine()) != null) {
-                    FilePOJO filePOJO =PARSE_MAKE_FilePOJO_ROOT(line_long,fileclickselected);
-                    if(!filePOJO.getName().startsWith("."))
-                    {
-                        filePOJOS_filtered.add(filePOJO);
-                    }
-
-                    filePOJOS.add(filePOJO);
-                }
-                process_long.waitFor();
-            }
-            catch(Exception e){}
-        }
-
-         */
-/*
-        if(fileObjectType==FileObjectType.ROOT_TYPE)
-        {
-            other_permission_string=Global.GET_OTHER_FILE_PERMISSION(fileclickselected);
-            Timber.tag("Shankar").d(","file_path - "+fileclickselected+"    modified other permission - "+other_permission_string+" whether existsUri - "+new File(fileclickselected).existsUri());
-            MAKE_FilePOJO_ROOT(fileclickselected);
-        }
-
-        if(other_permission_string!=null)
-        {
-            Global.SET_OTHER_FILE_PERMISSION(other_permission_string,fileclickselected);
-        }
-
- */
 
         RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
         repositoryClass.hashmap_file_pojo.put(fileObjectType+fileclickselected,filePOJOS);
@@ -1523,9 +1427,6 @@ public class FilePOJOUtil {
                 }
                 filePOJOS.add(filePOJO);
             }
-
         }
     }
-
-
 }
