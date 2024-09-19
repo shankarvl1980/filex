@@ -10,6 +10,8 @@ import android.provider.DocumentsContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.jcraft.jsch.ChannelSftp;
+
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Stack;
+import java.util.Vector;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
@@ -405,6 +408,22 @@ public final class FileUtil
 		}
 		Timber.tag(TAG).d("FTP file not found: %s", file_path);
 		return null;
+	}
+
+	public static ChannelSftp.LsEntry getChannelSftpLsEntry(ChannelSftp channelSftp, String file_path){
+		try {
+			@SuppressWarnings("unchecked")
+			Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
+			if (entries != null && entries.size() == 1) {
+				ChannelSftp.LsEntry lsEntry = entries.get(0);
+				return lsEntry;
+			} else {
+				Timber.tag(TAG).e("Could not find the file or multiple entries returned for path: %s", file_path);
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 

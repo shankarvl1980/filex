@@ -229,6 +229,11 @@ public class FileEditorViewModel extends AndroidViewModel {
                     File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
+                else if(fileObjectType==FileObjectType.SFTP_TYPE)
+                {
+                    File cache_file=Global.COPY_TO_SFTP_CACHE(file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                }
                 else
                 {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);

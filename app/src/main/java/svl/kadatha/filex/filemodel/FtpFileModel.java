@@ -506,6 +506,4 @@ public class FtpFileModel implements FileModel {
             }
         }
     }
-
-
 }

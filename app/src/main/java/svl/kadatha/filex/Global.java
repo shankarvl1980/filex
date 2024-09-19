@@ -775,7 +775,6 @@ public class Global
 				}
 			}
 		}
-
 	}
 
 

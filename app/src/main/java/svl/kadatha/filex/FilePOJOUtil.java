@@ -7,6 +7,11 @@ import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
+
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -26,6 +31,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -589,6 +595,66 @@ public class FilePOJOUtil {
         );
     }
 
+    public static FilePOJO MAKE_FilePOJO(ChannelSftp.LsEntry entry, boolean extract_icon, FileObjectType fileObjectType, String file_path, ChannelSftp channelSftp) {
+        Timber.tag(TAG).d("Creating FilePOJO for SFTP file: %s", file_path);
+        String name = entry.getFilename();
+        String path = file_path;
+        SftpATTRS attrs = entry.getAttrs();
+        boolean isDirectory = attrs.isDir();
+
+        long dateLong = 0L;
+        String date = "";
+        try {
+            int mtime = attrs.getMTime(); // Modification time in seconds since epoch
+            dateLong = ((long) mtime) * 1000; // Convert to milliseconds
+            date = Global.SDF.format(new Date(dateLong));
+        } catch (Exception e) {
+            Timber.tag(TAG).e("Error getting modification time for SFTP file: %s", e.getMessage());
+        }
+
+        long sizeLong = 0L;
+        String si = "";
+
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(isDirectory, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                } else if (extract_icon && type == 0) {
+                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                }
+            }
+
+            sizeLong = attrs.getSize();
+            si = FileUtil.humanReadableByteCount(sizeLong);
+        } else {
+            String sub_file_count = null;
+            try {
+                @SuppressWarnings("unchecked")
+                Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
+                if (entries != null) {
+                    sub_file_count = "(" + entries.size() + ")";
+                }
+                si = sub_file_count;
+            } catch (SftpException e) {
+                Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
+            }
+        }
+
+        FilePOJO filePOJO = new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
+        Timber.tag(TAG).d("Created FilePOJO for SFTP file: %s, isDirectory: %b, size: %d", name, isDirectory, sizeLong);
+        return filePOJO;
+    }
+
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)
     {
         FilePOJO filePOJO=null;
@@ -640,11 +706,29 @@ public class FilePOJOUtil {
                         ftpClientRepository.releaseFtpClient(ftpClient);
                     }
                 }
+            }
+        }
+        else if(fileObjectType==FileObjectType.SFTP_TYPE){
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            ChannelSftp channelSftp = null;
+            try {
+                channelSftp=sftpChannelRepository.getSftpChannel();
+                ChannelSftp.LsEntry lsEntry=FileUtil.getChannelSftpLsEntry(channelSftp,file_path);
+                if(lsEntry!=null)
+                {
+                    filePOJO=MAKE_FilePOJO(lsEntry,false,fileObjectType,file_path,channelSftp);
+                }
+
+            } catch (Exception e) {
 
             }
-
+            finally {
+                if(sftpChannelRepository!=null && channelSftp!=null){
+                    sftpChannelRepository.releaseChannel(channelSftp);
+                    Timber.tag(TAG).d("SFTP channel released");
+                }
+            }
         }
-
         return filePOJO;
     }
 
@@ -746,7 +830,6 @@ public class FilePOJOUtil {
         }
         repositoryClass.hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs);
         repositoryClass.hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE+filePOJOHashmapKeyPath,filePOJOs_filtered);
-
     }
 
     public static void REMOVE_FROM_HASHMAP_FILE_POJO(final String source_folder, final List<String> deleted_files_name_list,FileObjectType fileObjectType)
@@ -809,7 +892,6 @@ public class FilePOJOUtil {
             REMOVE_FROM_LIBRARY_CACHE(fileObjectType,file_to_be_removed,"Duplicate Files");
             REMOVE_FROM_AUDIO_CACHE(fileObjectType,file_to_be_removed);
         }
-
         repositoryClass.hashmap_file_pojo.put(fileObjectType+source_folder,filePOJOs);
         repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+source_folder,filePOJOs_filtered);
     }
@@ -829,7 +911,6 @@ public class FilePOJOUtil {
                 return deleted_filePOJO;
             }
         }
-
         return deleted_filePOJO;
     }
 
@@ -887,7 +968,6 @@ public class FilePOJOUtil {
                 }
             }
         }
-
     }
 
     public static FilePOJO ADD_TO_HASHMAP_FILE_POJO(final String dest_folder, final List<String> added_file_name_list, FileObjectType fileObjectType, List<String> overwritten_file_path_list)
@@ -931,7 +1011,6 @@ public class FilePOJOUtil {
                 }
             }
 
-
             size=added_file_name_list.size();
             String file_path;
             for(int i=0;i<size;++i)
@@ -949,12 +1028,10 @@ public class FilePOJOUtil {
             }
             repositoryClass.hashmap_file_pojo.put(fileObjectType+dest_folder,filePOJOs);
             repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+dest_folder,filePOJOs_filtered);
-
         }
 
         REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(overwritten_file_path_list, fileObjectType);
         return filePOJO;
-
     }
 
     public static FilePOJO ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(String filePOJOHashmapKeyPath, final List<String> added_file_path_list, FileObjectType fileObjectType, List<String> overwritten_file_path_list)
@@ -979,7 +1056,6 @@ public class FilePOJOUtil {
                 remove_from_FilePOJO_comparing_file_path(overwritten_file_path,filePOJOs_filtered);
             }
         }
-
 
         size=added_file_path_list.size();
         for(int i=0;i<size;++i)
@@ -1034,12 +1110,10 @@ public class FilePOJOUtil {
             {
                 filePOJOs_filtered.add(filePOJO);
             }
-
         }
         repositoryClass.hashmap_file_pojo.put(fileObjectType+parent_path_to_dest_folder,filePOJOs);
         repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType+parent_path_to_dest_folder,filePOJOs_filtered);
     }
-
 
     public static void  REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(List<String> file_path_list, FileObjectType fileObjectType)
     {
@@ -1075,10 +1149,8 @@ public class FilePOJOUtil {
                 iterator.remove();
             }
         }
-
         repositoryClass.hashmap_internal_directory_size.remove(file_path);
         repositoryClass.hashmap_external_directory_size.remove(file_path);
-
     }
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
@@ -1100,10 +1172,8 @@ public class FilePOJOUtil {
                         }
                     }
                 }
-
             }
         }
-
     }
 
     public static void SET_HASHMAP_FILE_POJO_SIZE_NULL(String file_path,FileObjectType fileObjectType)
@@ -1201,9 +1271,7 @@ public class FilePOJOUtil {
             FTPClient ftpClient=null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
-                ftpClient.pwd();
                 file_array = ftpClient.listFiles(fileclickselected);
-
                 Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
                 for (int i = 0; i < size; ++i) {
@@ -1224,6 +1292,29 @@ public class FilePOJOUtil {
                 if (ftpClientRepository != null && ftpClient != null) {
                     ftpClientRepository.releaseFtpClient(ftpClient);
                     Timber.tag(TAG).d("FTP client released");
+                }
+            }
+        }
+        else if(fileObjectType==FileObjectType.SFTP_TYPE){
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            ChannelSftp channelSftp = null;
+            try {
+                channelSftp=sftpChannelRepository.getSftpChannel();
+                Vector<ChannelSftp.LsEntry> lsEntries=channelSftp.ls(fileclickselected);
+                for(ChannelSftp.LsEntry lsEntry : lsEntries){
+                    String name=lsEntry.getFilename();
+                    String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
+                    FilePOJO filePOJO = MAKE_FilePOJO(lsEntry, false, fileObjectType,path,channelSftp);
+                    filePOJOS_filtered.add(filePOJO);
+                    filePOJOS.add(filePOJO);
+                }
+            } catch (Exception e) {
+                return;
+            }
+            finally {
+                if(sftpChannelRepository!=null && channelSftp!=null){
+                    sftpChannelRepository.releaseChannel(channelSftp);
+                    Timber.tag(TAG).d("SFTP channel released");
                 }
             }
         }
@@ -1270,7 +1361,6 @@ public class FilePOJOUtil {
                     filePOJOS.add(filePOJO);
                 }
             }
-
         }
         else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
@@ -1357,9 +1447,7 @@ public class FilePOJOUtil {
             FTPClient ftpClient=null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
-                ftpClient.pwd();
                 file_array = ftpClient.listFiles(fileclickselected);
-
                 Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
                 for (int i = 0; i < size; ++i) {
@@ -1380,6 +1468,29 @@ public class FilePOJOUtil {
                 if (ftpClientRepository != null && ftpClient != null) {
                     ftpClientRepository.releaseFtpClient(ftpClient);
                     Timber.tag(TAG).d("FTP client released");
+                }
+            }
+        }
+        else if(fileObjectType==FileObjectType.SFTP_TYPE){
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            ChannelSftp channelSftp = null;
+            try {
+                channelSftp=sftpChannelRepository.getSftpChannel();
+                Vector<ChannelSftp.LsEntry> lsEntries=channelSftp.ls(fileclickselected);
+                for(ChannelSftp.LsEntry lsEntry : lsEntries){
+                    String name=lsEntry.getFilename();
+                    String path=Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected,name);
+                    FilePOJO filePOJO = MAKE_FilePOJO(lsEntry, false, fileObjectType,path,channelSftp);
+                    filePOJOS_filtered.add(filePOJO);
+                    filePOJOS.add(filePOJO);
+                }
+            } catch (Exception e) {
+                return;
+            }
+            finally {
+                if(sftpChannelRepository!=null && channelSftp!=null){
+                    sftpChannelRepository.releaseChannel(channelSftp);
+                    Timber.tag(TAG).d("SFTP channel released");
                 }
             }
         }
