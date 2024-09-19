@@ -2331,6 +2331,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
 				p1.textView_storage_dir.setText(DetailFragment.FTP_FILE_PREFIX+ filePOJO.getName());
 			}
+			else if(fileObjectType==FileObjectType.SFTP_TYPE)
+			{
+				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
+				p1.textView_storage_dir.setText(DetailFragment.SFTP_FILE_PREFIX+ filePOJO.getName());
+			}
 			else if(fileObjectType==FileObjectType.ROOT_TYPE)
 			{
 				p1.imageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));

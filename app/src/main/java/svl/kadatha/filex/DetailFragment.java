@@ -62,6 +62,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public UsbFile currentUsbFile;
 	public static final String USB_FILE_PREFIX="usb:";
 	public static final String FTP_FILE_PREFIX="ftp:";
+	public static final String SFTP_FILE_PREFIX="sftp:";
 
 	public static boolean CUT_SELECTED;
 	public static boolean COPY_SELECTED;

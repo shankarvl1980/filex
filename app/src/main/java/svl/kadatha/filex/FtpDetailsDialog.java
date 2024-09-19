@@ -256,12 +256,10 @@ public class FtpDetailsDialog extends DialogFragment {
                         else {
                             Global.print(context,getString(R.string.server_could_not_be_connected));
                         }
-
                     }
                     else {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     }
-
                 }
             }
         });

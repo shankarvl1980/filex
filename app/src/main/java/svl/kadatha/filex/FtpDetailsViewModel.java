@@ -239,7 +239,7 @@ public class FtpDetailsViewModel extends AndroidViewModel {
                     if(loggedInStatus)
                     {
                         ftpClient=ftpClientRepository.getFtpClient();
-                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();//MainActivity.FTP_CLIENT.printWorkingDirectory();
+                        FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
                         if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
                         {
                             RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
