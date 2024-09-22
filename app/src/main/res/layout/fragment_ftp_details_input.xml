@@ -1,12 +1,12 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:orientation="vertical">
 
+    <!-- Heading outside ScrollView -->
     <TextView
-        android:id="@+id/ftp_details_title"
+        android:id="@+id/fragment_network_details_input_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/ten_dp"
@@ -14,321 +14,761 @@
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
-        android:textSize="19sp"
-        android:layout_gravity="top"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:textSize="19sp" />
 
-    <ScrollView
+    <!-- Container with Background -->
+    <LinearLayout
+        android:id="@+id/background_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/layout_margin"
-        app:layout_constraintTop_toBottomOf="@id/ftp_details_title"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/dialog_background">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Common Fields -->
+                <!-- Server -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/server"
+                        android:labelFor="@id/fragment_network_details_input_server"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_server"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="e.g. 192.168.1.102" />
+                </LinearLayout>
+
+                <!-- Port -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/port"
+                        android:labelFor="@id/fragment_network_details_input_port"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_port"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!-- Username -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_name"
+                        android:labelFor="@id/fragment_network_details_input_username"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_username"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <!-- Password -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/password"
+                        android:labelFor="@id/fragment_network_details_input_password"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_password"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="textPassword" />
+                </LinearLayout>
+
+                <!-- Encoding -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/encoding"
+                        android:labelFor="@id/fragment_network_details_input_encoding"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_encoding"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <!-- Display Name -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display"
+                        android:labelFor="@id/fragment_network_details_input_display"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="4dp"
+                        android:textSize="17sp"/>
+
+                    <EditText
+                        android:id="@+id/fragment_network_details_input_display"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <!-- FTP-specific fields -->
+                <LinearLayout
+                    android:id="@+id/fragment_network_details_input_ftp_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- FTP Mode -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mode"
+                        android:textSize="17sp"/>
+                    <RadioGroup
+                        android:id="@+id/fragment_network_details_input_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <RadioButton
+                            android:id="@+id/fragment_network_details_input_mode_passive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Passive" />
+                        <RadioButton
+                            android:id="@+id/fragment_network_details_input_mode_active"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Active" />
+                    </RadioGroup>
+
+                    <!-- Anonymous Login -->
+                    <CheckBox
+                        android:id="@+id/fragment_network_details_input_anonymous"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/anonymous"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- Use FTPS -->
+                    <CheckBox
+                        android:id="@+id/fragment_network_details_input_use_ftps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/use_ftps"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!-- SFTP-specific fields -->
+                <LinearLayout
+                    android:id="@+id/fragment_network_details_input_sftp_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Private Key -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/private_key"
+                        android:textSize="17sp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <Button
+                            android:id="@+id/fragment_network_details_input_select_private_key"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/select"
+                            android:layout_marginEnd="8dp" />
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_private_key_path"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/private_key_path" />
+                    </LinearLayout>
+
+                    <!-- Private Key Passphrase -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/private_key_passphrase"
+                            android:labelFor="@id/fragment_network_details_input_private_key_passphrase"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="17sp"/>
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_private_key_passphrase"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="textPassword" />
+                    </LinearLayout>
+
+                    <!-- Known Hosts Path -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/known_hosts_path"
+                            android:labelFor="@id/fragment_network_details_input_known_hosts_path"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="17sp"/>
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_known_hosts_path"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- WebDAV-specific fields -->
+                <LinearLayout
+                    android:id="@+id/fragment_network_details_input_webdav_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Base Path -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/base_path"
+                            android:labelFor="@id/fragment_network_details_input_base_path"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="17sp"/>
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_base_path"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <!-- Use HTTPS -->
+                    <CheckBox
+                        android:id="@+id/fragment_network_details_input_use_https"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/use_https"
+                        android:layout_marginBottom="8dp" />
+                </LinearLayout>
+
+                <!-- SMB-specific fields -->
+                <LinearLayout
+                    android:id="@+id/fragment_network_details_input_smb_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Domain -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/domain"
+                            android:labelFor="@id/fragment_network_details_input_domain"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="17sp"/>
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_domain"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <!-- Share Name -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/share_name"
+                            android:labelFor="@id/fragment_network_details_input_share_name"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="17sp"/>
+
+                        <EditText
+                            android:id="@+id/fragment_network_details_input_share_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <!-- SMB Version -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/smb_version"
+                        android:textSize="17sp"/>
+                    <Spinner
+                        android:id="@+id/fragment_network_details_input_smb_version"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/smb_versions"
+                        android:layout_marginBottom="16dp" />
+                </LinearLayout>
+
+                <!-- FrameLayout for buttons (to be added in DialogFragment) -->
+                <!-- Note: Moved outside the ScrollView -->
+                <!-- Button Container -->
+                <FrameLayout
+                    android:id="@+id/fragment_network_details_input_button_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+    <!--androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/ftp_details_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingBottom="@dimen/layout_margin"
+            android:background="?attr/dialog_title"
+            android:textSize="19sp"
+            android:layout_gravity="top"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/layout_margin"
+            app:layout_constraintTop_toBottomOf="@id/ftp_details_title"
+            app:layout_constraintStart_toStartOf="parent"
             >
-            <View
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="?attr/dialog_background"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_background_padding"
-
-
-                />
-            <TextView
-                android:id="@+id/ftp_details_server_label"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/server"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_server"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="8dp"
-
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:id="@+id/ftp_details_server"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_server_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
-                android:inputType="text"
-                android:maxLines="1"
-                android:hint="e.g. 192.168.1.102"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-
-            <TextView
-                android:id="@+id/ftp_details_port_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/four_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/port"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_port"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_server_label"
-                android:layout_marginTop="@dimen/layout_margin"
-
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_port"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_port_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_port_label"
-                android:inputType="number"
-                android:digits="0123456789"
-                android:maxLines="1"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-
-            <TextView
-                android:id="@+id/ftp_details_mode_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mode"
-                android:gravity="start"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_mode_rg"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:visibility="gone"
-                />
-
-
-            <RadioGroup
-                android:id="@+id/ftp_details_mode_rg"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_mode_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:minHeight="36dp"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:visibility="gone"
                 >
-
-                <RadioButton
-                    android:id="@+id/ftp_details_active_radio_btn"
+                <View
                     android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="?attr/dialog_background"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_background_padding"
+
+
+                    />
+                <TextView
+                    android:id="@+id/ftp_details_server_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/active"
-                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/layout_margin"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/server"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_server"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="8dp"
+
+                    />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:id="@+id/ftp_details_server"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_server_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_server_label"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:hint="e.g. 192.168.1.102"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    />
+
+                <TextView
+                    android:id="@+id/ftp_details_port_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/layout_margin"
+                    android:paddingTop="@dimen/four_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/port"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_port"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_server_label"
+                    android:layout_marginTop="@dimen/layout_margin"
+
+                    />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_port"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_port_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_port_label"
+                    android:inputType="number"
+                    android:digits="0123456789"
+                    android:maxLines="1"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    />
+
+                <TextView
+                    android:id="@+id/ftp_details_mode_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode"
+                    android:gravity="start"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_mode_rg"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:visibility="gone"
+                    />
+
+
+                <RadioGroup
+                    android:id="@+id/ftp_details_mode_rg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_port_label"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_mode_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:minHeight="36dp"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:visibility="gone"
+                    >
+
+                    <RadioButton
+                        android:id="@+id/ftp_details_active_radio_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/active"
+                        android:layout_weight="1"
+
+                        />
+
+                    <RadioButton
+                        android:id="@+id/ftp_details_passive_radio_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/passive"
+                        android:layout_weight="1"
+
+                        />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/ftp_details_user_name_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_name"
+                    android:gravity="start"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_mode_rg"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_user_name"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/layout_margin"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_user_name"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_user_name_label"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_user_name_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:layout_marginEnd="@dimen/ten_dp"
+
+                    />
+                <TextView
+                    android:id="@+id/ftp_details_password_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/password"
+                    android:gravity="start"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_user_name_label"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_pword"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/layout_margin"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_pword"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_password_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    />
+
+                <CheckBox
+                    android:id="@+id/ftp_details_anonymous_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/anonymous"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
+
 
                     />
 
-                <RadioButton
-                    android:id="@+id/ftp_details_passive_radio_btn"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/ftp_details_encoding_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/passive"
-                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_check_box"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    />
+
+                <TextView
+                    android:id="@+id/ftp_details_display_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:text="@string/display"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toStartOf="@id/ftp_details_display_optional_label"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label" />
+                <TextView
+                    android:id="@+id/ftp_details_display_optional_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/optional_in_bracket"
+                    android:gravity="start"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_display_label"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
+                    android:paddingEnd="@dimen/layout_margin"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingBottom="@dimen/ten_dp"
+                    android:layout_marginTop="@dimen/layout_margin"
 
                     />
 
-            </RadioGroup>
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_display"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toEndOf="@id/ftp_details_display_optional_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:layout_marginEnd="@dimen/ten_dp"
 
-            <TextView
-                android:id="@+id/ftp_details_user_name_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_name"
-                android:gravity="start"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_mode_rg"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_user_name"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_user_name"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_user_name_label"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_user_name_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_marginEnd="@dimen/ten_dp"
-
-                />
-            <TextView
-                android:id="@+id/ftp_details_password_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/password"
-                android:gravity="start"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_user_name_label"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_pword"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_pword"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_password_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_password_label"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-
-            <CheckBox
-                android:id="@+id/ftp_details_anonymous_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:button="@null"
-                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/anonymous"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_password_label"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_connect"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_display"
+                    android:text="@string/connect"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/ten_dp"
+                    android:visibility="gone"
+                    />
+                <View
+                    android:id="@+id/ftp_details_background_padding"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_connect"
+                    />
 
 
-                />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ftp_details_button_layout"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ftp_details_background_padding"
+                    android:elevation="6dp"
+                    />
 
-            <TextView
-                android:id="@+id/ftp_details_encoding_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ftp_details_anonymous_check_box"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/layout_margin"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/layout_margin"
-                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
-            <TextView
-                android:id="@+id/ftp_details_display_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/ten_dp"
-                android:layout_marginBottom="@dimen/ten_dp"
-                android:text="@string/display"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toStartOf="@id/ftp_details_display_optional_label"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_encoding_label" />
-            <TextView
-                android:id="@+id/ftp_details_display_optional_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/optional_in_bracket"
-                android:gravity="start"
-                android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_display_label"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
-                android:paddingEnd="@dimen/layout_margin"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingBottom="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/layout_margin"
-
-                />
-
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_display"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toEndOf="@id/ftp_details_display_optional_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/ftp_details_display_label"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_marginEnd="@dimen/ten_dp"
-
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_connect"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_display"
-                android:text="@string/connect"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:layout_marginBottom="@dimen/ten_dp"
-                android:visibility="gone"
-                />
-            <View
-                android:id="@+id/ftp_details_background_padding"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_connect"
-                />
-
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ftp_details_button_layout"
-                android:layout_marginTop="@dimen/layout_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ftp_details_background_padding"
-                android:elevation="6dp"
-                />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout-->
 
 
 

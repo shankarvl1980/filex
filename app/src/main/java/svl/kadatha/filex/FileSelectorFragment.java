@@ -68,7 +68,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		{
 			detailFragmentListener= (DetailFragmentListener) activity;
 		}
-
 	}
 
 	@Override
@@ -81,7 +80,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		fileclickselected=getTag();
 		if(fileclickselected==null)
@@ -126,8 +124,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 				}
 			}
 		}
-
-
 	}
 	
 	
@@ -326,7 +322,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		@Override
 		public void onBindViewHolder(final FileSelectorFragment.FileSelectorAdapter.ViewHolder p1, int p2)
 		{
-			// TODO: Implement this method
 			FilePOJO file=filePOJO_list.get(p2);
 			p1.v.setData(file,false);
 		}
@@ -334,7 +329,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return filePOJO_list.size();
 		}
 
@@ -437,10 +431,18 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 									getActivity().setResult(Activity.RESULT_CANCELED);
 								}
 								getActivity().finish();
-
+							}
+							else if(((FileSelectorActivity)activity).action_sought_request_code==FileSelectorActivity.FILE_PATH_REQUEST_CODE){
+								if (fileObjectType!=FileObjectType.FILE_TYPE) {
+									getActivity().setResult(Activity.RESULT_CANCELED);
+								}
+								Intent intent = new Intent();
+								intent.putExtra("filepathclickselected", filePOJO.getPath());
+								intent.putExtra("destFileObjectType", fileObjectType);
+								getActivity().setResult(Activity.RESULT_OK, intent);
+								getActivity().finish();
 							}
 						}
-
 					}
 				});
 			}
@@ -502,7 +504,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 				folder_empty_textview.setVisibility(View.GONE);
 			}
 		}
-
 	}
 
 
@@ -512,7 +513,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 		{
 			detailFragmentListener.clearCache(file_path,fileObjectType);
 		}
-
 
 		modification_observed=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
@@ -542,7 +542,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 			return true;
 		}
 	}
-
 }
 
 

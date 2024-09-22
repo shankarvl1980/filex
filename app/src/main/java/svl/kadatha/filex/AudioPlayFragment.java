@@ -114,7 +114,7 @@ public class AudioPlayFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(progress_bar!=null)progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
-					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
+					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
 					{
 						if(activity instanceof AudioPlayerActivity)
 						{
@@ -744,7 +744,7 @@ public class AudioPlayFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					if(!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
+					if(!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE ||audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;
@@ -765,7 +765,7 @@ public class AudioPlayFragment extends Fragment
 						src_uri=data;
 
 					}
-					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
+					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
 					{
 						src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
@@ -789,7 +789,7 @@ public class AudioPlayFragment extends Fragment
 					{
 						copy_uri=data;
 					}
-					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
+					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
 					{
 						copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
@@ -823,7 +823,7 @@ public class AudioPlayFragment extends Fragment
 					break;
 
 				case 3:
-					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE)
+					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;

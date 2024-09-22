@@ -8,17 +8,14 @@ import android.view.View;
 import androidx.annotation.RequiresApi;
 
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -655,6 +652,100 @@ public class FilePOJOUtil {
         return filePOJO;
     }
 
+//    public static FilePOJO MAKE_FilePOJO(ChannelSftp channelSftp, String file_path, boolean extract_icon, FileObjectType fileObjectType) {
+//        if (file_path == null || file_path.trim().isEmpty()) {
+//            Timber.tag(TAG).e("Invalid file path provided.");
+//            return null;
+//        }
+//
+//        try {
+//            // Determine if the path is a directory
+//            SftpATTRS attrs = channelSftp.stat(file_path);
+//            boolean isDirectory = attrs.isDir();
+//            String name = new File(file_path).getName(); // Extract the name from the path
+//
+//            long dateLong = 0L;
+//            String date = "";
+//            try {
+//                int mtime = attrs.getMTime(); // Modification time in seconds since epoch
+//                dateLong = ((long) mtime) * 1000; // Convert to milliseconds
+//                date = Global.SDF.format(new Date(dateLong));
+//            } catch (Exception e) {
+//                Timber.tag(TAG).e("Error getting modification time for SFTP path: %s, Error: %s", file_path, e.getMessage());
+//            }
+//
+//            long sizeLong = 0L;
+//            String si = "";
+//
+//            String file_ext = "";
+//            int overlay_visible = View.INVISIBLE;
+//            float alfa = Global.ENABLE_ALFA;
+//            String package_name = null;
+//            int type = R.drawable.folder_icon; // Default to folder icon
+//
+//            if (!isDirectory) {
+//                // It's a file
+//                type = R.drawable.unknown_file_icon;
+//                int idx = name.lastIndexOf(".");
+//                if (idx != -1) {
+//                    file_ext = name.substring(idx + 1).toLowerCase(); // Handle case sensitivity
+//                    type = GET_FILE_TYPE(isDirectory, file_ext);
+//                    if (type == -2) {
+//                        overlay_visible = View.VISIBLE;
+//                    } else if (extract_icon && type == 0) {
+//                        package_name = EXTRACT_ICON(MainActivity.PM, file_path, file_ext);
+//                    }
+//                }
+//
+//                sizeLong = attrs.getSize();
+//                si = FileUtil.humanReadableByteCount(sizeLong);
+//            } else {
+//                // It's a directory
+//                String sub_file_count = null;
+//                try {
+//                    @SuppressWarnings("unchecked")
+//                    Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
+//                    if (entries != null) {
+//                        sub_file_count = "(" + (entries.size()) + ")";
+//                    }
+//                    si = sub_file_count;
+//                } catch (SftpException e) {
+//                    Timber.tag(TAG).e("Error listing SFTP directory contents for path: %s, Error: %s", file_path, e.getMessage());
+//                }
+//            }
+//
+//            FilePOJO filePOJO = new FilePOJO(
+//                    fileObjectType,
+//                    name,
+//                    package_name,
+//                    file_path,
+//                    isDirectory,
+//                    dateLong,
+//                    date,
+//                    sizeLong,
+//                    si,
+//                    type,
+//                    file_ext,
+//                    alfa,
+//                    overlay_visible,
+//                    0,
+//                    0L,
+//                    null,
+//                    0,
+//                    null,
+//                    null
+//            );
+//
+//            Timber.tag(TAG).d("Created FilePOJO for SFTP path: %s, isDirectory: %b, size: %d", file_path, isDirectory, sizeLong);
+//            return filePOJO;
+//
+//        } catch (SftpException e) {
+//            Timber.tag(TAG).e("Error accessing SFTP path: %s, Error: %s", file_path, e.getMessage());
+//            return null;
+//        }
+//    }
+
+
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)
     {
         FilePOJO filePOJO=null;
@@ -688,7 +779,7 @@ public class FilePOJOUtil {
             }
             else
             {
-                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
                 FTPClient ftpClient= null;
                 try {
                     ftpClient = ftpClientRepository.getFtpClient();
@@ -709,16 +800,15 @@ public class FilePOJOUtil {
             }
         }
         else if(fileObjectType==FileObjectType.SFTP_TYPE){
-            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             ChannelSftp channelSftp = null;
             try {
                 channelSftp=sftpChannelRepository.getSftpChannel();
-                ChannelSftp.LsEntry lsEntry=FileUtil.getChannelSftpLsEntry(channelSftp,file_path);
+                ChannelSftp.LsEntry lsEntry=FileUtil.getSftpEntry(channelSftp,file_path);
                 if(lsEntry!=null)
                 {
-                    filePOJO=MAKE_FilePOJO(lsEntry,false,fileObjectType,file_path,channelSftp);
+                    filePOJO=MAKE_FilePOJO(lsEntry,false, fileObjectType,file_path,channelSftp);
                 }
-
             } catch (Exception e) {
 
             }
@@ -1267,7 +1357,7 @@ public class FilePOJOUtil {
         else if (fileObjectType == FileObjectType.FTP_TYPE) {
             Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
             FTPFile[] file_array;
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             FTPClient ftpClient=null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
@@ -1296,7 +1386,7 @@ public class FilePOJOUtil {
             }
         }
         else if(fileObjectType==FileObjectType.SFTP_TYPE){
-            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             ChannelSftp channelSftp = null;
             try {
                 channelSftp=sftpChannelRepository.getSftpChannel();
@@ -1443,7 +1533,7 @@ public class FilePOJOUtil {
         else if (fileObjectType == FileObjectType.FTP_TYPE) {
             Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
             FTPFile[] file_array;
-            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             FTPClient ftpClient=null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
@@ -1472,7 +1562,7 @@ public class FilePOJOUtil {
             }
         }
         else if(fileObjectType==FileObjectType.SFTP_TYPE){
-            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             ChannelSftp channelSftp = null;
             try {
                 channelSftp=sftpChannelRepository.getSftpChannel();

@@ -627,7 +627,6 @@ public class AppManagerListFragment extends Fragment {
                 {
                     back_up(bundle);
                 }
-
             }
         }
     });

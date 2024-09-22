@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.util.Stack;
 
 import svl.kadatha.filex.FtpClientRepository;
-import svl.kadatha.filex.FtpDetailsViewModel;
+import svl.kadatha.filex.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.Global;
 import timber.log.Timber;
 
@@ -71,7 +71,7 @@ public class FtpFileModel implements FileModel {
         FtpClientRepository ftpClientRepository = null;
         FTPClient ftpClient = null;
         try {
-            ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             ftpClient = ftpClientRepository.getFtpClient();
             boolean renamed = ftpClient.rename(path, new_file_path);
             Timber.tag(TAG).d("Rename operation result: %b", renamed);
@@ -92,7 +92,7 @@ public class FtpFileModel implements FileModel {
     @Override
     public boolean delete() {
         Timber.tag(TAG).d("Attempting to delete FTP directory: %s", path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient = null;
         boolean success = true;
 
@@ -150,7 +150,7 @@ public class FtpFileModel implements FileModel {
     @Override
     public InputStream getInputStream() {
         Timber.tag(TAG).d("Attempting to get InputStream for path: %s", path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -173,7 +173,7 @@ public class FtpFileModel implements FileModel {
     public OutputStream getChildOutputStream(String child_name, long source_length) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
         Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", file_path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -192,7 +192,7 @@ public class FtpFileModel implements FileModel {
     @Override
     public FileModel[] list() {
         Timber.tag(TAG).d("Attempting to list files for path: %s", path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -231,7 +231,7 @@ public class FtpFileModel implements FileModel {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
         Timber.tag(TAG).d("Attempting to create file: %s", file_path);
         InputStream bin = new ByteArrayInputStream(new byte[0]);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient=null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -270,7 +270,7 @@ public class FtpFileModel implements FileModel {
     @Override
     public long getLength() {
         Timber.tag(TAG).d("getLength() called, but always returns 0 for FTP files");
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient=null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -296,7 +296,7 @@ public class FtpFileModel implements FileModel {
     @Override
     public boolean exists() {
         Timber.tag(TAG).d("Checking if FTP file exists: %s", path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient=null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
@@ -440,7 +440,7 @@ public class FtpFileModel implements FileModel {
 
     private static boolean mkdirFtp(String file_path) {
         Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
         FTPClient ftpClient=null;
         try {
 
@@ -492,7 +492,7 @@ public class FtpFileModel implements FileModel {
         FtpClientRepository ftpClientRepository = null;
         FTPClient ftpClient = null;
         try {
-            ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+            ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             ftpClient = ftpClientRepository.getFtpClient();
             boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
             Timber.tag(TAG).d("FTP path is directory result: %b for path: %s", isDirectory, filePath);

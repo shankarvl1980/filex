@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import svl.kadatha.filex.FtpDetailsViewModel;
+import svl.kadatha.filex.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.SftpChannelRepository;
 import timber.log.Timber;
@@ -66,7 +66,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
 
             if (overwrite) {
@@ -99,7 +99,7 @@ public class SftpFileModel implements FileModel {
         ChannelSftp channelSftp = null;
         boolean success = true;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             deleteRecursive(channelSftp, path);
             Timber.tag(TAG).d("SFTP deletion result: %b for path: %s", success, path);
@@ -145,7 +145,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             InputStream inputStream = channelSftp.get(path);
             if (inputStream == null) {
@@ -169,7 +169,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             OutputStream outputStream = channelSftp.put(filePath);
             Timber.tag(TAG).d("Successfully retrieved OutputStream for path: %s", filePath);
@@ -189,7 +189,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             @SuppressWarnings("unchecked")
             Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(path);
@@ -200,9 +200,6 @@ public class SftpFileModel implements FileModel {
             List<FileModel> fileModels = new ArrayList<>();
             for (ChannelSftp.LsEntry entry : entries) {
                 String fileName = entry.getFilename();
-                if (".".equals(fileName) || "..".equals(fileName)) {
-                    continue;
-                }
                 String fullPath = path + "/" + fileName;
                 fileModels.add(new SftpFileModel(fullPath));
                 Timber.tag(TAG).d("Listed file: %s", fullPath);
@@ -227,7 +224,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             OutputStream outputStream = channelSftp.put(filePath);
             outputStream.close();
@@ -257,7 +254,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
 
             try {
@@ -316,7 +313,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             SftpATTRS attrs = channelSftp.lstat(path);
             long size = attrs.getSize();
@@ -338,7 +335,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             channelSftp.lstat(path);
             Timber.tag(TAG).d("SFTP file exists: %s", path);
@@ -368,7 +365,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             SftpATTRS attrs = channelSftp.lstat(path);
             long mtime = ((long) attrs.getMTime()) * 1000;
@@ -468,7 +465,7 @@ public class SftpFileModel implements FileModel {
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             SftpATTRS attrs = channelSftp.lstat(filePath);
             boolean isDirectory = attrs.isDir();

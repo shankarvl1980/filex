@@ -790,7 +790,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		networkRecyclerView=findViewById(R.id.network_recyclerview);
 		networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		int[]network_icon_image_array={R.drawable.ftp_file_icon};
+		int[]network_icon_image_array={R.drawable.ftp_file_icon,R.drawable.ftp_file_icon};
 		networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES,network_icon_image_array));
 
 
@@ -2433,10 +2433,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return library_arraylist.size();
 		}
-
 	}
 
 	private class NetworkRecyclerAdapter extends RecyclerView.Adapter<NetworkRecyclerAdapter.ViewHolder>
@@ -2482,12 +2480,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 							actionmode_finish(df,df.fileclickselected);
 							if(position[0]==0)
 							{
-								FtpDetailsDialog ftpDetailsDialog=FtpDetailsDialog.getInstance(FtpDetailsDialog.FTP);
-								ftpDetailsDialog.show(fm,"");
+								NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.FTP);
+								networkAccountsDetailsDialog.show(fm,"");
 							}
 							else if(position[0]==1){
-								FtpDetailsDialog ftpDetailsDialog=FtpDetailsDialog.getInstance(FtpDetailsDialog.SFTP);
-								ftpDetailsDialog.show(fm,"");
+								NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SFTP);
+								networkAccountsDetailsDialog.show(fm,"");
 							}
 							pbf.dismissAllowingStateLoss();
 							}
@@ -2576,7 +2574,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		@Override
 		public void onReceive(Context p1, Intent intent)
 		{
-			// TODO: Implement this method
 			String action = intent.getAction();
 			if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
 				USB_ATTACHED=intent.getBooleanExtra(UsbDocumentProvider.USB_ATTACHED,false);
@@ -2639,7 +2636,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			{
 				recentDialogListener.onMediaAttachedAndRemoved();
 			}
-
 		}
 	}
 

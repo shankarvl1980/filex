@@ -54,7 +54,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 		fileObjectType= (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 		size=files_selected_array.size();
 		source_folder=new File(files_selected_array.get(0)).getParent();
-
 	}
 	
 	@Override
@@ -127,7 +126,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 						{
 							if (!check_SAF_permission(file_path, fileObjectType)) return;
 						}
-
 					}
 					else if(fileObjectType== FileObjectType.SEARCH_LIBRARY_TYPE)
 					{

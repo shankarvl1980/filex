@@ -379,7 +379,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 
             }
-            else if(fileObjectType==FileObjectType.FTP_TYPE)
+            else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
             {
                 if(file_size>Global.CACHE_FILE_MAX_LIMIT)
                 {

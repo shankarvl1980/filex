@@ -689,7 +689,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 
 			 }
-			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
 			{
 				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{

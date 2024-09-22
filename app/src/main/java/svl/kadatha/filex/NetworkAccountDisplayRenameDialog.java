@@ -18,13 +18,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-public class FtpDisplayRenameDialog extends DialogFragment {
+public class NetworkAccountDisplayRenameDialog extends DialogFragment {
 
     private Context context;
     private String server,user_name, display,type;
+    private int port;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
-    private FtpDatabaseHelper ftpDatabaseHelper;
+    private NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
     private String request_code;
     private Bundle bundle;
 
@@ -33,13 +34,13 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
-        ftpDatabaseHelper=new FtpDatabaseHelper(context);
+        networkAccountsDatabaseHelper=new NetworkAccountsDatabaseHelper(context);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        ftpDatabaseHelper.close();
+        networkAccountsDatabaseHelper.close();
     }
 
     @Override
@@ -53,19 +54,16 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         {
             request_code=bundle.getString("request_code");
             server=bundle.getString("server");
+            port=bundle.getInt("port");
             user_name=bundle.getString("user_name");
             display=bundle.getString("display");
             type=bundle.getString("type");
         }
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // TODO: Implement this method
-
         View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -97,7 +95,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         {
             public void onClick(View v)
             {
-
                 final String new_name=new_ftp_name_edittext.getText().toString().trim();
                 if(new_name.equals(display))
                 {
@@ -110,7 +107,7 @@ public class FtpDisplayRenameDialog extends DialogFragment {
                     Global.print(context,getString(R.string.enter_file_name));
                     return;
                 }
-                int i=ftpDatabaseHelper.change_display(server,user_name,new_name,type);
+                int i=networkAccountsDatabaseHelper.change_display(server,port,user_name,new_name,type);
                 if(i>0)
                 {
                     bundle.putString("new_name",new_name);
@@ -132,17 +129,18 @@ public class FtpDisplayRenameDialog extends DialogFragment {
         return v;
     }
 
-    public static FtpDisplayRenameDialog getInstance(String request_code,String server,String user_name, String display,String type)
+    public static NetworkAccountDisplayRenameDialog getInstance(String request_code, String server,int port, String user_name, String display, String type)
     {
-        FtpDisplayRenameDialog ftpDisplayRenameDialog=new FtpDisplayRenameDialog();
+        NetworkAccountDisplayRenameDialog networkAccountDisplayRenameDialog =new NetworkAccountDisplayRenameDialog();
         Bundle bundle=new Bundle();
         bundle.putString("request_code",request_code);
         bundle.putString("server",server);
+        bundle.putInt("port",port);
         bundle.putString("user_name",user_name);
         bundle.putString("display",display);
         bundle.putString("type",type);
-        ftpDisplayRenameDialog.setArguments(bundle);
-        return ftpDisplayRenameDialog;
+        networkAccountDisplayRenameDialog.setArguments(bundle);
+        return networkAccountDisplayRenameDialog;
     }
 
 
@@ -162,7 +160,6 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog)
     {
-        // TODO: Implement this method
         super.onCancel(dialog);
         imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
     }
@@ -170,11 +167,8 @@ public class FtpDisplayRenameDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog)
     {
-        // TODO: Implement this method
-        imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
-        ftpDatabaseHelper.close();
         super.onDismiss(dialog);
+        imm.hideSoftInputFromWindow(new_ftp_name_edittext.getWindowToken(),0);
+        networkAccountsDatabaseHelper.close();
     }
-
-
 }

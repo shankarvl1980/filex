@@ -26,6 +26,8 @@ public class FileModelFactory {
             case FTP_TYPE:
                 fileModel=new FtpFileModel(path);
                 break;
+            case SFTP_TYPE:
+                fileModel=new SftpFileModel(path);
         }
         return fileModel;
     }

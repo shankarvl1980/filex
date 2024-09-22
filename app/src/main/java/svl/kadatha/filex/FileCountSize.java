@@ -8,6 +8,9 @@ import android.provider.DocumentsContract;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
+
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -15,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -143,7 +147,7 @@ public class FileCountSize {
                 }
                 else if (sourceFileObjectType == FileObjectType.FTP_TYPE) {
                     Timber.tag(TAG).d("Starting file count for FTP files");
-                    FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                    FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
                     FTPClient ftpClient = null;
                     try {
                         ftpClient = ftpClientRepository.getFtpClient();
@@ -163,6 +167,33 @@ public class FileCountSize {
                         if (ftpClientRepository != null && ftpClient != null) {
                             ftpClientRepository.releaseFtpClient(ftpClient);
                             Timber.tag(TAG).d("FTP client released");
+                        }
+                    }
+                }
+                else if(sourceFileObjectType == FileObjectType.SFTP_TYPE) {
+                    ChannelSftp.LsEntry[] ls_entries = new ChannelSftp.LsEntry[size];
+                    SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+                    ChannelSftp channelSftp = null;
+                    try {
+                        channelSftp = sftpChannelRepository.getSftpChannel();
+                        for(int i = 0; i < size; ++i) {
+                            String filePath = files_selected_array.get(i);;
+                            ChannelSftp.LsEntry entry = FileUtil.getSftpEntry(channelSftp, filePath);
+                            if(entry != null) {
+                                ls_entries[i] = entry;
+                            } else {
+                                Timber.tag("ViewModelFileCount").w("Skipping invalid path: %s", filePath);
+                                // Optionally, handle invalid paths as needed
+                            }
+                        }
+                        populateSFTP(ls_entries, include_folder, source_folder);
+                    } catch (Exception e) {
+                        Timber.tag("ViewModelFileCount").e("Exception during SFTP processing: %s", e.getMessage());
+                        throw new RuntimeException(e);
+                    }
+                    finally {
+                        if (sftpChannelRepository != null && channelSftp != null) {
+                            sftpChannelRepository.releaseChannel(channelSftp);
                         }
                     }
                 }
@@ -280,7 +311,7 @@ public class FileCountSize {
 
             if (f.isDirectory()) {
                 Timber.tag(TAG).d("Processing FTP directory: %s", f.getName());
-                FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+                FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
                 FTPClient ftpClient=null;
                 try {
                     String name = f.getName();
@@ -317,6 +348,105 @@ public class FileCountSize {
         }
         Timber.tag(TAG).d("FTP file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
+
+    private void populateSFTP(ChannelSftp.LsEntry[] source_list_entries, boolean include_folder, String initialPath) {
+        Timber.tag("ViewModelFileCount").d("Starting populateSFTP method with " + source_list_entries.length + " entries");
+
+        Stack<Pair<ChannelSftp.LsEntry, String>> stack = new Stack<>();
+        for (ChannelSftp.LsEntry entry : source_list_entries) {
+            stack.push(new Pair<>(entry, initialPath));
+        }
+        Timber.tag("ViewModelFileCount").d("Initial stack size: " + stack.size());
+
+        SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+        ChannelSftp channelSftp = null;
+        try {
+            channelSftp = sftpChannelRepository.getSftpChannel();
+            if (channelSftp == null || !channelSftp.isConnected()) {
+                Timber.tag("ViewModelFileCount").e("SFTP channel is null or not connected.");
+                return;
+            }
+
+            while (!stack.isEmpty()) {
+                if (isCancelled()) { // Implement this method based on your cancellation logic
+                    Timber.tag("ViewModelFileCount").d("Operation cancelled");
+                    return;
+                }
+
+                Pair<ChannelSftp.LsEntry, String> pair = stack.pop();
+                ChannelSftp.LsEntry entry = pair.first;
+                String path = pair.second;
+
+                if (entry == null) {
+                    Timber.tag("ViewModelFileCount").w("Null LsEntry encountered, skipping");
+                    continue;
+                }
+
+                String entryName = entry.getFilename();
+                if (".".equals(entryName) || "..".equals(entryName)) {
+                    Timber.tag("ViewModelFileCount").d("Skipping special directory: " + entryName);
+                    continue;
+                }
+
+                Timber.tag("ViewModelFileCount").d("Processing entry: " + entryName + " at path: " + path);
+
+                int no_of_files = 0;
+                long size_of_files = 0L;
+
+                if (entry.getAttrs().isDir()) {
+                    Timber.tag("ViewModelFileCount").d("Processing directory: " + entryName);
+                    String newPath = combinePaths(path, entryName);
+                    Timber.tag("ViewModelFileCount").d("New folder path: " + newPath);
+
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Vector<ChannelSftp.LsEntry> subEntries = channelSftp.ls(newPath);
+                        Timber.tag("ViewModelFileCount").d("Subdirectory " + entryName + " contains " + subEntries.size() + " entries");
+                        for (ChannelSftp.LsEntry subEntry : subEntries) {
+                            stack.push(new Pair<>(subEntry, newPath));
+                        }
+                    } catch (SftpException e) {
+                        Timber.tag("ViewModelFileCount").e("Error listing SFTP directory contents for path: %s, Error: %s", newPath, e.getMessage());
+                        continue;
+                    }
+
+                    if (include_folder) {
+                        no_of_files++;
+                        Timber.tag("ViewModelFileCount").d("Including folder in count");
+                    }
+                } else {
+                    no_of_files++;
+                    size_of_files += entry.getAttrs().getSize();
+                    Timber.tag("ViewModelFileCount").d("File: " + entryName + ", Size: " + entry.getAttrs().getSize());
+                }
+
+                total_no_of_files += no_of_files;
+                total_size_of_files += size_of_files;
+                Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+            }
+
+        } catch (Exception e) {
+            Timber.tag("ViewModelFileCount").e("Exception during SFTP populate: %s", e.getMessage());
+            throw new RuntimeException(e);
+        }
+        finally {
+            if (sftpChannelRepository != null && channelSftp != null) {
+                sftpChannelRepository.releaseChannel(channelSftp);
+            }
+        }
+
+        Timber.tag("ViewModelFileCount").d("populateSFTP method completed");
+    }
+
+
+    private String combinePaths(String dir, String file){
+        if(!dir.endsWith("/")){
+            dir += "/";
+        }
+        return dir + file;
+    }
+
 
     private void populate(List<String> source_list_files, boolean include_folder) {
         Stack<String> stack = new Stack<>();

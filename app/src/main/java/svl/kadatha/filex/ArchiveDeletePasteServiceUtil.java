@@ -447,8 +447,8 @@ public class ArchiveDeletePasteServiceUtil {
 
 
 
-    public static String ON_DELETE_ASYNCTASK_COMPLETE(Context context,int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
-                                                      List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled,boolean storage_analyser_delete)
+    public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
+                                                       List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled, boolean storage_analyser_delete)
     {
         String notification_content;
         if(cancelled)
@@ -471,9 +471,9 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_CUT_COPY_ASYNCTASK_COMPLETE(Context context, int counter_no_files, String source_folder, String dest_folder,
-                                                        FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, FilePOJO filePOJO,
-                                                        boolean cut, boolean cancelled)
+    public static String ON_CUT_COPY_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, String source_folder, String dest_folder,
+                                                         FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, FilePOJO filePOJO,
+                                                         boolean cut, boolean cancelled)
     {
         String notification_content;
 
@@ -497,7 +497,7 @@ public class ArchiveDeletePasteServiceUtil {
         return notification_content;
     }
 
-    public static void ON_ARCHIVE_ASYNCTASK_CANCEL(Context context, String dest_folder, String zip_file_name, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path)
+    public static void ON_ARCHIVE_ASYNC_TASK_CANCEL(Context context, String dest_folder, String zip_file_name, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path)
     {
         File f=new File(dest_folder,zip_file_name);
         ExecutorService executorService=MyExecutorService.getExecutorService();
@@ -518,7 +518,6 @@ public class ArchiveDeletePasteServiceUtil {
                             {
                                 FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
                             }
-
                         }
                     }
                 }
@@ -547,8 +546,8 @@ public class ArchiveDeletePasteServiceUtil {
         NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
     }
 
-    public static String ON_ARCHIVE_ASYNCTASK_COMPLETE(Context context,boolean result,FilePOJO filePOJO,String dest_folder,
-                                                       String zip_file_name,FileObjectType destFileObjectType)
+    public static String ON_ARCHIVE_ASYNC_TASK_COMPLETE(Context context, boolean result, FilePOJO filePOJO, String dest_folder,
+                                                        String zip_file_name, FileObjectType destFileObjectType)
     {
         String notification_content;
         if(result)
@@ -566,9 +565,9 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_UNARCHIVE_ASYNCTASK_COMPLETE(Context context, int counter_no_files,FilePOJO filePOJO, String dest_folder,
-                                                         FileObjectType destFileObjectType,
-                                                         String zip_file_path, boolean cancelled)
+    public static String ON_UNARCHIVE_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, FilePOJO filePOJO, String dest_folder,
+                                                          FileObjectType destFileObjectType,
+                                                          String zip_file_path, boolean cancelled)
     {
         String notification_content;
         if(cancelled)
@@ -581,7 +580,6 @@ public class ArchiveDeletePasteServiceUtil {
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder,destFileObjectType,filePOJO);
             notification_content=context.getString(R.string.unzipped)+" '"+new File(zip_file_path).getName()+"' "+context.getString(R.string.at)+" "+dest_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
-
         }
         else
         {
@@ -589,11 +587,10 @@ public class ArchiveDeletePasteServiceUtil {
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder,destFileObjectType);
         }
         return notification_content;
-
     }
 
-    public static String ON_COPY_TO_ASYNCTASK_COMPLETE(Context context,boolean result,String dest_folder,
-                                                       String file_name,FileObjectType destFileObjectType, FilePOJO filePOJO)
+    public static String ON_COPY_TO_ASYNC_TASK_COMPLETE(Context context, boolean result, String dest_folder,
+                                                        String file_name, FileObjectType destFileObjectType, FilePOJO filePOJO)
     {
         String notification_content;
         if(result)
@@ -609,58 +606,4 @@ public class ArchiveDeletePasteServiceUtil {
         }
         return notification_content;
     }
-
-
-    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream,long bytes_read
-
-    ) throws IOException {
-        String zip_entry_name=zipEntry.getName();
-        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);
-        File dest_file=new File(dest_file_path);
-
-        FileModel fileModel= FileModelFactory.getFileModel(zip_dest_path,destFileObjectType,uri,uri_path);
-
-        if(zipEntry.isDirectory())
-        {
-            fileModel.makeDirsRecursively(zip_entry_name);
-        }
-        else if(!zipEntry.isDirectory())
-        {
-            File parent_dest_file=dest_file.getParentFile();
-            String parent_dest_file_path=parent_dest_file.getAbsolutePath();
-
-            FileModel zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
-            boolean parent_dir_exists = zipEntryFileModel.exists();
-
-            if(!parent_dir_exists)
-            {
-                String zip_entry_parent=new File(zip_entry_name).getParent();
-                fileModel.makeDirsRecursively(zip_entry_parent);
-            }
-
-            OutputStream outStream;
-
-            zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
-            outStream=zipEntryFileModel.getChildOutputStream(dest_file.getName(),0);
-
-            if(outStream!=null)
-            {
-                BufferedOutputStream bufferedOutStream=new BufferedOutputStream(outStream);
-                byte[] b=new byte[FileUtil.BUFFER_SIZE];
-                int bytesread;
-                while((bytesread=zipInputStream.read(b))!=-1)
-                {
-                    bufferedOutStream.write(b,0,bytesread);
-                    bytes_read+=bytesread;
-                }
-                if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                    ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
-                }
-                bufferedOutStream.close();
-            }
-        }
-
-        return  zip_entry_name;
-    }
-
 }

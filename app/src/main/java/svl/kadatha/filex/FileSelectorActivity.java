@@ -63,6 +63,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static final int FOLDER_SELECT_REQUEST_CODE=1564;
     public static final int MOVE_COPY_REQUEST_CODE=351;
     public static final int PICK_FILE_REQUEST_CODE=0;
+    public static final int FILE_PATH_REQUEST_CODE=56;
     public boolean clear_cache;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
     private USBReceiver usbReceiver;
@@ -299,10 +300,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     return;
                 }
 
-
                 CreateFileDialog createFileDialog=CreateFileDialog.getInstance(1,fileSelectorFragment.fileclickselected,fileSelectorFragment.fileObjectType);
                 createFileDialog.show(fm,null);
-
             }
         });
 
@@ -323,10 +322,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        //Button okbutton = buttons_layout.findViewById(R.id.second_button);
-        //okbutton.setText(R.string.ok);
-        //Button cancelbutton = buttons_layout.findViewById(R.id.third_button);
-        //cancelbutton.setText(R.string.cancel);
         ok_btn.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
@@ -347,7 +342,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             intent.putExtra("folderclickselected", fileSelectorFragment.folder_selected_textview.getText().toString());
                             intent.putExtra("destFileObjectType", fileSelectorFragment.fileObjectType);
                             setResult(Activity.RESULT_OK, intent);
-
                         }
                         break;
                     case MOVE_COPY_REQUEST_CODE:
@@ -360,7 +354,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             intent.putExtra("bundle", bundle);
                             setResult(Activity.RESULT_OK, intent);
                         }
-
                         break;
                     default:
                         setResult(Activity.RESULT_CANCELED);
@@ -392,7 +385,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         if(intent!=null)
         {
-            action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,PICK_FILE_REQUEST_CODE);
+            action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,MOVE_COPY_REQUEST_CODE);
             bundle=intent.getBundleExtra("bundle");
         }
         if(savedInstanceState==null)
@@ -431,7 +424,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     return;
                 }
             }
-
         }
 
         if(grantResults.length==0 || !permission_not_granted_list.isEmpty())
@@ -461,11 +453,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         }
                     }
                 }
-
             }
-
         }
-
     }
 
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener)
@@ -634,8 +623,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     });
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -675,7 +662,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     tag = fileSelectorFragment.getTag();
                 }
                 countBackPressed=0;
-
             }
             else
             {
@@ -695,12 +681,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 {
                     Global.print(context,getString(R.string.click_OK_cancel_button_to_exit));
                 }
-
             }
-
         }
-
-
     }
 
     public List<FilePOJO> getFilePOJO_list()
@@ -758,12 +740,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             fm.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
-
     }
 
     private class OtherActivityBroadcastReceiver extends BroadcastReceiver
     {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
@@ -789,7 +769,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         @Override
         public void onReceive(Context p1, Intent intent)
         {
-            // TODO: Implement this method
             String action = intent.getAction();
             if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
                 try {
@@ -814,7 +793,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             fileSelectorFragment= (FileSelectorFragment)frag;
                             fileSelectorFragment.currentUsbFile=null;
                         }
-
                     }
 
                     Iterator<FilePOJO> iterator1= RECENT.iterator();
@@ -834,14 +812,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             {
                 recentDialogListener.onMediaAttachedAndRemoved();
             }
-
         }
     }
 
 
     @Override
     public void onMediaMount(String action) {
-
         switch (action) {
             case "android.intent.action.MEDIA_MOUNTED":
                 repositoryClass.storage_dir.clear();
@@ -951,7 +927,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             ImageView imageView;
             TextView textView;
         }
-
     }
 
 
@@ -959,7 +934,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     {
         void onMediaAttachedAndRemoved();
     }
-
-
-
 }

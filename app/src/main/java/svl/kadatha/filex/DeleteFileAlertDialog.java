@@ -127,7 +127,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 		viewModel.size_of_files_formatted.observe(this, new Observer<String>() {
 			@Override
 			public void onChanged(String s) {
-
 				size_files_textview.setText(getString(R.string.size)+" "+s);
 			}
 		});
@@ -179,7 +178,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 							{
 								if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) return;
 							}
-
 						}
 
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
@@ -218,7 +216,7 @@ public class DeleteFileAlertDialog extends DialogFragment
 							return;
 						}
 					}
-					else if(sourceFileObjectType== FileObjectType.FTP_TYPE)
+					else if(sourceFileObjectType== FileObjectType.FTP_TYPE || sourceFileObjectType==FileObjectType.SFTP_TYPE)
 					{
 						Class emptyService=ArchiveDeletePasteServiceUtil.getEmptyService(context);
 						if(emptyService==null)
@@ -256,7 +254,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 
 			}
 		});
-
 		return v;
 	}
 
@@ -279,7 +276,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 		intent.setAction(DeleteAsyncTask.TASK_TYPE);
 		intent.putExtra("bundle",bundle);
 		context.startActivity(intent);
-
 	}
 
 
@@ -314,5 +310,4 @@ public class DeleteFileAlertDialog extends DialogFragment
 	{
 		void deleteDialogOKButtonClick();
 	}
-
 }

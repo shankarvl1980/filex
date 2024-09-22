@@ -294,7 +294,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 				{
 					mp.setDataSource(file_path);
 				}
-				else if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
+				else if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
 				{
 					mp.setDataSource(context,data);
 				}

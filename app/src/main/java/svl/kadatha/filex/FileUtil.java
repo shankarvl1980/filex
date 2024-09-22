@@ -410,21 +410,60 @@ public final class FileUtil
 		return null;
 	}
 
-	public static ChannelSftp.LsEntry getChannelSftpLsEntry(ChannelSftp channelSftp, String file_path){
+
+	public static ChannelSftp.LsEntry getSftpEntry(ChannelSftp channelSftp, String path) {
 		try {
-			@SuppressWarnings("unchecked")
-			Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
-			if (entries != null && entries.size() == 1) {
-				ChannelSftp.LsEntry lsEntry = entries.get(0);
-				return lsEntry;
-			} else {
-				Timber.tag(TAG).e("Could not find the file or multiple entries returned for path: %s", file_path);
+			// Special handling for root directory
+			if (path.equals("/")) {
+				// Create a synthetic LsEntry for root if necessary
+				// Alternatively, decide how to represent the root directory
+				// Since root doesn't have a parent, you might skip it or handle differently
+				// For simplicity, return null or throw an exception
+				Timber.tag(TAG).e("Root directory '/' cannot be represented as a single LsEntry.");
 				return null;
 			}
+
+			String normalizedPath = path;
+			if (path.endsWith("/")) {
+				normalizedPath = path.substring(0, path.length() - 1);
+			}
+
+			// Determine parent directory and target name
+			int lastSlash = normalizedPath.lastIndexOf('/');
+			String parentDir;
+			String targetName;
+
+			if (lastSlash != -1) {
+				parentDir = normalizedPath.substring(0, lastSlash);
+				targetName = normalizedPath.substring(lastSlash + 1);
+				// Handle case where parentDir becomes empty (e.g., "/file.txt")
+				if (parentDir.isEmpty()) {
+					parentDir = "/";
+				}
+			} else {
+				parentDir = ".";
+				targetName = normalizedPath;
+			}
+
+			// List entries in the parent directory
+			@SuppressWarnings("unchecked")
+			Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(parentDir);
+
+			// Iterate through entries to find the target
+			for (ChannelSftp.LsEntry entry : entries) {
+				if (entry.getFilename().equals(targetName)) {
+					return entry;
+				}
+			}
+
+			Timber.tag(TAG).e("Could not find the file or directory for path: %s", path);
+			return null;
 		} catch (Exception e) {
+			Timber.tag(TAG).e("SFTP Exception for path: %s, Error: %s", path, e.getMessage());
 			return null;
 		}
 	}
+
 
 
 	private static boolean deleteNativeFile(@NonNull final File file)

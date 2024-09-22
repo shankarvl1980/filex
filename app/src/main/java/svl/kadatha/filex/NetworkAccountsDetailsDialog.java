@@ -3,6 +3,8 @@ package svl.kadatha.filex;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +33,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FtpDetailsDialog extends DialogFragment {
+public class NetworkAccountsDetailsDialog extends DialogFragment {
 
     private Context context;
     public final static String FTP="ftp";
     public final static String SFTP="sftp";
+    public final static String WebDAV="webdav";
+    public final static String SMB="smb";
     private String type;
     private Toolbar bottom_toolbar;
     private RecyclerView ftp_list_recyclerview;
-    private FtpListAdapter ftpListAdapter;
-    private List<FtpDetailsDialog.FtpPOJO> ftpPJO_selected_for_delete=new ArrayList<>();
+    private NetworkAccountPojoListAdapter networkAccountPojoListAdapter;
+    private List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJO_selected_for_delete=new ArrayList<>();
     private boolean toolbar_visible=true;
     private int scroll_distance;
     private int num_all_ftp;
@@ -49,7 +53,7 @@ public class FtpDetailsDialog extends DialogFragment {
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
     private TextView ftp_number_text_view,empty_ftp_list_tv;
-    private FtpDetailsViewModel viewModel;
+    private NetworkAccountDetailsViewModel viewModel;
     private final static String FTP_DELETE_REQUEST_CODE="ftp_delete_request_code";
     public final static String FTP_INPUT_DETAILS_REQUEST_CODE="ftp_input_details_request_code";
     private final static String FTP_RENAME_REQUEST_CODE="ftp_rename_request_code";
@@ -62,12 +66,12 @@ public class FtpDetailsDialog extends DialogFragment {
         permissionsUtil=new PermissionsUtil(context,(AppCompatActivity)context );
     }
 
-    public static FtpDetailsDialog getInstance(String type){
+    public static NetworkAccountsDetailsDialog getInstance(String type){
         Bundle bundle=new Bundle();
         bundle.putString("type",type);
-        FtpDetailsDialog ftpDetailsDialog=new FtpDetailsDialog();
-        ftpDetailsDialog.setArguments(bundle);
-        return ftpDetailsDialog;
+        NetworkAccountsDetailsDialog networkAccountsDetailsDialog =new NetworkAccountsDetailsDialog();
+        networkAccountsDetailsDialog.setArguments(bundle);
+        return networkAccountsDetailsDialog;
     }
 
 
@@ -87,10 +91,10 @@ public class FtpDetailsDialog extends DialogFragment {
         View v=inflater.inflate(R.layout.fragment_ftp_list,container,false);
         progress_bar=v.findViewById(R.id.fragment_ftp_list_progressbar);
         TextView heading=v.findViewById(R.id.fragment_ftp_list_heading);
-        if(type.equals(FtpDetailsDialog.FTP)){
+        if(type.equals(NetworkAccountsDetailsDialog.FTP)){
             heading.setText(R.string.ftp);
         }
-        else if(type.equals(FtpDetailsDialog.SFTP)){
+        else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
             heading.setText(R.string.sftp);
         }
         ftp_number_text_view=v.findViewById(R.id.ftp_details_ftp_number);
@@ -121,9 +125,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     scroll_distance+=dy;
                 }
-
             }
-
         });
 
 
@@ -148,7 +150,6 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     dismissAllowingStateLoss();
                 }
-
             }
         });
 
@@ -163,18 +164,18 @@ public class FtpDetailsDialog extends DialogFragment {
         disconnect_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         edit_btn=bottom_toolbar.findViewById(R.id.toolbar_btn_4);
 
-
         BottomToolbarClickListener bottomToolbarClickListener=new BottomToolbarClickListener();
         add_btn.setOnClickListener(bottomToolbarClickListener);
         delete_btn.setOnClickListener(bottomToolbarClickListener);
         disconnect_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
 
-        viewModel=new ViewModelProvider(this).get(FtpDetailsViewModel.class);
-        viewModel.fetchFtpPojoList(type);
-        if(FtpDetailsViewModel.FTP_POJO!=null){
+        viewModel=new ViewModelProvider(this).get(NetworkAccountDetailsViewModel.class);
+        viewModel.type=type;
+        viewModel.fetchNetworkAccountPojoList(type);
+        if(viewModel.networkAccountPOJO!=null){
             progress_bar.setVisibility(View.VISIBLE);
-            viewModel.testFtpServiceConnection();
+            viewModel.testServiceConnection();
         }
         else{
             disconnect_btn.setAlpha(Global.DISABLE_ALFA);
@@ -195,9 +196,9 @@ public class FtpDetailsDialog extends DialogFragment {
                 else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                    ftpListAdapter=new FtpListAdapter();
-                    ftp_list_recyclerview.setAdapter(ftpListAdapter);
-                    num_all_ftp=viewModel.ftpPOJOList.size();
+                    networkAccountPojoListAdapter =new NetworkAccountPojoListAdapter();
+                    ftp_list_recyclerview.setAdapter(networkAccountPojoListAdapter);
+                    num_all_ftp=viewModel.networkAccountPOJOList.size();
                     if(num_all_ftp==0)
                     {
                         ftp_list_recyclerview.setVisibility(View.GONE);
@@ -218,7 +219,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                    num_all_ftp = viewModel.ftpPOJOList.size();
+                    num_all_ftp = viewModel.networkAccountPOJOList.size();
                     if (num_all_ftp == 0) {
                         ftp_list_recyclerview.setVisibility(View.GONE);
                         empty_ftp_list_tv.setVisibility(View.VISIBLE);
@@ -248,14 +249,15 @@ public class FtpDetailsDialog extends DialogFragment {
                     {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
-                        {
-                            initiateCreateFragmentTransactions();
-                            dismissAllowingStateLoss();
-                        }
-                        else {
+                        if(type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()){
                             Global.print(context,getString(R.string.server_could_not_be_connected));
+                            return;
+                        } else if(type.equals(SFTP) && NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty()){
+                            Global.print(context,getString(R.string.server_could_not_be_connected));
+                            return;
                         }
+                        initiateCreateFragmentTransactions();
+                        dismissAllowingStateLoss();
                     }
                     else {
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -278,23 +280,22 @@ public class FtpDetailsDialog extends DialogFragment {
                     {
                         viewModel.loggedInStatus=false;
                         viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if(FtpDetailsViewModel.FTP_WORKING_DIR_PATH!=null)
-                        {
-                            initiateCreateFragmentTransactions();
-                            dismissAllowingStateLoss();
-                        }
-                        else {
+                        if(type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()){
                             Global.print(context,getString(R.string.server_could_not_be_connected));
+                            return;
+                        } else if(type.equals(SFTP) && NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty()){
+                            Global.print(context,getString(R.string.server_could_not_be_connected));
+                            return;
                         }
+                        initiateCreateFragmentTransactions();
+                        dismissAllowingStateLoss();
                     }
                     else {
                         viewModel.replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     }
-
                 }
             }
         });
-
 
 
         viewModel.replaceFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -307,7 +308,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                    num_all_ftp = viewModel.ftpPOJOList.size();
+                    num_all_ftp = viewModel.networkAccountPOJOList.size();
                     if (num_all_ftp == 0) {
                         ftp_list_recyclerview.setVisibility(View.GONE);
                         empty_ftp_list_tv.setVisibility(View.VISIBLE);
@@ -347,7 +348,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 }
                 else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
                     progress_bar.setVisibility(View.GONE);
-                    if(!viewModel.isFtpConnected){
+                    if(!viewModel.isNetworkConnected){
                         disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                         disconnect_btn.setEnabled(false);
                     }
@@ -362,9 +363,9 @@ public class FtpDetailsDialog extends DialogFragment {
                 if(requestKey.equals(FTP_DELETE_REQUEST_CODE))
                 {
                     progress_bar.setVisibility(View.VISIBLE);
-                    ftpPJO_selected_for_delete=new ArrayList<>();
-                    ftpPJO_selected_for_delete.addAll(viewModel.mselecteditems.values());
-                    viewModel.deleteFtpPojo(ftpPJO_selected_for_delete);
+                    networkAccountPOJO_selected_for_delete=new ArrayList<>();
+                    networkAccountPOJO_selected_for_delete.addAll(viewModel.mselecteditems.values());
+                    viewModel.deleteNetworkAccountPojo(networkAccountPOJO_selected_for_delete);
                 }
             }
         });
@@ -378,14 +379,12 @@ public class FtpDetailsDialog extends DialogFragment {
                     if(result.getBoolean("whetherToConnect"))
                     {
                         if(type.equals(FTP)){
-                            viewModel.replaceAndConnectFtpPojoList(result);
+                            viewModel.replaceAndConnectNetworkAccount(result);
                         }
-
                     }
                     else {
-                        viewModel.replaceFtpPojoList(result);
+                        viewModel.replaceNetworkAccountPojoList(result);
                     }
-
                 }
             }
         });
@@ -399,8 +398,9 @@ public class FtpDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.VISIBLE);
                     String new_name=result.getString("new_name");
                     String server=result.getString("server");
+                    int port=result.getInt("port");
                     String user_name=result.getString("user_name");
-                    if(new_name!=null)viewModel.changeFtpPojoDisplay(server,user_name,new_name,type);
+                    if(new_name!=null)viewModel.changeNetworkAccountPojoDisplay(server,port,user_name,new_name,type);
                 }
             }
         });
@@ -425,9 +425,10 @@ public class FtpDetailsDialog extends DialogFragment {
                 ((MainActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
             }
             if(type.equals(FTP)){
-                ((MainActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                ((MainActivity)context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+            }else if(type.equals(SFTP)){
+                ((MainActivity)context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH,FileObjectType.SFTP_TYPE);
             }
-
         }
         else if(appCompatActivity instanceof FileSelectorActivity){
             ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -435,7 +436,9 @@ public class FtpDetailsDialog extends DialogFragment {
                 ((FileSelectorActivity)context).recentDialogListener.onMediaAttachedAndRemoved();
             }
             if(type.equals(FTP)){
-                ((FileSelectorActivity)context).createNewFragmentTransaction(FtpDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+                ((FileSelectorActivity)context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH,FileObjectType.FTP_TYPE);
+            } else if(type.equals(SFTP)){
+                ((FileSelectorActivity)context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH,FileObjectType.SFTP_TYPE);
             }
         }
     }
@@ -444,14 +447,13 @@ public class FtpDetailsDialog extends DialogFragment {
     {
         viewModel.mselecteditems=new IndexedLinkedHashMap<>();
 
-        if(ftpListAdapter!=null)ftpListAdapter.notifyDataSetChanged();
+        if(networkAccountPojoListAdapter !=null) networkAccountPojoListAdapter.notifyDataSetChanged();
         enable_disable_buttons(false,0);
-
         ftp_number_text_view.setText(viewModel.mselecteditems.size()+"/"+num_all_ftp);
     }
 
 
-    private class FtpListAdapter extends RecyclerView.Adapter<FtpListAdapter.VH>
+    private class NetworkAccountPojoListAdapter extends RecyclerView.Adapter<NetworkAccountPojoListAdapter.VH>
     {
         @NonNull
         @Override
@@ -461,10 +463,10 @@ public class FtpDetailsDialog extends DialogFragment {
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            FtpPOJO ftpPOJO=viewModel.ftpPOJOList.get(position);
-            String display=ftpPOJO.display;
-            String server=ftpPOJO.server;
-            String user_name=ftpPOJO.user_name;
+            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=viewModel.networkAccountPOJOList.get(position);
+            String display=networkAccountPOJO.display;
+            String server=networkAccountPOJO.server;
+            String user_name=networkAccountPOJO.user_name;
             holder.ftp_display.setText((display==null || display.isEmpty()) ? server : display);
             holder.ftp_server.setText(server);
             holder.ftp_user_name.setText(getString(R.string.user)+" - "+user_name);
@@ -475,7 +477,7 @@ public class FtpDetailsDialog extends DialogFragment {
 
         @Override
         public int getItemCount() {
-            return viewModel.ftpPOJOList.size();
+            return viewModel.networkAccountPOJOList.size();
         }
 
         private class VH extends RecyclerView.ViewHolder
@@ -519,9 +521,11 @@ public class FtpDetailsDialog extends DialogFragment {
                                 return;
                             }
                             progress_bar.setVisibility(View.VISIBLE);
-                            FtpPOJO ftpPOJO=viewModel.ftpPOJOList.get(pos);
+                            NetworkAccountPOJO networkAccountPOJO=viewModel.networkAccountPOJOList.get(pos);
                             if(type.equals(FTP)){
-                                viewModel.connectFtp(ftpPOJO);
+                                viewModel.connectNetworkAccount(networkAccountPOJO);
+                            } else if(type.equals(SFTP)){
+                                viewModel.connectNetworkAccount(networkAccountPOJO);
                             }
                         }
                     }
@@ -565,7 +569,7 @@ public class FtpDetailsDialog extends DialogFragment {
                 {
                     v.setSelected(true);
                     ftp_select_indicator.setVisibility(View.VISIBLE);
-                    viewModel.mselecteditems.put(pos,viewModel.ftpPOJOList.get(pos));
+                    viewModel.mselecteditems.put(pos,viewModel.networkAccountPOJOList.get(pos));
 
                     bottom_toolbar.setVisibility(View.VISIBLE);
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -614,42 +618,50 @@ public class FtpDetailsDialog extends DialogFragment {
             if(id==R.id.toolbar_btn_1)
             {
                 clear_selection();
-                FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,null,null,type);
-                ftpDetailsInputDialog.show(getParentFragmentManager(),"");
+                NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,viewModel.type,null);
+                networkAccountDetailsInputDialog.show(getParentFragmentManager(),"");
             }
             else if(id==R.id.toolbar_btn_2)
             {
                 int s=viewModel.mselecteditems.size();
                 if(s>0)
                 {
-                    FtpPOJO ftpPOJO=viewModel.mselecteditems.getValueAtIndex(0);
-                    String display=ftpPOJO.display;
-                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.isEmpty()) ? ftpPOJO.server : display,s);
+                    NetworkAccountPOJO networkAccountPOJO=viewModel.mselecteditems.getValueAtIndex(0);
+                    String display=networkAccountPOJO.display;
+                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.isEmpty()) ? networkAccountPOJO.server : display,s);
                     deleteFtpAlertDialog.show(getParentFragmentManager(),"");
                 }
             }
             else if(id==R.id.toolbar_btn_3)
             {
-                if(FtpDetailsViewModel.FTP_POJO==null)return;
-                FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
-                ftpClientRepository.shutdown();
+                if(viewModel.networkAccountPOJO==null)return;
+                switch (type){
+                    case FTP:
+
+                        FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(viewModel.networkAccountPOJO);
+                        ftpClientRepository.shutdown();
+                        break;
+                    case SFTP:
+                        SftpChannelRepository sftpChannelRepository=SftpChannelRepository.getInstance(viewModel.networkAccountPOJO);
+                        sftpChannelRepository.shutdown();
+                        break;
+                }
+
                 disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                 disconnect_btn.setEnabled(false);
                 Global.print(context, "ftp connection disconnected");
-
             }
             else if(id==R.id.toolbar_btn_4)
             {
                 int s=viewModel.mselecteditems.size();
                 if(s==1)
                 {
-                    FtpPOJO tobe_replaced_ftp=viewModel.mselecteditems.getValueAtIndex(0);
+                    NetworkAccountPOJO tobe_replaced_ftp=viewModel.mselecteditems.getValueAtIndex(0);
                     String ftp_server=tobe_replaced_ftp.server;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
-                    FtpDetailsInputDialog ftpDetailsInputDialog=FtpDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,ftp_server,ftp_user_name,type);
-                    ftpDetailsInputDialog.show(getParentFragmentManager(),"");
+                    NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,viewModel.type,viewModel.networkAccountPOJOList.get(viewModel.mselecteditems.getKeyAtIndex(0)));
+                    networkAccountDetailsInputDialog.show(getParentFragmentManager(),"");
                 }
-
                 clear_selection();
             }
             else if(id==R.id.toolbar_btn_5)
@@ -660,99 +672,147 @@ public class FtpDetailsDialog extends DialogFragment {
     }
 
 
-    public static class FtpPOJO {
+    public static class NetworkAccountPOJO implements Parcelable {
         final String server;
-        final String mode;
+        final int port;
         final String user_name;
         final String password;
-        final String type;
         final String encoding;
         final String display;
-        final int port;
+        final String type;
+
+        // FTP-specific fields
+        final String mode;
         final boolean anonymous;
+        final boolean useFTPS;
 
-        // Constructor
-        FtpPOJO(String server, int port, String mode, String user_name, String password, String type, boolean anonymous, String encoding, String display) {
-            this.server = server;
-            this.port = port;
-            this.mode = mode;
-            this.user_name = user_name;
-            this.password = password;
-            this.type = type;
-            this.anonymous = anonymous;
-            this.encoding = encoding;
-            this.display = display;
-        }
-
-        // Copy Constructor for deep copy
-        public FtpPOJO(FtpPOJO other) {
-            this.server = new String(other.server); // Creating new String instances, though not required due to immutability
-            this.port = other.port;
-            this.mode = new String(other.mode);
-            this.user_name = new String(other.user_name);
-            this.password = new String(other.password);
-            this.type = new String(other.type);
-            this.anonymous = other.anonymous;
-            this.encoding = new String(other.encoding);
-            this.display = new String(other.display);
-        }
-
-        // Method to return a deep copy
-        public FtpPOJO deepCopy() {
-            return new FtpPOJO(this); // Uses the copy constructor
-        }
-    }
-
-
-    public static class SftpPOJO {
-        final String server;
-        final int port;
-        final String user_name;
-        final String password;
-        final boolean useKeyAuth;
+        // SFTP-specific fields
         final String privateKeyPath;
         final String privateKeyPassphrase;
-        final String encoding;
-        final String display;
-        final int timeout;
-        final boolean strictHostKeyChecking;
+        final String knownHostsPath;
+
+        // WebDAV-specific fields
+        final String basePath;
+        final boolean useHTTPS;
+
+        // SMB-specific fields
+        final String domain;
+        final String shareName;
+        final String smbVersion;
 
         // Constructor
-        SftpPOJO(String server, int port, String user_name, String password,
-                 boolean useKeyAuth, String privateKeyPath, String privateKeyPassphrase,
-                 String encoding, String display, int timeout, boolean strictHostKeyChecking) {
+        public NetworkAccountPOJO(String server, int port, String user_name, String password,
+                                  String encoding, String display, String type,
+                                  String mode, boolean anonymous, boolean useFTPS,
+                                  String privateKeyPath, String privateKeyPassphrase, String knownHostsPath,
+                                  String basePath, boolean useHTTPS,
+                                  String domain, String shareName, String smbVersion) {
             this.server = server;
             this.port = port;
             this.user_name = user_name;
             this.password = password;
-            this.useKeyAuth = useKeyAuth;
-            this.privateKeyPath = privateKeyPath;
-            this.privateKeyPassphrase = privateKeyPassphrase;
             this.encoding = encoding;
             this.display = display;
-            this.timeout = timeout;
-            this.strictHostKeyChecking = strictHostKeyChecking;
+            this.type = type;
+            this.mode = mode;
+            this.anonymous = anonymous;
+            this.useFTPS = useFTPS;
+            this.privateKeyPath = privateKeyPath;
+            this.privateKeyPassphrase = privateKeyPassphrase;
+            this.knownHostsPath = knownHostsPath;
+            this.basePath = basePath;
+            this.useHTTPS = useHTTPS;
+            this.domain = domain;
+            this.shareName = shareName;
+            this.smbVersion = smbVersion;
         }
 
         // Copy Constructor for deep copy
-        public SftpPOJO(SftpPOJO other) {
-            this.server = new String(other.server);
+        public NetworkAccountPOJO(NetworkAccountPOJO other) {
+            this.server = other.server != null ? new String(other.server) : null;
             this.port = other.port;
-            this.user_name = new String(other.user_name);
-            this.password = new String(other.password);
-            this.useKeyAuth = other.useKeyAuth;
+            this.user_name = other.user_name != null ? new String(other.user_name) : null;
+            this.password = other.password != null ? new String(other.password) : null;
+            this.encoding = other.encoding != null ? new String(other.encoding) : null;
+            this.display = other.display != null ? new String(other.display) : null;
+            this.type = other.type != null ? new String(other.type) : null;
+            this.mode = other.mode != null ? new String(other.mode) : null;
+            this.anonymous = other.anonymous;
+            this.useFTPS = other.useFTPS;
             this.privateKeyPath = other.privateKeyPath != null ? new String(other.privateKeyPath) : null;
             this.privateKeyPassphrase = other.privateKeyPassphrase != null ? new String(other.privateKeyPassphrase) : null;
-            this.encoding = new String(other.encoding);
-            this.display = new String(other.display);
-            this.timeout = other.timeout;
-            this.strictHostKeyChecking = other.strictHostKeyChecking;
+            this.knownHostsPath = other.knownHostsPath != null ? new String(other.knownHostsPath) : null;
+            this.basePath = other.basePath != null ? new String(other.basePath) : null;
+            this.useHTTPS = other.useHTTPS;
+            this.domain = other.domain != null ? new String(other.domain) : null;
+            this.shareName = other.shareName != null ? new String(other.shareName) : null;
+            this.smbVersion = other.smbVersion != null ? new String(other.smbVersion) : null;
         }
 
         // Method to return a deep copy
-        public SftpPOJO deepCopy() {
-            return new SftpPOJO(this); // Uses the copy constructor
+        public NetworkAccountPOJO deepCopy() {
+            return new NetworkAccountPOJO(this);
         }
-    }
 
+        // Parcelable implementation
+        protected NetworkAccountPOJO(Parcel in) {
+            server = in.readString();
+            port = in.readInt();
+            user_name = in.readString();
+            password = in.readString();
+            encoding = in.readString();
+            display = in.readString();
+            type = in.readString();
+            mode = in.readString();
+            anonymous = in.readByte() != 0;
+            useFTPS = in.readByte() != 0;
+            privateKeyPath = in.readString();
+            privateKeyPassphrase = in.readString();
+            knownHostsPath = in.readString();
+            basePath = in.readString();
+            useHTTPS = in.readByte() != 0;
+            domain = in.readString();
+            shareName = in.readString();
+            smbVersion = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(server);
+            dest.writeInt(port);
+            dest.writeString(user_name);
+            dest.writeString(password);
+            dest.writeString(encoding);
+            dest.writeString(display);
+            dest.writeString(type);
+            dest.writeString(mode);
+            dest.writeByte((byte) (anonymous ? 1 : 0));
+            dest.writeByte((byte) (useFTPS ? 1 : 0));
+            dest.writeString(privateKeyPath);
+            dest.writeString(privateKeyPassphrase);
+            dest.writeString(knownHostsPath);
+            dest.writeString(basePath);
+            dest.writeByte((byte) (useHTTPS ? 1 : 0));
+            dest.writeString(domain);
+            dest.writeString(shareName);
+            dest.writeString(smbVersion);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<NetworkAccountPOJO> CREATOR = new Creator<NetworkAccountPOJO>() {
+            @Override
+            public NetworkAccountPOJO createFromParcel(Parcel in) {
+                return new NetworkAccountPOJO(in);
+            }
+
+            @Override
+            public NetworkAccountPOJO[] newArray(int size) {
+                return new NetworkAccountPOJO[size];
+            }
+        };
+    }
 }

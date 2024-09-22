@@ -61,8 +61,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		{
 			((MainActivity)activity).recentDialogListener=this;
 		}
-
-
 	}
 
 	@Override
@@ -79,7 +77,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
@@ -88,7 +85,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_recent,container,false);
 		RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_recycler_view);
         recent_recyclerview = v.findViewById(R.id.dialog_recent_recycler_view);
@@ -139,7 +135,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			}
 		});
 		return v;
-		
 	}
 
 	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -161,7 +156,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 	@Override
 	public void onResume()
 	{
-		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
 		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
@@ -171,9 +165,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				recent_label.setVisibility(View.GONE);
 				recent_recyclerview.setAdapter(null);
 			}
-
 			window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
-
 		}
 		else
 		{
@@ -196,7 +188,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,false,file_size);
 			fileTypeSelectFragment.show(getParentFragmentManager(),"");
 		}
-
 		else
 		{
 			if(file_ext.matches("(?i)apk"))
@@ -227,7 +218,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 
 			}
-			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
 			{
 				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{
@@ -240,7 +231,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 			{
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 			}
-
 		}
 	}
 
@@ -253,7 +243,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		rootdirrecycleradapter.notifyDataSetChanged();
 		recentRecyclerAdapter.notifyDataSetChanged();
 	}
-
 
 	private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder>
 	{
@@ -284,7 +273,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 
 				this.view.setOnClickListener(new View.OnClickListener()
 					{
-
 						public void onClick(View p)
 						{
 							pos=getBindingAdapterPosition();
@@ -297,7 +285,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 								{
 									((MainActivity)activity).createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
 								}
-
 							}
 							else
 							{
@@ -307,7 +294,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 							ADD_FILE_POJO_TO_RECENT(filePOJO);
 							dismissAllowingStateLoss();
 						}
-
 					});
 			}
 		}
@@ -316,7 +302,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		@Override
 		public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
-			// TODO: Implement this method
 			View itemview=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
 			return new ViewHolder(itemview);
 		}
@@ -324,7 +309,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		@Override
 		public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2)
 		{
-			// TODO: Implement this method
 			FilePOJO filePOJO = dir_linkedlist.get(p2);
 			if(storage_dir)
 			{
@@ -388,7 +372,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return dir_linkedlist.size();
 		}
 		
@@ -417,8 +400,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		{
 			MainActivity.RECENT.addFirst(filePOJO);
 		}
-
-
 	}
 
 
@@ -436,7 +417,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 							UsbDocumentProvider.ACTION_USB_PERMISSION), pending_intent_flag);
 					usbManager.requestPermission(device, permissionIntent);
 					break;
-
 				}
 			}
 		}

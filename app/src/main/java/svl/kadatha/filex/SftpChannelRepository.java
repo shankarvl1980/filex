@@ -6,11 +6,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 
-import org.apache.commons.net.ftp.FTPClient;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,24 +24,24 @@ public class SftpChannelRepository {
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
     private final Map<ChannelSftp, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler;
-    private FtpDetailsDialog.SftpPOJO sftpPOJO;
+    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private int initialChannels;
     private static final int MAX_IDLE_CONNECTIONS = 5;
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
     private static final String TAG = "Sftp-sftpchannel";
 
-    private SftpChannelRepository(FtpDetailsDialog.SftpPOJO sftpPOJO) {
+    private SftpChannelRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         this.sftpChannels = new ConcurrentLinkedQueue<>();
         this.inUseChannels = new ConcurrentLinkedQueue<>();
         this.lastUsedTimes = new ConcurrentHashMap<>();
         this.keepAliveScheduler = Executors.newScheduledThreadPool(1);
-        this.sftpPOJO = sftpPOJO;
+        this.networkAccountPOJO = networkAccountPOJO;
         initializeChannels();
     }
 
-    public static synchronized SftpChannelRepository getInstance(FtpDetailsDialog.SftpPOJO sftpPOJO) {
+    public static synchronized SftpChannelRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         if (instance == null) {
-            instance = new SftpChannelRepository(sftpPOJO);
+            instance = new SftpChannelRepository(networkAccountPOJO);
         }
         return instance;
     }
@@ -94,12 +90,14 @@ public class SftpChannelRepository {
 
     private ChannelSftp createAndConnectSftpChannel() throws JSchException {
         JSch jsch = new JSch();
-        Session session = jsch.getSession(sftpPOJO.user_name, sftpPOJO.server, sftpPOJO.port);
+        Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.server, networkAccountPOJO.port);
 
-        if (sftpPOJO.useKeyAuth) {
-            jsch.addIdentity(sftpPOJO.privateKeyPath, sftpPOJO.privateKeyPassphrase);
+        //if (sftpPOJO.useKeyAuth)
+        if(!networkAccountPOJO.privateKeyPath.isEmpty())
+        {
+            jsch.addIdentity(networkAccountPOJO.privateKeyPath, networkAccountPOJO.privateKeyPassphrase);
         } else {
-            session.setPassword(sftpPOJO.password);
+            session.setPassword(networkAccountPOJO.password);
         }
 
         session.setConfig("StrictHostKeyChecking", "no");

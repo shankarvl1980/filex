@@ -1118,7 +1118,7 @@ public class Global
 			{
 				FileUtil.mkdirsNative(parent_file);
 				createNativeNewFile(cache_file);
-				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(FtpDetailsViewModel.FTP_POJO);
+				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
 				FTPClient ftpClient=null;
 				try {
 					ftpClient=ftpClientRepository.getFtpClient();
@@ -1157,7 +1157,7 @@ public class Global
 				FileUtil.mkdirsNative(parentFile);
 				createNativeNewFile(cacheFile);
 
-				SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(FtpDetailsViewModel.SFTP_POJO);
+				SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
 				ChannelSftp channelSftp = null;
 
 				try {

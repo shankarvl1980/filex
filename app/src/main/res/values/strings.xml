@@ -375,6 +375,7 @@
 
 	<string name="ftp_server">FTP Server</string>
 	<string name="ftp_client">FTP</string>
+	<string name="sftp_client">SFTP</string>
 
     <string-array name="library_categories">
 		<item>@string/download</item>
@@ -388,6 +389,14 @@
 
 	<string-array name="network_types">
 		<item>@string/ftp_client</item>
+		<item>@string/sftp_client</item>
+	</string-array>
+
+	<string-array name="smb_versions">
+		<item>Automatic</item>
+		<item>SMB1</item>
+		<item>SMB2</item>
+		<item>SMB3</item>
 	</string-array>
 
 
@@ -474,5 +483,19 @@
     <string name="removed_directories">Removed directories</string>
 	<string name="there_are_no_files_to_copy">There are no files to copy</string>
     <string name="select_a_directory_to_copy">select a directory to copy</string>
+    <string name="update_webdav_server">Update WebDAV Server</string>
+	<string name="new_webdav_server">New WebDAV Server</string>
+	<string name="update_smb_server">Update SMB Server</string>
+	<string name="new_smb_server">New SMB Server</string>
+    <string name="use_ftps">Use FTPS</string>
+	<string name="private_key">Private Key</string>
+	<string name="private_key_path">Private Key Path</string>
+	<string name="private_key_passphrase">Private Key Passphrase:</string>
+	<string name="known_hosts_path">Known Hosts Path</string>
+	<string name="base_path">Base Path</string>
+	<string name="use_https">Use HTTPS</string>
+	<string name="domain">Domain</string>
+	<string name="share_name">Share Name</string>
+	<string name="smb_version">SMB Version</string>
 
 </resources>
