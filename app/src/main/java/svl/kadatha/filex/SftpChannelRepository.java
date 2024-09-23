@@ -92,15 +92,18 @@ public class SftpChannelRepository {
         JSch jsch = new JSch();
         Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.server, networkAccountPOJO.port);
 
-        //if (sftpPOJO.useKeyAuth)
-        if(!networkAccountPOJO.privateKeyPath.isEmpty())
-        {
+        if(!networkAccountPOJO.privateKeyPath.isEmpty()) {
             jsch.addIdentity(networkAccountPOJO.privateKeyPath, networkAccountPOJO.privateKeyPassphrase);
         } else {
             session.setPassword(networkAccountPOJO.password);
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
+        if(!networkAccountPOJO.knownHostsPath.isEmpty()) {
+            jsch.setKnownHosts(networkAccountPOJO.knownHostsPath);
+        } else {
+            session.setConfig("StrictHostKeyChecking", "no");
+        }
+
         session.connect();
 
         ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
@@ -108,6 +111,7 @@ public class SftpChannelRepository {
 
         return channelSftp;
     }
+
 
     private void sendKeepAlive() {
         for (ChannelSftp channel : sftpChannels) {

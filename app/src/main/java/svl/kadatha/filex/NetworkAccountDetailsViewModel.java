@@ -8,12 +8,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
 
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -35,11 +32,11 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     private Future<?> future9;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> ftpConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> replaceFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> replaceAndConnectFtpAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> changeFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> checkDuplicateFtpDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> networkConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceNetworkAccountAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceAndConnectNetworkAccountAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> changeNetworkAccountDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> checkDuplicateNetworkAccountDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> testServiceConnectionAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOList;
     public IndexedLinkedHashMap<Integer, NetworkAccountsDetailsDialog.NetworkAccountPOJO> mselecteditems=new IndexedLinkedHashMap<>();
@@ -131,18 +128,18 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     public synchronized void connectNetworkAccount(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO)
     {
-        if(ftpConnectAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(networkConnectAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future3=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 type= networkAccountPOJO.type;
                 if(type.equals(NetworkAccountsDetailsDialog.FTP)){
-                    connectFtp(networkAccountPOJO,ftpConnectAsyncTaskStatus);
+                    connectFtp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
                 else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
-                    connectSftp(networkAccountPOJO,ftpConnectAsyncTaskStatus);
+                    connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
         });
@@ -150,8 +147,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     public synchronized void replaceAndConnectNetworkAccount(Bundle bundle)
     {
-        if(replaceAndConnectFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(replaceAndConnectNetworkAccountAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        replaceAndConnectNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future5=executorService.submit(new Runnable() {
             @Override
@@ -163,10 +160,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(server,port,user_name,type);
                 type= networkAccountPOJO.type;
                 if(type.equals(NetworkAccountsDetailsDialog.FTP)){
-                    connectFtp(networkAccountPOJO,replaceAndConnectFtpAsyncTaskStatus);
+                    connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 }
                 else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
-                    connectSftp(networkAccountPOJO,replaceAndConnectFtpAsyncTaskStatus);
+                    connectSftp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 }
             }
         });
@@ -184,19 +181,22 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             FTP_NETWORK_ACCOUNT_POJO=networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO=networkAccountPOJO;
 
-            loggedInStatus=true;
-            if(loggedInStatus)
+            ftpClient=ftpClientRepository.getFtpClient();
+            if(ftpClient!=null && ftpClient.isConnected()){
+                loggedInStatus=true;
+            }else{
+                loggedInStatus=false;
+                throw new Exception("FTP client is not connected");
+            }
+            FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
+            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
             {
-                ftpClient=ftpClientRepository.getFtpClient();
-                FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
-                if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
-                {
-                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                    repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
-                }
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
             }
         }
         catch (Exception e) {
+            loggedInStatus=false;
             Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
         }
         finally {
@@ -220,19 +220,22 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             SFTP_NETWORK_ACCOUNT_POJO=networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO=networkAccountPOJO;
 
-            loggedInStatus=true;
-            if(loggedInStatus)
+            channelSftp=sftpChannelRepository.getSftpChannel();
+            if(channelSftp!=null && channelSftp.isConnected()){
+                loggedInStatus=true;
+            }else{
+                loggedInStatus=false;
+                throw new Exception("SFTP client is not connected");
+            }
+            SFTP_WORKING_DIR_PATH = channelSftp.pwd();
+            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(FileObjectType.SFTP_TYPE))
             {
-                channelSftp=sftpChannelRepository.getSftpChannel();
-                SFTP_WORKING_DIR_PATH = channelSftp.pwd();
-                if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.SFTP_TYPE))
-                {
-                    RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                    repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));
-                }
+                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));
             }
         }
         catch (Exception e) {
+            loggedInStatus=false;
             Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
         }
         finally {
@@ -273,14 +276,14 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     public synchronized void replaceNetworkAccountPojoList(Bundle bundle)
     {
-        if(replaceFtpAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        replaceFtpAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(replaceNetworkAccountAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
-                replaceFtpAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                replaceNetworkAccountAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -288,23 +291,23 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     public synchronized void changeNetworkAccountPojoDisplay(String server,int port ,String user_name, String new_name, String type)
     {
-        if(changeFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(changeNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        changeNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 networkAccountsDatabaseHelper.change_display(server,port,user_name,new_name,type);
                 networkAccountPOJOList=networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
-                changeFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                changeNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
     public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String server,int port,String user_name)
     {
-        if(checkDuplicateFtpDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
-        checkDuplicateFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        if(checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+        checkDuplicateNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         future7 = executorService.submit(new Runnable() {
             @Override
@@ -312,7 +315,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 networkAccountPOJOAlreadyExists = false;
                 NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(server,port ,user_name,type);
                 networkAccountPOJOAlreadyExists = networkAccountPOJO != null;
-                checkDuplicateFtpDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                checkDuplicateNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

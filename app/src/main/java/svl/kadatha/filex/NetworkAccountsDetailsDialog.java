@@ -235,7 +235,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-        viewModel.ftpConnectAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+        viewModel.networkConnectAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED)
@@ -247,8 +247,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if(viewModel.loggedInStatus)
                     {
-                        viewModel.loggedInStatus=false;
-                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                        viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()){
                             Global.print(context,getString(R.string.server_could_not_be_connected));
                             return;
@@ -260,13 +259,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         dismissAllowingStateLoss();
                     }
                     else {
-                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                        viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     }
                 }
             }
         });
 
-        viewModel.replaceAndConnectFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+        viewModel.replaceAndConnectNetworkAccountAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED)
@@ -278,8 +277,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if(viewModel.loggedInStatus)
                     {
-                        viewModel.loggedInStatus=false;
-                        viewModel.ftpConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                        viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                         if(type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()){
                             Global.print(context,getString(R.string.server_could_not_be_connected));
                             return;
@@ -291,14 +289,14 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         dismissAllowingStateLoss();
                     }
                     else {
-                        viewModel.replaceAndConnectFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                        viewModel.replaceAndConnectNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     }
                 }
             }
         });
 
 
-        viewModel.replaceFtpAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+        viewModel.replaceNetworkAccountAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED)
@@ -319,12 +317,12 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         empty_ftp_list_tv.setVisibility(View.GONE);
                     }
                     clear_selection();
-                    viewModel.replaceFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    viewModel.replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
         });
 
-        viewModel.changeFtpDisplayAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+        viewModel.changeNetworkAccountDisplayAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if(asyncTaskStatus==AsyncTaskStatus.STARTED)
@@ -335,7 +333,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 {
                     progress_bar.setVisibility(View.GONE);
                     clear_selection();
-                    viewModel.changeFtpDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    viewModel.changeNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
         });
