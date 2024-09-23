@@ -217,7 +217,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 							}
 							else
 							{
-
 								aalf.clear_selection();
 								albumlf.clear_selection();
 								aslf.clear_selection();
@@ -246,7 +245,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
 							break;
 						default:
-
 							aalf.clear_selection();
 							albumlf.clear_selection();
 							aslf.clear_selection();
@@ -295,9 +293,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 					view_pager.setCurrentItem(1);
 				}
 			}
-
 		}
-
 	}
 
 	@Override
@@ -310,7 +306,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	@Override
 	protected void onStart()
 	{
-		// TODO: Implement this method
 		super.onStart();
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
@@ -341,7 +336,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	{
 		Global.CLEAR_CACHE();
 	}
-
 
 
 	@Override
@@ -407,7 +401,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -483,7 +476,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
 	}
 
-
 	private class ViewPagerFragmentAdapter extends FragmentPagerAdapter
 	{
 		ViewPagerFragmentAdapter(FragmentManager fm)
@@ -493,8 +485,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		@Override
 		public Fragment getItem(int p1)
 		{
-			// TODO: Implement this method
-			
 			switch(p1)
 			{
 				case 0:
@@ -521,8 +511,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 		@Override
 		public CharSequence getPageTitle(int position)
 		{
-			// TODO: Implement this method
-
 			switch(position)
 			{
 				case 0:
@@ -556,7 +544,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 	}
 
 
-
 	interface SearchFilterListener
 	{
 		void onSearchFilter(String constraint);
@@ -582,5 +569,4 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 			}
 		}
 	}
-
 }

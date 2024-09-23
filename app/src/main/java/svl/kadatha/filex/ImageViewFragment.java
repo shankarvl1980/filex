@@ -58,7 +58,6 @@ import java.util.List;
 public class
 ImageViewFragment extends Fragment
 {
-
 	private ViewPager view_pager;
 	private Context context;
 	private ImageViewPagerAdapter image_view_adapter;
@@ -120,7 +119,6 @@ ImageViewFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_image_view,container,false);
 		toolbar_visible=true;
 		handler=new Handler();
@@ -237,7 +235,6 @@ ImageViewFragment extends Fragment
 							if(viewModel.fromThirdPartyApp)
 							{
 								uri=data;
-
 							}
 							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
 							{
@@ -323,7 +320,6 @@ ImageViewFragment extends Fragment
 					}
 					listPopWindow.dismiss();
 				}
-
 			});
 		listPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener()
 			{
@@ -385,7 +381,6 @@ ImageViewFragment extends Fragment
 				{
 					picture_selector_adapter.notifyDataSetChanged();
 				}
-
 			}
 
 			public void onPageScrollStateChanged(int i)

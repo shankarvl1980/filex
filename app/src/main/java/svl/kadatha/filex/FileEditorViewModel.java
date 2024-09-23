@@ -239,7 +239,7 @@ public class FileEditorViewModel extends AndroidViewModel {
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
 
-                if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
+                if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                 {
                     data = FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
                 }

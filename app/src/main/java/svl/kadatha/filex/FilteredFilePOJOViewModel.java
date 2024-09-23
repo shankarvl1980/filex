@@ -139,7 +139,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 }
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE)
+                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                 {
                     if(whetherVideo)
                     {
@@ -149,7 +149,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     {
                         album_file_pojo_list.add(currently_shown_file);
                     }
-
                 }
                 else
                 {
@@ -180,10 +179,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                     {
                                         album_file_pojo_list.add(filePOJO);
                                     }
-
                                     if(filePOJO.getName().equals(currently_shown_file.getName())) file_selected_idx=count;
                                     count++;
-
                                 }
                                 else if(filePOJO.getName().equals(currently_shown_file.getName()))
                                 {
@@ -198,7 +195,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                     file_selected_idx=count;
                                     count++;
                                 }
-
                             }
                             else if(filePOJO.getName().equals(currently_shown_file.getName()))
                             {
@@ -213,10 +209,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                 file_selected_idx=count;
                                 count++;
                             }
-
                         }
                     }
-
                 }
                 if(whetherVideo)
                 {
@@ -226,7 +220,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 {
                     total_images=album_file_pojo_list.size();
                 }
-
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -263,7 +256,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         f.delete();
                     }
                 }
-
                 hasWallPaperSet.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -314,7 +306,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 }
 
                 try {
-
                     long file_size;
                     if(fromThirdPartyApp)
                     {
@@ -332,7 +323,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     {
                         pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }
-                    else if(fileObjectType==FileObjectType.FTP_TYPE)
+                    else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                     {
                         pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }
@@ -350,8 +341,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     {
                         size_per_page_MB=(double)file_size/total_pages/1024/1024;
                     }
-
-
                 }
                 catch (SecurityException e)
                 {
@@ -360,7 +349,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 catch (IOException e) {
                     Global.print_background_thread(application,application.getString(R.string.file_not_in_PDF_format_or_corrupted));
                 }
-
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

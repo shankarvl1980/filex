@@ -44,7 +44,6 @@ public class ImageViewActivity extends BaseActivity
 	{
 		if(intent!=null)
 		{
-
 			data=intent.getData();
 			//boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
 			fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
@@ -54,7 +53,6 @@ public class ImageViewActivity extends BaseActivity
 			{
 				getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fileObjectType),"picture_fragment").commit();
 			}
-
 		}
 	}
 
@@ -67,14 +65,12 @@ public class ImageViewActivity extends BaseActivity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		// TODO: Implement this method
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
 	protected void onStart()
 	{
-		// TODO: Implement this method
 		super.onStart();
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();

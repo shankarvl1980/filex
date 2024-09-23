@@ -105,7 +105,6 @@ public class PdfViewFragment extends Fragment
         float height=getResources().getDimension(R.dimen.floating_button_margin_bottom)+56;
         floating_button_height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,height,displayMetrics);
         recyclerview_height= (int) getResources().getDimension(R.dimen.image_preview_dimen)+((int) getResources().getDimension(R.dimen.layout_margin) *2);
-
     }
 
 
@@ -182,7 +181,6 @@ public class PdfViewFragment extends Fragment
                         if(viewModel.fromThirdPartyApp)
                         {
                             copy_uri=data;
-
                         }
                         else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
                         {
@@ -333,7 +331,6 @@ public class PdfViewFragment extends Fragment
                 {
                     picture_selector_adapter.notifyDataSetChanged();
                 }
-
             }
 
             public void onPageScrollStateChanged(int i)
@@ -346,7 +343,6 @@ public class PdfViewFragment extends Fragment
                 viewModel.previously_selected_image_idx=viewModel.image_selected_idx;
                 viewModel.image_selected_idx=i;
                 current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
-
             }
         });
 
@@ -417,9 +413,7 @@ public class PdfViewFragment extends Fragment
                     recyclerview.setAdapter(picture_selector_adapter);
                     lm.scrollToPositionWithOffset(viewModel.image_selected_idx,-preview_image_offset);
                     current_page_tv.setText(viewModel.image_selected_idx+1+"/"+viewModel.total_pages);
-
                 }
-
             }
         });
 
@@ -588,7 +582,6 @@ public class PdfViewFragment extends Fragment
         @Override
         public int getItemPosition(Object object)
         {
-            // TODO: Implement this method
             return POSITION_UNCHANGED;
         }
 
@@ -596,7 +589,6 @@ public class PdfViewFragment extends Fragment
         @Override
         public void destroyItem(ViewGroup container, int position, Object object)
         {
-            // TODO: Implement this method
             container.removeView((View)object);
         }
 
@@ -660,7 +652,6 @@ public class PdfViewFragment extends Fragment
                     view.setTag(position);
                 }
                 catch (IllegalArgumentException e){ cancel(true);}
-
             }
         }
     }

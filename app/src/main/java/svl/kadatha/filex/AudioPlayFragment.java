@@ -121,7 +121,6 @@ public class AudioPlayFragment extends Fragment
 							((AudioPlayerActivity)activity).data = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(audioPlayViewModel.currently_shown_file.getPath()));
 							data= ((AudioPlayerActivity)activity).data;
 						}
-
 					}
 					Intent service_intent=new Intent(context,AudioPlayerService.class);
 					service_intent.setData(data);
@@ -140,7 +139,6 @@ public class AudioPlayFragment extends Fragment
 	}
 
 
-
 	@Override
 	public void onDetach() {
 		super.onDetach();
@@ -150,7 +148,6 @@ public class AudioPlayFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		list_popupwindowpojos=new ArrayList<>();
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon,getString(R.string.delete),1));
@@ -199,7 +196,6 @@ public class AudioPlayFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		View v=inflater.inflate(R.layout.fragment_current_play,container,false);
 		handler=new Handler();
 		onserviceconnection_handler=new Handler();
@@ -268,7 +264,6 @@ public class AudioPlayFragment extends Fragment
 			}
 		};
 
-
 		SeekBar volumeControlSeekbar = v.findViewById(R.id.current_play_volume_seekbar);
 		volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
 		volumeControlSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -293,7 +288,6 @@ public class AudioPlayFragment extends Fragment
 		audio_album_tv=v.findViewById(R.id.current_play_album);
 		audio_artists_tv=v.findViewById(R.id.current_play_artists);
 		next_audio_tv=v.findViewById(R.id.current_play_next_audio_title);
-
 
 		ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
 		overflow_btn.setOnClickListener(new View.OnClickListener()
@@ -523,8 +517,6 @@ public class AudioPlayFragment extends Fragment
 				}
 			}
 		});
-
-
 		return v;
 	}
 
@@ -535,7 +527,6 @@ public class AudioPlayFragment extends Fragment
 		{
 			public void run()
 			{
-
 				int current_pos=audio_player_service.get_current_position(); //audio_player;_service.get_current_position();
 				seekbar.setProgress(current_pos);
 				current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
@@ -551,13 +542,9 @@ public class AudioPlayFragment extends Fragment
 				{
 					handler.postDelayed(this,1000);
 				}
-
-
 			}
-
 		});
 	}
-
 
 	private String convertSecondsToHMmSs(int milliseconds)
 	{
@@ -574,7 +561,6 @@ public class AudioPlayFragment extends Fragment
 		{
 			return String.format("%02d:%02d", m,s);
 		}
-
 	}
 
 	public void enable_disable_previous_next_btn()
@@ -626,19 +612,16 @@ public class AudioPlayFragment extends Fragment
 		if(next_btn.isEnabled() && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()>AudioPlayerService.CURRENT_PLAY_NUMBER+1)
 		{
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" "+AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER+1).getTitle());
-
 		}
 		else
 		{
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
 		}
-
 	}
 
 	@Override
 	public void onStart()
 	{
-		// TODO: Implement this method
 		super.onStart();
 		Intent service_intent=new Intent(context,AudioPlayerService.class);
 		service_bound=context.bindService(service_intent,service_connection,Context.BIND_AUTO_CREATE);
@@ -656,7 +639,6 @@ public class AudioPlayFragment extends Fragment
 					{
 						String path=AudioPlayerActivity.AUDIO_FILE.getData();
 						setTitleArt(AudioPlayerActivity.AUDIO_FILE.getId(),AudioPlayerActivity.AUDIO_FILE.getTitle(),path); // dont try audio_player_service.current_audio, it may not have been instantiated.
-
 					}
 					total_duration=audio_player_service.get_duration();
 					isDurationMoreThanHour=(total_duration/1000)>3599;
@@ -673,12 +655,9 @@ public class AudioPlayFragment extends Fragment
 					update_position();
 					onserviceconnection_handler.removeCallbacks(this);
 				}
-
 			}
 		};
-
 		onserviceconnection_handler.post(runnable);
-
 	}
 
 	@Override
@@ -703,7 +682,6 @@ public class AudioPlayFragment extends Fragment
 	@Override
 	public void onDestroy()
 	{
-		// TODO: Implement this method
 		super.onDestroy();
 		audio_player_service.removeAudioPlayerServiceBroadcastListener();
 	}
@@ -733,7 +711,6 @@ public class AudioPlayFragment extends Fragment
 		@Override
 		public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
 		{
-			// TODO: Implement this method
 			final ArrayList<String> files_selected_array=new ArrayList<>();
 			if(AudioPlayerActivity.AUDIO_FILE==null) return;
 			if(activity instanceof AudioPlayerActivity)
@@ -858,7 +835,6 @@ public class AudioPlayFragment extends Fragment
 			}
 			listPopWindow.dismiss();
 		}
-
 	}
 
 	private void set_ring_tone()
@@ -925,5 +901,4 @@ public class AudioPlayFragment extends Fragment
 
 		Global.print(context,getString(R.string.ringtone_set));
 	}
-
 }

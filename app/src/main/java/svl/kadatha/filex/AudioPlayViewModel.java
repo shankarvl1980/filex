@@ -106,7 +106,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 AudioPlayerService.CURRENT_PLAY_NUMBER=0;
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE)
+                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                 {
                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                 }
@@ -127,22 +127,18 @@ public class AudioPlayViewModel extends AndroidViewModel {
                                 file_ext=filePOJO.getName().substring(idx+1);
                                 if(file_ext.matches(Global.AUDIO_REGEX))
                                 {
-
                                     AudioPOJO audio=new AudioPOJO(0,filePOJO.getPath(),filePOJO.getName(),null,null,null,"0",fileObjectType);
                                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
 
                                     if(AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))AudioPlayerService.CURRENT_PLAY_NUMBER=count;
                                     count++;
-
                                 }
                                 else if(filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle()))
                                 {
-
                                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                                     AudioPlayerService.CURRENT_PLAY_NUMBER=count;
                                     count++;
                                 }
-
                             }
                             else if(filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle()))
                             {
@@ -151,12 +147,9 @@ public class AudioPlayViewModel extends AndroidViewModel {
                                 AudioPlayerService.CURRENT_PLAY_NUMBER=count;
                                 count++;
                             }
-
                         }
                     }
-
                 }
-
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -186,16 +179,13 @@ public class AudioPlayViewModel extends AndroidViewModel {
                                 album_id=audioPOJO.getAlbumId();
                             }
                         }
-
                     }
                 }
                 else {
                     album_id=AudioPlayerActivity.EXISTING_AUDIOS_ID.get(audio_id);
                 }
-
                 isAlbumArtFetched.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
-
 }

@@ -54,14 +54,12 @@ public class PdfViewActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        // TODO: Implement this method
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onStart()
     {
-        // TODO: Implement this method
         super.onStart();
         clear_cache=true;
         Global.WORKOUT_AVAILABLE_SPACE();
