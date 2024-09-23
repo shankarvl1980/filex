@@ -902,11 +902,11 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 							} catch (IOException e) {
 
 							}
-
 						}
 						else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                         {
                             String fp=file_path.toString();
+							if(fp.isEmpty()) fp=File.separator;
                             if(detailFragmentListener!=null)detailFragmentListener.createFragmentTransaction(fp,fileObjectType);
                         }
 					}

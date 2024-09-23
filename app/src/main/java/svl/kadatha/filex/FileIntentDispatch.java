@@ -157,11 +157,9 @@ class FileIntentDispatch
 							Global.print(context,context.getString(R.string.exception_thrown));
 						}
 					}
-
 					package_found=true;
 					break;
 				}
-
 			}
 
 			if(!package_found)
@@ -178,8 +176,6 @@ class FileIntentDispatch
 		AppSelectorDialog appSelectorDialog=AppSelectorDialog.getInstance(uri,file_path,mime_type,clear_top,fileObjectType,file_size);
 		appSelectorDialog.show(((AppCompatActivity)context).getSupportFragmentManager(),"");
 	}
-
-
 
 	public static String SET_INTENT_FOR_VIEW(Intent intent,String mime_type,String file_path ,String file_extn,FileObjectType fileObjectType,
 	boolean clear_top, Uri uri)

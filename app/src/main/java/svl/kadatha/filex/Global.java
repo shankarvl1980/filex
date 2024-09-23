@@ -871,6 +871,8 @@ public class Global
 				return FileObjectType.USB_TYPE;
 			case "FTP_TYPE":
 				return FileObjectType.FTP_TYPE;
+			case "SFTP_TYPE":
+				return FileObjectType.SFTP_TYPE;
 			default:
 				return null;
 		}

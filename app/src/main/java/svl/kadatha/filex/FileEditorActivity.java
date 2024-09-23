@@ -92,7 +92,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
     @Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		context=this;
 		fm=getSupportFragmentManager();
