@@ -67,7 +67,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public static boolean CUT_SELECTED;
 	public static boolean COPY_SELECTED;
 	public static FileObjectType CUT_COPY_FILE_OBJECT_TYPE;
-	public static String CUT_COPY_FILECLICKSELECTED="";
+	public static String CUT_COPY_FILE_CLICK_SELECTED ="";
 	public static ArrayList<String> FILE_SELECTED_FOR_CUT_COPY=new ArrayList<>();
 
 	public  String search_file_name;
@@ -120,7 +120,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		Bundle bundle=getArguments();
 		fileObjectType=(FileObjectType)bundle.getSerializable("fileObjectType");
@@ -176,7 +175,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				}
 			}
 		}
-
 	}
 	
 	@Override
@@ -235,7 +233,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				if(detailFragmentListener!=null)detailFragmentListener.setSearchBarVisibility(false);
 				LibraryAlbumSelectDialog libraryAlbumSelectDialog=LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE,file_click_selected_name);
 				libraryAlbumSelectDialog.show(getParentFragmentManager(),"");
-
 			}
 		});
 
@@ -248,7 +245,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 					Global.IMAGE_VIDEO_GRID_LAYOUT=!Global.IMAGE_VIDEO_GRID_LAYOUT;
 					layout_image_view.setImageResource(Global.IMAGE_VIDEO_GRID_LAYOUT ? R.drawable.list_layout_icon : R.drawable.grid_layout_icon);
 					tinyDB.putBoolean("image_video_grid_layout",Global.IMAGE_VIDEO_GRID_LAYOUT);
-
 				}
 				getParentFragmentManager().beginTransaction().detach(DetailFragment.this).commit();
 				getParentFragmentManager().beginTransaction().attach(DetailFragment.this).commit();
@@ -321,7 +317,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 					scroll_distance+=dy;
 				}
 			}
-
 		});
 
 		FastScrollerView fastScroller = v.findViewById(R.id.fastScroller_detail_fragment);
@@ -345,7 +340,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 					search_regex = searchParameters.search_regex;
 					search_lower_limit_size = searchParameters.search_lower_limit_size;
 					search_upper_limit_size = searchParameters.search_upper_limit_size;
-
 				}
 
 				if (LIBRARY_CATEGORIES.contains(fileclickselected) || fileclickselected.equals("Large Files") || fileclickselected.equals("Duplicate Files"))
@@ -384,46 +378,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			}
 		});
 
-//		viewModel.copyFtpAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
-//			@Override
-//			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-//				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-//				{
-//					progress_bar.setVisibility(View.VISIBLE);
-//				}
-//				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-//				{
-//					progress_bar.setVisibility(View.GONE);
-//					if(viewModel.ftp_cached_file_path!=null)
-//					{
-//						FileIntentDispatch.openFile(context,viewModel.ftp_cached_file_path,"",false,viewModel.ftp_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
-//					}
-//
-//					viewModel.copyFtpAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-//				}
-//
-//			}
-//		});
-
-//		viewModel.copyUsbAsyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
-//			@Override
-//			public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-//				if(asyncTaskStatus==AsyncTaskStatus.STARTED)
-//				{
-//					progress_bar.setVisibility(View.VISIBLE);
-//				}
-//				else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED)
-//				{
-//					progress_bar.setVisibility(View.GONE);
-//					if(viewModel.usb_cached_file_path!=null)
-//					{
-//						FileIntentDispatch.openFile(context,viewModel.usb_cached_file_path,"",false,viewModel.usb_cached_file_fileObjectType,viewModel.select_app_to_open_ftp,Global.CACHE_FILE_MAX_LIMIT);
-//					}
-//					viewModel.copyUsbAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-//				}
-//			}
-//		});
-
 		getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
 			@Override
 			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -456,7 +410,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 						if(parent_file_name!=null)
 						{
 							filepath_adapter=new FilePathRecyclerViewAdapter(fileclickselected+File.separator+result.getString("parent_file_name"));
-
 						}
 						else
 						{
@@ -465,7 +418,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 						filepath_recyclerview.setAdapter(filepath_adapter);
 						viewModel.library_filter_path=result.getString("parent_file_path");
 						adapter.getFilter().filter(null);
-
 					}
 				}
 			}
@@ -481,7 +433,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		{
 			clearSelectionAndNotifyDataSetChanged();
 		}
-
 		else if(modification_observed)
 		{
 			if(detailFragmentListener!=null)
@@ -565,7 +516,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			else {
 				adapter=new DetailRecyclerViewAdapterGrid(context,show_file_path);
 			}
-
 		}
 		else {
 			if(fileclickselected.equals("Duplicate Files"))
@@ -575,7 +525,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			else {
 				adapter=new DetailRecyclerViewAdapterList(context,show_file_path);
 			}
-
 		}
 
 		set_adapter();
@@ -602,7 +551,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public void onStop() {
 		super.onStop();
 		fileModifyObserver.startWatching();
-	
 	}
 
 	@Override
@@ -702,7 +650,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			 {
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			 }
-
 		 }
 	}
 
@@ -825,7 +772,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				folder_empty.setVisibility(View.GONE);
 			}
 		}
-		
 	}
 
 	private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)
@@ -888,7 +834,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			if(p.equals(File.separator))
 			{
 				filepath_string_array= new String[]{""};
-
 			}
 			else
 			{
@@ -957,13 +902,11 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 							}
 
 						}
-						else if(fileObjectType==FileObjectType.FTP_TYPE)
+						else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
                         {
                             String fp=file_path.toString();
                             if(detailFragmentListener!=null)detailFragmentListener.createFragmentTransaction(fp,fileObjectType);
                         }
-
-
 					}
 				});
 			}
@@ -972,14 +915,12 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		@Override
 		public DetailFragment.FilePathRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 		{
-			// TODO: Implement this method
 			return new ViewHolder((FrameLayout)LayoutInflater.from(context).inflate(R.layout.filepath_recyclerview_layout,p1,false));
 		}
 
 		@Override
 		public void onBindViewHolder(DetailFragment.FilePathRecyclerViewAdapter.ViewHolder p1, int p2)
 		{
-			// TODO: Implement this method
 			if(filepath_string_array[p2].isEmpty())
 			{
 				p1.file_path_string_tv.setText(File.separator);
@@ -993,11 +934,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return filepath_string_array.length;
 		}
 	}
-
-
 }
 

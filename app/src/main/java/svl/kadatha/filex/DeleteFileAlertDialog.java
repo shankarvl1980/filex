@@ -114,8 +114,9 @@ public class DeleteFileAlertDialog extends DialogFragment
 		dialog_heading_textview.setText(R.string.delete);
 		new_file_name_edittext.setVisibility(View.GONE);
 
-		ViewModelFileCount viewModel = new ViewModelProvider(this).get(ViewModelFileCount.class);
-		viewModel.countFile(source_folder,sourceFileObjectType,files_selected_array,size,true);
+		ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, sourceFileObjectType);
+		ViewModelFileCount viewModel = new ViewModelProvider(this,factory).get(ViewModelFileCount.class);
+		//viewModel.countFile(source_folder,sourceFileObjectType,files_selected_array,size,true);
 
 		viewModel.total_no_of_files.observe(this, new Observer<Integer>() {
 			@Override

@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 
 public class VideoViewFragmentViewModel extends AndroidViewModel {
 
-   // public MediaPlayer mp;
+
     public boolean playmode,completed;
     public boolean firststart,surfaceCreated;
     public boolean wasPlaying;
@@ -17,7 +17,5 @@ public class VideoViewFragmentViewModel extends AndroidViewModel {
     public boolean setDisplay;
     public VideoViewFragmentViewModel(@NonNull Application application) {
         super(application);
-       // mp=new MediaPlayer();
     }
-
 }

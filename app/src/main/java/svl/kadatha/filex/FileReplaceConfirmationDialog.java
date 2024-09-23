@@ -188,14 +188,12 @@ public class FileReplaceConfirmationDialog extends DialogFragment
 							bundle.putStringArrayList("overwritten_file_path_list",fileDuplicationViewModel.overwritten_file_path_list);
 							getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE,bundle);
 						}
-
 					}
 					else{
 						PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,
 								fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,cut);
 						pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
 					}
-
 					dismissAllowingStateLoss();
 				}
 			}

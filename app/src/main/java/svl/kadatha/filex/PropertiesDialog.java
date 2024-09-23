@@ -224,8 +224,9 @@ public class PropertiesDialog extends DialogFragment
 			properties_rwh_table_layout.addView(row_item);
 		}
 
-		ViewModelFileCount viewModel=new ViewModelProvider(this).get(ViewModelFileCount.class);
-		viewModel.countFile(source_folder,fileObjectType,files_selected_array,size,true);
+		ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, fileObjectType);
+		ViewModelFileCount viewModel=new ViewModelProvider(this,factory).get(ViewModelFileCount.class);
+		//viewModel.countFile(source_folder,fileObjectType,files_selected_array,size,true);
 
 		viewModel.total_no_of_files.observe(this, new androidx.lifecycle.Observer<Integer>() {
 			@Override
@@ -237,7 +238,6 @@ public class PropertiesDialog extends DialogFragment
 		viewModel.size_of_files_formatted.observe(this, new Observer<String>() {
 			@Override
 			public void onChanged(String s) {
-
 				size_files_textview.setText(" "+s);
 			}
 		});

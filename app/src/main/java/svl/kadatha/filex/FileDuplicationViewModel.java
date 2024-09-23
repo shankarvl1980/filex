@@ -127,9 +127,7 @@ public class FileDuplicationViewModel extends ViewModel {
                                 stop_loop=true;
                                 break;
                             }
-
                         }
-
                     }
                     if(stop_loop)break;
                 }
@@ -183,7 +181,6 @@ public class FileDuplicationViewModel extends ViewModel {
                     iterator.remove();
                     break;
                 }
-
             }
         }
     }
@@ -206,7 +203,6 @@ public class FileDuplicationViewModel extends ViewModel {
                 return false;
             }
         }
-
 
         // If all checks fail, assume it's not a directory
         return false;

@@ -381,7 +381,7 @@ public class CopyToActivity extends BaseActivity{
         super.onStart();
         if(first_start)
         {
-                first_start=false;
+            first_start=false;
         }
         else {
             clear_cache=true;

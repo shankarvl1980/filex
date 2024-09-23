@@ -1,9 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
@@ -29,37 +27,30 @@ import timber.log.Timber;
 public class FileCountSize {
     final Context context;
     List<String> files_selected_array;
-    Uri target_uri;
-    String target_uri_path;
     boolean include_folder;
     FileObjectType sourceFileObjectType;
     int total_no_of_files;
     long total_size_of_files;
     final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied=new MutableLiveData<>();
+    final MutableLiveData<Integer> mutable_total_no_of_files=new MutableLiveData<>();
     String source_folder;
     private boolean isCancelled;
     private List<Uri>data_list;
     private Future<?> future1,future2,future3, future4;
     private static final String TAG = "Ftp-FileCountSize";
 
-    FileCountSize(Context context,List<String> files_selected_array, Uri source_uri,String source_uri_path, FileObjectType sourceFileObjectType)
+    FileCountSize(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType)
     {
         this.context=context;
         this.files_selected_array=files_selected_array;
         this.include_folder= true;
-        this.target_uri= source_uri;
-        this.target_uri_path= source_uri_path;
         this.sourceFileObjectType=sourceFileObjectType;
-
     }
 
     FileCountSize(Context context,List<Uri> data_list)
     {
         this.context=context;
         this.data_list=data_list;
-        //this.total_no_of_files=total_no_of_files;
-        //this.total_size_of_files=total_size_of_files;
-
     }
 
     public void cancel(boolean mayInterruptRunning){
@@ -87,7 +78,7 @@ public class FileCountSize {
 
                 total_no_of_files +=data_list.size();
                 total_size_of_files += uri_size;
-
+                mutable_total_no_of_files.postValue(total_no_of_files);
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
             }
         });
@@ -113,10 +104,10 @@ public class FileCountSize {
                         try {
                             final int[] count = new int[1];
                             final long[] s = new long[1];
-                            new NioFileIterator(files_selected_array,count, s,new MutableLiveData<>(),mutable_size_of_files_to_be_archived_copied);
+                            new NioFileIterator(files_selected_array,count, s,mutable_total_no_of_files,mutable_size_of_files_to_be_archived_copied);
                             total_no_of_files+=count[0];
                             total_size_of_files+=s[0];
-
+                            mutable_total_no_of_files.postValue(total_no_of_files);
                             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
 
                         } catch (IOException e) {
@@ -133,7 +124,6 @@ public class FileCountSize {
                         }
                         populate(f_array,include_folder);
                     }
-
                 }
                 else if(sourceFileObjectType== FileObjectType.USB_TYPE)
                 {
@@ -197,10 +187,6 @@ public class FileCountSize {
                         }
                     }
                 }
-                else
-                {
-                    populate(files_selected_array,include_folder);
-                }
             }
         });
     }
@@ -240,8 +226,9 @@ public class FileCountSize {
 
             total_no_of_files += no_of_files;
             total_size_of_files += size_of_files;
-
+            mutable_total_no_of_files.postValue(total_no_of_files);
             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+            Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
         }
     }
 
@@ -280,6 +267,7 @@ public class FileCountSize {
 
             total_no_of_files += no_of_files;
             total_size_of_files += size_of_files;
+            mutable_total_no_of_files.postValue(total_no_of_files);
             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
     }
@@ -344,6 +332,7 @@ public class FileCountSize {
             total_no_of_files += no_of_files;
             total_size_of_files += size_of_files;
             Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
+            mutable_total_no_of_files.postValue(total_no_of_files);
             mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
         }
         Timber.tag(TAG).d("FTP file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
@@ -423,6 +412,7 @@ public class FileCountSize {
                 total_no_of_files += no_of_files;
                 total_size_of_files += size_of_files;
                 Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
+                mutable_total_no_of_files.postValue(total_no_of_files);
                 mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
             }
 
@@ -448,45 +438,45 @@ public class FileCountSize {
     }
 
 
-    private void populate(List<String> source_list_files, boolean include_folder) {
-        Stack<String> stack = new Stack<>();
-        for (String filePath : source_list_files) {
-            stack.push(filePath);
-        }
-
-        while (!stack.isEmpty()) {
-            if (isCancelled()) {
-                return;
-            }
-
-            String parent_file_path = stack.pop();
-            int no_of_files = 0;
-            long size_of_files = 0L;
-
-            Uri uri = FileUtil.getDocumentUri(parent_file_path, target_uri, target_uri_path);
-            if (FileUtil.isDirectoryUri(context, uri)) {
-                Uri children_uri = DocumentsContract.buildChildDocumentsUriUsingTree(target_uri, FileUtil.getDocumentID(parent_file_path, target_uri, target_uri_path));
-                Cursor cursor = context.getContentResolver().query(children_uri, new String[]{DocumentsContract.Document.COLUMN_DISPLAY_NAME}, null, null, null);
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        String displayName = cursor.getString(0);
-                        stack.push(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, displayName));
-                    }
-                    cursor.close();
-                }
-
-                if (include_folder) {
-                    no_of_files++;
-                }
-            } else {
-                no_of_files++;
-                size_of_files += FileUtil.getSizeUri(context, uri);
-            }
-
-            total_no_of_files += no_of_files;
-            total_size_of_files += size_of_files;
-            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-        }
-    }
+//    private void populate(List<String> source_list_files, boolean include_folder) {
+//        Stack<String> stack = new Stack<>();
+//        for (String filePath : source_list_files) {
+//            stack.push(filePath);
+//        }
+//
+//        while (!stack.isEmpty()) {
+//            if (isCancelled()) {
+//                return;
+//            }
+//
+//            String parent_file_path = stack.pop();
+//            int no_of_files = 0;
+//            long size_of_files = 0L;
+//
+//            Uri uri = FileUtil.getDocumentUri(parent_file_path, target_uri, target_uri_path);
+//            if (FileUtil.isDirectoryUri(context, uri)) {
+//                Uri children_uri = DocumentsContract.buildChildDocumentsUriUsingTree(target_uri, FileUtil.getDocumentID(parent_file_path, target_uri, target_uri_path));
+//                Cursor cursor = context.getContentResolver().query(children_uri, new String[]{DocumentsContract.Document.COLUMN_DISPLAY_NAME}, null, null, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//                        String displayName = cursor.getString(0);
+//                        stack.push(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, displayName));
+//                    }
+//                    cursor.close();
+//                }
+//
+//                if (include_folder) {
+//                    no_of_files++;
+//                }
+//            } else {
+//                no_of_files++;
+//                size_of_files += FileUtil.getSizeUri(context, uri);
+//            }
+//
+//            total_no_of_files += no_of_files;
+//            total_size_of_files += size_of_files;
+//            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+//        }
+//    }
 
 }
