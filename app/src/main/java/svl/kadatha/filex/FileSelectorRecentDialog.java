@@ -97,7 +97,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         View v=inflater.inflate(R.layout.fragment_recent,container,false);
         RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_recycler_view);
         recent_recyclerview = v.findViewById(R.id.dialog_recent_recycler_view);
@@ -139,7 +138,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 {
                     FileSelectorActivity.RECENT =new LinkedList<>();
                 }
-
             }
         });
 
@@ -149,9 +147,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             {
                 dismissAllowingStateLoss();
             }
-
         });
-
         return v;
     }
 
@@ -159,7 +155,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     @Override
     public void onResume()
     {
-        // TODO: Implement this method
         super.onResume();
         Window window=getDialog().getWindow();
         if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
@@ -192,7 +187,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         {
             root_dir_linkedlist.addAll(((FileSelectorActivity)context).storage_filePOJO_list); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
-
         rootdirrecycleradapter.notifyDataSetChanged();
         recentRecyclerAdapter.notifyDataSetChanged();
     }
@@ -247,7 +241,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                         }
                         dismissAllowingStateLoss();
                     }
-
                 });
             }
         }
@@ -256,7 +249,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         @Override
         public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
-            // TODO: Implement this method
             View itemview=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
             return new ViewHolder(itemview);
         }
@@ -264,7 +256,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         @Override
         public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2)
         {
-            // TODO: Implement this method
             FilePOJO filePOJO = dir_linkedlist.get(p2);
             if(storage_dir)
             {
@@ -305,7 +296,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
                     p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName()+space);
                 }
-
+                else if(fileObjectType==FileObjectType.SFTP_TYPE)
+                {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX+filePOJO.getName()+space);
+                }
             }
             else
             {

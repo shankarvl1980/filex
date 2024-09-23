@@ -348,6 +348,11 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
 					p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName()+space);
 				}
+				else if(fileObjectType==FileObjectType.SFTP_TYPE)
+				{
+					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
+					p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX+filePOJO.getName()+space);
+				}
 				
 			}
 			else
