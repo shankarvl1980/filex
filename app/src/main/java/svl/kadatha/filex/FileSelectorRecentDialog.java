@@ -32,7 +32,6 @@ import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 public class FileSelectorRecentDialog extends DialogFragment implements FileSelectorActivity.RecentDialogListener, StorageAnalyserActivity.RecentDialogListener
 {
-
     private Context context;
     private final LinkedList<FilePOJO> root_dir_linkedlist=new LinkedList<>();
     public static final int RECENT_SIZE=30;
@@ -61,7 +60,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             activity_catering=FILE_SELECTOR;
             ((FileSelectorActivity)context).recentDialogListener=this;
         }
-
     }
 
     @Override
@@ -75,13 +73,11 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         {
             ((FileSelectorActivity)context).recentDialogListener=null;
         }
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
         if (activity_catering.equals(STORAGE_ANALYSER)) {
@@ -90,7 +86,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
         else if (activity_catering.equals(FILE_SELECTOR)){
             root_dir_linkedlist.addAll(((FileSelectorActivity)activity).getFilePOJO_list()); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         }
-
     }
 
 
@@ -164,7 +159,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 recent_label.setVisibility(View.GONE);
                 recent_recyclerview.setAdapter(null);
             }
-
             window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_WIDTH);
         }
         else
@@ -274,9 +268,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                         p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
                     }
                     p1.textView_recent_dir.setText(filePOJO.getName()+space);
-
                 }
-
                 else if(fileObjectType== FileObjectType.USB_TYPE)
                 {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
@@ -288,7 +280,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                     {
                         p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
                         p1.textView_recent_dir.setText(R.string.root_directory);
-
                     }
                 }
                 else if(fileObjectType==FileObjectType.FTP_TYPE)
@@ -317,14 +308,12 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 {
                     p1.textView_recent_dir.setText(filePOJO.getPath());
                 }
-
             }
         }
 
         @Override
         public int getItemCount()
         {
-            // TODO: Implement this method
             return dir_linkedlist.size();
         }
 
@@ -337,7 +326,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
 
     public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO, String activity_catering)
     {
-
         if(activity_catering.equals(STORAGE_ANALYSER))
         {
             if(!StorageAnalyserActivity.RECENT.isEmpty())
@@ -356,7 +344,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
             {
                 StorageAnalyserActivity.RECENT.addFirst(filePOJO);
             }
-
         }
         else
         {
@@ -377,7 +364,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 FileSelectorActivity.RECENT.addFirst(filePOJO);
             }
         }
-
     }
 
 
@@ -395,11 +381,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                             UsbDocumentProvider.ACTION_USB_PERMISSION), pending_intent_flag);
                     usbManager.requestPermission(device, permissionIntent);
                     break;
-
                 }
             }
         }
-
     }
-
 }

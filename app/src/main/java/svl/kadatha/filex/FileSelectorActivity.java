@@ -695,7 +695,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for(FilePOJO filePOJO:repositoryClass.storage_dir)
         {
-            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE || filePOJO.getFileObjectType()==FileObjectType.USB_TYPE)
+            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE || filePOJO.getFileObjectType()==FileObjectType.USB_TYPE || filePOJO.getFileObjectType()==FileObjectType.SFTP_TYPE)
             {
                 filePOJOS.add(filePOJO);
             }

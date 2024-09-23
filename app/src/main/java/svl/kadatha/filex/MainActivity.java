@@ -849,7 +849,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	protected void onNewIntent(Intent intent)
 	{
 		super.onNewIntent(intent);
-		send_intent=intent;
+		String action=intent.getAction();
+		if(action.equals(Intent.ACTION_SEND_MULTIPLE) || action.equals(Intent.ACTION_SEND)){
+			send_intent=intent;
+		}
 	}
 
 	private void on_intent(Intent intent, Bundle savedInstanceState){
@@ -863,7 +866,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					df.clearSelectionAndNotifyDataSetChanged();
 					paste_pastecancel_view_procedure(df);
 					DetailFragment.COPY_SELECTED=true;
-					send_intent=intent;
 					actionmode_finish(df,df.fileclickselected);
 				}
 			}
@@ -2179,6 +2181,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				//if intent comes from outside
 				if(send_intent!=null){
+					Global.print(context,send_intent.getAction());
+					Timber.tag("copyto_send_intent").d(send_intent.getAction());
 					send_intent.putExtra("folderclickselected", df.fileclickselected);
 					send_intent.putExtra("destFileObjectType", df.fileObjectType);
 					send_intent.setClass(context, CopyToActivity.class);
