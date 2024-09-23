@@ -122,7 +122,7 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
         {
             if(savedInstanceState==null)
             {
-                createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getFileObjectType());
+                createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getFileObjectType());
             }
         }
 
@@ -570,6 +570,12 @@ public class StorageAnalyserActivity extends  BaseActivity implements MediaMount
             }
         }
     }
+
+    @Override
+    public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
+
+    }
+
     public void rescan_large_files_library() {
         Global.print(context, getString(R.string.scanning_started));
         ExecutorService executorService = MyExecutorService.getExecutorService();

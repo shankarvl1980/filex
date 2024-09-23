@@ -300,6 +300,7 @@ public class CopyToActivity extends BaseActivity{
         intent.putExtra("bundle",bundle);
         context.startActivity(intent);
         imm.hideSoftInputFromWindow(file_name_edit_text.getWindowToken(),0);
+        clear_cache=true;
         finish();
     }
 
@@ -319,6 +320,7 @@ public class CopyToActivity extends BaseActivity{
         if(intent!=null)
         {
             Bundle bundle = intent.getExtras();
+            folderclickselected = intent.getStringExtra("folderclickselected");
             String action=intent.getAction();
             if(action.equals(Intent.ACTION_SEND_MULTIPLE))
             {
@@ -343,7 +345,15 @@ public class CopyToActivity extends BaseActivity{
                         String f_name=file_name_list.get(0);
                         file_name_edit_text.setText(f_name==null ? "" : f_name);
                     }
-                    browse_button.callOnClick();
+
+                    if(folderclickselected.isEmpty()){
+                        browse_button.callOnClick();
+                    }else{
+                        folderclickselected = intent.getStringExtra("folderclickselected");
+                        destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
+                        destination_folder_edittext.setText(folderclickselected);
+                        destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
+                    }
                 }
             }
         }

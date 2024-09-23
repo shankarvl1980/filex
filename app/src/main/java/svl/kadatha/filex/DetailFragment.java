@@ -422,6 +422,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				}
 			}
 		});
+
+		detailFragmentListener.onCreateView(fileclickselected,fileObjectType);
 		return v;
 	}
 

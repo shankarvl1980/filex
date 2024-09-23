@@ -390,7 +390,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
         if(savedInstanceState==null)
         {
-            createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getFileObjectType());
+            createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getFileObjectType());
         }
     }
 
@@ -573,6 +573,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     @Override
     public void rescanLargeDuplicateFilesLibrary(String type) {
+
+    }
+
+    @Override
+    public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
 
     }
 

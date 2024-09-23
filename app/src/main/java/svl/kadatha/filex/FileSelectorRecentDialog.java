@@ -274,7 +274,7 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 if(spacePOJO!=null) space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
                 if(fileObjectType== FileObjectType.FILE_TYPE)
                 {
-                    if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(filePOJO.getPath()))
+                    if(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(filePOJO.getPath()))
                     {
                         p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
                     }

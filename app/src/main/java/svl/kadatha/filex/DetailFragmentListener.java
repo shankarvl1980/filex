@@ -15,6 +15,5 @@ public interface DetailFragmentListener {
     void setCurrentDirText(String current_dir_name);
     void enableParentDirImageButton(boolean enable);
     void rescanLargeDuplicateFilesLibrary(String type);
-
-
+    void onCreateView(String fileclickselected,FileObjectType fileObjectType);
 }

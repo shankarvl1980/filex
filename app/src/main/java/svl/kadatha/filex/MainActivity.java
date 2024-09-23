@@ -158,6 +158,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 	private NestedScrollView nestedScrollView;
 	private RepositoryClass repositoryClass;
 	private NetworkStateReceiver networkStateReceiver;
+	private Intent send_intent;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -729,7 +730,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						pbf.dismissAllowingStateLoss();
 					}
 				},500);
-
 			}
 		});
 
@@ -751,7 +751,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 						pbf.dismissAllowingStateLoss();
 					}
 				},500);
-
 			}
 		});
 
@@ -826,6 +825,15 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			public void onDrawerSlide(View v, float f){}
 		});
 
+		discoverDevice();
+
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				onbackpressed(true);
+			}
+		});
+
 		if(savedInstanceState==null)
 		{
 			createFragmentTransaction(Global.INTERNAL_PRIMARY_STORAGE_PATH,FileObjectType.FILE_TYPE);
@@ -835,15 +843,33 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 				onNewIntent(intent);
 			}
 		}
-		discoverDevice();
-
-		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-			@Override
-			public void handleOnBackPressed() {
-				onbackpressed(true);
-			}
-		});
 	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		super.onNewIntent(intent);
+		send_intent=intent;
+	}
+
+	private void on_intent(Intent intent, Bundle savedInstanceState){
+		if(intent!=null)
+		{
+			String action=intent.getAction();
+			if(action.equals(Intent.ACTION_SEND_MULTIPLE) || action.equals(Intent.ACTION_SEND))
+			{
+				DetailFragment df=(DetailFragment)fm.findFragmentById(R.id.detail_fragment);
+				if(df!=null){
+					df.clearSelectionAndNotifyDataSetChanged();
+					paste_pastecancel_view_procedure(df);
+					DetailFragment.COPY_SELECTED=true;
+					send_intent=intent;
+					actionmode_finish(df,df.fileclickselected);
+				}
+			}
+		}
+	}
+
 
 	private void rescanLibrary()
 	{
@@ -951,6 +977,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			}
 		}
 	}
+
+	@Override
+	public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
+		if(send_intent!=null){
+			on_intent(send_intent,null);
+		}
+	}
+
 	public void rescan_large_files_library()
 	{
 		Global.print(context,getString(R.string.scanning_started));
@@ -1184,12 +1218,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 			.setNegativeButton(getString(R.string.cancel), okListener)
 			.create()
 			.show();
-	}
-
-	@Override
-	protected void onNewIntent(Intent intent)
-	{
-		super.onNewIntent(intent);
 	}
 
 
@@ -2149,18 +2177,27 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 					return;
 				}
 
-				FileObjectType sourceFileObjectType = DetailFragment.CUT_COPY_FILE_OBJECT_TYPE;
-				String source_folder = DetailFragment.CUT_COPY_FILE_CLICK_SELECTED;
-				if(sourceFileObjectType==null)
-				{
-					Global.print(context,getString(R.string.could_not_perform_action));
-				}
-				else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
-					Global.print(context,DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
-				} else  {
-					files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
-					df.progress_bar.setVisibility(View.VISIBLE);
-					fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false,null);
+				//if intent comes from outside
+				if(send_intent!=null){
+					send_intent.putExtra("folderclickselected", df.fileclickselected);
+					send_intent.putExtra("destFileObjectType", df.fileObjectType);
+					send_intent.setClass(context, CopyToActivity.class);
+					startActivity(send_intent);
+					send_intent=null;
+				}else{
+					FileObjectType sourceFileObjectType = DetailFragment.CUT_COPY_FILE_OBJECT_TYPE;
+					String source_folder = DetailFragment.CUT_COPY_FILE_CLICK_SELECTED;
+					if(sourceFileObjectType==null)
+					{
+						Global.print(context,getString(R.string.could_not_perform_action));
+					}
+					else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
+						Global.print(context,DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
+					} else  {
+						files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
+						df.progress_bar.setVisibility(View.VISIBLE);
+						fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder,sourceFileObjectType,df.fileclickselected,df.fileObjectType,files_selected_array,DetailFragment.CUT_SELECTED,false,null);
+					}
 				}
 
 				DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = null;
@@ -2270,7 +2307,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 			if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
-				if(Global.GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath().equals(file_path)) {
+				if(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(file_path)) {
 					p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
 				}
 				else

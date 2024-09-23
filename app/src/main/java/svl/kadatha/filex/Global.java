@@ -245,7 +245,6 @@ public class Global
 							URI_PERMISSION_LIST.add(new UriPOJO(uri,uri_authority,uri_path)); //check path is not equl to file separator as it becomes to / when SD card is removed
 						}
 					}
-
 				}
 			}
 		}
@@ -326,7 +325,6 @@ public class Global
 			{
 				REMOVE_ALL_URI_PERMISSIONS();
 			}
-
 		}
 		else
 		{
@@ -353,7 +351,6 @@ public class Global
 				{
 					REMOVE_ALL_URI_PERMISSIONS();
 				}
-
 			}
 		}
 		GET_URI_PERMISSIONS_LIST(App.getAppContext());
@@ -410,7 +407,6 @@ public class Global
 
 	static void GET_IMAGE_VIEW_DIMENSIONS(Context context)
 	{
-		
 		if(IMAGEVIEW_DIMENSION_SMALL_LIST==0)
 		{
 			DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
@@ -556,7 +552,6 @@ public class Global
 			tinyDB.putInt("recycler_view_font_size_factor",RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putInt("file_selector_recycler_view_font_size_factor",FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
 			tinyDB.putBoolean("image_video_grid_layout",IMAGE_VIDEO_GRID_LAYOUT);
-
 		}
 		//
 
@@ -643,7 +638,7 @@ public class Global
 
 
 
-	static FilePOJO GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR()
+	static FilePOJO GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR()
 	{
 		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
 		if(repositoryClass.storage_dir.get(0).getPath().equals("/"))
@@ -662,7 +657,7 @@ public class Global
 		if(repositoryClass.storage_dir.isEmpty())
 		{
 			repositoryClass.storage_dir =new ArrayList<>(StorageUtil.getSdCardPaths(context,true));
-			INTERNAL_PRIMARY_STORAGE_PATH=GET_INTERNAL_STORAGE_FILEPOJO_STORAGE_DIR().getPath();
+			INTERNAL_PRIMARY_STORAGE_PATH= GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath();
 			WORKOUT_AVAILABLE_SPACE();
 		}
 	}
@@ -728,9 +723,7 @@ public class Global
 			{
 				SPACE_ARRAY.put(fileObjectType+filePOJO.getPath(),new SpacePOJO(filePOJO.getPath(),totalspace,availabelspace));
 			}
-
 		}
-
 	}
 
 	public static boolean CHECK_APPS_FOR_RECOGNISED_FILE_EXT(Context context,String file_extn){
@@ -1058,29 +1051,26 @@ public class Global
 		}
 		USB_CACHED_FILE_OBJECT=fileObjectType;
 		long[] bytes_read=new long[1];
-		if(!cache_file.exists())
+		File parent_file=cache_file.getParentFile();
+		if(parent_file!=null)
 		{
-			File parent_file=cache_file.getParentFile();
-			if(parent_file!=null)
+			FileUtil.mkdirsNative(parent_file);
+			createNativeNewFile(cache_file);
+			UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+			if(targetUsbFile!=null)
 			{
-				FileUtil.mkdirsNative(parent_file);
-				createNativeNewFile(cache_file);
-				UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-				if(targetUsbFile!=null)
-				{
-                    try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(targetUsbFile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(cache_file)) {
-						FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
+				try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(targetUsbFile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(cache_file)) {
+					FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
 
-					} catch (Exception e) {
-						USB_CACHED_FILE_OBJECT=null;
-						return cache_file;
-					}
+				} catch (Exception e) {
 					USB_CACHED_FILE_OBJECT=null;
 					return cache_file;
 				}
+				USB_CACHED_FILE_OBJECT=null;
+				return cache_file;
 			}
-
 		}
+
 		USB_CACHED_FILE_OBJECT=null;
 		return cache_file;
 	}
@@ -1111,38 +1101,34 @@ public class Global
 	{
 		File cache_file=new File(FTP_CACHE_DIR,file_path);
 		long []bytes_read=new long[1];
-		if(!cache_file.exists())
+		File parent_file=cache_file.getParentFile();
+		if(parent_file!=null)
 		{
-			File parent_file=cache_file.getParentFile();
-			if(parent_file!=null)
-			{
-				FileUtil.mkdirsNative(parent_file);
-				createNativeNewFile(cache_file);
-				FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-				FTPClient ftpClient=null;
-				try {
-					ftpClient=ftpClientRepository.getFtpClient();
-					try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-						FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
-						ftpClient.completePendingCommand();
-						return cache_file;
+			FileUtil.mkdirsNative(parent_file);
+			createNativeNewFile(cache_file);
+			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
+			FTPClient ftpClient=null;
+			try {
+				ftpClient=ftpClientRepository.getFtpClient();
+				try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+					FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
+					ftpClient.completePendingCommand();
+					return cache_file;
 
-					} catch (Exception e) {
+				} catch (Exception e) {
 
-						return cache_file;
-					}
-
-				} catch (IOException e) {
-					throw new RuntimeException(e);
+					return cache_file;
 				}
-				finally {
-					if (ftpClientRepository != null && ftpClient != null) {
-						ftpClientRepository.releaseFtpClient(ftpClient);
-						Timber.tag(FTP_TAG).d("FTP client released");
-					}
+
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			finally {
+				if (ftpClientRepository != null && ftpClient != null) {
+					ftpClientRepository.releaseFtpClient(ftpClient);
+					Timber.tag(FTP_TAG).d("FTP client released");
 				}
 			}
-
 		}
 		return cache_file;
 	}
@@ -1150,38 +1136,35 @@ public class Global
 	public static File COPY_TO_SFTP_CACHE(String filePath) {
 		File cacheFile = new File(SFTP_CACHE_DIR, filePath);
 		long[] bytesRead = new long[1];
+		File parentFile = cacheFile.getParentFile();
+		if (parentFile != null) {
+			FileUtil.mkdirsNative(parentFile);
+			createNativeNewFile(cacheFile);
 
-		if (!cacheFile.exists()) {
-			File parentFile = cacheFile.getParentFile();
-			if (parentFile != null) {
-				FileUtil.mkdirsNative(parentFile);
-				createNativeNewFile(cacheFile);
+			SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+			ChannelSftp channelSftp = null;
 
-				SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
-				ChannelSftp channelSftp = null;
+			try {
+				channelSftp = sftpChannelRepository.getSftpChannel();
 
-				try {
-					channelSftp = sftpChannelRepository.getSftpChannel();
+				try (InputStream inputStream = channelSftp.get(filePath);
+					 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile))) {
 
-					try (InputStream inputStream = channelSftp.get(filePath);
-						 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile))) {
+					FileUtil.bufferedCopy(inputStream, outputStream, false, bytesRead);
+					return cacheFile;
 
-						FileUtil.bufferedCopy(inputStream, outputStream, false, bytesRead);
-						return cacheFile;
+				} catch (SftpException | IOException e) {
+					Timber.tag(FTP_TAG).e("Error copying file from SFTP: %s", e.getMessage());
+					return cacheFile;
+				}
 
-					} catch (SftpException | IOException e) {
-						Timber.tag(FTP_TAG).e("Error copying file from SFTP: %s", e.getMessage());
-						return cacheFile;
-					}
-
-				} catch (JSchException e) {
-					Timber.tag(FTP_TAG).e("Error getting SFTP channel: %s", e.getMessage());
-					throw new RuntimeException(e);
-				} finally {
-					if (sftpChannelRepository != null && channelSftp != null) {
-						sftpChannelRepository.releaseChannel(channelSftp);
-						Timber.tag(FTP_TAG).d("SFTP channel released");
-					}
+			} catch (JSchException e) {
+				Timber.tag(FTP_TAG).e("Error getting SFTP channel: %s", e.getMessage());
+				throw new RuntimeException(e);
+			} finally {
+				if (sftpChannelRepository != null && channelSftp != null) {
+					sftpChannelRepository.releaseChannel(channelSftp);
+					Timber.tag(FTP_TAG).d("SFTP channel released");
 				}
 			}
 		}
