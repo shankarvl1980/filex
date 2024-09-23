@@ -11,23 +11,23 @@
         android:id="@+id/settings_heading"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="?attr/dialog_title"
-        android:textSize="19sp"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
         android:layout_gravity="top"
+        android:background="?attr/dialog_title"
         android:gravity="center_vertical"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
         android:text="@string/settings"
+        android:textSize="19sp"
 
         />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:paddingBottom="60dp"
-        >
+        android:paddingBottom="60dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
 
@@ -41,25 +41,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:text="@string/theme"
                 android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <RadioGroup
                 android:id="@+id/preferences_theme_rg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/theme_label"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/theme_label"
 
                 >
 
@@ -67,46 +66,45 @@
                     android:id="@+id/preferences_rb_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/light"
                     android:minHeight="36dp"
-                    android:textSize="15sp"
-                    />
+                    android:text="@string/light"
+                    android:textSize="15sp" />
 
                 <RadioButton
                     android:id="@+id/preferences_rb_dark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dark"
                     android:minHeight="36dp"
-                    android:textSize="15sp"
-                    />
+                    android:text="@string/dark"
+                    android:textSize="15sp" />
+
                 <RadioButton
                     android:id="@+id/preferences_rb_system"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/system_default"
                     android:minHeight="36dp"
-                    android:textSize="15sp"
-                    />
+                    android:text="@string/system_default"
+                    android:textSize="15sp" />
 
             </RadioGroup>
+
             <View
                 android:id="@+id/fragment_preferences_divider1"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="?attr/recycler_text_color"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:background="?attr/recycler_text_color"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_theme_rg"
-                />
+                app:layout_constraintTop_toBottomOf="@id/preferences_theme_rg" />
+
             <TextView
                 android:id="@+id/default_apps_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
                 android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:text="@string/default_apps_to_open_files"
                 android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -119,10 +117,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/remove_defaults"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/preferences_remove_select_defaults_btn"
-                app:layout_constraintTop_toBottomOf="@id/default_apps_label"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
 
             <Button
                 android:id="@+id/preferences_remove_select_defaults_btn"
@@ -132,77 +129,75 @@
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/remove_selected"
                 app:layout_constraintStart_toEndOf="@+id/preferences_remove_all_defaults_btn"
-                app:layout_constraintTop_toBottomOf="@id/default_apps_label"/>
+                app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
 
             <View
                 android:id="@+id/fragment_preferences_divider2"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="?attr/recycler_text_color"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:background="?attr/recycler_text_color"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn"
-                />
+                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn" />
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/preferences_switch_show_file_path"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
-                android:textColor="@color/light_recycler_text_color"
                 android:text="@string/show_file_path_for_library_files"
+                android:textColor="@color/light_recycler_text_color"
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider2" />
+
             <View
                 android:id="@+id/fragment_preferences_divider3"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="?attr/recycler_text_color"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:background="?attr/recycler_text_color"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_file_path"
-                />
+                app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_file_path" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/preferences_switch_show_usb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
-                android:textColor="@color/light_recycler_text_color"
                 android:text="@string/enable_usb_flash_drive"
+                android:textColor="@color/light_recycler_text_color"
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3"
                 android:visibility="gone"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3" />
+
             <View
                 android:id="@+id/fragment_preferences_divider4"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="?attr/recycler_text_color"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb"
+                android:background="?attr/recycler_text_color"
                 android:visibility="gone"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </ScrollView>
+
     <FrameLayout
         android:id="@+id/preferences_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_gravity="bottom"
-        />
+        android:layout_gravity="bottom" />
 </FrameLayout>
-
 
 
     <!--FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

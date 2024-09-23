@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/file_selector_container_layout"
     android:layout_width="match_parent"
@@ -22,26 +21,25 @@
             android:id="@+id/file_selector_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:textSize="19sp"
-            android:singleLine="true"
-            android:textColor="?attr/toolbar_text_color"
             android:clickable="false"
             android:focusable="false"
-            />
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingEnd="@dimen/ten_dp"
+            android:singleLine="true"
+            android:textColor="?attr/toolbar_text_color"
+            android:textSize="19sp" />
+
         <ImageButton
             android:id="@+id/file_selector_sort_btn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:background="?attr/toolbar_background"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:src="@drawable/sort_icon"
             android:clickable="false"
             android:focusable="false"
-            />
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/sort_icon" />
 
 
         <ImageButton
@@ -50,12 +48,11 @@
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:background="?attr/toolbar_background"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:src="@drawable/down_arrow_toolbar_icon"
             android:clickable="false"
             android:focusable="false"
-            />
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/down_arrow_toolbar_icon" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -73,13 +70,13 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/search_edittext_background"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
+        android:background="@drawable/search_edittext_background"
+        android:elevation="6dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
-        android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/file_selector_search_view_cancel_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,12 +102,13 @@
         android:id="@+id/file_selector_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/file_selector_bottom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_file_selector_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/file_selector_bottom_toolbar"
 
         />
+
     <TextView
         android:id="@+id/file_selector_file_number"
         android:layout_width="wrap_content"
@@ -132,18 +130,17 @@
         android:elevation="6dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/file_selector_floating_action_button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/back_icon"

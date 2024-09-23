@@ -1,106 +1,102 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-		<TextView
-			android:id="@+id/file_selector_current_folder_label"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			android:paddingStart="@dimen/ten_dp"
-			android:paddingEnd="@dimen/ten_dp"
-			android:paddingTop="@dimen/layout_margin"
-			android:paddingBottom="@dimen/layout_margin"
+    <TextView
+        android:id="@+id/file_selector_current_folder_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
-			/>
-
-
-		<EditText
-
-			android:id="@+id/file_selector_folder_selected"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/ten_dp"
-			android:layout_marginEnd="@dimen/ten_dp"
-			android:focusable="false"
-			android:cursorVisible="false"
-			android:textColor="?attr/edit_text_color"
-			android:textSize="17sp"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/file_selector_current_folder_label"
-
-			/>
+        />
 
 
-			<androidx.recyclerview.widget.RecyclerView
+    <EditText
 
-				android:id="@+id/file_selectorRecyclerView"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:background="@null"
-				android:layoutAnimation="@anim/layout_animation_fall_down"
-				android:scrollbarThumbVertical="@drawable/scrollbar"
-				android:scrollbars="vertical"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected"
-				app:layout_constraintBottom_toBottomOf="parent"
-				android:paddingBottom="100dp"
-				android:clipToPadding="false"
-				style="@style/my_scrollbar"
-				/>
+        android:id="@+id/file_selector_folder_selected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:textColor="?attr/edit_text_color"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/file_selector_current_folder_label"
 
-			<svl.kadatha.filex.FastScrollerView
-					android:id="@+id/fastScroller_file_selector"
-					android:layout_width="20dp"
-					android:layout_height="0dp"
-					android:layout_gravity="end"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected"
-				app:layout_constraintBottom_toBottomOf="parent"
-				android:paddingBottom="100dp"/>
+        />
 
-			<TextView
-				android:id="@+id/file_selector_folder_empty"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:gravity="center"
-				android:text="@string/no_file_found"
-				android:paddingBottom="?attr/actionBarSize"
-				android:visibility="gone"
-				android:background="@null"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected"
-				app:layout_constraintBottom_toBottomOf="parent"
-				/>
 
-	<FrameLayout
-		android:id="@+id/file_selector_progressbar"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent"
-		android:clickable="true"
-		android:focusable="true"
-		android:foregroundGravity="center"
-		android:elevation="6dp"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
-		>
-		<ProgressBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@null"
-			android:layout_gravity="center"
-			/>
-	</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
 
+        android:id="@+id/file_selectorRecyclerView"
+        style="@style/my_scrollbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@null"
+        android:clipToPadding="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingBottom="100dp"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected" />
+
+    <svl.kadatha.filex.FastScrollerView
+        android:id="@+id/fastScroller_file_selector"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:layout_gravity="end"
+        android:paddingBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected" />
+
+    <TextView
+        android:id="@+id/file_selector_folder_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@null"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/no_file_found"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/file_selector_folder_selected" />
+
+    <FrameLayout
+        android:id="@+id/file_selector_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null" />
+    </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

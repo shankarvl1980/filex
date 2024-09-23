@@ -7,80 +7,76 @@
 
     <ImageView
         android:id="@+id/analyser_image_file"
-        android:layout_height="30dp"
         android:layout_width="30dp"
+        android:layout_height="30dp"
         android:scaleType="centerCrop"
 
         />
+
     <ImageView
         android:id="@+id/analyser_overlay_image_file"
-        android:layout_height="30dp"
         android:layout_width="30dp"
+        android:layout_height="30dp"
 
         android:background="@null"
         android:src="@drawable/play_overlay_icon"
         android:visibility="invisible"
 
         />
+
     <TextView
         android:id="@+id/analyser_item_background"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="?attr/storage_analyser_item_background"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin"
-        />
+        android:paddingEnd="@dimen/layout_margin" />
 
     <TextView
         android:id="@+id/analyser_item_foreground"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/rectangle_file_size_item_clip"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin"
-        />
+        android:paddingEnd="@dimen/layout_margin" />
 
     <TextView
         android:id="@+id/analyser_text_file_name"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textColor="?attr/recycler_main_text_color"
-        android:singleLine="true"
+        android:layout_height="wrap_content"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-        />
+        android:singleLine="true"
+        android:textColor="?attr/recycler_main_text_color" />
 
     <TextView
         android:id="@+id/analyser_text_size"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="start"
-        android:textColor="?attr/recycler_text_color"
         android:paddingStart="@dimen/layout_margin"
-        />
+        android:textColor="?attr/recycler_text_color" />
 
 
     <TextView
         android:id="@+id/analyser_text_size_percentage"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:singleLine="true"
-    />
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/analyser_text_subfile_count"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="end"
-        android:textColor="?attr/recycler_text_color"
         android:paddingEnd="@dimen/layout_margin"
-        />
+        android:textColor="?attr/recycler_text_color" />
 
     <ImageView
         android:id="@+id/analyser_file_select_indicator"
-        android:layout_height="26dp"
         android:layout_width="26dp"
+        android:layout_height="26dp"
         android:src="@drawable/select_indicator_icon"
         android:visibility="invisible"
 
@@ -88,12 +84,10 @@
 
     <View
         android:id="@+id/analyser_item_separator"
-        android:layout_height="4dp"
         android:layout_width="match_parent"
+        android:layout_height="4dp"
         android:background="?attr/recycler_main_text_color"
-        android:visibility="gone"
-        />
-
+        android:visibility="gone" />
 
 
 </merge>

@@ -13,27 +13,26 @@
         android:id="@+id/drawerScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
+        android:layout_margin="@dimen/layout_margin"
         android:scrollbarThumbVertical="@drawable/scrollbar"
 
-        android:layout_margin="@dimen/layout_margin">
+        android:scrollbars="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
 
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawer_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/layout_margin"
+                android:background="?attr/drawer_title"
                 android:choiceMode="singleChoice"
+                android:padding="@dimen/layout_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:background="?attr/drawer_title"
 
                 />
 
@@ -42,14 +41,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/layout_margin"
-                app:constraint_referenced_ids="usb_heading,eject_usb_image_view"
                 android:background="?attr/drawer_title"
+                android:visibility="gone"
+                app:constraint_referenced_ids="usb_heading,eject_usb_image_view"
                 app:layout_constraintBottom_toBottomOf="@id/usb_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview"
-                android:visibility="gone"
-                />
+                app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview" />
 
             <TextView
                 android:id="@+id/usb_heading"
@@ -57,11 +55,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/eject_usb"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 app:layout_constraintEnd_toStartOf="@id/eject_usb_image_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/usb_background" />
@@ -77,7 +75,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/usb_heading"
                 app:layout_constraintTop_toTopOf="@+id/usb_heading" />
-
 
 
             <View
@@ -97,11 +94,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/working_directory"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 app:layout_constraintEnd_toStartOf="@id/working_dir_expand_indicator"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/working_dir_layout_background" />
@@ -138,20 +135,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="?attr/drawer_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview"
                 app:layout_constraintBottom_toBottomOf="@id/working_dir_button_group"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/working_dir_recyclerview" />
+
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/working_dir_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:constraint_referenced_ids="working_dir_add_btn,working_dir_remove_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn"
-                android:visibility="gone"/>
+                app:layout_constraintTop_toBottomOf="@id/working_dir_add_btn" />
 
             <Button
                 android:id="@+id/working_dir_add_btn"
@@ -201,11 +198,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/library"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 app:layout_constraintEnd_toStartOf="@id/library_expand_indicator"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/library_layout_background" />
@@ -226,12 +223,12 @@
                 />
 
             <androidx.constraintlayout.widget.Group
+                android:id="@+id/library_layout_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/library_layout_group"
-                app:constraint_referenced_ids="library_recyclerview,library_scan_label_background,library_scan_label,library_scan_image_view"
                 android:visibility="gone"
-                />
+                app:constraint_referenced_ids="library_recyclerview,library_scan_label_background,library_scan_label,library_scan_image_view" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/library_recyclerview"
                 android:layout_width="match_parent"
@@ -266,16 +263,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="44dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/rescan_library"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/library_scan_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/library_scan_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@id/library_scan_label_background" />
 
             <ImageView
                 android:id="@+id/library_scan_image_view"
@@ -295,19 +291,19 @@
                 android:id="@+id/switch_hide_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
                 android:background="?attr/drawer_title"
                 android:minHeight="48dp"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingEnd="@dimen/ten_dp"
-                android:layout_marginTop="@dimen/layout_margin"
                 android:text="@string/show_hidden_files"
-                android:textSize="17sp"
                 android:textColor="?attr/heading_text_color"
+                android:textSize="17sp"
                 android:theme="@style/MySwitchCompat"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/library_scan_label_background"
-                android:visibility="gone"/>
+                app:layout_constraintTop_toBottomOf="@id/library_scan_label_background" />
 
 
             <View
@@ -330,16 +326,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/audio_player"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/audio_player_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/audio_player_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@id/audio_player_label_background" />
 
             <ImageView
                 android:id="@+id/audio_player_image_view"
@@ -374,16 +369,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/analyse_storage"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/storage_analyser_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/storage_analyser_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@+id/storage_analyser_label_background" />
 
             <ImageView
                 android:id="@+id/storage_analyser_image_view"
@@ -418,16 +412,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/clean_storage"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/clean_storage_drawer_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/clean_storage_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@+id/clean_storage_label_background" />
 
             <ImageView
                 android:id="@+id/clean_storage_drawer_image_view"
@@ -464,16 +457,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/app_manager"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/app_manager_drawer_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/app_manager_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@+id/app_manager_label_background" />
 
             <ImageView
                 android:id="@+id/app_manager_drawer_image_view"
@@ -500,8 +492,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/search_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/app_manager_label_background"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/app_manager_label_background" />
 
             <TextView
                 android:id="@+id/search_label"
@@ -509,16 +500,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/search"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/search_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/search_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@+id/search_label_background" />
 
             <ImageView
                 android:id="@+id/search_image_view"
@@ -531,8 +521,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/search_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/search_label"
-                app:layout_constraintTop_toTopOf="@+id/search_label"
-                />
+                app:layout_constraintTop_toTopOf="@+id/search_label" />
 
             <View
                 android:id="@+id/access_pc_label_background"
@@ -544,8 +533,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/access_pc_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_label_background"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/search_label_background" />
 
             <TextView
                 android:id="@+id/access_pc_label"
@@ -553,16 +541,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/access_from_pc"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
 
                 app:layout_constraintEnd_toStartOf="@id/access_pc_image_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/access_pc_label_background"
-                />
+                app:layout_constraintTop_toTopOf="@+id/access_pc_label_background" />
 
             <ImageView
                 android:id="@+id/access_pc_image_view"
@@ -575,8 +562,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/access_pc_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/access_pc_label"
-                app:layout_constraintTop_toTopOf="@+id/access_pc_label"
-                />
+                app:layout_constraintTop_toTopOf="@+id/access_pc_label" />
 
 
             <View
@@ -598,11 +584,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
                 android:text="@string/network"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 app:layout_constraintEnd_toStartOf="@id/network_expand_indicator"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/network_layout_background"
@@ -625,12 +611,12 @@
                 />
 
             <androidx.constraintlayout.widget.Group
+                android:id="@+id/network_layout_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/network_layout_group"
-                app:constraint_referenced_ids="network_recyclerview"
                 android:visibility="gone"
-                />
+                app:constraint_referenced_ids="network_recyclerview" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/network_recyclerview"
                 android:layout_width="match_parent"
@@ -649,8 +635,8 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/network_recyclerview"
 
                 />
@@ -659,14 +645,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
+
     <FrameLayout
         android:id="@+id/drawer_end_butt_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/drawer_title"
-        android:layout_marginTop="@dimen/layout_margin"
-        android:layout_marginStart="@dimen/layout_margin"
-        android:layout_marginEnd="@dimen/layout_margin"
         android:layout_gravity="bottom"
-        />
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:layout_marginEnd="@dimen/layout_margin"
+        android:background="?attr/drawer_title" />
 </FrameLayout>

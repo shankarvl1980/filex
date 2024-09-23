@@ -1,25 +1,23 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-   
+
     >
 
-	<Button
-		android:id="@+id/first_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_background"
-	/>
-	<Button
-		android:id="@+id/second_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_background"
-	/>
+    <Button
+        android:id="@+id/first_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_background" />
 
-	<Button
-		android:id="@+id/third_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_background"
-	/>
+    <Button
+        android:id="@+id/second_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_background" />
+
+    <Button
+        android:id="@+id/third_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_background" />
 
 </merge>

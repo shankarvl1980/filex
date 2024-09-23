@@ -1,129 +1,130 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:text="@string/app_action"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
-        android:background="?attr/dialog_title"
-        android:textSize="19sp"
         android:layout_gravity="top"
+        android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/app_action"
+        android:textSize="19sp"
 
         />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null">
+
             <View
                 android:id="@+id/fragment_app_action_dialog_background"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_recyclerView"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:background="?attr/dialog_background"
-                />
+                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_recyclerView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/fragment_app_action_app_image"
                 android:layout_width="@dimen/image_preview_dimen"
                 android:layout_height="@dimen/image_preview_dimen"
+                android:layout_margin="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
                 app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
                 app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name"
-                app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
-                android:layout_margin="10dp"
 
                 />
 
             <TextView
+                android:id="@+id/fragment_app_action_app_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
-                app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:id="@+id/fragment_app_action_app_name"
-                android:textSize="19sp"
                 android:layout_margin="@dimen/ten_dp"
                 android:maxLines="2"
-                />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
+                android:textSize="19sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
+                app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background" />
+
+            <TextView
                 android:id="@+id/fragment_app_action_package_name"
-                android:textSize="15sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:maxLines="2"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name" />
+
+            <TextView
                 android:id="@+id/fragment_app_action_app_version"
-                android:textSize="15sp"
-                android:maxLines="1"
-                android:layout_marginEnd="@dimen/ten_dp"
-                />
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:id="@+id/fragment_app_action_app_size"
-                android:textSize="15sp"
-                android:maxLines="1"
                 android:layout_marginEnd="@dimen/ten_dp"
-                />
+                android:maxLines="1"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name" />
+
+            <TextView
+                android:id="@+id/fragment_app_action_app_size"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:maxLines="1"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version" />
+
             <View
                 android:id="@+id/fragment_app_action_divider"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@android:color/black"
-                android:alpha="0.5"
                 android:layout_marginTop="@dimen/ten_dp"
+                android:alpha="0.5"
+                android:background="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size"
-                />
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size" />
+
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_app_action_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_app_action_recyclerView"
-                android:choiceMode="singleChoice"
                 android:layout_marginTop="@dimen/layout_margin"
+                android:choiceMode="singleChoice"
                 android:padding="@dimen/layout_margin"
-                android:scrollbars="vertical"
                 android:scrollbarThumbVertical="@drawable/scrollbar"
+                android:scrollbars="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/fragment_app_action_divider"
 
                 />
 
             <FrameLayout
+                android:id="@+id/fragment_app_action_button_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/layout_margin"
-                android:id="@+id/fragment_app_action_button_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_recyclerView"
-                />
+                app:layout_constraintTop_toBottomOf="@id/fragment_app_action_recyclerView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -7,17 +7,16 @@
         android:id="@+id/fragment_ftp_list_heading"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
-        android:textSize="19sp"
         android:background="?attr/dialog_title"
         android:gravity="center_vertical"
-        />
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
 
@@ -25,26 +24,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/scan"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_list_heading"
         android:visibility="gone"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_list_heading" />
+
     <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/fragment_ftp_recyclerview"
+        style="@style/my_scrollbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/dialog_recyclerview_background"
+        android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false"
-        style="@style/my_scrollbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
 
         />
 
@@ -53,11 +52,11 @@
         android:id="@+id/ftp_details_ftp_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
         android:background="@drawable/rounded_rectangle_shape"
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
 
@@ -67,58 +66,56 @@
         android:id="@+id/ftp_details_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
-        android:text="@string/nothing_found_here"
-        android:paddingBottom="?attr/actionBarSize"
-        android:visibility="gone"
         android:background="?attr/dialog_recyclerview_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/nothing_found_here"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fragment_ftp_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/toolbar_background"
         android:layout_gravity="bottom"
+        android:background="?attr/toolbar_background"
         android:elevation="6dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/fragment_ftp_list_progressbar"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
+        android:elevation="6dp"
         android:focusable="true"
         android:foregroundGravity="center"
-        android:elevation="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <ProgressBar
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_gravity="center"
-            />
+            android:background="@null" />
     </FrameLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_ftp_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/back_icon"

@@ -1,84 +1,80 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-	<TextView
-		android:id="@+id/directories_label"
-		android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/directories_label"
+        android:layout_width="match_parent"
 
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_title"
-		android:gravity="center"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:paddingTop="@dimen/layout_margin"
-		android:paddingBottom="@dimen/layout_margin"
-		android:text="@string/directories"
-		android:textSize="19sp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
-
-
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/dialog_recent_root_dir_recycler_view"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/layout_margin"
-		android:background="?attr/dialog_background"
-		android:choiceMode="singleChoice"
-		android:padding="@dimen/layout_margin"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/directories_label"
-		/>
-
-	<TextView
-		android:id="@+id/recent_label"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/layout_margin"
-		android:background="?attr/dialog_title"
-		android:gravity="start"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:paddingTop="@dimen/layout_margin"
-		android:paddingBottom="@dimen/layout_margin"
-		android:text="@string/recent"
-		android:textSize="19sp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/dialog_recent_root_dir_recycler_view" />
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_title"
+        android:gravity="center"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/directories"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/dialog_recent_recycler_view"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:choiceMode="singleChoice"
-				android:background="?attr/dialog_background"
-				android:padding="@dimen/layout_margin"
-				android:scrollbarThumbVertical="@drawable/scrollbar"
-				android:layout_marginBottom="@dimen/layout_margin"
-				android:scrollbars="vertical"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/recent_label"
-				app:layout_constraintBottom_toTopOf="@id/fragment_recent_button_layout"
-				/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_recent_root_dir_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:background="?attr/dialog_background"
+        android:choiceMode="singleChoice"
+        android:padding="@dimen/layout_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/directories_label" />
+
+    <TextView
+        android:id="@+id/recent_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:background="?attr/dialog_title"
+        android:gravity="start"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/recent"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_recent_root_dir_recycler_view" />
 
 
-		<FrameLayout
-			android:id="@+id/fragment_recent_button_layout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/layout_margin"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_recent_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/layout_margin"
+        android:background="?attr/dialog_background"
+        android:choiceMode="singleChoice"
+        android:padding="@dimen/layout_margin"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/fragment_recent_button_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recent_label" />
+
+
+    <FrameLayout
+        android:id="@+id/fragment_recent_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

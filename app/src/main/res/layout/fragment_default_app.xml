@@ -55,48 +55,46 @@
 </androidx.constraintlayout.widget.ConstraintLayout-->
 
 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
 
+    >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/remove_default_apps"
+        android:textSize="19sp"
+
+        />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_marginTop="@dimen/layout_margin"
 
-        >
+        android:background="@null">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/remove_default_apps"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:paddingTop="@dimen/layout_margin"
-            android:paddingBottom="@dimen/layout_margin"
-            android:background="?attr/dialog_title"
-            android:textSize="19sp"
-            android:layout_gravity="top"
-
-            />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/layout_margin"
-
-            android:background="@null"
-            >
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/dialog_background"
-            android:padding="@dimen/ten_dp"
-
             android:layout_marginBottom="50dp"
-            >
+            android:background="?attr/dialog_background"
+
+            android:padding="@dimen/ten_dp">
+
             <TableLayout
+                android:id="@+id/default_app_table_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/default_app_table_layout"
 
 
                 />
@@ -104,14 +102,13 @@
 
         </ScrollView>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:id="@+id/fragment_default_app_button_layout"
-                android:layout_gravity="bottom"
-                />
+        <FrameLayout
+            android:id="@+id/fragment_default_app_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/layout_margin" />
 
-        </FrameLayout>
+    </FrameLayout>
 
-    </LinearLayout>
+</LinearLayout>

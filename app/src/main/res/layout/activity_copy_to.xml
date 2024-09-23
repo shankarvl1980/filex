@@ -2,34 +2,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/activity_copy_to_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="top"
         android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
         android:text="@string/copy_to"
         android:textSize="19sp"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
-        android:layout_gravity="top"
 
         />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            >
+            android:layout_marginTop="@dimen/layout_margin">
 
             <View
                 android:layout_width="match_parent"
@@ -44,27 +41,27 @@
                 android:id="@+id/activity_copy_to_filename_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/file_name"
                 android:textSize="17sp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
 
                 />
+
             <EditText
+                android:id="@+id/activity_copy_to_filename"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/activity_copy_to_filename"
-                android:textColor="?attr/edit_text_color"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
-                />
+                android:textColor="?attr/edit_text_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label" />
 
 
             <TextView
@@ -75,8 +72,8 @@
                 android:layout_marginTop="@dimen/layout_margin"
                 android:gravity="start"
                 android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/destination_folder"
                 android:textSize="17sp"
@@ -94,8 +91,8 @@
                 android:layout_marginTop="@dimen/layout_margin"
                 android:gravity="start"
                 android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
                 android:paddingBottom="@dimen/layout_margin"
                 android:textSize="13sp"
                 app:layout_constraintStart_toEndOf="@id/activity_copy_to_destination_folder_label"
@@ -108,11 +105,11 @@
                 android:id="@+id/activity_copy_to_destination_folder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/edit_text_color"
-                android:focusable="false"
-                android:cursorVisible="false"
                 android:layout_marginStart="@dimen/ten_dp"
                 android:layout_marginEnd="@dimen/ten_dp"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:textColor="?attr/edit_text_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/activity_copy_to_destination_folder_label"
@@ -135,10 +132,9 @@
                 android:id="@+id/activity_copy_to_background_padding"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_copy_to_browse_button"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_copy_to_browse_button" />
 
 
             <FrameLayout
@@ -152,23 +148,22 @@
 
             <FrameLayout
                 android:id="@+id/copy_to_progressbar"
-                android:layout_height="match_parent"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:clickable="true"
+                android:elevation="6dp"
                 android:focusable="true"
                 android:foregroundGravity="center"
-                android:elevation="6dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                >
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
                 <ProgressBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
                     android:layout_gravity="center"
-                    />
+                    android:background="@null" />
             </FrameLayout>
 
 

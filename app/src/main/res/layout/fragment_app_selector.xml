@@ -30,140 +30,141 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_app_label" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/dialog_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox"
         app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox" />
+
     <CheckBox
         android:id="@+id/select_app_remember_choice_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/dialog_background"
-        android:padding="@dimen/ten_dp"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
+        android:background="?attr/dialog_background"
+        android:minHeight="36dp"
+        android:padding="@dimen/ten_dp"
         android:text="@string/remember_the_choice"
         android:textSize="19sp"
-        android:minHeight="36dp"
         app:layout_constraintBottom_toTopOf="@id/fragment_app_selector_button_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_select_app_recyclerview" />
+
     <ImageView
         android:id="@+id/select_app_remember_choice_info_image"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:padding="10dp"
-        app:layout_constraintStart_toEndOf="@id/select_app_remember_choice_checkbox"
-        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox"
-        app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
         android:src="@drawable/dialog_properties_icon"
-        />
+        app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
+        app:layout_constraintStart_toEndOf="@id/select_app_remember_choice_checkbox"
+        app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox" />
 
 
     <FrameLayout
         android:id="@+id/fragment_app_selector_progressbar"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
+        android:elevation="6dp"
         android:focusable="true"
         android:foregroundGravity="center"
-        android:elevation="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
         >
+
         <ProgressBar
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_gravity="center"
-            />
+            android:background="@null" />
     </FrameLayout>
 
 
     <FrameLayout
-            android:id="@+id/fragment_app_selector_button_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            app:layout_constraintTop_toBottomOf="@id/select_app_remember_choice_checkbox"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:elevation="7dp"
+        android:id="@+id/fragment_app_selector_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:elevation="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_app_remember_choice_checkbox"
 
-            />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/select_app"
-        android:padding="@dimen/layout_margin"
-        android:background="@color/dialog_title"
-        android:textSize="19sp"
-        android:layout_gravity="top"
-        android:gravity="center"
-        />
-    <FrameLayout
+    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/layout_margin"
-        android:background="@null"
+        android:orientation="vertical">
 
-        >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/dialog_background"
-        android:layout_marginBottom="52dp"
-        >
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/dialog_select_app_recyclerview"
-        android:choiceMode="singleChoice"
-        android:padding="@dimen/layout_margin"
-
-        />
-        <CheckBox
-            android:id="@+id/select_app_remember_choice_checkbox"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:text="@string/remember_the_choice"
-            android:layout_gravity="bottom"
+            android:text="@string/select_app"
             android:padding="@dimen/layout_margin"
-            android:background="@color/dialog_background"
-        />
-    </FrameLayout>
+            android:background="@color/dialog_title"
+            android:textSize="19sp"
+            android:layout_gravity="top"
+            android:gravity="center"
+            />
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="@dimen/layout_margin"
-            android:id="@+id/fragment_app_selector_button_layout"
-            android:layout_gravity="bottom"
+            android:background="@null"
+
+            >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dialog_background"
+            android:layout_marginBottom="52dp"
+            >
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dialog_select_app_recyclerview"
+            android:choiceMode="singleChoice"
+            android:padding="@dimen/layout_margin"
+
             />
-    </FrameLayout>
+            <CheckBox
+                android:id="@+id/select_app_remember_choice_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="@string/remember_the_choice"
+                android:layout_gravity="bottom"
+                android:padding="@dimen/layout_margin"
+                android:background="@color/dialog_background"
+            />
+        </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:id="@+id/fragment_app_selector_button_layout"
+                android:layout_gravity="bottom"
+                />
+        </FrameLayout>
 
 
 
 
 
-    </LinearLayout-->
+        </LinearLayout-->

@@ -1,86 +1,81 @@
-
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-	>
+    >
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/fragment_album_list_container"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layoutAnimation="@anim/layout_animation_fall_down"
-		android:background="@null"
-		android:scrollbars="vertical"
-		android:scrollbarThumbVertical="@drawable/scrollbar"
-		android:paddingBottom="?attr/actionBarSize"
-		android:clipToPadding="false"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_album_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:clipToPadding="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingBottom="?attr/actionBarSize"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
 
-	/>
+        />
 
-	<svl.kadatha.filex.FastScrollerView
-		android:id="@+id/fastScroller_album_list"
-		android:layout_width="20dp"
-		android:layout_height="match_parent"
-		android:layout_gravity="end"
-		android:paddingBottom="?attr/actionBarSize"
-		/>
-	<TextView
-		android:id="@+id/album_list_file_number"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_margin="@dimen/layout_margin"
-		android:background="@drawable/rounded_rectangle_shape"
-		android:padding="@dimen/layout_margin"
-		android:textColor="?attr/recycler_text_color"
-		android:layout_gravity="end"
+    <svl.kadatha.filex.FastScrollerView
+        android:id="@+id/fastScroller_album_list"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:paddingBottom="?attr/actionBarSize" />
 
-		/>
+    <TextView
+        android:id="@+id/album_list_file_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="@drawable/rounded_rectangle_shape"
+        android:padding="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color"
 
-
-	<TextView
-		android:id="@+id/album_list_empty"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-
-		android:background="@null"
-		android:gravity="center"
-		android:visibility="gone"
-		android:text="@string/no_file_found"
-		android:paddingBottom="?attr/actionBarSize"
-    />
+        />
 
 
-	<androidx.appcompat.widget.Toolbar
-		android:id="@+id/album_list_bottom_toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/toolbar_background"
-		android:layout_gravity="bottom"
+    <TextView
+        android:id="@+id/album_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="@null"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/no_file_found"
+        android:visibility="gone" />
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/album_list_bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/toolbar_background"
         android:elevation="6dp"
-		app:contentInsetLeft="0dp"
-		app:contentInsetStart="0dp"
-	/>
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp" />
 
-	<FrameLayout
-		android:id="@+id/album_list_progressbar"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent"
-		android:clickable="true"
-		android:focusable="true"
-		android:foregroundGravity="center"
-		android:elevation="6dp"
-		>
-		<ProgressBar
+    <FrameLayout
+        android:id="@+id/album_list_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center">
 
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="@null"
-		android:layout_gravity="center"
-		/>
-	</FrameLayout>
+        <ProgressBar
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null" />
+    </FrameLayout>
 
 </FrameLayout>
 	

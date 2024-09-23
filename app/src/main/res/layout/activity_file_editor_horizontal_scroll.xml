@@ -1,135 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<svl.kadatha.filex.ObservableScrollView
-		android:id="@+id/file_editor_scrollview"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:scrollbars="vertical"
-		android:scrollbarThumbVertical="@drawable/scrollbar"
-		android:clipToPadding="false"
-		android:layout_marginBottom="?attr/actionBarSize"
-		android:layout_marginTop="?attr/actionBarSize"
-		android:fillViewport="true"
+    <svl.kadatha.filex.ObservableScrollView
+        android:id="@+id/file_editor_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
 
-	>
+        >
 
-		<HorizontalScrollView
-			android:id="@+id/file_editor_hscroll"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:scrollbarThumbVertical="@drawable/scrollbar"
-			android:fillViewport="true">
+        <HorizontalScrollView
+            android:id="@+id/file_editor_hscroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbarThumbVertical="@drawable/scrollbar">
 
-			<svl.kadatha.filex.LineNumberedEditText
-				android:id="@+id/textfile_edittext"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:inputType="text|textMultiLine"
-				android:background="?attr/activity_background"
-				android:paddingStart="2dp"
-				android:paddingEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:fontFamily="monospace"
-				android:textColor="?attr/edit_text_color"
-				android:gravity="start"
+            <svl.kadatha.filex.LineNumberedEditText
+                android:id="@+id/textfile_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/activity_background"
+                android:fontFamily="monospace"
+                android:gravity="start"
+                android:inputType="text|textMultiLine"
+                android:paddingStart="2dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
+                android:textColor="?attr/edit_text_color"
 
-				/>
+                />
 
-		</HorizontalScrollView>
+        </HorizontalScrollView>
 
-	</svl.kadatha.filex.ObservableScrollView>
-	<TextView
-		android:id="@+id/file_editor_page_number"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="top|end"
-		android:layout_marginTop="?attr/actionBarSize"
-		android:layout_marginEnd="@dimen/layout_margin"
-		android:background="@drawable/rounded_rectangle_shape"
-		android:padding="@dimen/layout_margin"
-		android:textColor="?attr/recycler_text_color"
-		android:elevation="7dp"
-		/>
+    </svl.kadatha.filex.ObservableScrollView>
 
-	<androidx.appcompat.widget.Toolbar
-		android:id="@+id/file_editor_top_toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="top"
-		android:elevation="6dp"
-		android:background="?attr/toolbar_background"
-		app:contentInsetLeft="0dp"
-		app:contentInsetStart="0dp"
-		>
-		<TextView
-			android:id="@+id/file_editor_file_name_textview"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:textSize="17sp"
-			android:singleLine="true"
-			android:paddingStart="@dimen/ten_dp"
-			android:paddingEnd="@dimen/ten_dp"
-			android:textColor="?attr/toolbar_text_color"
-			android:gravity="center_vertical"
-			android:ellipsize="end"
-			android:layout_marginEnd="50dp"/>
-		<ImageButton
-			android:id="@+id/file_editor_overflow_btn"
-			android:src="@drawable/overflow_icon"
-			android:layout_width="50dp"
-			android:layout_height="match_parent"
-			android:background="?attr/toolbar_background"
-			android:layout_gravity="end"
-			android:padding="10dp"/>
-	</androidx.appcompat.widget.Toolbar>
+    <TextView
+        android:id="@+id/file_editor_page_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginEnd="@dimen/layout_margin"
+        android:background="@drawable/rounded_rectangle_shape"
+        android:elevation="7dp"
+        android:padding="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color" />
 
-	<FrameLayout
-		android:id="@+id/file_editor_progressbar"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent"
-		android:clickable="true"
-		android:focusable="true"
-		android:foregroundGravity="center"
-		android:elevation="6dp"
-		>
-		<ProgressBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@null"
-			android:layout_gravity="center"
-			/>
-	</FrameLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/file_editor_top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp">
 
-	<com.google.android.material.floatingactionbutton.FloatingActionButton
-		android:id="@+id/file_editor_floating_action_button_back"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|end"
-		android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-		android:layout_marginEnd="@dimen/floating_button_margin_end"
-		android:clickable="true"
-		android:src="@drawable/back_icon"
-		app:backgroundTint="?attr/toolbar_background"
-		app:elevation="7dp"
-		app:layout_anchorGravity="end"
-		android:focusable="true" />
+        <TextView
+            android:id="@+id/file_editor_file_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="50dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingEnd="@dimen/ten_dp"
+            android:singleLine="true"
+            android:textColor="?attr/toolbar_text_color"
+            android:textSize="17sp" />
 
-	<androidx.appcompat.widget.Toolbar
-		android:id="@+id/file_editor_bottom_toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/toolbar_background"
-		android:elevation="6dp"
-		android:layout_gravity="bottom"
-		app:contentInsetLeft="0dp"
-		app:contentInsetStart="0dp"
-		/>
+        <ImageButton
+            android:id="@+id/file_editor_overflow_btn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/overflow_icon" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/file_editor_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null" />
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/file_editor_floating_action_button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_icon"
+        app:backgroundTint="?attr/toolbar_background"
+        app:elevation="7dp"
+        app:layout_anchorGravity="end" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/file_editor_bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp" />
 
 </merge>
 

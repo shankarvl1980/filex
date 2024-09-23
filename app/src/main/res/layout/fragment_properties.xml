@@ -3,64 +3,63 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
 
->
+    >
 
-	<TextView
-		android:id="@+id/properties_heading"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_title"
-		android:text="@string/properties"
-		android:textSize="19sp"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:paddingTop="@dimen/layout_margin"
-		android:paddingBottom="@dimen/layout_margin"
+    <TextView
+        android:id="@+id/properties_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/properties"
+        android:textSize="19sp"
 
-	/>
-	<ScrollView
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+        />
 
-	>
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
-		<TableLayout
-			android:id="@+id/fragment_properties_details_table_layout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?attr/dialog_background"
-			android:layout_marginTop="@dimen/layout_margin"
-			android:padding="@dimen/ten_dp"
-			
-			>
+        >
 
-		</TableLayout>
-		
-		<TableLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/fragment_properties_rwh_tablelayout"
-			android:background="?attr/dialog_background"
-			android:layout_marginTop="@dimen/layout_margin"
-			android:padding="@dimen/ten_dp"
-			android:visibility="gone"
-		>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-		</TableLayout>
+            <TableLayout
+                android:id="@+id/fragment_properties_details_table_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/ten_dp"
+
+                >
+
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/fragment_properties_rwh_tablelayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/ten_dp"
+                android:visibility="gone">
+
+            </TableLayout>
 
 
-	<FrameLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/layout_margin"
-		android:id="@+id/fragment_properties_button_layout"
-		/>
+            <FrameLayout
+                android:id="@+id/fragment_properties_button_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin" />
 
-		</LinearLayout>
-	</ScrollView>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

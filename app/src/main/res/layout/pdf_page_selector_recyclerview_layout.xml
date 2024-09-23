@@ -1,17 +1,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/layout_margin"
     android:background="@drawable/select_picture_recyclerview"
+    android:padding="@dimen/layout_margin"
 
     >
+
     <TextView
         android:id="@+id/pdf_page_selector_textview"
         android:layout_width="@dimen/image_preview_dimen"
         android:layout_height="@dimen/image_preview_dimen"
         android:background="?attr/activity_background"
-        android:textSize="19sp"
         android:gravity="center"
-        />
+        android:textSize="19sp" />
 
 </FrameLayout>

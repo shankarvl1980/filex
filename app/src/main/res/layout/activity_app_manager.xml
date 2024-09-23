@@ -1,9 +1,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/activity_app_manager_container_layout"
-    android:layout_height="match_parent"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/activity_app_manager_tab_layout"
@@ -27,7 +26,7 @@
         android:paddingTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.constraintlayout.widget.Group
@@ -38,19 +37,20 @@
         app:constraint_referenced_ids="app_manager_search_view_edit_text,app_manager_search_view_cancel_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
     <EditText
 
         android:id="@+id/app_manager_search_view_edit_text"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/search_edittext_background"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
+        android:background="@drawable/search_edittext_background"
+        android:elevation="6dp"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
-        android:elevation="6dp"
 
         app:layout_constraintEnd_toStartOf="@id/app_manager_search_view_cancel_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,8 +77,8 @@
         android:id="@+id/floating_action_app_manager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/back_icon"

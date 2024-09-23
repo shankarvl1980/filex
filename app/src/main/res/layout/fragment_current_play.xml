@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:id="@+id/current_play_audio_name"
             android:layout_width="wrap_content"
@@ -34,20 +35,21 @@
             android:id="@+id/audio_player_exit_btn"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:src="@drawable/exit_icon"
             android:layout_gravity="end"
             android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/exit_icon"
 
             />
+
         <ImageButton
             android:id="@+id/current_play_overflow"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
             android:background="?attr/toolbar_background"
             android:padding="10dp"
             android:src="@drawable/overflow_icon"
-            android:layout_gravity="end"
 
             />
 
@@ -61,13 +63,13 @@
 
         android:lines="1"
         android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="10dp"
+        android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
 
     <TextView
         android:id="@+id/current_play_artists"
@@ -78,9 +80,9 @@
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        app:layout_constraintTop_toBottomOf="@id/current_play_album"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_album" />
 
     <TextView
         android:id="@+id/current_play_next_audio_title"
@@ -94,15 +96,16 @@
         android:paddingBottom="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         android:textStyle="bold|italic"
-        app:layout_constraintTop_toBottomOf="@id/current_play_artists"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_artists" />
+
     <View
         android:id="@+id/current_play_list_image_btn_background"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="?attr/toolbar_background"
         android:layout_margin="@dimen/layout_margin"
+        android:background="?attr/toolbar_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
 
@@ -112,9 +115,9 @@
         android:id="@+id/current_play_list_image_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_margin="@dimen/layout_margin"
         android:background="@drawable/select_detail_recyclerview"
         android:padding="10dp"
-        android:layout_margin="@dimen/layout_margin"
         android:src="@drawable/play_list_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
@@ -126,27 +129,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:paddingEnd="@dimen/ten_dp"
         android:text="@string/volume"
+        android:textColor="?attr/recycler_text_color"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_next_audio_title"
-        />
+        app:layout_constraintTop_toBottomOf="@id/current_play_next_audio_title" />
+
     <SeekBar
         android:id="@+id/current_play_volume_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_volume_text"
         android:layout_marginBottom="@dimen/layout_margin"
         android:elevation="6dp"
         android:padding="@dimen/layout_margin"
         android:progressDrawable="@drawable/seek_bar_progress"
         android:thumb="@drawable/seek_thumb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_volume_text"
 
         />
-
 
 
     <ImageView
@@ -155,28 +157,26 @@
         android:layout_height="0dp"
         android:adjustViewBounds="true"
 
-        android:scaleType="fitCenter"
         android:paddingTop="@dimen/layout_margin"
+        android:scaleType="fitCenter"
 
+        android:src="@drawable/woofer_icon"
         app:layout_constraintBottom_toTopOf="@+id/audio_player_current_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_volume_seekbar"
-        android:src="@drawable/woofer_icon"
-        />
+        app:layout_constraintTop_toBottomOf="@id/current_play_volume_seekbar" />
 
     <TextView
         android:id="@+id/audio_player_current_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:gravity="start"
         android:padding="10dp"
-        android:layout_marginBottom="8dp"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
-        app:layout_constraintStart_toStartOf="parent"
-         />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
         android:id="@+id/audio_player_seekbar"
@@ -185,24 +185,22 @@
         android:elevation="6dp"
         android:progressDrawable="@drawable/seek_bar_progress"
         android:thumb="@drawable/seek_thumb"
-        app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
+        app:layout_constraintBottom_toBottomOf="@+id/audio_player_total_time"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_total_time"
-        app:layout_constraintTop_toTopOf="@+id/audio_player_total_time"
-        app:layout_constraintBottom_toBottomOf="@+id/audio_player_total_time"/>
+        app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
+        app:layout_constraintTop_toTopOf="@+id/audio_player_total_time" />
 
     <TextView
         android:id="@+id/audio_player_total_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:gravity="end"
         android:padding="10dp"
-        android:layout_marginBottom="8dp"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar"
-         />
-
+        app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />
 
 
     <androidx.appcompat.widget.Toolbar
@@ -216,33 +214,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
     <FrameLayout
         android:id="@+id/audio_play_progressbar"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
+        android:elevation="6dp"
         android:focusable="true"
         android:foregroundGravity="center"
-        android:elevation="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
         >
+
         <ProgressBar
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_gravity="center"
-            />
+            android:background="@null" />
     </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
     <!--LinearLayout

@@ -9,11 +9,11 @@
         android:id="@+id/fragment_network_details_input_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
         android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
         android:textSize="19sp" />
 
     <!-- Container with Background -->
@@ -21,8 +21,8 @@
         android:id="@+id/background_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="?attr/dialog_background">
+        android:background="?attr/dialog_background"
+        android:orientation="vertical">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -39,17 +39,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/server"
-                        android:labelFor="@id/fragment_network_details_input_server"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_server"
+                        android:text="@string/server"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_server"
@@ -63,17 +63,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/port"
-                        android:labelFor="@id/fragment_network_details_input_port"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_port"
+                        android:text="@string/port"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_port"
@@ -87,17 +87,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/user_name"
-                        android:labelFor="@id/fragment_network_details_input_username"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_username"
+                        android:text="@string/user_name"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_username"
@@ -110,17 +110,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/password"
-                        android:labelFor="@id/fragment_network_details_input_password"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_password"
+                        android:text="@string/password"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_password"
@@ -134,18 +134,18 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginBottom="4dp"
+                    android:orientation="horizontal"
                     android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/encoding"
-                        android:labelFor="@id/fragment_network_details_input_encoding"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_encoding"
+                        android:text="@string/encoding"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_encoding"
@@ -158,17 +158,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/display"
-                        android:labelFor="@id/fragment_network_details_input_display"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
-                        android:textSize="17sp"/>
+                        android:labelFor="@id/fragment_network_details_input_display"
+                        android:text="@string/display"
+                        android:textSize="17sp" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_display"
@@ -190,19 +190,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mode"
-                        android:textSize="17sp"/>
+                        android:textSize="17sp" />
+
                     <RadioGroup
                         android:id="@+id/fragment_network_details_input_mode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal">
 
                         <RadioButton
                             android:id="@+id/fragment_network_details_input_mode_passive"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Passive" />
+
                         <RadioButton
                             android:id="@+id/fragment_network_details_input_mode_active"
                             android:layout_width="wrap_content"
@@ -215,17 +217,17 @@
                         android:id="@+id/fragment_network_details_input_anonymous"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/anonymous"
-                        android:layout_marginBottom="8dp" />
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/anonymous" />
 
                     <!-- Use FTPS -->
                     <CheckBox
                         android:id="@+id/fragment_network_details_input_use_ftps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/use_ftps"
                         android:layout_marginBottom="8dp"
-                        android:visibility="gone"/>
+                        android:text="@string/use_ftps"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <!-- SFTP-specific fields -->
@@ -241,19 +243,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/private_key"
-                        android:textSize="17sp"/>
+                        android:textSize="17sp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/fragment_network_details_input_select_private_key"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/select"
-                            android:layout_marginEnd="8dp" />
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/select" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_private_key_path"
@@ -267,17 +270,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/private_key_passphrase"
-                            android:labelFor="@id/fragment_network_details_input_private_key_passphrase"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="8dp"
-                            android:textSize="17sp"/>
+                            android:labelFor="@id/fragment_network_details_input_private_key_passphrase"
+                            android:text="@string/private_key_passphrase"
+                            android:textSize="17sp" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_private_key_passphrase"
@@ -291,17 +294,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/known_hosts_path"
-                            android:labelFor="@id/fragment_network_details_input_known_hosts_path"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="8dp"
-                            android:textSize="17sp"/>
+                            android:labelFor="@id/fragment_network_details_input_known_hosts_path"
+                            android:text="@string/known_hosts_path"
+                            android:textSize="17sp" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_known_hosts_path"
@@ -323,17 +326,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/base_path"
-                            android:labelFor="@id/fragment_network_details_input_base_path"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="8dp"
-                            android:textSize="17sp"/>
+                            android:labelFor="@id/fragment_network_details_input_base_path"
+                            android:text="@string/base_path"
+                            android:textSize="17sp" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_base_path"
@@ -347,8 +350,8 @@
                         android:id="@+id/fragment_network_details_input_use_https"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/use_https"
-                        android:layout_marginBottom="8dp" />
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/use_https" />
                 </LinearLayout>
 
                 <!-- SMB-specific fields -->
@@ -363,17 +366,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/domain"
-                            android:labelFor="@id/fragment_network_details_input_domain"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="8dp"
-                            android:textSize="17sp"/>
+                            android:labelFor="@id/fragment_network_details_input_domain"
+                            android:text="@string/domain"
+                            android:textSize="17sp" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_domain"
@@ -386,17 +389,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/share_name"
-                            android:labelFor="@id/fragment_network_details_input_share_name"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="8dp"
-                            android:textSize="17sp"/>
+                            android:labelFor="@id/fragment_network_details_input_share_name"
+                            android:text="@string/share_name"
+                            android:textSize="17sp" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_share_name"
@@ -410,13 +413,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/smb_version"
-                        android:textSize="17sp"/>
+                        android:textSize="17sp" />
+
                     <Spinner
                         android:id="@+id/fragment_network_details_input_smb_version"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:entries="@array/smb_versions"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginBottom="16dp"
+                        android:entries="@array/smb_versions" />
                 </LinearLayout>
 
                 <!-- FrameLayout for buttons (to be added in DialogFragment) -->
@@ -435,7 +439,6 @@
     </LinearLayout>
 
 </LinearLayout>
-
 
 
     <!--androidx.constraintlayout.widget.ConstraintLayout

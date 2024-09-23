@@ -1,236 +1,236 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
 
-	android:layout_height="match_parent">
-
-
-	<TextView
-		android:id="@+id/album_details_panel_title_TextView"
-		android:layout_width="0dp"
-		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/toolbar_background"
-		android:gravity="center_vertical"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:singleLine="true"
-		android:textColor="?attr/toolbar_text_color"
-		android:textSize="19sp"
-		app:layout_constraintEnd_toStartOf="@id/album_details_search_img_btn"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-
-		/>
-
-	<ImageButton
-		android:id="@+id/album_details_search_img_btn"
-		android:layout_width="50dp"
-		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/toolbar_background"
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-
-		android:src="@drawable/search_icon"
-		app:layout_constraintEnd_toStartOf="@id/album_details_all_select"
-		app:layout_constraintStart_toEndOf="@id/album_details_panel_title_TextView"
-		app:layout_constraintTop_toTopOf="parent" />
-
-	<ImageButton
-		android:id="@+id/album_details_all_select"
-		android:layout_width="50dp"
-		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/toolbar_background"
-
-		android:paddingStart="@dimen/layout_margin"
-		android:paddingEnd="@dimen/layout_margin"
-		android:src="@drawable/select_icon"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@id/album_details_search_img_btn"
-		app:layout_constraintTop_toTopOf="parent" />
-
-	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@+id/album_details_search_toolbar"
-		android:layout_width="0dp"
-		android:layout_height="?android:attr/actionBarSize"
-		android:background="?attr/toolbar_background"
-		android:elevation="6dp"
-		android:orientation="horizontal"
-		android:visibility="gone"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
-
-		<EditText
-
-			android:id="@+id/album_details_search_view"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_gravity="center_vertical"
-			android:background="@drawable/search_edittext_background"
-			android:layout_marginStart="@dimen/ten_dp"
-			android:layout_marginEnd="@dimen/ten_dp"
-			android:singleLine="true"
-			android:textColor="?attr/toolbar_text_color"
-			android:textSize="17sp"
-			app:layout_constraintEnd_toStartOf="@id/album_details_search_view_cancel_button"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
-
-		<ImageButton
-
-			android:id="@+id/album_details_search_view_cancel_button"
-			android:layout_width="50dp"
-			android:layout_height="match_parent"
-
-			android:layout_gravity="center_vertical"
-			android:background="@null"
-			android:paddingTop="@dimen/layout_margin"
-			android:paddingBottom="@dimen/layout_margin"
-			android:src="@drawable/cancel_icon"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toEndOf="@id/album_details_search_view"
-			app:layout_constraintTop_toTopOf="parent" />
-
-	</androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_height="match_parent">
 
 
+    <TextView
+        android:id="@+id/album_details_panel_title_TextView"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingEnd="@dimen/ten_dp"
+        android:singleLine="true"
+        android:textColor="?attr/toolbar_text_color"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toStartOf="@id/album_details_search_img_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
-		<View
-			android:id="@+id/album_details_background"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_marginTop="@dimen/layout_margin"
-			android:background="?attr/dialog_background"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/album_details_panel_title_TextView"
-			app:layout_constraintBottom_toBottomOf="@id/album_details_bottom_toolbar"
+        />
 
-			/>
-		<androidx.recyclerview.widget.RecyclerView
-			android:id="@+id/album_details_recyclerview"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_margin="@dimen/layout_margin"
-			android:paddingBottom="?attr/actionBarSize"
-			android:background="?attr/dialog_recyclerview_background"
-			android:choiceMode="singleChoice"
-			android:clipToPadding="false"
-			android:layoutAnimation="@anim/layout_animation_fall_down"
-			android:scrollbarThumbVertical="@drawable/scrollbar"
-			android:scrollbars="vertical"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toTopOf="@id/album_details_background"
-			app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+    <ImageButton
+        android:id="@+id/album_details_search_img_btn"
+        android:layout_width="50dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
 
-			/>
+        android:src="@drawable/search_icon"
+        app:layout_constraintEnd_toStartOf="@id/album_details_all_select"
+        app:layout_constraintStart_toEndOf="@id/album_details_panel_title_TextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-			<svl.kadatha.filex.FastScrollerView
-				android:id="@+id/fastScroller_album_detail"
-				android:layout_width="20dp"
-				android:layout_height="0dp"
-				android:layout_gravity="end"
-				android:layout_margin="@dimen/layout_margin"
-				android:paddingBottom="?attr/actionBarSize"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toTopOf="@id/album_details_background"
-				app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+    <ImageButton
+        android:id="@+id/album_details_all_select"
+        android:layout_width="50dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background"
 
-				/>
-	<TextView
-		android:id="@+id/album_details_file_number"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="@drawable/rounded_rectangle_shape"
-		android:padding="@dimen/layout_margin"
-		android:textColor="?attr/recycler_text_color"
-		android:layout_marginTop="8dp"
-		android:layout_marginEnd="8dp"
-		app:layout_constraintEnd_toEndOf="@id/album_details_background"
-		app:layout_constraintTop_toTopOf="@id/album_details_background"
+        android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="@dimen/layout_margin"
+        android:src="@drawable/select_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/album_details_search_img_btn"
+        app:layout_constraintTop_toTopOf="parent" />
 
-		/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/album_details_search_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-	<TextView
-		android:id="@+id/album_details_empty_list_tv"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_margin="@dimen/layout_margin"
-		android:paddingBottom="?attr/actionBarSize"
-		android:background="?attr/dialog_recyclerview_background"
-		android:gravity="center"
-		android:text="@string/no_file_found"
-		android:visibility="gone"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="@id/album_details_background"
-		app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+        <EditText
 
-		/>
-	
+            android:id="@+id/album_details_search_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:layout_marginEnd="@dimen/ten_dp"
+            android:background="@drawable/search_edittext_background"
+            android:singleLine="true"
+            android:textColor="?attr/toolbar_text_color"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toStartOf="@id/album_details_search_view_cancel_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
 
-		<androidx.appcompat.widget.Toolbar
-			android:id="@+id/album_details_bottom_toolbar"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?attr/toolbar_background"
-			android:elevation="6dp"
-			app:contentInsetLeft="0dp"
-			app:contentInsetStart="0dp"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/album_details_search_view_cancel_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
 
-			/>
-	<FrameLayout
-		android:id="@+id/album_details_progressbar"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent"
-		android:clickable="true"
-		android:focusable="true"
-		android:foregroundGravity="center"
-		android:elevation="6dp"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingBottom="@dimen/layout_margin"
+            android:src="@drawable/cancel_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/album_details_search_view"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		>
-		<ProgressBar
-
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@null"
-			android:layout_gravity="center"
-			/>
-	</FrameLayout>
-
-	<com.google.android.material.floatingactionbutton.FloatingActionButton
-		android:id="@+id/album_details_floating_action_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|end"
-		android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-		android:layout_marginEnd="@dimen/floating_button_margin_end"
-		android:clickable="true"
-		android:focusable="true"
-		android:src="@drawable/back_icon"
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-		app:backgroundTint="?attr/toolbar_background"
-		app:elevation="6dp"
-		app:layout_anchorGravity="end"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent" />
+    <View
+        android:id="@+id/album_details_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:background="?attr/dialog_background"
+        app:layout_constraintBottom_toBottomOf="@id/album_details_bottom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_details_panel_title_TextView"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/album_details_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="?attr/dialog_recyclerview_background"
+        android:choiceMode="singleChoice"
+        android:clipToPadding="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingBottom="?attr/actionBarSize"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/album_details_background"
+
+        />
+
+    <svl.kadatha.filex.FastScrollerView
+        android:id="@+id/fastScroller_album_detail"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:layout_gravity="end"
+        android:layout_margin="@dimen/layout_margin"
+        android:paddingBottom="?attr/actionBarSize"
+        app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/album_details_background"
+
+        />
+
+    <TextView
+        android:id="@+id/album_details_file_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_rectangle_shape"
+        android:padding="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintEnd_toEndOf="@id/album_details_background"
+        app:layout_constraintTop_toTopOf="@id/album_details_background"
+
+        />
+
+    <TextView
+        android:id="@+id/album_details_empty_list_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="?attr/dialog_recyclerview_background"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/no_file_found"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/album_details_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/album_details_background"
+
+        />
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/album_details_bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        />
+
+    <FrameLayout
+        android:id="@+id/album_details_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        >
+
+        <ProgressBar
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null" />
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/album_details_floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_icon"
+
+
+        app:backgroundTint="?attr/toolbar_background"
+        app:elevation="6dp"
+        app:layout_anchorGravity="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-	<!--FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -374,7 +374,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-		android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginEnd="@dimen/floating_button_margin_end"
                 android:clickable="true"
                 android:src="@drawable/back_icon"
                 app:backgroundTint="@color/toolbar_background"

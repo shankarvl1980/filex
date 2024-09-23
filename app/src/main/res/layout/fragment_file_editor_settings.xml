@@ -1,270 +1,260 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
 
-	>
+    >
 
-	<TextView
+    <TextView
 
-		android:id="@+id/file_editor_settings_heading"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_title"
-		android:textSize="19sp"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:paddingTop="@dimen/layout_margin"
-		android:paddingBottom="@dimen/layout_margin"
-		android:layout_gravity="top"
-		android:text="@string/settings"
+        android:id="@+id/file_editor_settings_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/settings"
+        android:textSize="19sp"
 
-		/>
-	<ScrollView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+        />
 
-		>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
 
-		<androidx.constraintlayout.widget.ConstraintLayout
+        >
 
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
 
-
-			<View
-				android:id="@+id/file_editor_settings_background"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:minHeight="44dp"
-				android:background="?attr/dialog_background"
-				android:layout_marginTop="@dimen/four_dp"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent"
-				app:layout_constraintBottom_toBottomOf="@id/fragment_file_editor_background_padding"
-				/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
-			<CheckBox
-				android:id="@+id/file_editor_settings_wrap_checkbox"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingStart="@dimen/ten_dp"
-				android:paddingEnd="@dimen/ten_dp"
-				android:button="@null"
-				android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/wrap_text"
-				android:textSize="17sp"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="@id/file_editor_settings_background"
-				android:background="?attr/dialog_background"
-
-				/>
+            <View
+                android:id="@+id/file_editor_settings_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/four_dp"
+                android:background="?attr/dialog_background"
+                android:minHeight="44dp"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_file_editor_background_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-			<TextView
-				android:id="@+id/file_editor_settings_text_size"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:background="?attr/dialog_background"
-				android:paddingStart="@dimen/ten_dp"
-				android:paddingEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/text_size"
+            <CheckBox
+                android:id="@+id/file_editor_settings_wrap_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:button="@null"
+                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
+                android:text="@string/wrap_text"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/file_editor_settings_background"
+
+                />
 
 
-				android:textSize="17sp"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_editor_settings_wrap_checkbox" />
+            <TextView
+                android:id="@+id/file_editor_settings_text_size"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
+                android:text="@string/text_size"
 
 
-
-			<EditText
-				android:id="@+id/file_editor_settings_sample_text"
-				android:layout_width="0dp"
-				android:layout_height="0dp"
-				android:background="@null"
-				android:focusable="false"
-				android:gravity="center"
-				android:layout_marginStart="@dimen/ten_dp"
-				android:layout_marginEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:singleLine="true"
-				android:text="AaBbCc123"
-				android:textColor="?attr/edit_text_color"
-				android:typeface="monospace"
-				app:layout_constraintBottom_toBottomOf="@id/file_editor_text_size_decrease"
-				app:layout_constraintEnd_toStartOf="@+id/file_editor_text_size_decrease"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_editor_settings_text_size" />
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_editor_settings_wrap_checkbox" />
 
 
-			<ImageButton
-				android:id="@+id/file_editor_text_size_increase"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:background="@null"
-
-				android:contentDescription="@string/edit"
-				android:elevation="6dp"
-				android:padding="@dimen/ten_dp"
-				android:src="@drawable/up_arrow_icon"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toTopOf="@id/file_editor_settings_sample_text" />
-
-			<ImageButton
-				android:id="@+id/file_editor_text_size_decrease"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-
-
-				android:background="@null"
-				android:contentDescription="@string/edit"
-				android:elevation="6dp"
-				android:padding="@dimen/ten_dp"
-
-				android:src="@drawable/down_arrow_icon"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_editor_text_size_increase" />
+            <EditText
+                android:id="@+id/file_editor_settings_sample_text"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
+                android:background="@null"
+                android:focusable="false"
+                android:gravity="center"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
+                android:singleLine="true"
+                android:text="AaBbCc123"
+                android:textColor="?attr/edit_text_color"
+                android:typeface="monospace"
+                app:layout_constraintBottom_toBottomOf="@id/file_editor_text_size_decrease"
+                app:layout_constraintEnd_toStartOf="@+id/file_editor_text_size_decrease"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_editor_settings_text_size" />
 
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/file_editor_settings_advanced_label"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_editor_text_size_decrease"
-				android:text="@string/advanced"
-				android:textSize="17sp"
-				android:paddingStart="@dimen/ten_dp"
-				android:paddingEnd="@dimen/ten_dp"
-				android:paddingTop="@dimen/layout_margin"
-				android:paddingBottom="@dimen/layout_margin"
-				android:visibility="gone"
-				/>
-			<ImageButton
-				android:layout_width="30dp"
-				android:layout_height="30dp"
-				android:background="@null"
-				android:padding="@dimen/ten_dp"
-				android:id="@+id/file_editor_settings_advanced_expander"
-				android:src="@drawable/down_arrow_dialog_icon"
-				app:layout_constraintStart_toEndOf="@id/file_editor_settings_advanced_label"
-				app:layout_constraintTop_toTopOf="@id/file_editor_settings_advanced_label"
-				android:visibility="gone"
-				/>
-			<View
-				android:layout_width="0dp"
-				android:layout_height="0dp"
-				android:id="@+id/file_editor_settings_advanced_group"
+            <ImageButton
+                android:id="@+id/file_editor_text_size_increase"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@null"
 
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="@id/file_editor_settings_advanced_expander"
-				app:layout_constraintTop_toTopOf="@id/file_editor_settings_advanced_label"
-				app:layout_constraintBottom_toBottomOf="@id/file_editor_settings_advanced_label"
-				/>
+                android:contentDescription="@string/edit"
+                android:elevation="6dp"
+                android:padding="@dimen/ten_dp"
+                android:src="@drawable/up_arrow_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/file_editor_settings_sample_text" />
 
-			<androidx.constraintlayout.widget.Group
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/file_editor_settings_eol_group"
-				app:constraint_referenced_ids="end_of_line_label,eol_rg"
-				android:visibility="gone"
-				/>
-
-			<TextView
-				android:id="@+id/end_of_line_label"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="4dp"
-				android:background="?attr/dialog_background"
-
-				android:paddingStart="@dimen/ten_dp"
-				android:paddingEnd="@dimen/ten_dp"
-				android:paddingBottom="@dimen/layout_margin"
-				android:text="@string/end_of_line"
-				android:textSize="17sp"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/file_editor_settings_advanced_label" />
-
-			<RadioGroup
-				android:id="@+id/eol_rg"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="?attr/dialog_background"
-				android:paddingStart="20dp"
-				android:paddingEnd="20dp"
-				android:paddingBottom="@dimen/layout_margin"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/end_of_line_label">
-
-				<RadioButton
-					android:id="@+id/eol_rb_n"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Unix (\\n)"
-					android:minHeight="36dp"
-					/>
-
-				<RadioButton
-
-					android:id="@+id/eol_rb_r"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Mac (\\r)"
-					android:minHeight="36dp"/>
-
-				<RadioButton
-
-					android:id="@+id/eol_rb_rn"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="Windows (\\r\\n)"
-					android:minHeight="36dp"
-					/>
-			</RadioGroup>
-			<View
-				android:id="@+id/fragment_file_editor_background_padding"
-				android:layout_width="match_parent"
-				android:layout_height="8dp"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/eol_rg"
-				/>
+            <ImageButton
+                android:id="@+id/file_editor_text_size_decrease"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
 
 
+                android:background="@null"
+                android:contentDescription="@string/edit"
+                android:elevation="6dp"
+                android:padding="@dimen/ten_dp"
 
-			<FrameLayout
-				android:id="@+id/fragment_file_editor_settings_button_layout"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/layout_margin"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/fragment_file_editor_background_padding" />
+                android:src="@drawable/down_arrow_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_editor_text_size_increase" />
 
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
-	</ScrollView>
+            <TextView
+                android:id="@+id/file_editor_settings_advanced_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingTop="@dimen/layout_margin"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
+                android:text="@string/advanced"
+                android:textSize="17sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_editor_text_size_decrease" />
 
+            <ImageButton
+                android:id="@+id/file_editor_settings_advanced_expander"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:padding="@dimen/ten_dp"
+                android:src="@drawable/down_arrow_dialog_icon"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/file_editor_settings_advanced_label"
+                app:layout_constraintTop_toTopOf="@id/file_editor_settings_advanced_label" />
+
+            <View
+                android:id="@+id/file_editor_settings_advanced_group"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+
+                app:layout_constraintBottom_toBottomOf="@id/file_editor_settings_advanced_label"
+                app:layout_constraintEnd_toEndOf="@id/file_editor_settings_advanced_expander"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/file_editor_settings_advanced_label" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/file_editor_settings_eol_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="end_of_line_label,eol_rg" />
+
+            <TextView
+                android:id="@+id/end_of_line_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="?attr/dialog_background"
+
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:paddingBottom="@dimen/layout_margin"
+                android:text="@string/end_of_line"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/file_editor_settings_advanced_label" />
+
+            <RadioGroup
+                android:id="@+id/eol_rg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="@dimen/layout_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/end_of_line_label">
+
+                <RadioButton
+                    android:id="@+id/eol_rb_n"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dp"
+                    android:text="Unix (\\n)" />
+
+                <RadioButton
+
+                    android:id="@+id/eol_rb_r"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dp"
+                    android:text="Mac (\\r)" />
+
+                <RadioButton
+
+                    android:id="@+id/eol_rb_rn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dp"
+                    android:text="Windows (\\r\\n)" />
+            </RadioGroup>
+
+            <View
+                android:id="@+id/fragment_file_editor_background_padding"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eol_rg" />
+
+
+            <FrameLayout
+                android:id="@+id/fragment_file_editor_settings_button_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_file_editor_background_padding" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 
 </LinearLayout>
 
 
-
-
-
-	<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"

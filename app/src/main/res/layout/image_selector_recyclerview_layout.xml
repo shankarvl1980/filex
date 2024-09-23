@@ -1,17 +1,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-	android:padding="@dimen/layout_margin"
-	android:background="@drawable/select_picture_recyclerview"
+    android:background="@drawable/select_picture_recyclerview"
+    android:padding="@dimen/layout_margin"
 
-	>
-	<ImageView
-		android:id="@+id/picture_viewpager_layout_imageview"
-		android:layout_width="@dimen/image_preview_dimen"
-		android:layout_height="@dimen/image_preview_dimen"
-		android:scaleType="centerCrop"
-		android:background="?attr/activity_background"
-		android:src="@drawable/picture_icon"
-	/>
+    >
+
+    <ImageView
+        android:id="@+id/picture_viewpager_layout_imageview"
+        android:layout_width="@dimen/image_preview_dimen"
+        android:layout_height="@dimen/image_preview_dimen"
+        android:background="?attr/activity_background"
+        android:scaleType="centerCrop"
+        android:src="@drawable/picture_icon" />
 
 </FrameLayout>

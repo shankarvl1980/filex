@@ -1,9 +1,6 @@
-
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,21 +11,20 @@
         android:background="?attr/filepath_recyclerview_background"
         android:elevation="6dp"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        />
+        android:paddingEnd="10dp" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_archive_detail_container"
+        style="@style/my_scrollbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:background="@null"
-        android:scrollbars="vertical"
+        android:clipToPadding="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingTop="40sp"
         android:paddingBottom="100dp"
-        android:clipToPadding="false"
-        style="@style/my_scrollbar"/>
+        android:scrollbars="vertical" />
 
     <svl.kadatha.filex.FastScrollerView
         android:id="@+id/fastScroller_archive_detail_fragment"
@@ -36,7 +32,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:paddingTop="40sp"
-        android:paddingBottom="100dp"/>
+        android:paddingBottom="100dp" />
 
     <TextView
         android:id="@+id/fragment_archive_empty_folder"
@@ -50,19 +46,18 @@
 
     <FrameLayout
         android:id="@+id/fragment_archive_detail_progressbar"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
-        android:focusable="true"
-        android:foregroundGravity="center"
         android:elevation="6dp"
-        >
+        android:focusable="true"
+        android:foregroundGravity="center">
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
             android:layout_gravity="center"
-            />
+            android:background="@null" />
     </FrameLayout>
 
 

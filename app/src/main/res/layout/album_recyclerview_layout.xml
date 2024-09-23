@@ -3,50 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/select_storage_list"
-    android:padding="@dimen/layout_margin"
-    >
+    android:padding="@dimen/layout_margin">
 
     <TextView
         android:id="@+id/album_name"
-        android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:textSize="17sp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/layout_margin"
         android:layout_marginEnd="@dimen/layout_margin"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_main_text_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="17sp"
         app:layout_constraintEnd_toStartOf="@id/album_image_dir"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/album_path"
-        android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:textSize="15sp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/layout_margin"
         android:layout_marginEnd="@dimen/layout_margin"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/album_name"
+        android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@id/album_image_dir"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_name" />
+
     <ImageView
         android:id="@+id/album_image_dir"
-        android:layout_height="30dp"
         android:layout_width="30dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/album_name"
+        android:layout_height="30dp"
         android:layout_marginStart="@dimen/layout_margin"
         android:layout_marginEnd="@dimen/layout_margin"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/album_name"
+        app:layout_constraintTop_toTopOf="parent"
 
         />
 

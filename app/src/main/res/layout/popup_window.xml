@@ -2,13 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="?attr/dialog_background"
-    >
+    android:background="?attr/dialog_background">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="@dimen/four_dp"
-        android:text="@string/default_choices_can_be_removed_from_the_settings"
-        />
+        android:text="@string/default_choices_can_be_removed_from_the_settings" />
 </RelativeLayout>

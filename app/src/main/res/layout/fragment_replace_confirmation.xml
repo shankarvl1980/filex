@@ -1,115 +1,111 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<TextView
-		android:id="@+id/replace_confirmation_title"
-		android:layout_width="0dp"
+    <TextView
+        android:id="@+id/replace_confirmation_title"
+        android:layout_width="0dp"
 
-		android:layout_height="wrap_content"
+        android:layout_height="wrap_content"
 
-		android:background="?attr/dialog_title"
-		android:paddingStart="@dimen/ten_dp"
-		android:paddingEnd="@dimen/ten_dp"
-		android:paddingTop="@dimen/layout_margin"
-		android:paddingBottom="@dimen/layout_margin"
-		android:text="@string/replace_file"
+        android:background="?attr/dialog_title"
+        android:paddingStart="@dimen/ten_dp"
+        android:paddingTop="@dimen/layout_margin"
+        android:paddingEnd="@dimen/ten_dp"
+        android:paddingBottom="@dimen/layout_margin"
+        android:text="@string/replace_file"
 
-		android:textSize="19sp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
-
-
-	<TextView
-		android:id="@+id/dialog_fragment_replace_message"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="4dp"
-		android:background="?attr/dialog_background"
-		android:padding="@dimen/ten_dp"
-
-		android:textSize="17sp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/replace_confirmation_title" />
-
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:background="?attr/dialog_background"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_replace_message"
-		app:layout_constraintBottom_toBottomOf="@id/dialog_fragment_applyall_confirmationCheckBox"
-
-		/>
-	<CheckBox
-		android:id="@+id/dialog_fragment_applyall_confirmationCheckBox"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="?attr/dialog_background"
-
-		android:layout_marginStart="@dimen/ten_dp"
-		android:layout_marginEnd="@dimen/ten_dp"
-		android:text="@string/apply_to_all_similarly_named_files"
-
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_replace_message" />
-
-	<View
-		android:id="@+id/dialog_fragment_replace_dialog_background"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/ten_dp"
-		android:background="?attr/dialog_background"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/dialog_fragment_applyall_confirmationCheckBox"
-
-		/>
-
-	<FrameLayout
-		android:id="@+id/file_replacement_dialog_progressbar"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent"
-		android:clickable="true"
-		android:focusable="true"
-		android:foregroundGravity="center"
-		android:elevation="6dp"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
-		>
-		<ProgressBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@null"
-			android:layout_gravity="center"
-			/>
-	</FrameLayout>
-
-	<FrameLayout
-		android:id="@+id/fragment_replace_confirmation_button_layout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/layout_margin"
-		android:elevation="6dp"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_replace_dialog_background" />
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
+    <TextView
+        android:id="@+id/dialog_fragment_replace_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="?attr/dialog_background"
+        android:padding="@dimen/ten_dp"
 
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/replace_confirmation_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/dialog_background"
+        app:layout_constraintBottom_toBottomOf="@id/dialog_fragment_applyall_confirmationCheckBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_fragment_replace_message"
+
+        />
+
+    <CheckBox
+        android:id="@+id/dialog_fragment_applyall_confirmationCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ten_dp"
+
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:background="?attr/dialog_background"
+        android:text="@string/apply_to_all_similarly_named_files"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_fragment_replace_message" />
+
+    <View
+        android:id="@+id/dialog_fragment_replace_dialog_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ten_dp"
+        android:background="?attr/dialog_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_fragment_applyall_confirmationCheckBox"
+
+        />
+
+    <FrameLayout
+        android:id="@+id/file_replacement_dialog_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_replace_confirmation_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:elevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_replace_dialog_background" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-	<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

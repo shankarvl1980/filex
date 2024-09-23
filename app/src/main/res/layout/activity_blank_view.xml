@@ -1,7 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:id="@+id/activity_blank_view_container"
-	>
+    android:id="@+id/activity_blank_view_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 </FrameLayout>

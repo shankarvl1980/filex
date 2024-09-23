@@ -5,47 +5,49 @@
     android:background="@drawable/select_detail_grid_recyclerview"
 
     >
+
     <TextView
         android:id="@+id/default_app_mime_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/select_detail_grid_recyclerview"
+        android:gravity="center_vertical"
         android:minHeight="44dp"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-        android:gravity="center_vertical"
-        android:background="@drawable/select_detail_grid_recyclerview"
         android:textSize="17sp"
 
         />
+
     <ImageView
         android:id="@+id/default_app_image_view"
-        android:layout_height="34dp"
         android:layout_width="34dp"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
+        android:layout_height="34dp"
         android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
         android:paddingStart="@dimen/layout_margin"
-        />
+        android:scaleType="fitCenter" />
+
     <TextView
         android:id="@+id/default_app_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:minHeight="44dp"
-        android:lines="1"
         android:gravity="center_vertical"
+        android:lines="1"
+        android:minHeight="44dp"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:textSize="17sp"
 
         />
+
     <CheckBox
         android:id="@+id/default_app_checkbox"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:minHeight="44dp"
-        android:checked="false"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        />
+        android:checked="false"
+        android:minHeight="44dp" />
 
 </TableRow>
