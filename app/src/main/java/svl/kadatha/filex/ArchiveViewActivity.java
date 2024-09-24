@@ -64,7 +64,6 @@ public class ArchiveViewActivity extends BaseActivity{
     public static final String ACTIVITY_NAME="ARCHIVE_VIEW_ACTIVITY";
     Toolbar bottom_toolbar;
 
-
     TextView current_dir_textview;
     Context context=this;
     private int countBackPressed=0;
@@ -73,8 +72,6 @@ public class ArchiveViewActivity extends BaseActivity{
     private static final boolean[] alreadyNotificationWarned=new boolean[1];
 
     static File ZIP_FILE;
-
-
 
     public static PackageManager PM;
     public PackageManager pm;
@@ -131,17 +128,14 @@ public class ArchiveViewActivity extends BaseActivity{
         PM=pm;
         localBroadcastManager=LocalBroadcastManager.getInstance(context);
 
-
         otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter=new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
 
-
         activity_progress_bar=findViewById(R.id.activity_archive_detail_progressbar);
         keyBoardUtil=new KeyBoardUtil(root_layout);
-
 
         imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -183,7 +177,6 @@ public class ArchiveViewActivity extends BaseActivity{
 
 
         file_number_view=findViewById(R.id.archive_detail_fragment_file_number);
-
         back_button = findViewById(R.id.archive_top_toolbar_back_button);
         back_button.setVisibility(View.GONE);
         parent_dir_image_button=findViewById(R.id.archive_top_toolbar_parent_dir_imagebutton);
@@ -196,7 +189,6 @@ public class ArchiveViewActivity extends BaseActivity{
         current_dir_textview.setOnClickListener(topToolbarClickListener);
         all_select.setOnClickListener(topToolbarClickListener);
 
-
         floating_button_back = findViewById(R.id.archive_floating_action_button_back);
         floating_button_back.setOnClickListener(new View.OnClickListener()
         {
@@ -205,8 +197,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 onbackpressed(false);
             }
         });
-
-
 
         EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(this,4,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
         int[] drawables ={R.drawable.search_icon,R.drawable.refresh_icon,R.drawable.extract_icon,R.drawable.cancel_icon};
@@ -224,7 +214,6 @@ public class ArchiveViewActivity extends BaseActivity{
         refresh.setOnClickListener(bottomToolbarClickListener);
         extract.setOnClickListener(bottomToolbarClickListener);
         close.setOnClickListener(bottomToolbarClickListener);
-
 
         Global.WARN_NOTIFICATIONS_DISABLED(context,NotifManager.CHANNEL_ID,alreadyNotificationWarned);
 
@@ -315,7 +304,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
-        // TODO: Implement this method
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         final List<String> permission_not_granted_list=new ArrayList<>();
         if(requestCode==PermissionsUtil.PERMISSIONS_REQUEST_CODE && grantResults.length>0)
@@ -338,7 +326,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     return;
                 }
             }
-
         }
 
         if(grantResults.length==0 || !permission_not_granted_list.isEmpty())
@@ -475,7 +462,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 Global.print(context,getString(R.string.could_not_open_zipe_file));
                 return;
             }
-
             viewModel.extractArchive(zipfile);
         }
     }
@@ -484,7 +470,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onStart()
     {
-        // TODO: Implement this method
         super.onStart();
         clear_cache=true;
         Global.WORKOUT_AVAILABLE_SPACE();
@@ -559,7 +544,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     });
                 }
             }
-
         }
     });
 
@@ -567,7 +551,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-        // TODO: Implement this method
         super.onSaveInstanceState(outState);
         outState.putBoolean("clear_cache",clear_cache);
     }
@@ -575,7 +558,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onRestoreInstanceState(savedInstanceState);
         clear_cache=savedInstanceState.getBoolean("clear_cache");
     }
@@ -597,7 +579,6 @@ public class ArchiveViewActivity extends BaseActivity{
             fm.beginTransaction().replace(R.id.archive_detail_fragment,ArchiveViewFragment.getInstance(fileObjectType),file_path)
                     .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
-
     }
 
     private void onbackpressed(boolean onBackPressed)
@@ -614,13 +595,11 @@ public class ArchiveViewActivity extends BaseActivity{
 
         else if(keyBoardUtil.getKeyBoardVisibility())
         {
-
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
         }
         else if(!archiveViewFragment.viewModel.mselecteditems.isEmpty())
         {
             actionmode_finish(archiveViewFragment,archiveViewFragment.fileclickselected);
-
         }
         else if(search_toolbar_visible)
         {
@@ -635,7 +614,6 @@ public class ArchiveViewActivity extends BaseActivity{
             int entry_count;
             if((entry_count=fm.getBackStackEntryCount())>1)
             {
-
                 fm.popBackStack();
                 int frag=2;
                 archiveViewFragment= (ArchiveViewFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
@@ -648,7 +626,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     archiveViewFragment= (ArchiveViewFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
                     df_tag = archiveViewFragment.getTag();
                 }
-
                 countBackPressed=0;
             }
             else
@@ -680,7 +657,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 {
                     Global.print(context,getString(R.string.click_close_button_to_exit));
                 }
-
             }
         }
     }
@@ -688,7 +664,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onPause()
     {
-        // TODO: Implement this method
         super.onPause();
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
     }
@@ -697,7 +672,6 @@ public class ArchiveViewActivity extends BaseActivity{
     @Override
     protected void onDestroy()
     {
-        // TODO: Implement this method
         super.onDestroy();
         localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
     }
@@ -754,39 +728,11 @@ public class ArchiveViewActivity extends BaseActivity{
         }
     }
 
-
-//    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array)
-//    {
-//        int size=file_array.size();
-//        for(int i=0;i<size;++i)
-//        {
-//            File f=file_array.get(i);
-//            if(f.isDirectory())
-//            {
-//                File[] inner_file_array=f.listFiles();
-//                if(inner_file_array.length==0)
-//                {
-//                    file_pathstring_array.add(f.getAbsolutePath()+File.separator);
-//                }
-//                else
-//                {
-//                    recursivefilepath(file_pathstring_array,Arrays.asList(inner_file_array));
-//                }
-//            }
-//            else
-//            {
-//                file_pathstring_array.add(f.getAbsolutePath());
-//            }
-//        }
-//    }
-
-
     private class TopToolbarClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(View v)
         {
-            // TODO: Implement this method
             ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
             if(archiveViewFragment==null)return;
             int id = v.getId();
@@ -822,9 +768,7 @@ public class ArchiveViewActivity extends BaseActivity{
                     archiveViewFragment.adapter.deselectAll();
                 }
             }
-
         }
-
     }
 
     private class BottomToolbarClickListener implements View.OnClickListener
@@ -833,7 +777,6 @@ public class ArchiveViewActivity extends BaseActivity{
         public void onClick(View v)
         {
             ArchiveViewFragment archiveViewFragment=(ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-
             int id = v.getId();
             if (id == R.id.toolbar_btn_1) {
                 if(archiveViewFragment==null)return;
@@ -885,7 +828,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     if(size!=0)
                     {
                         List<File> file_list=new ArrayList<>();
-
                         for(int i=0;i<size;++i)
                         {
                             file_list.add(new File(archiveViewFragment.viewModel.mselecteditems.getValueAtIndex(i)));
@@ -922,10 +864,8 @@ public class ArchiveViewActivity extends BaseActivity{
                     Global.print(context,"cleared cache");
                 }
                 finish();
-
             }
         }
-
     }
 
     private class OtherActivityBroadcastReceiver extends BroadcastReceiver
@@ -944,14 +884,12 @@ public class ArchiveViewActivity extends BaseActivity{
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
                     if (archiveViewFragment != null) archiveViewFragment.modification_observed = true;
                     break;
-
             }
         }
     }
 
     public static class ArchiveDetailRecyclerViewAdapter extends  RecyclerView.Adapter <ArchiveDetailRecyclerViewAdapter.ViewHolder> implements Filterable
     {
-
         private final Context context;
         private final ArchiveViewFragment archiveViewFragment;
         private final ArchiveViewActivity archiveViewActivity;
@@ -981,7 +919,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     archiveViewActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
                 }
             }
-            
         }
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnLongClickListener
@@ -995,7 +932,6 @@ public class ArchiveViewActivity extends BaseActivity{
                 this.view=view;
                 this.view.setOnClickListener(this);
                 this.view.setOnLongClickListener(this);
-
             }
 
             @Override
@@ -1055,8 +991,6 @@ public class ArchiveViewActivity extends BaseActivity{
                     v.setSelected(true);
                     ((RecyclerViewLayout)v).set_selected(true);
                     ++size;
-
-                    
 
                     if(size==archiveViewFragment.file_list_size)
                     {
@@ -1131,9 +1065,7 @@ public class ArchiveViewActivity extends BaseActivity{
                         archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
                         archiveViewFragment.folder_empty.setVisibility(View.GONE);
                     }
-
                     archiveViewActivity.file_number_view.setText(""+t);
-
                 }
             };
         }
@@ -1179,11 +1111,5 @@ public class ArchiveViewActivity extends BaseActivity{
         {
             this.cardViewClickListener=listener;
         }
-
     }
-
-
-
-
-
 }

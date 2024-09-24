@@ -63,6 +63,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 	public static final String USB_FILE_PREFIX="usb:";
 	public static final String FTP_FILE_PREFIX="ftp:";
 	public static final String SFTP_FILE_PREFIX="sftp:";
+	public static final String WEBDAV_FILE_PREFIX="webdav:";
+	public static final String SMB_FILE_PREFIX="smb:";
 
 	public static boolean CUT_SELECTED;
 	public static boolean COPY_SELECTED;
@@ -153,6 +155,18 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			else if(fileObjectType==FileObjectType.FTP_TYPE)
 			{
 				file_click_selected_name=FTP_FILE_PREFIX+fileclickselected;
+			}
+			else if(fileObjectType==FileObjectType.SFTP_TYPE)
+			{
+				file_click_selected_name=SFTP_FILE_PREFIX+fileclickselected;
+			}
+			else if(fileObjectType==FileObjectType.WEBDAV_TYPE)
+			{
+				file_click_selected_name=WEBDAV_FILE_PREFIX+fileclickselected;
+			}
+			else if(fileObjectType==FileObjectType.SMB_TYPE)
+			{
+				file_click_selected_name=SMB_FILE_PREFIX+fileclickselected;
 			}
 			else
 			{
@@ -639,7 +653,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 
 			 }
-			else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+			else if(Global.whether_file_cached(fileObjectType))
 			{
 				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{
@@ -648,7 +662,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 				}
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			}
-			 else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+			 else if(fileObjectType==FileObjectType.FILE_TYPE)
 			 {
 				 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,select_app,file_size);
 			 }
@@ -903,7 +917,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
 							}
 						}
-						else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+						else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE || fileObjectType==FileObjectType.WEBDAV_TYPE || fileObjectType==FileObjectType.SMB_TYPE)
                         {
                             String fp=file_path.toString();
 							if(fp.isEmpty()) fp=File.separator;

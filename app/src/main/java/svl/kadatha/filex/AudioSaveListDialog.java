@@ -38,8 +38,6 @@ public class AudioSaveListDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
-		
 		super.onCreate(savedInstanceState);
 		bundle=getArguments();
 		request_code=bundle.getString("request_code");

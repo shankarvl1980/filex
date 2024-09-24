@@ -45,7 +45,6 @@ public class DefaultAppsDialog extends DialogFragment
         super.onAttach(context);
         this.context=context;
         defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
-
     }
 
     @Override

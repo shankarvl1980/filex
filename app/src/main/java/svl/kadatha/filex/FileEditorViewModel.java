@@ -215,31 +215,15 @@ public class FileEditorViewModel extends AndroidViewModel {
                 source_folder=file.getParent();
                 isWritable=FileUtil.isWritable(fileObjectType,file_path);
 
-                if(fileObjectType ==FileObjectType.USB_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_USB_CACHE(file_path,fileObjectType);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                {
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.ROOT_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.SFTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_SFTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
+                if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE){
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
+                else{
+                    File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                }
 
-                if(fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+                if(Global.whether_file_cached(fileObjectType))
                 {
                     data = FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
                 }

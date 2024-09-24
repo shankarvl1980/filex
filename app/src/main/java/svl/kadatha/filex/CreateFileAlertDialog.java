@@ -19,7 +19,6 @@ import androidx.fragment.app.DialogFragment;
 
 public class CreateFileAlertDialog extends DialogFragment
 {
-
 	private String [] type_file;
 	private	Context context;
 	private String parent_folder;
@@ -34,7 +33,6 @@ public class CreateFileAlertDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		type_file=new String[]{getString(R.string.file),getString(R.string.folder)};

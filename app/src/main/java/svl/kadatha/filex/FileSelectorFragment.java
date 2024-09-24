@@ -403,11 +403,11 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 							if(((FileSelectorActivity)activity).action_sought_request_code==FileSelectorActivity.PICK_FILE_REQUEST_CODE)
 							{
 								Uri uri = null;
-								if(fileObjectType==FileObjectType.USB_TYPE)
+								if(Global.whether_file_cached(fileObjectType))
 								{
 									Global.print(context,context.getString(R.string.not_supported));
 								}
-								else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+								else if(fileObjectType==FileObjectType.FILE_TYPE)
 								{
 									File file=new File(filePOJO.getPath());
 									uri = FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",file);

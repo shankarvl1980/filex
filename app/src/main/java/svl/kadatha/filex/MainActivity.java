@@ -1985,7 +1985,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 									}
 									FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
 								}
-								else if(df.fileObjectType==FileObjectType.USB_TYPE)
+								else
 								{
 									Global.print(context,getString(R.string.not_supported));
 //									String file_path=df.viewModel.mselecteditems.getValueAtIndex(0);

@@ -39,6 +39,7 @@ public class ArchiveDeletePasteServiceUtil {
         {
             emptyService=ArchiveDeletePasteProgressActivity3.class;
         }
+
         if(emptyService!=null)
         {
             AppCompatActivity appCompatActivity=(AppCompatActivity)context;
@@ -63,7 +64,6 @@ public class ArchiveDeletePasteServiceUtil {
                 ((InstaCropperActivity)context).clear_cache=false;
             }
         }
-
         return emptyService;
     }
 
@@ -145,27 +145,6 @@ public class ArchiveDeletePasteServiceUtil {
 
         return noOperation;
     }
-    public static boolean WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType sourceFileObjectType, FileObjectType destFileObjectType)
-    {
-        boolean noOperation=true;
-//        if(noOperation && sourceFileObjectType!=null)
-//        {
-//            if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-//            {
-//                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
-//            }
-//        }
-//
-//        if(noOperation && destFileObjectType!=null)
-//        {
-//            if(destFileObjectType==FileObjectType.FTP_TYPE)
-//            {
-//                noOperation=ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.FTP_TYPE);
-//            }
-//        }
-
-        return noOperation;
-    }
 
     public static void CLEAR_CACHE_AND_REFRESH(String file_path, FileObjectType fileObjectType)
     {
@@ -213,7 +192,6 @@ public class ArchiveDeletePasteServiceUtil {
             {
                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
             }
-
         }
 
         if(storageAnalyserFragment !=null && storageAnalyserFragment.fileObjectType==fileObjectType)
@@ -225,7 +203,6 @@ public class ArchiveDeletePasteServiceUtil {
             }
             if(df!=null)df.local_activity_delete=true; //to avoid modification observed which causes re-populate of filepojos
         }
-
     }
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(String dest_folder,String source_folder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType,FilePOJO filePOJO)
@@ -325,7 +302,6 @@ public class ArchiveDeletePasteServiceUtil {
             if(Global.AFTER_ARCHIVE_GOTO_DEST_FOLDER)
             {
                 DetailFragment.TO_BE_MOVED_TO_FILE_POJO=filePOJO;
-
                 if (df.detailFragmentListener != null) {
 
                     if(destFileObjectType== FileObjectType.FILE_TYPE)
@@ -341,13 +317,10 @@ public class ArchiveDeletePasteServiceUtil {
                         df.detailFragmentListener.createFragmentTransaction(dest_folder,FileObjectType.FTP_TYPE);
                     }
                 }
-
             }
             else
             {
-
                 String tag=df.getTag();
-
                 if(Global.IS_CHILD_FILE(tag,parent_dest_folder)  && df.fileObjectType==destFileObjectType)
                 {
                     df.clearSelectionAndNotifyDataSetChanged();
@@ -360,7 +333,6 @@ public class ArchiveDeletePasteServiceUtil {
                     {
                         df.glm.scrollToPositionWithOffset(idx,0);
                     }
-
                 }
             }
         }
@@ -446,7 +418,6 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-
     public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
                                                        List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled, boolean storage_analyser_delete)
     {
@@ -466,7 +437,6 @@ public class ArchiveDeletePasteServiceUtil {
         {
             notification_content=sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.could_not_delete_selected_files) : context.getString(R.string.could_not_delete_selected_files)+" "+source_folder;
         }
-
         return notification_content;
     }
 
@@ -500,46 +470,13 @@ public class ArchiveDeletePasteServiceUtil {
     public static void ON_ARCHIVE_ASYNC_TASK_CANCEL(Context context, String dest_folder, String zip_file_name, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path)
     {
         File f=new File(dest_folder,zip_file_name);
+        String file_path=Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder,zip_file_name);
         ExecutorService executorService=MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                if(destFileObjectType==FileObjectType.FILE_TYPE)
-                {
-                    if(f.exists())
-                    {
-                        if (FileUtil.isWritable(destFileObjectType,f.getAbsolutePath()))
-                        {
-                            FileUtil.deleteNativeDirectory(f);
-                        }
-                        else
-                        {
-                            if (Global.IS_CHILD_FILE(dest_folder,tree_uri_path))
-                            {
-                                FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
-                            }
-                        }
-                    }
-                }
-                else if(destFileObjectType==FileObjectType.USB_TYPE)
-                {
-//                    if(zipUsbFile!=null)
-//                    {
-//                        FileUtil.deleteUsbDirectory(zipUsbFile);
-//                    }
-                }
-                else if(destFileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    //do not do any thing as it is on main thread
-                }
-                else
-                {
-                    if(FileUtil.existsUri(context,f.getAbsolutePath(),tree_uri,tree_uri_path))
-                    {
-                        FileUtil.deleteSAFDirectory(context,f.getAbsolutePath(),tree_uri,tree_uri_path);
-                    }
-                }
-
+                FileModel fileModel=FileModelFactory.getFileModel(file_path,destFileObjectType,tree_uri,tree_uri_path);
+                fileModel.delete();
                 Global.WORKOUT_AVAILABLE_SPACE();
             }
         });

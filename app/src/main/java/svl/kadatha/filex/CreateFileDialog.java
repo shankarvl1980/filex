@@ -52,13 +52,11 @@ public class CreateFileDialog extends DialogFragment
 		this.context=context;
 		imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         AppCompatActivity appCompatActivity = (AppCompatActivity) context;
-
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle=getArguments();
@@ -181,12 +179,6 @@ public class CreateFileDialog extends DialogFragment
 				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
 				{
 					Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
-					return;
-				}
-
-				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
-				{
-					Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
 					return;
 				}
 

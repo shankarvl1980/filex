@@ -84,7 +84,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         fileclickselected=getTag();
         if(fileclickselected==null)
@@ -117,21 +116,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
             }
         }
-
-
-        if(fileObjectType==FileObjectType.USB_TYPE)
-        {
-            if(MainActivity.usbFileRoot!=null)
-            {
-                try {
-                    currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-
-                } catch (IOException e) {
-
-                }
-            }
-        }
-
     }
 
 

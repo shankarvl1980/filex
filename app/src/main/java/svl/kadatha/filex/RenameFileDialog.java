@@ -58,7 +58,6 @@ public class RenameFileDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle=getArguments();
@@ -204,12 +203,6 @@ public class RenameFileDialog extends DialogFragment
 					return;
 				}
 
-				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
-				{
-					Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-					return;
-				}
-
 				new_file_path =Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path,new_name);
 
 				overwriting= Global.WHETHER_FILE_ALREADY_EXISTS(fileObjectType,new_file_path,viewModel.destFilePOJOs);
@@ -245,16 +238,9 @@ public class RenameFileDialog extends DialogFragment
 					{
 						Global.print(context,getString(R.string.a_file_with_given_name_already_exists));
 					}
-					else if(fileObjectType==FileObjectType.ROOT_TYPE)
-					{
+					else {
 						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
 						renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
-					}
-					else if(fileObjectType==FileObjectType.FTP_TYPE)
-					{
-						RenameReplaceConfirmationDialog renameReplaceConfirmationDialog=RenameReplaceConfirmationDialog.getInstance(new_name);
-						renameReplaceConfirmationDialog.show(getParentFragmentManager(),"");
-
 					}
 				}
 				else if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable)

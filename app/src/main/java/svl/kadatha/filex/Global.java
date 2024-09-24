@@ -1,5 +1,6 @@
 package svl.kadatha.filex;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentUris;
@@ -62,6 +63,8 @@ import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
+import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
 
 public class Global
@@ -74,6 +77,9 @@ public class Global
 	static File TEMP_ROTATE_CACHE_DIR;
 	static File FTP_CACHE_DIR;
 	static File SFTP_CACHE_DIR;
+	static File WEBDAV_CACHE_DIR;
+	static File SMB_CACHE_DIR;
+	static File ROOT_CACHE_DIR;
 	static File APK_ICON_DIR;
 	static final List<String>APK_ICON_PACKAGE_NAME_LIST=new ArrayList<>();
 	static int ARCHIVE_CACHE_DIR_LENGTH;
@@ -279,7 +285,6 @@ public class Global
 		String uri_path;
 		if(uri_authority.equals(UsbDocumentProvider.DOCUMENTS_AUTHORITY))
 		{
-
 			final String docId = DocumentsContract.getTreeDocumentId(treeUri);
 			final String[] split = docId.split(":");
 			if(split.length==1)
@@ -403,7 +408,6 @@ public class Global
 		IS_TABLET=context.getResources().getBoolean(R.bool.isTablet);
 	}
 	
-	
 
 	static void GET_IMAGE_VIEW_DIMENSIONS(Context context)
 	{
@@ -457,11 +461,13 @@ public class Global
 		TEMP_ROTATE_CACHE_DIR=context.getExternalFilesDir(".temp_rotate_cache");
 		FTP_CACHE_DIR=context.getExternalFilesDir(".ftp_cache");
 		SFTP_CACHE_DIR=context.getExternalFilesDir(".sftp_cache");
+		WEBDAV_CACHE_DIR=context.getExternalFilesDir(".webdav_cache");
+		SMB_CACHE_DIR=context.getExternalFilesDir(".smb_cache");
+		ROOT_CACHE_DIR=context.getExternalFilesDir(".root_cache");
 		APK_ICON_DIR=context.getExternalFilesDir(".apk_icons");
 		APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
 		SIZE_APK_ICON_LIST=APK_ICON_PACKAGE_NAME_LIST.size();
 		ARCHIVE_CACHE_DIR_LENGTH=ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
-
 	}
 
 	static void GET_PREFERENCES(TinyDB tinyDB)
@@ -506,7 +512,6 @@ public class Global
 				APP_MANAGER_SORT="d_name_asc";
 			}
 		}
-
 
 		//
 		if(THEME==null)
@@ -554,7 +559,6 @@ public class Global
 			tinyDB.putBoolean("image_video_grid_layout",IMAGE_VIDEO_GRID_LAYOUT);
 		}
 		//
-
 
 		if(RECYCLER_VIEW_FONT_SIZE_FACTOR!=0 && RECYCLER_VIEW_FONT_SIZE_FACTOR!=1 && RECYCLER_VIEW_FONT_SIZE_FACTOR!=2)
 		{
@@ -635,8 +639,6 @@ public class Global
 			}
 		};
 	}
-
-
 
 	static FilePOJO GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR()
 	{
@@ -786,6 +788,20 @@ public class Global
 		return false;
 	}
 
+	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType)
+	{
+		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+		Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
+		while(iterator.hasNext())
+		{
+			if(iterator.next().getFileObjectType()==fileObjectType)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
 		if(fileObjectType!=FileObjectType.SFTP_TYPE) return false;
@@ -830,7 +846,6 @@ public class Global
 		return false;
 	}
 
-
 	public static String GET_TRUNCATED_FILE_PATH_USB(String file_path)
 	{
 		if(file_path.equals(File.separator)) return file_path;
@@ -873,6 +888,10 @@ public class Global
 				return FileObjectType.FTP_TYPE;
 			case "SFTP_TYPE":
 				return FileObjectType.SFTP_TYPE;
+			case "WEBDAV_TYPE":
+				return FileObjectType.WEBDAV_TYPE;
+			case "SMB_CACHE":
+				return FileObjectType.SMB_TYPE;
 			default:
 				return null;
 		}
@@ -882,12 +901,20 @@ public class Global
 	{
 		switch (fileObjectType)
 		{
+			case ROOT_TYPE:
+				return "(Root)";
 			case FILE_TYPE:
 				return "(Device)";
 			case USB_TYPE:
 				return "(USB)";
 			case FTP_TYPE:
 				return "(FTP)";
+			case SFTP_TYPE:
+				return "(SFTP)";
+			case WEBDAV_TYPE:
+				return "(WebDAV)";
+			case SMB_TYPE:
+				return "(SMB)";
 			default:
 				return "";
 		}
@@ -955,7 +982,7 @@ public class Global
 		if(alreadyWarned[0])return;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			if (Build.VERSION.SDK_INT >= 33){
-				if(context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+				if(context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
 				{
 					print(context, context.getString(R.string.notification_not_enabled_grant_permission_in_device_settings));
 					alreadyWarned[0] = true;
@@ -1043,47 +1070,12 @@ public class Global
 		}
 	}
 
-
-	public static File COPY_TO_USB_CACHE(String file_path,FileObjectType fileObjectType)
-	{
-		File cache_file=new File(USB_CACHE_DIR,file_path);
-		if(MainActivity.usbFileRoot==null)
-		{
-			return cache_file;
-		}
-		USB_CACHED_FILE_OBJECT=fileObjectType;
-		long[] bytes_read=new long[1];
-		File parent_file=cache_file.getParentFile();
-		if(parent_file!=null)
-		{
-			FileUtil.mkdirsNative(parent_file);
-			createNativeNewFile(cache_file);
-			UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
-			if(targetUsbFile!=null)
-			{
-				try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(targetUsbFile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(cache_file)) {
-					FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
-
-				} catch (Exception e) {
-					USB_CACHED_FILE_OBJECT=null;
-					return cache_file;
-				}
-				USB_CACHED_FILE_OBJECT=null;
-				return cache_file;
-			}
-		}
-
-		USB_CACHED_FILE_OBJECT=null;
-		return cache_file;
-	}
-
 	public static boolean createNativeNewFile(@NonNull final File file)
 	{
 		if (file.exists())
 		{
 			return false;
 		}
-
 		try
 		{
 			if (file.createNewFile())
@@ -1095,83 +1087,156 @@ public class Global
 		{
 
 		}
-
 		return false;
 	}
 
-	public static File COPY_TO_FTP_CACHE(String file_path)
-	{
-		File cache_file=new File(FTP_CACHE_DIR,file_path);
+	public static File COPY_TO_CACHE(String file_path,FileObjectType fileObjectType){
+		File cache_file = null;
+		switch (fileObjectType)
+		{
+			case USB_TYPE:
+				cache_file=new File(USB_CACHE_DIR,file_path);
+				break;
+			case FTP_TYPE:
+				cache_file=new File(FTP_CACHE_DIR,file_path);
+				break;
+			case SFTP_TYPE:
+				cache_file=new File(SFTP_CACHE_DIR,file_path);
+				break;
+			case WEBDAV_TYPE:
+				cache_file=new File(WEBDAV_CACHE_DIR,file_path);
+				break;
+			case SMB_TYPE:
+				cache_file=new File(SMB_CACHE_DIR,file_path);
+				break;
+			case ROOT_TYPE:
+				cache_file=new File(ROOT_CACHE_DIR,file_path);
+				break;
+		}
+
 		long []bytes_read=new long[1];
 		File parent_file=cache_file.getParentFile();
 		if(parent_file!=null)
 		{
 			FileUtil.mkdirsNative(parent_file);
-			createNativeNewFile(cache_file);
-			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-			FTPClient ftpClient=null;
-			try {
-				ftpClient=ftpClientRepository.getFtpClient();
-				try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
-					FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
-					ftpClient.completePendingCommand();
-					return cache_file;
-
-				} catch (Exception e) {
-
-					return cache_file;
-				}
-
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			finally {
-				if (ftpClientRepository != null && ftpClient != null) {
-					ftpClientRepository.releaseFtpClient(ftpClient);
-					Timber.tag(FTP_TAG).d("FTP client released");
-				}
-			}
+			FileModel source_file_model= FileModelFactory.getFileModel(file_path,fileObjectType,null,null);
+			FileModel dest_file_model=FileModelFactory.getFileModel(parent_file.getPath(),FileObjectType.FILE_TYPE,null,null);
+			FileUtil.copy_FileModel_FileModel(source_file_model,dest_file_model,cache_file.getName(),false,bytes_read);
 		}
 		return cache_file;
 	}
 
-	public static File COPY_TO_SFTP_CACHE(String filePath) {
-		File cacheFile = new File(SFTP_CACHE_DIR, filePath);
-		long[] bytesRead = new long[1];
-		File parentFile = cacheFile.getParentFile();
-		if (parentFile != null) {
-			FileUtil.mkdirsNative(parentFile);
-			createNativeNewFile(cacheFile);
-
-			SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
-			ChannelSftp channelSftp = null;
-
-			try {
-				channelSftp = sftpChannelRepository.getSftpChannel();
-
-				try (InputStream inputStream = channelSftp.get(filePath);
-					 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile))) {
-
-					FileUtil.bufferedCopy(inputStream, outputStream, false, bytesRead);
-					return cacheFile;
-
-				} catch (SftpException | IOException e) {
-					Timber.tag(FTP_TAG).e("Error copying file from SFTP: %s", e.getMessage());
-					return cacheFile;
-				}
-
-			} catch (JSchException e) {
-				Timber.tag(FTP_TAG).e("Error getting SFTP channel: %s", e.getMessage());
-				throw new RuntimeException(e);
-			} finally {
-				if (sftpChannelRepository != null && channelSftp != null) {
-					sftpChannelRepository.releaseChannel(channelSftp);
-					Timber.tag(FTP_TAG).d("SFTP channel released");
-				}
-			}
-		}
-		return cacheFile;
+	public static boolean whether_file_cached(FileObjectType fileObjectType){
+        return fileObjectType == FileObjectType.ROOT_TYPE || fileObjectType == FileObjectType.USB_TYPE || fileObjectType == FileObjectType.FTP_TYPE
+                || fileObjectType == FileObjectType.SFTP_TYPE || fileObjectType == FileObjectType.WEBDAV_TYPE || fileObjectType == FileObjectType.SMB_TYPE;
 	}
+
+//	public static File COPY_TO_USB_CACHE(String file_path,FileObjectType fileObjectType)
+//	{
+//		File cache_file=new File(USB_CACHE_DIR,file_path);
+//		if(MainActivity.usbFileRoot==null)
+//		{
+//			return cache_file;
+//		}
+//		USB_CACHED_FILE_OBJECT=fileObjectType;
+//		long[] bytes_read=new long[1];
+//		File parent_file=cache_file.getParentFile();
+//		if(parent_file!=null)
+//		{
+//			FileUtil.mkdirsNative(parent_file);
+//			createNativeNewFile(cache_file);
+//			UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,file_path);
+//			if(targetUsbFile!=null)
+//			{
+//				try (InputStream inStream = UsbFileStreamFactory.createBufferedInputStream(targetUsbFile,MainActivity.usbCurrentFs); OutputStream outputStream = new FileOutputStream(cache_file)) {
+//					FileUtil.bufferedCopy(inStream, outputStream,true,bytes_read);
+//
+//				} catch (Exception e) {
+//					USB_CACHED_FILE_OBJECT=null;
+//					return cache_file;
+//				}
+//				USB_CACHED_FILE_OBJECT=null;
+//				return cache_file;
+//			}
+//		}
+//
+//		USB_CACHED_FILE_OBJECT=null;
+//		return cache_file;
+//	}
+
+//	public static File COPY_TO_FTP_CACHE(String file_path)
+//	{
+//		File cache_file=new File(FTP_CACHE_DIR,file_path);
+//		long []bytes_read=new long[1];
+//		File parent_file=cache_file.getParentFile();
+//		if(parent_file!=null)
+//		{
+//			FileUtil.mkdirsNative(parent_file);
+//			createNativeNewFile(cache_file);
+//			FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
+//			FTPClient ftpClient=null;
+//			try {
+//				ftpClient=ftpClientRepository.getFtpClient();
+//				try (InputStream inputStream= ftpClient.retrieveFileStream(file_path); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cache_file))) {
+//					FileUtil.bufferedCopy(inputStream, outputStream, false, bytes_read);
+//					ftpClient.completePendingCommand();
+//					return cache_file;
+//
+//				} catch (Exception e) {
+//
+//					return cache_file;
+//				}
+//
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//			finally {
+//				if (ftpClientRepository != null && ftpClient != null) {
+//					ftpClientRepository.releaseFtpClient(ftpClient);
+//					Timber.tag(FTP_TAG).d("FTP client released");
+//				}
+//			}
+//		}
+//		return cache_file;
+//	}
+
+//	public static File COPY_TO_SFTP_CACHE(String filePath) {
+//		File cacheFile = new File(SFTP_CACHE_DIR, filePath);
+//		long[] bytesRead = new long[1];
+//		File parentFile = cacheFile.getParentFile();
+//		if (parentFile != null) {
+//			FileUtil.mkdirsNative(parentFile);
+//			createNativeNewFile(cacheFile);
+//
+//			SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+//			ChannelSftp channelSftp = null;
+//
+//			try {
+//				channelSftp = sftpChannelRepository.getSftpChannel();
+//
+//				try (InputStream inputStream = channelSftp.get(filePath);
+//					 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile))) {
+//
+//					FileUtil.bufferedCopy(inputStream, outputStream, false, bytesRead);
+//					return cacheFile;
+//
+//				} catch (SftpException | IOException e) {
+//					Timber.tag(FTP_TAG).e("Error copying file from SFTP: %s", e.getMessage());
+//					return cacheFile;
+//				}
+//
+//			} catch (JSchException e) {
+//				Timber.tag(FTP_TAG).e("Error getting SFTP channel: %s", e.getMessage());
+//				throw new RuntimeException(e);
+//			} finally {
+//				if (sftpChannelRepository != null && channelSftp != null) {
+//					sftpChannelRepository.releaseChannel(channelSftp);
+//					Timber.tag(FTP_TAG).d("SFTP channel released");
+//				}
+//			}
+//		}
+//		return cacheFile;
+//	}
 
 	public static Bitmap scaleToFitHeight(Bitmap bitmap,int height){
 		float factor=height/(float)bitmap.getHeight();

@@ -51,7 +51,6 @@ public class PropertiesDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle=getArguments();
@@ -91,7 +90,7 @@ public class PropertiesDialog extends DialogFragment
 				}
 
 			}
-			else if(fileObjectType==FileObjectType.FTP_TYPE)
+			else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
 			{
 				//FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
 				filename_str=new File(files_selected_array.get(0)).getName();

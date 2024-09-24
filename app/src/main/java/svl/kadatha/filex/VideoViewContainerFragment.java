@@ -72,7 +72,6 @@ public class VideoViewContainerFragment extends Fragment
 		activity=((AppCompatActivity)context);
 	}
 
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -91,7 +90,6 @@ public class VideoViewContainerFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		View v;
 		v=inflater.inflate(R.layout.fragment_video_view_container,container,false);
 		toolbar_visible=true;
@@ -126,7 +124,7 @@ public class VideoViewContainerFragment extends Fragment
 					switch(p1)
 					{
 						case 0:
-							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE|| viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -140,12 +138,12 @@ public class VideoViewContainerFragment extends Fragment
 							if(viewModel.fromThirdPartyApp)
 							{
 								src_uri=data;
-
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE||viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							else if(Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
+
 							if(src_uri==null)
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
@@ -154,16 +152,14 @@ public class VideoViewContainerFragment extends Fragment
 							ArrayList<Uri> uri_list=new ArrayList<>();
 							uri_list.add(src_uri);
 							FileIntentDispatch.sendUri(context,uri_list);
-
 							break;
 						case 2:
 							Uri copy_uri=null;
 							if(viewModel.fromThirdPartyApp)
 							{
 								copy_uri=data;
-
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							else if(Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -191,9 +187,8 @@ public class VideoViewContainerFragment extends Fragment
 								Global.print(context,getString(R.string.could_not_perform_action));
 							}
 							break;
-
 						case 3:
-							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -202,14 +197,11 @@ public class VideoViewContainerFragment extends Fragment
 							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
 							propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 							break;
-
 						default:
 							break;
 					}
 					listPopWindow.dismiss();
 				}
-
-
 			});
 		listPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener()
 		{
@@ -229,7 +221,6 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				getActivity().getOnBackPressedDispatcher().onBackPressed();
 			}
-			
 		});
 		viewModel=new ViewModelProvider(requireActivity()).get(FilteredFilePOJOViewModel.class);
 		if(activity instanceof VideoViewActivity)
@@ -247,7 +238,6 @@ public class VideoViewContainerFragment extends Fragment
 				viewModel.fromThirdPartyApp=true;
 				viewModel.fileObjectType =FileObjectType.FILE_TYPE;
 			}
-
 		}
 
 
@@ -262,13 +252,12 @@ public class VideoViewContainerFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					if(Global.whether_file_cached(viewModel.fileObjectType))
 					{
 						if(activity instanceof VideoViewActivity)
 						{
 							((VideoViewActivity)activity).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
-
 					}
 					adapter=new VideoViewPagerAdapter(getChildFragmentManager(),viewModel.video_list);
 					viewpager.setAdapter(adapter);
@@ -320,7 +309,6 @@ public class VideoViewContainerFragment extends Fragment
 					}
 					deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
-
 			}
 		});
 
@@ -332,7 +320,6 @@ public class VideoViewContainerFragment extends Fragment
 					{
 						((VideoViewActivity)activity).current_page_idx=p;
 					}
-
 				}
 
 				public void onPageScrollStateChanged(int p)
@@ -389,10 +376,8 @@ public class VideoViewContainerFragment extends Fragment
 					adapter.notifyDataSetChanged();
 					viewModel.video_refreshed=true;
 				}
-
 			}
 		});
-
 		return v;
 	}
 
@@ -409,7 +394,6 @@ public class VideoViewContainerFragment extends Fragment
 
 	public void onVideoViewClick()
 	{
-		//if(toolbar.getGlobalVisibleRect(new Rect()))
 		if(toolbar_visible)
 		{
 			//disappear
@@ -430,6 +414,7 @@ public class VideoViewContainerFragment extends Fragment
 			handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 		}
 	}
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -452,14 +437,11 @@ public class VideoViewContainerFragment extends Fragment
 			{
 				title.setText(viewModel.currently_shown_file.getName());
 			}
-
 		}
 
 		@Override
 		public Fragment getItem(int p1)
 		{
-			// TODO: Implement this method
-
 			final VideoViewFragment frag;
 			boolean b=viewModel.firststart;
 			FilePOJO filePOJO=viewModel.video_list.getKeyAtIndex(p1);
@@ -477,28 +459,21 @@ public class VideoViewContainerFragment extends Fragment
 						viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx),position);
 					}
 				}
-
 			});
 			return frag;
 		}
 
-		
 
 		@Override
 		public int getCount()
 		{
-			// TODO: Implement this method
 			return list.size();
 		}
 
 		@Override
 		public int getItemPosition(Object object)
 		{
-			// TODO: Implement this method
 			return POSITION_NONE;
 		}
-
 	}
-
-
 }

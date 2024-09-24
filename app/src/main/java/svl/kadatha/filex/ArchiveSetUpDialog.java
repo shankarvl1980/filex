@@ -78,7 +78,6 @@ public class ArchiveSetUpDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle=getArguments();
@@ -417,7 +416,7 @@ public class ArchiveSetUpDialog extends DialogFragment
 							return;
 						}
 						destFileObjectType=rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-						if(destFileObjectType==FileObjectType.USB_TYPE || destFileObjectType==FileObjectType.FTP_TYPE)
+						if(destFileObjectType==FileObjectType.USB_TYPE || destFileObjectType==FileObjectType.FTP_TYPE || destFileObjectType==FileObjectType.SFTP_TYPE)
 						{
 							Global.print(context,getString(R.string.not_supported));
 							return;

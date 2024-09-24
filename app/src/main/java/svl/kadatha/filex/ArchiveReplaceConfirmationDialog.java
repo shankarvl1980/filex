@@ -15,7 +15,6 @@ import androidx.fragment.app.DialogFragment;
 
 public class ArchiveReplaceConfirmationDialog extends DialogFragment
 {
-
     private String zip_folder_name;
 	private String archive_action;
 	private Bundle bundle;

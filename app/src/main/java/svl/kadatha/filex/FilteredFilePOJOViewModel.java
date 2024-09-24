@@ -96,28 +96,12 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
             @Override
             public void run() {
 
-                if(fileObjectType ==FileObjectType.USB_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_USB_CACHE(file_path,fileObjectType);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                {
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.ROOT_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.SFTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_SFTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
+                if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE || fileObjectType==FileObjectType.ROOT_TYPE){
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
+                }
+                else{
+                    File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
 
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
@@ -139,7 +123,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 }
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+                if(fromThirdPartyApp || Global.whether_file_cached(fileObjectType))
                 {
                     if(whetherVideo)
                     {
@@ -281,28 +265,12 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
             @Override
             public void run() {
 
-                if(fileObjectType ==FileObjectType.USB_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_USB_CACHE(file_path,fileObjectType);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                {
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.ROOT_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.SFTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_SFTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
+                if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE || fileObjectType==FileObjectType.ROOT_TYPE){
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
+                }
+                else{
+                    File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);//Global.COPY_TO_FTP_CACHE(file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
 
                 try {
@@ -311,23 +279,10 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                     {
                         pdfRenderer = new PdfRenderer(application.getContentResolver().openFileDescriptor(data,"r"));
                     }
-                    else if(fileObjectType==FileObjectType.FILE_TYPE)
+                    else
                     {
                         pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
                     }
-                    else if(fileObjectType==FileObjectType.USB_TYPE)
-                    {
-                        pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
-                    }
-                    else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                    {
-                        pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
-                    }
-                    else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
-                    {
-                        pdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(new File(currently_shown_file.getPath()), ParcelFileDescriptor.MODE_READ_ONLY));
-                    }
-
 
                     file_size=currently_shown_file.getSizeLong();
                     if(file_size==0)
@@ -352,9 +307,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-
     }
-
 
     public void rotate(Uri tree_uri, String tree_uri_path) {
     if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;

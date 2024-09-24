@@ -62,6 +62,7 @@ public class AlbumListFragment extends Fragment
 	private static final String SAVE_AUDIO_LIST_REQUEST_CODE="album_list_save_audio_request_code";
 	private static final String AUDIO_SELECT_REQUEST_CODE="album_details_audio_select_request_code";
 	private AppCompatActivity activity;
+
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);

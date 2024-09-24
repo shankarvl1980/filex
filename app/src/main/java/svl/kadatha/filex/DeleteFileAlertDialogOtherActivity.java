@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 {
-
     private TextView no_files_textview;
     private TextView size_files_textview;
 
@@ -45,7 +44,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();
@@ -59,7 +57,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		context=getContext();
 		View v=inflater.inflate(R.layout.fragment_create_rename_delete,container,false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
@@ -115,11 +112,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 						return;
 					}
 
-					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(fileObjectType,null))
-					{
-						Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-						return;
-					}
 					if(fileObjectType== FileObjectType.FILE_TYPE)
 					{
 						String file_path=files_selected_array.get(0);
@@ -170,14 +162,12 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 					tree_uri_path=result.getString("tree_uri_path");
 					okbutton.callOnClick();
 				}
-
 			}
 		});
 
 
 		if(savedInstanceState!=null)
 		{
-
 			no_files_textview.setText(getString(R.string.total_files)+" "+total_no_of_files);
 			size_files_textview.setText(getString(R.string.size)+" "+size_of_files_to_be_deleted);
 		}
@@ -198,12 +188,10 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 	@Override
 	public void onResume()
 	{
-		// TODO: Implement this method
 		super.onResume();
 		Window window=getDialog().getWindow();
 		window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		
 	}
 
 	private boolean check_SAF_permission(String file_path,FileObjectType fileObjectType)
@@ -225,5 +213,4 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment
 			return true;
 		}
 	}
-
 }

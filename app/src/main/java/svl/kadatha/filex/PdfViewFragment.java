@@ -139,13 +139,11 @@ public class PdfViewFragment extends Fragment
         {
             public void onItemClick(AdapterView<?> adapterview, View v, int p1,long p2)
             {
-
                 final ArrayList<String> files_selected_array=new ArrayList<>();
-
                 switch(p1)
                 {
                     case 0:
-                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+                        if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -160,9 +158,8 @@ public class PdfViewFragment extends Fragment
                         if(viewModel.fromThirdPartyApp)
                         {
                             src_uri=data;
-
                         }
-                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+                        else if(Global.whether_file_cached(viewModel.fileObjectType))
                         {
                             src_uri= FileProvider.getUriForFile(context, context.getPackageName()+".provider",new File(viewModel.currently_shown_file.getPath()));
                         }
@@ -174,7 +171,6 @@ public class PdfViewFragment extends Fragment
                         ArrayList<Uri> uri_list=new ArrayList<>();
                         uri_list.add(src_uri);
                         FileIntentDispatch.sendUri(context,uri_list);
-
                         break;
                     case 2:
                         Uri copy_uri=null;
@@ -182,7 +178,7 @@ public class PdfViewFragment extends Fragment
                         {
                             copy_uri=data;
                         }
-                        else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+                        else if(Global.whether_file_cached(viewModel.fileObjectType))
                         {
                             copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
                         }
@@ -212,7 +208,7 @@ public class PdfViewFragment extends Fragment
                         break;
 
                     case 3:
-                        if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+                        if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
                         {
                             Global.print(context,getString(R.string.not_able_to_process));
                             break;
@@ -266,11 +262,9 @@ public class PdfViewFragment extends Fragment
                         break;
                     default:
                         break;
-
                 }
                 listPopWindow.dismiss();
             }
-
         });
 
         listPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener()
@@ -281,7 +275,6 @@ public class PdfViewFragment extends Fragment
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
             }
-
         });
         view_pager=v.findViewById(R.id.activity_picture_view_viewpager);
         floating_back_button=v.findViewById(R.id.floating_button_picture_fragment);
@@ -291,7 +284,6 @@ public class PdfViewFragment extends Fragment
             {
                 getActivity().getOnBackPressedDispatcher().onBackPressed();
             }
-
         });
         progress_bar=v.findViewById(R.id.activity_picture_progressbar);
         current_page_tv=v.findViewById(R.id.image_view_current_view);
@@ -361,7 +353,6 @@ public class PdfViewFragment extends Fragment
                     //floating_back_button.setVisibility(View.GONE);
                     toolbar_visible=false;
                 }
-
             }
         };
 
@@ -395,7 +386,7 @@ public class PdfViewFragment extends Fragment
                 else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
                 {
                     progress_bar.setVisibility(View.GONE);
-                    if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+                    if(Global.whether_file_cached(viewModel.fileObjectType))
                     {
                         if(activity instanceof PdfViewActivity)
                         {
@@ -467,7 +458,6 @@ public class PdfViewFragment extends Fragment
         getChildFragmentManager().setFragmentResultListener(PdfPasswordDialog.PASSWORD_REQUEST_CODE, this,
                 (requestKey, result) -> {
                     String password = result.getString("password");
-
                 });
 
         return v;
@@ -515,7 +505,6 @@ public class PdfViewFragment extends Fragment
             is_menu_opened=false;
             toolbar_visible=false;
             handler.removeCallbacks(runnable);
-
         }
         else
         {
@@ -530,13 +519,11 @@ public class PdfViewFragment extends Fragment
             toolbar_visible=true;
             handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
         }
-
     }
 
     private class PdfViewPagerAdapter extends PagerAdapter
     {
         TouchImageView image_view;
-
         PdfViewPagerAdapter()
         {
             title.setText(viewModel.currently_shown_file.getName());
@@ -545,21 +532,18 @@ public class PdfViewFragment extends Fragment
         @Override
         public int getCount()
         {
-            // TODO: Implement this method
             return viewModel.total_pages;
         }
 
         @Override
         public boolean isViewFromObject(View p1, Object p2)
         {
-            // TODO: Implement this method
             return p1.equals(p2);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position)
         {
-            // TODO: Implement this method
             View v=LayoutInflater.from(context).inflate(R.layout.image_viewpager_layout,container,false);
             image_view=v.findViewById(R.id.picture_viewpager_layout_imageview);
             image_view.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -591,7 +575,6 @@ public class PdfViewFragment extends Fragment
         {
             container.removeView((View)object);
         }
-
     }
 
     private class BitmapFetchAsyncTask extends AsyncTask<Void,Void,Void>
@@ -614,7 +597,6 @@ public class PdfViewFragment extends Fragment
 
                 try {
                     bitmap=getBitmap(viewModel.pdfRenderer,position);
-
                 }
                 catch (SecurityException e)
                 {
@@ -629,13 +611,11 @@ public class PdfViewFragment extends Fragment
                 {
                     Global.print_background_thread(context,getString(R.string.exception_thrown));
                 }
-
             }
             else
             {
                 Global.print_background_thread(context,getString(R.string.outofmemory_exception_thrown));
             }
-
             return null;
         }
 
@@ -655,8 +635,6 @@ public class PdfViewFragment extends Fragment
             }
         }
     }
-
-
 
 
     private Bitmap getBitmap(PdfRenderer pdfRenderer, int i)
@@ -695,7 +673,6 @@ public class PdfViewFragment extends Fragment
         @Override
         public void onBindViewHolder(PictureSelectorAdapter.VH p1, int p2)
         {
-            // TODO: Implement this method
             p1.textView.setText(p2+1+"");
             p1.v.setSelected(viewModel.mselecteditems.containsKey(p2));
 
@@ -704,7 +681,6 @@ public class PdfViewFragment extends Fragment
         @Override
         public int getItemCount()
         {
-            // TODO: Implement this method
             return total_pages;
         }
 
@@ -735,7 +711,6 @@ public class PdfViewFragment extends Fragment
             }
         }
     }
-
 }
 
 

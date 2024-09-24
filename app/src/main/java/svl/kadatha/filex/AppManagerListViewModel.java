@@ -89,12 +89,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
             return;
         }
 
-        if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(null,destFileObjectType))
-        {
-            Global.print(application,application.getString(R.string.wait_till_current_service_on_ftp_finishes));
-            return;
-        }
-
         if(isBackedUp.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         FILE_OBJECT_TYPE=destFileObjectType;
         isBackedUp.setValue(AsyncTaskStatus.STARTED);
@@ -146,8 +140,8 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     isBackedUp.postValue(AsyncTaskStatus.COMPLETED);
                     return;
                 }
-                List<File> src_file_list=new ArrayList<>();
 
+                List<File> src_file_list=new ArrayList<>();
                 for(String s: files_selected_array)
                 {
                     File file=new File(s);

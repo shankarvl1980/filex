@@ -100,7 +100,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 return unzip(zip_file_path,tree_uri,tree_uri_path,zip_dest_path,isWritable);
             }
         }
-        else if(destFileObjectType==FileObjectType.USB_TYPE || destFileObjectType==FileObjectType.FTP_TYPE){
+        else if(Global.whether_file_cached(destFileObjectType)){
             return unzip(zip_file_path,tree_uri,tree_uri_path,zip_dest_path,isWritable);
         }
         else {

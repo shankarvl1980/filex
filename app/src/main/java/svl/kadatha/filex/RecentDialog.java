@@ -40,7 +40,6 @@ import me.jahnen.libaums.core.UsbMassStorageDevice;
 
 public class RecentDialog extends DialogFragment implements MainActivity.RecentDialogListener
 {
-
     private Context context;
 	private final LinkedList<FilePOJO> root_dir_linkedlist=new LinkedList<>();
     public static final int RECENT_SIZE=30;
@@ -71,7 +70,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 		{
 			((MainActivity)activity).recentDialogListener=null;
 		}
-
 	}
 
 	@Override
@@ -218,7 +216,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 
 			}
-			else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+			else if(Global.whether_file_cached(fileObjectType))
 			{
 				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
 				{
@@ -227,7 +225,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				}
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 			}
-			else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+			else if(fileObjectType==FileObjectType.FILE_TYPE)
 			{
 				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 			}
@@ -340,7 +338,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 					{
 						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
 						p1.textView_recent_dir.setText(R.string.root_directory);
-
 					}
 				}
 				else if(fileObjectType==FileObjectType.FTP_TYPE)
@@ -364,6 +361,10 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
 				else if(filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
 				{
 					p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+ filePOJO.getPath());
+				}
+				else if(filePOJO.getFileObjectType()==FileObjectType.SFTP_TYPE)
+				{
+					p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX+ filePOJO.getPath());
 				}
 				else
 				{

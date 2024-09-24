@@ -24,18 +24,15 @@ public class DeleteFtpAlertDialog extends DialogFragment {
     private String request_code;
     private TextView textView;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context=context;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
         Bundle bundle=getArguments();

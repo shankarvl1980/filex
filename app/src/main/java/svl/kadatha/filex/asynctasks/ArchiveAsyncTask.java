@@ -107,7 +107,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     }
                 }
             }
-            else if(sourceFileObjectType==FileObjectType.USB_TYPE || sourceFileObjectType==FileObjectType.FTP_TYPE)
+            else
             {
                 List<FileModel> fileModels=new ArrayList<>();
                 FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);

@@ -114,7 +114,7 @@ public class AudioPlayFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					if(progress_bar!=null)progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
-					if(audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					if(Global.whether_file_cached(audioPlayViewModel.fileObjectType))
 					{
 						if(activity instanceof AudioPlayerActivity)
 						{
@@ -177,20 +177,7 @@ public class AudioPlayFragment extends Fragment
 		if(data!=null)
 		{
 			if(progress_bar!=null)progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
-//
-//			if(activity instanceof AudioPlayerActivity)
-//			{
-//				audioPlayViewModel.fileObjectType= ((AudioPlayerActivity)activity).fileObjectType;
-//				audioPlayViewModel.fromThirdPartyApp = ((AudioPlayerActivity)activity).fromThirdPartyApp;
-//				audioPlayViewModel.file_path= ((AudioPlayerActivity)activity).file_path;
-//			}
-//
-//			audioPlayViewModel.album_id=AudioPlayerActivity.AUDIO_FILE.getAlbumId();
-
-//			String source_folder = new File(audioPlayViewModel.file_path).getParent();
-//			audioPlayViewModel.albumPolling(source_folder,audioPlayViewModel.fileObjectType,audioPlayViewModel.fromThirdPartyApp);
 		}
-
 	}
 
 	@Override
@@ -248,7 +235,6 @@ public class AudioPlayFragment extends Fragment
 							default:
 								break;
 						}
-
 						enable_disable_previous_next_btn();
 					}
 				});
@@ -308,7 +294,6 @@ public class AudioPlayFragment extends Fragment
 				}
 				((AudioPlayerActivity)context).getOnBackPressedDispatcher().onBackPressed();
 				audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
-
 			}
 		});
 
@@ -330,7 +315,6 @@ public class AudioPlayFragment extends Fragment
 		listPopWindow.setFocusable(true);
 		listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
 		listView.setOnItemClickListener(new ListPopupWindowClickListener());
-
 
 		EquallyDistributedImageButtonsLayout tb_layout =new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
 		int[] drawables ={R.drawable.previous_icon,R.drawable.backward_10_icon,R.drawable.play_icon,R.drawable.forward_10_icon,R.drawable.next_icon};
@@ -574,9 +558,9 @@ public class AudioPlayFragment extends Fragment
 			audio_album_tv.setText(getString(R.string.album_colon)+" null");
 			audio_artists_tv.setText(getString(R.string.artists_colon)+" null");
 			next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
-
 			return;
 		}
+
 		if(AudioPlayerService.CURRENT_PLAY_NUMBER<=0)
 		{
 			previous_btn.setEnabled(false);
@@ -587,6 +571,7 @@ public class AudioPlayFragment extends Fragment
 			previous_btn.setEnabled(true);
 			previous_btn.setAlpha(Global.ENABLE_ALFA);
 		}
+
 		if(AudioPlayerService.CURRENT_PLAY_NUMBER>=AudioPlayerService.AUDIO_QUEUED_ARRAY.size()-1)
 		{
 			next_btn.setEnabled(false);
@@ -597,6 +582,7 @@ public class AudioPlayFragment extends Fragment
 			next_btn.setEnabled(true);
 			next_btn.setAlpha(Global.ENABLE_ALFA);
 		}
+
 		// Below is placed here instead of at setTittleArt method because, AudioPlayerService.AUDIO_QUEUED_ARRAY and CURRENT_PLAY not yet updated on selection of audio
 		if(audio_player_service !=null && audio_player_service.current_audio!=null)
 		{
@@ -707,7 +693,6 @@ public class AudioPlayFragment extends Fragment
 
 	private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener
 	{
-
 		@Override
 		public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
 		{
@@ -721,11 +706,12 @@ public class AudioPlayFragment extends Fragment
 			switch(p3)
 			{
 				case 0:
-					if(!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE ||audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
+					if(!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(),Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()))
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;
 					}
+
 					if(!AllAudioListFragment.FULLY_POPULATED)
 					{
 						Global.print(context,getString(R.string.wait_till_all_audios_populated_in_all_songs_tab));
@@ -742,7 +728,7 @@ public class AudioPlayFragment extends Fragment
 						src_uri=data;
 
 					}
-					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					else if(Global.whether_file_cached(audioPlayViewModel.fileObjectType))
 					{
 						src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
@@ -766,7 +752,7 @@ public class AudioPlayFragment extends Fragment
 					{
 						copy_uri=data;
 					}
-					else if(audioPlayViewModel.fileObjectType==FileObjectType.FILE_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					else if(Global.whether_file_cached(audioPlayViewModel.fileObjectType))
 					{
 						copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(AudioPlayerActivity.AUDIO_FILE.getData()));
 					}
@@ -800,7 +786,7 @@ public class AudioPlayFragment extends Fragment
 					break;
 
 				case 3:
-					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || audioPlayViewModel.fileObjectType==FileObjectType.USB_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.FTP_TYPE || audioPlayViewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					if(AudioPlayerActivity.AUDIO_FILE.getFileObjectType()==null || Global.whether_file_cached(audioPlayViewModel.fileObjectType))
 					{
 						Global.print(context,getString(R.string.not_able_to_process));
 						break;

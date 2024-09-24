@@ -17,11 +17,9 @@ import androidx.fragment.app.DialogFragment;
 
 public class RenameReplaceConfirmationDialog extends DialogFragment
 {
-
     private String rename_file_name;
 	private Context context;
 	private Bundle bundle;
-
 
    public static RenameReplaceConfirmationDialog getInstance(String new_name)
    {
@@ -41,7 +39,6 @@ public class RenameReplaceConfirmationDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();

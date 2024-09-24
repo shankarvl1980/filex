@@ -21,7 +21,6 @@ public class CleanStorageDialog extends DialogFragment
     private Context context;
     private DetailFragmentListener detailFragmentListener;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

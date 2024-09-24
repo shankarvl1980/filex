@@ -118,7 +118,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		LINE_NUMBER_SIZE=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,getResources().getDisplayMetrics());
 
-
 		scrollview=findViewById(R.id.file_editor_scrollview);
 		keyBoardUtil=new KeyBoardUtil(scrollview);
 
@@ -169,7 +168,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon,getString(R.string.properties),4));
 		list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.settings_icon,getString(R.string.settings),5));
 
-
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
 		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context, list_popupwindowpojos));
@@ -186,7 +184,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				switch(p1)
 				{
 					case 0:
-						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+						if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
@@ -202,7 +200,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						{
 							src_uri=viewModel.data;
 						}
-						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE ||viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+						else if(Global.whether_file_cached(viewModel.fileObjectType))
 						{
 							src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
@@ -221,9 +219,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						if(viewModel.fromThirdPartyApp)
 						{
 							copy_uri=viewModel.data;
-
 						}
-						else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+						else if(Global.whether_file_cached(viewModel.fileObjectType))
 						{
 							copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
@@ -247,9 +244,8 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 							Global.print(context,getString(R.string.could_not_perform_action));
 						}
 						break;
-
 					case 3:
-						if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+						if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 						{
 							Global.print(context,getString(R.string.not_able_to_process));
 							break;
@@ -258,14 +254,12 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
 						propertiesDialog.show(fm,"properties_dialog");
 						break;
-
 					case 4:
 						fileEditorSettingsDialog=FileEditorSettingsDialog.getInstance(viewModel.eol);
 						fileEditorSettingsDialog.show(fm,"file_editor_overflow");
 						break;
 					default:
 						break;
-
 				}
 				listPopWindow.dismiss();
 			}
@@ -295,7 +289,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					scroll_distance+=dy;
 				}
 			}
-			
 		});
 
         BottomToolbarListener bottomToolbarListener = new BottomToolbarListener();
@@ -441,7 +434,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					filetext_container_edittext.setEditable(false);
 					onClick_edit_button();
 					viewModel.textViewUndoRedo.startListening();
-
 				}
 			}
 		});
@@ -510,7 +502,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 					tree_uri_path=result.getString("tree_uri_path");
 					start_file_save_service();
 				}
-
 			}
 		});
 
@@ -526,8 +517,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 						boolean next_action=result.getBoolean("next_action");
 						next_action(next_action);
 					}
-
-
 				}
 			}
 		});
@@ -537,7 +526,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			Intent intent=getIntent();
 			on_intent(intent, savedInstanceState);
 		}
-
 
 		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
 			@Override
@@ -591,19 +579,17 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		else {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		}
-
 	}
+
 	@Override
 	protected void onStart()
 	{
-		// TODO: Implement this method
 		super.onStart();
 		if(emptyService!=null && serviceConnection!=null)
 		{
 			Intent file_save_service_intent=new Intent(context,emptyService);
 			bindService(file_save_service_intent,serviceConnection,Context.BIND_AUTO_CREATE);
 		}
-
 		clear_cache=true;
 		Global.WORKOUT_AVAILABLE_SPACE();
 	}
@@ -611,7 +597,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	@Override
 	protected void onStop()
 	{
-		// TODO: Implement this method
 		super.onStop();
 		if(serviceConnection!=null)
 		{
@@ -699,10 +684,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			return false;
 		}
 	}
+
 	@Override
 	public void onEOLchanged(int eol)
 	{
-		// TODO: Implement this method
 		if(!viewModel.file_format_supported)
 		{
 			return;
@@ -836,7 +821,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 				}
 			}
 		}
-
 	}
 
 	private void file_close_procedure()
@@ -865,17 +849,14 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
-		// TODO: Implement this method
 		super.onSaveInstanceState(outState);
 		outState.putString("file_name",file_name.getText().toString());
 		outState.putBoolean("clear_cache",clear_cache);
-
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onRestoreInstanceState(savedInstanceState);
 		file_name.setText(savedInstanceState.getString("file_name"));
 		onClick_edit_button();
@@ -889,9 +870,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 			down_button.setEnabled(false);
 			down_button.setAlpha(Global.DISABLE_ALFA);
 		}
-
 		clear_cache=savedInstanceState.getBoolean("clear_cache");
-
 	}
 
 	private void onClick_edit_button()
@@ -958,13 +937,11 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 	}
 
 
-
 	private void start_file_save_service() {
 		if (!viewModel.file.exists())// || viewModel.temporary_file_for_save == null) {
 		{
 			return;
 		}
-
 
 		Bundle bundle = new Bundle();
 		bundle.putBoolean("isWritable", viewModel.isWritable);
@@ -1084,23 +1061,19 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 								} else if (viewModel.action_after_save.equals("go_next")) {
 									go_next();
 								}
-
 								progress_bar.setVisibility(View.GONE);
 							}
 						});
 					}
 			}
-
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName p1)
 		{
-			// TODO: Implement this method
 			if(service!=null)service=null;
 			if(fileSaveService1!=null)fileSaveService1.setFileSaveServiceCompletionListener(null);
 			if(fileSaveService2!=null)fileSaveService2.setFileSaveServiceCompletionListener(null);
-
 		}
 	}
 
@@ -1120,8 +1093,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 		{
 			emptyService=FileSaveService2.class;
 		}
-
 		return emptyService;
 	}
-
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class PdfPasswordDialog extends DialogFragment {
@@ -15,6 +16,12 @@ public class PdfPasswordDialog extends DialogFragment {
 
     public static PdfPasswordDialog newInstance() {
         return new PdfPasswordDialog();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setCancelable(false);
     }
 
     @Override

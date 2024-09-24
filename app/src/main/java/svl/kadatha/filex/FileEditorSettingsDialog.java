@@ -26,7 +26,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class FileEditorSettingsDialog extends DialogFragment
 {
-
 	private RadioButton unix_rb,mac_rb,wnd_rb;
 	private ImageButton text_size_decrease_btn,text_size_increase_btn;
 	private boolean not_wrap;
@@ -45,7 +44,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 	@Override
 	public void onAttach(Context context)
 	{
-		// TODO: Implement this method
 		super.onAttach(context);
 		this.context=context;
 		fileEditorActivity=((FileEditorActivity)context);
@@ -62,7 +60,6 @@ public class FileEditorSettingsDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		not_wrap=FileEditorActivity.NOT_WRAP;

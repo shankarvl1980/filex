@@ -46,7 +46,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();
@@ -58,7 +57,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
         Context context = getContext();
 		View v=inflater.inflate(R.layout.fragment_saf_permission_helper,container,false);
         ImageView imageView1 = v.findViewById(R.id.fragment_saf_permission_helper_imageview1);
@@ -66,6 +64,7 @@ public class SAFPermissionHelperDialog extends DialogFragment
         ImageView imageView3 = v.findViewById(R.id.fragment_saf_permission_helper_imageview3);
         ImageView imageView4 = v.findViewById(R.id.fragment_saf_permission_helper_imageview4);
         TextView textView = v.findViewById(R.id.fragment_saf_permission_helper_tv);
+
 		if(fileObjectType==FileObjectType.USB_TYPE)
 		{
 			imageView1.setVisibility(View.GONE);
@@ -91,7 +90,6 @@ public class SAFPermissionHelperDialog extends DialogFragment
 		
 		cancel_button.setOnClickListener(new View.OnClickListener()
 		{
-			
 			public void onClick(View v)
 			{
 				getParentFragmentManager().setFragmentResult(SAF_PERMISSION_CANCEL_REQUEST_CODE,null);

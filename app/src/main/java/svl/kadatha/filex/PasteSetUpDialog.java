@@ -41,7 +41,6 @@ public class PasteSetUpDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 
@@ -182,10 +181,6 @@ public class PasteSetUpDialog extends DialogFragment
 				return check_SAF_permission_source(file_path,fileObjectType);
 			}
 		}
-		else if(fileObjectType==FileObjectType.USB_TYPE)
-		{
-			return true;
-		}
 		else if(fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
 		{
 			for(int n=0;n<size;++n)
@@ -196,10 +191,6 @@ public class PasteSetUpDialog extends DialogFragment
 					if(!check_SAF_permission_source(file_path,FileObjectType.FILE_TYPE)) return false;
 				}
 			}
-			return true;
-		}
-		else if(fileObjectType==FileObjectType.FTP_TYPE)
-		{
 			return true;
 		}
 		else if(fileObjectType ==FileObjectType.ROOT_TYPE)
@@ -217,7 +208,6 @@ public class PasteSetUpDialog extends DialogFragment
 
 		}
 		return true; //this needs to be true, after success checking of permission of in searchlibrarytype to return true
-
 	}
 
 	private boolean check_permission_for_destination(String file_path,FileObjectType fileObjectType)
@@ -317,13 +307,6 @@ public class PasteSetUpDialog extends DialogFragment
 		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,destFileObjectType))
 		{
 			Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
-			dismissAllowingStateLoss();
-			return;
-		}
-
-		if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(sourceFileObjectType,destFileObjectType))
-		{
-			Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
 			dismissAllowingStateLoss();
 			return;
 		}

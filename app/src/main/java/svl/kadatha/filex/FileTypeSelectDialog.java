@@ -43,7 +43,6 @@ public class FileTypeSelectDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		Bundle bundle = getArguments();

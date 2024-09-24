@@ -28,7 +28,6 @@ import svl.kadatha.filex.asynctasks.DeleteAsyncTask;
 
 public class DeleteFileAlertDialog extends DialogFragment
 {
-
     private TextView no_files_textview;
     private TextView size_files_textview;
     private final ArrayList<String>files_selected_array=new ArrayList<>();
@@ -59,7 +58,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
 		setCancelable(false);
 		bundle=getArguments();
@@ -140,12 +138,6 @@ public class DeleteFileAlertDialog extends DialogFragment
 					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(sourceFileObjectType,null))
 					{
 						Global.print(context,getString(R.string.wait_till_completion_on_going_operation_on_usb));
-						return;
-					}
-
-					if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(sourceFileObjectType,null))
-					{
-						Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
 						return;
 					}
 

@@ -134,7 +134,6 @@ ImageViewFragment extends Fragment
 				}
 			});
 
-
 		listPopWindow=new PopupWindow(context);
 		ListView listView=new ListView(context);
 		listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
@@ -151,8 +150,7 @@ ImageViewFragment extends Fragment
 					switch(p1)
 					{
 						case 0:
-
-							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -161,15 +159,13 @@ ImageViewFragment extends Fragment
 							DeleteFileAlertDialogOtherActivity deleteFileAlertDialogOtherActivity=DeleteFileAlertDialogOtherActivity.getInstance(DELETE_FILE_REQUEST_CODE,files_selected_array,viewModel.fileObjectType);
 							deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(),"deletefilealertotheractivity");
 							break;
-							
 						case 1:
 							Uri src_uri=null;
 							if(viewModel.fromThirdPartyApp)
 							{
 								src_uri=data;
-
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							else if(Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								src_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -187,9 +183,8 @@ ImageViewFragment extends Fragment
 							if(viewModel.fromThirdPartyApp)
 							{
 								copy_uri=data;
-
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							else if(Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								copy_uri= FileProvider.getUriForFile(context, Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -218,9 +213,8 @@ ImageViewFragment extends Fragment
 								Global.print(context,getString(R.string.could_not_perform_action));
 							}
 							break;
-
 						case 3:
-							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								Global.print(context,getString(R.string.not_able_to_process));
 								break;
@@ -229,14 +223,13 @@ ImageViewFragment extends Fragment
 							PropertiesDialog propertiesDialog=PropertiesDialog.getInstance(files_selected_array,viewModel.fileObjectType);
 							propertiesDialog.show(getParentFragmentManager(),"properties_dialog");
 							break;
-							
 						case 4:
 							Uri uri=null;
 							if(viewModel.fromThirdPartyApp)
 							{
 								uri=data;
 							}
-							else if(viewModel.fileObjectType==FileObjectType.FILE_TYPE || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							else if(Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								uri=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 							}
@@ -254,13 +247,12 @@ ImageViewFragment extends Fragment
 							{
 								((ImageViewActivity)activity).clear_cache=false;
 							}
-
 							File tempFile=new File(context.getExternalCacheDir(),viewModel.currently_shown_file.getName());
 							Intent intent=InstaCropperActivity.getIntent(context,uri,FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",tempFile),viewModel.currently_shown_file.getName(),Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT,100);
 							activityResultLauncher_crop_request.launch(intent);
 							break;
 						case 5:
-							if(viewModel.fromThirdPartyApp || viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+							if(viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType))
 							{
 								TouchImageView currentView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
 								if (currentView != null) {
@@ -312,11 +304,9 @@ ImageViewFragment extends Fragment
 									viewModel.rotate(tree_uri,tree_uri_path);
 								}
 							}
-
 							break;
 						default:
 							break;
-
 					}
 					listPopWindow.dismiss();
 				}
@@ -329,7 +319,6 @@ ImageViewFragment extends Fragment
 					handler.removeCallbacks(runnable);
 					handler.postDelayed(runnable,Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 				}
-
 			});
 		view_pager=v.findViewById(R.id.activity_picture_view_viewpager);
 		floating_back_button=v.findViewById(R.id.floating_button_picture_fragment);
@@ -339,7 +328,6 @@ ImageViewFragment extends Fragment
 				{
 					getActivity().getOnBackPressedDispatcher().onBackPressed();
 				}
-
 			});
 
 		image_view_selector_butt=v.findViewById(R.id.image_view_selector_recyclerview_group);
@@ -412,7 +400,6 @@ ImageViewFragment extends Fragment
 					//floating_back_button.setVisibility(View.GONE);
 					toolbar_visible=false;
 				}
-
 			}
 		};
 
@@ -434,7 +421,6 @@ ImageViewFragment extends Fragment
 				viewModel.fileObjectType=FileObjectType.FILE_TYPE;
 				viewModel.fromThirdPartyApp=true;
 			}
-
 		}
 
 		viewModel.getAlbumFromCurrentFolder(Global.IMAGE_REGEX,false);
@@ -448,13 +434,12 @@ ImageViewFragment extends Fragment
 				else if (asyncTaskStatus==AsyncTaskStatus.COMPLETED)
 				{
 					progress_bar.setVisibility(View.GONE);
-					if(viewModel.fileObjectType==FileObjectType.USB_TYPE || viewModel.fileObjectType==FileObjectType.FTP_TYPE || viewModel.fileObjectType==FileObjectType.SFTP_TYPE)
+					if(Global.whether_file_cached(viewModel.fileObjectType))
 					{
 						if(activity instanceof ImageViewActivity)
 						{
 							((ImageViewActivity)activity).data=FileProvider.getUriForFile(context,Global.FILEX_PACKAGE+".provider",new File(viewModel.currently_shown_file.getPath()));
 						}
-
 					}
 					image_view_adapter=new ImageViewPagerAdapter(viewModel.album_file_pojo_list);
 					view_pager.setAdapter(image_view_adapter);
@@ -466,7 +451,6 @@ ImageViewFragment extends Fragment
 					recyclerview.setLayoutManager(lm);
 					recyclerview.setAdapter(picture_selector_adapter);
 					lm.scrollToPositionWithOffset(viewModel.file_selected_idx,-preview_image_offset);
-
 				}
 			}
 		});
@@ -556,7 +540,6 @@ ImageViewFragment extends Fragment
 						viewModel.rotate(tree_uri,tree_uri_path);
 					}
 				}
-
 			}
 		});
 
@@ -573,10 +556,8 @@ ImageViewFragment extends Fragment
 					progress_bar.setVisibility(View.GONE);
 					viewModel.hasWallPaperSet.setValue(AsyncTaskStatus.NOT_YET_STARTED);
 				}
-
 			}
 		});
-
 		return v;
 	}
 
@@ -651,7 +632,6 @@ ImageViewFragment extends Fragment
 			is_menu_opened=false;
 			toolbar_visible=false;
 			handler.removeCallbacks(runnable);
-
 		}
 		else
 		{
@@ -668,7 +648,6 @@ ImageViewFragment extends Fragment
 		}
 	}
 
-
 	private class ImageViewPagerAdapter extends PagerAdapter
 	{
 		final List<FilePOJO> albumList;
@@ -683,21 +662,18 @@ ImageViewFragment extends Fragment
 		@Override
 		public int getCount()
 		{
-			// TODO: Implement this method
 			return albumList.size();
 		}
 
 		@Override
 		public boolean isViewFromObject(View p1, Object p2)
 		{
-			// TODO: Implement this method
 			return p1.equals(p2);
 		}
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position)
 		{
-			// TODO: Implement this method
 			View v=LayoutInflater.from(context).inflate(R.layout.image_viewpager_layout,container,false);
 			image_view=v.findViewById(R.id.picture_viewpager_layout_imageview);
 			image_view.setMaxZoom(6);
@@ -755,25 +731,20 @@ ImageViewFragment extends Fragment
 		@Override
 		public int getItemPosition(Object object)
 		{
-			// TODO: Implement this method
 			return POSITION_NONE;
 		}
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object)
 		{
-			// TODO: Implement this method
 			container.removeView((View)object);
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position)
 		{
-			// TODO: Implement this method
 			return albumList.get(position).getName();
 		}
-
-
 	}
 
 
@@ -788,7 +759,6 @@ ImageViewFragment extends Fragment
 		@Override
 		public PictureSelectorAdapter.VH onCreateViewHolder(ViewGroup parent, int p2)
 		{
-			// TODO: Implement this method
 			View v=LayoutInflater.from(context).inflate(R.layout.image_selector_recyclerview_layout,parent,false);
 			return new VH(v);
 		}
@@ -796,7 +766,6 @@ ImageViewFragment extends Fragment
 		@Override
 		public void onBindViewHolder(PictureSelectorAdapter.VH p1, int p2)
 		{
-			// TODO: Implement this method
 			FilePOJO f=picture_list.get(p2);
 			if(viewModel.fromThirdPartyApp)
 			{
@@ -805,7 +774,6 @@ ImageViewFragment extends Fragment
 					data=((ImageViewActivity)activity).data; //on rotation oncreateview is created first, data is null in oncreate
 					GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
 				}
-
 			}
 			else if(f.getFileObjectType()==FileObjectType.FILE_TYPE)
 			{
@@ -835,15 +803,12 @@ ImageViewFragment extends Fragment
 						.dontAnimate()
 						.into(p1.imageview);
 			}
-
 			p1.v.setSelected(viewModel.mselecteditems.containsKey(p2));
-
 		}
 
 		@Override
 		public int getItemCount()
 		{
-			// TODO: Implement this method
 			return picture_list.size();
 		}
 
@@ -862,10 +827,8 @@ ImageViewFragment extends Fragment
 			@Override
 			public void onClick(View p1)
 			{
-				// TODO: Implement this method
 				view_pager.setCurrentItem(getBindingAdapterPosition());
 			}
 		}
 	}
-
 }

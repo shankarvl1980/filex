@@ -105,7 +105,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         fileModifyObserver.setFileObserverListener(this);
         filepath_recyclerview=v.findViewById(R.id.fragment_archive_filepath_container);
 
-
         progress_bar=v.findViewById(R.id.fragment_archive_detail_progressbar);
 
         recyclerView=v.findViewById(R.id.fragment_archive_detail_container);
@@ -114,7 +113,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         filepath_recyclerview.addItemDecoration(itemdecor );
         LinearLayoutManager file_path_lm=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
         filepath_recyclerview.setLayoutManager(file_path_lm);
-
 
         if(Global.FILE_GRID_LAYOUT)
         {
@@ -159,7 +157,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     scroll_distance+=dy;
                 }
             }
-
         });
 
         folder_empty=v.findViewById(R.id.fragment_archive_empty_folder);
@@ -210,7 +207,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     extractZipFileViewModel.isZipExtracted=false;
                     extractZipFileViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
-
             }
         });
 
@@ -242,7 +238,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             time_image_view.setSelected(viewModel.library_time_desc);
             adapter.notifyDataSetChanged();
         }
-
         else if(modification_observed)
         {
             archiveViewActivity.actionmode_finish(this,fileclickselected);
@@ -279,7 +274,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         adapter=new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context);
         set_adapter();
         progress_bar.setVisibility(View.GONE);
-
         archiveViewActivity.file_number_view.setText(viewModel.mselecteditems.size()+"/"+file_list_size);
     }
 
@@ -379,7 +373,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
 
             }
-            else if(fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+            else if(Global.whether_file_cached(fileObjectType))
             {
                 if(file_size>Global.CACHE_FILE_MAX_LIMIT)
                 {
@@ -388,7 +382,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 }
                 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
             }
-            else if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.ROOT_TYPE)
+            else if(fileObjectType==FileObjectType.FILE_TYPE)
             {
                 FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
             }
@@ -455,7 +449,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     }
                     catch(IOException e){}
                 }
-
             }
 
             public void onLongClick(FilePOJO filePOJO)
@@ -488,7 +481,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 folder_empty.setVisibility(View.GONE);
             }
         }
-
     }
 
     private boolean check_SAF_permission(String new_file_path,FileObjectType fileObjectType)
@@ -529,7 +521,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             if(p.equals(File.separator))
             {
                 filepath_string_array= new String[]{""};
-
             }
             else
             {
@@ -577,14 +568,12 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         @Override
         public FilePathRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
         {
-            // TODO: Implement this method
             return new ViewHolder((FrameLayout)LayoutInflater.from(context).inflate(R.layout.filepath_recyclerview_layout,p1,false));
         }
 
         @Override
         public void onBindViewHolder(FilePathRecyclerViewAdapter.ViewHolder p1, int p2)
         {
-            // TODO: Implement this method
             if(filepath_string_array[p2].isEmpty())
             {
                 p1.file_path_string_tv.setText(File.separator);
@@ -598,10 +587,8 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         @Override
         public int getItemCount()
         {
-            // TODO: Implement this method
             return filepath_string_array.length;
         }
     }
-
 }
 

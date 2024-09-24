@@ -21,7 +21,6 @@ public class YesOrNoAlertDialog extends DialogFragment
     private int message;
     private Context context;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -31,7 +30,6 @@ public class YesOrNoAlertDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         setCancelable(false);
         bundle=getArguments();

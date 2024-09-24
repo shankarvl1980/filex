@@ -513,11 +513,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                                 Global.print(context,getString(R.string.not_connected_to_network));
                                 return;
                             }
-                            if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_FTP(FileObjectType.FTP_TYPE,FileObjectType.FTP_TYPE))
-                            {
-                                Global.print(context,getString(R.string.wait_till_current_service_on_ftp_finishes));
-                                return;
-                            }
+
                             progress_bar.setVisibility(View.VISIBLE);
                             NetworkAccountPOJO networkAccountPOJO=viewModel.networkAccountPOJOList.get(pos);
                             if(type.equals(FTP)){

@@ -60,30 +60,13 @@ public class AudioPlayViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                if(fileObjectType ==FileObjectType.USB_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_USB_CACHE(file_path,fileObjectType);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.ROOT_TYPE)
-                {
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.ROOT_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.FTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_FTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else if(fileObjectType==FileObjectType.SFTP_TYPE)
-                {
-                    File cache_file=Global.COPY_TO_SFTP_CACHE(file_path);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
+                if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE || fileObjectType==FileObjectType.ROOT_TYPE){
                     currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
-
+                else{
+                    File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);//Global.COPY_TO_FTP_CACHE(file_path);
+                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                }
 
                 List<FilePOJO> filePOJOS=new ArrayList<>(), filePOJOS_filtered=new ArrayList<>();
                 if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType+source_folder))
@@ -106,7 +89,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                 AudioPlayerService.CURRENT_PLAY_NUMBER=0;
 
                 // limiting to the selected only, in case of file selected from usb storage by adding condition below
-                if(fromThirdPartyApp || fileObjectType==FileObjectType.USB_TYPE || fileObjectType==FileObjectType.FTP_TYPE || fileObjectType==FileObjectType.SFTP_TYPE)
+                if(fromThirdPartyApp || Global.whether_file_cached(fileObjectType))
                 {
                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                 }

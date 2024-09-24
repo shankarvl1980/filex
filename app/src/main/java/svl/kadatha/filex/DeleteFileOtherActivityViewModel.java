@@ -109,7 +109,6 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
         }
     }
 
-
     public synchronized void deleteAudioPOJO(String source_folder,List<AudioPOJO> src_audio_file_list, FileObjectType fileObjectType,Uri tree_uri, String tree_uri_path)
     {
         if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
