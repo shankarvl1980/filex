@@ -90,7 +90,7 @@ public class SftpChannelRepository {
 
     private ChannelSftp createAndConnectSftpChannel() throws JSchException {
         JSch jsch = new JSch();
-        Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.server, networkAccountPOJO.port);
+        Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.host, networkAccountPOJO.port);
 
         if(!networkAccountPOJO.privateKeyPath.isEmpty()) {
             jsch.addIdentity(networkAccountPOJO.privateKeyPath, networkAccountPOJO.privateKeyPassphrase);

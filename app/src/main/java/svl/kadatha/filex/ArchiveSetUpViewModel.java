@@ -44,12 +44,9 @@ public class ArchiveSetUpViewModel extends ViewModel {
         future1=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                Global.REMOVE_RECURSIVE_PATHS(files_selected_array,archivedestfolder,destFileObjectType,sourceFileObjectType);
+                Global.REMOVE_RECURSIVE_PATHS(files_selected_array,sourceFileObjectType,archivedestfolder,destFileObjectType);
                 isRecursiveFilesRemoved.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-
-
     }
-
 }

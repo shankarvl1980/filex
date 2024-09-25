@@ -22,7 +22,7 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create table with all necessary fields including new ones
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                "server TEXT, " +
+                "host TEXT, " +
                 "port INTEGER, " +
                 "user_name TEXT, " +
                 "password TEXT, " +
@@ -40,12 +40,12 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
                 "domain TEXT, " +
                 "shareName TEXT, " +
                 "smbVersion TEXT, " +
-                "PRIMARY KEY (server, port, user_name, type)" +
+                "PRIMARY KEY (host, port, user_name, type)" +
                 ")");
 
         // Create an index for faster lookups
         db.execSQL("CREATE INDEX idx_server_port_user_type ON " + TABLE +
-                " (server, port, user_name, type)");
+                " (host, port, user_name, type)");
     }
 
     @Override
@@ -57,8 +57,8 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
     public long insert(NetworkAccountsDetailsDialog.NetworkAccountPOJO pojo) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         // Delete existing record if any
-        sqLiteDatabase.delete(TABLE, "server=? AND port=? AND user_name=? AND type=?",
-                new String[]{pojo.server, String.valueOf(pojo.port), pojo.user_name, pojo.type});
+        sqLiteDatabase.delete(TABLE, "host=? AND port=? AND user_name=? AND type=?",
+                new String[]{pojo.host, String.valueOf(pojo.port), pojo.user_name, pojo.type});
         ContentValues contentValues = createContentValues(pojo);
         return sqLiteDatabase.insert(TABLE, null, contentValues);
     }
@@ -69,24 +69,24 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues contentValues = createContentValues(pojo);
         return sqLiteDatabase.update(TABLE, contentValues,
-                "server=? AND port=? AND user_name=? AND type=?",
+                "host=? AND port=? AND user_name=? AND type=?",
                 new String[]{original_server, String.valueOf(original_port), original_user_name, original_type});
     }
 
     // Delete method
-    public int delete(String server, int port, String user_name, String type) {
-        return getWritableDatabase().delete(TABLE, "server=? AND port=? AND user_name=? AND type=?",
-                new String[]{server, String.valueOf(port), user_name, type});
+    public int delete(String host, int port, String user_name, String type) {
+        return getWritableDatabase().delete(TABLE, "host=? AND port=? AND user_name=? AND type=?",
+                new String[]{host, String.valueOf(port), user_name, type});
     }
 
     // Change display name method
-    public int change_display(String server, int port, String user_name, String new_display_name, String type) {
+    public int change_display(String host, int port, String user_name, String new_display_name, String type) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("display", new_display_name);
         return sqLiteDatabase.update(TABLE, contentValues,
-                "server=? AND port=? AND user_name=? AND type=?",
-                new String[]{server, String.valueOf(port), user_name, type});
+                "host=? AND port=? AND user_name=? AND type=?",
+                new String[]{host, String.valueOf(port), user_name, type});
     }
 
     // Get NetworkAccountPOJO list by type
@@ -111,12 +111,12 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Get NetworkAccountPOJO
-    public NetworkAccountsDetailsDialog.NetworkAccountPOJO getNetworkAccountPOJO(String server, int port, String user_name, String type) {
+    public NetworkAccountsDetailsDialog.NetworkAccountPOJO getNetworkAccountPOJO(String host, int port, String user_name, String type) {
         NetworkAccountsDetailsDialog.NetworkAccountPOJO pojo = null;
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(TABLE, null,
-                "server=? AND port=? AND user_name=? AND type=?",
-                new String[]{server, String.valueOf(port), user_name, type},
+                "host=? AND port=? AND user_name=? AND type=?",
+                new String[]{host, String.valueOf(port), user_name, type},
                 null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             pojo = createPojoFromCursor(cursor);
@@ -128,7 +128,7 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
     // Helper method to create ContentValues from POJO
     private ContentValues createContentValues(NetworkAccountsDetailsDialog.NetworkAccountPOJO pojo) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("server", pojo.server);
+        contentValues.put("host", pojo.host);
         contentValues.put("port", pojo.port);
         contentValues.put("user_name", pojo.user_name);
         contentValues.put("password", pojo.password);
@@ -151,7 +151,7 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
 
     // Helper method to create POJO from Cursor
     private NetworkAccountsDetailsDialog.NetworkAccountPOJO createPojoFromCursor(Cursor cursor) {
-        String server = cursor.getString(cursor.getColumnIndex("server"));
+        String host = cursor.getString(cursor.getColumnIndex("host"));
         int port = cursor.getInt(cursor.getColumnIndex("port"));
         String user_name = cursor.getString(cursor.getColumnIndex("user_name"));
         String password = cursor.getString(cursor.getColumnIndex("password"));
@@ -171,7 +171,7 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
         String smbVersion = cursor.getString(cursor.getColumnIndex("smbVersion"));
 
         return new NetworkAccountsDetailsDialog.NetworkAccountPOJO(
-                server, port, user_name, password,
+                host, port, user_name, password,
                 encoding, display, type,
                 mode, anonymous, useFTPS,
                 privateKeyPath, privateKeyPassphrase, knownHostsPath,

@@ -21,7 +21,7 @@ import androidx.fragment.app.DialogFragment;
 public class NetworkAccountDisplayRenameDialog extends DialogFragment {
 
     private Context context;
-    private String server,user_name, display,type;
+    private String host,user_name, display,type;
     private int port;
     private EditText new_ftp_name_edittext;
     private InputMethodManager imm;
@@ -52,7 +52,7 @@ public class NetworkAccountDisplayRenameDialog extends DialogFragment {
         if(bundle!=null)
         {
             request_code=bundle.getString("request_code");
-            server=bundle.getString("server");
+            host=bundle.getString("host");
             port=bundle.getInt("port");
             user_name=bundle.getString("user_name");
             display=bundle.getString("display");
@@ -106,7 +106,7 @@ public class NetworkAccountDisplayRenameDialog extends DialogFragment {
                     Global.print(context,getString(R.string.enter_file_name));
                     return;
                 }
-                int i=networkAccountsDatabaseHelper.change_display(server,port,user_name,new_name,type);
+                int i=networkAccountsDatabaseHelper.change_display(host,port,user_name,new_name,type);
                 if(i>0)
                 {
                     bundle.putString("new_name",new_name);
@@ -128,12 +128,12 @@ public class NetworkAccountDisplayRenameDialog extends DialogFragment {
         return v;
     }
 
-    public static NetworkAccountDisplayRenameDialog getInstance(String request_code, String server,int port, String user_name, String display, String type)
+    public static NetworkAccountDisplayRenameDialog getInstance(String request_code, String host,int port, String user_name, String display, String type)
     {
         NetworkAccountDisplayRenameDialog networkAccountDisplayRenameDialog =new NetworkAccountDisplayRenameDialog();
         Bundle bundle=new Bundle();
         bundle.putString("request_code",request_code);
-        bundle.putString("server",server);
+        bundle.putString("host",host);
         bundle.putInt("port",port);
         bundle.putString("user_name",user_name);
         bundle.putString("display",display);

@@ -33,7 +33,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
     private Context context;
     private NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
-    private String original_server="",original_user_name="",server="",user_name="",password="",type="",encoding="",display="";
+    private String original_host="",original_user_name="",host="",user_name="",password="",type="",encoding="",display="";
     private int original_port,port;
 
     //ftp specific fields
@@ -99,15 +99,15 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=bundle.getParcelable("networkAccountPOJO");
 
             if(networkAccountPOJO!=null){
-                original_server=networkAccountPOJO.server;//bundle.getString("server");
+                original_host=networkAccountPOJO.host;
                 original_port=networkAccountPOJO.port;
-                original_user_name=networkAccountPOJO.user_name;//bundle.getString("user_name");
-                server=networkAccountPOJO.server;
+                original_user_name=networkAccountPOJO.user_name;
+                host=networkAccountPOJO.host;
                 port=networkAccountPOJO.port;
-                user_name=networkAccountPOJO.user_name;//bundle.getString("user_name");
+                user_name=networkAccountPOJO.user_name;
             }
 
-            if(original_server!=null && !original_server.isEmpty())
+            if(original_host!=null && !original_host.isEmpty())
             {
                 update=true;
                 if(networkAccountPOJO!=null)
@@ -214,7 +214,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 //            }
 //        });
 
-        server_tv.setText(server);
+        server_tv.setText(host);
         if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
             port_tv.setText("21");
         } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
@@ -299,17 +299,17 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
     private void onOkButtonClick(boolean whetherToConnect)
     {
-        server=server_tv.getText().toString().trim();
+        host=server_tv.getText().toString().trim();
         user_name=user_name_tv.getText().toString().trim();
-        if(server.isEmpty() || port_tv.getText().toString().trim().isEmpty() || user_name.isEmpty())
+        if(host.isEmpty() || port_tv.getText().toString().trim().isEmpty() || user_name.isEmpty())
         {
-            Global.print(context,getString(R.string.server_port_username_fields_can_not_be_empty));
+            Global.print(context,getString(R.string.host_port_username_fields_can_not_be_empty));
             return;
         }
 
-        if(!server.matches("\\S+"))
+        if(!host.matches("\\S+"))
         {
-            Global.print(context,getString(R.string.server_address_should_not_contain_spaces));
+            Global.print(context,getString(R.string.host_address_should_not_contain_spaces));
             return;
         }
 
@@ -330,20 +330,20 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         smbVersion=smbVersion_spinner.getSelectedItem().toString();
 
         bundle.putBoolean("whetherToConnect",whetherToConnect);
-        if(!update && whetherFtpPOJOAlreadyExists(server,user_name,type) && !replace)
+        if(!update && whetherFtpPOJOAlreadyExists(host,user_name,type) && !replace)
         {
             YesOrNoAlertDialog ftpServerCloseAlertDialog= YesOrNoAlertDialog.getInstance(NETWORK_ACCOUNT_REPLACE_REQUEST_CODE,R.string.ftp_setting_already_exists_want_to_replace_it,bundle);
             ftpServerCloseAlertDialog.show(getParentFragmentManager(),"");
         }
         else
         {
-            bundle.putString("original_server",original_server);
+            bundle.putString("original_host",original_host);
             bundle.putInt("original_port",original_port);
             bundle.putString("original_user_name",original_user_name);
             bundle.putBoolean("update",update);
             bundle.putBoolean("replace",replace);
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=new NetworkAccountsDetailsDialog.NetworkAccountPOJO(
-                    server,port,user_name,password,encoding,display,type,mode,anonymous,useFTPS,privateKeyPath,privateKeyPassphrase,knownHostsPath,basePath,useHTTPS,domain,shareName,smbVersion);
+                    host,port,user_name,password,encoding,display,type,mode,anonymous,useFTPS,privateKeyPath,privateKeyPassphrase,knownHostsPath,basePath,useHTTPS,domain,shareName,smbVersion);
             bundle.putParcelable("networkAccountPOJO",networkAccountPOJO);
 
             dismissAllowingStateLoss();
@@ -352,9 +352,9 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         }
     }
 
-    private boolean whetherFtpPOJOAlreadyExists(String server,String user_name,String type)
+    private boolean whetherFtpPOJOAlreadyExists(String host,String user_name,String type)
     {
-        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(server,port,user_name,type);
+        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(host,port,user_name,type);
         return networkAccountPOJO != null;
     }
     @Override

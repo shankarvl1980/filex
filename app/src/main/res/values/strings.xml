@@ -296,7 +296,7 @@
 	<string name="sftp">SFTP</string>
     <string name="new_ftp_server">New FTP Server</string>
 	<string name="new_sftp_server">New SFTP Server</string>
-    <string name="server">Server</string>
+    <string name="host">Host</string>
 	<string name="port">Port</string>
 	<string name="active">Active</string>
 	<string name="passive">Passive</string>
@@ -306,7 +306,7 @@
 	<string name="user">User</string>
 	<string name="anonymous">Anonymous</string>
 	<string name="display">Display</string>
-    <string name="server_port_username_fields_can_not_be_empty">Server,port,username fields can not be empty</string>
+    <string name="host_port_username_fields_can_not_be_empty">Host,port,username fields can not be empty</string>
     <string name="encoding">Encoding</string>
     <string name="are_you_sure_to_delete_ftp_details">Are you sure to delete the selected ftp details?</string>
 	<string name="ftp_server_details">FTP server details</string>
@@ -460,7 +460,7 @@
     <string name="notification_not_enabled_grant_permission_in_device_settings">Notifications are not enabled. Grant permission for app in Device settings</string>
 	<string name="enable_specified_notification_channel_for_better_control">Enable specified notification channel for better control</string>
 	<string name="server_service_started">Server service started</string>
-	<string name="server_address_should_not_contain_spaces">Server address should not contain spaces</string>
+	<string name="host_address_should_not_contain_spaces">Host address should not contain spaces</string>
     <string name="connect">Connect</string>
 	<string name="disconnect">Disconnect</string>
     <string name="nothing_found_here">Nothing found here</string>

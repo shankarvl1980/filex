@@ -160,7 +160,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment
             }
 
             p1.album_name_tv.setText(viewModel.libraryDirPOJOS.get(p2).getName());
-            p1.album_path_tv.setText(context.getString(R.string.path)+" "+viewModel.libraryDirPOJOS.get(p2).getPath());
+            p1.album_path_tv.setText(viewModel.libraryDirPOJOS.get(p2).getPath());
         }
 
         @Override

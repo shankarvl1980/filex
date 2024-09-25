@@ -287,7 +287,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout
 		filenametextview.setText(filePOJO.getName());
 		filesubfilecounttextview.setText(filePOJO.getSize());
 		filemoddatetextview.setText(filePOJO.getDate());
-		filepathtextview.setText(context.getString(R.string.path)+" "+filePOJO.getPath());
+		filepathtextview.setText(filePOJO.getPath());
 	}
 
 	public void set_selected(boolean item_selected)

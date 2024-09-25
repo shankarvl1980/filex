@@ -115,7 +115,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 for(int i=0;i<size;++i)
                 {
                     NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountPOJOS_for_delete.get(i);
-                    int j=networkAccountsDatabaseHelper.delete(networkAccountPOJO.server,networkAccountPOJO.port,networkAccountPOJO.user_name,type);
+                    int j=networkAccountsDatabaseHelper.delete(networkAccountPOJO.host,networkAccountPOJO.port,networkAccountPOJO.user_name,type);
                     if(j>0)
                     {
                         networkAccountPOJOList.remove(networkAccountPOJO);
@@ -154,10 +154,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
-                String server=bundle.getString("server");
+                String host=bundle.getString("host");
                 int port=bundle.getInt("port");
                 String user_name=bundle.getString("user_name");
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(server,port,user_name,type);
+                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(host,port,user_name,type);
                 type= networkAccountPOJO.type;
                 if(type.equals(NetworkAccountsDetailsDialog.FTP)){
                     connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
@@ -192,7 +192,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
             {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
+                repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
             }
         }
         catch (Exception e) {
@@ -231,7 +231,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(FileObjectType.SFTP_TYPE))
             {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));
+                repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));
             }
         }
         catch (Exception e) {
@@ -260,7 +260,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         if(original_user_name==null)original_user_name="";
         if(replace)
         {
-            networkAccountsDatabaseHelper.delete(networkAccountPOJO.server,networkAccountPOJO.port ,networkAccountPOJO.user_name,networkAccountPOJO.type);
+            networkAccountsDatabaseHelper.delete(networkAccountPOJO.host,networkAccountPOJO.port ,networkAccountPOJO.user_name,networkAccountPOJO.type);
         }
         if(update)
         {
@@ -289,7 +289,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void changeNetworkAccountPojoDisplay(String server,int port ,String user_name, String new_name, String type)
+    public synchronized void changeNetworkAccountPojoDisplay(String host,int port ,String user_name, String new_name, String type)
     {
         if(changeNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         changeNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -297,14 +297,14 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         future6=executorService.submit(new Runnable() {
             @Override
             public void run() {
-                networkAccountsDatabaseHelper.change_display(server,port,user_name,new_name,type);
+                networkAccountsDatabaseHelper.change_display(host,port,user_name,new_name,type);
                 networkAccountPOJOList=networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
                 changeNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String server,int port,String user_name)
+    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host,int port,String user_name)
     {
         if(checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
         checkDuplicateNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
@@ -313,7 +313,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 networkAccountPOJOAlreadyExists = false;
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(server,port ,user_name,type);
+                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host,port ,user_name,type);
                 networkAccountPOJOAlreadyExists = networkAccountPOJO != null;
                 checkDuplicateNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

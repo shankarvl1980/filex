@@ -216,11 +216,11 @@ public class FileEditorViewModel extends AndroidViewModel {
                 isWritable=FileUtil.isWritable(fileObjectType,file_path);
 
                 if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE){
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
+                    currently_shown_file=MakeFilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
                 }
                 else{
                     File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);
-                    currently_shown_file=FilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                    currently_shown_file=MakeFilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
                 }
 
                 if(Global.whether_file_cached(fileObjectType))

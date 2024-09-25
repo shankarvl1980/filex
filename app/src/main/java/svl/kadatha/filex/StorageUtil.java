@@ -39,11 +39,8 @@ public class StorageUtil
 			STORAGE_DIR.add(new File("/"));
 			result.add(new FilePOJO(FileObjectType.ROOT_TYPE,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,0,0L,null,0,null,null));
 		}
-		
-
 
 		int length=externalFilesDirs.length;
-
 		for(int i=0;i<length;++i)
 		{
 			final File file=externalFilesDirs[i];
@@ -55,7 +52,6 @@ public class StorageUtil
 				verify_add_file_path(f,result);
 			}
 		}
-
 
 		File mnt = new File("/storage");
 		if (!mnt.exists())
@@ -90,12 +86,11 @@ public class StorageUtil
 		return result;
     }
 
-
     private static void verify_add_file_path(File f, List<FilePOJO> result)
 	{
 		if(STORAGE_DIR.contains(f)) return;
 		STORAGE_DIR.add(f);
-		result.add(FilePOJOUtil.MAKE_FilePOJO(f,false,FileObjectType.FILE_TYPE));
+		result.add(MakeFilePOJOUtil.MAKE_FilePOJO(f,false,FileObjectType.FILE_TYPE));
 		int j = 0;
 		File dummy_file;
 		do {
@@ -193,7 +188,6 @@ public class StorageUtil
 				}
 			}
 			si=FileUtil.humanReadableByteCount(sizeLong);
-
 		}
 		else
 		{
@@ -211,7 +205,6 @@ public class StorageUtil
 		{
 			alfa=Global.DISABLE_ALFA;
 		}
-
 		int type=0;
 		return new FilePOJO(FileObjectType.ROOT_TYPE,name,null,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
 	}

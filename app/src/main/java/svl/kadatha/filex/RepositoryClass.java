@@ -356,7 +356,7 @@ public class RepositoryClass {
                             File f=new File(file_path);
                             if(f.exists())
                             {
-                                FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
+                                FilePOJO filePOJO=MakeFilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                                 filePOJO.setChecksum(checksum);
                                 filePOJO.setWhetherExternal(!filePOJO.getPath().startsWith(Global.INTERNAL_PRIMARY_STORAGE_PATH));
                                 f_pojos.add(filePOJO);
@@ -384,7 +384,7 @@ public class RepositoryClass {
                     Path path= Paths.get(data);
                     if(Files.exists(path))
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=MakeFilePOJOUtil.MAKE_FilePOJO(path,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         parent_directory.add(path.getParent().toString());
@@ -407,7 +407,7 @@ public class RepositoryClass {
                     File f=new File(data);
                     if(f.exists())
                     {
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=MakeFilePOJOUtil.MAKE_FilePOJO(f,extract_icon,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         parent_directory.add(f.getParent());
@@ -444,7 +444,7 @@ public class RepositoryClass {
                         {
                             return;
                         }
-                        FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(p,true,FileObjectType.FILE_TYPE);
+                        FilePOJO filePOJO=MakeFilePOJOUtil.MAKE_FilePOJO(p,true,FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
@@ -471,7 +471,7 @@ public class RepositoryClass {
                         return;
                     }
                     File file=file_list[i];
-                    FilePOJO filePOJO=FilePOJOUtil.MAKE_FilePOJO(file,true,FileObjectType.FILE_TYPE);
+                    FilePOJO filePOJO=MakeFilePOJOUtil.MAKE_FilePOJO(file,true,FileObjectType.FILE_TYPE);
                     f_pojos.add(filePOJO);
                     f_pojos_filtered.add(filePOJO);
                     count++;

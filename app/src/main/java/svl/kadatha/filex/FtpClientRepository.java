@@ -133,7 +133,7 @@ public class FtpClientRepository {
     private FTPClient createAndConnectFtpClient() throws IOException {
         FTPClient client = new FTPClient();
         client.setConnectTimeout(5000);
-        client.connect(networkAccountPOJO.server, networkAccountPOJO.port);
+        client.connect(networkAccountPOJO.host, networkAccountPOJO.port);
 
         if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
             throw new IOException("Failed to connect to the FTP server. Reply code: " + client.getReplyCode());
@@ -200,7 +200,7 @@ public class FtpClientRepository {
     private void reconnectClient(FTPClient client) throws IOException {
         disconnectAndCloseClient(client);
 
-        client.connect(networkAccountPOJO.server, networkAccountPOJO.port);
+        client.connect(networkAccountPOJO.host, networkAccountPOJO.port);
 
         if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
             throw new IOException("Failed to connect to the FTP server. Reply code: " + client.getReplyCode());

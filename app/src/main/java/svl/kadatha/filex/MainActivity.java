@@ -2552,7 +2552,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		if(!usb_path_added)
 		{
 			Global.USB_STORAGE_PATH=usbFileRoot.getAbsolutePath();
-			repositoryClass.storage_dir.add(FilePOJOUtil.MAKE_FilePOJO(usbFileRoot,false));
+			repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(usbFileRoot,false));
 			Global.WORKOUT_AVAILABLE_SPACE();
 			storageRecyclerAdapter.notifyDataSetChanged();
 		}

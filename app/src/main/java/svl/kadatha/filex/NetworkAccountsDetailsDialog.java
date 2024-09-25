@@ -395,10 +395,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 {
                     progress_bar.setVisibility(View.VISIBLE);
                     String new_name=result.getString("new_name");
-                    String server=result.getString("server");
+                    String host=result.getString("host");
                     int port=result.getInt("port");
                     String user_name=result.getString("user_name");
-                    if(new_name!=null)viewModel.changeNetworkAccountPojoDisplay(server,port,user_name,new_name,type);
+                    if(new_name!=null)viewModel.changeNetworkAccountPojoDisplay(host,port,user_name,new_name,type);
                 }
             }
         });
@@ -463,11 +463,11 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         public void onBindViewHolder(@NonNull VH holder, int position) {
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=viewModel.networkAccountPOJOList.get(position);
             String display=networkAccountPOJO.display;
-            String server=networkAccountPOJO.server;
+            String host=networkAccountPOJO.host;
             String user_name=networkAccountPOJO.user_name;
-            holder.ftp_display.setText((display==null || display.isEmpty()) ? server : display);
-            holder.ftp_server.setText(server);
-            holder.ftp_user_name.setText(getString(R.string.user)+" - "+user_name);
+            holder.ftp_display.setText((display==null || display.isEmpty()) ? host : display);
+            holder.ftp_server.setText(host);
+            holder.ftp_user_name.setText(user_name);
             boolean item_selected=viewModel.mselecteditems.containsKey(position);
             holder.v.setSelected(item_selected);
             holder.ftp_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
@@ -536,7 +536,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 });
             }
 
-
             private void onLongClickProcedure(View v, int size)
             {
                 pos=getBindingAdapterPosition();
@@ -572,7 +571,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
                     ++size;
                     enable_disable_buttons(true,size);
-
                 }
                 ftp_number_text_view.setText(size+"/"+num_all_ftp);
             }
@@ -622,7 +620,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 {
                     NetworkAccountPOJO networkAccountPOJO=viewModel.mselecteditems.getValueAtIndex(0);
                     String display=networkAccountPOJO.display;
-                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.isEmpty()) ? networkAccountPOJO.server : display,s);
+                    DeleteFtpAlertDialog deleteFtpAlertDialog=DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE,(display==null || display.isEmpty()) ? networkAccountPOJO.host : display,s);
                     deleteFtpAlertDialog.show(getParentFragmentManager(),"");
                 }
             }
@@ -651,7 +649,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 if(s==1)
                 {
                     NetworkAccountPOJO tobe_replaced_ftp=viewModel.mselecteditems.getValueAtIndex(0);
-                    String ftp_server=tobe_replaced_ftp.server;
+                    String ftp_host=tobe_replaced_ftp.host;
                     String ftp_user_name=tobe_replaced_ftp.user_name;
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE,viewModel.type,viewModel.networkAccountPOJOList.get(viewModel.mselecteditems.getKeyAtIndex(0)));
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(),"");
@@ -667,7 +665,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
 
     public static class NetworkAccountPOJO implements Parcelable {
-        final String server;
+        final String host;
         final int port;
         final String user_name;
         final String password;
@@ -695,13 +693,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         final String smbVersion;
 
         // Constructor
-        public NetworkAccountPOJO(String server, int port, String user_name, String password,
+        public NetworkAccountPOJO(String host, int port, String user_name, String password,
                                   String encoding, String display, String type,
                                   String mode, boolean anonymous, boolean useFTPS,
                                   String privateKeyPath, String privateKeyPassphrase, String knownHostsPath,
                                   String basePath, boolean useHTTPS,
                                   String domain, String shareName, String smbVersion) {
-            this.server = server;
+            this.host = host;
             this.port = port;
             this.user_name = user_name;
             this.password = password;
@@ -723,7 +721,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         // Copy Constructor for deep copy
         public NetworkAccountPOJO(NetworkAccountPOJO other) {
-            this.server = other.server != null ? new String(other.server) : null;
+            this.host = other.host != null ? new String(other.host) : null;
             this.port = other.port;
             this.user_name = other.user_name != null ? new String(other.user_name) : null;
             this.password = other.password != null ? new String(other.password) : null;
@@ -750,7 +748,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         // Parcelable implementation
         protected NetworkAccountPOJO(Parcel in) {
-            server = in.readString();
+            host = in.readString();
             port = in.readInt();
             user_name = in.readString();
             password = in.readString();
@@ -772,7 +770,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(server);
+            dest.writeString(host);
             dest.writeInt(port);
             dest.writeString(user_name);
             dest.writeString(password);
