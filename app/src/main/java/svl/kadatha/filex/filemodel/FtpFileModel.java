@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import svl.kadatha.filex.FtpClientRepository;
@@ -107,12 +109,20 @@ public class FtpFileModel implements FileModel {
 
             while (!stack.isEmpty() && success) {
                 String currentPath = stack.pop();
+                String baseName = new File(currentPath).getName();
+                if (".".equals(baseName) || "..".equals(baseName)) {
+                    Timber.tag(TAG).w("Skipping deletion of special directory: %s", currentPath);
+                    continue;
+                }
 
                 if (isDirectory(currentPath)) {
                     String[] list = ftpClient.listNames(currentPath);
                     if (list != null && list.length > 0) {
                         for (String item : list) {
-                            stack.push(item);
+                            String itemBaseName = new File(item).getName();
+                            if (!".".equals(itemBaseName) && !"..".equals(itemBaseName)) {
+                                stack.push(item);
+                            }
                         }
                     } else {
                         success = ftpClient.removeDirectory(currentPath);
@@ -206,13 +216,16 @@ public class FtpFileModel implements FileModel {
                 return new FileModel[0];
             }
 
-            FileModel[] fileModels = new FileModel[fullPaths.length];
-            for (int i = 0; i < fullPaths.length; i++) {
-                fileModels[i] = new FtpFileModel(fullPaths[i]);
-                Timber.tag(TAG).d("Listed file: %s", fullPaths[i]);
+            List<FileModel> fileModels = new ArrayList<>();
+            for (String fileName : fullPaths) {
+                String baseName = new File(fileName).getName();
+                if (!baseName.equals(".") && !baseName.equals("..")) {
+                    fileModels.add(new FtpFileModel(fileName));
+                    Timber.tag(TAG).d("Listed file: %s", fileName);
+                }
             }
-            Timber.tag(TAG).d("Successfully listed %d files", fullPaths.length);
-            return fileModels;
+            Timber.tag(TAG).d("Successfully listed %d files", fileModels.size());
+            return fileModels.toArray(new FileModel[0]);
         } catch (IOException e) {
             Timber.tag(TAG).e("Failed to list files: %s", e.getMessage());
             return new FileModel[0];
@@ -226,6 +239,7 @@ public class FtpFileModel implements FileModel {
             }
         }
     }
+
     @Override
     public boolean createFile(String name) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);

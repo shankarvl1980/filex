@@ -85,9 +85,35 @@ public class RootFileModel implements FileModel {
 
     @Override
     public boolean delete() {
-        String command = "rm -rf '" + path + "'";
-        return RootUtils.executeCommandBoolean(command);
+        if (isSafeToDelete(path)) {
+            String command = "rm -rf '" + path + "'";
+            return RootUtils.executeCommandBoolean(command);
+        } else {
+            // Log a warning and avoid deletion
+            System.err.println("Unsafe delete operation prevented for path: " + path);
+            return false;
+        }
     }
+
+    private boolean isSafeToDelete(String path) {
+        if (path == null || path.isEmpty()) {
+            return false;
+        }
+        // Normalize the path to remove redundant slashes
+        String normalizedPath = path.replaceAll("/+", "/");
+        // Disallow root directory deletion
+        if (normalizedPath.equals("/")) {
+            return false;
+        }
+        // Disallow deletion of "." or ".."
+        String name = getName();
+        if (".".equals(name) || "..".equals(name)) {
+            return false;
+        }
+        // Additional checks can be added here if necessary
+        return true;
+    }
+
 
     @Override
     public InputStream getInputStream() {

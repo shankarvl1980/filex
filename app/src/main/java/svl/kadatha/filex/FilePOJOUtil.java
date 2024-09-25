@@ -752,7 +752,6 @@ public class FilePOJOUtil {
                 }
                 filePOJOS.add(filePOJO);
             }
-
         }
     }
 

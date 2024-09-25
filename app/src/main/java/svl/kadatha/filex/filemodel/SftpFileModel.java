@@ -197,13 +197,17 @@ public class SftpFileModel implements FileModel {
                 Timber.tag(TAG).w("No files listed or directory is empty for path: %s", path);
                 return new FileModel[0];
             }
+
             List<FileModel> fileModels = new ArrayList<>();
             for (ChannelSftp.LsEntry entry : entries) {
                 String fileName = entry.getFilename();
-                String fullPath = path + "/" + fileName;
-                fileModels.add(new SftpFileModel(fullPath));
-                Timber.tag(TAG).d("Listed file: %s", fullPath);
+                if (!fileName.equals(".") && !fileName.equals("..")) {
+                    String fullPath = path + "/" + fileName;
+                    fileModels.add(new SftpFileModel(fullPath));
+                    Timber.tag(TAG).d("Listed file: %s", fullPath);
+                }
             }
+
             Timber.tag(TAG).d("Successfully listed %d files", fileModels.size());
             return fileModels.toArray(new FileModel[0]);
         } catch (SftpException | JSchException e) {

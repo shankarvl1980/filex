@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -751,7 +753,7 @@ public class Global
 			}
 
 			boolean sameFileSystem=isSameFileSystem(source_network_account_pojo,sourceFileObjectType,dest_network_account_pojo,destFileObjectType);
-			if(!sameFileSystem){
+			if(sameFileSystem){
 				String dest_path = normalizePath(dest_folder, destFileObjectType);
 				Iterator<String> iterator=files_selected_array.iterator();
 				while(iterator.hasNext())
@@ -839,7 +841,6 @@ public class Global
 
 		// Resolve "." and ".." in the path
 		normalizedPath = normalizeDotsInPath(normalizedPath);
-
 		return normalizedPath;
 	}
 
@@ -865,45 +866,175 @@ public class Global
 		return normalizedPath.toString();
 	}
 
-	private static boolean isSameFileSystem(NetworkAccountsDetailsDialog.NetworkAccountPOJO source,FileObjectType sourceFileObjectType, NetworkAccountsDetailsDialog.NetworkAccountPOJO dest, FileObjectType destFileObjectType) {
-		if(source==null) return false;
-		if(dest==null) return false;
-		// Compare hostnames or IP addresses
-		try {
-			InetAddress address1 = InetAddress.getByName(source.host);
-			InetAddress address2 = InetAddress.getByName(dest.host);
-			if (!address1.equals(address2)) {
-				return false;
-			}
-		} catch (UnknownHostException e) {
-			return false;
+	private static boolean isSameFileSystem(NetworkAccountsDetailsDialog.NetworkAccountPOJO source,
+											FileObjectType sourceFileObjectType,
+											NetworkAccountsDetailsDialog.NetworkAccountPOJO dest,
+											FileObjectType destFileObjectType) {
+		if (source == null || dest == null) {
+			// Cannot proceed without both accounts; but to avoid unnecessary copying, assume same filesystem
+			return true;
 		}
 
-		// For SMB, compare share names
-		if (sourceFileObjectType== FileObjectType.SMB_TYPE && destFileObjectType== FileObjectType.SMB_TYPE) {
-			if (!source.shareName.equals(dest.shareName)) {
-				return false;
+		// Extract hostnames
+		String host1 = extractHost(source.host);
+		String host2 = extractHost(dest.host);
+
+		if (host1 != null && host2 != null) {
+			// Resolve hostnames to IP addresses
+			try {
+				InetAddress[] addresses1 = InetAddress.getAllByName(host1);
+				InetAddress[] addresses2 = InetAddress.getAllByName(host2);
+				boolean sameHost = false;
+				for (InetAddress addr1 : addresses1) {
+					for (InetAddress addr2 : addresses2) {
+						if (addr1.equals(addr2)) {
+							sameHost = true;
+							break;
+						}
+					}
+					if (sameHost) break;
+				}
+				if (!sameHost) {
+					// Hosts are different; file systems are different
+					return false; // Only return false when certain
+				}
+			} catch (UnknownHostException e) {
+				// Cannot resolve hostnames; assume they might be the same to avoid unnecessary copying
+				// Do not return false here
 			}
+		} else {
+			// Host information is incomplete; assume hosts might be the same
+			// Do not return false here
 		}
 
-		// For WebDAV, you might want to compare root paths if they are significant
-		if (sourceFileObjectType== FileObjectType.WEBDAV_TYPE && destFileObjectType== FileObjectType.WEBDAV_TYPE) {
-			if (!source.basePath.equals(dest.basePath)) {
-				return false;
-			}
+		// At this point, hosts are the same or unresolved
+
+		// Optionally compare usernames
+		if (source.user_name != null && dest.user_name != null && !source.user_name.equals(dest.user_name)) {
+			// Different usernames may point to different areas; but to avoid unnecessary copying, proceed
 		}
 
-		// Additional checks can be added here based on specific requirements
+		// Proceed with cautious protocol-specific comparisons
 
-		// If hostname/IP and user account match, consider the filesystems the same
+		// SMB-specific comparisons
+		if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
+			if (source.shareName != null && dest.shareName != null && !source.shareName.equals(dest.shareName)) {
+				// Different share names might still access the same file system
+				// Proceed cautiously and do not return false
+			}
+			// Additional SMB-specific checks can be added here if necessary
+		}
+
+		// WebDAV-specific comparisons
+		if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE && destFileObjectType == FileObjectType.WEBDAV_TYPE) {
+			if (source.basePath != null && dest.basePath != null) {
+				String normalizedSourceBasePath = normalizePath(source.basePath);
+				String normalizedDestBasePath = normalizePath(dest.basePath);
+				// Instead of returning false, check if one base path is a subpath of the other
+				// or proceed cautiously without returning false
+			}
+			if (source.useHTTPS != dest.useHTTPS) {
+				// Different protocols may still access the same file system
+				// Do not return false solely based on protocol differences
+			}
+			// Additional WebDAV-specific checks can be added here if necessary
+		}
+
+		// Other protocol-specific comparisons can be added here if applicable
+
+		// Since we have not found definitive evidence that the file systems are different,
+		// we return true to avoid unnecessary copying
 		return true;
 	}
 
 
+	private static String extractHost(String host) {
+		if (host == null) return null;
+		host = host.trim();
 
-	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
+		// Check if the host string contains a scheme
+		if (host.matches("^[a-zA-Z][a-zA-Z0-9+.-]*://.*$")) {
+			try {
+				URI uri = new URI(host);
+				String extractedHost = uri.getHost();
+				if (extractedHost != null) {
+					return extractedHost;
+				}
+				// If getHost() is null, attempt to extract the authority
+				String authority = uri.getAuthority();
+				if (authority != null) {
+					// Remove any user info (e.g., user:pass@)
+					int atIndex = authority.lastIndexOf('@');
+					if (atIndex != -1) {
+						authority = authority.substring(atIndex + 1);
+					}
+					// Remove port if present
+					int colonIndex = authority.indexOf(':');
+					if (colonIndex != -1) {
+						authority = authority.substring(0, colonIndex);
+					}
+					return authority;
+				}
+			} catch (URISyntaxException e) {
+				// If URI parsing fails, proceed to manual extraction
+			}
+		}
+
+		// If there's no scheme or parsing failed, manually extract the host
+
+		// Remove any leading protocol prefixes manually
+		String hostWithoutProtocol = host.replaceFirst("^(ftp|sftp|http|https|smb)://", "");
+
+		// Remove user info if present (e.g., user:pass@)
+		int atIndex = hostWithoutProtocol.lastIndexOf('@');
+		if (atIndex != -1) {
+			hostWithoutProtocol = hostWithoutProtocol.substring(atIndex + 1);
+		}
+
+		// Remove any path starting with '/'
+		int slashIndex = hostWithoutProtocol.indexOf('/');
+		if (slashIndex != -1) {
+			hostWithoutProtocol = hostWithoutProtocol.substring(0, slashIndex);
+		}
+
+		// Remove port if present (after ':')
+		int colonIndex = hostWithoutProtocol.indexOf(':');
+		if (colonIndex != -1) {
+			hostWithoutProtocol = hostWithoutProtocol.substring(0, colonIndex);
+		}
+
+		// The remaining string should be the host
+		return hostWithoutProtocol;
+	}
+
+
+	private static String normalizePath(String path) {
+		if (path == null) return "";
+		// Replace backslashes with forward slashes
+		path = path.replace('\\', '/');
+		// Remove redundant slashes
+		path = path.replaceAll("/+", "/");
+		// Remove trailing slash
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
+
+	public static boolean IS_CHILD_FILE(String child_path,String parent_path)
 	{
-		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
+		if(parent_path.equals(File.separator))
+		{
+			return child_path.startsWith(parent_path);
+		}
+		else
+		{
+			return (child_path+File.separator).startsWith(parent_path+File.separator);
+		}
+	}
+
+	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType)
+	{
 		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
 		Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
 		while(iterator.hasNext())
@@ -916,8 +1047,9 @@ public class Global
 		return false;
 	}
 
-	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType)
+	public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType fileObjectType)
 	{
+		if(fileObjectType!=FileObjectType.FTP_TYPE) return false;
 		RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
 		Iterator<FilePOJO> iterator=repositoryClass.storage_dir.iterator();
 		while(iterator.hasNext())
@@ -984,18 +1116,6 @@ public class Global
 		else
 		{
 			return file_path;
-		}
-	}
-
-	public static boolean IS_CHILD_FILE(String child_path,String parent_path)
-	{
-		if(parent_path.equals(File.separator))
-		{
-			return child_path.startsWith(parent_path);
-		}
-		else
-		{
-			return (child_path+File.separator).startsWith(parent_path+File.separator);
 		}
 	}
 

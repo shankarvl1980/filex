@@ -6,8 +6,11 @@ import android.os.Looper;
 
 import androidx.core.util.Pair;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import svl.kadatha.filex.AlternativeAsyncTask;
@@ -79,11 +82,11 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file_path);
             if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
                 if (isSourceFromInternal) {
-                    copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, cut);
+                    copy_result = CopyFileModel(sourceFileModel, destFileModel,current_file_name, cut);
 
                 } else // that is cut and paste  from external directory
                 {
-                    copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
+                    copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name,false);
                     if (copy_result && cut) {
                         sourceFileModel.delete();
                     }
@@ -147,7 +150,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             listener.onTaskCancelled(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY,filePOJO);
         }
     }
-
 
     public boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
@@ -241,4 +243,148 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
+    public boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
+        Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
+
+        List<FileModel> filesToCopy = new ArrayList<>();
+        collectFilesToCopy(sourceFileModel, filesToCopy);
+        Timber.tag("CopyFileModel").d("Collected %d files/directories to copy.", filesToCopy.size());
+
+        boolean allCopiesSuccessful = true;
+        Set<String> processedPaths = new HashSet<>();
+
+        String sourceRootPath = sourceFileModel.getPath();
+        String destRootPath = destFileModel.getPath();
+        String sourceName = new File(sourceRootPath).getName();
+
+        for (FileModel source : filesToCopy) {
+            if (isCancelled()) {
+                Timber.tag("CopyFileModel").d("Operation cancelled by user.");
+                return false;
+            }
+
+            String relativePath = getRelativePath(sourceRootPath, source.getPath());
+            String destPath = computeDestinationPath(destRootPath, sourceName, relativePath);
+
+            if (processedPaths.contains(destPath)) {
+                Timber.tag("CopyFileModel").d("Skipping already processed path: %s", destPath);
+                continue;
+            }
+
+            processedPaths.add(destPath);
+
+            Timber.tag("CopyFileModel").d("Processing: Source=%s, Dest=%s, IsDirectory=%s",
+                    source.getPath(), destPath, source.isDirectory());
+
+            try {
+                if (source.isDirectory()) {
+                    createDirectory(destPath);
+                } else {
+                    copyFile(source, destPath);
+                }
+            } catch (CopyFailedException e) {
+                Timber.tag("CopyFileModel").e("Copy failed: %s", e.getMessage());
+                allCopiesSuccessful = false;
+                break;
+            }
+        }
+
+        if (cut && allCopiesSuccessful) {
+            try {
+                sourceFileModel.delete();
+            } catch (Exception e) {
+                Timber.tag("CopyFileModel").e("Delete failed: %s", e.getMessage());
+                allCopiesSuccessful = false;
+            }
+        }
+
+        Timber.tag("CopyFileModel").d("Copy operation completed. All copies successful: %s", allCopiesSuccessful);
+        return allCopiesSuccessful;
+    }
+
+    private String getRelativePath(String rootPath, String fullPath) {
+        if (!rootPath.endsWith(File.separator)) {
+            rootPath += File.separator;
+        }
+        if (fullPath.startsWith(rootPath)) {
+            return fullPath.substring(rootPath.length());
+        }
+        return "";
+    }
+
+    private String computeDestinationPath(String destRoot, String sourceName, String relativePath) {
+        if (relativePath.isEmpty()) {
+            return new File(destRoot, sourceName).getPath();
+        }
+        return new File(new File(destRoot, sourceName), relativePath).getPath();
+    }
+
+    private void createDirectory(String path) throws CopyFailedException {
+        File dir = new File(path);
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new CopyFailedException("Failed to create directory: " + path);
+        }
+        Timber.tag("CopyFileModel").d("Created/Verified directory: %s", path);
+    }
+
+    private void copyFile(FileModel source, String destPath) throws CopyFailedException {
+        File destFile = new File(destPath);
+        File destParentDir = destFile.getParentFile();
+        if (!destParentDir.exists() && !destParentDir.mkdirs()) {
+            throw new CopyFailedException("Failed to create parent directory: " + destParentDir.getPath());
+        }
+
+        FileModel destParentFileModel = FileModelFactory.getFileModel(destParentDir.getPath(), destFileObjectType, tree_uri, tree_uri_path);
+        boolean success = FileUtil.copy_FileModel_FileModel(source, destParentFileModel, destFile.getName(), false, counter_size_files);
+        if (success) {
+            Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
+            ++counter_no_files;
+        } else {
+            throw new CopyFailedException("Failed to copy file: " + source.getPath());
+        }
+    }
+
+    // Other methods (deleteSource, collectFilesToCopy, and exception classes) remain the same
+    private static class CopyFailedException extends Exception {
+        public CopyFailedException(String message) {
+            super(message);
+        }
+    }
+
+    private static class DeleteFailedException extends Exception {
+        public DeleteFailedException(String message) {
+            super(message);
+        }
+    }
+
+    // Utility method to get parent path
+    private String getParentPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        int lastSeparatorIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+        if (lastSeparatorIndex > 0) {
+            return path.substring(0, lastSeparatorIndex);
+        } else {
+            // No parent directory
+            return null;
+        }
+    }
+
+    private void collectFilesToCopy(FileModel source, List<FileModel> filesToCopy) {
+        // Add the source itself first
+        filesToCopy.add(source);
+
+        // If it's a directory, recursively add its contents
+        if (source.isDirectory()) {
+            FileModel[] children = source.list();
+            if (children != null) {
+                for (FileModel child : children) {
+                    collectFilesToCopy(child, filesToCopy);
+                }
+            }
+        }
+
+        Timber.tag("CopyFileModel").d("Collected file/directory: %s, IsDirectory: %s", source.getPath(), source.isDirectory());
+    }
 }

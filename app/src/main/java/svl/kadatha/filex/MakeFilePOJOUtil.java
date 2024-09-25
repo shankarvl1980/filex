@@ -600,7 +600,6 @@ public class MakeFilePOJOUtil {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
-
             sizeLong = attrs.getSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
@@ -621,100 +620,6 @@ public class MakeFilePOJOUtil {
         Timber.tag(TAG).d("Created FilePOJO for SFTP file: %s, isDirectory: %b, size: %d", name, isDirectory, sizeLong);
         return filePOJO;
     }
-
-//    public static FilePOJO MAKE_FilePOJO(ChannelSftp channelSftp, String file_path, boolean extract_icon, FileObjectType fileObjectType) {
-//        if (file_path == null || file_path.trim().isEmpty()) {
-//            Timber.tag(TAG).e("Invalid file path provided.");
-//            return null;
-//        }
-//
-//        try {
-//            // Determine if the path is a directory
-//            SftpATTRS attrs = channelSftp.stat(file_path);
-//            boolean isDirectory = attrs.isDir();
-//            String name = new File(file_path).getName(); // Extract the name from the path
-//
-//            long dateLong = 0L;
-//            String date = "";
-//            try {
-//                int mtime = attrs.getMTime(); // Modification time in seconds since epoch
-//                dateLong = ((long) mtime) * 1000; // Convert to milliseconds
-//                date = Global.SDF.format(new Date(dateLong));
-//            } catch (Exception e) {
-//                Timber.tag(TAG).e("Error getting modification time for SFTP path: %s, Error: %s", file_path, e.getMessage());
-//            }
-//
-//            long sizeLong = 0L;
-//            String si = "";
-//
-//            String file_ext = "";
-//            int overlay_visible = View.INVISIBLE;
-//            float alfa = Global.ENABLE_ALFA;
-//            String package_name = null;
-//            int type = R.drawable.folder_icon; // Default to folder icon
-//
-//            if (!isDirectory) {
-//                // It's a file
-//                type = R.drawable.unknown_file_icon;
-//                int idx = name.lastIndexOf(".");
-//                if (idx != -1) {
-//                    file_ext = name.substring(idx + 1).toLowerCase(); // Handle case sensitivity
-//                    type = GET_FILE_TYPE(isDirectory, file_ext);
-//                    if (type == -2) {
-//                        overlay_visible = View.VISIBLE;
-//                    } else if (extract_icon && type == 0) {
-//                        package_name = EXTRACT_ICON(MainActivity.PM, file_path, file_ext);
-//                    }
-//                }
-//
-//                sizeLong = attrs.getSize();
-//                si = FileUtil.humanReadableByteCount(sizeLong);
-//            } else {
-//                // It's a directory
-//                String sub_file_count = null;
-//                try {
-//                    @SuppressWarnings("unchecked")
-//                    Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
-//                    if (entries != null) {
-//                        sub_file_count = "(" + (entries.size()) + ")";
-//                    }
-//                    si = sub_file_count;
-//                } catch (SftpException e) {
-//                    Timber.tag(TAG).e("Error listing SFTP directory contents for path: %s, Error: %s", file_path, e.getMessage());
-//                }
-//            }
-//
-//            FilePOJO filePOJO = new FilePOJO(
-//                    fileObjectType,
-//                    name,
-//                    package_name,
-//                    file_path,
-//                    isDirectory,
-//                    dateLong,
-//                    date,
-//                    sizeLong,
-//                    si,
-//                    type,
-//                    file_ext,
-//                    alfa,
-//                    overlay_visible,
-//                    0,
-//                    0L,
-//                    null,
-//                    0,
-//                    null,
-//                    null
-//            );
-//
-//            Timber.tag(TAG).d("Created FilePOJO for SFTP path: %s, isDirectory: %b, size: %d", file_path, isDirectory, sizeLong);
-//            return filePOJO;
-//
-//        } catch (SftpException e) {
-//            Timber.tag(TAG).e("Error accessing SFTP path: %s, Error: %s", file_path, e.getMessage());
-//            return null;
-//        }
-//    }
-
 
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)
     {
