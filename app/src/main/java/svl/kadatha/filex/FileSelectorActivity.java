@@ -658,7 +658,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 String tag=fileSelectorFragment.getTag();
 
                 while(tag !=null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
-                        && !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(fileSelectorFragment.fileObjectType) && !Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(fileSelectorFragment.fileObjectType))
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType))
                 {
                     fm.popBackStack();
                     ++frag;

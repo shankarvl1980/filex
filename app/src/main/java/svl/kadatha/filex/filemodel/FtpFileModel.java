@@ -480,25 +480,21 @@ public class FtpFileModel implements FileModel {
         }
     }
 
-    private static boolean mkdirsFTP(String parent_file_path, @NonNull String extended_path) {
-        Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", extended_path, parent_file_path);
-        boolean success = true;
-        String[] file_path_substring = extended_path.split("/");
-        int size = file_path_substring.length;
-        for (int i = 0; i < size; ++i) {
-            String path_string = file_path_substring[i];
-            if (!path_string.isEmpty()) {
-                String new_dir_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, path_string);
-                success = mkdirFtp(new_dir_path);
-                parent_file_path += File.separator + path_string;
-                if (!success) {
-                    Timber.tag(TAG).w("Failed to create FTP directory: %s", new_dir_path);
+    private static boolean mkdirsFTP(String parentPath, @NonNull String extendedPath) {
+        Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", extendedPath, parentPath);
+        String[] pathSegments = extendedPath.split("/");
+        String currentPath = parentPath;
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                currentPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, segment);
+                if (!mkdirFtp(currentPath)) {
+                    Timber.tag(TAG).w("Failed to create FTP directory: %s", currentPath);
                     return false;
                 }
             }
         }
         Timber.tag(TAG).d("Successfully created multiple FTP directories");
-        return success;
+        return true;
     }
 
     private static boolean isDirectory(String filePath) {

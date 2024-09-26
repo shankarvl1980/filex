@@ -41,8 +41,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private boolean isCancelled=false;
     private Future<?> future1,future2,future3, future4, future5, future6, future7, future8,future9,future10,future11;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-//    public final MutableLiveData<AsyncTaskStatus> copyFtpAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-//    public final MutableLiveData<AsyncTaskStatus> copyUsbAsyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public IndexedLinkedHashMap<Integer,String> mselecteditems=new IndexedLinkedHashMap<>();
     private String what_to_find=null;
@@ -55,8 +53,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public String library_filter_path;
     public boolean library_time_desc=false,library_size_desc=false;
 
-
-    public boolean select_app_to_open_ftp;
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
@@ -122,15 +118,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         }
                     });
 
-//                    future5=executorService.submit(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            fill_file_size(final_storage_space, fileclickselected,half_dir_count,dir_count);
-//                        }
-//                    });
                     try {
                         future4.get();
-                        //future5.get();
                     } catch (ExecutionException | InterruptedException e) {}
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -165,16 +154,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         fill_file_size(final_storage_space, fileclickselected,0,dir_count);
                     }
                 });
-//
-//                future7=executorService.submit(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        fill_file_size(final_storage_space, fileclickselected,half_dir_count,dir_count);
-//                    }
-//                });
+
                 try {
                     future6.get();
-                    //future7.get();
                 } catch (ExecutionException | InterruptedException e) {}
 
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

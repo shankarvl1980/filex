@@ -279,30 +279,21 @@ public class JavaFileModel implements FileModel {
 
     }
 
-    private static boolean mkdirsSAFFile(Context context, String parent_file_path, @NonNull String path, Uri tree_uri, String tree_uri_path)
-    {
-        boolean success=true;
-        String [] file_path_substring=path.split("/");
-        int size=file_path_substring.length;
-        for (int i=0; i<size;++i)
-        {
-            String path_string=file_path_substring[i];
-            if(!path_string.isEmpty())
-            {
-                if(!new File(parent_file_path,path_string).exists())
-                {
-                    success=mkdirSAF(context,parent_file_path,path_string,tree_uri,tree_uri_path);
+    private static boolean mkdirsSAFFile(Context context, String parentFilePath, @NonNull String path, Uri treeUri, String treeUriPath) {
+        String[] pathSegments = path.split("/");
+        String currentPath = parentFilePath;
 
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                currentPath = new File(currentPath, segment).getPath();
+                if (!new File(currentPath).exists()) {
+                    if (!mkdirSAF(context, parentFilePath, segment, treeUri, treeUriPath)) {
+                        return false;
+                    }
                 }
-                parent_file_path+=File.separator+path_string;
-                if(!success)
-                {
-                    return false;
-                }
+                parentFilePath = currentPath;
             }
-
         }
-        return success;
+        return true;
     }
-
 }

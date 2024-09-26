@@ -108,7 +108,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         {
                             try {
                                 currentUsbFile=MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
-
                             } catch (IOException e) {
 
                             }
@@ -119,7 +118,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     destFilePOJOs=repositoryClass.hashmap_file_pojo.get(destFileObjectType+dest_folder);
                 }
 
-
                 if(destFilePOJOs!=null)
                 {
                     for(FilePOJO filePOJO:destFilePOJOs)
@@ -127,7 +125,6 @@ public class AppManagerListViewModel extends AndroidViewModel {
                         dest_file_names.add(filePOJO.getName());
                     }
                 }
-
 
                 List<String> overwritten_copied_file_name_list;
                 boolean copy_result;

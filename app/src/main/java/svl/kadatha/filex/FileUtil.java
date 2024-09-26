@@ -633,7 +633,6 @@ public final class FileUtil
 				System.err.println("Failed to delete root folder: " + folder.getAbsolutePath());
 			}
 		}
-
 		return success;
 	}
 

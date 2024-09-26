@@ -23,7 +23,6 @@ import timber.log.Timber;
 
 public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
-
     public static final String TASK_TYPE = "copy_to";
     private final TaskProgressListener listener;
     private final List<Uri> data_list;

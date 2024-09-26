@@ -189,7 +189,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 throw new Exception("FTP client is not connected");
             }
             FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
-            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FTP_FILE_OBJECT(FileObjectType.FTP_TYPE))
+            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.FTP_TYPE))
             {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
@@ -228,7 +228,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 throw new Exception("SFTP client is not connected");
             }
             SFTP_WORKING_DIR_PATH = channelSftp.pwd();
-            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_SFTP_FILE_OBJECT(FileObjectType.SFTP_TYPE))
+            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.SFTP_TYPE))
             {
                 RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
                 repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));

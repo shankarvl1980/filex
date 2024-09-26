@@ -281,40 +281,29 @@ public class UsbFileModel implements FileModel{
         }
     }
 
-    private static boolean mkdirsUsb(String parent_file_path, @NonNull String path)
-    {
-        boolean success=true;
-        UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,parent_file_path);
-        if(parentUsbFile==null)
-        {
+    private static boolean mkdirsUsb(String parent_file_path, @NonNull String path) {
+        UsbFile parentUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, parent_file_path);
+        if (parentUsbFile == null) {
             return false;
         }
-        String [] path_substring=path.split("/");
-        int size=path_substring.length;
-        for (int i=0; i<size;++i)
-        {
-            String path_string=path_substring[i];
-            if(!path_string.isEmpty())
-            {
-                UsbFile usbFile;
-                if((usbFile=FileUtil.getUsbFile(parentUsbFile,path_string))==null)
-                {
-                    success=mkdirUsb(parentUsbFile,path_string);
-                    parentUsbFile=FileUtil.getUsbFile(parentUsbFile,path_string);
-                }
-                else
-                {
-                    parentUsbFile=usbFile;
-                }
 
-                if(!success)
-                {
-                    return false;
+        String[] pathSegments = path.split("/");
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                UsbFile usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
+                if (usbFile == null) {
+                    if (!mkdirUsb(parentUsbFile, segment)) {
+                        return false;
+                    }
+                    usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
+                    if (usbFile == null) {
+                        return false;
+                    }
                 }
+                parentUsbFile = usbFile;
             }
-
         }
-        return success;
+        return true;
     }
 
     private static boolean deleteUsbFile(UsbFile usbFile)

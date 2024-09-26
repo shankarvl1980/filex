@@ -8,9 +8,11 @@ import androidx.core.util.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Queue;
 import java.util.Stack;
 
 import svl.kadatha.filex.AlternativeAsyncTask;
@@ -64,11 +66,17 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     copied_files_name = new ArrayList<>();
     copied_source_file_path_list = new ArrayList<>();
-
 }
     @Override
     protected Boolean doInBackground(Void... params) {
         boolean copy_result = false;
+        boolean whether_copy_between_network_file_systems = true;
+        List<FileObjectType> net_work_protocols= Arrays.asList(FileObjectType.FTP_TYPE,FileObjectType.SFTP_TYPE,FileObjectType.WEBDAV_TYPE,FileObjectType.SMB_TYPE);
+        if(net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)){
+            if(!sourceFileObjectType.equals(destFileObjectType)){
+                whether_copy_between_network_file_systems=true;
+            }
+        }
 
         FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
@@ -79,25 +87,18 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             FileModel sourceFileModel = sourceFileModels[i];
             String file_path = sourceFileModel.getPath();
             current_file_name = sourceFileModel.getName();
-            boolean isSourceFromInternal = FileUtil.isFromInternal(sourceFileObjectType, file_path);
-            if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
-                if (isSourceFromInternal) {
-                    copy_result = CopyFileModel(sourceFileModel, destFileModel,current_file_name, cut);
 
-                } else // that is cut and paste  from external directory
-                {
-                    copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name,false);
-                    if (copy_result && cut) {
-                        sourceFileModel.delete();
-                    }
+            if(whether_copy_between_network_file_systems){
+                copy_result=CopyFileModelForNetWorkDestFolders(sourceFileModel,destFileModel,current_file_name,false);
+                if (copy_result && cut) {
+                    sourceFileModel.delete();
                 }
-            } else {
+            }else{
                 copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
                 if (copy_result && cut) {
                     sourceFileModel.delete();
                 }
             }
-
 
             if (copy_result) {
                 copied_files_name.add(current_file_name);
@@ -119,7 +120,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,copied_files_name,sourceFileObjectType);
                 }
-
             }
             copied_files_name.clear();
             copied_source_file_path_list.clear();
@@ -151,7 +151,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-    public boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
+    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
 
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
@@ -243,18 +243,16 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
-    public boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
 
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
+
         Timber.tag("CopyFileModel").d("Collected %d files/directories to copy.", filesToCopy.size());
 
         boolean allCopiesSuccessful = true;
-        Set<String> processedPaths = new HashSet<>();
-
         String sourceRootPath = sourceFileModel.getPath();
-        String destRootPath = destFileModel.getPath();
         String sourceName = new File(sourceRootPath).getName();
 
         for (FileModel source : filesToCopy) {
@@ -264,31 +262,29 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
 
             String relativePath = getRelativePath(sourceRootPath, source.getPath());
-            String destPath = computeDestinationPath(destRootPath, sourceName, relativePath);
-
-            if (processedPaths.contains(destPath)) {
-                Timber.tag("CopyFileModel").d("Skipping already processed path: %s", destPath);
-                continue;
-            }
-
-            processedPaths.add(destPath);
-
-            Timber.tag("CopyFileModel").d("Processing: Source=%s, Dest=%s, IsDirectory=%s",
-                    source.getPath(), destPath, source.isDirectory());
+            String destPath = computeDestinationPath(sourceName, relativePath);
 
             try {
                 if (source.isDirectory()) {
-                    createDirectory(destPath);
+                    createDirectory(destFileModel, destPath,destFileObjectType);
+                    ++counter_no_files;
+                    publishProgress(null);
                 } else {
-                    copyFile(source, destPath);
+                    File destFile = new File(destPath);
+                    FileModel destParentModel = createDirectory(destFileModel, destFile.getParent(),destFileObjectType);
+                    boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
+                    if(success){
+                        Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
+                        ++counter_no_files;
+                        publishProgress(null);
+                    }
                 }
             } catch (CopyFailedException e) {
-                Timber.tag("CopyFileModel").e("Copy failed: %s", e.getMessage());
+                Timber.tag("CopyFileModel").e("Operation failed: %s", e.getMessage());
                 allCopiesSuccessful = false;
                 break;
             }
         }
-
         if (cut && allCopiesSuccessful) {
             try {
                 sourceFileModel.delete();
@@ -302,6 +298,64 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
+    private void collectFilesToCopy(FileModel sourceFileModel, List<FileModel> filesToCopy) {
+        filesToCopy.add(sourceFileModel);
+
+        if (sourceFileModel.isDirectory()) {
+            FileModel[] children = sourceFileModel.list();
+            if (children != null) {
+                for (FileModel child : children) {
+                    collectFilesToCopy(child, filesToCopy);
+                }
+            }
+        }
+    }
+
+//    private void collectFilesToCopy(FileModel sourceFileModel, LinkedHashSet<FileModel> filesToCopy) {
+//        Queue<FileModel> queue = new LinkedList<>();
+//        queue.offer(sourceFileModel);
+//
+//        while (!queue.isEmpty()) {
+//            FileModel current = queue.poll();
+//            filesToCopy.add(current);
+//
+//            if (current.isDirectory()) {
+//                FileModel[] children = current.list();
+//                if (children != null) {
+//                    // Add directories first, then files
+//                    for (FileModel child : children) {
+//                        if (child.isDirectory()) {
+//                            queue.offer(child);
+//                        }
+//                    }
+//                    for (FileModel child : children) {
+//                        if (!child.isDirectory()) {
+//                            queue.offer(child);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    // createDirectory and copyFile methods remain the same as in the previous version
+    private FileModel createDirectory(FileModel baseModel, String path, FileObjectType fileObjectType) throws CopyFailedException {
+        Timber.tag("CopyFileModel").d("Attempting to create directory path: %s", path);
+        if (!baseModel.makeDirsRecursively(path)) {
+            throw new CopyFailedException("Failed to create directory: " + path);
+        }
+        // Create and return a FileModel for the newly created directory
+        FileModel createdDirModel = FileModelFactory.getFileModel(
+                new File(baseModel.getPath(), path).getPath(),
+                fileObjectType,
+                tree_uri,
+                tree_uri_path
+        );
+        Timber.tag("CopyFileModel").d("Successfully created/verified directory path: %s", path);
+        return createdDirModel;
+    }
+
+
     private String getRelativePath(String rootPath, String fullPath) {
         if (!rootPath.endsWith(File.separator)) {
             rootPath += File.separator;
@@ -312,36 +366,11 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return "";
     }
 
-    private String computeDestinationPath(String destRoot, String sourceName, String relativePath) {
+    private String computeDestinationPath(String sourceName, String relativePath) {
         if (relativePath.isEmpty()) {
-            return new File(destRoot, sourceName).getPath();
+            return new File(sourceName).getPath();
         }
-        return new File(new File(destRoot, sourceName), relativePath).getPath();
-    }
-
-    private void createDirectory(String path) throws CopyFailedException {
-        File dir = new File(path);
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new CopyFailedException("Failed to create directory: " + path);
-        }
-        Timber.tag("CopyFileModel").d("Created/Verified directory: %s", path);
-    }
-
-    private void copyFile(FileModel source, String destPath) throws CopyFailedException {
-        File destFile = new File(destPath);
-        File destParentDir = destFile.getParentFile();
-        if (!destParentDir.exists() && !destParentDir.mkdirs()) {
-            throw new CopyFailedException("Failed to create parent directory: " + destParentDir.getPath());
-        }
-
-        FileModel destParentFileModel = FileModelFactory.getFileModel(destParentDir.getPath(), destFileObjectType, tree_uri, tree_uri_path);
-        boolean success = FileUtil.copy_FileModel_FileModel(source, destParentFileModel, destFile.getName(), false, counter_size_files);
-        if (success) {
-            Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
-            ++counter_no_files;
-        } else {
-            throw new CopyFailedException("Failed to copy file: " + source.getPath());
-        }
+        return new File(new File( sourceName), relativePath).getPath();
     }
 
     // Other methods (deleteSource, collectFilesToCopy, and exception classes) remain the same
@@ -349,42 +378,5 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         public CopyFailedException(String message) {
             super(message);
         }
-    }
-
-    private static class DeleteFailedException extends Exception {
-        public DeleteFailedException(String message) {
-            super(message);
-        }
-    }
-
-    // Utility method to get parent path
-    private String getParentPath(String path) {
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-        int lastSeparatorIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
-        if (lastSeparatorIndex > 0) {
-            return path.substring(0, lastSeparatorIndex);
-        } else {
-            // No parent directory
-            return null;
-        }
-    }
-
-    private void collectFilesToCopy(FileModel source, List<FileModel> filesToCopy) {
-        // Add the source itself first
-        filesToCopy.add(source);
-
-        // If it's a directory, recursively add its contents
-        if (source.isDirectory()) {
-            FileModel[] children = source.list();
-            if (children != null) {
-                for (FileModel child : children) {
-                    collectFilesToCopy(child, filesToCopy);
-                }
-            }
-        }
-
-        Timber.tag("CopyFileModel").d("Collected file/directory: %s, IsDirectory: %s", source.getPath(), source.isDirectory());
     }
 }
