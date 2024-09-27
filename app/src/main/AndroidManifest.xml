@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="11501"
-    android:versionName="1.15.01"
-    >
+    android:versionName="1.15.01">
 
 
     <uses-feature android:name="android.hardware.usb.host" />
@@ -13,31 +12,30 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
 
-
     <queries>
         <intent>
-            <action android:name="android.intent.action.VIEW"/>
-            <data android:mimeType="*/*"/>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="*/*" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.SEND"/>
-            <data android:mimeType="*/*"/>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
         </intent>
     </queries>
 
@@ -46,10 +44,10 @@
         android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/application_name"
-        android:supportsRtl="true"
         android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
         android:theme="@style/MyLightBaseTheme"
         tools:node="replace">
 
@@ -59,18 +57,20 @@
 
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop"
+            android:exported="true"
             android:label="@string/copy_to"
-            android:exported="true">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -95,106 +95,118 @@
 
         <activity
             android:name=".FileEditorActivity"
-            android:label="@string/text_editor"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/text_editor">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/*" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".PdfViewActivity"
-            android:label="@string/pdf_viewer"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/pdf_viewer">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="application/pdf" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".AudioPlayerActivity"
+            android:exported="true"
             android:label="@string/audio_player"
-            android:launchMode="singleTop"
-            android:exported="true">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="audio/*" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".ImageViewActivity"
+            android:exported="true"
             android:label="@string/image_viewer"
-            android:theme="@style/MyLightFullScreen"
-            android:exported="true">
+            android:theme="@style/MyLightFullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".VideoViewActivity"
-            android:label="@string/video_player"
-            android:theme="@style/MyLightFullScreen"
             android:configChanges="uiMode"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/video_player"
+            android:theme="@style/MyLightFullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".InstaCropperActivity"
-            android:exported="false">
-        </activity>
+        <activity
+            android:name=".InstaCropperActivity"
+            android:exported="false"></activity>
 
         <activity
             android:name=".FileSelectorActivity"
-            android:label="@string/file_selector"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/file_selector">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.OPENABLE"/>
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".StorageAnalyserActivity"
-            android:label="@string/analyse_storage"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/analyse_storage">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".AppManagerActivity"
-            android:label="@string/app_manager"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/app_manager">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".CopyToActivity"
-            android:label="@string/copy_to"
             android:exported="true"
+            android:label="@string/copy_to"
             android:theme="@style/MyLightDialog">
             <!--intent-filter>
                 <action android:name="android.intent.action.SEND"/>
@@ -207,57 +219,57 @@
 
         <activity
             android:name=".ArchiveViewActivity"
-            android:label="@string/archive_viewer"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/archive_viewer">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="application/zip" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".FtpServerActivity"
-            android:label="@string/ftp_server"
-            android:exported="true">
-        </activity>
+            android:exported="true"
+            android:label="@string/ftp_server"></activity>
 
         <service
             android:name=".AudioPlayerService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".ArchiveDeletePasteFileService1"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".ArchiveDeletePasteFileService2"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".ArchiveDeletePasteFileService3"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".FileSaveService1"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".FileSaveService2"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".FileSaveService3"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name="svl.kadatha.filex.ftpserver.ftp.FsService"
-            android:foregroundServiceType="connectedDevice"
-            />
-        <service android:name="svl.kadatha.filex.ftpserver.ftp.NsdService"
-            android:foregroundServiceType="connectedDevice"
-            />
+            android:foregroundServiceType="connectedDevice" />
+        <service
+            android:name="svl.kadatha.filex.ftpserver.ftp.NsdService"
+            android:foregroundServiceType="connectedDevice" />
 
 
         <provider
@@ -270,6 +282,7 @@
                 android:resource="@xml/provider_paths" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

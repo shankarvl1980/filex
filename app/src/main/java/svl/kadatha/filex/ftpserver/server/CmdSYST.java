@@ -22,11 +22,10 @@ package svl.kadatha.filex.ftpserver.server;
 import timber.log.Timber;
 
 public class CmdSYST extends FtpCmd implements Runnable {
-    private static final String TAG = CmdSYST.class.getSimpleName();
-
     // This is considered a safe response to the SYST command, see
     // http://cr.yp.to/ftp/syst.html
     public static final String response = "215 UNIX Type: L8\r\n";
+    private static final String TAG = CmdSYST.class.getSimpleName();
 
     public CmdSYST(SessionThread sessionThread, String input) {
         super(sessionThread);
@@ -34,8 +33,8 @@ public class CmdSYST extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "SYST executing");
+        Timber.tag(TAG).d("SYST executing");
         sessionThread.writeString(response);
-        Timber.tag(TAG).d( "SYST finished");
+        Timber.tag(TAG).d("SYST finished");
     }
 }

@@ -33,23 +33,23 @@ public class CmdPASV extends FtpCmd implements Runnable {
     @Override
     public void run() {
         String cantOpen = "502 Couldn't open a port\r\n";
-        Timber.tag(TAG).d( "PASV running");
+        Timber.tag(TAG).d("PASV running");
         int port;
         if ((port = sessionThread.onPasv()) == 0) {
             // There was a problem opening a port
-            Timber.tag(TAG).e( "Couldn't open a port for PASV");
+            Timber.tag(TAG).e("Couldn't open a port for PASV");
             sessionThread.writeString(cantOpen);
             return;
         }
         InetAddress address = sessionThread.getDataSocketPasvIp();
         if (address == null) {
-            Timber.tag(TAG).e( "PASV IP string invalid");
+            Timber.tag(TAG).e("PASV IP string invalid");
             sessionThread.writeString(cantOpen);
             return;
         }
-        Timber.tag(TAG).d( "PASV sending IP: " + address.getHostAddress());
+        Timber.tag(TAG).d("PASV sending IP: " + address.getHostAddress());
         if (port < 1) {
-            Timber.tag(TAG).e( "PASV port number invalid");
+            Timber.tag(TAG).e("PASV port number invalid");
             sessionThread.writeString(cantOpen);
             return;
         }
@@ -64,6 +64,6 @@ public class CmdPASV extends FtpCmd implements Runnable {
         response.append(").\r\n");
         String responseString = response.toString();
         sessionThread.writeString(responseString);
-        Timber.tag(TAG).d( "PASV completed, sent: " + responseString);
+        Timber.tag(TAG).d("PASV completed, sent: " + responseString);
     }
 }

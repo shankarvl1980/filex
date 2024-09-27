@@ -17,11 +17,12 @@ public class CmdSIZE extends FtpCmd {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "SIZE executing");
+        Timber.tag(TAG).d("SIZE executing");
         String errString = null;
         String param = getParameter(input);
         long size = 0;
-        mainblock: {
+        mainblock:
+        {
             File currentDir = sessionThread.getWorkingDir();
             if (param.contains(File.separator)) {
                 errString = "550 No directory traversal allowed in SIZE param\r\n";
@@ -37,7 +38,7 @@ public class CmdSIZE extends FtpCmd {
             if (!target.exists()) {
                 errString = "550 Cannot get the SIZE of nonexistent object\r\n";
                 try {
-                    Timber.tag(TAG).i( "Failed getting size of: " + target.getCanonicalPath());
+                    Timber.tag(TAG).i("Failed getting size of: " + target.getCanonicalPath());
                 } catch (IOException e) {
                 }
                 break mainblock;
@@ -53,7 +54,7 @@ public class CmdSIZE extends FtpCmd {
         } else {
             sessionThread.writeString("213 " + size + "\r\n");
         }
-        Timber.tag(TAG).d( "SIZE complete");
+        Timber.tag(TAG).d("SIZE complete");
     }
 
 }

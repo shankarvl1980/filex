@@ -49,7 +49,8 @@ public class CmdLIST extends CmdAbstractListing implements Runnable {
     public void run() {
         String errString = null;
 
-        mainblock: {
+        mainblock:
+        {
             String param = getParameter(input);
             Timber.tag(TAG).d("LIST parameter: " + param);
             while (param.startsWith("-")) {

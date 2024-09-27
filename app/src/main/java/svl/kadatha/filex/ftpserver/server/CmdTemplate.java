@@ -22,9 +22,8 @@ package svl.kadatha.filex.ftpserver.server;
 import timber.log.Timber;
 
 public class CmdTemplate extends FtpCmd implements Runnable {
-    private static final String TAG = CmdTemplate.class.getSimpleName();
-
     public static final String message = "TEMPLATE!!";
+    private static final String TAG = CmdTemplate.class.getSimpleName();
 
     public CmdTemplate(SessionThread sessionThread, String input) {
         super(sessionThread);
@@ -33,7 +32,7 @@ public class CmdTemplate extends FtpCmd implements Runnable {
     @Override
     public void run() {
         sessionThread.writeString(message);
-        Timber.tag(TAG).i( "Template log message");
+        Timber.tag(TAG).i("Template log message");
     }
 
 }

@@ -36,6 +36,19 @@ import timber.log.Timber;
 public abstract class CmdAbstractListing extends FtpCmd {
     // TODO: .class.getSimpleName() from abstract class?
     public static final String TAG = "CmdAbstractListing";
+    /**
+     * Comparator to sort file listings. Sorts directories before files, sorts
+     * alphabetical ignoring case
+     */
+    static final Comparator<File> listingComparator = (lhs, rhs) -> {
+        if (lhs.isDirectory() && rhs.isFile()) {
+            return -1;
+        } else if (lhs.isFile() && rhs.isDirectory()) {
+            return 1;
+        } else {
+            return lhs.getName().compareToIgnoreCase(rhs.getName());
+        }
+    };
 
     public CmdAbstractListing(SessionThread sessionThread, String input) {
         super(sessionThread);
@@ -52,20 +65,20 @@ public abstract class CmdAbstractListing extends FtpCmd {
         if (!dir.isDirectory()) {
             return "500 Internal error, listDirectory on non-directory\r\n";
         }
-        Timber.tag(TAG).d( "Listing directory: " + dir);
+        Timber.tag(TAG).d("Listing directory: " + dir);
 
         // Get a listing of all files and directories in the path
         File[] entries = dir.listFiles();
         if (entries == null) {
             return "500 Couldn't list directory. Check config and mount status.\r\n";
         }
-        Timber.tag(TAG).d( "Dir len " + entries.length);
+        Timber.tag(TAG).d("Dir len " + entries.length);
         try {
             Arrays.sort(entries, listingComparator);
         } catch (Exception e) {
             // once got a FC on this, seems it is possible to have a dir that
             // breaks the listing comparator (unable to reproduce)
-            Timber.tag(TAG).e( "Unable to sort the listing: " + e.getMessage());
+            Timber.tag(TAG).e("Unable to sort the listing: " + e.getMessage());
             // play for sure, and get back the entries
             entries = dir.listFiles();
         }
@@ -82,7 +95,7 @@ public abstract class CmdAbstractListing extends FtpCmd {
     // Returns an error string on failure, or returns null if successful.
     protected String sendListing(String listing) {
         if (sessionThread.openDataSocket()) {
-            Timber.tag(TAG).d( "LIST/NLST done making socket");
+            Timber.tag(TAG).d("LIST/NLST done making socket");
         } else {
             sessionThread.closeDataSocket();
             return "425 Error opening data socket\r\n";
@@ -90,29 +103,15 @@ public abstract class CmdAbstractListing extends FtpCmd {
         String mode = sessionThread.isBinaryMode() ? "BINARY" : "ASCII";
         sessionThread.writeString("150 Opening " + mode
                 + " mode data connection for file list\r\n");
-        Timber.tag(TAG).d( "Sent code 150, sending listing string now");
+        Timber.tag(TAG).d("Sent code 150, sending listing string now");
         if (!sessionThread.sendViaDataSocket(listing)) {
-            Timber.tag(TAG).d( "sendViaDataSocket failure");
+            Timber.tag(TAG).d("sendViaDataSocket failure");
             sessionThread.closeDataSocket();
             return "426 Data socket or network error\r\n";
         }
         sessionThread.closeDataSocket();
-        Timber.tag(TAG).d( "Listing sendViaDataSocket success");
+        Timber.tag(TAG).d("Listing sendViaDataSocket success");
         sessionThread.writeString("226 Data transmission OK\r\n");
         return null;
     }
-
-    /**
-     * Comparator to sort file listings. Sorts directories before files, sorts
-     * alphabetical ignoring case
-     */
-    static final Comparator<File> listingComparator = (lhs, rhs) -> {
-        if (lhs.isDirectory() && rhs.isFile()) {
-            return -1;
-        } else if (lhs.isFile() && rhs.isDirectory()) {
-            return 1;
-        } else {
-            return lhs.getName().compareToIgnoreCase(rhs.getName());
-        }
-    };
 }

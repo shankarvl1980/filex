@@ -54,7 +54,7 @@ public abstract class FtpServerFileUtil {
             } else {
                 // Storage Access Framework
                 DocumentFile targetDocument = getDocumentFile(target, false, context);
-                if(targetDocument==null)return false;
+                if (targetDocument == null) return false;
                 outStream =
                         context.getContentResolver().openOutputStream(targetDocument.getUri());
 
@@ -109,7 +109,8 @@ public abstract class FtpServerFileUtil {
         } else {
             // Storage Access Framework
             DocumentFile targetDocument = getDocumentFile(target, false, context);
-            if(targetDocument!=null) outStream =  new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
+            if (targetDocument != null)
+                outStream = new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
         }
         return outStream;
     }
@@ -210,7 +211,7 @@ public abstract class FtpServerFileUtil {
                 return false;
             }
             try {
-                if(DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
+                if (DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
                     return true;
                 }
             } catch (Exception e) {
@@ -465,7 +466,7 @@ public abstract class FtpServerFileUtil {
             if (file != null && !file.equals(context.getExternalFilesDir("external"))) {
                 int index = file.getAbsolutePath().lastIndexOf("/Android/data");
                 if (index < 0) {
-                    Timber.tag(LOG).w( "Unexpected external file dir: " + file.getAbsolutePath());
+                    Timber.tag(LOG).w("Unexpected external file dir: " + file.getAbsolutePath());
                 } else {
                     String path = file.getAbsolutePath().substring(0, index);
                     try {
@@ -487,7 +488,7 @@ public abstract class FtpServerFileUtil {
             if (file != null) {
                 int index = file.getAbsolutePath().lastIndexOf("/Android/data");
                 if (index < 0) {
-                    Timber.tag(LOG).w( "Unexpected external file dir: " + file.getAbsolutePath());
+                    Timber.tag(LOG).w("Unexpected external file dir: " + file.getAbsolutePath());
                 } else {
                     String path = file.getAbsolutePath().substring(0, index);
                     try {
@@ -564,25 +565,21 @@ public abstract class FtpServerFileUtil {
 
 
         Uri treeUri = null;
-        File parent_file=file.getParentFile();
-        if(parent_file!=null)
-        {
-            if(!parent_file.exists()) return null;
-        }
-        else {
+        File parent_file = file.getParentFile();
+        if (parent_file != null) {
+            if (!parent_file.exists()) return null;
+        } else {
             return null;
         }
 
-        UriPOJO uriPOJO= Global.CHECK_AVAILABILITY_URI_PERMISSION(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
-        if(uriPOJO!=null)
-        {
-            treeUri=uriPOJO.get_uri();
+        UriPOJO uriPOJO = Global.CHECK_AVAILABILITY_URI_PERMISSION(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
+        if (uriPOJO != null) {
+            treeUri = uriPOJO.get_uri();
         }
         if (treeUri == null) {
             return null;
         }
-        if(!uriPOJO.get_path().equals(baseFolder))
-        {
+        if (!uriPOJO.get_path().equals(baseFolder)) {
             return null;
         }
 

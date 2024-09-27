@@ -59,8 +59,8 @@ public class FsSettings {
 //            }
 //            return new ArrayList<>(Collections.singletonList(new FtpUser(username, password, chroot)));
 //        } else {
-            FtpUser defaultUser = new FtpUser(context.getString(R.string.username_default), context.getString(R.string.password_default), "\\");
-            return new ArrayList<>(Collections.singletonList(defaultUser));
+        FtpUser defaultUser = new FtpUser(context.getString(R.string.username_default), context.getString(R.string.password_default), "\\");
+        return new ArrayList<>(Collections.singletonList(defaultUser));
 //        }
     }
 
@@ -81,7 +81,7 @@ public class FsSettings {
             chrootDir = new File("/");
         }
         if (!chrootDir.isDirectory()) {
-            Timber.tag(TAG).e( "getChrootDir: not a directory");
+            Timber.tag(TAG).e("getChrootDir: not a directory");
             // if this happens, we are screwed
             // we give it the application directory
             // but this will probably not be what the user wants
@@ -96,7 +96,7 @@ public class FsSettings {
     }
 
 /**
-     * @return the SharedPreferences for this application
-     */
+ * @return the SharedPreferences for this application
+ */
 
 }

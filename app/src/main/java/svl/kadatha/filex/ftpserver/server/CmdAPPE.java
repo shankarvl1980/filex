@@ -21,15 +21,15 @@ package svl.kadatha.filex.ftpserver.server;
 
 
 public class CmdAPPE extends CmdAbstractStore implements Runnable {
-	protected final String input;
+    protected final String input;
 
-	public CmdAPPE(SessionThread sessionThread, String input) {
-		super(sessionThread, CmdAPPE.class.toString());
-		this.input = input;
-	}
+    public CmdAPPE(SessionThread sessionThread, String input) {
+        super(sessionThread, CmdAPPE.class.toString());
+        this.input = input;
+    }
 
-	@Override
+    @Override
     public void run() {
-		doStorOrAppe(getParameter(input), true);
-	}
+        doStorOrAppe(getParameter(input), true);
+    }
 }

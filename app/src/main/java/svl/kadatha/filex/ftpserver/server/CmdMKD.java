@@ -38,7 +38,7 @@ public class CmdMKD extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "MKD executing");
+        Timber.tag(TAG).d("MKD executing");
         String param = getParameter(input);
         File toCreate;
         String errString = null;
@@ -67,11 +67,11 @@ public class CmdMKD extends FtpCmd implements Runnable {
         }
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).i( "MKD error: " + errString.trim());
+            Timber.tag(TAG).i("MKD error: " + errString.trim());
         } else {
             sessionThread.writeString("250 Directory created\r\n");
         }
-        Timber.tag(TAG).i( "MKD complete");
+        Timber.tag(TAG).i("MKD complete");
     }
 
 }

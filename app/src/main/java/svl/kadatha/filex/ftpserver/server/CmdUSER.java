@@ -34,7 +34,7 @@ public class CmdUSER extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "USER executing");
+        Timber.tag(TAG).d("USER executing");
         String userName = FtpCmd.getParameter(input);
         if (!userName.matches("[A-Za-z0-9]+")) {
             sessionThread.writeString("530 Invalid username\r\n");

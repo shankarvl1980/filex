@@ -39,34 +39,34 @@ public class CmdMLST extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "run: LIST executing, input: " + mInput);
+        Timber.tag(TAG).d("run: LIST executing, input: " + mInput);
         String param = getParameter(mInput);
-        
+
         File fileToFormat = null;
-        if(param.isEmpty()){
+        if (param.isEmpty()) {
             fileToFormat = sessionThread.getWorkingDir();
             param = "/";
-        }else{
+        } else {
             fileToFormat = inputPathToChrootedFile(sessionThread.getChrootDir(), sessionThread.getWorkingDir(), param);
         }
-        
+
         if (fileToFormat.exists()) {
             sessionThread.writeString("250- Listing " + param + "\r\n");
             sessionThread.writeString(makeString(fileToFormat) + "\r\n");
             sessionThread.writeString("250 End\r\n");
         } else {
-            Timber.tag(TAG).w( "run: file does not exist");
+            Timber.tag(TAG).w("run: file does not exist");
             sessionThread.writeString("550 file does not exist\r\n");
         }
 
-        Timber.tag(TAG).d( "run: LIST completed");
+        Timber.tag(TAG).d("run: LIST completed");
     }
 
-    public String makeString(File file){
+    public String makeString(File file) {
         StringBuilder response = new StringBuilder();
-        
-        String[] selectedTypes = sessionThread.getFormatTypes();   
-        if(selectedTypes != null){
+
+        String[] selectedTypes = sessionThread.getFormatTypes();
+        if (selectedTypes != null) {
             for (int i = 0; i < selectedTypes.length; ++i) {
                 String type = selectedTypes[i];
                 if (type.equalsIgnoreCase("size")) {
@@ -101,7 +101,7 @@ public class CmdMLST extends FtpCmd implements Runnable {
             }
         }
 
-        response.append(' ');    
+        response.append(' ');
         response.append(file.getName());
         response.append("\r\n");
         return response.toString();

@@ -35,7 +35,7 @@ public class CmdPASS extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "Executing PASS");
+        Timber.tag(TAG).d("Executing PASS");
         String attemptPassword = getParameter(input, true); // silent
         // Always first USER command, then PASS command
         String attemptUsername = sessionThread.getUserName();
@@ -44,24 +44,24 @@ public class CmdPASS extends FtpCmd implements Runnable {
             return;
         }
         if (attemptUsername.equals("anonymous") && FsSettings.allowAnonymous()) {
-            Timber.tag(TAG).i( "Guest logged in with email: " + attemptPassword);
+            Timber.tag(TAG).i("Guest logged in with email: " + attemptPassword);
             sessionThread.writeString("230 Guest login ok, read only access.\r\n");
             return;
         }
 
         FtpUser user = FsSettings.getUser(attemptUsername);
         if (user == null) {
-            Timber.tag(TAG).i( "Failed authentication, username does not exist!");
+            Timber.tag(TAG).i("Failed authentication, username does not exist!");
             Util.sleepIgnoreInterrupt(1000); // sleep to foil brute force attack
             sessionThread.writeString("500 Login incorrect.\r\n");
-            sessionThread.authAttempt( false);
+            sessionThread.authAttempt(false);
         } else if (user.getPassword().equals(attemptPassword)) {
-            Timber.tag(TAG).i( "User " + user.getUsername() + " password verified");
+            Timber.tag(TAG).i("User " + user.getUsername() + " password verified");
             sessionThread.writeString("230 Access granted\r\n");
             sessionThread.authAttempt(true);
             sessionThread.setChrootDir(user.getChroot());
         } else {
-            Timber.tag(TAG).i( "Failed authentication, incorrect password");
+            Timber.tag(TAG).i("Failed authentication, incorrect password");
             Util.sleepIgnoreInterrupt(1000); // sleep to foil brute force attack
             sessionThread.writeString("530 Login incorrect.\r\n");
             sessionThread.authAttempt(false);

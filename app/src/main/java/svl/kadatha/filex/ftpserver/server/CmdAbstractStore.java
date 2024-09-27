@@ -84,7 +84,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                 out = FtpServerFileUtil.getOutputStream(storeFile, App.getAppContext());
 
                 //file
-                if(out == null){
+                if (out == null) {
                     errString = "451 Couldn't open file \"" + param + "\" aka \""
                             + storeFile.getCanonicalPath() + "\" for writing\r\n";
                     break storing;
@@ -96,8 +96,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                         out.getChannel().position(sessionThread.offset);
                         sessionThread.offset = -1;
                     }
-                }
-                catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     errString = "451 Couldn't open file \"" + param + "\" aka \""
                             + storeFile.getCanonicalPath() + "\" for writing. Failed to create output stream.\r\n";
                     break storing;

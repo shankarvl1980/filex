@@ -36,58 +36,36 @@ import timber.log.Timber;
 public class NsdService extends Service {
     private static final String TAG = NsdService.class.getSimpleName();
 
-    private static final String FTP_SERVICE_TYPE= "_ftp._tcp.";
-
-    private NsdManager mNsdManager = null;
-
-    // keep runaway threads in check
-    private volatile boolean running = false;
-
-    public static class ServerActionsReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Timber.tag(TAG).d( "onReceive broadcast: " + intent.getAction());
-
-            if (intent.getAction() == null) {
-                return;
-            }
-            if (intent.getAction().equals(FsService.ACTION_STARTED)) {
-                Intent service = new Intent(context, NsdService.class);
-                context.startService(service);
-            } else if (intent.getAction().equals(FsService.ACTION_STOPPED)) {
-                Intent service = new Intent(context, NsdService.class);
-                context.stopService(service);
-            }
-        }
-
-    }
-
+    private static final String FTP_SERVICE_TYPE = "_ftp._tcp.";
     private final RegistrationListener mRegistrationListener = new RegistrationListener() {
 
         @Override
         public void onServiceRegistered(NsdServiceInfo serviceInfo) {
-            Timber.tag(TAG).d( "onServiceRegistered: " + serviceInfo.getServiceName());
+            Timber.tag(TAG).d("onServiceRegistered: " + serviceInfo.getServiceName());
         }
 
         @Override
         public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
-            Timber.tag(TAG).d( "onServiceUnregistered: " + serviceInfo.getServiceName());
+            Timber.tag(TAG).d("onServiceUnregistered: " + serviceInfo.getServiceName());
         }
 
         @Override
         public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-            Timber.tag(TAG).e( "onRegistrationFailed: errorCode=" + errorCode);
+            Timber.tag(TAG).e("onRegistrationFailed: errorCode=" + errorCode);
         }
 
         @Override
         public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-            Timber.tag(TAG).e( "onUnregistrationFailed: errorCode=" + errorCode);
+            Timber.tag(TAG).e("onUnregistrationFailed: errorCode=" + errorCode);
         }
     };
+    private NsdManager mNsdManager = null;
+    // keep runaway threads in check
+    private volatile boolean running = false;
 
     @Override
     public void onCreate() {
-        Timber.tag(TAG).d( "onCreate: Entered");
+        Timber.tag(TAG).d("onCreate: Entered");
 
         running = true;
 
@@ -102,58 +80,78 @@ public class NsdService extends Service {
 
         new Thread(() -> {
             // this call sometimes hangs, this is why I get it in a separate thread
-            Timber.tag(TAG).d( "onCreate: Trying to get the NsdManager");
+            Timber.tag(TAG).d("onCreate: Trying to get the NsdManager");
             mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
             if (mNsdManager != null) {
-                Timber.tag(TAG).d( "onCreate: Got the NsdManager");
+                Timber.tag(TAG).d("onCreate: Got the NsdManager");
                 try {
                     // all kinds of problems with the NsdManager, give it
                     // some extra time before I make next call
                     Thread.sleep(500);
                     if (!running) {
-                        Timber.tag(TAG).e( "NsdManager is no longer needed, bailing out");
+                        Timber.tag(TAG).e("NsdManager is no longer needed, bailing out");
                         mNsdManager = null;
                         return;
                     }
                     mNsdManager.registerService(serviceInfo,
                             NsdManager.PROTOCOL_DNS_SD, mRegistrationListener);
                 } catch (Exception e) {
-                    Timber.tag(TAG).e( "onCreate: Failed to register NsdManager");
+                    Timber.tag(TAG).e("onCreate: Failed to register NsdManager");
                     mNsdManager = null;
                 }
             } else {
-                Timber.tag(TAG).d( "onCreate: Failed to get the NsdManager");
+                Timber.tag(TAG).d("onCreate: Failed to get the NsdManager");
             }
         }).start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.tag(TAG).d( "onStartCommand: Entered");
+        Timber.tag(TAG).d("onStartCommand: Entered");
 
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Timber.tag(TAG).d( "onDestroy: Entered");
+        Timber.tag(TAG).d("onDestroy: Entered");
 
         running = false;
 
         if (mNsdManager == null) {
-            Timber.tag(TAG).e( "unregisterService: Unexpected mNsdManger to be null, bailing out");
+            Timber.tag(TAG).e("unregisterService: Unexpected mNsdManger to be null, bailing out");
             return;
         }
         try {
             mNsdManager.unregisterService(mRegistrationListener);
         } catch (Exception e) {
-            Timber.tag(TAG).e( "Unable to unregister NSD service, error: " + e.getMessage());
+            Timber.tag(TAG).e("Unable to unregister NSD service, error: " + e.getMessage());
         }
         mNsdManager = null;
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public static class ServerActionsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.tag(TAG).d("onReceive broadcast: " + intent.getAction());
+
+            if (intent.getAction() == null) {
+                return;
+            }
+            if (intent.getAction().equals(FsService.ACTION_STARTED)) {
+                Intent service = new Intent(context, NsdService.class);
+                context.startService(service);
+            } else if (intent.getAction().equals(FsService.ACTION_STOPPED)) {
+                Intent service = new Intent(context, NsdService.class);
+                context.stopService(service);
+            }
+        }
+
     }
 
 }

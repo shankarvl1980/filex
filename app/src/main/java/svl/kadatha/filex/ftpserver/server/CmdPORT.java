@@ -36,9 +36,10 @@ public class CmdPORT extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "PORT executing");
+        Timber.tag(TAG).d("PORT executing");
         String errString = null;
-        mainBlock: {
+        mainBlock:
+        {
             String param = getParameter(input);
             if (param.contains("|") && param.contains("::")) {
                 errString = "550 No IPv6 support, reconfigure your client\r\n";
@@ -86,9 +87,9 @@ public class CmdPORT extends FtpCmd implements Runnable {
         if (errString == null) {
             sessionThread.writeString("200 PORT OK\r\n");
         } else {
-            Timber.tag(TAG).i( "PORT error: " + errString);
+            Timber.tag(TAG).i("PORT error: " + errString);
             sessionThread.writeString(errString);
         }
-        Timber.tag(TAG).d( "PORT completed");
+        Timber.tag(TAG).d("PORT completed");
     }
 }

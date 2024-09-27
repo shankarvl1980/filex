@@ -39,7 +39,7 @@ public class CmdDELE extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "DELE executing");
+        Timber.tag(TAG).d("DELE executing");
         String param = getParameter(input);
         File storeFile = inputPathToChrootedFile(sessionThread.getChrootDir(), sessionThread.getWorkingDir(), param);
         String errString = null;
@@ -53,12 +53,12 @@ public class CmdDELE extends FtpCmd implements Runnable {
 
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).i( "DELE failed: " + errString.trim());
+            Timber.tag(TAG).i("DELE failed: " + errString.trim());
         } else {
             sessionThread.writeString("250 File successfully deleted\r\n");
             MediaUpdater.notifyFileDeleted(storeFile.getPath());
         }
-        Timber.tag(TAG).d( "DELE finished");
+        Timber.tag(TAG).d("DELE finished");
     }
 
 }

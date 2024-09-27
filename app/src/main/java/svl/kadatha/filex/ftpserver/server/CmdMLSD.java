@@ -45,9 +45,10 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
     public void run() {
         String errString = null;
 
-        mainblock: {
+        mainblock:
+        {
             String param = getParameter(input);
-            Timber.tag(TAG).d( "MLSD parameter: " + param);
+            Timber.tag(TAG).d("MLSD parameter: " + param);
             File fileToList = null;
             if (param.isEmpty()) {
                 fileToList = sessionThread.getWorkingDir();
@@ -86,9 +87,9 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
 
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).d( "MLSD failed with: " + errString);
+            Timber.tag(TAG).d("MLSD failed with: " + errString);
         } else {
-            Timber.tag(TAG).d( "MLSD completed OK");
+            Timber.tag(TAG).d("MLSD completed OK");
         }
         // The success or error response over the control connection will
         // have already been handled by sendListing, so we can just quit now.
@@ -96,11 +97,11 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
 
     // Generates a line of a directory listing in the Format of MLSx
     @Override
-    protected String makeLsString(File file) {      
+    protected String makeLsString(File file) {
         StringBuilder response = new StringBuilder();
 
         if (!file.exists()) {
-            Timber.tag(TAG).i( "makeLsString had nonexistent file");
+            Timber.tag(TAG).i("makeLsString had nonexistent file");
             return null;
         }
 
@@ -111,15 +112,15 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
         String lastNamePart = file.getName();
         // Many clients can't handle files containing these symbols
         if (lastNamePart.contains("*") || lastNamePart.contains("/")) {
-            Timber.tag(TAG).i( "Filename omitted due to disallowed character");
+            Timber.tag(TAG).i("Filename omitted due to disallowed character");
             return null;
         } else {
             // The following line generates many calls in large directories
             // staticTimber.l((Log.DEBUG, "Filename: " + lastNamePart);
         }
 
-        String[] selectedTypes = sessionThread.getFormatTypes();   
-        if(selectedTypes != null){
+        String[] selectedTypes = sessionThread.getFormatTypes();
+        if (selectedTypes != null) {
             for (int i = 0; i < selectedTypes.length; ++i) {
                 String type = selectedTypes[i];
                 if (type.equalsIgnoreCase("size")) {
@@ -154,7 +155,7 @@ public class CmdMLSD extends CmdAbstractListing implements Runnable {
             }
         }
 
-        response.append(' ');    
+        response.append(' ');
         response.append(lastNamePart);
         response.append("\r\n");
         return response.toString();

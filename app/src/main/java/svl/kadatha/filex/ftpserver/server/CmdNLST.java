@@ -31,10 +31,9 @@ import java.io.File;
 import timber.log.Timber;
 
 public class CmdNLST extends CmdAbstractListing implements Runnable {
-    private static final String TAG = CmdNLST.class.getSimpleName();
-
     // The approximate number of milliseconds in 6 months
     public final static long MS_IN_SIX_MONTHS = 6L * 30L * 24L * 60L * 60L * 1000L;
+    private static final String TAG = CmdNLST.class.getSimpleName();
     private final String input;
 
     public CmdNLST(SessionThread sessionThread, String input) {
@@ -46,7 +45,8 @@ public class CmdNLST extends CmdAbstractListing implements Runnable {
     public void run() {
         String errString = null;
 
-        mainblock: {
+        mainblock:
+        {
             String param = getParameter(input);
             if (param.startsWith("-")) {
                 // Ignore options to list, which start with a dash
@@ -95,9 +95,9 @@ public class CmdNLST extends CmdAbstractListing implements Runnable {
 
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).d( "NLST failed with: " + errString);
+            Timber.tag(TAG).d("NLST failed with: " + errString);
         } else {
-            Timber.tag(TAG).d( "NLST completed OK");
+            Timber.tag(TAG).d("NLST completed OK");
         }
         // The success or error response over the control connection will
         // have already been handled by sendListing, so we can just quit now.
@@ -106,7 +106,7 @@ public class CmdNLST extends CmdAbstractListing implements Runnable {
     @Override
     protected String makeLsString(File file) {
         if (!file.exists()) {
-            Timber.tag(TAG).i( "makeLsString had nonexistent file");
+            Timber.tag(TAG).i("makeLsString had nonexistent file");
             return null;
         }
 
@@ -117,10 +117,10 @@ public class CmdNLST extends CmdAbstractListing implements Runnable {
         String lastNamePart = file.getName();
         // Many clients can't handle files containing these symbols
         if (lastNamePart.contains("*") || lastNamePart.contains("/")) {
-            Timber.tag(TAG).i( "Filename omitted due to disallowed character");
+            Timber.tag(TAG).i("Filename omitted due to disallowed character");
             return null;
         } else {
-            Timber.tag(TAG).d( "Filename: " + lastNamePart);
+            Timber.tag(TAG).d("Filename: " + lastNamePart);
             return lastNamePart + "\r\n";
         }
     }

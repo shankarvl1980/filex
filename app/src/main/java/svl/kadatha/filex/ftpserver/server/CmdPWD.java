@@ -37,7 +37,7 @@ public class CmdPWD extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "PWD executing");
+        Timber.tag(TAG).d("PWD executing");
         // We assume that the chroot restriction has been applied, and that
         // therefore the current directory is located somewhere within the
         // chroot directory. Therefore, we can just slice of the chroot
@@ -57,10 +57,10 @@ public class CmdPWD extends FtpCmd implements Runnable {
             sessionThread.writeString("257 \"" + currentDir + "\"\r\n");
         } catch (IOException e) {
             // This shouldn't happen unless our input validation has failed
-            Timber.tag(TAG).e( "PWD canonicalize");
+            Timber.tag(TAG).e("PWD canonicalize");
             sessionThread.closeSocket(); // should cause thread termination
         }
-        Timber.tag(TAG).d( "PWD complete");
+        Timber.tag(TAG).d("PWD complete");
     }
 
 }

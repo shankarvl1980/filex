@@ -37,26 +37,27 @@ public class CmdOPTS extends FtpCmd implements Runnable {
         String errString = null;
         String responseString = null;
 
-        mainBlock: {
+        mainBlock:
+        {
             if (param == null) {
                 errString = "550 Need argument to OPTS\r\n";
-                Timber.tag(TAG).w( "Couldn't understand empty OPTS command");
+                Timber.tag(TAG).w("Couldn't understand empty OPTS command");
                 break mainBlock;
             }
             String[] splits = param.split(" ");
             String optName = splits[0].toUpperCase();
 
             // if the first parameter (optName) is HASH, second parameter (optVal) is optional
-            if(optName.equals("HASH")) {
-                Timber.tag(TAG).d( "Got OPTS HASH");
+            if (optName.equals("HASH")) {
+                Timber.tag(TAG).d("Got OPTS HASH");
                 // if second parameter not passed, respond with currently selected algorithm
-                if(splits.length == 1) {
-                    Timber.tag(TAG).d( "No arguments for OPTS HASH, returning selected algorithm");
+                if (splits.length == 1) {
+                    Timber.tag(TAG).d("No arguments for OPTS HASH, returning selected algorithm");
                     responseString = "200 " + sessionThread.getHashingAlgorithm() + "\r\n";
-                } else if(splits.length == 2) {
+                } else if (splits.length == 2) {
                     String newHashingAlgorithm = splits[1].toUpperCase();
-                    Timber.tag(TAG).d( "Got OPTS HASH: " + newHashingAlgorithm);
-                    if(newHashingAlgorithm.equals("MD5") ||
+                    Timber.tag(TAG).d("Got OPTS HASH: " + newHashingAlgorithm);
+                    if (newHashingAlgorithm.equals("MD5") ||
                             newHashingAlgorithm.equals("SHA-1") ||
                             newHashingAlgorithm.equals("SHA-256") ||
                             newHashingAlgorithm.equals("SHA-384") ||
@@ -68,13 +69,13 @@ public class CmdOPTS extends FtpCmd implements Runnable {
                     }
                 } else {
                     errString = "550 Malformed OPTS HASH command\r\n";
-                    Timber.tag(TAG).w( "Couldn't parse options for OPTS HASH command");
+                    Timber.tag(TAG).w("Couldn't parse options for OPTS HASH command");
                 }
                 // break out of mainblock, OPTS command is handled.
                 break mainBlock;
             } else if (splits.length != 2) {
                 errString = "550 Malformed OPTS command\r\n";
-                Timber.tag(TAG).w( "Couldn't parse OPTS command");
+                Timber.tag(TAG).w("Couldn't parse OPTS command");
                 break mainBlock;
             }
 
@@ -83,14 +84,14 @@ public class CmdOPTS extends FtpCmd implements Runnable {
                 // OK, whatever. Don't really know what to do here. We
                 // always operate in UTF8 mode.
                 if (optVal.equals("ON")) {
-                    Timber.tag(TAG).d( "Got OPTS UTF8 ON");
+                    Timber.tag(TAG).d("Got OPTS UTF8 ON");
                     sessionThread.setEncoding("UTF-8");
                 } else {
-                    Timber.tag(TAG).i( "Ignoring OPTS UTF8 for something besides ON");
+                    Timber.tag(TAG).i("Ignoring OPTS UTF8 for something besides ON");
                 }
                 break mainBlock;
-            } else if(optName.equals("MLST")) {
-                Timber.tag(TAG).d( "Got OPTS MLST: " + optVal);
+            } else if (optName.equals("MLST")) {
+                Timber.tag(TAG).d("Got OPTS MLST: " + optVal);
                 String[] opts = optVal.split(";");
                 boolean hasType = false, hasSize = false, hasModify = false, hasPerm = false;
                 for (String opt : opts) {
@@ -104,32 +105,32 @@ public class CmdOPTS extends FtpCmd implements Runnable {
                         hasPerm = true;
                     }
                 }
-                
+
                 int optCount = 0;
                 StringBuilder types = new StringBuilder();
-                if(hasType){
+                if (hasType) {
                     opts[optCount++] = "Type";
                     types.append("Type;");
                 }
-                if(hasSize){
+                if (hasSize) {
                     opts[optCount++] = "Size";
                     types.append("Size;");
                 }
-                if(hasModify){
+                if (hasModify) {
                     opts[optCount++] = "Modify";
                     types.append("Modify;");
                 }
-                if(hasPerm){
+                if (hasPerm) {
                     opts[optCount++] = "Perm";
                     types.append("Perm;");
                 }
                 String[] newOpts = new String[optCount];
                 System.arraycopy(opts, 0, newOpts, 0, optCount);
-                
+
                 sessionThread.setFormatTypes(newOpts);
                 responseString = "200 MLST OPTS " + types + "\r\n";
             } else {
-                Timber.tag(TAG).d( "Unrecognized OPTS option: " + optName);
+                Timber.tag(TAG).d("Unrecognized OPTS option: " + optName);
                 errString = "502 Unrecognized option\r\n";
                 break mainBlock;
             }
@@ -138,7 +139,7 @@ public class CmdOPTS extends FtpCmd implements Runnable {
             sessionThread.writeString(errString);
         } else {
             sessionThread.writeString(responseString != null ? responseString : "200 OPTS accepted\r\n");
-            Timber.tag(TAG).d( "Handled OPTS ok");
+            Timber.tag(TAG).d("Handled OPTS ok");
         }
     }
 

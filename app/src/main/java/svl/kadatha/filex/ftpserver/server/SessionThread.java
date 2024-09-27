@@ -40,10 +40,16 @@ import timber.log.Timber;
 
 public class SessionThread extends Thread {
 
-    private static final int MAX_AUTH_FAILS = 3;
     public static final int DATA_CHUNK_SIZE = 65536;  // do file I/O in 64k chunks
-
+    private static final int MAX_AUTH_FAILS = 3;
     private final Socket cmdSocket;
+    private final LocalDataSocket localDataSocket;
+    private final boolean sendWelcomeBanner;
+    // FTP control sessions should start out in ASCII, according to the RFC. However, many clients
+    // don't turn on UTF-8 even though they support it, so we just turn it on by default.
+    protected String encoding = "UTF-8";
+    long offset = -1; // where to start append when using REST/RANG
+    long endPosition = -1; // where to stop append when using RANG
     private boolean binaryMode = false;
     private String userName = null;  // username that the client sends
     private boolean userAuthenticated = false;
@@ -51,15 +57,8 @@ public class SessionThread extends Thread {
     private File chrootDir = workingDir;
     private Socket dataSocket = null;
     private File renameFrom = null;
-    private final LocalDataSocket localDataSocket;
     private InputStream dataInputStream = null;
     private OutputStream dataOutputStream = null;
-    private final boolean sendWelcomeBanner;
-    // FTP control sessions should start out in ASCII, according to the RFC. However, many clients
-    // don't turn on UTF-8 even though they support it, so we just turn it on by default.
-    protected String encoding = "UTF-8";
-    long offset = -1; // where to start append when using REST/RANG
-    long endPosition = -1; // where to stop append when using RANG
     private String[] formatTypes = {"Size", "Modify", "Type", "Perm"}; // types option of MLST/MLSD
     private int authFails = 0;
     private String hashingAlgorithm = "SHA-1";
@@ -68,6 +67,10 @@ public class SessionThread extends Thread {
         cmdSocket = socket;
         localDataSocket = dataSocket;
         sendWelcomeBanner = true;
+    }
+
+    static public ByteBuffer stringToBB(String s) {
+        return ByteBuffer.wrap(s.getBytes());
     }
 
     /**
@@ -121,9 +124,9 @@ public class SessionThread extends Thread {
      *
      * @param buf Where to place the input bytes
      * @return >0 if successful which is the number of bytes read
-     *         -1 if no bytes remain to be read
-     *         -2 if the data socket was not connected
-     *         0 if there was a read  error
+     * -1 if no bytes remain to be read
+     * -2 if the data socket was not connected
+     * 0 if there was a read  error
      */
     public int receiveFromDataSocket(byte[] buf) {
         int bytesRead;
@@ -176,7 +179,7 @@ public class SessionThread extends Thread {
     /**
      * Will be called by (e.g.) CmdSTOR, CmdRETR, CmdLIST, etc. when they are about to
      * start actually doing IO over the data socket.
-     *
+     * <p>
      * Must call closeDataSocket() when done
      *
      * @return true if successful
@@ -301,10 +304,6 @@ public class SessionThread extends Thread {
         return pasvMode;
     }
 
-    static public ByteBuffer stringToBB(String s) {
-        return ByteBuffer.wrap(s.getBytes());
-    }
-
     public boolean isBinaryMode() {
         return binaryMode;
     }
@@ -313,12 +312,12 @@ public class SessionThread extends Thread {
         this.binaryMode = binaryMode;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getUserName() {
         return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     /**

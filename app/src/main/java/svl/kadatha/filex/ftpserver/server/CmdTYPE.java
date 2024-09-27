@@ -34,7 +34,7 @@ public class CmdTYPE extends FtpCmd implements Runnable {
     @Override
     public void run() {
         String output;
-        Timber.tag(TAG).d( "TYPE executing");
+        Timber.tag(TAG).d("TYPE executing");
         String param = getParameter(input);
         if (param.equals("I") || param.equals("L 8")) {
             output = "200 Binary type set\r\n";
@@ -46,7 +46,7 @@ public class CmdTYPE extends FtpCmd implements Runnable {
             output = "503 Malformed TYPE command\r\n";
         }
         sessionThread.writeString(output);
-        Timber.tag(TAG).d( "TYPE complete");
+        Timber.tag(TAG).d("TYPE complete");
     }
 
 }

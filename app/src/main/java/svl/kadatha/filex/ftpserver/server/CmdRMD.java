@@ -39,7 +39,7 @@ public class CmdRMD extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "RMD executing");
+        Timber.tag(TAG).d("RMD executing");
         String param = getParameter(input);
         File toRemove;
         String errString = null;
@@ -69,11 +69,11 @@ public class CmdRMD extends FtpCmd implements Runnable {
         }
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).i( "RMD failed: " + errString.trim());
+            Timber.tag(TAG).i("RMD failed: " + errString.trim());
         } else {
             sessionThread.writeString("250 Removed directory\r\n");
         }
-        Timber.tag(TAG).d( "RMD finished");
+        Timber.tag(TAG).d("RMD finished");
     }
 
     /**
@@ -93,10 +93,10 @@ public class CmdRMD extends FtpCmd implements Runnable {
             for (File entry : toDelete.listFiles()) {
                 success &= recursiveDelete(entry);
             }
-            Timber.tag(TAG).d( "Recursively deleted: " + toDelete);
+            Timber.tag(TAG).d("Recursively deleted: " + toDelete);
             return success && FtpServerFileUtil.deleteFile(toDelete, App.getAppContext());
         } else {
-            Timber.tag(TAG).d( "RMD deleting file: " + toDelete);
+            Timber.tag(TAG).d("RMD deleting file: " + toDelete);
             boolean success = FtpServerFileUtil.deleteFile(toDelete, App.getAppContext());
             MediaUpdater.notifyFileDeleted(toDelete.getPath());
             return success;

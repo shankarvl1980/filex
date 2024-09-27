@@ -30,7 +30,7 @@ public class CmdFEAT extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "run: Giving FEAT");
+        Timber.tag(TAG).d("run: Giving FEAT");
         sessionThread.writeString("211-Features supported by FTP Server\r\n");
         sessionThread.writeString(" UTF8\r\n");
         sessionThread.writeString(" MDTM\r\n");
@@ -45,7 +45,7 @@ public class CmdFEAT extends FtpCmd implements Runnable {
         sessionThread.writeString(" REST STREAM\r\n");
         sessionThread.writeString(" RANG STREAM\r\n");
         sessionThread.writeString("211 End\r\n");
-        Timber.tag(TAG).d( "run: Gave FEAT");
+        Timber.tag(TAG).d("run: Gave FEAT");
     }
 
 }

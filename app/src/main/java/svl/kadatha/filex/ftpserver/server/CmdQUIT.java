@@ -30,7 +30,7 @@ public class CmdQUIT extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "QUIT executing");
+        Timber.tag(TAG).d("QUIT executing");
         sessionThread.writeString("221 Goodbye\r\n");
         sessionThread.closeSocket();
     }

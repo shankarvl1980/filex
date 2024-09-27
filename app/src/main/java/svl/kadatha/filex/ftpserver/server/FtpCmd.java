@@ -26,10 +26,7 @@ import timber.log.Timber;
 
 public abstract class FtpCmd implements Runnable {
     public static final String TAG = FtpCmd.class.getSimpleName();
-
-    protected final SessionThread sessionThread;
-
-    protected static final CmdMap[] cmdClasses = { new CmdMap("SYST", CmdSYST.class),
+    protected static final CmdMap[] cmdClasses = {new CmdMap("SYST", CmdSYST.class),
             new CmdMap("USER", CmdUSER.class), new CmdMap("PASS", CmdPASS.class),
             new CmdMap("TYPE", CmdTYPE.class), new CmdMap("CWD", CmdCWD.class),
             new CmdMap("PWD", CmdPWD.class), new CmdMap("LIST", CmdLIST.class),
@@ -54,20 +51,17 @@ public abstract class FtpCmd implements Runnable {
             new CmdMap("HASH", CmdHASH.class),
             new CmdMap("RANG", CmdRANG.class)
     };
-
-    private static final Class<?>[] allowedCmdsWhileAnonymous = { CmdUSER.class, CmdPASS.class, //
+    private static final Class<?>[] allowedCmdsWhileAnonymous = {CmdUSER.class, CmdPASS.class, //
             CmdCWD.class, CmdLIST.class, CmdMDTM.class, CmdNLST.class, CmdPASV.class, //
             CmdPWD.class, CmdQUIT.class, CmdRETR.class, CmdSIZE.class, CmdTYPE.class, //
             CmdCDUP.class, CmdNOOP.class, CmdSYST.class, CmdPORT.class, //
             CmdMLST.class, CmdMLSD.class, CmdHASH.class, CmdRANG.class //
     };
+    protected final SessionThread sessionThread;
 
     public FtpCmd(SessionThread sessionThread) {
         this.sessionThread = sessionThread;
     }
-
-    @Override
-    abstract public void run();
 
     protected static void dispatchCommand(SessionThread session, String inputString) {
         String[] strings = inputString.split(" ");
@@ -75,18 +69,18 @@ public abstract class FtpCmd implements Runnable {
         if (strings == null) {
             // There was some egregious sort of parsing error
             String errString = "502 Command parse error\r\n";
-            Timber.tag(TAG).d( errString);
+            Timber.tag(TAG).d(errString);
             session.writeString(errString);
             return;
         }
         if (strings.length < 1) {
-            Timber.tag(TAG).d( "No strings parsed");
+            Timber.tag(TAG).d("No strings parsed");
             session.writeString(unrecognizedCmdMsg);
             return;
         }
         String verb = strings[0];
         if (verb.isEmpty()) {
-            Timber.tag(TAG).i( "Invalid command verb");
+            Timber.tag(TAG).i("Invalid command verb");
             session.writeString(unrecognizedCmdMsg);
             return;
         }
@@ -105,21 +99,21 @@ public abstract class FtpCmd implements Runnable {
                     constructor = cmdClasses[i].getCommand().getConstructor(
                             SessionThread.class, String.class);
                 } catch (NoSuchMethodException e) {
-                    Timber.tag(TAG).e( "FtpCmd subclass lacks expected " + "constructor ");
+                    Timber.tag(TAG).e("FtpCmd subclass lacks expected " + "constructor ");
                     return;
                 }
                 try {
                     cmdInstance = constructor.newInstance(session,
                             inputString);
                 } catch (Exception e) {
-                    Timber.tag(TAG).e( "Instance creation error on FtpCmd");
+                    Timber.tag(TAG).e("Instance creation error on FtpCmd");
                     return;
                 }
             }
         }
         if (cmdInstance == null) {
             // If we couldn't find a matching command,
-            Timber.tag(TAG).d( "Ignoring unrecognized FTP verb: " + verb);
+            Timber.tag(TAG).d("Ignoring unrecognized FTP verb: " + verb);
             session.writeString(unrecognizedCmdMsg);
             return;
         }
@@ -152,7 +146,7 @@ public abstract class FtpCmd implements Runnable {
      * An FTP parameter is that part of the input string that occurs after the first
      * space, including any subsequent spaces. Also, we want to chop off the trailing
      * '\r\n', if present.
-     *
+     * <p>
      * Some parameters shouldn't be logged or output (e.g. passwords), so the caller can
      * use silent==true in that case.
      */
@@ -171,7 +165,7 @@ public abstract class FtpCmd implements Runnable {
         retString = retString.replaceAll("\\s+$", "");
 
         if (!silent) {
-            Timber.tag(TAG).d( "Parsed argument: " + retString);
+            Timber.tag(TAG).d("Parsed argument: " + retString);
         }
         return retString;
     }
@@ -196,6 +190,9 @@ public abstract class FtpCmd implements Runnable {
         return new File(existingPrefix, param);
     }
 
+    @Override
+    abstract public void run();
+
     public boolean violatesChroot(File file) {
         try {
             // taking the canonical path as new devices have sdcard symbolic linked
@@ -204,15 +201,15 @@ public abstract class FtpCmd implements Runnable {
             String canonicalChroot = chroot.getCanonicalPath();
             String canonicalPath = file.getCanonicalPath();
             if (!canonicalPath.startsWith(canonicalChroot)) {
-                Timber.tag(TAG).i( "Path violated folder restriction, denying");
-                Timber.tag(TAG).d( "path: " + canonicalPath);
-                Timber.tag(TAG).d( "chroot: " + chroot);
+                Timber.tag(TAG).i("Path violated folder restriction, denying");
+                Timber.tag(TAG).d("path: " + canonicalPath);
+                Timber.tag(TAG).d("chroot: " + chroot);
                 return true; // the path must begin with the chroot path
             }
             return false;
         } catch (Exception e) {
-            Timber.tag(TAG).i( "Path canonicalization problem: " + e);
-            Timber.tag(TAG).i( "When checking file: " + file.getAbsolutePath());
+            Timber.tag(TAG).i("Path canonicalization problem: " + e);
+            Timber.tag(TAG).i("When checking file: " + file.getAbsolutePath());
             return true; // for security, assume violation
         }
     }

@@ -33,14 +33,12 @@ public class LocalDataSocket {
 
     private static final int SO_TIMEOUT_MS = 30000; // socket timeout millis
     private static final int TCP_CONNECTION_BACKLOG = 5;
-
-
+    private final boolean isPasvMode = true;
     // Listener socket used for PASV mode
     ServerSocket server = null;
     // Remote IP & port information used for PORT mode
     private InetAddress remoteAddress;
     private int remotePort;
-    private final boolean isPasvMode = true;
 
     public LocalDataSocket() {
         clearState();
@@ -60,7 +58,7 @@ public class LocalDataSocket {
         server = null;
         remoteAddress = null;
         remotePort = 0;
-        Timber.tag(TAG).d( "State cleared");
+        Timber.tag(TAG).d("State cleared");
     }
 
     public int onPasv() {
@@ -68,10 +66,10 @@ public class LocalDataSocket {
         try {
             // Listen on any port (port parameter 0)
             server = new ServerSocket(0, TCP_CONNECTION_BACKLOG);
-            Timber.tag(TAG).d( "Data socket pasv() listen successful");
+            Timber.tag(TAG).d("Data socket pasv() listen successful");
             return server.getLocalPort();
         } catch (IOException e) {
-            Timber.tag(TAG).e( "Data socket creation error");
+            Timber.tag(TAG).e("Data socket creation error");
             clearState();
             return 0;
         }
@@ -88,7 +86,7 @@ public class LocalDataSocket {
         if (server == null) {
             // We're in PORT mode (not PASV)
             if (remoteAddress == null || remotePort == 0) {
-                Timber.tag(TAG).i( "PORT mode but not initialized correctly");
+                Timber.tag(TAG).i("PORT mode but not initialized correctly");
                 clearState();
                 return null;
             }
@@ -96,7 +94,7 @@ public class LocalDataSocket {
             try {
                 socket = new Socket(remoteAddress, remotePort);
             } catch (IOException e) {
-                Timber.tag(TAG).i( "Couldn't open PORT data socket to: " + remoteAddress.toString()
+                Timber.tag(TAG).i("Couldn't open PORT data socket to: " + remoteAddress.toString()
                         + ":" + remotePort);
                 clearState();
                 return null;
@@ -106,7 +104,7 @@ public class LocalDataSocket {
             try {
                 socket.setSoTimeout(SO_TIMEOUT_MS);
             } catch (Exception e) {
-                Timber.tag(TAG).e( "Couldn't set SO_TIMEOUT");
+                Timber.tag(TAG).e("Couldn't set SO_TIMEOUT");
                 clearState();
                 return null;
             }
@@ -117,9 +115,9 @@ public class LocalDataSocket {
             Socket socket = null;
             try {
                 socket = server.accept();
-                Timber.tag(TAG).d( "onTransfer pasv accept successful");
+                Timber.tag(TAG).d("onTransfer pasv accept successful");
             } catch (Exception e) {
-                Timber.tag(TAG).i( "Exception accepting PASV socket");
+                Timber.tag(TAG).i("Exception accepting PASV socket");
                 socket = null;
             }
             clearState();

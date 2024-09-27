@@ -44,7 +44,7 @@ abstract public class Util {
             buf.append(byteOfInt(address, 0)).append(sep).append(byteOfInt(address, 1))
                     .append(sep).append(byteOfInt(address, 2)).append(sep)
                     .append(byteOfInt(address, 3));
-            Timber.tag(TAG).d( "ipToString returning: " + buf);
+            Timber.tag(TAG).d("ipToString returning: " + buf);
             return buf.toString();
         } else {
             return null;
@@ -68,7 +68,7 @@ abstract public class Util {
         if (address == 0) {
             // This can only occur due to an error, we shouldn't blindly
             // convert 0 to string.
-            Timber.tag(TAG).e( "ipToString won't convert value 0");
+            Timber.tag(TAG).e("ipToString won't convert value 0");
             return null;
         }
         return ipToString(address, ".");

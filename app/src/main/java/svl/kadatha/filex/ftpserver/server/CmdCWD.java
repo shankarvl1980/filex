@@ -36,24 +36,25 @@ public class CmdCWD extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "CWD executing");
+        Timber.tag(TAG).d("CWD executing");
         String param = getParameter(input);
         File newDir;
         String errString = null;
-        mainblock: {
+        mainblock:
+        {
             newDir = inputPathToChrootedFile(sessionThread.getChrootDir(), sessionThread.getWorkingDir(), param);
 
             // Ensure the new path does not violate the chroot restriction
             if (violatesChroot(newDir)) {
                 errString = "550 Invalid name or chroot violation\r\n";
                 sessionThread.writeString(errString);
-                Timber.tag(TAG).i( errString);
+                Timber.tag(TAG).i(errString);
                 break mainblock;
             }
 
             try {
                 newDir = newDir.getCanonicalFile();
-                Timber.tag(TAG).i( "New directory: " + newDir);
+                Timber.tag(TAG).i("New directory: " + newDir);
                 if (!newDir.isDirectory()) {
                     sessionThread.writeString("550 Can't CWD to invalid directory\r\n");
                 } else if (newDir.canRead()) {
@@ -67,6 +68,6 @@ public class CmdCWD extends FtpCmd implements Runnable {
                 break mainblock;
             }
         }
-        Timber.tag(TAG).d( "CWD complete");
+        Timber.tag(TAG).d("CWD complete");
     }
 }

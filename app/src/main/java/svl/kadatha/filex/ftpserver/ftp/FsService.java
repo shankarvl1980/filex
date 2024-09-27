@@ -1,4 +1,3 @@
-
 package svl.kadatha.filex.ftpserver.ftp;
 
 import android.app.AlarmManager;
@@ -41,35 +40,28 @@ import svl.kadatha.filex.ftpserver.server.TcpListener;
 import timber.log.Timber;
 
 public class FsService extends Service implements Runnable {
-    private static final String TAG = FsService.class.getSimpleName();
-
     // Service will check following actions when started through intent
     static public final String ACTION_REQUEST_START = "svl.kadatha.filex.REQUEST_START";
     static public final String ACTION_REQUEST_STOP = "svl.kadatha.filex.REQUEST_STOP";
-
     // Service will (global) broadcast when server start/stop
     static public final String ACTION_STARTED = "svl.kadatha.filex.FTPSERVER_STARTED";
     static public final String ACTION_STOPPED = "svl.kadatha.filex.FTPSERVER_STOPPED";
     static public final String ACTION_FAILEDTOSTART = "svl.kadatha.filex.FTPSERVER_FAILEDTOSTART";
-
-    protected static Thread serverThread = null;
-    protected boolean shouldExit = false;
-
-    protected ServerSocket listenSocket;
-
     // The server thread will check this often to look for incoming
     // connections. We are forced to use non-blocking accept() and polling
     // because we cannot wait forever in accept() if we want to be able
     // to receive an exit signal and cleanly exit.
     public static final int WAKE_INTERVAL_MS = 1000; // milliseconds
-
-    private TcpListener wifiListener = null;
+    private static final String TAG = FsService.class.getSimpleName();
+    protected static Thread serverThread = null;
     private final List<SessionThread> sessionThreads = new ArrayList<>();
-
+    private final FsServiceBinder fsServiceBinder = new FsServiceBinder();
+    protected boolean shouldExit = false;
+    protected ServerSocket listenSocket;
+    private TcpListener wifiListener = null;
     private PowerManager.WakeLock wakeLock;
     private WifiLock wifiLock = null;
 
-    private final FsServiceBinder fsServiceBinder=new FsServiceBinder();
     /**
      * Check to see if the FTP Server is up and running
      *
@@ -78,13 +70,13 @@ public class FsService extends Service implements Runnable {
     public static boolean isRunning() {
         // return true if and only if a server Thread is running
         if (serverThread == null) {
-            Timber.tag(TAG).d( "Server is not running (null serverThread)");
+            Timber.tag(TAG).d("Server is not running (null serverThread)");
             return false;
         }
         if (!serverThread.isAlive()) {
-            Timber.tag(TAG).d( "serverThread non-null but !isAlive()");
+            Timber.tag(TAG).d("serverThread non-null but !isAlive()");
         } else {
-            Timber.tag(TAG).d( "Server is alive");
+            Timber.tag(TAG).d("Server is alive");
         }
         return true;
     }
@@ -116,217 +108,12 @@ public class FsService extends Service implements Runnable {
     private static void warnIfNoExternalStorage() {
         String storageState = Environment.getExternalStorageState();
         if (!storageState.equals(Environment.MEDIA_MOUNTED)) {
-            Timber.tag(TAG).v( "Warning due to storage state " + storageState);
+            Timber.tag(TAG).v("Warning due to storage state " + storageState);
             Toast toast = Toast.makeText(App.getAppContext(),
                     R.string.storage_warning, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        startForeground(FsNotification.NOTIFICATION_ID, FsNotification.setupNotification(this));
-
-        //https://developer.android.com/reference/android/app/Service.html
-        //if there are not any pending start commands to be delivered to the service, it will be called with a null intent object,
-        if (intent != null && intent.getAction() != null) {
-            Timber.tag(TAG).d("onStartCommand called with action: " + intent.getAction());
-
-            switch (intent.getAction()) {
-                case ACTION_REQUEST_START:
-                    if (isRunning()) {
-                        return START_STICKY;
-                    }
-                    break;
-                case ACTION_REQUEST_STOP:
-                    stopSelf();
-                    return START_NOT_STICKY;
-            }
-        }
-
-        warnIfNoExternalStorage();
-
-        shouldExit = false;
-        int attempts = 10;
-        // The previous server thread may still be cleaning up, wait for it to finish.
-        while (serverThread != null) {
-            Timber.tag(TAG).w( "Won't start, server thread exists");
-            if (attempts > 0) {
-                attempts--;
-                Util.sleepIgnoreInterrupt(1000);
-            } else {
-                Timber.tag(TAG).w( "Server thread already exists");
-                return START_STICKY;
-            }
-        }
-        Timber.tag(TAG).d( "Creating server thread");
-        serverThread = new Thread(this);
-        serverThread.start();
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.tag(TAG).i( "onDestroy() Stopping server");
-        shouldExit = true;
-        if (serverThread == null) {
-            Timber.tag(TAG).w( "Stopping with null serverThread");
-            return;
-        }
-        serverThread.interrupt();
-        try {
-            serverThread.join(10000); // wait 10 sec for server thread to finish
-        } catch (InterruptedException ignored) {
-        }
-        if (serverThread.isAlive()) {
-            Timber.tag(TAG).w( "Server thread failed to exit");
-            // it may still exit eventually if we just leave the shouldExit flag set
-        } else {
-            Timber.tag(TAG).d( "serverThread join()ed ok");
-            serverThread = null;
-        }
-        try {
-            if (listenSocket != null) {
-                Timber.tag(TAG).i( "Closing listenSocket");
-                listenSocket.close();
-            }
-        } catch (IOException ignored) {
-        }
-
-        if (wifiLock != null) {
-            Timber.tag(TAG).d( "onDestroy: Releasing wifi lock");
-            wifiLock.release();
-            wifiLock = null;
-        }
-        if (wakeLock != null) {
-            Timber.tag(TAG).d( "onDestroy: Releasing wake lock");
-            wakeLock.release();
-            wakeLock = null;
-        }
-        Timber.tag(TAG).d( "FTPServerService.onDestroy() finished");
-    }
-
-    // This opens a listening socket on all interfaces.
-    void setupListener() throws IOException {
-        listenSocket = new ServerSocket();
-        listenSocket.setReuseAddress(true);
-        listenSocket.bind(new InetSocketAddress(FsSettings.getPortNumber()));
-    }
-
-    @Override
-    public void run() {
-        Timber.tag(TAG).d( "Server thread running");
-
-        if (!isConnectedToLocalNetwork()) {
-            Timber.tag(TAG).w( "run: There is no local network, bailing out");
-            stopSelf();
-            Intent intent=new Intent(ACTION_FAILEDTOSTART);
-            intent.setPackage(Global.FILEX_PACKAGE);
-            sendBroadcast(intent);
-            return;
-        }
-
-        // Initialization of wifi, set up the socket
-        try {
-            setupListener();
-        } catch (IOException e) {
-            Timber.tag(TAG).w( "run: Unable to open port, bailing out.");
-            stopSelf();
-            Intent intent=new Intent(ACTION_FAILEDTOSTART);
-            intent.setPackage(Global.FILEX_PACKAGE);
-            sendBroadcast(intent);
-            return;
-        }
-
-        // @TODO: when using ethernet, is it needed to take wifi lock?
-        takeWifiLock();
-        takeWakeLock();
-
-        // A socket is open now, so the FTP server is started, notify rest of world
-        Timber.tag(TAG).i( "Ftp Server up and running, broadcasting ACTION_STARTED");
-        Intent intent=new Intent(ACTION_STARTED);
-        intent.setPackage(Global.FILEX_PACKAGE);
-        sendBroadcast(intent);
-
-        while (!shouldExit) {
-            if (wifiListener != null) {
-                if (!wifiListener.isAlive()) {
-                    Timber.tag(TAG).d( "Joining crashed wifiListener thread");
-                    try {
-                        wifiListener.join();
-                    } catch (InterruptedException ignored) {
-                    }
-                    wifiListener = null;
-                }
-            }
-            if (wifiListener == null) {
-                // Either our wifi listener hasn't been created yet, or has crashed,
-                // so spawn it
-                wifiListener = new TcpListener(listenSocket, this);
-                wifiListener.start();
-            }
-            try {
-                // TODO: think about using ServerSocket, and just closing
-                // the main socket to send an exit signal
-                Thread.sleep(WAKE_INTERVAL_MS);
-            } catch (InterruptedException e) {
-                Timber.tag(TAG).d( "Thread interrupted");
-            }
-        }
-
-        terminateAllSessions();
-
-        if (wifiListener != null) {
-            wifiListener.quit();
-            wifiListener = null;
-        }
-        shouldExit = false; // we handled the exit flag, so reset it to acknowledge
-        Timber.tag(TAG).d( "Exiting cleanly, returning from run()");
-
-        stopSelf();
-        Intent intent_stop=new Intent(ACTION_STOPPED);
-        intent_stop.setPackage(Global.FILEX_PACKAGE);
-        sendBroadcast(intent_stop);
-    }
-
-    private void terminateAllSessions() {
-        Timber.tag(TAG).i( "Terminating " + sessionThreads.size() + " session thread(s)");
-        synchronized (this) {
-            for (SessionThread sessionThread : sessionThreads) {
-                if (sessionThread != null) {
-                    sessionThread.closeDataSocket();
-                    sessionThread.closeSocket();
-                }
-            }
-        }
-    }
-
-    /**
-     * Takes the wake lock
-     * <p>
-     * Many devices seem to not properly honor a PARTIAL_WAKE_LOCK, which should prevent
-     * CPU throttling. For these devices, we have a option to force the phone into a full
-     * wake lock.
-     */
-    private void takeWakeLock() {
-        if (wakeLock == null) {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            Timber.tag(TAG).d( "takeWakeLock: Taking full wake lock");
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            wakeLock.setReferenceCounted(false);
-        }
-        wakeLock.acquire();
-    }
-
-    private void takeWifiLock() {
-        Timber.tag(TAG).d( "takeWifiLock: Taking wifi lock");
-        if (wifiLock == null) {
-            WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            wifiLock = manager.createWifiLock(TAG);
-            wifiLock.setReferenceCounted(false);
-        }
-        wifiLock.acquire();
     }
 
     /**
@@ -337,7 +124,7 @@ public class FsService extends Service implements Runnable {
     public static InetAddress getLocalInetAddress() {
         InetAddress returnAddress = null;
         if (!isConnectedToLocalNetwork()) {
-            Timber.tag(TAG).e( "getLocalInetAddress called and no connection");
+            Timber.tag(TAG).e("getLocalInetAddress called and no connection");
             return null;
         }
         try {
@@ -377,7 +164,7 @@ public class FsService extends Service implements Runnable {
                 && ni.isConnected()
                 && (ni.getType() & (ConnectivityManager.TYPE_WIFI | ConnectivityManager.TYPE_ETHERNET)) != 0;
         if (!connected) {
-            Timber.tag(TAG).d( "isConnectedToLocalNetwork: see if it is an WIFI AP");
+            Timber.tag(TAG).d("isConnectedToLocalNetwork: see if it is an WIFI AP");
             WifiManager wm = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             try {
                 Method method = wm.getClass().getDeclaredMethod("isWifiApEnabled");
@@ -387,7 +174,7 @@ public class FsService extends Service implements Runnable {
             }
         }
         if (!connected) {
-            Timber.tag(TAG).d( "isConnectedToLocalNetwork: see if it is an USB AP");
+            Timber.tag(TAG).d("isConnectedToLocalNetwork: see if it is an USB AP");
             try {
                 ArrayList<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
                 for (NetworkInterface netInterface : networkInterfaces) {
@@ -400,6 +187,211 @@ public class FsService extends Service implements Runnable {
             }
         }
         return connected;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(FsNotification.NOTIFICATION_ID, FsNotification.setupNotification(this));
+
+        //https://developer.android.com/reference/android/app/Service.html
+        //if there are not any pending start commands to be delivered to the service, it will be called with a null intent object,
+        if (intent != null && intent.getAction() != null) {
+            Timber.tag(TAG).d("onStartCommand called with action: " + intent.getAction());
+
+            switch (intent.getAction()) {
+                case ACTION_REQUEST_START:
+                    if (isRunning()) {
+                        return START_STICKY;
+                    }
+                    break;
+                case ACTION_REQUEST_STOP:
+                    stopSelf();
+                    return START_NOT_STICKY;
+            }
+        }
+
+        warnIfNoExternalStorage();
+
+        shouldExit = false;
+        int attempts = 10;
+        // The previous server thread may still be cleaning up, wait for it to finish.
+        while (serverThread != null) {
+            Timber.tag(TAG).w("Won't start, server thread exists");
+            if (attempts > 0) {
+                attempts--;
+                Util.sleepIgnoreInterrupt(1000);
+            } else {
+                Timber.tag(TAG).w("Server thread already exists");
+                return START_STICKY;
+            }
+        }
+        Timber.tag(TAG).d("Creating server thread");
+        serverThread = new Thread(this);
+        serverThread.start();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        Timber.tag(TAG).i("onDestroy() Stopping server");
+        shouldExit = true;
+        if (serverThread == null) {
+            Timber.tag(TAG).w("Stopping with null serverThread");
+            return;
+        }
+        serverThread.interrupt();
+        try {
+            serverThread.join(10000); // wait 10 sec for server thread to finish
+        } catch (InterruptedException ignored) {
+        }
+        if (serverThread.isAlive()) {
+            Timber.tag(TAG).w("Server thread failed to exit");
+            // it may still exit eventually if we just leave the shouldExit flag set
+        } else {
+            Timber.tag(TAG).d("serverThread join()ed ok");
+            serverThread = null;
+        }
+        try {
+            if (listenSocket != null) {
+                Timber.tag(TAG).i("Closing listenSocket");
+                listenSocket.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        if (wifiLock != null) {
+            Timber.tag(TAG).d("onDestroy: Releasing wifi lock");
+            wifiLock.release();
+            wifiLock = null;
+        }
+        if (wakeLock != null) {
+            Timber.tag(TAG).d("onDestroy: Releasing wake lock");
+            wakeLock.release();
+            wakeLock = null;
+        }
+        Timber.tag(TAG).d("FTPServerService.onDestroy() finished");
+    }
+
+    // This opens a listening socket on all interfaces.
+    void setupListener() throws IOException {
+        listenSocket = new ServerSocket();
+        listenSocket.setReuseAddress(true);
+        listenSocket.bind(new InetSocketAddress(FsSettings.getPortNumber()));
+    }
+
+    @Override
+    public void run() {
+        Timber.tag(TAG).d("Server thread running");
+
+        if (!isConnectedToLocalNetwork()) {
+            Timber.tag(TAG).w("run: There is no local network, bailing out");
+            stopSelf();
+            Intent intent = new Intent(ACTION_FAILEDTOSTART);
+            intent.setPackage(Global.FILEX_PACKAGE);
+            sendBroadcast(intent);
+            return;
+        }
+
+        // Initialization of wifi, set up the socket
+        try {
+            setupListener();
+        } catch (IOException e) {
+            Timber.tag(TAG).w("run: Unable to open port, bailing out.");
+            stopSelf();
+            Intent intent = new Intent(ACTION_FAILEDTOSTART);
+            intent.setPackage(Global.FILEX_PACKAGE);
+            sendBroadcast(intent);
+            return;
+        }
+
+        // @TODO: when using ethernet, is it needed to take wifi lock?
+        takeWifiLock();
+        takeWakeLock();
+
+        // A socket is open now, so the FTP server is started, notify rest of world
+        Timber.tag(TAG).i("Ftp Server up and running, broadcasting ACTION_STARTED");
+        Intent intent = new Intent(ACTION_STARTED);
+        intent.setPackage(Global.FILEX_PACKAGE);
+        sendBroadcast(intent);
+
+        while (!shouldExit) {
+            if (wifiListener != null) {
+                if (!wifiListener.isAlive()) {
+                    Timber.tag(TAG).d("Joining crashed wifiListener thread");
+                    try {
+                        wifiListener.join();
+                    } catch (InterruptedException ignored) {
+                    }
+                    wifiListener = null;
+                }
+            }
+            if (wifiListener == null) {
+                // Either our wifi listener hasn't been created yet, or has crashed,
+                // so spawn it
+                wifiListener = new TcpListener(listenSocket, this);
+                wifiListener.start();
+            }
+            try {
+                // TODO: think about using ServerSocket, and just closing
+                // the main socket to send an exit signal
+                Thread.sleep(WAKE_INTERVAL_MS);
+            } catch (InterruptedException e) {
+                Timber.tag(TAG).d("Thread interrupted");
+            }
+        }
+
+        terminateAllSessions();
+
+        if (wifiListener != null) {
+            wifiListener.quit();
+            wifiListener = null;
+        }
+        shouldExit = false; // we handled the exit flag, so reset it to acknowledge
+        Timber.tag(TAG).d("Exiting cleanly, returning from run()");
+
+        stopSelf();
+        Intent intent_stop = new Intent(ACTION_STOPPED);
+        intent_stop.setPackage(Global.FILEX_PACKAGE);
+        sendBroadcast(intent_stop);
+    }
+
+    private void terminateAllSessions() {
+        Timber.tag(TAG).i("Terminating " + sessionThreads.size() + " session thread(s)");
+        synchronized (this) {
+            for (SessionThread sessionThread : sessionThreads) {
+                if (sessionThread != null) {
+                    sessionThread.closeDataSocket();
+                    sessionThread.closeSocket();
+                }
+            }
+        }
+    }
+
+    /**
+     * Takes the wake lock
+     * <p>
+     * Many devices seem to not properly honor a PARTIAL_WAKE_LOCK, which should prevent
+     * CPU throttling. For these devices, we have a option to force the phone into a full
+     * wake lock.
+     */
+    private void takeWakeLock() {
+        if (wakeLock == null) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            Timber.tag(TAG).d("takeWakeLock: Taking full wake lock");
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+            wakeLock.setReferenceCounted(false);
+        }
+        wakeLock.acquire();
+    }
+
+    private void takeWifiLock() {
+        Timber.tag(TAG).d("takeWifiLock: Taking wifi lock");
+        if (wifiLock == null) {
+            WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiLock = manager.createWifiLock(TAG);
+            wifiLock.setReferenceCounted(false);
+        }
+        wifiLock.acquire();
     }
 
     /**
@@ -417,14 +409,14 @@ public class FsService extends Service implements Runnable {
             List<SessionThread> toBeRemoved = new ArrayList<>();
             for (SessionThread sessionThread : sessionThreads) {
                 if (!sessionThread.isAlive()) {
-                    Timber.tag(TAG).d( "Cleaning up finished session...");
+                    Timber.tag(TAG).d("Cleaning up finished session...");
                     try {
                         sessionThread.join();
-                        Timber.tag(TAG).d( "Thread joined");
+                        Timber.tag(TAG).d("Thread joined");
                         toBeRemoved.add(sessionThread);
                         sessionThread.closeSocket(); // make sure socket closed
                     } catch (InterruptedException e) {
-                        Timber.tag(TAG).d( "Interrupted while joining");
+                        Timber.tag(TAG).d("Interrupted while joining");
                         // We will try again in the next loop iteration
                     }
                 }
@@ -436,7 +428,7 @@ public class FsService extends Service implements Runnable {
             // Cleanup is complete. Now actually add the new thread to the list.
             sessionThreads.add(newSession);
         }
-        Timber.tag(TAG).d( "Registered session thread");
+        Timber.tag(TAG).d("Registered session thread");
     }
 
     @Override
@@ -453,7 +445,7 @@ public class FsService extends Service implements Runnable {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Timber.tag(TAG).d( "user has removed my activity, we got killed! restarting...");
+        Timber.tag(TAG).d("user has removed my activity, we got killed! restarting...");
         Intent restartService = new Intent(getApplicationContext(), this.getClass());
         restartService.setPackage(getPackageName());
         PendingIntent restartServicePI = PendingIntent.getService(
@@ -467,8 +459,7 @@ public class FsService extends Service implements Runnable {
 
     public class FsServiceBinder extends Binder {
 
-        public FsService getService()
-        {
+        public FsService getService() {
             return FsService.this;
         }
     }

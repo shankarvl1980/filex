@@ -40,9 +40,9 @@ public class TcpListener extends Thread {
     public void quit() {
         try {
             listenSocket.close(); // if the TcpListener thread is blocked on accept,
-                                  // closing the socket will raise an exception
+            // closing the socket will raise an exception
         } catch (Exception e) {
-            Timber.tag(TAG).d( "Exception closing TcpListener listenSocket");
+            Timber.tag(TAG).d("Exception closing TcpListener listenSocket");
         }
     }
 
@@ -51,13 +51,13 @@ public class TcpListener extends Thread {
         try {
             while (true) {
                 Socket clientSocket = listenSocket.accept();
-                Timber.tag(TAG).i( "New connection, spawned thread");
+                Timber.tag(TAG).i("New connection, spawned thread");
                 SessionThread newSession = new SessionThread(clientSocket, new LocalDataSocket());
                 newSession.start();
                 ftpServerService.registerSessionThread(newSession);
             }
         } catch (Exception e) {
-            Timber.tag(TAG).d( "Exception in TcpListener");
+            Timber.tag(TAG).d("Exception in TcpListener");
         }
     }
 }

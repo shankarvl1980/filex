@@ -39,7 +39,7 @@ public class CmdMDTM extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "run: MDTM executing, input: " + mInput);
+        Timber.tag(TAG).d("run: MDTM executing, input: " + mInput);
         String param = getParameter(mInput);
         File file = inputPathToChrootedFile(sessionThread.getChrootDir(), sessionThread.getWorkingDir(), param);
 
@@ -48,11 +48,11 @@ public class CmdMDTM extends FtpCmd implements Runnable {
             String response = "213 " + Util.getFtpDate(lastModified) + "\r\n";
             sessionThread.writeString(response);
         } else {
-            Timber.tag(TAG).w( "run: file does not exist");
+            Timber.tag(TAG).w("run: file does not exist");
             sessionThread.writeString("550 file does not exist\r\n");
         }
 
-        Timber.tag(TAG).d( "run: MDTM completed");
+        Timber.tag(TAG).d("run: MDTM completed");
     }
 
 }

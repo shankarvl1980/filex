@@ -34,10 +34,11 @@ public class CmdCDUP extends FtpCmd implements Runnable {
 
     @Override
     public void run() {
-        Timber.tag(TAG).d( "CDUP executing");
+        Timber.tag(TAG).d("CDUP executing");
         File newDir;
         String errString = null;
-        mainBlock: {
+        mainBlock:
+        {
             File workingDir = sessionThread.getWorkingDir();
             newDir = workingDir.getParentFile();
             if (newDir == null) {
@@ -68,10 +69,10 @@ public class CmdCDUP extends FtpCmd implements Runnable {
         }
         if (errString != null) {
             sessionThread.writeString(errString);
-            Timber.tag(TAG).i( "CDUP error: " + errString);
+            Timber.tag(TAG).i("CDUP error: " + errString);
         } else {
             sessionThread.writeString("200 CDUP successful\r\n");
-            Timber.tag(TAG).d( "CDUP success");
+            Timber.tag(TAG).d("CDUP success");
         }
     }
 }
