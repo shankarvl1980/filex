@@ -2181,8 +2181,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
 				//if intent comes from outside
 				if(send_intent!=null){
-					Global.print(context,send_intent.getAction());
-					Timber.tag("copyto_send_intent").d(send_intent.getAction());
 					send_intent.putExtra("folderclickselected", df.fileclickselected);
 					send_intent.putExtra("destFileObjectType", df.fileObjectType);
 					send_intent.setClass(context, CopyToActivity.class);
@@ -2231,7 +2229,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
 		DetailFragment.CUT_SELECTED=false;
 		DetailFragment.COPY_SELECTED=false;
-		send_intent=null;
 		bottom_toolbar.setVisibility(View.VISIBLE);
 		bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 		paste_toolbar.setVisibility(View.GONE);
