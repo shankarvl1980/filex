@@ -48,6 +48,110 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
         mTargetHeight = targetHeight;
     }
 
+    protected static Bitmap getBitmap(Context context, Uri uri, BitmapFactory.Options options) {
+        Bitmap bitmap = null;
+
+        while (true) {
+            try {
+                bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options);
+                break;
+            } catch (Throwable t) {
+                options.inSampleSize *= 2;
+
+                if (options.inSampleSize >= 1024) {
+                    Timber.tag(TAG).d("Failed to optimize RAM to receive Bitmap.");
+
+                    break;
+                }
+            }
+        }
+
+        if (bitmap != null) {
+            int orientation = getRotation(uri, context);
+
+            if (orientation != 0) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(orientation);
+
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+            }
+        }
+
+        return bitmap;
+    }
+
+    private static int getRotation(Uri uri, Context context) {
+        if (isUriMatching(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, uri) || isUriMatching(MediaStore.Images.Media.INTERNAL_CONTENT_URI, uri)) {
+            Cursor c = context.getContentResolver().query(uri, new String[]{MediaStore.Images.Media.ORIENTATION}, null, null, null);
+
+            if (c.getCount() == 1) {
+                c.moveToFirst();
+
+                int orientation = c.getInt(0);
+
+                c.close();
+
+                return orientation;
+            } else {
+                Timber.tag(TAG).w("Failed to get MediaStore image orientation.");
+
+                c.close();
+
+                return 0;
+            }
+        }
+
+        try {
+            ExifInterface ei;
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                ei = new ExifInterface(context.getContentResolver().openInputStream(uri));
+            } else {
+                ei = new ExifInterface(uri.toString());
+            }
+
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            Timber.tag(TAG).w("Failed to get image orientation from file.", e);
+
+            return 0;
+        }
+    }
+
+    protected static Bitmap resizeBitmap(Bitmap bitmap, int newWidth, int newHeight) {
+        Bitmap resizedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
+
+        float scaleX = newWidth / (float) bitmap.getWidth();
+        float scaleY = newHeight / (float) bitmap.getHeight();
+        float pivotX = 0;
+        float pivotY = 0;
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(scaleX, scaleY, pivotX, pivotY);
+
+        Canvas canvas = new Canvas(resizedBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return resizedBitmap;
+    }
+
+    private static boolean isUriMatching(Uri path, Uri element) {
+        return Uri.withAppendedPath(path, element.getLastPathSegment()).equals(element);
+    }
+
     protected int getTargetWidth() {
         return mTargetWidth;
     }
@@ -120,112 +224,6 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
 
     protected int getRawHeight() {
         return mRawHeight;
-    }
-
-    protected static Bitmap getBitmap(Context context, Uri uri, BitmapFactory.Options options) {
-        Bitmap bitmap = null;
-
-        while (true) {
-            try {
-                bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options);
-                break;
-            } catch (Throwable t) {
-                options.inSampleSize *= 2;
-
-                if (options.inSampleSize >= 1024) {
-                    Timber.tag(TAG).d( "Failed to optimize RAM to receive Bitmap.");
-
-                    break;
-                }
-            }
-        }
-
-        if (bitmap != null) {
-            int orientation = getRotation(uri, context);
-
-            if (orientation != 0) {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(orientation);
-
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-            }
-        }
-
-        return bitmap;
-    }
-
-    private static int getRotation(Uri uri, Context context) {
-        if (isUriMatching(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, uri) || isUriMatching(MediaStore.Images.Media.INTERNAL_CONTENT_URI, uri)) {
-            Cursor c = context.getContentResolver().query(uri, new String[] {MediaStore.Images.Media.ORIENTATION }, null, null, null);
-
-            if (c.getCount() == 1) {
-                c.moveToFirst();
-
-                int orientation = c.getInt(0);
-
-                c.close();
-
-                return orientation;
-            }
-            else {
-                Timber.tag(TAG).w( "Failed to get MediaStore image orientation.");
-
-                c.close();
-
-                return 0;
-            }
-        }
-
-        try {
-            ExifInterface ei;
-
-            if (Build.VERSION.SDK_INT >= 24) {
-                ei = new ExifInterface(context.getContentResolver().openInputStream(uri));
-            }
-            else {
-                ei = new ExifInterface(uri.toString());
-            }
-
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-            switch(orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    return 90;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    return 180;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    return 270;
-                case ExifInterface.ORIENTATION_NORMAL:
-                default:
-                    return 0;
-            }
-        } catch (IOException e) {
-            Timber.tag(TAG).w( "Failed to get image orientation from file.", e);
-
-            return 0;
-        }
-    }
-
-    protected static Bitmap resizeBitmap(Bitmap bitmap, int newWidth, int newHeight) {
-        Bitmap resizedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-
-        float scaleX = newWidth / (float) bitmap.getWidth();
-        float scaleY = newHeight / (float) bitmap.getHeight();
-        float pivotX = 0;
-        float pivotY = 0;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(scaleX, scaleY, pivotX, pivotY);
-
-        Canvas canvas = new Canvas(resizedBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return resizedBitmap;
-    }
-
-    private static boolean isUriMatching(Uri path, Uri element) {
-        return Uri.withAppendedPath(path, element.getLastPathSegment()).equals(element);
     }
 
 }

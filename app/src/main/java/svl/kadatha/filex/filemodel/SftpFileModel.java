@@ -1,16 +1,23 @@
 package svl.kadatha.filex.filemodel;
 
 
-
 import androidx.annotation.NonNull;
 
-import com.jcraft.jsch.*;
-import java.io.*;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import svl.kadatha.filex.NetworkAccountDetailsViewModel;
+
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.SftpChannelRepository;
 import timber.log.Timber;
 
@@ -22,6 +29,78 @@ public class SftpFileModel implements FileModel {
     public SftpFileModel(String path) {
         this.path = path;
         Timber.tag(TAG).d("SftpFileModel created for path: %s", path);
+    }
+
+    private static boolean mkdirSftp(String dirPath) {
+        Timber.tag(TAG).d("Attempting to create SFTP directory: %s", dirPath);
+        SftpChannelRepository sftpChannelRepository = null;
+        ChannelSftp channelSftp = null;
+        try {
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+            channelSftp = sftpChannelRepository.getSftpChannel();
+
+            try {
+                channelSftp.stat(dirPath);
+                Timber.tag(TAG).d("SFTP directory already exists: %s", dirPath);
+                return true;
+            } catch (SftpException e) {
+                if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+                    channelSftp.mkdir(dirPath);
+                    Timber.tag(TAG).d("SFTP directory creation successful: %s", dirPath);
+                    return true;
+                } else {
+                    throw e;
+                }
+            }
+        } catch (SftpException | JSchException e) {
+            Timber.tag(TAG).e("Error creating SFTP directory: %s", e.getMessage());
+            return false;
+        } finally {
+            if (sftpChannelRepository != null && channelSftp != null) {
+                sftpChannelRepository.releaseChannel(channelSftp);
+                Timber.tag(TAG).d("SFTP channel released");
+            }
+        }
+    }
+
+    private static boolean mkdirsSftp(String parentPath, @NonNull String extendedPath) {
+        Timber.tag(TAG).d("Attempting to create multiple SFTP directories: %s in %s", extendedPath, parentPath);
+        boolean success = true;
+        String[] pathSegments = extendedPath.split("/");
+        String currentPath = parentPath;
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                currentPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, segment);
+                success = mkdirSftp(currentPath);
+                if (!success) {
+                    Timber.tag(TAG).w("Failed to create SFTP directory: %s", currentPath);
+                    return false;
+                }
+            }
+        }
+        Timber.tag(TAG).d("Successfully created multiple SFTP directories");
+        return true;
+    }
+
+    private static boolean isDirectory(String filePath) {
+        Timber.tag(TAG).d("Checking if SFTP path is directory: %s", filePath);
+        SftpChannelRepository sftpChannelRepository = null;
+        ChannelSftp channelSftp = null;
+        try {
+            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+            channelSftp = sftpChannelRepository.getSftpChannel();
+            SftpATTRS attrs = channelSftp.lstat(filePath);
+            boolean isDirectory = attrs.isDir();
+            Timber.tag(TAG).d("SFTP path is directory result: %b for path: %s", isDirectory, filePath);
+            return isDirectory;
+        } catch (SftpException | JSchException e) {
+            Timber.tag(TAG).e("Error checking if SFTP path is directory: %s", e.getMessage());
+            return false;
+        } finally {
+            if (sftpChannelRepository != null && channelSftp != null) {
+                sftpChannelRepository.releaseChannel(channelSftp);
+            }
+        }
     }
 
     @Override
@@ -253,62 +332,11 @@ public class SftpFileModel implements FileModel {
         return created;
     }
 
-    private static boolean mkdirSftp(String dirPath) {
-        Timber.tag(TAG).d("Attempting to create SFTP directory: %s", dirPath);
-        SftpChannelRepository sftpChannelRepository = null;
-        ChannelSftp channelSftp = null;
-        try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
-            channelSftp = sftpChannelRepository.getSftpChannel();
-
-            try {
-                channelSftp.stat(dirPath);
-                Timber.tag(TAG).d("SFTP directory already exists: %s", dirPath);
-                return true;
-            } catch (SftpException e) {
-                if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
-                    channelSftp.mkdir(dirPath);
-                    Timber.tag(TAG).d("SFTP directory creation successful: %s", dirPath);
-                    return true;
-                } else {
-                    throw e;
-                }
-            }
-        } catch (SftpException | JSchException e) {
-            Timber.tag(TAG).e("Error creating SFTP directory: %s", e.getMessage());
-            return false;
-        } finally {
-            if (sftpChannelRepository != null && channelSftp != null) {
-                sftpChannelRepository.releaseChannel(channelSftp);
-                Timber.tag(TAG).d("SFTP channel released");
-            }
-        }
-    }
-
     @Override
     public boolean makeDirsRecursively(String extended_path) {
         boolean created = mkdirsSftp(path, extended_path);
         Timber.tag(TAG).d("makeDirsRecursively() returned: %b for path: %s", created, Global.CONCATENATE_PARENT_CHILD_PATH(path, extended_path));
         return created;
-    }
-
-    private static boolean mkdirsSftp(String parentPath, @NonNull String extendedPath) {
-        Timber.tag(TAG).d("Attempting to create multiple SFTP directories: %s in %s", extendedPath, parentPath);
-        boolean success = true;
-        String[] pathSegments = extendedPath.split("/");
-        String currentPath = parentPath;
-        for (String segment : pathSegments) {
-            if (!segment.isEmpty()) {
-                currentPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, segment);
-                success = mkdirSftp(currentPath);
-                if (!success) {
-                    Timber.tag(TAG).w("Failed to create SFTP directory: %s", currentPath);
-                    return false;
-                }
-            }
-        }
-        Timber.tag(TAG).d("Successfully created multiple SFTP directories");
-        return true;
     }
 
     @Override
@@ -460,27 +488,6 @@ public class SftpFileModel implements FileModel {
             } finally {
                 repository.releaseChannel(channelSftp);
                 Timber.tag("SFTPOutputStreamWrapper").d("SFTP channel released");
-            }
-        }
-    }
-
-    private static boolean isDirectory(String filePath) {
-        Timber.tag(TAG).d("Checking if SFTP path is directory: %s", filePath);
-        SftpChannelRepository sftpChannelRepository = null;
-        ChannelSftp channelSftp = null;
-        try {
-            sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
-            channelSftp = sftpChannelRepository.getSftpChannel();
-            SftpATTRS attrs = channelSftp.lstat(filePath);
-            boolean isDirectory = attrs.isDir();
-            Timber.tag(TAG).d("SFTP path is directory result: %b for path: %s", isDirectory, filePath);
-            return isDirectory;
-        } catch (SftpException | JSchException e) {
-            Timber.tag(TAG).e("Error checking if SFTP path is directory: %s", e.getMessage());
-            return false;
-        } finally {
-            if (sftpChannelRepository != null && channelSftp != null) {
-                sftpChannelRepository.releaseChannel(channelSftp);
             }
         }
     }

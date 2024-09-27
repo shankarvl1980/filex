@@ -27,42 +27,44 @@ import timber.log.Timber;
 
 public class FileEditorViewModel extends AndroidViewModel {
 
+    public final static String temp_content_file_name = "temp_content.txt";
+    public static final int MAX_LINES_TO_DISPLAY = 200;
+    private static final String TAG = "FileEditorViewModel";
+    private static final int MAX_LINE_LENGTH = 10000;
+    public final MutableLiveData<AsyncTaskStatus> isReadingFinished = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> initializedSetUp = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> saveContentInTempFile = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> gotEOLofFile = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
-    private Future<?> future1,future2,future3,future4,future5;
     public File file;
     public String source_folder;
-    public boolean isWritable,isFileBig;
+    public boolean isWritable, isFileBig;
     public boolean fromThirdPartyApp;
     public Uri data;
     public FileObjectType fileObjectType;
-    public final MutableLiveData<AsyncTaskStatus> isReadingFinished=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> initializedSetUp=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> saveContentInTempFile=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> gotEOLofFile=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public int eol,altered_eol;
-    public LinkedHashMap<Integer, PagePointer> page_pointer_hashmap=new LinkedHashMap<>();
-    public int current_page=0;
-    public long current_page_end_point=0L;
-    public boolean file_start,file_end;
+    public int eol, altered_eol;
+    public LinkedHashMap<Integer, PagePointer> page_pointer_hashmap = new LinkedHashMap<>();
+    public int current_page = 0;
+    public long current_page_end_point = 0L;
+    public boolean file_start, file_end;
     public String file_path;
-    public boolean file_format_supported=true;
-    public boolean updated=true,to_be_closed_after_save;
-    public String action_after_save="";
+    public boolean file_format_supported = true;
+    public boolean updated = true, to_be_closed_after_save;
+    public String action_after_save = "";
     public FilePOJO currently_shown_file;
     public TextViewUndoRedoBatch textViewUndoRedo;
     public boolean fileRead;
     public StringBuilder stringBuilder;
-    private boolean isCancelled;
     public boolean edit_mode;
     public boolean is_eol_group_visible;
-    public final static String temp_content_file_name="temp_content.txt";
     public boolean whether_temp_content_saved;
+    private Future<?> future1, future2, future3, future4, future5;
+    private boolean isCancelled;
 
     public FileEditorViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
+        this.application = application;
     }
-
 
     @Override
     protected void onCleared() {
@@ -70,25 +72,18 @@ public class FileEditorViewModel extends AndroidViewModel {
         cancel(true);
     }
 
-    public void cancel(boolean mayInterruptRunning){
-        if(future1!=null) future1.cancel(mayInterruptRunning);
-        if(future2!=null) future2.cancel(mayInterruptRunning);
-        if(future3!=null) future3.cancel(mayInterruptRunning);
-        if(future4!=null) future4.cancel(mayInterruptRunning);
-        if(future5!=null) future5.cancel(mayInterruptRunning);
+    public void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) future1.cancel(mayInterruptRunning);
+        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future4 != null) future4.cancel(mayInterruptRunning);
+        if (future5 != null) future5.cancel(mayInterruptRunning);
         isCancelled = true;
     }
 
-    private boolean isCancelled()
-    {
+    private boolean isCancelled() {
         return isCancelled;
     }
-
-
-    private static final String TAG = "FileEditorViewModel";
-
-    public static final int MAX_LINES_TO_DISPLAY = 200;
-    private static final int MAX_LINE_LENGTH = 10000;
 
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
         Timber.tag(TAG).d("Starting openFile: filePointer=%d, pageNumber=%d", filePointer, pageNumber);
@@ -202,30 +197,26 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
 
-
-    public synchronized void setUpInitialization(FileObjectType fileObjectType,String file_path)
-    {
+    public synchronized void setUpInitialization(FileObjectType fileObjectType, String file_path) {
         if (initializedSetUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         initializedSetUp.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future2=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future2 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                file=new File(file_path);
-                source_folder=file.getParent();
-                isWritable=FileUtil.isWritable(fileObjectType,file_path);
+                file = new File(file_path);
+                source_folder = file.getParent();
+                isWritable = FileUtil.isWritable(fileObjectType, file_path);
 
-                if(fileObjectType==FileObjectType.FILE_TYPE || fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE){
-                    currently_shown_file=MakeFilePOJOUtil.MAKE_FilePOJO(new File(file_path),false,FileObjectType.FILE_TYPE);
-                }
-                else{
-                    File cache_file=Global.COPY_TO_CACHE(file_path,fileObjectType);
-                    currently_shown_file=MakeFilePOJOUtil.MAKE_FilePOJO(cache_file,false,FileObjectType.FILE_TYPE);
+                if (fileObjectType == FileObjectType.FILE_TYPE || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+                    currently_shown_file = MakeFilePOJOUtil.MAKE_FilePOJO(new File(file_path), false, FileObjectType.FILE_TYPE);
+                } else {
+                    File cache_file = Global.COPY_TO_CACHE(file_path, fileObjectType);
+                    currently_shown_file = MakeFilePOJOUtil.MAKE_FilePOJO(cache_file, false, FileObjectType.FILE_TYPE);
                 }
 
-                if(Global.whether_file_cached(fileObjectType))
-                {
-                    data = FileProvider.getUriForFile(application,Global.FILEX_PACKAGE+".provider",new File(currently_shown_file.getPath()));
+                if (Global.whether_file_cached(fileObjectType)) {
+                    data = FileProvider.getUriForFile(application, Global.FILEX_PACKAGE + ".provider", new File(currently_shown_file.getPath()));
                 }
                 determineEOL(data);
                 initializedSetUp.postValue(AsyncTaskStatus.COMPLETED);
@@ -233,18 +224,18 @@ public class FileEditorViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void saveContentInTempFile(String content){
+    public synchronized void saveContentInTempFile(String content) {
         if (saveContentInTempFile.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         saveContentInTempFile.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future3=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future3 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 File tempFile = new File(application.getExternalCacheDir(), temp_content_file_name);
-                whether_temp_content_saved=false;
+                whether_temp_content_saved = false;
                 try (FileWriter writer = new FileWriter(tempFile)) {
                     writer.write(content);
-                    whether_temp_content_saved=true;
+                    whether_temp_content_saved = true;
                 } catch (IOException e) {
 
                 }
@@ -290,8 +281,18 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
 
-
     public static class PagePointer implements Parcelable {
+        public static final Creator<PagePointer> CREATOR = new Creator<PagePointer>() {
+            @Override
+            public PagePointer createFromParcel(Parcel in) {
+                return new PagePointer(in);
+            }
+
+            @Override
+            public PagePointer[] newArray(int size) {
+                return new PagePointer[size];
+            }
+        };
         private final long startPoint;
         private final long endPoint;
 
@@ -315,18 +316,6 @@ public class FileEditorViewModel extends AndroidViewModel {
         public int describeContents() {
             return 0;
         }
-
-        public static final Creator<PagePointer> CREATOR = new Creator<PagePointer>() {
-            @Override
-            public PagePointer createFromParcel(Parcel in) {
-                return new PagePointer(in);
-            }
-
-            @Override
-            public PagePointer[] newArray(int size) {
-                return new PagePointer[size];
-            }
-        };
 
         public long getStartPoint() {
             return startPoint;

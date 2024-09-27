@@ -38,391 +38,312 @@ import java.util.LinkedList;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 
-public class RecentDialog extends DialogFragment implements MainActivity.RecentDialogListener
-{
+public class RecentDialog extends DialogFragment implements MainActivity.RecentDialogListener {
+    public static final int RECENT_SIZE = 30;
+    private final static String SAF_PERMISSION_REQUEST_CODE = "recent_dialog_saf_permission_request_code";
+    private final LinkedList<FilePOJO> root_dir_linkedlist = new LinkedList<>();
     private Context context;
-	private final LinkedList<FilePOJO> root_dir_linkedlist=new LinkedList<>();
-    public static final int RECENT_SIZE=30;
     private Uri tree_uri;
-	private String tree_uri_path="";
-	private RecentRecyclerAdapter rootdirrecycleradapter,recentRecyclerAdapter;
-	private RecyclerView recent_recyclerview;
-	private TextView recent_label;
-	private FilePOJO clicked_filepojo;
-	private final static String SAF_PERMISSION_REQUEST_CODE="recent_dialog_saf_permission_request_code";
+    private String tree_uri_path = "";
+    private RecentRecyclerAdapter rootdirrecycleradapter, recentRecyclerAdapter;
+    private RecyclerView recent_recyclerview;
+    private TextView recent_label;
+    private FilePOJO clicked_filepojo;
 
-	@Override
-	public void onAttach(@NonNull Context context) {
-		super.onAttach(context);
-		this.context=context;
-		AppCompatActivity activity= (AppCompatActivity) getActivity();
-		if(activity instanceof MainActivity)
-		{
-			((MainActivity)activity).recentDialogListener=this;
-		}
-	}
+    public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO) {
+        if (!MainActivity.RECENT.isEmpty()) {
+            if ((!MainActivity.RECENT.getFirst().getPath().equals(filePOJO.getPath()))) {
+                if (MainActivity.RECENT.size() >= RECENT_SIZE) {
+                    MainActivity.RECENT.removeLast();
+                }
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		AppCompatActivity activity= (AppCompatActivity) getActivity();
-		if(activity instanceof MainActivity)
-		{
-			((MainActivity)activity).recentDialogListener=null;
-		}
-	}
+                MainActivity.RECENT.addFirst(filePOJO);
+            }
+        } else {
+            MainActivity.RECENT.addFirst(filePOJO);
+        }
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setCancelable(false);
-		root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
-	}
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).recentDialogListener = this;
+        }
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
-		View v=inflater.inflate(R.layout.fragment_recent,container,false);
-		RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_recycler_view);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).recentDialogListener = null;
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setCancelable(false);
+        root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); ////adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_recent, container, false);
+        RecyclerView root_dir_recyclerview = v.findViewById(R.id.dialog_recent_root_dir_recycler_view);
         recent_recyclerview = v.findViewById(R.id.dialog_recent_recycler_view);
-        recent_label=v.findViewById(R.id.recent_label);
-		ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
-		buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,2,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        recent_label = v.findViewById(R.id.recent_label);
+        ViewGroup buttons_layout = v.findViewById(R.id.fragment_recent_button_layout);
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
         Button recent_clear_button = buttons_layout.findViewById(R.id.first_button);
-		recent_clear_button.setText(R.string.clear);
+        recent_clear_button.setText(R.string.clear);
         Button close_button = buttons_layout.findViewById(R.id.second_button);
-		close_button.setText(R.string.close);
+        close_button.setText(R.string.close);
 
         rootdirrecycleradapter = new RecentRecyclerAdapter(root_dir_linkedlist, true);
-		root_dir_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		root_dir_recyclerview.setAdapter(rootdirrecycleradapter);
-		root_dir_recyclerview.setLayoutManager(new LinearLayoutManager(context));
+        root_dir_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        root_dir_recyclerview.setAdapter(rootdirrecycleradapter);
+        root_dir_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 
-		recentRecyclerAdapter=new RecentRecyclerAdapter(MainActivity.RECENT,false);
-		recent_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
-		recent_recyclerview.setAdapter(recentRecyclerAdapter);
-		recent_recyclerview.setLayoutManager(new LinearLayoutManager(context));
-		
-		recent_clear_button.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				recentRecyclerAdapter.clear_recents();
-				MainActivity.RECENT =new LinkedList<>();
-			}
-		});
-		
-		close_button.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				dismissAllowingStateLoss();
-			}
-			
-		});
+        recentRecyclerAdapter = new RecentRecyclerAdapter(MainActivity.RECENT, false);
+        recent_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        recent_recyclerview.setAdapter(recentRecyclerAdapter);
+        recent_recyclerview.setLayoutManager(new LinearLayoutManager(context));
 
-		getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
-			@Override
-			public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-				if(requestKey.equals(SAF_PERMISSION_REQUEST_CODE))
-				{
-					tree_uri=result.getParcelable("tree_uri");
-					tree_uri_path=result.getString("tree_uri_path");
-				}
-			}
-		});
-		return v;
-	}
+        recent_clear_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                recentRecyclerAdapter.clear_recents();
+                MainActivity.RECENT = new LinkedList<>();
+            }
+        });
 
-	private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-		@Override
-		public void onActivityResult(ActivityResult result) {
-			if (result.getResultCode()== Activity.RESULT_OK)
-			{
-				if(clicked_filepojo!=null) file_open_intent_dispatch(clicked_filepojo.getPath(),clicked_filepojo.getFileObjectType(),clicked_filepojo.getName(),clicked_filepojo.getSizeLong());
-				clicked_filepojo=null;
-			}
-			else
-			{
-				Global.print(context,getString(R.string.permission_not_granted));
-			}
-		}
-	});
+        close_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismissAllowingStateLoss();
+            }
 
+        });
 
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		Window window=getDialog().getWindow();
-		if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-		{
-			if(!Global.IS_TABLET)
-			{
-				recent_label.setVisibility(View.GONE);
-				recent_recyclerview.setAdapter(null);
-			}
-			window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
-		}
-		else
-		{
-			window.setLayout(Global.DIALOG_WIDTH,Global.DIALOG_HEIGHT);
-		}
-		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-	}
+        getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (requestKey.equals(SAF_PERMISSION_REQUEST_CODE)) {
+                    tree_uri = result.getParcelable("tree_uri");
+                    tree_uri_path = result.getString("tree_uri_path");
+                }
+            }
+        });
+        return v;
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
-	private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, long file_size)
-	{
-		int idx=file_name.lastIndexOf(".");
-		String file_ext="";
-		if(idx!=-1)
-		{
-			file_ext=file_name.substring(idx+1);
-		}
+    @Override
+    public void onResume() {
+        super.onResume();
+        Window window = getDialog().getWindow();
+        if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+            if (!Global.IS_TABLET) {
+                recent_label.setVisibility(View.GONE);
+                recent_recyclerview.setAdapter(null);
+            }
+            window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
+        } else {
+            window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
+        }
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
 
-		if(file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context,file_ext))
-		{
-			FileTypeSelectDialog fileTypeSelectFragment=FileTypeSelectDialog.getInstance(file_path,fileObjectType,tree_uri,tree_uri_path,false,file_size);
-			fileTypeSelectFragment.show(getParentFragmentManager(),"");
-		}
-		else
-		{
-			if(file_ext.matches("(?i)apk"))
-			{
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
-						Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-						unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
-						activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
-						return;
-					}
-				}
-			}
+    private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, long file_size) {
+        int idx = file_name.lastIndexOf(".");
+        String file_ext = "";
+        if (idx != -1) {
+            file_ext = file_name.substring(idx + 1);
+        }
 
-			if(fileObjectType==FileObjectType.USB_TYPE)
-			{
-				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
-				{
-					Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
-					return;
-				}
+        if (file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context, file_ext)) {
+            FileTypeSelectDialog fileTypeSelectFragment = FileTypeSelectDialog.getInstance(file_path, fileObjectType, tree_uri, tree_uri_path, false, file_size);
+            fileTypeSelectFragment.show(getParentFragmentManager(), "");
+        } else {
+            if (file_ext.matches("(?i)apk")) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
+                        Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                        unknown_package_install_intent.setData(Uri.parse(String.format("package:%s", Global.FILEX_PACKAGE)));
+                        activityResultLauncher_unknown_package_install_permission.launch(unknown_package_install_intent);
+                        return;
+                    }
+                }
+            }
 
-				if(!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType,null))
-				{
-					Global.print(context,context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
-					return;
-				}
-				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
+            if (fileObjectType == FileObjectType.USB_TYPE) {
+                if (file_size > Global.CACHE_FILE_MAX_LIMIT) {
+                    Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
+                    return;
+                }
 
-			}
-			else if(Global.whether_file_cached(fileObjectType))
-			{
-				if(file_size>Global.CACHE_FILE_MAX_LIMIT)
-				{
-					Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
-					return;
-				}
-				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
-			}
-			else if(fileObjectType==FileObjectType.FILE_TYPE)
-			{
-				FileIntentDispatch.openFile(context,file_path,"",false,fileObjectType,false,file_size);
-			}
-		}
-	}
+                if (!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType, null)) {
+                    Global.print(context, context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
+                    return;
+                }
+                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
+
+            } else if (Global.whether_file_cached(fileObjectType)) {
+                if (file_size > Global.CACHE_FILE_MAX_LIMIT) {
+                    Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
+                    return;
+                }
+                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
+            } else if (fileObjectType == FileObjectType.FILE_TYPE) {
+                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
+            }
+        }
+    }
 
 
-	@Override
-	public void onMediaAttachedAndRemoved()
-	{
-		root_dir_linkedlist.clear();
-		root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
-		rootdirrecycleradapter.notifyDataSetChanged();
-		recentRecyclerAdapter.notifyDataSetChanged();
-	}
+    @Override
+    public void onMediaAttachedAndRemoved() {
+        root_dir_linkedlist.clear();
+        root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+        rootdirrecycleradapter.notifyDataSetChanged();
+        recentRecyclerAdapter.notifyDataSetChanged();
+    }
 
-	private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder>
-	{
-		LinkedList<FilePOJO> dir_linkedlist;
-		final boolean storage_dir;
+    private void discoverDevice() {
 
-		RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir)
-		{
-			this.dir_linkedlist=dir_linkedlist;
-			this.storage_dir=storage_dir;
-		}
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+        for (UsbDevice device : usbManager.getDeviceList().values()) {
+            for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {
+                if (device.equals(massStorageDevice.getUsbDevice())) {
+                    PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
+                            UsbDocumentProvider.ACTION_USB_PERMISSION), pending_intent_flag);
+                    usbManager.requestPermission(device, permissionIntent);
+                    break;
+                }
+            }
+        }
+    }
 
-		class ViewHolder extends RecyclerView.ViewHolder
-		{
-			final View view;
-			final ImageView fileimageview;
-			final ImageView overlay_fileimageview;
-			final TextView textView_recent_dir;
-			int pos;
-			
-			ViewHolder(View view)
-			{
-				super(view);
-				this.view=view;
-				fileimageview=view.findViewById(R.id.image_storage_dir);
-				overlay_fileimageview=view.findViewById(R.id.overlay_image_storage_dir);
-				textView_recent_dir=view.findViewById(R.id.text_storage_dir_name);
+    private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
+        final boolean storage_dir;
+        LinkedList<FilePOJO> dir_linkedlist;
 
-				this.view.setOnClickListener(new View.OnClickListener()
-					{
-						public void onClick(View p)
-						{
-							pos=getBindingAdapterPosition();
-							final FilePOJO filePOJO=dir_linkedlist.get(pos);
-							clicked_filepojo=filePOJO;
-							if(filePOJO.getIsDirectory())
-							{
-								AppCompatActivity activity= (AppCompatActivity) getActivity();
-								if(activity instanceof MainActivity)
-								{
-									((MainActivity)activity).createFragmentTransaction(filePOJO.getPath(),filePOJO.getFileObjectType());
-								}
-							}
-							else
-							{
-								file_open_intent_dispatch(filePOJO.getPath(),filePOJO.getFileObjectType(),filePOJO.getName(),filePOJO.getSizeLong());
-							}
+        RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir) {
+            this.dir_linkedlist = dir_linkedlist;
+            this.storage_dir = storage_dir;
+        }
 
-							ADD_FILE_POJO_TO_RECENT(filePOJO);
-							dismissAllowingStateLoss();
-						}
-					});
-			}
-		}
+        @Override
+        public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            View itemview = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
+            return new ViewHolder(itemview);
+        }
 
+        @Override
+        public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2) {
+            FilePOJO filePOJO = dir_linkedlist.get(p2);
+            if (storage_dir) {
+                FileObjectType fileObjectType = filePOJO.getFileObjectType();
+                String space = "";
+                SpacePOJO spacePOJO = Global.SPACE_ARRAY.get(fileObjectType + filePOJO.getPath());
+                if (spacePOJO != null)
+                    space = " (" + spacePOJO.getUsedSpaceReadable() + "/" + spacePOJO.getTotalSpaceReadable() + ")";
+                if (fileObjectType == FileObjectType.FILE_TYPE) {
+                    if (Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(filePOJO.getPath())) {
+                        p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
+                    } else {
+                        p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
+                    }
+                    p1.textView_recent_dir.setText(filePOJO.getName() + space);
 
-		@Override
-		public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
-		{
-			View itemview=LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout,p1,false);
-			return new ViewHolder(itemview);
-		}
+                } else if (fileObjectType == FileObjectType.USB_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName() + space);
+                } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
+                    if (filePOJO.getPath().equals(File.separator)) {
+                        p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
+                        p1.textView_recent_dir.setText(R.string.root_directory);
+                    }
+                } else if (fileObjectType == FileObjectType.FTP_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getName() + space);
+                } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName() + space);
+                }
+            } else {
+                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.overlay_fileimageview);
+                if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE) {
+                    p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getPath());
+                } else if (filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE) {
+                    p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath());
+                } else if (filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
+                    p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath());
+                } else {
+                    p1.textView_recent_dir.setText(filePOJO.getPath());
+                }
+            }
+        }
 
-		@Override
-		public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2)
-		{
-			FilePOJO filePOJO = dir_linkedlist.get(p2);
-			if(storage_dir)
-			{
-				FileObjectType fileObjectType=filePOJO.getFileObjectType();
-				String space="";
-				SpacePOJO spacePOJO=Global.SPACE_ARRAY.get(fileObjectType+filePOJO.getPath());
-				if(spacePOJO!=null) space=" ("+spacePOJO.getUsedSpaceReadable()+"/"+spacePOJO.getTotalSpaceReadable()+")";
-				if(fileObjectType== FileObjectType.FILE_TYPE)
-				{
-					if(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(filePOJO.getPath()))
-					{
-						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
-					}
-					else
-					{
-						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
-					}
-					p1.textView_recent_dir.setText(filePOJO.getName()+space);
+        @Override
+        public int getItemCount() {
+            return dir_linkedlist.size();
+        }
 
-				}
-				else if(fileObjectType== FileObjectType.USB_TYPE)
-				{
-					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
-					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName()+space);
-				}
-				else if(fileObjectType==FileObjectType.ROOT_TYPE)
-				{
-					if(filePOJO.getPath().equals(File.separator))
-					{
-						p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
-						p1.textView_recent_dir.setText(R.string.root_directory);
-					}
-				}
-				else if(fileObjectType==FileObjectType.FTP_TYPE)
-				{
-					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
-					p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName()+space);
-				}
-				else if(fileObjectType==FileObjectType.SFTP_TYPE)
-				{
-					p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
-					p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX+filePOJO.getName()+space);
-				}
-			}
-			else
-			{
-				RecyclerViewLayoutList.setIcon(context,filePOJO,p1.fileimageview,p1.overlay_fileimageview);
-				if(filePOJO.getFileObjectType()==FileObjectType.USB_TYPE)
-				{
-					p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX+ filePOJO.getPath());
-				}
-				else if(filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE)
-				{
-					p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX+ filePOJO.getPath());
-				}
-				else if(filePOJO.getFileObjectType()==FileObjectType.SFTP_TYPE)
-				{
-					p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX+ filePOJO.getPath());
-				}
-				else
-				{
-					p1.textView_recent_dir.setText(filePOJO.getPath());
-				}
-			}
-		}
+        public void clear_recents() {
+            dir_linkedlist = new LinkedList<>();
+            notifyDataSetChanged();
+        }
 
-		@Override
-		public int getItemCount()
-		{
-			return dir_linkedlist.size();
-		}
-		
-		public void clear_recents()
-		{
-			dir_linkedlist=new LinkedList<>();
-			notifyDataSetChanged();
-		}
-	}
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final View view;
+            final ImageView fileimageview;
+            final ImageView overlay_fileimageview;
+            final TextView textView_recent_dir;
+            int pos;
 
-	public static void ADD_FILE_POJO_TO_RECENT(FilePOJO filePOJO)
-	{
-		if(!MainActivity.RECENT.isEmpty())
-		{
-			if((!MainActivity.RECENT.getFirst().getPath().equals(filePOJO.getPath())))
-			{
-				if(MainActivity.RECENT.size()>=RECENT_SIZE)
-				{
-					MainActivity.RECENT.removeLast();
-				}
+            ViewHolder(View view) {
+                super(view);
+                this.view = view;
+                fileimageview = view.findViewById(R.id.image_storage_dir);
+                overlay_fileimageview = view.findViewById(R.id.overlay_image_storage_dir);
+                textView_recent_dir = view.findViewById(R.id.text_storage_dir_name);
 
-				MainActivity.RECENT.addFirst(filePOJO);
-			}
-		}
-		else
-		{
-			MainActivity.RECENT.addFirst(filePOJO);
-		}
-	}
+                this.view.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View p) {
+                        pos = getBindingAdapterPosition();
+                        final FilePOJO filePOJO = dir_linkedlist.get(pos);
+                        clicked_filepojo = filePOJO;
+                        if (filePOJO.getIsDirectory()) {
+                            AppCompatActivity activity = (AppCompatActivity) getActivity();
+                            if (activity instanceof MainActivity) {
+                                ((MainActivity) activity).createFragmentTransaction(filePOJO.getPath(), filePOJO.getFileObjectType());
+                            }
+                        } else {
+                            file_open_intent_dispatch(filePOJO.getPath(), filePOJO.getFileObjectType(), filePOJO.getName(), filePOJO.getSizeLong());
+                        }
+
+                        ADD_FILE_POJO_TO_RECENT(filePOJO);
+                        dismissAllowingStateLoss();
+                    }
+                });
+            }
+        }
+    }
 
 
-	private void discoverDevice() {
 
-		UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-		int pending_intent_flag=Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
-		for (UsbDevice device : usbManager.getDeviceList().values())
-		{
-			for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext()))
-			{
-				if (device.equals(massStorageDevice.getUsbDevice()))
-				{
-					PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
-							UsbDocumentProvider.ACTION_USB_PERMISSION), pending_intent_flag);
-					usbManager.requestPermission(device, permissionIntent);
-					break;
-				}
-			}
-		}
-	}
 }

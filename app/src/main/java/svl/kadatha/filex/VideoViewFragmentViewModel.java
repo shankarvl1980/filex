@@ -8,13 +8,14 @@ import androidx.lifecycle.AndroidViewModel;
 public class VideoViewFragmentViewModel extends AndroidViewModel {
 
 
-    public boolean playmode,completed;
-    public boolean firststart,surfaceCreated;
+    public boolean playmode, completed;
+    public boolean firststart, surfaceCreated;
     public boolean wasPlaying;
     public int idx;
     public int position;
     public int orientation;
     public boolean setDisplay;
+
     public VideoViewFragmentViewModel(@NonNull Application application) {
         super(application);
     }

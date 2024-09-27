@@ -13,22 +13,20 @@ import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.server.FtpUser;
 
 public class FtpServerViewModel extends AndroidViewModel {
-    public String user_name="pc",password="pc",chroot=Global.INTERNAL_PRIMARY_STORAGE_PATH;
     public static int PORT;
     public static FtpUser FTP_USER;
     public static boolean ALLOW_ANONYMOUS;
     public final List<String> chroot_list;
+    public String user_name = "pc", password = "pc", chroot = Global.INTERNAL_PRIMARY_STORAGE_PATH;
 
     public FtpServerViewModel(@NonNull Application application) {
         super(application);
-        PORT=Integer.parseInt(application.getString(R.string.portnumber_default));
-        FTP_USER=new FtpUser(application.getString(R.string.username_default),application.getString(R.string.password_default),Global.INTERNAL_PRIMARY_STORAGE_PATH);
-        chroot_list= new ArrayList<>();
-        RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-        for(FilePOJO filePOJO:repositoryClass.storage_dir)
-        {
-            if(!filePOJO.getPath().equals(File.separator) && filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE)
-            {
+        PORT = Integer.parseInt(application.getString(R.string.portnumber_default));
+        FTP_USER = new FtpUser(application.getString(R.string.username_default), application.getString(R.string.password_default), Global.INTERNAL_PRIMARY_STORAGE_PATH);
+        chroot_list = new ArrayList<>();
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
+            if (!filePOJO.getPath().equals(File.separator) && filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE) {
                 chroot_list.add(filePOJO.getPath());
             }
         }

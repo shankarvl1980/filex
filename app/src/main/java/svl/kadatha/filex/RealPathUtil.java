@@ -15,8 +15,7 @@ import java.io.File;
 public class RealPathUtil {
 
     public static String getRealPath(Context context, Uri fileUri) {
-        if(fileUri==null)
-        {
+        if (fileUri == null) {
             return "";
         }
         String realPath;
@@ -53,8 +52,7 @@ public class RealPathUtil {
                 // TODO handle non-primary volumes
             }
             //UsbProvider
-            if (isUsbDocument(uri))
-            {
+            if (isUsbDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 return split[1];
@@ -134,12 +132,9 @@ public class RealPathUtil {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return kadathaUriGetPath(uri);
-        }
-        finally {
+        } finally {
             if (cursor != null)
                 cursor.close();
         }
@@ -148,7 +143,7 @@ public class RealPathUtil {
 
     @SuppressLint("NewApi")
     private static String kadathaUriGetPath(Uri uri) {
-        if(uri==null)return "";
+        if (uri == null) return "";
         final boolean needToCheckUri = true;
         final boolean isOreoOrMore = Build.VERSION.SDK_INT >= 26;
         String selection = null;
@@ -161,7 +156,7 @@ public class RealPathUtil {
 
     @SuppressLint("NewApi")
     public static String getLastSegmentPath(Uri uri) {
-        if(uri==null)return "";
+        if (uri == null) return "";
         uri.normalizeScheme();
         String path = uri.getPath();
         path = path.substring(path.lastIndexOf(File.separator));
@@ -176,8 +171,7 @@ public class RealPathUtil {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    public static boolean isUsbDocument(Uri uri)
-    {
+    public static boolean isUsbDocument(Uri uri) {
         return UsbDocumentProvider.DOCUMENTS_AUTHORITY.equals(uri.getAuthority());
     }
 

@@ -9,10 +9,7 @@ import androidx.core.util.Pair;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Stack;
 
 import svl.kadatha.filex.AlternativeAsyncTask;
@@ -32,11 +29,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final List<String> copied_files_name;
     private final List<String> copied_source_file_path_list;
     private final List<String> overwritten_file_path_list;
-    private int counter_no_files;
-    private final long[] counter_size_files=new long[1];
-    private String copied_file_name;
-    private String current_file_name;
-    private FilePOJO filePOJO;
+    private final long[] counter_size_files = new long[1];
     private final List<String> files_selected_array;
     private final FileObjectType sourceFileObjectType;
     private final Uri tree_uri;
@@ -47,34 +40,39 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final boolean cut;
     private final Uri source_uri;
     private final String source_uri_path;
+    private int counter_no_files;
+    private String copied_file_name;
+    private String current_file_name;
+    private FilePOJO filePOJO;
 
 
     public CutCopyAsyncTask(ArrayList<String> files_selected_array, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,
-                        String dest_folder, FileObjectType destFileObjectType,Uri tree_uri, String tree_uri_path, boolean cut, List<String>overwritten_file_path_list,TaskProgressListener listener) {
-    this.files_selected_array = files_selected_array;
-    this.source_folder=source_folder;
-    this.sourceFileObjectType = sourceFileObjectType;
-    this.source_uri=source_uri;
-    this.source_uri_path=source_uri_path;
-    this.dest_folder = dest_folder;
-    this.destFileObjectType = destFileObjectType;
-    this.tree_uri=tree_uri;
-    this.tree_uri_path=tree_uri_path;
-    this.cut = cut;
-    this.overwritten_file_path_list=overwritten_file_path_list;
-    this.listener = listener;
+                            String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, boolean cut, List<String> overwritten_file_path_list, TaskProgressListener listener) {
+        this.files_selected_array = files_selected_array;
+        this.source_folder = source_folder;
+        this.sourceFileObjectType = sourceFileObjectType;
+        this.source_uri = source_uri;
+        this.source_uri_path = source_uri_path;
+        this.dest_folder = dest_folder;
+        this.destFileObjectType = destFileObjectType;
+        this.tree_uri = tree_uri;
+        this.tree_uri_path = tree_uri_path;
+        this.cut = cut;
+        this.overwritten_file_path_list = overwritten_file_path_list;
+        this.listener = listener;
 
-    copied_files_name = new ArrayList<>();
-    copied_source_file_path_list = new ArrayList<>();
-}
+        copied_files_name = new ArrayList<>();
+        copied_source_file_path_list = new ArrayList<>();
+    }
+
     @Override
     protected Boolean doInBackground(Void... params) {
         boolean copy_result = false;
         boolean whether_copy_between_network_file_systems = true;
-        List<FileObjectType> net_work_protocols= Arrays.asList(FileObjectType.FTP_TYPE,FileObjectType.SFTP_TYPE,FileObjectType.WEBDAV_TYPE,FileObjectType.SMB_TYPE);
-        if(net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)){
-            if(!sourceFileObjectType.equals(destFileObjectType)){
-                whether_copy_between_network_file_systems=true;
+        List<FileObjectType> net_work_protocols = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
+        if (net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)) {
+            if (!sourceFileObjectType.equals(destFileObjectType)) {
+                whether_copy_between_network_file_systems = true;
             }
         }
 
@@ -88,12 +86,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             String file_path = sourceFileModel.getPath();
             current_file_name = sourceFileModel.getName();
 
-            if(whether_copy_between_network_file_systems){
-                copy_result=CopyFileModelForNetWorkDestFolders(sourceFileModel,destFileModel,current_file_name,false);
+            if (whether_copy_between_network_file_systems) {
+                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, current_file_name, false);
                 if (copy_result && cut) {
                     sourceFileModel.delete();
                 }
-            }else{
+            } else {
                 copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
                 if (copy_result && cut) {
                     sourceFileModel.delete();
@@ -107,18 +105,13 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
             files_selected_array.remove(file_path);
         }
-        if(counter_no_files>0)
-        {
-            filePOJO= FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_file_path_list);
-            if(cut)
-            {
-                if(sourceFileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder,copied_source_file_path_list,FileObjectType.FILE_TYPE);
-                }
-                else
-                {
-                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder,copied_files_name,sourceFileObjectType);
+        if (counter_no_files > 0) {
+            filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
+            if (cut) {
+                if (sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(source_folder, copied_source_file_path_list, FileObjectType.FILE_TYPE);
+                } else {
+                    FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder, copied_files_name, sourceFileObjectType);
                 }
             }
             copied_files_name.clear();
@@ -131,7 +124,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY, counter_no_files, counter_size_files[0],current_file_name ,copied_file_name);
+            listener.onProgressUpdate(cut ? TASK_TYPE_CUT : TASK_TYPE_COPY, counter_no_files, counter_size_files[0], current_file_name, copied_file_name);
         }
     }
 
@@ -139,7 +132,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         if (listener != null) {
-            listener.onTaskCompleted(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY, result, filePOJO);
+            listener.onTaskCompleted(cut ? TASK_TYPE_CUT : TASK_TYPE_COPY, result, filePOJO);
         }
     }
 
@@ -147,7 +140,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected void onCancelled(Boolean aBoolean) {
         super.onCancelled(aBoolean);
         if (listener != null) {
-            listener.onTaskCancelled(cut ? TASK_TYPE_CUT:TASK_TYPE_COPY,filePOJO);
+            listener.onTaskCancelled(cut ? TASK_TYPE_CUT : TASK_TYPE_COPY, filePOJO);
         }
     }
 
@@ -216,7 +209,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 progressHandler.post(progressRunnable);
 
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
-                if(success){
+                if (success) {
                     ++counter_no_files;
                     publishProgress(null);
                 }
@@ -266,14 +259,14 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
             try {
                 if (source.isDirectory()) {
-                    createDirectory(destFileModel, destPath,destFileObjectType);
+                    createDirectory(destFileModel, destPath, destFileObjectType);
                     ++counter_no_files;
                     publishProgress(null);
                 } else {
                     File destFile = new File(destPath);
-                    FileModel destParentModel = createDirectory(destFileModel, destFile.getParent(),destFileObjectType);
+                    FileModel destParentModel = createDirectory(destFileModel, destFile.getParent(), destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
-                    if(success){
+                    if (success) {
                         Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
                         publishProgress(null);
@@ -370,7 +363,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         if (relativePath.isEmpty()) {
             return new File(sourceName).getPath();
         }
-        return new File(new File( sourceName), relativePath).getPath();
+        return new File(new File(sourceName), relativePath).getPath();
     }
 
     // Other methods (deleteSource, collectFilesToCopy, and exception classes) remain the same

@@ -14,64 +14,57 @@ import androidx.core.content.ContextCompat;
 
 import java.util.List;
 
-public class ListPopupWindowPOJO
-{
-	final int resource_id;
-	final String menu_name;
-	final int id;
-	
-	ListPopupWindowPOJO(int resource_id, String menu_name, int id)
-	{
-		this.resource_id=resource_id;
-		this.menu_name=menu_name;
-		this.id=id;
-	}
+public class ListPopupWindowPOJO {
+    final int resource_id;
+    final String menu_name;
+    final int id;
 
-	public static class PopupWindowAdapter extends ArrayAdapter<ListPopupWindowPOJO>
-	{
-		final Context context;
-		final List<ListPopupWindowPOJO> list;
-		PopupWindowAdapter(Context context, List<ListPopupWindowPOJO> list)
-		{
-			super(context,R.layout.list_popupwindow_layout,list);
-			this.context=context;
-			this.list=list;
-		}
+    ListPopupWindowPOJO(int resource_id, String menu_name, int id) {
+        this.resource_id = resource_id;
+        this.menu_name = menu_name;
+        this.id = id;
+    }
 
-		@NonNull
-		@Override
-		public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-			View v;
-			ViewHolder vh;
-			if(convertView==null)
-			{
-				v= LayoutInflater.from(context).inflate(R.layout.list_popupwindow_layout,parent,false);
-				vh=new ViewHolder();
-				vh.imageView=v.findViewById(R.id.list_popupwindow_layout_iv);
-				vh.textView=v.findViewById(R.id.list_popupwindow_tv);
-				v.setTag(vh);
-			}
-			else
-			{
-				v=convertView;
-				vh= (ViewHolder) convertView.getTag();
-			}
-			ListPopupWindowPOJO listPopupWindowPOJO=list.get(position);
-			vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,listPopupWindowPOJO.resource_id));
-			vh.textView.setText(listPopupWindowPOJO.menu_name);
-			return v;
-		}
+    public static class PopupWindowAdapter extends ArrayAdapter<ListPopupWindowPOJO> {
+        final Context context;
+        final List<ListPopupWindowPOJO> list;
 
-		@Override
-		public int getCount() {
-			return list.size();
-		}
+        PopupWindowAdapter(Context context, List<ListPopupWindowPOJO> list) {
+            super(context, R.layout.list_popupwindow_layout, list);
+            this.context = context;
+            this.list = list;
+        }
 
-		public static class ViewHolder
-		{
-			ImageView imageView;
-			TextView textView;
-		}
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View v;
+            ViewHolder vh;
+            if (convertView == null) {
+                v = LayoutInflater.from(context).inflate(R.layout.list_popupwindow_layout, parent, false);
+                vh = new ViewHolder();
+                vh.imageView = v.findViewById(R.id.list_popupwindow_layout_iv);
+                vh.textView = v.findViewById(R.id.list_popupwindow_tv);
+                v.setTag(vh);
+            } else {
+                v = convertView;
+                vh = (ViewHolder) convertView.getTag();
+            }
+            ListPopupWindowPOJO listPopupWindowPOJO = list.get(position);
+            vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, listPopupWindowPOJO.resource_id));
+            vh.textView.setText(listPopupWindowPOJO.menu_name);
+            return v;
+        }
 
-	}
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        public static class ViewHolder {
+            ImageView imageView;
+            TextView textView;
+        }
+
+    }
 }

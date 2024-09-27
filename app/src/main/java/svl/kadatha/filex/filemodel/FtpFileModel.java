@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Stack;
 
 import svl.kadatha.filex.FtpClientRepository;
-import svl.kadatha.filex.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.NetworkAccountDetailsViewModel;
 import timber.log.Timber;
 
 public class FtpFileModel implements FileModel {
@@ -28,6 +28,70 @@ public class FtpFileModel implements FileModel {
     FtpFileModel(String path) {
         this.path = path;
         Timber.tag(TAG).d("FtpFileModel created for path: %s", path);
+    }
+
+    private static boolean mkdirFtp(String file_path) {
+        Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
+        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
+        FTPClient ftpClient = null;
+        try {
+
+            boolean dirExists = isDirectory(file_path);
+            if (dirExists) {
+                Timber.tag(TAG).d("FTP directory already exists: %s", file_path);
+                return true;
+            } else {
+                ftpClient = ftpClientRepository.getFtpClient();
+                boolean success = ftpClient.makeDirectory(file_path);
+                Timber.tag(TAG).d("FTP directory creation result: %b for path: %s", success, file_path);
+                return success;
+            }
+        } catch (IOException e) {
+            Timber.tag(TAG).e("Error creating FTP directory: %s", e.getMessage());
+            return false;
+        } finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+                Timber.tag(TAG).d("FTP client released");
+            }
+        }
+    }
+
+    private static boolean mkdirsFTP(String parentPath, @NonNull String extendedPath) {
+        Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", extendedPath, parentPath);
+        String[] pathSegments = extendedPath.split("/");
+        String currentPath = parentPath;
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                currentPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, segment);
+                if (!mkdirFtp(currentPath)) {
+                    Timber.tag(TAG).w("Failed to create FTP directory: %s", currentPath);
+                    return false;
+                }
+            }
+        }
+        Timber.tag(TAG).d("Successfully created multiple FTP directories");
+        return true;
+    }
+
+    private static boolean isDirectory(String filePath) {
+        Timber.tag(TAG).d("Checking if FTP path is directory: %s", filePath);
+        FtpClientRepository ftpClientRepository = null;
+        FTPClient ftpClient = null;
+        try {
+            ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
+            ftpClient = ftpClientRepository.getFtpClient();
+            boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
+            Timber.tag(TAG).d("FTP path is directory result: %b for path: %s", isDirectory, filePath);
+            return isDirectory;
+        } catch (IOException e) {
+            Timber.tag(TAG).e("Error checking if FTP path is directory: %s", e.getMessage());
+            return false;
+        } finally {
+            if (ftpClientRepository != null && ftpClient != null) {
+                ftpClientRepository.releaseFtpClient(ftpClient);
+            }
+        }
     }
 
     @Override
@@ -65,7 +129,6 @@ public class FtpFileModel implements FileModel {
         return isDir;
     }
 
-
     @Override
     public boolean rename(String new_name, boolean overwrite) {
         String new_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(), new_name);
@@ -81,14 +144,13 @@ public class FtpFileModel implements FileModel {
         } catch (IOException e) {
             Timber.tag(TAG).e("Rename operation failed: %s", e.getMessage());
             return false;
-        }
-        finally {
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
-            } 
+            }
         }
-        
+
     }
 
     @Override
@@ -179,7 +241,6 @@ public class FtpFileModel implements FileModel {
         }
     }
 
-
     public OutputStream getChildOutputStream(String child_name, long source_length) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
         Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", file_path);
@@ -246,7 +307,7 @@ public class FtpFileModel implements FileModel {
         Timber.tag(TAG).d("Attempting to create file: %s", file_path);
         InputStream bin = new ByteArrayInputStream(new byte[0]);
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
             boolean created = ftpClient.storeFile(file_path, bin);
@@ -255,8 +316,7 @@ public class FtpFileModel implements FileModel {
         } catch (IOException e) {
             Timber.tag(TAG).e("Failed to create file: %s", e.getMessage());
             return false;
-        }
-        finally {
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
@@ -272,7 +332,6 @@ public class FtpFileModel implements FileModel {
         return created;
     }
 
-
     @Override
     public boolean makeDirsRecursively(String extended_path) {
         boolean created = mkdirsFTP(path, extended_path);
@@ -280,12 +339,11 @@ public class FtpFileModel implements FileModel {
         return created;
     }
 
-
     @Override
     public long getLength() {
         Timber.tag(TAG).d("getLength() called, but always returns 0 for FTP files");
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
             FTPFile[] files = ftpClient.listFiles(path);
@@ -296,8 +354,7 @@ public class FtpFileModel implements FileModel {
             }
         } catch (IOException e) {
             return 0;
-        }
-        finally {
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
@@ -311,7 +368,7 @@ public class FtpFileModel implements FileModel {
     public boolean exists() {
         Timber.tag(TAG).d("Checking if FTP file exists: %s", path);
         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-        FTPClient ftpClient=null;
+        FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
 
@@ -329,8 +386,7 @@ public class FtpFileModel implements FileModel {
         } catch (IOException e) {
             Timber.tag(TAG).e("Error checking if FTP file exists: %s", e.getMessage());
             return false;
-        }
-        finally {
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
@@ -347,7 +403,6 @@ public class FtpFileModel implements FileModel {
     public boolean isHidden() {
         return path.startsWith(".");
     }
-
 
     public static class FTPOutputStreamWrapper extends OutputStream {
         private final OutputStream wrappedStream;
@@ -448,71 +503,6 @@ public class FtpFileModel implements FileModel {
             } finally {
                 repository.releaseFtpClient(ftpClient);
                 Timber.tag("FTPInputStreamWrapper").d("FTP client released");
-            }
-        }
-    }
-
-    private static boolean mkdirFtp(String file_path) {
-        Timber.tag(TAG).d("Attempting to create FTP directory: %s", file_path);
-        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-        FTPClient ftpClient=null;
-        try {
-
-            boolean dirExists = isDirectory(file_path);
-            if (dirExists) {
-                Timber.tag(TAG).d("FTP directory already exists: %s", file_path);
-                return true;
-            } else {
-                ftpClient = ftpClientRepository.getFtpClient();
-                boolean success = ftpClient.makeDirectory(file_path);
-                Timber.tag(TAG).d("FTP directory creation result: %b for path: %s", success, file_path);
-                return success;
-            }
-        } catch (IOException e) {
-            Timber.tag(TAG).e("Error creating FTP directory: %s", e.getMessage());
-            return false;
-        }
-        finally {
-            if (ftpClientRepository != null && ftpClient != null) {
-                ftpClientRepository.releaseFtpClient(ftpClient);
-                Timber.tag(TAG).d("FTP client released");
-            }
-        }
-    }
-
-    private static boolean mkdirsFTP(String parentPath, @NonNull String extendedPath) {
-        Timber.tag(TAG).d("Attempting to create multiple FTP directories: %s in %s", extendedPath, parentPath);
-        String[] pathSegments = extendedPath.split("/");
-        String currentPath = parentPath;
-        for (String segment : pathSegments) {
-            if (!segment.isEmpty()) {
-                currentPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, segment);
-                if (!mkdirFtp(currentPath)) {
-                    Timber.tag(TAG).w("Failed to create FTP directory: %s", currentPath);
-                    return false;
-                }
-            }
-        }
-        Timber.tag(TAG).d("Successfully created multiple FTP directories");
-        return true;
-    }
-
-    private static boolean isDirectory(String filePath) {
-        Timber.tag(TAG).d("Checking if FTP path is directory: %s", filePath);
-        FtpClientRepository ftpClientRepository = null;
-        FTPClient ftpClient = null;
-        try {
-            ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
-            ftpClient = ftpClientRepository.getFtpClient();
-            boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
-            Timber.tag(TAG).d("FTP path is directory result: %b for path: %s", isDirectory, filePath);
-            return isDirectory;
-        } catch (IOException e) {
-            Timber.tag(TAG).e("Error checking if FTP path is directory: %s", e.getMessage());
-            return false;
-        } finally {
-            if (ftpClientRepository != null && ftpClient != null) {
-                ftpClientRepository.releaseFtpClient(ftpClient);
             }
         }
     }

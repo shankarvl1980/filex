@@ -55,38 +55,37 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,DetailFragmentListener
-{
-    private Context context;
+public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener {
+    public static final int FOLDER_SELECT_REQUEST_CODE = 1564;
+    public static final int MOVE_COPY_REQUEST_CODE = 351;
+    public static final int PICK_FILE_REQUEST_CODE = 0;
+    public static final int FILE_PATH_REQUEST_CODE = 56;
+    public static final String ACTION_SOUGHT = "action_sought";
+    public static final String ACTIVITY_NAME = "FILE_SELECTOR_ACTIVITY";
     public static FragmentManager FM;
+    public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
+    public static int RECYCLER_VIEW_FONT_SIZE_FACTOR, GRID_COUNT;
+    public static String SORT;
+    static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     public FragmentManager fm;
-    public static final int FOLDER_SELECT_REQUEST_CODE=1564;
-    public static final int MOVE_COPY_REQUEST_CODE=351;
-    public static final int PICK_FILE_REQUEST_CODE=0;
-    public static final int FILE_PATH_REQUEST_CODE=56;
     public boolean clear_cache;
+    public List<FilePOJO> storage_filePOJO_list;
+    public TextView file_number;
+    public int action_sought_request_code;
+    public RecentDialogListener recentDialogListener;
+    public FloatingActionButton floatingActionButton;
+    public boolean search_toolbar_visible;
+    public KeyBoardUtil keyBoardUtil;
+    public EditText search_edittext;
+    private Context context;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
     private USBReceiver usbReceiver;
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     private PopupWindow listPopWindow;
-    public List<FilePOJO> storage_filePOJO_list;
-    public TextView file_number;
-    public static final String ACTION_SOUGHT="action_sought";
-    public int action_sought_request_code;
     private Bundle bundle;
-    static LinkedList<FilePOJO> RECENT =new LinkedList<>();
-    public RecentDialogListener recentDialogListener;
-    public FloatingActionButton floatingActionButton;
-    public static final String ACTIVITY_NAME="FILE_SELECTOR_ACTIVITY";
-    public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
-    public static int RECYCLER_VIEW_FONT_SIZE_FACTOR,GRID_COUNT;
-    public static String SORT;
-    public boolean search_toolbar_visible;
-    public KeyBoardUtil keyBoardUtil;
     private Group search_toolbar;
-    public EditText search_edittext;
-    private int countBackPressed=0;
+    private int countBackPressed = 0;
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
@@ -94,16 +93,14 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=this;
-        repositoryClass=RepositoryClass.getRepositoryClass();
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
-        {
-            if (!Environment.isExternalStorageManager())
-            {
+        context = this;
+        repositoryClass = RepositoryClass.getRepositoryClass();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
                 try {
                     Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                     intent.addCategory("android.intent.category.DEFAULT");
-                    intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+                    intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
                     activityResultLauncher_all_files_access_permission.launch(intent);
                 } catch (Exception e) {
                     Intent intent = new Intent();
@@ -112,46 +109,47 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 }
             }
         }
-        PermissionsUtil permissionUtil=new PermissionsUtil(context,this);
+        PermissionsUtil permissionUtil = new PermissionsUtil(context, this);
         permissionUtil.check_permission();
-        mediaMountReceiver=new MediaMountReceiver();
+        mediaMountReceiver = new MediaMountReceiver();
         mediaMountReceiver.addMediaMountListener(this);
-        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);
+        intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(mediaMountReceiver, intentFilter,RECEIVER_NOT_EXPORTED);
-        }
-        else{
+            context.registerReceiver(mediaMountReceiver, intentFilter, RECEIVER_NOT_EXPORTED);
+        } else {
             context.registerReceiver(mediaMountReceiver, intentFilter);
         }
 
-        localBroadcastManager= LocalBroadcastManager.getInstance(context);
-        otherActivityBroadcastReceiver= new OtherActivityBroadcastReceiver();
-        IntentFilter localBroadcastIntentFilter=new IntentFilter();
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        otherActivityBroadcastReceiver = new OtherActivityBroadcastReceiver();
+        IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
-        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver,localBroadcastIntentFilter);
+        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver, localBroadcastIntentFilter);
 
-        usbReceiver=new USBReceiver();
-        IntentFilter usbIntentFilter=new IntentFilter();
+        usbReceiver = new USBReceiver();
+        IntentFilter usbIntentFilter = new IntentFilter();
         usbIntentFilter.addAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
-        localBroadcastManager.registerReceiver(usbReceiver,usbIntentFilter);
+        localBroadcastManager.registerReceiver(usbReceiver, usbIntentFilter);
 
         networkStateReceiver = new NetworkStateReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, filter);
 
         TinyDB tinyDB = new TinyDB(context);
-        fm=getSupportFragmentManager();
-        FM=fm;
-        
-        setContentView(R.layout.activity_file_selector);
-        Toolbar toolbar=findViewById(R.id.activity_file_selector_toolbar);
-        file_number=findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
+        fm = getSupportFragmentManager();
+        FM = fm;
 
-        ImageButton sort_btn=findViewById(R.id.file_selector_sort_btn);
+        setContentView(R.layout.activity_file_selector);
+        Toolbar toolbar = findViewById(R.id.activity_file_selector_toolbar);
+        file_number = findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
+
+        ImageButton sort_btn = findViewById(R.id.file_selector_sort_btn);
         sort_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,12 +159,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
         View containerLayout = findViewById(R.id.file_selector_container_layout);
-        keyBoardUtil=new KeyBoardUtil(containerLayout);
-        imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyBoardUtil = new KeyBoardUtil(containerLayout);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        search_toolbar=findViewById(R.id.file_selector_search_toolbar);
-        search_edittext=findViewById(R.id.file_selector_search_view_edit_text);
+        search_toolbar = findViewById(R.id.file_selector_search_toolbar);
+        search_edittext = findViewById(R.id.file_selector_search_view_edit_text);
         search_edittext.setMaxWidth(Integer.MAX_VALUE);
         search_edittext.addTextChangedListener(new TextWatcher() {
             @Override
@@ -182,13 +180,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             @Override
             public void afterTextChanged(Editable s) {
 
-                if(!search_toolbar_visible)
-                {
+                if (!search_toolbar_visible) {
                     return;
                 }
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if(fileSelectorFragment!=null && fileSelectorFragment.adapter!=null)
-                {
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment != null && fileSelectorFragment.adapter != null) {
                     fileSelectorFragment.adapter.getFilter().filter(s.toString());
                 }
             }
@@ -203,15 +199,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        Intent intent=getIntent();
-        on_intent(intent,savedInstanceState);
+        Intent intent = getIntent();
+        on_intent(intent, savedInstanceState);
         TextView heading = findViewById(R.id.file_selector_heading);
-        if((action_sought_request_code==FOLDER_SELECT_REQUEST_CODE) || action_sought_request_code==MOVE_COPY_REQUEST_CODE)
-        {
+        if ((action_sought_request_code == FOLDER_SELECT_REQUEST_CODE) || action_sought_request_code == MOVE_COPY_REQUEST_CODE) {
             heading.setText(getString(R.string.choose_folder));
-        }
-        else
-        {
+        } else {
             heading.setText(getString(R.string.pick_file));
         }
 
@@ -223,18 +216,18 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-        storage_filePOJO_list=getFilePOJO_list();
-        listPopWindow=new PopupWindow(context);
-        ListView listView=new ListView(context);
+        storage_filePOJO_list = getFilePOJO_list();
+        listPopWindow = new PopupWindow(context);
+        ListView listView = new ListView(context);
         PopupWindowAdapter popupWindowAdapater = new PopupWindowAdapter(context, storage_filePOJO_list);
         listView.setAdapter(popupWindowAdapater);
         listPopWindow.setContentView(listView);
         listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
         listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         listPopWindow.setFocusable(true);
-        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
+        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));
 
-        SHOW_HIDDEN_FILE=tinyDB.getBoolean("file_selector_show_hidden_file");
+        SHOW_HIDDEN_FILE = tinyDB.getBoolean("file_selector_show_hidden_file");
 
         floatingActionButton = findViewById(R.id.file_selector_floating_action_button_back);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -246,18 +239,18 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
         Toolbar bottom_toolbar = findViewById(R.id.file_selector_bottom_toolbar);
-        EquallyDistributedButtonsWithTextLayout tb_layout =new EquallyDistributedButtonsWithTextLayout(context,5,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-        int[] bottom_drawables ={R.drawable.search_icon,R.drawable.document_add_icon,R.drawable.refresh_icon,R.drawable.yes_icon,R.drawable.cancel_icon};
-        String [] titles={getString(R.string.search),getString(R.string.new_),getString(R.string.refresh),getString(R.string.ok),getString(R.string.cancel)};
-        tb_layout.setResourceImageDrawables(bottom_drawables,titles);
+        EquallyDistributedButtonsWithTextLayout tb_layout = new EquallyDistributedButtonsWithTextLayout(context, 5, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+        int[] bottom_drawables = {R.drawable.search_icon, R.drawable.document_add_icon, R.drawable.refresh_icon, R.drawable.yes_icon, R.drawable.cancel_icon};
+        String[] titles = {getString(R.string.search), getString(R.string.new_), getString(R.string.refresh), getString(R.string.ok), getString(R.string.cancel)};
+        tb_layout.setResourceImageDrawables(bottom_drawables, titles);
 
         bottom_toolbar.addView(tb_layout);
 
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        Button add_folder_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        Button refresh_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_3);
-        Button ok_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_4);
-        Button cancel_btn= bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+        Button add_folder_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button refresh_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button ok_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
+        Button cancel_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
 
 
 //
@@ -268,19 +261,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
-                {
-                    Global.print(context,getString(R.string.please_wait));
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
                     return;
                 }
-                if(!search_toolbar_visible)
-                {
+                if (!search_toolbar_visible) {
                     setSearchBarVisibility(true);
-                }
-                else
-                {
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                } else {
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 }
             }
         });
@@ -288,30 +277,27 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         add_folder_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(search_toolbar_visible)
-                {
+                if (search_toolbar_visible) {
                     setSearchBarVisibility(false);
                 }
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
 
-                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
-                {
-                    Global.print(context,getString(R.string.please_wait));
+                if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
                     return;
                 }
 
-                CreateFileDialog createFileDialog=CreateFileDialog.getInstance(1,fileSelectorFragment.fileclickselected,fileSelectorFragment.fileObjectType);
-                createFileDialog.show(fm,null);
+                CreateFileDialog createFileDialog = CreateFileDialog.getInstance(1, fileSelectorFragment.fileclickselected, fileSelectorFragment.fileObjectType);
+                createFileDialog.show(fm, null);
             }
         });
 
         refresh_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
-                {
-                    Global.print(context,getString(R.string.please_wait));
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
                     return;
                 }
 
@@ -322,14 +308,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        ok_btn.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE)
-                {
-                    Global.print(context,getString(R.string.please_wait));
+        ok_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
                     return;
                 }
 
@@ -348,8 +331,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         if (fileSelectorFragment.fileclickselected == null) {
                             setResult(Activity.RESULT_CANCELED);
                         } else {
-                            bundle.putString("dest_folder",fileSelectorFragment.folder_selected_textview.getText().toString());
-                            bundle.putSerializable("destFileObjectType",fileSelectorFragment.fileObjectType);
+                            bundle.putString("dest_folder", fileSelectorFragment.folder_selected_textview.getText().toString());
+                            bundle.putSerializable("destFileObjectType", fileSelectorFragment.fileObjectType);
                             Intent intent = new Intent();
                             intent.putExtra("bundle", bundle);
                             setResult(Activity.RESULT_OK, intent);
@@ -365,10 +348,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
 
-        cancel_btn.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 finish();
             }
         });
@@ -381,44 +362,35 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
     }
 
-    private void on_intent(Intent intent, Bundle savedInstanceState )
-    {
-        if(intent!=null)
-        {
-            action_sought_request_code=intent.getIntExtra(ACTION_SOUGHT,MOVE_COPY_REQUEST_CODE);
-            bundle=intent.getBundleExtra("bundle");
+    private void on_intent(Intent intent, Bundle savedInstanceState) {
+        if (intent != null) {
+            action_sought_request_code = intent.getIntExtra(ACTION_SOUGHT, MOVE_COPY_REQUEST_CODE);
+            bundle = intent.getBundleExtra("bundle");
         }
-        if(savedInstanceState==null)
-        {
-            createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath(),Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getFileObjectType());
+        if (savedInstanceState == null) {
+            createFragmentTransaction(Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath(), Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getFileObjectType());
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        on_intent(intent,null);
+        on_intent(intent, null);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        final List<String> permission_not_granted_list=new ArrayList<>();
-        if(requestCode==PermissionsUtil.PERMISSIONS_REQUEST_CODE && grantResults.length>0)
-        {
-            for(int i=0;i<permissions.length;++i)
-            {
-                if(grantResults[i]!= PackageManager.PERMISSION_GRANTED)
-                {
+        final List<String> permission_not_granted_list = new ArrayList<>();
+        if (requestCode == PermissionsUtil.PERMISSIONS_REQUEST_CODE && grantResults.length > 0) {
+            for (int i = 0; i < permissions.length; ++i) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                     permission_not_granted_list.add(permissions[i]);
-                }
-                else if(permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                {
+                } else if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     repositoryClass.storage_dir.clear();
                     repositoryClass.hashmap_file_pojo.clear();
                     repositoryClass.hashmap_file_pojo_filtered.clear();
-                    Intent in=getIntent();
+                    Intent in = getIntent();
                     finish();
                     startActivity(in);
                     return;
@@ -426,10 +398,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
 
-        if(grantResults.length==0 || !permission_not_granted_list.isEmpty())
-        {
-            for(String permission:permission_not_granted_list)
-            {
+        if (grantResults.length == 0 || !permission_not_granted_list.isEmpty()) {
+            for (String permission : permission_not_granted_list) {
                 if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permission)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (shouldShowRequestPermissionRationale(permission)) {
@@ -457,8 +427,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-    private void showDialogOK(String message, DialogInterface.OnClickListener okListener)
-    {
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(context)
                 .setMessage(message)
                 .setPositiveButton(getString(R.string.ok), okListener)
@@ -469,65 +438,58 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
-        clear_cache=true;
+        clear_cache = true;
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("clear_cache",clear_cache);
+        outState.putBoolean("clear_cache", clear_cache);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        clear_cache=savedInstanceState.getBoolean("clear_cache");
+        clear_cache = savedInstanceState.getBoolean("clear_cache");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(!isFinishing() && !isChangingConfigurations() && clear_cache)
-        {
+        if (!isFinishing() && !isChangingConfigurations() && clear_cache) {
             clearCache();
         }
     }
 
-    public void setSearchBarVisibility(boolean visible)
-    {
-        FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if(fileSelectorFragment.progress_bar.getVisibility()==View.VISIBLE && visible)
-        {
-            Global.print(context,getString(R.string.please_wait));
+    public void setSearchBarVisibility(boolean visible) {
+        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+        if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE && visible) {
+            Global.print(context, getString(R.string.please_wait));
             return;
         }
 
-        search_toolbar_visible=visible;
-        if(search_toolbar_visible)
-        {
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        search_toolbar_visible = visible;
+        if (search_toolbar_visible) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             search_toolbar.setVisibility(View.VISIBLE);
             search_edittext.requestFocus();
             fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
-        }
-        else
-        {
-            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+        } else {
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
             search_toolbar.setVisibility(View.GONE);
             search_edittext.setText("");
             search_edittext.clearFocus();
             fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
-            if(fileSelectorFragment.adapter!=null)fileSelectorFragment.adapter.getFilter().filter(null);
+            if (fileSelectorFragment.adapter != null)
+                fileSelectorFragment.adapter.getFilter().filter(null);
         }
     }
 
 
-    public void clearCache()
-    {
+    public void clearCache() {
         Global.CLEAR_CACHE();
     }
 
@@ -556,9 +518,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         return null;
     }
 
-    public void clearCache(String file_path, FileObjectType fileObjectType)
-    {
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path),fileObjectType); //no need of broad cast here, as the method includes broadcast
+    public void clearCache(String file_path, FileObjectType fileObjectType) {
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path), fileObjectType); //no need of broad cast here, as the method includes broadcast
     }
 
     @Override
@@ -581,33 +542,35 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-    private final ActivityResultLauncher<Intent>activityResultLauncher_all_files_access_permission=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaMountReceiver.removeMediaMountListener(this);
+        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(usbReceiver);
+        unregisterReceiver(networkStateReceiver);
+        context.unregisterReceiver(mediaMountReceiver);
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager())
-                {
+                if (Environment.isExternalStorageManager()) {
                     repositoryClass.storage_dir.clear();
                     repositoryClass.hashmap_file_pojo.clear();
                     repositoryClass.hashmap_file_pojo_filtered.clear();
-                    Intent in=getIntent();
+                    Intent in = getIntent();
                     finish();
                     startActivity(in);
-                }
-                else
-                {
-                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions),new DialogInterface.OnClickListener()
-                    {
+                } else {
+                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            switch (which)
-                            {
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     try {
                                         Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                                         intent.addCategory("android.intent.category.DEFAULT");
-                                        intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+                                        intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
                                         activityResultLauncher_all_files_access_permission.launch(intent);
                                     } catch (Exception e) {
                                         Intent intent = new Intent();
@@ -617,7 +580,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                     }
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
-                                    Global.print(context,getString(R.string.permission_not_granted));
+                                    Global.print(context, getString(R.string.permission_not_granted));
                                     finish();
                                     break;
                             }
@@ -628,198 +591,91 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     });
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mediaMountReceiver.removeMediaMountListener(this);
-        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
-        localBroadcastManager.unregisterReceiver(usbReceiver);
-        unregisterReceiver(networkStateReceiver);
-        context.unregisterReceiver(mediaMountReceiver);
-    }
-
-    private void onbackpressed(boolean onBackPressed)
-    {
-        if(keyBoardUtil.getKeyBoardVisibility())
-        {
-            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-        }
-        else if(search_toolbar_visible)
-        {
+    private void onbackpressed(boolean onBackPressed) {
+        if (keyBoardUtil.getKeyBoardVisibility()) {
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
+        } else if (search_toolbar_visible) {
             setSearchBarVisibility(false);
-        }
-        else
-        {
-            if(fm.getBackStackEntryCount()>1)
-            {
+        } else {
+            if (fm.getBackStackEntryCount() > 1) {
                 fm.popBackStack();
-                int frag=2, entry_count=fm.getBackStackEntryCount();
-                FileSelectorFragment fileSelectorFragment= (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
-                String tag=fileSelectorFragment.getTag();
+                int frag = 2, entry_count = fm.getBackStackEntryCount();
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
+                String tag = fileSelectorFragment.getTag();
 
-                while(tag !=null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType))
-                {
+                while (tag != null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
-                    if(frag>entry_count) break;
-                    fileSelectorFragment= (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count-frag).getName());
+                    if (frag > entry_count) break;
+                    fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                     tag = fileSelectorFragment.getTag();
                 }
-                countBackPressed=0;
-            }
-            else
-            {
-                if(onBackPressed)
-                {
+                countBackPressed = 0;
+            } else {
+                if (onBackPressed) {
                     countBackPressed++;
-                    if(countBackPressed==1)
-                    {
-                        Global.print(context,getString(R.string.press_again_to_close_activity));
-                    }
-                    else
-                    {
+                    if (countBackPressed == 1) {
+                        Global.print(context, getString(R.string.press_again_to_close_activity));
+                    } else {
                         finish();
                     }
-                }
-                else
-                {
-                    Global.print(context,getString(R.string.click_OK_cancel_button_to_exit));
+                } else {
+                    Global.print(context, getString(R.string.click_OK_cancel_button_to_exit));
                 }
             }
         }
     }
 
-    public List<FilePOJO> getFilePOJO_list()
-    {
+    public List<FilePOJO> getFilePOJO_list() {
         List<FilePOJO> filePOJOS = new ArrayList<>();
-        for(FilePOJO filePOJO:repositoryClass.storage_dir)
-        {
-            if(filePOJO.getFileObjectType()==FileObjectType.FILE_TYPE || filePOJO.getFileObjectType()==FileObjectType.FTP_TYPE || filePOJO.getFileObjectType()==FileObjectType.USB_TYPE || filePOJO.getFileObjectType()==FileObjectType.SFTP_TYPE)
-            {
+        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
+            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
                 filePOJOS.add(filePOJO);
             }
         }
         return filePOJOS;
     }
 
-    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType)
-    {
+    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
         String fragment_tag;
-        String existingFilePOJOkey="";
+        String existingFilePOJOkey = "";
 
-        FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if(fileSelectorFragment!=null)
-        {
-            fragment_tag=fileSelectorFragment.getTag();
-            existingFilePOJOkey=fileSelectorFragment.fileObjectType+fragment_tag;
+        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+        if (fileSelectorFragment != null) {
+            fragment_tag = fileSelectorFragment.getTag();
+            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
             setSearchBarVisibility(false);
         }
 
 
-        if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
-        {
-            FileSelectorFragment ff= FileSelectorFragment.getInstance(fileObjectType);
-            fm.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
+        if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
+            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
     }
-    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType)
-    {
-        String fragment_tag;
-        String existingFilePOJOkey="";
 
-        FileSelectorFragment fileSelectorFragment=(FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if(fileSelectorFragment!=null)
-        {
-            fragment_tag=fileSelectorFragment.getTag();
-            existingFilePOJOkey=fileSelectorFragment.fileObjectType+fragment_tag;
+    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
+        String fragment_tag;
+        String existingFilePOJOkey = "";
+
+        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+        if (fileSelectorFragment != null) {
+            fragment_tag = fileSelectorFragment.getTag();
+            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
             setSearchBarVisibility(false);
         }
 
 
         //this will force create new transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
         {
-            FileSelectorFragment ff= FileSelectorFragment.getInstance(fileObjectType);
-            fm.beginTransaction().replace(R.id.file_selector_container,ff,file_path).addToBackStack(file_path)
+            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
+            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
     }
-
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver
-    {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-            String activity_name=intent.getStringExtra("activity_name");
-            String file_path=intent.getStringExtra("file_path");
-            FileObjectType fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
-            switch (intent.getAction()) {
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    if (fileSelectorFragment != null) fileSelectorFragment.local_activity_delete = true;
-                    break;
-                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (fileSelectorFragment != null) fileSelectorFragment.modification_observed = true;
-                    break;
-                case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
-                    //storageRecyclerAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-    }
-
-    private class USBReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context p1, Intent intent)
-        {
-            String action = intent.getAction();
-            if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-                if (!MainActivity.USB_ATTACHED) {
-                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""),FileObjectType.USB_TYPE);
-                    FileSelectorFragment fileSelectorFragment=(FileSelectorFragment)fm.findFragmentById(R.id.file_selector_container);
-                    if(fileSelectorFragment!=null && fileSelectorFragment.fileObjectType==FileObjectType.USB_TYPE)
-                    {
-                        fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
-                        onbackpressed(false);
-                    }
-
-                    int entry_count=fm.getBackStackEntryCount();
-                    for(int i=0;i<entry_count;++i)
-                    {
-                        Fragment frag=fm.findFragmentByTag(fm.getBackStackEntryAt(i).getName());
-                        if(frag instanceof FileSelectorFragment)
-                        {
-                            fileSelectorFragment= (FileSelectorFragment)frag;
-                            fileSelectorFragment.currentUsbFile=null;
-                        }
-                    }
-
-                    Iterator<FilePOJO> iterator1= RECENT.iterator();
-                    while (iterator1.hasNext())
-                    {
-                        if(iterator1.next().getFileObjectType()==FileObjectType.USB_TYPE)
-                        {
-                            iterator1.remove();
-                        }
-                    }
-                    Global.REMOVE_USB_URI_PERMISSIONS();
-                }
-                storage_filePOJO_list=getFilePOJO_list();
-                //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
-            }
-            if(recentDialogListener!=null)
-            {
-                recentDialogListener.onMediaAttachedAndRemoved();
-            }
-        }
-    }
-
 
     @Override
     public void onMediaMount(String action) {
@@ -828,7 +684,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 repositoryClass.storage_dir.clear();
                 repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
-                storage_filePOJO_list=getFilePOJO_list();
+                storage_filePOJO_list = getFilePOJO_list();
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
@@ -840,27 +696,31 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 repositoryClass.storage_dir.clear();
                 repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
                 Global.WORKOUT_AVAILABLE_SPACE();
-                storage_filePOJO_list=getFilePOJO_list();
+                storage_filePOJO_list = getFilePOJO_list();
 
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
-                FileSelectorFragment fileSelectorFragment=(FileSelectorFragment)fm.findFragmentById(R.id.file_selector_container);
-                if(fileSelectorFragment!=null) fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment != null)
+                    fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                 break;
         }
     }
 
-    public static class PopupWindowAdapter extends ArrayAdapter<FilePOJO>
-    {
+    interface RecentDialogListener {
+        void onMediaAttachedAndRemoved();
+    }
+
+    public static class PopupWindowAdapter extends ArrayAdapter<FilePOJO> {
         final Context context;
         final List<FilePOJO> list;
-        PopupWindowAdapter(Context context, List<FilePOJO> list)
-        {
-            super(context,R.layout.list_popupwindow_layout,list);
-            this.context=context;
-            this.list=list;
+
+        PopupWindowAdapter(Context context, List<FilePOJO> list) {
+            super(context, R.layout.list_popupwindow_layout, list);
+            this.context = context;
+            this.list = list;
         }
 
         @NonNull
@@ -868,60 +728,45 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public View getView(int position, @Nullable final View convertView, @NonNull ViewGroup parent) {
             View v;
             PopupWindowAdapter.ViewHolder vh;
-            if(convertView==null)
-            {
-                v= LayoutInflater.from(context).inflate(R.layout.list_popupwindow_layout,parent,false);
-                vh=new PopupWindowAdapter.ViewHolder();
-                vh.imageView=v.findViewById(R.id.list_popupwindow_layout_iv);
-                vh.textView=v.findViewById(R.id.list_popupwindow_tv);
+            if (convertView == null) {
+                v = LayoutInflater.from(context).inflate(R.layout.list_popupwindow_layout, parent, false);
+                vh = new PopupWindowAdapter.ViewHolder();
+                vh.imageView = v.findViewById(R.id.list_popupwindow_layout_iv);
+                vh.textView = v.findViewById(R.id.list_popupwindow_tv);
                 v.setTag(vh);
+            } else {
+                v = convertView;
+                vh = (PopupWindowAdapter.ViewHolder) convertView.getTag();
             }
-            else
-            {
-                v=convertView;
-                vh= (PopupWindowAdapter.ViewHolder) convertView.getTag();
-            }
-            final FilePOJO filePOJO=list.get(position);
-            FileObjectType fileObjectType=filePOJO.getFileObjectType();
-            if(fileObjectType==FileObjectType.FILE_TYPE)
-            {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
-                if(repositoryClass.internal_storage_path_list.contains(filePOJO.getPath()))
-                {
-                    vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
-                }
-                else
-                {
-                    vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.sdcard_icon));
+            final FilePOJO filePOJO = list.get(position);
+            FileObjectType fileObjectType = filePOJO.getFileObjectType();
+            if (fileObjectType == FileObjectType.FILE_TYPE) {
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+                if (repositoryClass.internal_storage_path_list.contains(filePOJO.getPath())) {
+                    vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
+                } else {
+                    vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
                 }
                 vh.textView.setText(filePOJO.getName());
-            }
-            else if(fileObjectType==FileObjectType.USB_TYPE)
-            {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.usb_icon));
-                vh.textView.setText(DetailFragment.USB_FILE_PREFIX+filePOJO.getName());
-            }
-            else if(fileObjectType==FileObjectType.FTP_TYPE)
-            {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
-                vh.textView.setText(DetailFragment.FTP_FILE_PREFIX+filePOJO.getName());
-            }
-            else if(fileObjectType==FileObjectType.SFTP_TYPE)
-            {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ftp_file_icon));
-                vh.textView.setText(DetailFragment.SFTP_FILE_PREFIX+filePOJO.getName());
-            }
-            else if(fileObjectType==FileObjectType.ROOT_TYPE)
-            {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.device_icon));
+            } else if (fileObjectType == FileObjectType.USB_TYPE) {
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
+                vh.textView.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName());
+            } else if (fileObjectType == FileObjectType.FTP_TYPE) {
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                vh.textView.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getName());
+            } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                vh.textView.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName());
+            } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
                 vh.textView.setText(R.string.root_directory);
             }
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((FileSelectorActivity)context).createFragmentTransaction(filePOJO.getPath(),fileObjectType);
-                    ((FileSelectorActivity)context).listPopWindow.dismiss();
+                    ((FileSelectorActivity) context).createFragmentTransaction(filePOJO.getPath(), fileObjectType);
+                    ((FileSelectorActivity) context).listPopWindow.dismiss();
                 }
             });
             return v;
@@ -932,16 +777,79 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             return list.size();
         }
 
-        public static class ViewHolder
-        {
+        public static class ViewHolder {
             ImageView imageView;
             TextView textView;
         }
     }
 
-
-    interface RecentDialogListener
-    {
-        void onMediaAttachedAndRemoved();
+    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+            String activity_name = intent.getStringExtra("activity_name");
+            String file_path = intent.getStringExtra("file_path");
+            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            switch (intent.getAction()) {
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    if (fileSelectorFragment != null)
+                        fileSelectorFragment.local_activity_delete = true;
+                    break;
+                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
+                    if (fileSelectorFragment != null)
+                        fileSelectorFragment.modification_observed = true;
+                    break;
+                case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
+                    //storageRecyclerAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
     }
+
+    private class USBReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context p1, Intent intent) {
+            String action = intent.getAction();
+            if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
+                if (!MainActivity.USB_ATTACHED) {
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.USB_TYPE);
+                    FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                    if (fileSelectorFragment != null && fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
+                        fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
+                        onbackpressed(false);
+                    }
+
+                    int entry_count = fm.getBackStackEntryCount();
+                    for (int i = 0; i < entry_count; ++i) {
+                        Fragment frag = fm.findFragmentByTag(fm.getBackStackEntryAt(i).getName());
+                        if (frag instanceof FileSelectorFragment) {
+                            fileSelectorFragment = (FileSelectorFragment) frag;
+                            fileSelectorFragment.currentUsbFile = null;
+                        }
+                    }
+
+                    Iterator<FilePOJO> iterator1 = RECENT.iterator();
+                    while (iterator1.hasNext()) {
+                        if (iterator1.next().getFileObjectType() == FileObjectType.USB_TYPE) {
+                            iterator1.remove();
+                        }
+                    }
+                    Global.REMOVE_USB_URI_PERMISSIONS();
+                }
+                storage_filePOJO_list = getFilePOJO_list();
+                //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+            }
+            if (recentDialogListener != null) {
+                recentDialogListener.onMediaAttachedAndRemoved();
+            }
+        }
+    }
+
+
+
 }

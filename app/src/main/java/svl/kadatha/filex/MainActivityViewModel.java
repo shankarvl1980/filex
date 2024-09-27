@@ -13,21 +13,19 @@ import java.util.concurrent.Future;
 
 public class MainActivityViewModel extends AndroidViewModel {
 
+    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
-    private boolean isCancelled;
-    private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9,future10;
-
-    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final TinyDB tinyDB;
-
-    public boolean archive_view,working_dir_open,library_or_search_shown,network_shown;
-    public String toolbar_shown="bottom";
+    public boolean archive_view, working_dir_open, library_or_search_shown, network_shown;
+    public String toolbar_shown = "bottom";
+    private boolean isCancelled;
+    private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10;
 
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
-        tinyDB=new TinyDB(application);
+        this.application = application;
+        tinyDB = new TinyDB(application);
     }
 
     @Override
@@ -39,43 +37,39 @@ public class MainActivityViewModel extends AndroidViewModel {
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
 
-        if(Global.WHETHER_TO_CLEAR_CACHE_TODAY)
-        {
+        if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());
-            if(Global.SIZE_APK_ICON_LIST>800)
-            {
+            if (Global.SIZE_APK_ICON_LIST > 800) {
                 Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
             }
-            tinyDB.putInt("cache_cleared_month",Global.CURRENT_MONTH);
-            Global.print(application,"cleared cache");
+            tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
+            Global.print(application, "cleared cache");
         }
     }
 
-    public void cancel(boolean mayInterruptRunning){
-        if(future1!=null) future1.cancel(mayInterruptRunning);
-        if(future2!=null) future2.cancel(mayInterruptRunning);
-        if(future3!=null) future3.cancel(mayInterruptRunning);
-        if(future4!=null) future4.cancel(mayInterruptRunning);
-        if(future5!=null) future5.cancel(mayInterruptRunning);
-        if(future6!=null) future6.cancel(mayInterruptRunning);
-        if(future7!=null) future7.cancel(mayInterruptRunning);
-        if(future8!=null) future8.cancel(mayInterruptRunning);
-        if(future9!=null) future9.cancel(mayInterruptRunning);
-        if(future10!=null) future10.cancel(mayInterruptRunning);
-        isCancelled=true;
+    public void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) future1.cancel(mayInterruptRunning);
+        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future4 != null) future4.cancel(mayInterruptRunning);
+        if (future5 != null) future5.cancel(mayInterruptRunning);
+        if (future6 != null) future6.cancel(mayInterruptRunning);
+        if (future7 != null) future7.cancel(mayInterruptRunning);
+        if (future8 != null) future8.cancel(mayInterruptRunning);
+        if (future9 != null) future9.cancel(mayInterruptRunning);
+        if (future10 != null) future10.cancel(mayInterruptRunning);
+        isCancelled = true;
     }
 
-    private boolean isCancelled()
-    {
+    private boolean isCancelled() {
         return isCancelled;
     }
 
 
-    public void deleteDirectory(File dir)
-    {
-        if(isDeletionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public void deleteDirectory(File dir) {
+        if (isDeletionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isDeletionCompleted.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -85,153 +79,141 @@ public class MainActivityViewModel extends AndroidViewModel {
         });
     }
 
-    public void getAppList()
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+    public void getAppList() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.populateAppsList();
             }
         });
     }
 
-    public void getAudioPOJOList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+    public void getAudioPOJOList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getAudioPOJOList(isCancelled);
             }
         });
     }
 
-    public void getAlbumList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+    public void getAlbumList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getAlbumList(isCancelled);
             }
         });
     }
 
 
-    public void getDownloadList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future2=executorService.submit(new Runnable() {
+    public void getDownloadList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future2 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getDownLoadList(isCancelled);
             }
         });
 
     }
 
-    public void getDocumentList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future3=executorService.submit(new Runnable() {
+    public void getDocumentList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future3 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getDocumentList(isCancelled);
             }
         });
 
     }
 
-    public void getImageList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future4=executorService.submit(new Runnable() {
+    public void getImageList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future4 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getImageList(isCancelled);
             }
         });
 
     }
 
-    public void getAudioList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future5=executorService.submit(new Runnable() {
+    public void getAudioList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future5 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getAudioList(isCancelled);
             }
         });
 
     }
 
-    public void getVideoList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future6=executorService.submit(new Runnable() {
+    public void getVideoList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future6 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getVideoList(isCancelled);
             }
         });
 
     }
 
-    public void getArchiveList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future7=executorService.submit(new Runnable() {
+    public void getArchiveList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future7 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getArchiveList(isCancelled);
             }
         });
 
     }
 
-    public void getApkList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future8=executorService.submit(new Runnable() {
+    public void getApkList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future8 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getApkList(isCancelled);
             }
         });
     }
 
-    public void getLargeFileList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future9=executorService.submit(new Runnable() {
+    public void getLargeFileList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future9 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getLargeFileList(isCancelled);
             }
         });
 
     }
 
-    public void getDuplicateFileList(boolean isCancelled)
-    {
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future10=executorService.submit(new Runnable() {
+    public void getDuplicateFileList(boolean isCancelled) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future10 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.getDuplicateFileList(isCancelled);
             }
         });

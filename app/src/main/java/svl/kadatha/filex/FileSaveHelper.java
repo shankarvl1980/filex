@@ -4,7 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,18 +25,6 @@ import timber.log.Timber;
 public class FileSaveHelper {
 
     private static final String TAG = "FileSaveHelper";
-
-    public static class SaveResult {
-        public final boolean success;
-        public final LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
-        public final String errorMessage;
-
-        public SaveResult(boolean success, LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap, String errorMessage) {
-            this.success = success;
-            this.pagePointerHashmap = pagePointerHashmap;
-            this.errorMessage = errorMessage;
-        }
-    }
 
     public static SaveResult saveFile(Context context, Bundle bundle) {
         if (bundle == null) {
@@ -160,6 +157,7 @@ public class FileSaveHelper {
             deleteTempFile(intermediaryTempFile);
         }
     }
+
     private static void copyFile(File source, File dest) throws IOException {
         try (InputStream is = new FileInputStream(source);
              OutputStream os = new FileOutputStream(dest)) {
@@ -214,7 +212,6 @@ public class FileSaveHelper {
         }
     }
 
-
     private static LinkedHashMap<Integer, FileEditorViewModel.PagePointer> getPagePointerHashmap(Bundle bundle) {
         LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap = new LinkedHashMap<>();
         try {
@@ -260,6 +257,18 @@ public class FileSaveHelper {
 
         // Log the updated hashmap
         Timber.tag(Global.TAG).d("Updated page pointers. Current page: %d, Total pages: %d", currentPage, pagePointerHashmap.size());
+    }
+
+    public static class SaveResult {
+        public final boolean success;
+        public final LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
+        public final String errorMessage;
+
+        public SaveResult(boolean success, LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap, String errorMessage) {
+            this.success = success;
+            this.pagePointerHashmap = pagePointerHashmap;
+            this.errorMessage = errorMessage;
+        }
     }
 
 }

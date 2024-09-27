@@ -75,7 +75,7 @@ public class TickSeekBar extends androidx.appcompat.widget.AppCompatSeekBar {
         float height = getHeight();
 
         for (int i = 0; i < tickCount; i++) {
-            float x = getPaddingLeft() + (width * i / (float)(tickCount - 1));
+            float x = getPaddingLeft() + (width * i / (float) (tickCount - 1));
             canvas.drawLine(x, height * 0.25f, x, height * 0.75f, tickPaint);
         }
     }

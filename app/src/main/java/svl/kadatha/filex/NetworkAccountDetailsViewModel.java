@@ -19,7 +19,30 @@ import timber.log.Timber;
 
 public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
+    private static final String TAG = "NetworkAccountViewModel";
+    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO FTP_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SFTP_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO WEBDAV_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SMB_NETWORK_ACCOUNT_POJO;
+    public static String FTP_WORKING_DIR_PATH;
+    public static String SFTP_WORKING_DIR_PATH;
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> networkConnectAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceNetworkAccountAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> replaceAndConnectNetworkAccountAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> changeNetworkAccountDisplayAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> checkDuplicateNetworkAccountDisplayAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> testServiceConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
+    private final NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
+    public List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOList;
+    public IndexedLinkedHashMap<Integer, NetworkAccountsDetailsDialog.NetworkAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
+    public boolean loggedInStatus;
+    public boolean networkAccountPOJOAlreadyExists;
+    public boolean isNetworkConnected;
+    public String type;
+    public NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = null;
     private boolean isCancelled;
     private Future<?> future1;
     private Future<?> future2;
@@ -30,37 +53,11 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     private Future<?> future7;
     private Future<?> future8;
     private Future<?> future9;
-    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> networkConnectAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> replaceNetworkAccountAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> replaceAndConnectNetworkAccountAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> changeNetworkAccountDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> checkDuplicateNetworkAccountDisplayAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> testServiceConnectionAsyncTaskStatus =new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOList;
-    public IndexedLinkedHashMap<Integer, NetworkAccountsDetailsDialog.NetworkAccountPOJO> mselecteditems=new IndexedLinkedHashMap<>();
-
-    public boolean loggedInStatus;
-    private final NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
-
-    public boolean networkAccountPOJOAlreadyExists;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO FTP_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SFTP_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO WEBDAV_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SMB_NETWORK_ACCOUNT_POJO;
-    public static String FTP_WORKING_DIR_PATH;
-    public static String SFTP_WORKING_DIR_PATH;
-    public boolean isNetworkConnected;
-    public String type;
-    public NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=null;
-
-    private static final String TAG = "NetworkAccountViewModel";
 
     public NetworkAccountDetailsViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
-        networkAccountsDatabaseHelper=new NetworkAccountsDatabaseHelper(application);
+        this.application = application;
+        networkAccountsDatabaseHelper = new NetworkAccountsDatabaseHelper(application);
     }
 
     @Override
@@ -70,54 +67,49 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         cancel(true);
     }
 
-    private void cancel(boolean mayInterruptRunning){
-        if(future1!=null) future1.cancel(mayInterruptRunning);
-        if(future2!=null) future2.cancel(mayInterruptRunning);
-        if(future3!=null) future3.cancel(mayInterruptRunning);
-        if(future4!=null) future4.cancel(mayInterruptRunning);
-        if(future5!=null) future5.cancel(mayInterruptRunning);
-        if(future6!=null) future6.cancel(mayInterruptRunning);
-        if(future7!=null) future7.cancel(mayInterruptRunning);
-        if(future8!=null) future8.cancel(mayInterruptRunning);
-        if(future9!=null) future9.cancel(mayInterruptRunning);
-        isCancelled=true;
+    private void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) future1.cancel(mayInterruptRunning);
+        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future4 != null) future4.cancel(mayInterruptRunning);
+        if (future5 != null) future5.cancel(mayInterruptRunning);
+        if (future6 != null) future6.cancel(mayInterruptRunning);
+        if (future7 != null) future7.cancel(mayInterruptRunning);
+        if (future8 != null) future8.cancel(mayInterruptRunning);
+        if (future9 != null) future9.cancel(mayInterruptRunning);
+        isCancelled = true;
     }
 
-    private boolean isCancelled()
-    {
+    private boolean isCancelled() {
         return isCancelled;
     }
 
-    public synchronized void fetchNetworkAccountPojoList(String type)
-    {
-        if(asyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void fetchNetworkAccountPojoList(String type) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                networkAccountPOJOList=networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+                networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    public synchronized void deleteNetworkAccountPojo(List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOS_for_delete)
-    {
-        if(deleteAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void deleteNetworkAccountPojo(List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOS_for_delete) {
+        if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         deleteAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future2=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future2 = executorService.submit(new Runnable() {
             @Override
             public void run() {
 
-                int size=networkAccountPOJOS_for_delete.size();
-                for(int i=0;i<size;++i)
-                {
-                    NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountPOJOS_for_delete.get(i);
-                    int j=networkAccountsDatabaseHelper.delete(networkAccountPOJO.host,networkAccountPOJO.port,networkAccountPOJO.user_name,type);
-                    if(j>0)
-                    {
+                int size = networkAccountPOJOS_for_delete.size();
+                for (int i = 0; i < size; ++i) {
+                    NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountPOJOS_for_delete.get(i);
+                    int j = networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, type);
+                    if (j > 0) {
                         networkAccountPOJOList.remove(networkAccountPOJO);
                     }
                 }
@@ -126,80 +118,74 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void connectNetworkAccount(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO)
-    {
-        if(networkConnectAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void connectNetworkAccount(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+        if (networkConnectAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future3=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future3 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                type= networkAccountPOJO.type;
-                if(type.equals(NetworkAccountsDetailsDialog.FTP)){
+                type = networkAccountPOJO.type;
+                if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
                     connectFtp(networkAccountPOJO, networkConnectAsyncTaskStatus);
-                }
-                else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
+                } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
         });
     }
 
-    public synchronized void replaceAndConnectNetworkAccount(Bundle bundle)
-    {
-        if(replaceAndConnectNetworkAccountAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void replaceAndConnectNetworkAccount(Bundle bundle) {
+        if (replaceAndConnectNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         replaceAndConnectNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future5=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future5 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
-                String host=bundle.getString("host");
-                int port=bundle.getInt("port");
-                String user_name=bundle.getString("user_name");
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=networkAccountsDatabaseHelper.getNetworkAccountPOJO(host,port,user_name,type);
-                type= networkAccountPOJO.type;
-                if(type.equals(NetworkAccountsDetailsDialog.FTP)){
+                String host = bundle.getString("host");
+                int port = bundle.getInt("port");
+                String user_name = bundle.getString("user_name");
+                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
+                type = networkAccountPOJO.type;
+                if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
                     connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
-                }
-                else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
+                } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     connectSftp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 }
             }
         });
     }
 
-    private void connectFtp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO,MutableLiveData<AsyncTaskStatus> asyncTaskStatus){
-        loggedInStatus=false;
+    private void connectFtp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+        loggedInStatus = false;
         FtpClientRepository ftpClientRepository = null;
         FTPClient ftpClient = null;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy=networkAccountPOJO.deepCopy();
-            ftpClientRepository=FtpClientRepository.getInstance(networkAccountPOJOCopy);
+            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJOCopy);
             ftpClientRepository.shutdown();
-            ftpClientRepository=FtpClientRepository.getInstance(networkAccountPOJO);
-            FTP_NETWORK_ACCOUNT_POJO=networkAccountPOJO;
-            NetworkAccountDetailsViewModel.this.networkAccountPOJO=networkAccountPOJO;
+            ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJO);
+            FTP_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
+            NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 
-            ftpClient=ftpClientRepository.getFtpClient();
-            if(ftpClient!=null && ftpClient.isConnected()){
-                loggedInStatus=true;
-            }else{
-                loggedInStatus=false;
+            ftpClient = ftpClientRepository.getFtpClient();
+            if (ftpClient != null && ftpClient.isConnected()) {
+                loggedInStatus = true;
+            } else {
+                loggedInStatus = false;
                 throw new Exception("FTP client is not connected");
             }
             FTP_WORKING_DIR_PATH = ftpClient.printWorkingDirectory();
-            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.FTP_TYPE))
-            {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+            if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.FTP_TYPE)) {
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.FTP_TYPE, FTP_WORKING_DIR_PATH));
             }
-        }
-        catch (Exception e) {
-            loggedInStatus=false;
-            Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
-        }
-        finally {
+        } catch (Exception e) {
+            loggedInStatus = false;
+            Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
+        } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
                 Timber.tag(TAG).d("FTP client released");
@@ -208,37 +194,34 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectSftp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO,MutableLiveData<AsyncTaskStatus> asyncTaskStatus){
-        loggedInStatus=false;
+    private void connectSftp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+        loggedInStatus = false;
         SftpChannelRepository sftpChannelRepository = null;
-        ChannelSftp channelSftp= null;
+        ChannelSftp channelSftp = null;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy=networkAccountPOJO.deepCopy();
-            sftpChannelRepository=SftpChannelRepository.getInstance(networkAccountPOJOCopy);
+            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJOCopy);
             sftpChannelRepository.shutdown();
-            sftpChannelRepository=sftpChannelRepository.getInstance(networkAccountPOJO);
-            SFTP_NETWORK_ACCOUNT_POJO=networkAccountPOJO;
-            NetworkAccountDetailsViewModel.this.networkAccountPOJO=networkAccountPOJO;
+            sftpChannelRepository = sftpChannelRepository.getInstance(networkAccountPOJO);
+            SFTP_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
+            NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 
-            channelSftp=sftpChannelRepository.getSftpChannel();
-            if(channelSftp!=null && channelSftp.isConnected()){
-                loggedInStatus=true;
-            }else{
-                loggedInStatus=false;
+            channelSftp = sftpChannelRepository.getSftpChannel();
+            if (channelSftp != null && channelSftp.isConnected()) {
+                loggedInStatus = true;
+            } else {
+                loggedInStatus = false;
                 throw new Exception("SFTP client is not connected");
             }
             SFTP_WORKING_DIR_PATH = channelSftp.pwd();
-            if(!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.SFTP_TYPE))
-            {
-                RepositoryClass repositoryClass=RepositoryClass.getRepositoryClass();
+            if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.SFTP_TYPE)) {
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SFTP_TYPE, SFTP_WORKING_DIR_PATH));
             }
-        }
-        catch (Exception e) {
-            loggedInStatus=false;
-            Global.print_background_thread(application,application.getString(R.string.server_could_not_be_connected));
-        }
-        finally {
+        } catch (Exception e) {
+            loggedInStatus = false;
+            Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
+        } finally {
             if (sftpChannelRepository != null && channelSftp != null) {
                 sftpChannelRepository.releaseChannel(channelSftp);
                 Timber.tag(TAG).d("SFTP client released");
@@ -247,39 +230,34 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void replaceNetworkAccountPojo(Bundle bundle)
-    {
+    private void replaceNetworkAccountPojo(Bundle bundle) {
         long row_number;
-        String original_server=bundle.getString("original_server");
-        String original_user_name=bundle.getString("original_user_name");
-        int original_port=bundle.getInt("original_port");
-        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO=bundle.getParcelable("networkAccountPOJO");
-        boolean update=bundle.getBoolean("update");
-        boolean replace=bundle.getBoolean("replace");
-        if(original_server==null)original_server="";
-        if(original_user_name==null)original_user_name="";
-        if(replace)
-        {
-            networkAccountsDatabaseHelper.delete(networkAccountPOJO.host,networkAccountPOJO.port ,networkAccountPOJO.user_name,networkAccountPOJO.type);
+        String original_server = bundle.getString("original_server");
+        String original_user_name = bundle.getString("original_user_name");
+        int original_port = bundle.getInt("original_port");
+        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
+        boolean update = bundle.getBoolean("update");
+        boolean replace = bundle.getBoolean("replace");
+        if (original_server == null) original_server = "";
+        if (original_user_name == null) original_user_name = "";
+        if (replace) {
+            networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, networkAccountPOJO.type);
         }
-        if(update)
-        {
-            row_number=networkAccountsDatabaseHelper.update(original_server,original_port,original_user_name,networkAccountPOJO.type,networkAccountPOJO);
-        }
-        else
-        {
-            row_number=networkAccountsDatabaseHelper.insert(networkAccountPOJO);
+        if (update) {
+            row_number = networkAccountsDatabaseHelper.update(original_server, original_port, original_user_name, networkAccountPOJO.type, networkAccountPOJO);
+        } else {
+            row_number = networkAccountsDatabaseHelper.insert(networkAccountPOJO);
         }
 
-        networkAccountPOJOList=networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+        networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
     }
 
-    public synchronized void replaceNetworkAccountPojoList(Bundle bundle)
-    {
-        if(replaceNetworkAccountAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void replaceNetworkAccountPojoList(Bundle bundle) {
+        if (replaceNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future4=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future4 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
@@ -289,50 +267,50 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void changeNetworkAccountPojoDisplay(String host,int port ,String user_name, String new_name, String type)
-    {
-        if(changeNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void changeNetworkAccountPojoDisplay(String host, int port, String user_name, String new_name, String type) {
+        if (changeNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         changeNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future6=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future6 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                networkAccountsDatabaseHelper.change_display(host,port,user_name,new_name,type);
-                networkAccountPOJOList=networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+                networkAccountsDatabaseHelper.change_display(host, port, user_name, new_name, type);
+                networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
                 changeNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host,int port,String user_name)
-    {
-        if(checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host, int port, String user_name) {
+        if (checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         checkDuplicateNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         future7 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 networkAccountPOJOAlreadyExists = false;
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host,port ,user_name,type);
+                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
                 networkAccountPOJOAlreadyExists = networkAccountPOJO != null;
                 checkDuplicateNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
-    public synchronized void testServiceConnection(){
-        if(testServiceConnectionAsyncTaskStatus.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void testServiceConnection() {
+        if (testServiceConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         testServiceConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        isNetworkConnected=false;
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+        isNetworkConnected = false;
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         future8 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                if(type.equals(NetworkAccountsDetailsDialog.FTP)){
-                    isNetworkConnected =FtpClientRepository.getInstance(FTP_NETWORK_ACCOUNT_POJO).testFtpServerConnection();
-                }
-                else if(type.equals(NetworkAccountsDetailsDialog.SFTP)){
-                    isNetworkConnected =SftpChannelRepository.getInstance(SFTP_NETWORK_ACCOUNT_POJO).testSftpServerConnection();
+                if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
+                    isNetworkConnected = FtpClientRepository.getInstance(FTP_NETWORK_ACCOUNT_POJO).testFtpServerConnection();
+                } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
+                    isNetworkConnected = SftpChannelRepository.getInstance(SFTP_NETWORK_ACCOUNT_POJO).testSftpServerConnection();
                 }
                 testServiceConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

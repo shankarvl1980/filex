@@ -4,52 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.SftpException;
-
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
 import java.util.concurrent.Future;
-
-import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 @SuppressWarnings("ALL")
 public class ViewModelFileCount extends ViewModel {
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public long total_size_of_files;
+    MutableLiveData<Integer> total_no_of_files = new MutableLiveData<>();
+    MutableLiveData<String> size_of_files_formatted = new MutableLiveData<>();
     private FileCountSize fileCountSize;
     private int cumulative_no_of_files;
-    MutableLiveData<Integer> total_no_of_files=new MutableLiveData<>();
-    public long total_size_of_files;
-    MutableLiveData<String> size_of_files_formatted=new MutableLiveData<>();
     private Future<?> future;
     private boolean isCancelled;
-    public final MutableLiveData<AsyncTaskStatus>asyncTaskStatus=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        cancel(true);
-    }
-
-    private void cancel(boolean mayInterruptRunning){
-        if(future!=null) future.cancel(mayInterruptRunning);
-        isCancelled=true;
-    }
-
-    private boolean isCancelled()
-    {
-        return isCancelled;
-    }
 
     // Constructor where you instantiate and execute FileCountSize
     public ViewModelFileCount(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType) {
@@ -79,6 +50,21 @@ public class ViewModelFileCount extends ViewModel {
         // Optionally, update LiveData as needed
         total_no_of_files.postValue(fileCountSize.total_no_of_files);
         size_of_files_formatted.postValue(FileUtil.humanReadableByteCount(fileCountSize.total_size_of_files));
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        cancel(true);
+    }
+
+    private void cancel(boolean mayInterruptRunning) {
+        if (future != null) future.cancel(mayInterruptRunning);
+        isCancelled = true;
+    }
+
+    private boolean isCancelled() {
+        return isCancelled;
     }
 
 
@@ -184,9 +170,6 @@ public class ViewModelFileCount extends ViewModel {
 //            }
 //        });
 //    }
-
-
-
 
     public static class ViewModelFileCountFactory implements ViewModelProvider.Factory {
         private final Context context;

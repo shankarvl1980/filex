@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 
-
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -76,8 +75,8 @@ public class GridDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        mLinePaint.setAlpha(Math.round(mAlpha*255));
-        mLineBorderPaint.setAlpha(Math.round(mAlpha*0x44));
+        mLinePaint.setAlpha(Math.round(mAlpha * 255));
+        mLineBorderPaint.setAlpha(Math.round(mAlpha * 0x44));
 
         Rect bounds = getBounds();
 
@@ -108,10 +107,12 @@ public class GridDrawable extends Drawable {
     }
 
     @Override
-    public void setAlpha(int alpha) { }
+    public void setAlpha(int alpha) {
+    }
 
     @Override
-    public void setColorFilter(ColorFilter colorFilter) { }
+    public void setColorFilter(ColorFilter colorFilter) {
+    }
 
     @Override
     public int getOpacity() {

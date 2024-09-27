@@ -39,7 +39,6 @@ public class CustomGridLayoutManager extends GridLayoutManager {
         super.onScrollStateChanged(state);
     }
 
-    
 
     public void setScrollEnabled(boolean isEnabled) {
         this.isScrollEnabled = isEnabled;

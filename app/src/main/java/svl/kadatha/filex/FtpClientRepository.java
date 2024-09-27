@@ -22,18 +22,18 @@ import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 public class FtpClientRepository {
-    private static FtpClientRepository instance;
-    private final ConcurrentLinkedQueue<FTPClient> ftpClients;
-    private final ConcurrentLinkedQueue<FTPClient> inUseClients;
-    private final Map<FTPClient, Long> lastUsedTimes;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
     private static final int MAX_IDLE_CONNECTIONS = 5;
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
-    private int initialClients;
-    private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
     private static final String TAG = "Ftp-ftpClientRepository";
+    private static FtpClientRepository instance;
+    private final ConcurrentLinkedQueue<FTPClient> ftpClients;
+    private final ConcurrentLinkedQueue<FTPClient> inUseClients;
+    private final Map<FTPClient, Long> lastUsedTimes;
+    private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
+    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private int initialClients;
 
     private FtpClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         this.ftpClients = new ConcurrentLinkedQueue<>();
@@ -41,6 +41,13 @@ public class FtpClientRepository {
         this.lastUsedTimes = new ConcurrentHashMap<>();
         this.networkAccountPOJO = networkAccountPOJO;
         initializeClients();
+    }
+
+    public static synchronized FtpClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+        if (instance == null) {
+            instance = new FtpClientRepository(networkAccountPOJO);
+        }
+        return instance;
     }
 
     private void initializeClients() {
@@ -67,13 +74,6 @@ public class FtpClientRepository {
             }
         }
         keepAliveScheduler.scheduleWithFixedDelay(this::sendKeepAlive, 30, 30, TimeUnit.SECONDS);
-    }
-
-    public static synchronized FtpClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
-        if (instance == null) {
-            instance = new FtpClientRepository(networkAccountPOJO);
-        }
-        return instance;
     }
 
     public synchronized FTPClient getFtpClient() throws IOException {
@@ -309,7 +309,7 @@ public class FtpClientRepository {
             }
         }
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()),"");
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), "");
 
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.FTP_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
@@ -323,9 +323,9 @@ public class FtpClientRepository {
         ftpClients.clear();
         inUseClients.clear();
         lastUsedTimes.clear();
-        networkAccountPOJO=null;
-        NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO=null;
-        instance=null;
+        networkAccountPOJO = null;
+        NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO = null;
+        instance = null;
     }
 
     public boolean testConnection(FTPClient client) {
@@ -336,7 +336,7 @@ public class FtpClientRepository {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
-            }else{
+            } else {
                 client.setControlKeepAliveTimeout(10);
             }
 

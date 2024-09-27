@@ -7,11 +7,9 @@ public class MyExecutorService {
 
     private static ExecutorService executorService;
 
-    public synchronized static ExecutorService getExecutorService()
-    {
-        if(executorService==null)
-        {
-            executorService=Executors.newCachedThreadPool();
+    public synchronized static ExecutorService getExecutorService() {
+        if (executorService == null) {
+            executorService = Executors.newCachedThreadPool();
         }
         return executorService;
     }

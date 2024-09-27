@@ -34,30 +34,6 @@ public class App extends Application {
 
     private static App mInstance;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if(BuildConfig.DEBUG)
-        {
-            Timber.plant(new Timber.DebugTree());
-        }
-
-        mInstance = this;
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FsService.ACTION_STARTED);
-        intentFilter.addAction(FsService.ACTION_STOPPED);
-        intentFilter.addAction(FsService.ACTION_FAILEDTOSTART);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter,RECEIVER_NOT_EXPORTED);
-        }
-        else{
-            registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter);
-        }
-
-    }
-
     /**
      * @return the Context of this application
      */
@@ -81,6 +57,27 @@ public class App extends Application {
         }
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+
+        mInstance = this;
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(FsService.ACTION_STARTED);
+        intentFilter.addAction(FsService.ACTION_STOPPED);
+        intentFilter.addAction(FsService.ACTION_FAILEDTOSTART);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter, RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter);
+        }
+
+    }
 
 
 }

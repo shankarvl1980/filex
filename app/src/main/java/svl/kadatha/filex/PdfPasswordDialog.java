@@ -42,9 +42,9 @@ public class PdfPasswordDialog extends DialogFragment {
             result.putString("password", password);
             getParentFragmentManager().setFragmentResult(PASSWORD_REQUEST_CODE, result);
             dismiss();
-});
+        });
 
-cancelButton.setOnClickListener(v -> dismiss());
+        cancelButton.setOnClickListener(v -> dismiss());
 
         return view;
     }

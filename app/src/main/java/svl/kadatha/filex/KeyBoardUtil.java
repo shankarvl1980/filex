@@ -6,8 +6,8 @@ import android.view.ViewTreeObserver;
 
 public class KeyBoardUtil {
     private boolean keyboardShown;
-    KeyBoardUtil(final View view)
-    {
+
+    KeyBoardUtil(final View view) {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -16,14 +16,13 @@ public class KeyBoardUtil {
 
                 int screenHeight = view.getRootView().getHeight();
                 int keypadHeight = screenHeight - r.bottom;
-                keyboardShown= keypadHeight > screenHeight * 0.15;
+                keyboardShown = keypadHeight > screenHeight * 0.15;
 
             }
         });
     }
 
-    public boolean getKeyBoardVisibility()
-    {
+    public boolean getKeyBoardVisibility() {
         return keyboardShown;
     }
 

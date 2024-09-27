@@ -15,18 +15,19 @@ public interface FileModel {
 
     boolean isDirectory();
 
-    boolean rename(String new_name,boolean overwrite);
+    boolean rename(String new_name, boolean overwrite);
 
     boolean delete();
 
     InputStream getInputStream();
 
-    OutputStream getChildOutputStream(String child_name,long source_length);
+    OutputStream getChildOutputStream(String child_name, long source_length);
 
     FileModel[] list();
 
     boolean createFile(String name);
-    boolean makeDirIfNotExists (String dir_name);
+
+    boolean makeDirIfNotExists(String dir_name);
 
     boolean makeDirsRecursively(String extended_path);
 

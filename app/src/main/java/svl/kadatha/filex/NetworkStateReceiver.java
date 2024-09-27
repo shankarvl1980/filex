@@ -14,12 +14,12 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             );
 
             if (noConnectivity) {
-                if(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO!=null){
-                    FtpClientRepository ftpClientRepository=FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
+                if (NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO != null) {
+                    FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
                     ftpClientRepository.shutdown();
                 }
-                if(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO!=null){
-                    SftpChannelRepository sftpChannelRepository=SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
+                if (NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO != null) {
+                    SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
                     sftpChannelRepository.shutdown();
                 }
             }

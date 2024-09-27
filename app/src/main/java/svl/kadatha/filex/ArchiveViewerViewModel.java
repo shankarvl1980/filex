@@ -18,11 +18,11 @@ import java.util.zip.ZipFile;
 
 public class ArchiveViewerViewModel extends AndroidViewModel {
 
-    private boolean isCancelled;
-    private Future<?> future1,future2,future3,future4,future5,future6,future7,future8,future9;
-    public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean zipFileExtracted;
-    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted=new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    private boolean isCancelled;
+    private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9;
 
     public ArchiveViewerViewModel(@NonNull Application application) {
         super(application);
@@ -32,62 +32,52 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()), FileObjectType.FILE_TYPE);
         cancel(true);
     }
 
-    public void cancel(boolean mayInterruptRunning){
-        if(future1!=null) future1.cancel(mayInterruptRunning);
-        if(future2!=null) future2.cancel(mayInterruptRunning);
-        if(future3!=null) future3.cancel(mayInterruptRunning);
-        if(future4!=null) future4.cancel(mayInterruptRunning);
-        if(future5!=null) future5.cancel(mayInterruptRunning);
-        if(future6!=null) future6.cancel(mayInterruptRunning);
-        if(future7!=null) future7.cancel(mayInterruptRunning);
-        if(future8!=null) future8.cancel(mayInterruptRunning);
-        if(future9!=null) future9.cancel(mayInterruptRunning);
-        isCancelled=true;
+    public void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) future1.cancel(mayInterruptRunning);
+        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future4 != null) future4.cancel(mayInterruptRunning);
+        if (future5 != null) future5.cancel(mayInterruptRunning);
+        if (future6 != null) future6.cancel(mayInterruptRunning);
+        if (future7 != null) future7.cancel(mayInterruptRunning);
+        if (future8 != null) future8.cancel(mayInterruptRunning);
+        if (future9 != null) future9.cancel(mayInterruptRunning);
+        isCancelled = true;
     }
 
-    private boolean isCancelled()
-    {
+    private boolean isCancelled() {
         return isCancelled;
     }
 
-    public synchronized void extractArchive(ZipFile zipfile)
-    {
-        if(isExtractionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public synchronized void extractArchive(ZipFile zipfile) {
+        if (isExtractionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isExtractionCompleted.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
-        future1=executorService.submit(new Runnable() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                zipFileExtracted=false;
+                zipFileExtracted = false;
                 FileUtil.deleteNativeDirectory(Global.ARCHIVE_EXTRACT_DIR);
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()),FileObjectType.FILE_TYPE);
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()), FileObjectType.FILE_TYPE);
 
-                Enumeration<? extends ZipEntry> zip_entries=zipfile.entries();
-                while(zip_entries.hasMoreElements())
-                {
-                    ZipEntry zipentry=zip_entries.nextElement();
-                    File f=new File(Global.ARCHIVE_EXTRACT_DIR,zipentry.getName());
-                    if(zipentry.isDirectory() && !f.exists())
-                    {
-                        zipFileExtracted=f.mkdirs();
-                    }
-                    else if(!zipentry.isDirectory())
-                    {
-                        if(!f.getParentFile().exists())
-                        {
-                            zipFileExtracted=f.getParentFile().mkdirs();
+                Enumeration<? extends ZipEntry> zip_entries = zipfile.entries();
+                while (zip_entries.hasMoreElements()) {
+                    ZipEntry zipentry = zip_entries.nextElement();
+                    File f = new File(Global.ARCHIVE_EXTRACT_DIR, zipentry.getName());
+                    if (zipentry.isDirectory() && !f.exists()) {
+                        zipFileExtracted = f.mkdirs();
+                    } else if (!zipentry.isDirectory()) {
+                        if (!f.getParentFile().exists()) {
+                            zipFileExtracted = f.getParentFile().mkdirs();
                         }
-                        try
-                        {
-                            zipFileExtracted=f.createNewFile();
-                        }
-                        catch(IOException e)
-                        {
-                            zipFileExtracted=false;
+                        try {
+                            zipFileExtracted = f.createNewFile();
+                        } catch (IOException e) {
+                            zipFileExtracted = false;
                         }
                     }
                 }
@@ -96,11 +86,10 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
         });
     }
 
-    public void deleteDirectory(File dir)
-    {
-        if(isDeletionCompleted.getValue()!=AsyncTaskStatus.NOT_YET_STARTED)return;
+    public void deleteDirectory(File dir) {
+        if (isDeletionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isDeletionCompleted.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService=MyExecutorService.getExecutorService();
+        ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {

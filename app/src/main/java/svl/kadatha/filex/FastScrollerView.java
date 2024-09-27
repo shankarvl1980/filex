@@ -14,13 +14,20 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FastScrollerView extends View {
+    private static final long HIDE_DELAY = 2000; // 2 seconds
+    private final Handler hideHandler = new Handler();
     private RecyclerView recyclerView;
     private Drawable thumbDrawable;
     private int thumbHeight;
     private boolean isDragging;
     private boolean isThumbVisible = false;
-    private final Handler hideHandler = new Handler();
-    private static final long HIDE_DELAY = 2000; // 2 seconds
+    private final Runnable hideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            isThumbVisible = false;
+            invalidate();
+        }
+    };
 
     public FastScrollerView(Context context) {
         super(context);
@@ -71,7 +78,7 @@ public class FastScrollerView extends View {
         float scrollOffset = recyclerView.computeVerticalScrollOffset();
 
         float thumbY = scrollOffset / (scrollRange - scrollExtent) * (getHeight() - thumbHeight);
-        thumbDrawable.setBounds(0, (int)thumbY, getWidth(), (int)(thumbY + thumbHeight));
+        thumbDrawable.setBounds(0, (int) thumbY, getWidth(), (int) (thumbY + thumbHeight));
     }
 
     @Override
@@ -104,7 +111,7 @@ public class FastScrollerView extends View {
     private void updateThumbFromTouch(float touchY) {
         float scrollFraction = touchY / getHeight();
         float thumbY = scrollFraction * (getHeight() - thumbHeight);
-        thumbDrawable.setBounds(0, (int)thumbY, getWidth(), (int)(thumbY + thumbHeight));
+        thumbDrawable.setBounds(0, (int) thumbY, getWidth(), (int) (thumbY + thumbHeight));
         invalidate();
     }
 
@@ -113,6 +120,7 @@ public class FastScrollerView extends View {
         int targetPosition = (int) (scrollFraction * recyclerView.getAdapter().getItemCount());
         recyclerView.scrollToPosition(targetPosition);
     }
+
     private void showThumb() {
         isThumbVisible = true;
         hideHandler.removeCallbacks(hideRunnable);
@@ -122,13 +130,5 @@ public class FastScrollerView extends View {
     private void scheduleHideThumb() {
         hideHandler.postDelayed(hideRunnable, HIDE_DELAY);
     }
-
-    private final Runnable hideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            isThumbVisible = false;
-            invalidate();
-        }
-    };
 }
 

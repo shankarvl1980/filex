@@ -1,11 +1,8 @@
 package svl.kadatha.filex.filemodel;
 
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
@@ -245,7 +242,6 @@ public class RootFileModel implements FileModel {
             process.destroy();
         }
     }
-
 
 
     public class RootFileOutputStream extends OutputStream {

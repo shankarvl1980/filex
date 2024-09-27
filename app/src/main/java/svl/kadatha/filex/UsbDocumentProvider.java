@@ -37,22 +37,16 @@ import timber.log.Timber;
 
 public class UsbDocumentProvider extends DocumentsProvider {
 
-    private static final String TAG = UsbDocumentProvider.class.getSimpleName();
-
     public static final String DOCUMENTS_AUTHORITY = "svl.kadatha.filex.usbdocuments";
-    public static final String USB_ATTACHED="usbattached";
+    public static final String USB_ATTACHED = "usbattached";
     /**
      * Action string to request the permission to communicate with an UsbDevice.
      */
     public static final String ACTION_USB_PERMISSION = "svl.kadatha.filex.USB_PERMISSION";
-    public static final String USB_ATTACH_BROADCAST="svl.kadatha.filex.USB";
-
+    public static final String USB_ATTACH_BROADCAST = "svl.kadatha.filex.USB";
+    private static final String TAG = UsbDocumentProvider.class.getSimpleName();
     private static final String DIRECTORY_SEPARATOR = "/";
     private static final String ROOT_SEPARATOR = ":";
-    public static ArrayList<UsbMassStorageDevice> USB_MASS_STORAGE_DEVICES;
-    private LocalBroadcastManager localBroadcastManager;
-    private static int CHECKED_TIMES;
-
     /**
      * Default root projection: everything but Root.COLUMN_MIME_TYPES
      */
@@ -64,7 +58,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
             DocumentsContract.Root.COLUMN_DOCUMENT_ID,
             DocumentsContract.Root.COLUMN_ICON,
             DocumentsContract.Root.COLUMN_AVAILABLE_BYTES};
-
     /**
      * Default document projection: everything but Document.COLUMN_ICON and Document.COLUMN_SUMMARY
      */
@@ -75,15 +68,11 @@ public class UsbDocumentProvider extends DocumentsProvider {
             DocumentsContract.Document.COLUMN_MIME_TYPE,
             DocumentsContract.Document.COLUMN_SIZE,
             DocumentsContract.Document.COLUMN_LAST_MODIFIED};
-
-    private static class UsbPartition {
-        UsbDevice device;
-        FileSystem fileSystem;
-    }
-
+    public static ArrayList<UsbMassStorageDevice> USB_MASS_STORAGE_DEVICES;
+    private static int CHECKED_TIMES;
     private final Map<String, UsbPartition> mRoots = new HashMap<>();
-
     private final LruCache<String, UsbFile> mFileCache = new LruCache<>(100);
+    private LocalBroadcastManager localBroadcastManager;
 
     private static String[] resolveRootProjection(String[] projection) {
         return projection != null ? projection : DEFAULT_ROOT_PROJECTION;
@@ -93,13 +82,44 @@ public class UsbDocumentProvider extends DocumentsProvider {
         return projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION;
     }
 
+    private static String getMimeType(UsbFile file) {
+
+        if (file.isDirectory()) {
+            return DocumentsContract.Document.MIME_TYPE_DIR;
+        } else {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName()).toLowerCase();
+            if (!extension.isEmpty()) {
+                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                Timber.tag(TAG).d("mimeType: " + mimeType);
+                if (mimeType == null) {
+                    mimeType = "application/octet-stream";
+                }
+                return mimeType;
+            }
+        }
+        return "application/octet-stream";
+    }
+
+    private static String getFileName(String mimeType, String displayName) {
+
+        String extension = MimeTypeMap.getFileExtensionFromUrl(displayName).toLowerCase();
+        if ((extension == null) ||
+                !Objects.equals(mimeType, MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension))) {
+            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+            if (extension != null) {
+                displayName = displayName + "." + extension;
+            }
+        }
+        return displayName;
+    }
+
     @Override
     public boolean onCreate() {
         Context context = getContext();
         assert context != null;
-        Global.RECOGNISE_USB=new TinyDB(context).getBoolean("recognise_usb");
-        USB_MASS_STORAGE_DEVICES=new ArrayList<>();
-        localBroadcastManager=LocalBroadcastManager.getInstance(context);
+        Global.RECOGNISE_USB = new TinyDB(context).getBoolean("recognise_usb");
+        USB_MASS_STORAGE_DEVICES = new ArrayList<>();
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
         getDetail();
 
         BroadcastReceiver usbPermissionBroadcastReceiver = new BroadcastReceiver() {
@@ -158,11 +178,11 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private void discoverDevice(UsbDevice device) {
-        if(!Global.RECOGNISE_USB)return;
-        Timber.tag(TAG).d( "discoverDevice() " + device.toString());
+        if (!Global.RECOGNISE_USB) return;
+        Timber.tag(TAG).d("discoverDevice() " + device.toString());
         Context context = getContext();
         assert context != null;
-        if(!USB_MASS_STORAGE_DEVICES.isEmpty())return;
+        if (!USB_MASS_STORAGE_DEVICES.isEmpty()) return;
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {
@@ -171,13 +191,13 @@ public class UsbDocumentProvider extends DocumentsProvider {
                     addRoot(massStorageDevice);
                     USB_MASS_STORAGE_DEVICES.add(massStorageDevice);
 
-                    Intent intent=new Intent();
+                    Intent intent = new Intent();
                     intent.setAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
-                    intent.putExtra(USB_ATTACHED,true);
+                    intent.putExtra(USB_ATTACHED, true);
                     localBroadcastManager.sendBroadcast(intent);
 
                 } else {
-                    int pending_intent_flag= Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+                    int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
                     PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
                             ACTION_USB_PERMISSION), pending_intent_flag);
                     usbManager.requestPermission(device, permissionIntent);
@@ -189,10 +209,10 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     private void detachDevice(UsbDevice usbDevice) {
 
-        Timber.tag(TAG).d( "detachDevice() " + usbDevice.toString());
+        Timber.tag(TAG).d("detachDevice() " + usbDevice.toString());
         for (Map.Entry<String, UsbPartition> root : mRoots.entrySet()) {
             if (root.getValue().device.equals(usbDevice)) {
-                Timber.tag(TAG).d( "remove rootId " + root.getKey());
+                Timber.tag(TAG).d("remove rootId " + root.getKey());
                 mRoots.remove(root.getKey());
                 mFileCache.evictAll();
                 notifyRootsChanged();
@@ -200,15 +220,15 @@ public class UsbDocumentProvider extends DocumentsProvider {
             }
         }
         USB_MASS_STORAGE_DEVICES.clear();
-        Intent intent=new Intent();
+        Intent intent = new Intent();
         intent.setAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
-        intent.putExtra(USB_ATTACHED,false);
+        intent.putExtra(USB_ATTACHED, false);
         localBroadcastManager.sendBroadcast(intent);
 
     }
 
     private void addRoot(UsbMassStorageDevice device) {
-        Timber.tag(TAG).d( "addRoot() " + device.toString());
+        Timber.tag(TAG).d("addRoot() " + device.toString());
 
         try {
             device.init();
@@ -218,19 +238,18 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 usbPartition.fileSystem = partition.getFileSystem();
                 mRoots.put(Integer.toString(partition.hashCode()), usbPartition);
 
-                Timber.tag(TAG).d( "found root " + partition.hashCode());
+                Timber.tag(TAG).d("found root " + partition.hashCode());
             }
         } catch (IOException e) {
-            Timber.tag(TAG).e( "error setting up device");
+            Timber.tag(TAG).e("error setting up device");
         }
 
         notifyRootsChanged();
     }
 
-
     @Override
     public Cursor queryRoots(String[] projection) throws FileNotFoundException {
-        Timber.tag(TAG).d( "queryRoots()");
+        Timber.tag(TAG).d("queryRoots()");
 
         // Create a cursor with either the requested fields, or the default projection if "projection" is null.
         final MatrixCursor result = new MatrixCursor(resolveRootProjection(projection));
@@ -247,7 +266,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
             String documentId = getDocIdForFile(rootDirectory);
 
-            Timber.tag(TAG).d( "add root " + documentId);
+            Timber.tag(TAG).d("add root " + documentId);
 
             final MatrixCursor.RowBuilder row = result.newRow();
             // These columns are required
@@ -270,7 +289,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryDocument(String documentId, String[] projection) throws FileNotFoundException {
-        Timber.tag(TAG).d( "queryDocument() " + documentId);
+        Timber.tag(TAG).d("queryDocument() " + documentId);
 
         try {
             final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
@@ -283,7 +302,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) throws FileNotFoundException {
-        Timber.tag(TAG).d( "queryChildDocuments() " + parentDocumentId);
+        Timber.tag(TAG).d("queryChildDocuments() " + parentDocumentId);
 
         try {
             final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
@@ -299,7 +318,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public ParcelFileDescriptor openDocument(String documentId, String mode, CancellationSignal signal) throws FileNotFoundException {
-        Timber.tag(TAG).d( "openDocument() " + documentId);
+        Timber.tag(TAG).d("openDocument() " + documentId);
 
         try {
             UsbFile file = getFileForDocId(documentId);
@@ -311,15 +330,15 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 accessMode = ParcelFileDescriptor.MODE_READ_ONLY;
             }
             if (accessMode == ParcelFileDescriptor.MODE_READ_ONLY) {
-                Timber.tag(TAG).d( "openDocument() piping to UsbFileInputStream");
+                Timber.tag(TAG).d("openDocument() piping to UsbFileInputStream");
                 return ParcelFileDescriptorUtil.pipeFrom(new UsbFileInputStream(file));
             } else if (accessMode == ParcelFileDescriptor.MODE_WRITE_ONLY) {
-                Timber.tag(TAG).d( "openDocument() piping to UsbFileOutputStream");
+                Timber.tag(TAG).d("openDocument() piping to UsbFileOutputStream");
                 return ParcelFileDescriptorUtil.pipeTo(new UsbFileOutputStream(file));
 
             }
 
-            Timber.tag(TAG).d( "openDocument() return null");
+            Timber.tag(TAG).d("openDocument() return null");
 
             return null;
 
@@ -330,13 +349,13 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public boolean isChildDocument(String parentDocumentId, String documentId) {
-        return Global.IS_CHILD_FILE(documentId,parentDocumentId);
+        return Global.IS_CHILD_FILE(documentId, parentDocumentId);
     }
 
     @Override
     public String createDocument(String parentDocumentId, String mimeType, String displayName)
             throws FileNotFoundException {
-        Timber.tag(TAG).d( "createDocument() " + parentDocumentId);
+        Timber.tag(TAG).d("createDocument() " + parentDocumentId);
 
         try {
             UsbFile parent = getFileForDocId(parentDocumentId);
@@ -357,10 +376,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
     @Override
     public String renameDocument(String documentId, String displayName)
             throws FileNotFoundException {
-        Timber.tag(TAG).d( "renameDocument() " + documentId);
+        Timber.tag(TAG).d("renameDocument() " + documentId);
 
-        try(UsbFile file = getFileForDocId(documentId))
-        {
+        try (UsbFile file = getFileForDocId(documentId)) {
             file.setName(getFileName(getMimeType(file), displayName));
             mFileCache.remove(documentId);
             return getDocIdForFile(file);
@@ -372,10 +390,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public void deleteDocument(String documentId) throws FileNotFoundException {
-        Timber.tag(TAG).d( "deleteDocument() " + documentId);
+        Timber.tag(TAG).d("deleteDocument() " + documentId);
 
-        try(UsbFile file = getFileForDocId(documentId))
-        {
+        try (UsbFile file = getFileForDocId(documentId)) {
             file.delete();
             mFileCache.remove(documentId);
         } catch (IOException e) {
@@ -385,52 +402,15 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public String getDocumentType(String documentId) {
-        Timber.tag(TAG).d( "getDocumentType() " + documentId);
+        Timber.tag(TAG).d("getDocumentType() " + documentId);
 
         try {
             return getMimeType(getFileForDocId(documentId));
         } catch (IOException e) {
-            Timber.tag(TAG).e( e.getMessage());
+            Timber.tag(TAG).e(e.getMessage());
         }
 
         return "application/octet-stream";
-    }
-
-
-    private static String getMimeType(UsbFile file) {
-
-        if (file.isDirectory())
-        {
-            return DocumentsContract.Document.MIME_TYPE_DIR;
-        }
-        else
-        {
-            String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName()).toLowerCase();
-            if (!extension.isEmpty())
-            {
-                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                Timber.tag(TAG).d( "mimeType: " + mimeType);
-                if(mimeType==null)
-                {
-                    mimeType="application/octet-stream";
-                }
-                return mimeType;
-            }
-        }
-        return "application/octet-stream";
-    }
-
-    private static String getFileName(String mimeType, String displayName) {
-
-        String extension = MimeTypeMap.getFileExtensionFromUrl(displayName).toLowerCase();
-        if ((extension == null) ||
-                !Objects.equals(mimeType, MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension))) {
-            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-            if (extension != null) {
-                displayName = displayName + "." + extension;
-            }
-        }
-        return displayName;
     }
 
     private void includeFile(final MatrixCursor result, final UsbFile file) throws FileNotFoundException {
@@ -466,8 +446,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
         // Document.COLUMN_SUMMARY is optional additional information about the file
     }
 
-
-
     private void notifyRootsChanged() {
         getContext().getContentResolver().notifyChange(
                 DocumentsContract.buildRootsUri(DOCUMENTS_AUTHORITY), null, false);
@@ -492,24 +470,26 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private UsbFile getFileForDocId(String documentId) throws IOException {
-        Timber.tag(TAG).d( "getFileForDocId() " + documentId);
-        Timber.tag(TAG).d( "No cache entry for " + documentId);
+        Timber.tag(TAG).d("getFileForDocId() " + documentId);
+        Timber.tag(TAG).d("No cache entry for " + documentId);
 
-        String[] path_segments=documentId.split(ROOT_SEPARATOR);
-        if(path_segments.length==1)
-        {
-           Timber.tag(TAG).d("path segments when length 1 "+path_segments[0]);
+        String[] path_segments = documentId.split(ROOT_SEPARATOR);
+        if (path_segments.length == 1) {
+            Timber.tag(TAG).d("path segments when length 1 " + path_segments[0]);
             return MainActivity.usbFileRoot;
-        }
-        else
-        {
-            String path=path_segments[1];
+        } else {
+            String path = path_segments[1];
 
             return MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
 
         }
 
 
+    }
+
+    private static class UsbPartition {
+        UsbDevice device;
+        FileSystem fileSystem;
     }
 
 }

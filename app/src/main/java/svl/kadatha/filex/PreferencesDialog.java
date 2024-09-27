@@ -19,23 +19,22 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 
-public class PreferencesDialog extends DialogFragment
-{
+public class PreferencesDialog extends DialogFragment {
+    public static String THEME;
+    DetailFragment df;
     private Context context;
     private boolean byte_count_block_1000;
-    DetailFragment df;
     private TinyDB tinyDB;
     private DefaultAppDatabaseHelper defaultAppDatabaseHelper;
-    public static String THEME;
-    private boolean light_rb_checked,dark_rb_checked,system_rb_checked;
+    private boolean light_rb_checked, dark_rb_checked, system_rb_checked;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context=context;
-        df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
-        tinyDB=new TinyDB(context);
-        defaultAppDatabaseHelper=new DefaultAppDatabaseHelper(context);
+        this.context = context;
+        df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
+        tinyDB = new TinyDB(context);
+        defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(context);
     }
 
     @Override
@@ -48,20 +47,19 @@ public class PreferencesDialog extends DialogFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        final View v=inflater.inflate(R.layout.fragment_preferences,container,false);
+        final View v = inflater.inflate(R.layout.fragment_preferences, container, false);
         RadioButton light_rb = v.findViewById(R.id.preferences_rb_light);
         light_rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!light_rb_checked)
-                {
-                    THEME="light";
-                    Global.THEME=PreferencesDialog.THEME;
-                    tinyDB.putString("theme",Global.THEME);
+                if (!light_rb_checked) {
+                    THEME = "light";
+                    Global.THEME = PreferencesDialog.THEME;
+                    tinyDB.putString("theme", Global.THEME);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    light_rb_checked=true;
-                    dark_rb_checked=false;
-                    system_rb_checked=false;
+                    light_rb_checked = true;
+                    dark_rb_checked = false;
+                    system_rb_checked = false;
                 }
 
             }
@@ -71,59 +69,55 @@ public class PreferencesDialog extends DialogFragment
         dark_rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!dark_rb_checked)
-                {
-                    THEME="dark";
-                    Global.THEME=PreferencesDialog.THEME;
-                    tinyDB.putString("theme",Global.THEME);
+                if (!dark_rb_checked) {
+                    THEME = "dark";
+                    Global.THEME = PreferencesDialog.THEME;
+                    tinyDB.putString("theme", Global.THEME);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    dark_rb_checked=true;
-                    light_rb_checked=false;
-                    system_rb_checked=false;
+                    dark_rb_checked = true;
+                    light_rb_checked = false;
+                    system_rb_checked = false;
                 }
 
             }
         });
 
-        RadioButton system_rb=v.findViewById(R.id.preferences_rb_system);
+        RadioButton system_rb = v.findViewById(R.id.preferences_rb_system);
         system_rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!system_rb_checked)
-                {
-                    THEME="system";
-                    Global.THEME=PreferencesDialog.THEME;
-                    tinyDB.putString("theme",Global.THEME);
+                if (!system_rb_checked) {
+                    THEME = "system";
+                    Global.THEME = PreferencesDialog.THEME;
+                    tinyDB.putString("theme", Global.THEME);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                    system_rb_checked=true;
-                    dark_rb_checked=false;
-                    light_rb_checked=false;
+                    system_rb_checked = true;
+                    dark_rb_checked = false;
+                    light_rb_checked = false;
                 }
             }
         });
 
-        THEME=Global.THEME;
-        if(THEME!=null)
-        {
-            switch (THEME)
-            {
+        THEME = Global.THEME;
+        if (THEME != null) {
+            switch (THEME) {
                 case "system":
                     system_rb.setChecked(true);
-                    system_rb_checked=true;
-                    light_rb_checked=false;
-                    dark_rb_checked=false;
+                    system_rb_checked = true;
+                    light_rb_checked = false;
+                    dark_rb_checked = false;
                     break;
                 case "light":
                     light_rb.setChecked(true);
-                    light_rb_checked=true;
-                    dark_rb_checked=false;
-                    system_rb_checked=false;
+                    light_rb_checked = true;
+                    dark_rb_checked = false;
+                    system_rb_checked = false;
                     break;
                 case "dark":
                     dark_rb.setChecked(true);
-                    dark_rb_checked=true;
-                    light_rb_checked=false;
-                    system_rb_checked=false;
+                    dark_rb_checked = true;
+                    light_rb_checked = false;
+                    system_rb_checked = false;
                     break;
             }
 
@@ -131,8 +125,7 @@ public class PreferencesDialog extends DialogFragment
 
 
         Button remove_defaults_btn = v.findViewById(R.id.preferences_remove_all_defaults_btn);
-        remove_defaults_btn.setOnClickListener(new View.OnClickListener()
-        {
+        remove_defaults_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 defaultAppDatabaseHelper.deleteTable();
@@ -144,8 +137,8 @@ public class PreferencesDialog extends DialogFragment
         remove_selected_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DefaultAppsDialog defaultAppsDialog =new DefaultAppsDialog();
-                defaultAppsDialog.show(getParentFragmentManager(),"");
+                DefaultAppsDialog defaultAppsDialog = new DefaultAppsDialog();
+                defaultAppsDialog.show(getParentFragmentManager(), "");
             }
         });
 
@@ -158,16 +151,15 @@ public class PreferencesDialog extends DialogFragment
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Global.SHOW_FILE_PATH=b;
-                        tinyDB.putBoolean("show_file_path",Global.SHOW_FILE_PATH);
-                        DetailFragment df=(DetailFragment)getParentFragmentManager().findFragmentById(R.id.detail_fragment);
-                        if(df.fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE)
-                        {
+                        Global.SHOW_FILE_PATH = b;
+                        tinyDB.putBoolean("show_file_path", Global.SHOW_FILE_PATH);
+                        DetailFragment df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
+                        if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                             getParentFragmentManager().beginTransaction().detach(df).commit();
                             getParentFragmentManager().beginTransaction().attach(df).commit();
                         }
                     }
-                },500);
+                }, 500);
 
 
             }
@@ -182,15 +174,15 @@ public class PreferencesDialog extends DialogFragment
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Global.RECOGNISE_USB=b;
-                        tinyDB.putBoolean("recognise_usb",Global.RECOGNISE_USB);
+                        Global.RECOGNISE_USB = b;
+                        tinyDB.putBoolean("recognise_usb", Global.RECOGNISE_USB);
                     }
-                },500);
+                }, 500);
             }
         });
 
         ViewGroup buttons_layout = v.findViewById(R.id.preferences_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT));
 
         Button cancel_btn = buttons_layout.findViewById(R.id.first_button);
         cancel_btn.setText(R.string.close);
@@ -204,13 +196,12 @@ public class PreferencesDialog extends DialogFragment
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         // TODO: Implement this method
         super.onResume();
 
-        Window window=getDialog().getWindow();
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        Window window = getDialog().getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 

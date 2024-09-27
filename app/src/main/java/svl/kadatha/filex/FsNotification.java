@@ -43,7 +43,8 @@ public class FsNotification {
 
     public static final int NOTIFICATION_ID = 7890;
     public static final String CHANNEL_ID = "svl.kadatha.filex.ftp_server_channel_id";
-    public final static CharSequence CHANNEL_NAME="FTP Server";
+    public final static CharSequence CHANNEL_NAME = "FTP Server";
+
     public static Notification setupNotification(Context context) {
         Timber.tag(TAG).d("Setting up the notification");
         // Get NotificationManager reference
@@ -68,7 +69,7 @@ public class FsNotification {
         CharSequence contentTitle = context.getString(R.string.notification_title);
         CharSequence contentText = ipText;
 
-        int pending_intent_flag=(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
+        int pending_intent_flag = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) ? PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_CANCEL_CURRENT;
 
         Intent notificationIntent = new Intent(context, FtpServerActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -90,11 +91,11 @@ public class FsNotification {
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
             channel.setDescription(description);
-            channel.setSound(null,null);
+            channel.setSound(null, null);
             nm.createNotificationChannel(channel);
         }
 
-        return new NotificationCompat.Builder(context,CHANNEL_ID)
+        return new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setContentIntent(contentIntent)

@@ -20,67 +20,164 @@ import android.view.animation.DecelerateInterpolator;
 
 public class InstaCropperView extends View {
 
-    public Context context;
-    public static final float DEFAULT_MINIMUM_RATIO = 3F/5F;
+    public static final float DEFAULT_MINIMUM_RATIO = 3F / 5F;
     public static final float DEFAULT_MAXIMUM_RATIO = 1.91F;
     public static final float DEFAULT_RATIO = 1F;
-
     private static final float MAXIMUM_OVER_SCROLL = 144F;
     private static final float MAXIMUM_OVER_SCALE = 0.7F;
-
     private static final long SET_BACK_DURATION = 400;
+    private final GridDrawable mGridDrawable = new GridDrawable();
+    private final RectF mHelperRect = new RectF();
+    private final Drawable.Callback mGridCallback = new Drawable.Callback() {
 
-    public interface BitmapCallback {
-        void onBitmapReady(Bitmap bitmap);
-    }
+        @Override
+        public void invalidateDrawable(Drawable who) {
+            invalidate();
+        }
 
+        @Override
+        public void scheduleDrawable(Drawable who, Runnable what, long when) {
+        }
+
+        @Override
+        public void unscheduleDrawable(Drawable who, Runnable what) {
+        }
+
+    };
+    public Context context;
     private float mMinimumRatio = DEFAULT_MINIMUM_RATIO;
     private float mMaximumRatio = DEFAULT_MAXIMUM_RATIO;
-
     private Uri mImageUri = null;
     private int mImageRawWidth;
     private int mImageRawHeight;
-
     private MakeDrawableTask mMakeDrawableTask = null;
-
     private int mWidth;
     private int mHeight;
-
-    private final GridDrawable mGridDrawable = new GridDrawable();
-
     private Drawable mDrawable = null;
-
     private float mDrawableScale;
     private float mScaleFocusX;
     private float mScaleFocusY;
-
     private float mDisplayDrawableLeft;
     private float mDisplayDrawableTop;
+    private final ScaleGestureDetector.OnScaleGestureListener mOnScaleGestureListener =
+            new ScaleGestureDetector.OnScaleGestureListener() {
 
-    private final RectF mHelperRect = new RectF();
+                @Override
+                public boolean onScale(ScaleGestureDetector detector) {
+                    float overScale = measureOverScale();
+                    float scale = applyOverScaleFix(detector.getScaleFactor(), overScale);
 
+                    mScaleFocusX = detector.getFocusX();
+                    mScaleFocusY = detector.getFocusY();
+
+                    setScaleKeepingFocus(mDrawableScale * scale, mScaleFocusX, mScaleFocusY);
+
+                    return true;
+                }
+
+                @Override
+                public boolean onScaleBegin(ScaleGestureDetector detector) {
+                    return true;
+                }
+
+                @Override
+                public void onScaleEnd(ScaleGestureDetector detector) {
+                }
+
+            };
+    private final ValueAnimator.AnimatorUpdateListener mSettleAnimatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            float animatedValue = (float) animation.getAnimatedValue();
+
+            getDisplayDrawableBounds(mHelperRect);
+
+            float overScrollX = measureOverScrollX(mHelperRect);
+            float overScrollY = measureOverScrollY(mHelperRect);
+            float overScale = measureOverScale();
+
+            mDisplayDrawableLeft -= overScrollX * animatedValue;
+            mDisplayDrawableTop -= overScrollY * animatedValue;
+
+            float targetScale = mDrawableScale / overScale;
+            float newScale = (1 - animatedValue) * mDrawableScale + animatedValue * targetScale;
+
+            setScaleKeepingFocus(newScale, mScaleFocusX, mScaleFocusY);
+
+            updateGrid();
+            invalidate();
+        }
+
+    };
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleGestureDetector;
-
     private float mMaximumOverScroll;
+    private final GestureDetector.OnGestureListener mOnGestureListener = new GestureDetector.OnGestureListener() {
 
+        @Override
+        public boolean onDown(MotionEvent motionEvent) {
+            return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent motionEvent) {
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent motionEvent) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            distanceX = -distanceX;
+            distanceY = -distanceY;
+
+            getDisplayDrawableBounds(mHelperRect);
+
+            float overScrollX = measureOverScrollX(mHelperRect);
+            float overScrollY = measureOverScrollY(mHelperRect);
+
+            distanceX = applyOverScrollFix(distanceX, overScrollX);
+            distanceY = applyOverScrollFix(distanceY, overScrollY);
+
+            mDisplayDrawableLeft += distanceX;
+            mDisplayDrawableTop += distanceY;
+
+            updateGrid();
+            invalidate();
+
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent motionEvent) {
+        }
+
+        @Override
+        public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+            return false;
+        }
+
+    };
     private ValueAnimator mAnimator;
 
     public InstaCropperView(Context context) {
         super(context);
-        this.context=context;
+        this.context = context;
         initialize(context, null, 0, 0);
     }
 
     public InstaCropperView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context=context;
+        this.context = context;
         initialize(context, attrs, 0, 0);
     }
 
     public InstaCropperView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.context=context;
+        this.context = context;
         initialize(context, attrs, defStyleAttr, 0);
     }
 
@@ -103,21 +200,6 @@ public class InstaCropperView extends View {
 
         mGridDrawable.setCallback(mGridCallback);
     }
-
-    private final Drawable.Callback mGridCallback = new Drawable.Callback() {
-
-        @Override
-        public void invalidateDrawable(Drawable who) {
-            invalidate();
-        }
-
-        @Override
-        public void scheduleDrawable(Drawable who, Runnable what, long when) { }
-
-        @Override
-        public void unscheduleDrawable(Drawable who, Runnable what) { }
-
-    };
 
     public void setRatios(float defaultRatio, float minimumRatio, float maximumRatio) {
         mMinimumRatio = minimumRatio;
@@ -183,7 +265,7 @@ public class InstaCropperView extends View {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                ((InstaCropperActivity)context).progress_bar.setVisibility(VISIBLE);
+                ((InstaCropperActivity) context).progress_bar.setVisibility(VISIBLE);
             }
 
             @Override
@@ -234,19 +316,16 @@ public class InstaCropperView extends View {
                                 if (actualWidth <= widthSize && actualHeight <= heightSize) {
                                     targetWidth = actualWidth;
                                     targetHeight = actualHeight;
-                                }
-                                else {
+                                } else {
                                     float specRatio = (float) widthSize / (float) heightSize;
 
                                     if (specRatio == actualRatio) {
                                         targetWidth = widthSize;
                                         targetHeight = heightSize;
-                                    }
-                                    else if (specRatio > actualRatio) {
+                                    } else if (specRatio > actualRatio) {
                                         targetHeight = heightSize;
                                         targetWidth = (int) (targetHeight * actualRatio);
-                                    }
-                                    else {
+                                    } else {
                                         targetWidth = widthSize;
                                         targetHeight = (int) (targetWidth / actualRatio);
                                     }
@@ -256,8 +335,7 @@ public class InstaCropperView extends View {
                                 if (actualWidth <= widthSize) {
                                     targetWidth = actualWidth;
                                     targetHeight = actualHeight;
-                                }
-                                else {
+                                } else {
                                     targetWidth = widthSize;
                                     targetHeight = (int) (targetWidth / actualRatio);
                                 }
@@ -274,8 +352,7 @@ public class InstaCropperView extends View {
                                 if (actualHeight <= heightSize) {
                                     targetHeight = actualHeight;
                                     targetWidth = actualWidth;
-                                }
-                                else {
+                                } else {
                                     targetHeight = heightSize;
                                     targetWidth = (int) (targetHeight * actualRatio);
                                 }
@@ -288,14 +365,14 @@ public class InstaCropperView extends View {
                         break;
                 }
 
-                Bitmap bitmap=cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
+                Bitmap bitmap = cropImageAndResize(context, actualLeft, actualTop, actualRight, actualBottom, targetWidth, targetHeight);
                 callback.onBitmapReady(bitmap);
                 return bitmap;
             }
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                ((InstaCropperActivity)context).progress_bar.setVisibility(GONE);
+                ((InstaCropperActivity) context).progress_bar.setVisibility(GONE);
             }
 
         }.execute(null);
@@ -312,7 +389,7 @@ public class InstaCropperView extends View {
 
         while (resultArea > targetArea) {
             options.inSampleSize *= 2;
-            resultArea = rawArea / (options.inSampleSize * options.inSampleSize) ;
+            resultArea = rawArea / (options.inSampleSize * options.inSampleSize);
         }
 
         if (options.inSampleSize > 1) {
@@ -358,8 +435,7 @@ public class InstaCropperView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         float screenRatio;
         int width, height;
-        if(Global.IS_TABLET)
-        {
+        if (Global.IS_TABLET) {
             int screenWidth, screenHeight;
             int targetWidth, targetHeight;
 
@@ -377,7 +453,7 @@ public class InstaCropperView extends View {
             int heightSize = MeasureSpec.getSize(heightMeasureSpec);
             // Calculate 60% of the screen size
             if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
-                targetHeight = (int) (screenHeight * 0.7f)-Global.ACTION_BAR_HEIGHT;
+                targetHeight = (int) (screenHeight * 0.7f) - Global.ACTION_BAR_HEIGHT;
                 targetWidth = (int) (targetHeight * screenRatio);
                 heightSize -= Global.ACTION_BAR_HEIGHT;
             } else {
@@ -396,8 +472,7 @@ public class InstaCropperView extends View {
             } else {
                 height = (int) (width / screenRatio);
             }
-        }
-        else {
+        } else {
 
             screenRatio = (float) Global.SCREEN_WIDTH / Global.SCREEN_HEIGHT;
             int targetWidth = (int) (Global.SCREEN_WIDTH * 0.7f);
@@ -408,8 +483,8 @@ public class InstaCropperView extends View {
 
             if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
                 // Landscape mode
-                heightSize-=(Global.ACTION_BAR_HEIGHT+Global.EIGHT_DP);
-                targetHeight-=(Global.ACTION_BAR_HEIGHT+Global.EIGHT_DP);
+                heightSize -= (Global.ACTION_BAR_HEIGHT + Global.EIGHT_DP);
+                targetHeight -= (Global.ACTION_BAR_HEIGHT + Global.EIGHT_DP);
                 height = Math.min(heightSize, targetHeight);
                 width = (int) (height * screenRatio);
 
@@ -434,7 +509,6 @@ public class InstaCropperView extends View {
 
         setMeasuredDimension(width, height);
     }
-
 
     /*
     @Override
@@ -638,18 +712,15 @@ public class InstaCropperView extends View {
             boolean drawableIsWiderThanView = drawableRatio > viewRatio;
 
             if (drawableIsWiderThanView) {
-                scale =  (float) mWidth / (float) mImageRawWidth;
-            }
-            else {
+                scale = (float) mWidth / (float) mImageRawWidth;
+            } else {
                 scale = (float) mHeight / (float) mImageRawHeight;
             }
-        }
-        else {
+        } else {
             if (drawableSizeRatio < mMinimumRatio) {
                 getBoundsForHeightAndRatio(mHeight, mMinimumRatio, mHelperRect);
                 scale = mHelperRect.width() / mImageRawWidth;
-            }
-            else {
+            } else {
                 getBoundsForWidthAndRatio(mWidth, mMaximumRatio, mHelperRect);
                 scale = mHelperRect.height() / mImageRawHeight;
             }
@@ -755,58 +826,11 @@ public class InstaCropperView extends View {
         return true;
     }
 
-    private final GestureDetector.OnGestureListener mOnGestureListener = new GestureDetector.OnGestureListener() {
-
-        @Override
-        public boolean onDown(MotionEvent motionEvent) {
-            return true;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent motionEvent) { }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent motionEvent) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            distanceX = - distanceX;
-            distanceY = - distanceY;
-
-            getDisplayDrawableBounds(mHelperRect);
-
-            float overScrollX = measureOverScrollX(mHelperRect);
-            float overScrollY = measureOverScrollY(mHelperRect);
-
-            distanceX = applyOverScrollFix(distanceX, overScrollX);
-            distanceY = applyOverScrollFix(distanceY, overScrollY);
-
-            mDisplayDrawableLeft += distanceX;
-            mDisplayDrawableTop += distanceY;
-
-            updateGrid();
-            invalidate();
-
-            return true;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent motionEvent) { }
-
-        @Override
-        public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-            return false;
-        }
-
-    };
-
     private float measureOverScrollX(RectF displayDrawableBounds) {
         boolean drawableIsSmallerThanView = displayDrawableBounds.width() <= mWidth;
 
         if (drawableIsSmallerThanView) {
-            return displayDrawableBounds.centerX() - mWidth/2;
+            return displayDrawableBounds.centerX() - mWidth / 2;
         }
 
         if (displayDrawableBounds.left <= 0 && displayDrawableBounds.right >= mWidth) {
@@ -828,7 +852,7 @@ public class InstaCropperView extends View {
         boolean drawableIsSmallerThanView = displayDrawableBounds.height() < mHeight;
 
         if (drawableIsSmallerThanView) {
-            return displayDrawableBounds.centerY() - mHeight/2;
+            return displayDrawableBounds.centerY() - mHeight / 2;
         }
 
         if (displayDrawableBounds.top <= 0 && displayDrawableBounds.bottom >= mHeight) {
@@ -857,33 +881,6 @@ public class InstaCropperView extends View {
 
         return distance;
     }
-
-    private final ScaleGestureDetector.OnScaleGestureListener mOnScaleGestureListener =
-            new ScaleGestureDetector.OnScaleGestureListener() {
-
-                @Override
-                public boolean onScale(ScaleGestureDetector detector) {
-                    float overScale = measureOverScale();
-                    float scale = applyOverScaleFix(detector.getScaleFactor(), overScale);
-
-                    mScaleFocusX = detector.getFocusX();
-                    mScaleFocusY = detector.getFocusY();
-
-                    setScaleKeepingFocus(mDrawableScale * scale, mScaleFocusX, mScaleFocusY);
-
-                    return true;
-                }
-
-                @Override
-                public boolean onScaleBegin(ScaleGestureDetector detector) {
-                    return true;
-                }
-
-                @Override
-                public void onScaleEnd(ScaleGestureDetector detector) { }
-
-            };
-
 
     private float measureOverScale() {
         float maximumAllowedScale = getMaximumAllowedScale();
@@ -963,30 +960,8 @@ public class InstaCropperView extends View {
         invalidate();
     }
 
-    private final ValueAnimator.AnimatorUpdateListener mSettleAnimatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
-
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            float animatedValue = (float) animation.getAnimatedValue();
-
-            getDisplayDrawableBounds(mHelperRect);
-
-            float overScrollX = measureOverScrollX(mHelperRect);
-            float overScrollY = measureOverScrollY(mHelperRect);
-            float overScale = measureOverScale();
-
-            mDisplayDrawableLeft -= overScrollX * animatedValue;
-            mDisplayDrawableTop -= overScrollY * animatedValue;
-
-            float targetScale = mDrawableScale / overScale;
-            float newScale = (1 - animatedValue) * mDrawableScale + animatedValue * targetScale;
-
-            setScaleKeepingFocus(newScale, mScaleFocusX, mScaleFocusY);
-
-            updateGrid();
-            invalidate();
-        }
-
-    };
+    public interface BitmapCallback {
+        void onBitmapReady(Bitmap bitmap);
+    }
 
 }

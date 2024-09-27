@@ -24,18 +24,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         Global.GET_ACTION_BAR_HEIGHT(context);
         Global.GET_STORAGE_DIR(context);
 
-       switch (Global.THEME)
-       {
+        switch (Global.THEME) {
 
-           case "light":
-               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-               break;
-           case "dark":
-               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-           case "system":
-               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
-               break;
-       }
+            case "light":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "dark":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            case "system":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
+                break;
+        }
 
     }
 

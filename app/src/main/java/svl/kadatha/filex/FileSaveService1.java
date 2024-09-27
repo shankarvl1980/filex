@@ -14,85 +14,85 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class FileSaveService1 extends Service {
-	private FileSaveServiceBinder binder = new FileSaveServiceBinder();
-	private FileSaveServiceCompletionListener fileSaveServiceCompletionListener;
-	private Context context;
-	private NotifManager nm;
-	static boolean SERVICE_COMPLETED = true;
-	private Handler handler;
-	public LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
+    static boolean SERVICE_COMPLETED = true;
+    public LinkedHashMap<Integer, FileEditorViewModel.PagePointer> pagePointerHashmap;
+    private FileSaveServiceBinder binder = new FileSaveServiceBinder();
+    private FileSaveServiceCompletionListener fileSaveServiceCompletionListener;
+    private Context context;
+    private NotifManager nm;
+    private Handler handler;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		SERVICE_COMPLETED = false;
-		context = this;
-		nm = new NotifManager(context);
-		handler = new Handler();
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SERVICE_COMPLETED = false;
+        context = this;
+        nm = new NotifManager(context);
+        handler = new Handler();
+    }
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Bundle bundle = intent.getBundleExtra("bundle");
-		if (bundle != null) {
-			filesave(bundle);
-			int notification_id = 980;
-			File file = new File(bundle.getString("file_path"));
-			startForeground(notification_id, nm.build(getString(R.string.being_updated) + "-" + "'" + file.getName() + "'", notification_id));
-		} else {
-			SERVICE_COMPLETED = true;
-			stopSelf();
-		}
-		return START_NOT_STICKY;
-	}
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Bundle bundle = intent.getBundleExtra("bundle");
+        if (bundle != null) {
+            filesave(bundle);
+            int notification_id = 980;
+            File file = new File(bundle.getString("file_path"));
+            startForeground(notification_id, nm.build(getString(R.string.being_updated) + "-" + "'" + file.getName() + "'", notification_id));
+        } else {
+            SERVICE_COMPLETED = true;
+            stopSelf();
+        }
+        return START_NOT_STICKY;
+    }
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		if (binder == null) {
-			binder = new FileSaveServiceBinder();
-		}
-		return binder;
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        if (binder == null) {
+            binder = new FileSaveServiceBinder();
+        }
+        return binder;
+    }
 
-	class FileSaveServiceBinder extends Binder {
-		public FileSaveService1 getService() {
-			return FileSaveService1.this;
-		}
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+        SERVICE_COMPLETED = true;
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		handler.removeCallbacksAndMessages(null);
-		SERVICE_COMPLETED = true;
-	}
+    private void filesave(final Bundle bundle) {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        Future future = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                final FileSaveHelper.SaveResult saveResult = FileSaveHelper.saveFile(context, bundle);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (fileSaveServiceCompletionListener != null) {
+                            fileSaveServiceCompletionListener.onServiceCompletion(saveResult);
+                        }
+                        stopForeground(true);
+                        stopSelf();
+                        SERVICE_COMPLETED = true;
+                    }
+                });
+            }
+        });
+    }
 
-	interface FileSaveServiceCompletionListener {
-		void onServiceCompletion(FileSaveHelper.SaveResult result);
-	}
+    public void setFileSaveServiceCompletionListener(FileSaveServiceCompletionListener listener) {
+        fileSaveServiceCompletionListener = listener;
+    }
 
-	private void filesave(final Bundle bundle) {
-		ExecutorService executorService = MyExecutorService.getExecutorService();
-		Future future = executorService.submit(new Runnable() {
-			@Override
-			public void run() {
-				final FileSaveHelper.SaveResult saveResult = FileSaveHelper.saveFile(context, bundle);
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (fileSaveServiceCompletionListener != null) {
-							fileSaveServiceCompletionListener.onServiceCompletion(saveResult);
-						}
-						stopForeground(true);
-						stopSelf();
-						SERVICE_COMPLETED = true;
-					}
-				});
-			}
-		});
-	}
+    interface FileSaveServiceCompletionListener {
+        void onServiceCompletion(FileSaveHelper.SaveResult result);
+    }
 
-	public void setFileSaveServiceCompletionListener(FileSaveServiceCompletionListener listener) {
-		fileSaveServiceCompletionListener = listener;
-	}
+    class FileSaveServiceBinder extends Binder {
+        public FileSaveService1 getService() {
+            return FileSaveService1.this;
+        }
+    }
 }

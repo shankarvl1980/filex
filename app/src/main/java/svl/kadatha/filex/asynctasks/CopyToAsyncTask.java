@@ -33,33 +33,43 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private final List<String> copied_files_name;
     private final Context context;
     private final List<String> copied_source_file_path_list;
+    private final long[] counter_size_files = new long[1];
+    private final List<String> overwritten_file_path_list;
     private int counter_no_files;
-    private final long []counter_size_files=new long[1];
     private FilePOJO filePOJO;
     private String file_name;
     private String copied_file;
-    private final List<String> overwritten_file_path_list;
 
-    public CopyToAsyncTask(Context context,List<Uri>data_list,String file_name,String dest_folder,FileObjectType destFileObjectType,Uri tree_uri,String tree_uri_path,List<String>overwritten_file_path_list, TaskProgressListener listener) {
-        this.context=context;
-        this.data_list=data_list;
-        this.file_name=file_name;
-        this.dest_folder=dest_folder;
-        this.destFileObjectType=destFileObjectType;
-        this.tree_uri=tree_uri;
-        this.tree_uri_path=tree_uri_path;
-        this.overwritten_file_path_list=overwritten_file_path_list;
+    public CopyToAsyncTask(Context context, List<Uri> data_list, String file_name, String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, List<String> overwritten_file_path_list, TaskProgressListener listener) {
+        this.context = context;
+        this.data_list = data_list;
+        this.file_name = file_name;
+        this.dest_folder = dest_folder;
+        this.destFileObjectType = destFileObjectType;
+        this.tree_uri = tree_uri;
+        this.tree_uri_path = tree_uri_path;
+        this.overwritten_file_path_list = overwritten_file_path_list;
         this.listener = listener;
-        this.copied_files_name=new ArrayList<>();
-        this.copied_source_file_path_list=new ArrayList<>();
-        this.counter_no_files=0;
-        this.counter_size_files[0]=0;
+        this.copied_files_name = new ArrayList<>();
+        this.copied_source_file_path_list = new ArrayList<>();
+        this.counter_no_files = 0;
+        this.counter_size_files[0] = 0;
+    }
+
+    public static long getLengthUri(Context context, Uri uri) {
+        long fileSize = 0;
+        try (AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r")) {
+            fileSize = fileDescriptor.getLength();
+        } catch (IOException e) {
+
+        } finally {
+            return fileSize;
+        }
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        if(destFileObjectType== FileObjectType.ROOT_TYPE)
-        {
+        if (destFileObjectType == FileObjectType.ROOT_TYPE) {
             return false;
         }
         if (isCancelled() || data_list == null || data_list.isEmpty()) {
@@ -75,30 +85,30 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             }
         };
 
-        FileModel destFileModel= FileModelFactory.getFileModel(dest_folder,destFileObjectType,tree_uri,tree_uri_path);
-        boolean onlyOneUri=data_list.size()==1;
+        FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
+        boolean onlyOneUri = data_list.size() == 1;
         boolean copy_result = false;
-        for(Uri data:data_list){
-            if(!onlyOneUri) {
-                file_name= CopyToActivity.getFileNameOfUri(context,data);
-            }else{
-                if(file_name.isEmpty())file_name=CopyToActivity.getFileNameOfUri(context,data);
+        for (Uri data : data_list) {
+            if (!onlyOneUri) {
+                file_name = CopyToActivity.getFileNameOfUri(context, data);
+            } else {
+                if (file_name.isEmpty()) file_name = CopyToActivity.getFileNameOfUri(context, data);
             }
             progressHandler.post(progressRunnable);
-            copy_result= FileUtil.CopyUriFileModel(data,destFileModel,file_name,counter_size_files);
+            copy_result = FileUtil.CopyUriFileModel(data, destFileModel, file_name, counter_size_files);
 
             if (copy_result) {
                 String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
                 copied_files_name.add(file_name);
                 copied_source_file_path_list.add(dest_file_path);
                 counter_no_files++;
-                copied_file=file_name;
+                copied_file = file_name;
                 publishProgress(null);
             }
 
         }
-        if(counter_no_files>0){
-            filePOJO= FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder,copied_files_name,destFileObjectType,overwritten_file_path_list);
+        if (counter_no_files > 0) {
+            filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
         }
 
 
@@ -112,7 +122,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], file_name,copied_file);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], file_name, copied_file);
         }
     }
 
@@ -129,20 +139,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onCancelled(Boolean aBoolean) {
         super.onCancelled(aBoolean);
         if (listener != null) {
-            listener.onTaskCancelled(TASK_TYPE,filePOJO);
-        }
-    }
-
-    public static long getLengthUri(Context context, Uri uri)
-    {
-        long fileSize = 0;
-        try (AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r")) {
-            fileSize = fileDescriptor.getLength();
-        } catch (IOException e) {
-
-        }
-        finally {
-            return fileSize;
+            listener.onTaskCancelled(TASK_TYPE, filePOJO);
         }
     }
 }

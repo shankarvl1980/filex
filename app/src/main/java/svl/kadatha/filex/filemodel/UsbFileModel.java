@@ -15,51 +15,123 @@ import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MainActivity;
 
-public class UsbFileModel implements FileModel{
+public class UsbFileModel implements FileModel {
     private final UsbFile usbFile;
     private final String path;
 
-    UsbFileModel(String path){
-        usbFile= FileUtil.getUsbFile(MainActivity.usbFileRoot,path);
-        this.path=path;
+    UsbFileModel(String path) {
+        usbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, path);
+        this.path = path;
+    }
+
+    private static boolean mkdirUsb(UsbFile parentUsbFile, String name) {
+        if (parentUsbFile == null) return false;
+        try {
+            parentUsbFile.createDirectory(name);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static boolean mkdirsUsb(String parent_file_path, @NonNull String path) {
+        UsbFile parentUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, parent_file_path);
+        if (parentUsbFile == null) {
+            return false;
+        }
+
+        String[] pathSegments = path.split("/");
+        for (String segment : pathSegments) {
+            if (!segment.isEmpty()) {
+                UsbFile usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
+                if (usbFile == null) {
+                    if (!mkdirUsb(parentUsbFile, segment)) {
+                        return false;
+                    }
+                    usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
+                    if (usbFile == null) {
+                        return false;
+                    }
+                }
+                parentUsbFile = usbFile;
+            }
+        }
+        return true;
+    }
+
+    private static boolean deleteUsbFile(UsbFile usbFile) {
+        if (usbFile == null) return false;
+        try {
+            if (!usbFile.isDirectory() && usbFile.getLength() == 0) {
+                boolean madeNonZero = make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
+                if (madeNonZero) {
+                    usbFile.delete();
+                    return true;
+                }
+            } else {
+                usbFile.delete();
+                return true;
+            }
+
+
+        } catch (IOException e) {
+            return false;
+        }
+        return false;
+    }
+
+    public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path) {
+        String string = "abcdefghijklmnopqrstuvwxyz";
+        OutputStream outStream = null;
+        try {
+            UsbFile targetUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, target_file_path);
+            if (targetUsbFile != null) {
+                outStream = UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
+                outStream.write(string.getBytes(StandardCharsets.UTF_8));
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (outStream != null) outStream.close();
+            } catch (Exception e) {
+                // ignore exception
+            }
+
+        }
+        return true;
     }
 
     @Override
     public String getName() {
-        if(usbFile!=null)
-        {
+        if (usbFile != null) {
             return new File(path).getName();
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @Override
     public String getParentName() {
-        if(usbFile!=null)
-        {
-            File parentFile=new File(path).getParentFile();
-            if(parentFile!=null)
-            {
+        if (usbFile != null) {
+            File parentFile = new File(path).getParentFile();
+            if (parentFile != null) {
                 return parentFile.getName();
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @Override
     public String getPath() {
-        if(usbFile!=null)
-        {
+        if (usbFile != null) {
             return path;
-        }
-        else{
+        } else {
             return null;
         }
 
@@ -67,26 +139,24 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public String getParentPath() {
-        if(usbFile!=null){
-            return  new File(path).getParent();
-        }
-        else{
+        if (usbFile != null) {
+            return new File(path).getParent();
+        } else {
             return null;
         }
     }
 
     @Override
     public boolean isDirectory() {
-        if(usbFile!=null)
-        {
+        if (usbFile != null) {
             return usbFile.isDirectory();
         }
         return false;
     }
 
     @Override
-    public boolean rename(String new_name,boolean overwrite) {
-        if(usbFile==null) return false;
+    public boolean rename(String new_name, boolean overwrite) {
+        if (usbFile == null) return false;
         try {
             usbFile.setName(new_name);
             return true;
@@ -155,24 +225,23 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public InputStream getInputStream() {
-        if(usbFile!=null)
-        {
-            return UsbFileStreamFactory.createBufferedInputStream(usbFile,MainActivity.usbCurrentFs);
+        if (usbFile != null) {
+            return UsbFileStreamFactory.createBufferedInputStream(usbFile, MainActivity.usbCurrentFs);
         }
         return null;
     }
 
     @Override
-    public OutputStream getChildOutputStream(String child_name,long source_length) {
-        UsbFile parentUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,path);
-        if (parentUsbFile != null)
-        {
-            UsbFile targetUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, Global.CONCATENATE_PARENT_CHILD_PATH(path,child_name));
-            if(targetUsbFile!=null && targetUsbFile.getLength()==0)deleteUsbFile(targetUsbFile);
+    public OutputStream getChildOutputStream(String child_name, long source_length) {
+        UsbFile parentUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, path);
+        if (parentUsbFile != null) {
+            UsbFile targetUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name));
+            if (targetUsbFile != null && targetUsbFile.getLength() == 0)
+                deleteUsbFile(targetUsbFile);
             try {
                 targetUsbFile = parentUsbFile.createFile(child_name);
-                if(source_length >0) targetUsbFile.setLength(source_length); // causes problem
-                return UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
+                if (source_length > 0) targetUsbFile.setLength(source_length); // causes problem
+                return UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile, MainActivity.usbCurrentFs);
 
             } catch (Exception e) {
                 return null;
@@ -183,16 +252,14 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public FileModel[] list() {
-        if(usbFile!=null)
-        {
-            if(!usbFile.isDirectory()) return null;
+        if (usbFile != null) {
+            if (!usbFile.isDirectory()) return null;
             try {
-                UsbFile [] usbFiles=usbFile.listFiles();
-                int size= usbFiles != null ? usbFiles.length : 0;
-                FileModel[] fileModels=new FileModel[size];
-                for(int i=0;i<size;++i)
-                {
-                    fileModels[i]=new UsbFileModel(usbFiles[i].getAbsolutePath());
+                UsbFile[] usbFiles = usbFile.listFiles();
+                int size = usbFiles != null ? usbFiles.length : 0;
+                FileModel[] fileModels = new FileModel[size];
+                for (int i = 0; i < size; ++i) {
+                    fileModels[i] = new UsbFileModel(usbFiles[i].getAbsolutePath());
                 }
                 return fileModels;
             } catch (Exception e) {
@@ -204,7 +271,7 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public boolean createFile(String name) {
-        if(usbFile==null) return false;
+        if (usbFile == null) return false;
         try {
             usbFile.createFile(name);
             return true;
@@ -213,19 +280,15 @@ public class UsbFileModel implements FileModel{
         }
     }
 
-
     @Override
     public boolean makeDirIfNotExists(String dir_name) {
-        UsbFile childUsbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot,Global.CONCATENATE_PARENT_CHILD_PATH(path,dir_name));
-        if(childUsbFile==null)
-        {
-            return mkdirUsb(usbFile,dir_name);
-        }
-        else {
+        UsbFile childUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, Global.CONCATENATE_PARENT_CHILD_PATH(path, dir_name));
+        if (childUsbFile == null) {
+            return mkdirUsb(usbFile, dir_name);
+        } else {
             return childUsbFile.isDirectory();
         }
     }
-
 
     @Override
     public boolean makeDirsRecursively(String extended_path) {
@@ -234,22 +297,19 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public long getLength() {
-        if(usbFile!=null){
+        if (usbFile != null) {
             return usbFile.getLength();
-        }
-        else{
+        } else {
             return 0;
         }
     }
 
     @Override
     public boolean exists() {
-        if(usbFile!=null)
-        {
-            UsbFile dest_usbFile=FileUtil.getUsbFile(MainActivity.usbFileRoot, path);
+        if (usbFile != null) {
+            UsbFile dest_usbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, path);
             return dest_usbFile != null;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -257,10 +317,9 @@ public class UsbFileModel implements FileModel{
 
     @Override
     public long lastModified() {
-        if(usbFile!=null){
+        if (usbFile != null) {
             return usbFile.lastModified();
-        }
-        else{
+        } else {
             return 0;
         }
     }
@@ -268,104 +327,6 @@ public class UsbFileModel implements FileModel{
     @Override
     public boolean isHidden() {
         return path.startsWith(".");
-    }
-
-    private static boolean mkdirUsb(UsbFile parentUsbFile, String name)
-    {
-        if(parentUsbFile==null) return false;
-        try {
-            parentUsbFile.createDirectory(name);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    private static boolean mkdirsUsb(String parent_file_path, @NonNull String path) {
-        UsbFile parentUsbFile = FileUtil.getUsbFile(MainActivity.usbFileRoot, parent_file_path);
-        if (parentUsbFile == null) {
-            return false;
-        }
-
-        String[] pathSegments = path.split("/");
-        for (String segment : pathSegments) {
-            if (!segment.isEmpty()) {
-                UsbFile usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
-                if (usbFile == null) {
-                    if (!mkdirUsb(parentUsbFile, segment)) {
-                        return false;
-                    }
-                    usbFile = FileUtil.getUsbFile(parentUsbFile, segment);
-                    if (usbFile == null) {
-                        return false;
-                    }
-                }
-                parentUsbFile = usbFile;
-            }
-        }
-        return true;
-    }
-
-    private static boolean deleteUsbFile(UsbFile usbFile)
-    {
-        if(usbFile==null) return false;
-        try {
-            if(!usbFile.isDirectory() && usbFile.getLength()==0)
-            {
-                boolean madeNonZero=make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
-                if(madeNonZero)
-                {
-                    usbFile.delete();
-                    return true;
-                }
-            }
-            else
-            {
-                usbFile.delete();
-                return true;
-            }
-
-
-        } catch (IOException e) {
-            return false;
-        }
-        return false;
-    }
-
-    public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path)
-    {
-        String string="abcdefghijklmnopqrstuvwxyz";
-        OutputStream outStream=null;
-        try
-        {
-            UsbFile targetUsbFile=  FileUtil.getUsbFile(MainActivity.usbFileRoot,target_file_path);
-            if (targetUsbFile != null)
-            {
-                outStream=UsbFileStreamFactory.createBufferedOutputStream(targetUsbFile,MainActivity.usbCurrentFs);
-                outStream.write(string.getBytes(StandardCharsets.UTF_8));
-            }
-            else
-            {
-                return false;
-            }
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-        finally
-        {
-            try
-            {
-                if(outStream!=null)outStream.close();
-            }
-            catch (Exception e)
-            {
-                // ignore exception
-            }
-
-        }
-        return true;
     }
 
 }

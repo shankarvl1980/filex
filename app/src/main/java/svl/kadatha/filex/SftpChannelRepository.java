@@ -12,13 +12,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
 public class SftpChannelRepository {
+    private static final int MAX_IDLE_CONNECTIONS = 5;
+    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
+    private static final String TAG = "Sftp-sftpchannel";
     private static SftpChannelRepository instance;
     private final ConcurrentLinkedQueue<ChannelSftp> sftpChannels;
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
@@ -26,9 +29,6 @@ public class SftpChannelRepository {
     private final ScheduledExecutorService keepAliveScheduler;
     private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private int initialChannels;
-    private static final int MAX_IDLE_CONNECTIONS = 5;
-    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
-    private static final String TAG = "Sftp-sftpchannel";
 
     private SftpChannelRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         this.sftpChannels = new ConcurrentLinkedQueue<>();
@@ -92,13 +92,13 @@ public class SftpChannelRepository {
         JSch jsch = new JSch();
         Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.host, networkAccountPOJO.port);
 
-        if(!networkAccountPOJO.privateKeyPath.isEmpty()) {
+        if (!networkAccountPOJO.privateKeyPath.isEmpty()) {
             jsch.addIdentity(networkAccountPOJO.privateKeyPath, networkAccountPOJO.privateKeyPassphrase);
         } else {
             session.setPassword(networkAccountPOJO.password);
         }
 
-        if(!networkAccountPOJO.knownHostsPath.isEmpty()) {
+        if (!networkAccountPOJO.knownHostsPath.isEmpty()) {
             jsch.setKnownHosts(networkAccountPOJO.knownHostsPath);
         } else {
             session.setConfig("StrictHostKeyChecking", "no");
@@ -179,7 +179,7 @@ public class SftpChannelRepository {
             }
         }
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()),"");
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), "");
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.SFTP_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
 
@@ -216,7 +216,7 @@ public class SftpChannelRepository {
             channel = getSftpChannel();
             return testConnection(channel);
         } catch (JSchException e) {
-            Timber.tag(TAG).e( "Error getting SFTP channel: %s", e.getMessage());
+            Timber.tag(TAG).e("Error getting SFTP channel: %s", e.getMessage());
             return false;
         } finally {
             if (channel != null) {

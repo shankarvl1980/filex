@@ -1,15 +1,17 @@
 package svl.kadatha.filex;
+
 import android.os.Handler;
 import android.os.Looper;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public abstract class AlternativeAsyncTask < Params, Progress, Result > {
+public abstract class AlternativeAsyncTask<Params, Progress, Result> {
 
     private final ExecutorService executor;
     private Handler handler;
-    private Future<?>future;
+    private Future<?> future;
+
     protected AlternativeAsyncTask() {
 
         executor = MyExecutorService.getExecutorService();
@@ -18,23 +20,26 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
 
     public Handler getHandler() {
         if (handler == null) {
-            synchronized(AlternativeAsyncTask.class)
-            {
+            synchronized (AlternativeAsyncTask.class) {
                 handler = new Handler(Looper.getMainLooper());
             }
         }
         return handler;
     }
 
-    protected void onPreExecute() {}
+    protected void onPreExecute() {
+    }
 
     protected abstract Result doInBackground(Params[] params);
 
-    protected void onPostExecute(Result result) {}
+    protected void onPostExecute(Result result) {
+    }
 
-    protected void onCancelled(Result result) {}
+    protected void onCancelled(Result result) {
+    }
 
-    protected void onProgressUpdate(Progress value) {}
+    protected void onProgressUpdate(Progress value) {
+    }
 
     public void publishProgress(Progress value) {
         getHandler().post(new Runnable() {
@@ -51,12 +56,11 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
             @Override
             public void run() {
                 onPreExecute();
-                future=executor.submit(new Runnable() {
+                future = executor.submit(new Runnable() {
                     @Override
                     public void run() {
                         Result result = doInBackground(params);
-                        if(isCancelled())
-                        {
+                        if (isCancelled()) {
                             getHandler().post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -64,8 +68,7 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
                                 }
                             });
 
-                        }
-                        else {
+                        } else {
                             getHandler().post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -82,14 +85,13 @@ public abstract class AlternativeAsyncTask < Params, Progress, Result > {
     }
 
     public void cancel(boolean interrupt) {
-        if(future!=null)
-        {
+        if (future != null) {
             future.cancel(interrupt);
         }
 
     }
 
     public boolean isCancelled() {
-        return executor == null || executor.isTerminated() || executor.isShutdown() || future ==null || future.isCancelled();
+        return executor == null || executor.isTerminated() || executor.isShutdown() || future == null || future.isCancelled();
     }
 }

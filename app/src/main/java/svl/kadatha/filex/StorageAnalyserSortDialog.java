@@ -19,42 +19,39 @@ import androidx.fragment.app.DialogFragment;
 
 
 @SuppressWarnings("Convert2Lambda")
-public class StorageAnalyserSortDialog extends DialogFragment
-{
+public class StorageAnalyserSortDialog extends DialogFragment {
     private TinyDB tinyDB;
-    private ImageButton name_asc_btn,name_desc_btn,date_asc_btn,date_desc_btn,size_asc_btn,size_desc_btn;
+    private ImageButton name_asc_btn, name_desc_btn, date_asc_btn, date_desc_btn, size_asc_btn, size_desc_btn;
     private Context context;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context=context;
-        tinyDB=new TinyDB(context);
+        this.context = context;
+        tinyDB = new TinyDB(context);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCancelable(false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: Implement this method
 
-        View v= inflater.inflate(R.layout.fragment_storage_analyser_sort,container,false);
-        TextView lable=v.findViewById(R.id.storage_analyser_sort_heading);
+        View v = inflater.inflate(R.layout.fragment_storage_analyser_sort, container, false);
+        TextView lable = v.findViewById(R.id.storage_analyser_sort_heading);
         lable.setText(getString(R.string.sort));
-        Group layout_group=v.findViewById(R.id.storage_analyser_layout_group);
+        Group layout_group = v.findViewById(R.id.storage_analyser_layout_group);
         layout_group.setVisibility(View.GONE);
-        name_asc_btn=v.findViewById(R.id.storage_analyser_name_asc);
-        name_desc_btn=v.findViewById(R.id.storage_analyser_name_desc);
-        date_asc_btn=v.findViewById(R.id.storage_analyser_date_asc);
-        date_desc_btn=v.findViewById(R.id.storage_analyser_date_desc);
-        size_asc_btn=v.findViewById(R.id.storage_analyser_size_asc);
-        size_desc_btn=v.findViewById(R.id.storage_analyser_size_desc);
+        name_asc_btn = v.findViewById(R.id.storage_analyser_name_asc);
+        name_desc_btn = v.findViewById(R.id.storage_analyser_name_desc);
+        date_asc_btn = v.findViewById(R.id.storage_analyser_date_asc);
+        date_desc_btn = v.findViewById(R.id.storage_analyser_date_desc);
+        size_asc_btn = v.findViewById(R.id.storage_analyser_size_asc);
+        size_desc_btn = v.findViewById(R.id.storage_analyser_size_desc);
 
         SortButtonClickListener sortButtonClickListener = new SortButtonClickListener();
         name_asc_btn.setOnClickListener(sortButtonClickListener);
@@ -66,13 +63,11 @@ public class StorageAnalyserSortDialog extends DialogFragment
 
 
         ViewGroup buttons_layout = v.findViewById(R.id.storage_analyser_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,1,Global.DIALOG_WIDTH,Global.DIALOG_WIDTH));
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
         Button close_button = buttons_layout.findViewById(R.id.first_button);
         close_button.setText(R.string.close);
-        close_button.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        close_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 dismissAllowingStateLoss();
             }
         });
@@ -83,10 +78,8 @@ public class StorageAnalyserSortDialog extends DialogFragment
         return v;
     }
 
-    private void set_selection()
-    {
-        switch(Global.STORAGE_ANALYSER_SORT)
-        {
+    private void set_selection() {
+        switch (Global.STORAGE_ANALYSER_SORT) {
 
             case "d_name_asc":
             case "f_name_asc":
@@ -158,25 +151,22 @@ public class StorageAnalyserSortDialog extends DialogFragment
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         // TODO: Implement this method
         super.onResume();
-        Window window=getDialog().getWindow();
-        window.setLayout(Global.DIALOG_WIDTH,LayoutParams.WRAP_CONTENT);
+        Window window = getDialog().getWindow();
+        window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
-    private class SortButtonClickListener implements View.OnClickListener
-    {
+    private class SortButtonClickListener implements View.OnClickListener {
 
         @Override
-        public void onClick(View button)
-        {
+        public void onClick(View button) {
             // TODO: Implement this method
             String selected_sort;
             int id = button.getId();
-            if(id==R.id.storage_analyser_name_asc){
+            if (id == R.id.storage_analyser_name_asc) {
                 selected_sort = "d_name_asc";
             } else if (id == R.id.storage_analyser_name_desc) {
                 selected_sort = "d_name_desc";
@@ -184,32 +174,27 @@ public class StorageAnalyserSortDialog extends DialogFragment
                 selected_sort = "d_date_asc";
             } else if (id == R.id.storage_analyser_date_desc) {
                 selected_sort = "d_date_desc";
-            } else if(id==R.id.storage_analyser_size_asc) {
-                selected_sort="d_size_asc";
+            } else if (id == R.id.storage_analyser_size_asc) {
+                selected_sort = "d_size_asc";
             } else {
-                selected_sort="d_size_desc";
+                selected_sort = "d_size_desc";
             }
 
-            if(!selected_sort.equals(Global.STORAGE_ANALYSER_SORT))
-            {
-                StorageAnalyserFragment storageAnalyserFragment =(StorageAnalyserFragment)getParentFragmentManager().findFragmentById(R.id.storage_analyser_container);
-                if(storageAnalyserFragment !=null && storageAnalyserFragment.progress_bar.getVisibility()==View.GONE)
-                {
-                    if(storageAnalyserFragment.fileclickselected.equals("Duplicate Files") && (id!=R.id.storage_analyser_name_desc && id!=R.id.storage_analyser_name_asc))
-                    {
-                        Global.print(context,getString(R.string.cannot_sort_here));
+            if (!selected_sort.equals(Global.STORAGE_ANALYSER_SORT)) {
+                StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) getParentFragmentManager().findFragmentById(R.id.storage_analyser_container);
+                if (storageAnalyserFragment != null && storageAnalyserFragment.progress_bar.getVisibility() == View.GONE) {
+                    if (storageAnalyserFragment.fileclickselected.equals("Duplicate Files") && (id != R.id.storage_analyser_name_desc && id != R.id.storage_analyser_name_asc)) {
+                        Global.print(context, getString(R.string.cannot_sort_here));
                         return;
                     }
-                    Global.STORAGE_ANALYSER_SORT=selected_sort;
+                    Global.STORAGE_ANALYSER_SORT = selected_sort;
                     set_selection();
 
                     getParentFragmentManager().beginTransaction().detach(storageAnalyserFragment).commit();
                     getParentFragmentManager().beginTransaction().attach(storageAnalyserFragment).commit();
-                    tinyDB.putString("storage_analyser_sort",Global.STORAGE_ANALYSER_SORT);
-                }
-                else
-                {
-                    Global.print(context,getString(R.string.wait_ellipse));
+                    tinyDB.putString("storage_analyser_sort", Global.STORAGE_ANALYSER_SORT);
+                } else {
+                    Global.print(context, getString(R.string.wait_ellipse));
                 }
 
             }

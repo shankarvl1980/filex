@@ -44,7 +44,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
                     df.detailFragmentListener.setCurrentDirText(DetailFragment.USB_FILE_PREFIX + File.separator);
                     df.detailFragmentListener.enableParentDirImageButton(false);
                 }
-            } else if(df.fileObjectType==FileObjectType.FILE_TYPE){
+            } else if (df.fileObjectType == FileObjectType.FILE_TYPE) {
                 File f = new File(df.fileclickselected);
                 File parent_file = f.getParentFile();
                 if (parent_file != null) {
@@ -57,69 +57,8 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnLongClickListener {
-        final RecyclerViewLayout view;
-        int pos;
-
-        ViewHolder(RecyclerViewLayout view) {
-            super(view);
-            this.view = view;
-            this.view.setOnClickListener(this);
-            this.view.setOnLongClickListener(this);
-        }
-
-        @Override
-        public void onClick(View p1) {
-            pos = getBindingAdapterPosition();
-            int size = df.viewModel.mselecteditems.size();
-            if (size > 0) {
-                longClickMethod(p1, size);
-            } else {
-                if (cardViewClickListener != null) {
-                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
-                    cardViewClickListener.onClick(filePOJO);
-                }
-            }
-        }
-
-        private void longClickMethod(View v, int size) {
-            pos = getBindingAdapterPosition();
-            if (df.viewModel.mselecteditems.containsKey(pos)) {
-                df.viewModel.mselecteditems.remove(pos);
-                v.setSelected(false);
-                ((RecyclerViewLayout) v).set_selected(false);
-                --size;
-
-                if (cardViewClickListener != null) {
-                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
-                    cardViewClickListener.onLongClick(filePOJO, size);
-                }
-            } else {
-                df.viewModel.mselecteditems.put(pos, df.filePOJO_list.get(pos).getPath());
-                v.setSelected(true);
-                ((RecyclerViewLayout) v).set_selected(true);
-                ++size;
-
-                if (cardViewClickListener != null) {
-                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
-                    cardViewClickListener.onLongClick(filePOJO, size);
-                }
-            }
-            if (df.detailFragmentListener != null) {
-                df.detailFragmentListener.setFileNumberView(size + "/" + df.file_list_size);
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View p1) {
-            longClickMethod(p1, df.viewModel.mselecteditems.size());
-            return true;
-        }
-    }
-
     @Override
     public abstract ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
-
 
     @Override
     public void onBindViewHolder(DetailRecyclerViewAdapter.ViewHolder p1, int p2) {
@@ -208,7 +147,6 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
-
     public void selectAll() {
         df.viewModel.mselecteditems = new IndexedLinkedHashMap<>();
         int size = df.filePOJO_list.size();
@@ -235,6 +173,10 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
 
     }
 
+    public void setCardViewClickListener(CardViewClickListener listener) {
+        this.cardViewClickListener = listener;
+    }
+
 
     interface CardViewClickListener {
         void onClick(FilePOJO filePOJO);
@@ -242,9 +184,64 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
         void onLongClick(FilePOJO filePOJO, int size);
     }
 
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnLongClickListener {
+        final RecyclerViewLayout view;
+        int pos;
 
-    public void setCardViewClickListener(CardViewClickListener listener) {
-        this.cardViewClickListener = listener;
+        ViewHolder(RecyclerViewLayout view) {
+            super(view);
+            this.view = view;
+            this.view.setOnClickListener(this);
+            this.view.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View p1) {
+            pos = getBindingAdapterPosition();
+            int size = df.viewModel.mselecteditems.size();
+            if (size > 0) {
+                longClickMethod(p1, size);
+            } else {
+                if (cardViewClickListener != null) {
+                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
+                    cardViewClickListener.onClick(filePOJO);
+                }
+            }
+        }
+
+        private void longClickMethod(View v, int size) {
+            pos = getBindingAdapterPosition();
+            if (df.viewModel.mselecteditems.containsKey(pos)) {
+                df.viewModel.mselecteditems.remove(pos);
+                v.setSelected(false);
+                ((RecyclerViewLayout) v).set_selected(false);
+                --size;
+
+                if (cardViewClickListener != null) {
+                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
+                    cardViewClickListener.onLongClick(filePOJO, size);
+                }
+            } else {
+                df.viewModel.mselecteditems.put(pos, df.filePOJO_list.get(pos).getPath());
+                v.setSelected(true);
+                ((RecyclerViewLayout) v).set_selected(true);
+                ++size;
+
+                if (cardViewClickListener != null) {
+                    FilePOJO filePOJO = df.filePOJO_list.get(pos);
+                    cardViewClickListener.onLongClick(filePOJO, size);
+                }
+            }
+            if (df.detailFragmentListener != null) {
+                df.detailFragmentListener.setFileNumberView(size + "/" + df.file_list_size);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View p1) {
+            longClickMethod(p1, df.viewModel.mselecteditems.size());
+            return true;
+        }
     }
 
 }

@@ -28,34 +28,34 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppManagerActivity extends BaseActivity{
+public class AppManagerActivity extends BaseActivity {
 
-    private Context context;
+    public static final String APP_TYPE = "app_type";
+    public static final String USER_INSTALLED_APPS = "user_installed_apps";
+    public static final String SYSTEM_APPS = "system_apps";
+    public static final String ACTIVITY_NAME = "APP_MANAGER_ACTIVITY";
+    public static boolean FILE_GRID_LAYOUT;
+    private final List<SearchFilterListener> searchFilterListeners = new ArrayList<>();
     public ViewPager viewPager;
-    private AppManagerListFragment userAppListFragment,systemAppListFragment;
-    public static final String APP_TYPE="app_type";
-    public static final String USER_INSTALLED_APPS="user_installed_apps";
-    public static final String SYSTEM_APPS="system_apps";
     public boolean search_toolbar_visible;
     public KeyBoardUtil keyBoardUtil;
-    private Group search_toolbar;
     public EditText search_edittext;
-    private final List<SearchFilterListener> searchFilterListeners=new ArrayList<>();
     public boolean clear_cache;
-    public static final String ACTIVITY_NAME="APP_MANAGER_ACTIVITY";
+    private Context context;
+    private AppManagerListFragment userAppListFragment, systemAppListFragment;
+    private Group search_toolbar;
     private AppManagementFragmentAdapter adapter;
-    public static boolean FILE_GRID_LAYOUT;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
-        context=this;
+        context = this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);
-        keyBoardUtil=new KeyBoardUtil(containerLayout);
-        search_toolbar=findViewById(R.id.app_manager_search_toolbar);
-        search_edittext=findViewById(R.id.app_manager_search_view_edit_text);
+        keyBoardUtil = new KeyBoardUtil(containerLayout);
+        search_toolbar = findViewById(R.id.app_manager_search_toolbar);
+        search_edittext = findViewById(R.id.app_manager_search_view_edit_text);
         search_edittext.setMaxWidth(Integer.MAX_VALUE);
         search_edittext.addTextChangedListener(new TextWatcher() {
             @Override
@@ -70,15 +70,12 @@ public class AppManagerActivity extends BaseActivity{
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(!search_toolbar_visible)
-                {
+                if (!search_toolbar_visible) {
                     return;
                 }
 
-                for(SearchFilterListener listener:searchFilterListeners)
-                {
-                    if(listener!=null)
-                    {
+                for (SearchFilterListener listener : searchFilterListeners) {
+                    if (listener != null) {
                         listener.onSearchFilter(s.toString());
                     }
                 }
@@ -95,8 +92,8 @@ public class AppManagerActivity extends BaseActivity{
 
 
         TabLayout tabLayout = findViewById(R.id.activity_app_manager_tab_layout);
-        viewPager=findViewById(R.id.activity_app_manager_viewpager);
-        adapter = new AppManagementFragmentAdapter(getSupportFragmentManager(),context);
+        viewPager = findViewById(R.id.activity_app_manager_viewpager);
+        adapter = new AppManagementFragmentAdapter(getSupportFragmentManager(), context);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -127,27 +124,22 @@ public class AppManagerActivity extends BaseActivity{
 
 
         adapter.startUpdate(viewPager);
-        userAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,0);
-        systemAppListFragment= (AppManagerListFragment) adapter.instantiateItem(viewPager,1);
+        userAppListFragment = (AppManagerListFragment) adapter.instantiateItem(viewPager, 0);
+        systemAppListFragment = (AppManagerListFragment) adapter.instantiateItem(viewPager, 1);
         adapter.finishUpdate(viewPager);
 
-        AppManagerListViewModel viewModel=new ViewModelProvider(this).get(AppManagerListViewModel.class);
+        AppManagerListViewModel viewModel = new ViewModelProvider(this).get(AppManagerListViewModel.class);
         viewModel.populateApps();
-        Intent intent=getIntent();
-        on_intent(intent,savedInstanceState);
-        getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
+        Intent intent = getIntent();
+        on_intent(intent, savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(keyBoardUtil.getKeyBoardVisibility())
-                {
-                    ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
-                }
-                else if(search_toolbar_visible)
-                {
+                if (keyBoardUtil.getKeyBoardVisibility()) {
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
+                } else if (search_toolbar_visible) {
                     setSearchBarVisibility(false);
-                }
-                else
-                {
+                } else {
                     userAppListFragment.clear_selection();
                     systemAppListFragment.clear_selection();
                     finish();
@@ -157,40 +149,32 @@ public class AppManagerActivity extends BaseActivity{
 
     }
 
-    private void on_intent(Intent intent,Bundle savedInstanceState)
-    {
+    private void on_intent(Intent intent, Bundle savedInstanceState) {
 
     }
 
 
-    public void setSearchBarVisibility(boolean visible)
-    {
-        if(userAppListFragment.adapter==null || userAppListFragment.progress_bar.getVisibility()==View.VISIBLE || systemAppListFragment.adapter==null || systemAppListFragment.progress_bar.getVisibility()==View.VISIBLE)
-        {
-            Global.print(context,getString(R.string.please_wait));
+    public void setSearchBarVisibility(boolean visible) {
+        if (userAppListFragment.adapter == null || userAppListFragment.progress_bar.getVisibility() == View.VISIBLE || systemAppListFragment.adapter == null || systemAppListFragment.progress_bar.getVisibility() == View.VISIBLE) {
+            Global.print(context, getString(R.string.please_wait));
             return;
         }
-        search_toolbar_visible=visible;
-        if(search_toolbar_visible)
-        {
-            ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        search_toolbar_visible = visible;
+        if (search_toolbar_visible) {
+            ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             search_toolbar.setVisibility(View.VISIBLE);
             search_edittext.requestFocus();
             userAppListFragment.clear_selection();
             systemAppListFragment.clear_selection();
-        }
-        else
-        {
-            ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(),0);
+        } else {
+            ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
             search_toolbar.setVisibility(View.GONE);
             search_edittext.setText("");
             search_edittext.clearFocus();
             userAppListFragment.clear_selection();
             systemAppListFragment.clear_selection();
-            for(SearchFilterListener listener:searchFilterListeners)
-            {
-                if(listener!=null)
-                {
+            for (SearchFilterListener listener : searchFilterListeners) {
+                if (listener != null) {
                     listener.onSearchFilter(null);
                 }
             }
@@ -198,27 +182,82 @@ public class AppManagerActivity extends BaseActivity{
 
     }
 
+    public void refresh_adapter() {
+        startActivity(getIntent());
+        finish();
+        overridePendingTransition(0, 0);
+    }
 
-    private static class AppManagementFragmentAdapter extends FragmentPagerAdapter
-    {
+    @Override
+    protected void onStart() {
+        // TODO: Implement this method
+        super.onStart();
+        clear_cache = true;
+        Global.WORKOUT_AVAILABLE_SPACE();
+    }
 
-        private AppManagerListFragment mCurrentFragment;
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("clear_cache", clear_cache);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        clear_cache = savedInstanceState.getBoolean("clear_cache");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!isFinishing() && !isChangingConfigurations() && clear_cache) {
+            clearCache();
+        }
+    }
+
+    public void clearCache() {
+        Global.CLEAR_CACHE();
+    }
+
+    public void refresh_fragment_on_uninstall() {
+        AppManagerListFragment appManagerListFragment = adapter.getCurrentFragment();
+        if (appManagerListFragment != null) {
+            appManagerListFragment.num_all_app--;
+            appManagerListFragment.clear_selection();
+        }
+    }
+
+    public void addSearchFilterListener(SearchFilterListener listener) {
+        searchFilterListeners.add(listener);
+    }
+
+    public void removeSearchFilterListener(SearchFilterListener listener) {
+        searchFilterListeners.remove(listener);
+    }
+
+    interface SearchFilterListener {
+        void onSearchFilter(String constraint);
+    }
+
+    private static class AppManagementFragmentAdapter extends FragmentPagerAdapter {
+
         private final Context context;
+        private AppManagerListFragment mCurrentFragment;
+
         public AppManagementFragmentAdapter(@NonNull FragmentManager fm, Context context) {
-            super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            this.context=context;
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.context = context;
         }
 
-        public AppManagerListFragment getCurrentFragment()
-        {
+        public AppManagerListFragment getCurrentFragment() {
             return mCurrentFragment;
         }
 
         @Override
         public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            if(getCurrentFragment()!=object)
-            {
-                mCurrentFragment= (AppManagerListFragment) object;
+            if (getCurrentFragment() != object) {
+                mCurrentFragment = (AppManagerListFragment) object;
             }
             super.setPrimaryItem(container, position, object);
         }
@@ -258,73 +297,6 @@ public class AppManagerActivity extends BaseActivity{
             }
             return context.getString(R.string.user_installed_apps);
         }
-    }
-
-
-    public void refresh_adapter()
-    {
-        startActivity(getIntent());
-        finish();
-        overridePendingTransition(0, 0);
-    }
-    @Override
-    protected void onStart()
-    {
-        // TODO: Implement this method
-        super.onStart();
-        clear_cache=true;
-        Global.WORKOUT_AVAILABLE_SPACE();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("clear_cache",clear_cache);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        clear_cache=savedInstanceState.getBoolean("clear_cache");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(!isFinishing() && !isChangingConfigurations() && clear_cache)
-        {
-            clearCache();
-        }
-    }
-
-    public void clearCache()
-    {
-        Global.CLEAR_CACHE();
-    }
-
-    public void refresh_fragment_on_uninstall()
-    {
-        AppManagerListFragment appManagerListFragment=adapter.getCurrentFragment();
-        if(appManagerListFragment!=null)
-        {
-            appManagerListFragment.num_all_app--;
-            appManagerListFragment.clear_selection();
-        }
-    }
-
-    interface SearchFilterListener
-    {
-        void onSearchFilter(String constraint);
-    }
-
-    public void addSearchFilterListener(SearchFilterListener listener)
-    {
-        searchFilterListeners.add(listener);
-    }
-
-    public void removeSearchFilterListener(SearchFilterListener listener)
-    {
-        searchFilterListeners.remove(listener);
     }
 
 

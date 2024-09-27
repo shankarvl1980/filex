@@ -13,158 +13,140 @@ import android.widget.LinearLayout;
 import androidx.annotation.IdRes;
 import androidx.core.content.ContextCompat;
 
-public class EquallyDistributedButtonsWithTextLayout extends ViewGroup
-{
-	private final Context context;
-	private final int screen_width;
+public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
+    private final Context context;
+    private final int screen_width;
     private final int screen_height;
-    private int child_count,toppadding;
-	private LinearLayout.LayoutParams params;
+    private int child_count, toppadding;
+    private LinearLayout.LayoutParams params;
 
-	EquallyDistributedButtonsWithTextLayout(Context context, int child_count, int screen_width, int screen_height)
-	{
-		super(context);
-		this.context=context;
-		this.child_count=child_count;
-		this.screen_width=screen_width;
-		this.screen_height=screen_height;
-		init();
-	}
-	
-	EquallyDistributedButtonsWithTextLayout(Context context, AttributeSet attr, int child_count, int screen_width, int screen_height)
-	{
-		super(context,attr);
-		this.context=context;
-		this.child_count=child_count;
-		this.screen_width=screen_width;
-		this.screen_height=screen_height;
-		init();
-	}
-	
-	EquallyDistributedButtonsWithTextLayout(Context context, AttributeSet attr, int defStyle, int child_count, int screen_width, int screen_height)
-	{
-		super(context,attr,defStyle);
-		this.context=context;
-		this.child_count=child_count;
-		this.screen_width=screen_width;
-		this.screen_height=screen_height;
-		init();
-	}
+    EquallyDistributedButtonsWithTextLayout(Context context, int child_count, int screen_width, int screen_height) {
+        super(context);
+        this.context = context;
+        this.child_count = child_count;
+        this.screen_width = screen_width;
+        this.screen_height = screen_height;
+        init();
+    }
 
-	private void init()
-	{
-		setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT,ViewGroup.MarginLayoutParams.WRAP_CONTENT));
-		LayoutInflater.from(context).inflate(R.layout.toolbar_buttons_layout,this,true);
+    EquallyDistributedButtonsWithTextLayout(Context context, AttributeSet attr, int child_count, int screen_width, int screen_height) {
+        super(context, attr);
+        this.context = context;
+        this.child_count = child_count;
+        this.screen_width = screen_width;
+        this.screen_height = screen_height;
+        init();
+    }
+
+    EquallyDistributedButtonsWithTextLayout(Context context, AttributeSet attr, int defStyle, int child_count, int screen_width, int screen_height) {
+        super(context, attr, defStyle);
+        this.context = context;
+        this.child_count = child_count;
+        this.screen_width = screen_width;
+        this.screen_height = screen_height;
+        init();
+    }
+
+    private void init() {
+        setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT));
+        LayoutInflater.from(context).inflate(R.layout.toolbar_buttons_layout, this, true);
 
 
         int toolbar_width;
-        if(Global.ORIENTATION== Configuration.ORIENTATION_LANDSCAPE)
-		{
-			toolbar_width =screen_height;
-		}
-		else
-		{
-			toolbar_width =screen_width;
-		}
+        if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+            toolbar_width = screen_height;
+        } else {
+            toolbar_width = screen_width;
+        }
 
-		int icon_dimension=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,40,getResources().getDisplayMetrics());
+        int icon_dimension = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
 
-		toppadding=(Global.ACTION_BAR_HEIGHT-icon_dimension)/4;
+        toppadding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
 
-		child_count=Math.min(child_count,getChildCount());
-		int w= toolbar_width /child_count;
+        child_count = Math.min(child_count, getChildCount());
+        int w = toolbar_width / child_count;
 
-		params=new LinearLayout.LayoutParams(w,Global.ACTION_BAR_HEIGHT);
-	}
+        params = new LinearLayout.LayoutParams(w, Global.ACTION_BAR_HEIGHT);
+    }
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-	{
-		// TODO: Implement this method
-		int widthUsed=0,maxHeight=0,heightUsed=0;
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // TODO: Implement this method
+        int widthUsed = 0, maxHeight = 0, heightUsed = 0;
 
-		for(int i=0; i<child_count; ++i)
-		{
-			Button child= (Button) getChildAt(i);
-			child.setLayoutParams(params);
-			child.setPadding(0,toppadding,0,toppadding);
-			child.setTextSize((float) Global.ACTION_BAR_HEIGHT_IN_DP /4);
-			measureChildWithMargins(child,widthMeasureSpec,widthUsed,Global.ACTION_BAR_HEIGHT,heightUsed);
-			widthUsed+=child.getMeasuredWidth()+child.getPaddingStart()+child.getPaddingEnd();
-			heightUsed=child.getMeasuredHeight()+child.getPaddingTop()+child.getPaddingBottom();
-			maxHeight=Math.max(maxHeight,heightUsed);
-		}
-		setMeasuredDimension(widthMeasureSpec,Global.ACTION_BAR_HEIGHT);
+        for (int i = 0; i < child_count; ++i) {
+            Button child = (Button) getChildAt(i);
+            child.setLayoutParams(params);
+            child.setPadding(0, toppadding, 0, toppadding);
+            child.setTextSize((float) Global.ACTION_BAR_HEIGHT_IN_DP / 4);
+            measureChildWithMargins(child, widthMeasureSpec, widthUsed, Global.ACTION_BAR_HEIGHT, heightUsed);
+            widthUsed += child.getMeasuredWidth() + child.getPaddingStart() + child.getPaddingEnd();
+            heightUsed = child.getMeasuredHeight() + child.getPaddingTop() + child.getPaddingBottom();
+            maxHeight = Math.max(maxHeight, heightUsed);
+        }
+        setMeasuredDimension(widthMeasureSpec, Global.ACTION_BAR_HEIGHT);
 
-	}
+    }
 
-	@Override
-	protected void onLayout(boolean p1, int p2, int p3, int p4, int p5)
-	{
-		// TODO: Implement this method
-	
-		int x=0,y=0;
+    @Override
+    protected void onLayout(boolean p1, int p2, int p3, int p4, int p5) {
+        // TODO: Implement this method
 
-		for(int i=0;i<child_count;++i)
-		{
-			View child=getChildAt(i);
-			child.layout(x,y,x+child.getMeasuredWidth(),y+child.getMeasuredHeight());
-			x+=child.getMeasuredWidth();
-			child.setBackground(ContextCompat.getDrawable(context,R.drawable.select_icon_selection));
+        int x = 0, y = 0;
 
-		}
+        for (int i = 0; i < child_count; ++i) {
+            View child = getChildAt(i);
+            child.layout(x, y, x + child.getMeasuredWidth(), y + child.getMeasuredHeight());
+            x += child.getMeasuredWidth();
+            child.setBackground(ContextCompat.getDrawable(context, R.drawable.select_icon_selection));
 
-	}
-	
-	public void setResourceImageDrawables(@IdRes int[] drawables, String[] titles)
-	{
+        }
 
-		for(int i=0;i<child_count;++i)
-		{
-			Button child=(Button)getChildAt(i);
-			child.setCompoundDrawablesWithIntrinsicBounds(0,drawables[i],0,0);
-			child.setText(titles[i]);
-		}
-	}
-	public void setResourceImageDrawables(@IdRes int[] drawables, String[] titles, int color)
-	{
+    }
 
-		for(int i=0;i<child_count;++i)
-		{
-			Button child=(Button)getChildAt(i);
-			child.setTextColor(color);
+    public void setResourceImageDrawables(@IdRes int[] drawables, String[] titles) {
 
-			child.setCompoundDrawablesWithIntrinsicBounds(0,drawables[i],0,0);
-			child.setText(titles[i]);
+        for (int i = 0; i < child_count; ++i) {
+            Button child = (Button) getChildAt(i);
+            child.setCompoundDrawablesWithIntrinsicBounds(0, drawables[i], 0, 0);
+            child.setText(titles[i]);
+        }
+    }
 
-		}
-	}
-	@Override
-	protected boolean checkLayoutParams(ViewGroup.LayoutParams p)
-	{
-		// TODO: Implement this method
-		return p instanceof MarginLayoutParams;
-	}
+    public void setResourceImageDrawables(@IdRes int[] drawables, String[] titles, int color) {
 
-	@Override
-	protected ViewGroup.LayoutParams generateDefaultLayoutParams()
-	{
-		// TODO: Implement this method
-		return new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT,MarginLayoutParams.WRAP_CONTENT);
-	}
+        for (int i = 0; i < child_count; ++i) {
+            Button child = (Button) getChildAt(i);
+            child.setTextColor(color);
 
-	@Override
-	protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p)
-	{
-		// TODO: Implement this method
-		return generateDefaultLayoutParams();
-	}
+            child.setCompoundDrawablesWithIntrinsicBounds(0, drawables[i], 0, 0);
+            child.setText(titles[i]);
 
-	@Override
-	public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs)
-	{
-		// TODO: Implement this method
-		return new MarginLayoutParams(context,attrs);
-	}
+        }
+    }
+
+    @Override
+    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+        // TODO: Implement this method
+        return p instanceof MarginLayoutParams;
+    }
+
+    @Override
+    protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
+        // TODO: Implement this method
+        return new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
+    }
+
+    @Override
+    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+        // TODO: Implement this method
+        return generateDefaultLayoutParams();
+    }
+
+    @Override
+    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        // TODO: Implement this method
+        return new MarginLayoutParams(context, attrs);
+    }
 
 }

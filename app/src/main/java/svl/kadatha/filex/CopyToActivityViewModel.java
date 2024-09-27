@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 public class CopyToActivityViewModel extends AndroidViewModel {
-    private boolean isCancelled;
-    private Future<?> future1,future2,future3;
     public List<FilePOJO> destFilePOJOs;
+    private boolean isCancelled;
+    private Future<?> future1, future2, future3;
 
     public CopyToActivityViewModel(@NonNull Application application) {
         super(application);
@@ -24,16 +24,15 @@ public class CopyToActivityViewModel extends AndroidViewModel {
         cancel(true);
     }
 
-    public void cancel(boolean mayInterruptRunning){
-        if(future1!=null) future1.cancel(mayInterruptRunning);
-        if(future2!=null) future2.cancel(mayInterruptRunning);
-        if(future3!=null) future3.cancel(mayInterruptRunning);
+    public void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) future1.cancel(mayInterruptRunning);
+        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future3 != null) future3.cancel(mayInterruptRunning);
 
-        isCancelled=true;
+        isCancelled = true;
     }
 
-    private boolean isCancelled()
-    {
+    private boolean isCancelled() {
         return isCancelled;
     }
 

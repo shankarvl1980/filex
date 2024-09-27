@@ -55,7 +55,7 @@ public class ParcelFileDescriptorUtil {
                 IOUtils.copy(mIn, mOut);
                 mOut.flush();
             } catch (IOException e) {
-                Timber.tag("TransferThread").e( "writing failed");
+                Timber.tag("TransferThread").e("writing failed");
                 e.printStackTrace();
             } finally {
                 IOUtils.closeQuietly(mIn);

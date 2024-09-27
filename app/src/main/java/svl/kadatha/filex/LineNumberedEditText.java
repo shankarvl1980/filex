@@ -17,15 +17,23 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 public class LineNumberedEditText extends LinearLayout {
+    private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp
     private EditText editText;
     private LineNumberView lineNumberView;
     private int startingLineNumber = 1;
-    private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp
 
 
     public LineNumberedEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
+    }
+
+    public static int spToPx(Context context, float sp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                sp,
+                context.getResources().getDisplayMetrics()
+        );
     }
 
     private void init(Context context) {
@@ -42,10 +50,12 @@ public class LineNumberedEditText extends LinearLayout {
         editText.setTypeface(Typeface.MONOSPACE);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -85,6 +95,10 @@ public class LineNumberedEditText extends LinearLayout {
     public void setTextSize(float size) {
         editText.setTextSize(size);
         lineNumberView.updateLineNumbers();
+    }
+
+    private int dpToPx(Context context, int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
     private class LineNumberView extends View {
@@ -146,6 +160,7 @@ public class LineNumberedEditText extends LinearLayout {
             }
             return result;
         }
+
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int maxNumber = startingLineNumber + (lineStartIndexes != null ? lineStartIndexes.length - 1 : 999);
@@ -159,18 +174,6 @@ public class LineNumberedEditText extends LinearLayout {
             LineNumberedEditText.this.startingLineNumber = startingLineNumber;
             invalidate();
         }
-    }
-
-    private int dpToPx(Context context, int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
-    }
-
-    public static int spToPx(Context context, float sp) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                sp,
-                context.getResources().getDisplayMetrics()
-        );
     }
 
 }

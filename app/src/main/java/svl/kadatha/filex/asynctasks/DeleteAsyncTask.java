@@ -16,22 +16,22 @@ import timber.log.Timber;
 
 public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     public static final String TASK_TYPE = "delete";
+    public final List<String> deleted_file_names = new ArrayList<>();
+    public final List<String> deleted_files_path_list = new ArrayList<>();
     private final String source_folder;
     private final TaskProgressListener listener;
     private final List<String> files_selected_array;
     private final FileObjectType sourceFileObjectType;
     private final Uri source_uri;
     private final String source_uri_path;
-    public final List<String> deleted_file_names=new ArrayList<>();
-    public final List<String> deleted_files_path_list=new ArrayList<>();
+    FileModel[] sourceFileModels;
     private int counter_no_files;
     private long counter_size_files;
-    FileModel[] sourceFileModels;
     private String current_file_name;
     private String deleted_file_name;
     private FilePOJO filePOJO;
 
-    public DeleteAsyncTask(ArrayList<String>files_selected_array, String source_folder, Uri source_uri, String source_uri_path, FileObjectType sourceFileObjectType, TaskProgressListener listener) {
+    public DeleteAsyncTask(ArrayList<String> files_selected_array, String source_folder, Uri source_uri, String source_uri_path, FileObjectType sourceFileObjectType, TaskProgressListener listener) {
         this.files_selected_array = files_selected_array;
         this.source_folder = source_folder;
         this.source_uri = source_uri;
@@ -81,7 +81,7 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, current_file_name,deleted_file_name);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, current_file_name, deleted_file_name);
         }
     }
 
@@ -97,7 +97,7 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onCancelled(Boolean aBoolean) {
         super.onCancelled(aBoolean);
         if (listener != null) {
-            listener.onTaskCancelled(TASK_TYPE,filePOJO);
+            listener.onTaskCancelled(TASK_TYPE, filePOJO);
         }
     }
 

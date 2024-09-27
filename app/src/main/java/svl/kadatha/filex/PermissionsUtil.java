@@ -1,4 +1,5 @@
 package svl.kadatha.filex;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -15,54 +16,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionsUtil {
-	static final int PERMISSIONS_REQUEST_CODE = 657;
-	static final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE = 693;
-	private final Context context;
-	private final Activity activity;
-	private final List<String> permissions_not_granted_list = new ArrayList<>();
+    static final int PERMISSIONS_REQUEST_CODE = 657;
+    static final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE = 693;
+    private final Context context;
+    private final Activity activity;
+    private final List<String> permissions_not_granted_list = new ArrayList<>();
 
 
-	PermissionsUtil(Context context, AppCompatActivity activity) {
-		this.context = context;
-		this.activity = activity;
+    PermissionsUtil(Context context, AppCompatActivity activity) {
+        this.context = context;
+        this.activity = activity;
 
-	}
+    }
 
-	public void check_permission() {
+    public void check_permission() {
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			int i,j;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-				if (Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
-				else i = PackageManager.PERMISSION_DENIED;
-				if (i != PackageManager.PERMISSION_GRANTED) {
-					permissions_not_granted_list.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
-				}
-			} else {
-				i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-				if (i != PackageManager.PERMISSION_GRANTED) {
-					permissions_not_granted_list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-				}
-			}
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int i, j;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
+                else i = PackageManager.PERMISSION_DENIED;
+                if (i != PackageManager.PERMISSION_GRANTED) {
+                    permissions_not_granted_list.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+                }
+            } else {
+                i = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (i != PackageManager.PERMISSION_GRANTED) {
+                    permissions_not_granted_list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }
+            }
 
-			if (Build.VERSION.SDK_INT >= 33) {
-				i=ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
-				if (i != PackageManager.PERMISSION_GRANTED) {
-					permissions_not_granted_list.add(Manifest.permission.POST_NOTIFICATIONS);
-				}
-			}
+            if (Build.VERSION.SDK_INT >= 33) {
+                i = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
+                if (i != PackageManager.PERMISSION_GRANTED) {
+                    permissions_not_granted_list.add(Manifest.permission.POST_NOTIFICATIONS);
+                }
+            }
 
-			if (!permissions_not_granted_list.isEmpty()) {
-				activity.requestPermissions(permissions_not_granted_list.toArray(new String[0]), PERMISSIONS_REQUEST_CODE);
-			}
-		}
-	}
+            if (!permissions_not_granted_list.isEmpty()) {
+                activity.requestPermissions(permissions_not_granted_list.toArray(new String[0]), PERMISSIONS_REQUEST_CODE);
+            }
+        }
+    }
 
-	public boolean isNetworkConnected ()
-		{
-			ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-			return networkInfo != null && networkInfo.isConnectedOrConnecting();
-		}
+    public boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
 
-	}
+}
