@@ -413,11 +413,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     df.progress_bar.setVisibility(View.VISIBLE);
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     df.progress_bar.setVisibility(View.GONE);
-                    //					if(fileDuplicationViewModel.sourceFileObjectType==FileObjectType.FTP_TYPE && fileDuplicationViewModel.destFileObjectType==FileObjectType.FTP_TYPE)
-//					{
-//						Global.print(context,context.getString(R.string.not_supported));
-//					}
-//					else
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
                                 fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list,
@@ -583,10 +578,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                             fm.beginTransaction().detach(df).commit();
                             fm.beginTransaction().attach(df).commit();
                         }
-
                     }
                 }, 500);
-
             }
         });
 
@@ -610,7 +603,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         pbf.dismissAllowingStateLoss();
                     }
                 }, 500);
-
             }
         });
 

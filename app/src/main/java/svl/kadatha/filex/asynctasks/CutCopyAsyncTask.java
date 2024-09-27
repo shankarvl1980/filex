@@ -304,33 +304,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-//    private void collectFilesToCopy(FileModel sourceFileModel, LinkedHashSet<FileModel> filesToCopy) {
-//        Queue<FileModel> queue = new LinkedList<>();
-//        queue.offer(sourceFileModel);
-//
-//        while (!queue.isEmpty()) {
-//            FileModel current = queue.poll();
-//            filesToCopy.add(current);
-//
-//            if (current.isDirectory()) {
-//                FileModel[] children = current.list();
-//                if (children != null) {
-//                    // Add directories first, then files
-//                    for (FileModel child : children) {
-//                        if (child.isDirectory()) {
-//                            queue.offer(child);
-//                        }
-//                    }
-//                    for (FileModel child : children) {
-//                        if (!child.isDirectory()) {
-//                            queue.offer(child);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     // createDirectory and copyFile methods remain the same as in the previous version
     private FileModel createDirectory(FileModel baseModel, String path, FileObjectType fileObjectType) throws CopyFailedException {
         Timber.tag("CopyFileModel").d("Attempting to create directory path: %s", path);
