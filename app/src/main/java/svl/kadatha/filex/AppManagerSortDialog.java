@@ -40,7 +40,6 @@ public class AppManagerSortDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_storage_analyser_sort, container, false);
         RadioGroup rg = v.findViewById(R.id.storage_analyser_dialog_view_layout_rg);
         list_rb = v.findViewById(R.id.storage_analyser_view_rb_list);

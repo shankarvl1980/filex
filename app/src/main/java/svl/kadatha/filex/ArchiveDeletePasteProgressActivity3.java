@@ -269,7 +269,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
 
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file);
+                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
 
@@ -281,7 +281,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
 
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file);
+                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
 

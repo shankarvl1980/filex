@@ -87,12 +87,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             current_file_name = sourceFileModel.getName();
 
             if (whether_copy_between_network_file_systems) {
-                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, current_file_name, false);
+                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, false);
                 if (copy_result && cut) {
                     sourceFileModel.delete();
                 }
             } else {
-                copy_result = CopyFileModel(sourceFileModel, destFileModel, current_file_name, false);
+                copy_result = CopyFileModel(sourceFileModel, destFileModel, false);
                 if (copy_result && cut) {
                     sourceFileModel.delete();
                 }
@@ -144,7 +144,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
+    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
 
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
@@ -161,7 +161,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 progressHandler.postDelayed(this, 1000); // Run every 1 second
             }
         };
-
+        // Start the progress handler
+        progressHandler.post(progressRunnable);
         while (!stack.isEmpty()) {
             if (isCancelled()) {
                 Timber.tag("CopyFileModel").d("Operation cancelled");
@@ -202,20 +203,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 publishProgress(null);
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
-
-                copied_file_name = source.getName();
-
-                // Start the progress handler
-                progressHandler.post(progressRunnable);
-
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
                 if (success) {
                     ++counter_no_files;
+                    copied_file_name=source.getName();
                     publishProgress(null);
                 }
-
-                // Stop the progress handler
-                progressHandler.removeCallbacks(progressRunnable);
 
                 if (!success) {
                     Timber.tag("CopyFileModel").e("Failed to copy file: " + source.getPath());
@@ -224,7 +217,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
             }
         }
-
+        // Stop the progress handler
+        progressHandler.removeCallbacks(progressRunnable);
         if (cut && allCopiesSuccessful) {
             Timber.tag("CopyFileModel").d("Deleting source after successful cut operation: " + sourceFileModel.getPath());
             FileUtil.deleteFileModel(sourceFileModel);
@@ -236,7 +230,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
-    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String current_file_name, boolean cut) {
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
 
         List<FileModel> filesToCopy = new ArrayList<>();
@@ -245,12 +239,23 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         Timber.tag("CopyFileModel").d("Collected %d files/directories to copy.", filesToCopy.size());
 
         boolean allCopiesSuccessful = true;
+        // Create a handler for regular progress updates
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
         String sourceRootPath = sourceFileModel.getPath();
         String sourceName = new File(sourceRootPath).getName();
-
+        // Start the progress handler
+        progressHandler.post(progressRunnable);
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
                 Timber.tag("CopyFileModel").d("Operation cancelled by user.");
+                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
                 return false;
             }
 
@@ -269,15 +274,21 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     if (success) {
                         Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
+                        copied_file_name=source.getName();
+                        Timber.tag("published").d("this is published: %s", source.getName());
                         publishProgress(null);
                     }
                 }
             } catch (CopyFailedException e) {
                 Timber.tag("CopyFileModel").e("Operation failed: %s", e.getMessage());
+                // Stop the progress handler
+                progressHandler.removeCallbacks(progressRunnable);
                 allCopiesSuccessful = false;
                 break;
             }
         }
+        // Stop the progress handler
+        progressHandler.removeCallbacks(progressRunnable);
         if (cut && allCopiesSuccessful) {
             try {
                 sourceFileModel.delete();
