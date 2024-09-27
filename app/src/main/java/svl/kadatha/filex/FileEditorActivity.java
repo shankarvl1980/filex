@@ -168,7 +168,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         ListView listView = new ListView(context);
         listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context, list_popupwindowpojos));
         listPopWindow.setContentView(listView);
-        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
+        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popup_window_width));
         listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         listPopWindow.setFocusable(true);
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));

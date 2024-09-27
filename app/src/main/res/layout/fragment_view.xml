@@ -1,350 +1,353 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/fragment_view_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/layout_margin"
+
+        />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
-        android:text="@string/view"
-        android:textSize="19sp" />
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/layout_margin">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?attr/dialog_title"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/layout_margin"
+            android:text="@string/view"
+            android:textSize="19sp" />
 
-            <TextView
-                android:id="@+id/layout_lable"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:layout_marginBottom="@dimen/four_dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/layout"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_height="wrap_content">
 
-                />
-
-            <RadioGroup
-
-                android:id="@+id/dialog_view_layout_rg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:minHeight="36dp"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_lable">
-
-                <RadioButton
-                    android:id="@+id/dialog_view_rb_list"
+                <TextView
+                    android:id="@+id/layout_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/list"
-                    android:textSize="15sp"
+                    android:background="?attr/dialog_background"
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/layout"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
 
                     />
 
-                <RadioButton
+                <RadioGroup
 
-                    android:id="@+id/dialog_view_rb_grid"
+                    android:id="@+id/dialog_view_layout_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/grid"
-                    android:textSize="15sp"
+                    android:background="?attr/dialog_background"
+                    android:minHeight="36dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_label">
 
-                    />
-
-            </RadioGroup>
-
-
-            <View
-                android:id="@+id/seekbar_layout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="?attr/dialog_background"
-                app:layout_constraintBottom_toBottomOf="@id/font_small_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
-
-            <TextView
-                android:id="@+id/seekbar_heading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/font_size"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/seekbar_layout" />
-
-            <svl.kadatha.filex.TickSeekBar
-                android:id="@+id/seekbar_fontsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:elevation="6dp"
-
-                android:max="2"
-                android:paddingStart="38dp"
-                android:paddingEnd="38dp"
-                android:progressTint="@null"
-                android:thumb="@drawable/seek_thumb"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/seekbar_heading"
-                app:seekBarColor="?attr/seek_bar_progress"
-                app:seekBarLineWidth="4dp"
-                app:tickColor="?attr/seek_bar_progress"
-                app:tickCount="3"
-                app:tickWidth="4dp" />
-
-            <TextView
-                android:id="@+id/font_small_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/small"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@id/font_medium_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
-
-            <TextView
-                android:id="@+id/font_medium_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="@dimen/layout_margin"
-                android:text="@string/medium"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@id/font_large_label"
-                app:layout_constraintStart_toEndOf="@id/font_small_label"
-                app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
-
-            <TextView
-                android:id="@+id/font_large_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:gravity="end"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/large"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/font_medium_label"
-                app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
-
-
-            <View
-                android:id="@+id/sort_layout_backgroundd"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="?attr/dialog_background"
-                app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/seekbar_layout" />
-
-            <TextView
-                android:id="@+id/sort_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/ten_dp"
-
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/sort"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd" />
-
-
-            <TableLayout
-                android:id="@+id/sort_table_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/ten_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
-
-                >
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp">
-
-                    <TextView
+                    <RadioButton
+                        android:id="@+id/dialog_view_rb_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/name"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/date"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/size"
-                        android:textSize="17sp" />
-
-                </TableRow>
-
-                <TableRow
-
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp">
-
-                    <ImageButton
-                        android:id="@+id/name_asc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-
-                        android:background="@drawable/select_icon_selection"
-
-                        android:gravity="center"
-                        android:src="@drawable/sort_alphabetical_az_icon"
+                        android:layout_weight="1"
+                        android:text="@string/list"
+                        android:textSize="15sp"
 
                         />
 
-                    <ImageButton
-                        android:id="@+id/date_asc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-                        android:background="@drawable/select_icon_selection"
-                        android:gravity="center"
-                        android:src="@drawable/sort_time_asc_icon" />
+                    <RadioButton
 
-                    <ImageButton
-                        android:id="@+id/size_asc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-                        android:background="@drawable/select_icon_selection"
-                        android:gravity="center"
-                        android:src="@drawable/sort_size_asc_icon" />
+                        android:id="@+id/dialog_view_rb_grid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/grid"
+                        android:textSize="15sp"
 
-                </TableRow>
+                        />
 
-                <TableRow
+                </RadioGroup>
 
+
+                <View
+                    android:id="@+id/seekbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:background="?attr/dialog_background"
+                    app:layout_constraintBottom_toBottomOf="@id/font_small_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
+
+                <TextView
+                    android:id="@+id/seekbar_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/font_size"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/seekbar_layout" />
+
+                <svl.kadatha.filex.TickSeekBar
+                    android:id="@+id/seekbar_fontsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="6dp"
+
+                    android:max="2"
+                    android:paddingStart="38dp"
+                    android:paddingEnd="38dp"
+                    android:progressTint="@null"
+                    android:thumb="@drawable/seek_thumb"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_heading"
+                    app:seekBarColor="?attr/seek_bar_progress"
+                    app:seekBarLineWidth="4dp"
+                    app:tickColor="?attr/seek_bar_progress"
+                    app:tickCount="3"
+                    app:tickWidth="4dp" />
+
+                <TextView
+                    android:id="@+id/font_small_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/small"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@id/font_medium_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
+
+                <TextView
+                    android:id="@+id/font_medium_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/layout_margin"
+                    android:text="@string/medium"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@id/font_large_label"
+                    app:layout_constraintStart_toEndOf="@id/font_small_label"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
+
+                <TextView
+                    android:id="@+id/font_large_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:gravity="end"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/large"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/font_medium_label"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
+
+
+                <View
+                    android:id="@+id/sort_layout_backgroundd"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="?attr/dialog_background"
+                    app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_layout" />
+
+                <TextView
+                    android:id="@+id/sort_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/ten_dp"
+
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/sort"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd" />
+
+
+                <TableLayout
+                    android:id="@+id/sort_table_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/ten_dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
 
                     >
 
-                    <ImageButton
-                        android:id="@+id/name_desc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-                        android:background="@drawable/select_icon_selection"
-                        android:gravity="center"
-                        android:src="@drawable/sort_alphabetical_za_icon"
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
 
-                        />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/name"
+                            android:textSize="17sp" />
 
-                    <ImageButton
-                        android:id="@+id/date_desc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-                        android:background="@drawable/select_icon_selection"
-                        android:gravity="center"
-                        android:src="@drawable/sort_time_desc_icon"
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/date"
+                            android:textSize="17sp" />
 
-                        />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/size"
+                            android:textSize="17sp" />
 
-                    <ImageButton
-                        android:id="@+id/size_desc"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_margin="@dimen/layout_margin"
-                        android:background="@drawable/select_icon_selection"
-                        android:gravity="center"
-                        android:src="@drawable/sort_size_desc_icon"
+                    </TableRow>
 
-                        />
+                    <TableRow
 
-                </TableRow>
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
 
-            </TableLayout>
+                        <ImageButton
+                            android:id="@+id/name_asc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/view_switch_show_hidden"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:minHeight="44dp"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/ten_dp"
-                android:text="@string/show_hidden_files"
-                android:textColor="@color/light_recycler_text_color"
-                android:textSize="17sp"
-                android:theme="@style/MyLightSwitchCompat"
-                app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
+                            android:background="@drawable/select_icon_selection"
 
-                />
+                            android:gravity="center"
+                            android:src="@drawable/sort_alphabetical_az_icon"
 
-            <FrameLayout
-                android:id="@+id/fragment_view_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_switch_show_hidden"
+                            />
 
-                />
+                        <ImageButton
+                            android:id="@+id/date_asc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
+                            android:background="@drawable/select_icon_selection"
+                            android:gravity="center"
+                            android:src="@drawable/sort_time_asc_icon" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                        <ImageButton
+                            android:id="@+id/size_asc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
+                            android:background="@drawable/select_icon_selection"
+                            android:gravity="center"
+                            android:src="@drawable/sort_size_asc_icon" />
+
+                    </TableRow>
+
+                    <TableRow
+
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+
+                        >
+
+                        <ImageButton
+                            android:id="@+id/name_desc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
+                            android:background="@drawable/select_icon_selection"
+                            android:gravity="center"
+                            android:src="@drawable/sort_alphabetical_za_icon"
+
+                            />
+
+                        <ImageButton
+                            android:id="@+id/date_desc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
+                            android:background="@drawable/select_icon_selection"
+                            android:gravity="center"
+                            android:src="@drawable/sort_time_desc_icon"
+
+                            />
+
+                        <ImageButton
+                            android:id="@+id/size_desc"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_margin="@dimen/layout_margin"
+                            android:background="@drawable/select_icon_selection"
+                            android:gravity="center"
+                            android:src="@drawable/sort_size_desc_icon"
+
+                            />
+
+                    </TableRow>
+
+                </TableLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/view_switch_show_hidden"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:minHeight="44dp"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/ten_dp"
+                    android:text="@string/show_hidden_files"
+                    android:textColor="@color/light_recycler_text_color"
+                    android:textSize="17sp"
+                    android:theme="@style/MyLightSwitchCompat"
+                    app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
+
+                    />
 
 
-</LinearLayout>
-
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

@@ -222,7 +222,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         PopupWindowAdapter popupWindowAdapater = new PopupWindowAdapter(context, storage_filePOJO_list);
         listView.setAdapter(popupWindowAdapater);
         listPopWindow.setContentView(listView);
-        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
+        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popup_window_width));
         listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         listPopWindow.setFocusable(true);
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));
