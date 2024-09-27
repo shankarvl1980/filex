@@ -1,456 +1,265 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_fragment_cut_copy_delete_archive_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/dialog_fragment_cut_copy_title"
+    <FrameLayout
+        android:id="@+id/fragment_cut_copy_delete_progress_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/layout_margin" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
-        android:textSize="19sp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_margin">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null">
-
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:background="?attr/dialog_background"
-                app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_size_progress"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
-
-                />
-
-            <TableLayout
-                android:id="@+id/fragment_cut_copy_delete_tablelayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/ten_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/ten_dp">
-
-                    <TextView
-                        android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
-                        android:layout_height="wrap_content"
-                        android:text="@string/from"
-                        android:textSize="17sp"
-
-
-                        />
-
-                    <TextView
-
-
-                        android:layout_height="wrap_content"
-                        android:text=" : "
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/dialog_fragment_cut_copy_from"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="17sp"
-
-
-                        />
-                </TableRow>
-
-
-                <TableRow
-                    android:id="@+id/fragment_cut_copy_delete_archive_totablerow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
-                        android:layout_height="wrap_content"
-                        android:text="@string/to"
-                        android:textSize="17sp"
-
-                        />
-
-                    <TextView
-
-
-                        android:layout_height="wrap_content"
-                        android:text=" : "
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/dialog_fragment_cut_copy_to"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="17sp" />
-
-
-                </TableRow>
-
-            </TableLayout>
-
-            <TextView
-                android:id="@+id/dialog_fragment_cut_copy_current_file_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:paddingStart="@dimen/ten_dp"
-                android:text="@string/current_file"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
-
-            <TextView
-                android:id="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text=" - "
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/dialog_fragment_cut_copy_current_file_label"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
-
-            <EditText
-                android:id="@+id/dialog_fragment_cut_copy_archive_current_file"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:background="@null"
-                android:ellipsize="end"
-                android:enabled="false"
-                android:focusable="false"
-                android:singleLine="true"
-                android:textColor="?attr/edit_text_color"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
-
-            <EditText
-                android:id="@+id/dialog_fragment_copied_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="-3dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:ellipsize="end"
-                android:enabled="false"
-                android:focusable="false"
-                android:singleLine="true"
-                android:textColor="?attr/edit_text_color"
-                android:textSize="17sp"
-
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_cut_copy_current_file_label" />
-
-            <ProgressBar
-                android:id="@+id/fragment_cut_copy_delete_archive_progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:maxHeight="20dip"
-
-                android:minHeight="20dip"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-
-
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
-
-            <TextView
-                android:id="@+id/fragment_cut_copy_delete_archive_no_files"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
-
-
-            <TextView
-                android:id="@+id/fragment_cut_copy_delete_archive_total_no_files"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingEnd="@dimen/ten_dp"
-                app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_size_files"
-                app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
-
-
-            <TextView
-                android:id="@+id/fragment_cut_copy_delete_archive_size_files"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingStart="@dimen/ten_dp"
-                app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_size_files"
-                app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_total_no_files"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
-
-            <TextView
-                android:id="@+id/fragment_cut_copy_delete_archive_total_size_files"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingEnd="@dimen/ten_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_size_files"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
-
-
-            <TextView
-                android:id="@+id/dialog_fragment_size_progress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_no_files" />
-
-            <FrameLayout
-                android:id="@+id/fragment_cut_copy_delete_progress_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_size_progress" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-</LinearLayout>
-
-
-    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/dialog_fragment_cut_copy_delete_archive_layout"
+        android:layout_marginBottom="?attr/actionBarSize">
 
-
-        >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="19sp"
             android:id="@+id/dialog_fragment_cut_copy_title"
-
-            android:background="@color/dialog_title"
-            android:padding="@dimen/layout_margin"
-
-            />
-
-
-            <RelativeLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="@dimen/layout_margin"
-                android:background="@color/dialog_background"
-                android:paddingStart="@dimen/layout_margin"
-                android:paddingEnd="@dimen/layout_margin"
-
-            >
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fragment_cut_copy_delete_tablelayout"
-
-
-                >
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    >
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
-                    android:text="@string/from"
-                    android:textSize="17sp"
-
-
-                />
-                    <TextView
-
-
-                        android:layout_height="wrap_content"
-                        android:text=": "
-                        android:textSize="17sp"
-                    />
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:id="@+id/dialog_fragment_cut_copy_from"
-                    android:textSize="17sp"
-                    android:layout_weight="1"
-
-
-                />
-                </TableRow>
-
-
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/fragment_cut_copy_delete_archive_totablerow"
-                >
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
-                    android:text="@string/to"
-                    android:textSize="17sp"
-
-
-                />
-                    <TextView
-
-
-                        android:layout_height="wrap_content"
-                        android:text=": "
-                        android:textSize="17sp"
-                    />
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:id="@+id/dialog_fragment_cut_copy_to"
-                    android:textSize="17sp"
-                    android:layout_weight="1"
-                />
-
-
-
-                </TableRow>
-
-            </TableLayout>
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/dialog_fragment_cut_copy_current_file_label"
-                    android:textSize="17sp"
-                    android:text="@string/current_file_colon"
-                    android:layout_below="@+id/fragment_cut_copy_delete_tablelayout"
-                />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_cut_copy_archive_current_file"
-                    android:textSize="17sp"
-                    android:singleLine="true"
-                    android:focusable="false"
-                    android:enabled="false"
-                    android:ellipsize="end"
-                    android:background="@null"
-                    android:layout_marginEnd="-3dp"
-                    android:layout_below="@+id/fragment_cut_copy_delete_tablelayout"
-                    android:layout_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label"
-                    android:textColor="@color/edit_text_color"
-                    />
-
-        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/dialog_fragment_copied_file"
-            android:textSize="17sp"
-            android:singleLine="true"
-            android:focusable="false"
-            android:enabled="false"
-            android:ellipsize="end"
-            android:layout_below="@+id/dialog_fragment_cut_copy_current_file_label"
-            android:layout_marginTop="-3dp"
-            android:layout_marginStart="-3dp"
-            android:layout_marginEnd="-3dp"
-            android:textColor="@color/edit_text_color"
+            android:background="?attr/dialog_title"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/layout_margin"
+            android:textSize="19sp"
 
-        />
-        <TextView
-            android:id="@+id/fragment_cut_copy_delete_archive_no_files"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/dialog_fragment_copied_file"
-            android:layout_alignParentStart="true"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/fragment_cut_copy_delete_archive_size_files"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_below="@+id/dialog_fragment_copied_file"
-                android:layout_alignParentEnd="true"
-
-            />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/dialog_fragment_timetaken"
-                android:textSize="17sp"
-                android:layout_below="@+id/fragment_cut_copy_delete_archive_no_files"
-            />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxHeight="20dip"
-                android:minHeight="20dip"
-                android:indeterminate="true"
-                android:layout_below="@+id/dialog_fragment_timetaken"
-
-
-
-            />
-
-
-        </RelativeLayout>
-
-
-        <FrameLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
-            android:id="@+id/fragment_cut_copy_delete_progress_button_layout"
-            />
+            android:layout_marginBottom="@dimen/layout_margin">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null">
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="?attr/dialog_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_size_progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
 
 
+                    />
 
-    </LinearLayout-->
+                <TableLayout
+                    android:id="@+id/fragment_cut_copy_delete_tablelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ten_dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ten_dp">
+
+                        <TextView
+                            android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
+                            android:layout_height="wrap_content"
+                            android:text="@string/from"
+                            android:textSize="17sp"
+
+
+                            />
+
+                        <TextView
+
+
+                            android:layout_height="wrap_content"
+                            android:text=" : "
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:id="@+id/dialog_fragment_cut_copy_from"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textSize="17sp"
+
+
+                            />
+                    </TableRow>
+
+
+                    <TableRow
+                        android:id="@+id/fragment_cut_copy_delete_archive_totablerow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
+                            android:layout_height="wrap_content"
+                            android:text="@string/to"
+                            android:textSize="17sp"
+
+                            />
+
+                        <TextView
+
+
+                            android:layout_height="wrap_content"
+                            android:text=" : "
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:id="@+id/dialog_fragment_cut_copy_to"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textSize="17sp" />
+
+
+                    </TableRow>
+
+                </TableLayout>
+
+                <TextView
+                    android:id="@+id/dialog_fragment_cut_copy_current_file_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:paddingStart="@dimen/ten_dp"
+                    android:text="@string/current_file"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
+
+                <TextView
+                    android:id="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text=" - "
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toEndOf="@id/dialog_fragment_cut_copy_current_file_label"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
+
+                <EditText
+                    android:id="@+id/dialog_fragment_cut_copy_archive_current_file"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:textColor="?attr/edit_text_color"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
+
+                <EditText
+                    android:id="@+id/dialog_fragment_copied_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="-3dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:ellipsize="end"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:textColor="?attr/edit_text_color"
+                    android:textSize="17sp"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_cut_copy_current_file_label" />
+
+                <ProgressBar
+                    android:id="@+id/fragment_cut_copy_delete_archive_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:maxHeight="20dip"
+
+                    android:minHeight="20dip"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
+
+                <TextView
+                    android:id="@+id/fragment_cut_copy_delete_archive_no_files"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
+
+
+                <TextView
+                    android:id="@+id/fragment_cut_copy_delete_archive_total_no_files"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingEnd="@dimen/ten_dp"
+                    app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_size_files"
+                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
+
+
+                <TextView
+                    android:id="@+id/fragment_cut_copy_delete_archive_size_files"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingStart="@dimen/ten_dp"
+                    app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_size_files"
+                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_total_no_files"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
+
+                <TextView
+                    android:id="@+id/fragment_cut_copy_delete_archive_total_size_files"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingEnd="@dimen/ten_dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_size_files"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
+
+
+                <TextView
+                    android:id="@+id/dialog_fragment_size_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_no_files" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>
+
+

@@ -45,7 +45,7 @@ public class ArchiveReplaceConfirmationDialog extends DialogFragment {
         Context context = getContext();
         View v = inflater.inflate(R.layout.fragment_archivereplace_confirmation, container, false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
-        ViewGroup buttons_layout = v.findViewById(R.id.fragment_archivereplace_confirmation_button_layout);
+        ViewGroup buttons_layout = v.findViewById(R.id.fragment_archive_replace_confirmation_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
         Button yes_button = buttons_layout.findViewById(R.id.first_button);
         yes_button.setText(R.string.yes);
