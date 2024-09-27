@@ -280,11 +280,10 @@ public class MakeFilePOJOUtil {
             si=sub_file_count;
         }
 
-        if(p.startsWith("."))
+        if(name.startsWith("."))
         {
             alfa=Global.DISABLE_ALFA;
         }
-
         return new FilePOJO(fileObjectType,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
@@ -360,7 +359,7 @@ public class MakeFilePOJOUtil {
             si=sub_file_count;
         }
 
-        if(p.startsWith("."))
+        if(name.startsWith("."))
         {
             alfa=Global.DISABLE_ALFA;
         }
@@ -425,6 +424,11 @@ public class MakeFilePOJOUtil {
             }
             si=sub_file_count;
         }
+
+        if(name.startsWith("."))
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
         return new FilePOJO(FileObjectType.USB_TYPE,name,package_name,path,isDirectory,dateLong,date,sizeLong,si,type,file_ext,alfa,overlay_visible,0,0L,null,0,null,null);
     }
 
@@ -482,9 +486,11 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error listing FTP directory contents: %s", e.getMessage());
             }
         }
-        FilePOJO filePOJO = new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
-        Timber.tag(TAG).d("Created FilePOJO for FTP file: %s, isDirectory: %b, size: %d", name, isDirectory, sizeLong);
-        return filePOJO;
+        if(name.startsWith("."))
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
 
@@ -615,10 +621,11 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
             }
         }
-
-        FilePOJO filePOJO = new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
-        Timber.tag(TAG).d("Created FilePOJO for SFTP file: %s, isDirectory: %b, size: %d", name, isDirectory, sizeLong);
-        return filePOJO;
+        if(name.startsWith("."))
+        {
+            alfa=Global.DISABLE_ALFA;
+        }
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path)

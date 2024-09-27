@@ -49,7 +49,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private final Set<String> first_part_entry_path_set;
     private final List<String> zipentry_selected_array;
     private int counter_no_files;
-    private long counter_size_files;
+    private long[] counter_size_files=new long[1];
     private final String zip_file_path;
 
 
@@ -132,7 +132,6 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 ZipEntry zipEntry=zip_entries.nextElement();
                 success= read_zip_entry(zipEntry,zip_dest_path, tree_uri,tree_uri_path);
             }
-
         }
         if(zip_folder_name==null)
         {
@@ -152,7 +151,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, current_file_name, current_file_name);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], current_file_name, current_file_name);
         }
     }
 
@@ -228,12 +227,10 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 return false;
             }
         }
-
     }
 
     private boolean unzip(String zip_file_path,Uri uri,String uri_path,String zip_dest_path,boolean isWritable)
     {
-        // TODO: Implement this method
         BufferedInputStream bufferedInputStream;
         ZipInputStream zipInputStream;
         FileModel destZipFileModel=FileModelFactory.getFileModel(zip_file_path,destFileObjectType,uri, uri_path);
@@ -307,54 +304,94 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         }
     }
 
-    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream,long bytes_read
+    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,
+                                   FileObjectType destFileObjectType, Uri uri, String uri_path,
+                                   InputStream zipInputStream, long[] bytes_read) throws IOException {
+        String zip_entry_name = zipEntry.getName();
+        String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, zip_entry_name);
+        File dest_file = new File(dest_file_path);
 
-    ) throws IOException {
-        String zip_entry_name=zipEntry.getName();
-        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);
-        File dest_file=new File(dest_file_path);
+        FileModel fileModel = FileModelFactory.getFileModel(zip_dest_path, destFileObjectType, uri, uri_path);
 
-        FileModel fileModel= FileModelFactory.getFileModel(zip_dest_path,destFileObjectType,uri,uri_path);
-
-        if(zipEntry.isDirectory())
-        {
+        if (zipEntry.isDirectory()) {
             fileModel.makeDirsRecursively(zip_entry_name);
-        }
-        else if(!zipEntry.isDirectory())
-        {
-            File parent_dest_file=dest_file.getParentFile();
-            String parent_dest_file_path=parent_dest_file.getAbsolutePath();
+        } else {
+            File parent_dest_file = dest_file.getParentFile();
+            String parent_dest_file_path = parent_dest_file.getAbsolutePath();
 
-            FileModel zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
-            boolean parent_dir_exists = zipEntryFileModel.exists();
+            FileModel zipEntryFileModel = FileModelFactory.getFileModel(parent_dest_file_path, destFileObjectType, uri, uri_path);
 
-            if(!parent_dir_exists)
-            {
-                String zip_entry_parent=new File(zip_entry_name).getParent();
+            if (!zipEntryFileModel.exists()) {
+                String zip_entry_parent = new File(zip_entry_name).getParent();
                 fileModel.makeDirsRecursively(zip_entry_parent);
             }
 
-            OutputStream outStream;
+            try (OutputStream outStream = zipEntryFileModel.getChildOutputStream(dest_file.getName(), 0);
+                 BufferedOutputStream bufferedOutStream = new BufferedOutputStream(outStream)) {
 
-            zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
-            outStream=zipEntryFileModel.getChildOutputStream(dest_file.getName(),0);
-
-            if(outStream!=null)
-            {
-                BufferedOutputStream bufferedOutStream=new BufferedOutputStream(outStream);
-                byte[] b=new byte[FileUtil.BUFFER_SIZE];
-                int bytesread;
-                while((bytesread=zipInputStream.read(b))!=-1)
-                {
-                    bufferedOutStream.write(b,0,bytesread);
-                    bytes_read+=bytesread;
+                byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
+                int bytesRead;
+                while ((bytesRead = zipInputStream.read(buffer)) != -1) {
+                    bufferedOutStream.write(buffer, 0, bytesRead);
+                    bytes_read[0] += bytesRead;
                 }
+
                 if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
                     ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
                 }
-                bufferedOutStream.close();
             }
         }
-        return  zip_entry_name;
+        return zip_entry_name;
     }
+
+//    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry,FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream,long bytes_read
+//
+//    ) throws IOException {
+//        String zip_entry_name=zipEntry.getName();
+//        String dest_file_path=Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path,zip_entry_name);
+//        File dest_file=new File(dest_file_path);
+//
+//        FileModel fileModel= FileModelFactory.getFileModel(zip_dest_path,destFileObjectType,uri,uri_path);
+//
+//        if(zipEntry.isDirectory())
+//        {
+//            fileModel.makeDirsRecursively(zip_entry_name);
+//        }
+//        else if(!zipEntry.isDirectory())
+//        {
+//            File parent_dest_file=dest_file.getParentFile();
+//            String parent_dest_file_path=parent_dest_file.getAbsolutePath();
+//
+//            FileModel zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
+//            boolean parent_dir_exists = zipEntryFileModel.exists();
+//
+//            if(!parent_dir_exists)
+//            {
+//                String zip_entry_parent=new File(zip_entry_name).getParent();
+//                fileModel.makeDirsRecursively(zip_entry_parent);
+//            }
+//
+//            OutputStream outStream;
+//
+//            zipEntryFileModel=FileModelFactory.getFileModel(parent_dest_file_path,destFileObjectType,uri,uri_path);
+//            outStream=zipEntryFileModel.getChildOutputStream(dest_file.getName(),0);
+//
+//            if(outStream!=null)
+//            {
+//                BufferedOutputStream bufferedOutStream=new BufferedOutputStream(outStream);
+//                byte[] b=new byte[FileUtil.BUFFER_SIZE];
+//                int bytesread;
+//                while((bytesread=zipInputStream.read(b))!=-1)
+//                {
+//                    bufferedOutStream.write(b,0,bytesread);
+//                    bytes_read+=bytesread;
+//                }
+//                if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+//                    ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+//                }
+//                bufferedOutStream.close();
+//            }
+//        }
+//        return  zip_entry_name;
+//    }
 }

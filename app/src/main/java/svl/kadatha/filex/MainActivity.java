@@ -2231,6 +2231,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 		DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
 		DetailFragment.CUT_SELECTED=false;
 		DetailFragment.COPY_SELECTED=false;
+		send_intent=null;
 		bottom_toolbar.setVisibility(View.VISIBLE);
 		bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
 		paste_toolbar.setVisibility(View.GONE);

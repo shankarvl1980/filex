@@ -321,7 +321,6 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
 		this.current_file_name = currentFileName;
 		this.copied_file_name= copied_file_name;
 		size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files);
-
 	}
 
 	@Override

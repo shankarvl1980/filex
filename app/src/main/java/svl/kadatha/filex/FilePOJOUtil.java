@@ -452,7 +452,6 @@ public class FilePOJOUtil {
                     filePOJOS.add(filePOJO);
                 }
             }
-
         }
         else if(fileObjectType==FileObjectType.FILE_TYPE)
         {
@@ -470,7 +469,6 @@ public class FilePOJOUtil {
                                 filePOJOS_filtered.add(filePOJO);
                             }
                             filePOJOS.add(filePOJO);
-
                         }
                     }
                     else{

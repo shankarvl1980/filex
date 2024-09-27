@@ -557,7 +557,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 			{
 				glm.scrollToPositionWithOffset(idx,0);
 			}
-
 			TO_BE_MOVED_TO_FILE_POJO=null;
 		}
         if(detailFragmentListener!=null)detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size()+"/"+file_list_size);
