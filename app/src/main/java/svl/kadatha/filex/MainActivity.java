@@ -2054,7 +2054,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     Global.print(context, getString(R.string.select_files_to_delete));
                 }
             } else if (id == R.id.toolbar_btn_5) {
-
+                send_intent=null;
                 paste_pastecancel_view_procedure(df);
             }
             df.clearSelectionAndNotifyDataSetChanged();
