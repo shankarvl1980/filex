@@ -44,7 +44,6 @@
                     android:id="@+id/fragment_apk_install_dialog_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-
                     android:background="?attr/dialog_background"
                     app:layout_constraintBottom_toBottomOf="@id/fragment_apk_install_button_barrier"
                     app:layout_constraintEnd_toEndOf="parent"

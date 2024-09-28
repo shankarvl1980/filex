@@ -108,9 +108,7 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
                     getParentFragmentManager().setFragmentResult(request_code, new Bundle());
                     dismissAllowingStateLoss();
                 }
-
             }
-
         });
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
@@ -130,16 +128,12 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
                     break;
                 }
             }
-
         }
-
-
         return v;
     }
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, GridLayout.LayoutParams.WRAP_CONTENT);
@@ -147,8 +141,7 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
     }
 
     private boolean validateInput(boolean correctIfNotValid) {
-
-        int port = 0;
+        int port;
         try {
             port = Integer.parseInt(port_input.getText().toString());
         } catch (Exception e) {
@@ -183,7 +176,6 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
                     directory = chroot_spinner.getSelectedItem().toString();
                 }
             }
-
         }
 
         if (port <= 0 || 65535 < port) {
@@ -209,8 +201,6 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
         viewModel.password = password;
         viewModel.chroot = directory;
         FtpServerViewModel.FTP_USER = new FtpUser(username, password, directory);
-
-
         return true;
     }
 
@@ -221,6 +211,4 @@ public class FtpServerSetDetailsDialog extends DialogFragment {
         imm.hideSoftInputFromWindow(user_input.getWindowToken(), 0);
         imm.hideSoftInputFromWindow(password_input.getWindowToken(), 0);
     }
-
-
 }

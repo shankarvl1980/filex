@@ -47,7 +47,6 @@ public class ViewDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_view, container, false);
         RadioGroup rg = v.findViewById(R.id.dialog_view_layout_rg);
         list_rb = v.findViewById(R.id.dialog_view_rb_list);
@@ -254,9 +253,7 @@ public class ViewDialog extends DialogFragment {
                 }
             });
         }
-
         set_selection();
-
         return v;
     }
 
@@ -349,7 +346,6 @@ public class ViewDialog extends DialogFragment {
     private class SortButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View button) {
-            // TODO: Implement this method
             String selected_sort;
             int id = button.getId();
             if (id == R.id.name_desc) {
@@ -403,13 +399,9 @@ public class ViewDialog extends DialogFragment {
                     } else {
                         Global.print(context, getString(R.string.wait_ellipse));
                     }
-
                 }
             }
-
         }
-
     }
-
 }
 

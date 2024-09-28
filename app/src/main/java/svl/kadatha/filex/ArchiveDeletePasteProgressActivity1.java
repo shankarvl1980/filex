@@ -4,12 +4,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
@@ -196,9 +200,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
                     dialog_title.setText(R.string.copying);
                     break;
             }
-
         }
-
     }
 
     @Override
@@ -211,7 +213,9 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getWindow().setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
+        Window window = getWindow();
+        window.setLayout(Global.DIALOG_WIDTH, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         PROGRESS_ACTIVITY_SHOWN = true;
         Intent service_intent = new Intent(this, ArchiveDeletePasteFileService1.class);
         boolean bound = bindService(service_intent, serviceConnection, Context.BIND_AUTO_CREATE);

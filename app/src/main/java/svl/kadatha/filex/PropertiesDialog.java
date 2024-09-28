@@ -114,7 +114,6 @@ public class PropertiesDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_properties, container, false);
         //private TextView permissions;
         TableLayout properties_details_table_layout = v.findViewById(R.id.fragment_properties_details_table_layout);
@@ -257,7 +256,6 @@ public class PropertiesDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -266,7 +264,6 @@ public class PropertiesDialog extends DialogFragment {
     }
 
     public void getPermissions(File file) {
-        // TODO: Implement this method
         BufferedReader buffered_reader;
         String exec;
         if (file.isDirectory()) {
@@ -290,8 +287,6 @@ public class PropertiesDialog extends DialogFragment {
                 } else {
                     symbolic_link_str = "-";
                 }
-
-
             }
             proc.waitFor();
             buffered_reader.close();
@@ -299,5 +294,4 @@ public class PropertiesDialog extends DialogFragment {
 
         }
     }
-
 }

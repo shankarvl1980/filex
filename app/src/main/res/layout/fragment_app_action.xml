@@ -34,6 +34,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +46,6 @@
                     android:id="@+id/fragment_app_action_dialog_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/layout_margin"
                     android:background="?attr/dialog_background"
                     app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_recyclerView"
                     app:layout_constraintStart_toStartOf="parent"

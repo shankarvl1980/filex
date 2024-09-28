@@ -1,558 +1,370 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_fragment_search_parameters_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/fragment_search_parameters_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/layout_margin" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
-        android:text="@string/search"
-        android:textSize="19sp"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:orientation="vertical">
 
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <View
-                android:id="@+id/search_file_label_background"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:background="?attr/dialog_background"
-                app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_search_storage_dir_recyclerview"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/dialog_fragment_search_file_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/name"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/search_file_label_background" />
-
-            <EditText
-                android:id="@+id/dialog_fragment_search_file_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:textColor="?attr/edit_text_color"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_file_label" />
-
-            <CheckBox
-                android:id="@+id/dialog_fragment_search_wholeword_checkbox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="-3dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:minHeight="36dp"
-                android:text="@string/whole_word"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_casesensitive_checkbox"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
-
-            <CheckBox
-                android:id="@+id/dialog_fragment_search_casesensitive_checkbox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="-3dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:minHeight="36dp"
-                android:text="@string/case_sensitive"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_wholeword_checkbox"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
-
-            <CheckBox
-                android:id="@+id/dialog_fragment_search_regex_checkbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
-                android:layout_marginTop="-3dp"
-                android:layout_marginEnd="@dimen/ten_dp"
-                android:minHeight="36dp"
-                android:text="@string/regex"
-                android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_wholeword_checkbox" />
-
-            <TextView
-
-                android:id="@+id/dialog_fragment_search_filetype_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-
-                android:gravity="start"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/type"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
-
-                />
-
-            <RadioGroup
-
-                android:id="@+id/dialog_fragment_search_rg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:minHeight="36dp"
-                android:orientation="horizontal"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_filetype_label">
-
-                <RadioButton
-                    android:id="@+id/dialog_search_rb_filetype"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="10dp"
-                    android:text="@string/file"
-
-                    />
-
-                <RadioButton
-
-                    android:id="@+id/dialog_search_rb_foldertype"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="10dp"
-                    android:text="@string/directory"
-
-                    />
-
-                <RadioButton
-                    android:id="@+id/dialog_search_rb_filefoldertype"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/file_directory"
-
-                    />
-            </RadioGroup>
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/dialog_fragment_search_size_label_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="dialog_fragment_search_size_rg,dialog_fragment_search_greater_less_than_table"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg" />
-
-
-            <RadioGroup
-
-                android:id="@+id/dialog_fragment_search_size_rg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:minHeight="36dp"
-                android:orientation="horizontal"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/layout_margin"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
-
-                >
-
-                <TextView
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/dialog_background"
-                    android:gravity="start"
-                    android:paddingEnd="@dimen/ten_dp"
-                    android:text="@string/size"
-                    android:textSize="17sp"
-
-                    />
-
-                <RadioButton
-                    android:id="@+id/dialog_search_rb_size_kb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="15dp"
-                    android:text="KB"
-                    android:textSize="15sp" />
-
-                <RadioButton
-
-                    android:id="@+id/dialog_search_rb_size_mb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="15dp"
-                    android:text="MB"
-                    android:textSize="15sp" />
-
-                <RadioButton
-
-                    android:id="@+id/dialog_search_rb_size_gb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="15dp"
-                    android:text="GB"
-                    android:textSize="15sp" />
-
-            </RadioGroup>
-
-            <TableLayout
-                android:id="@+id/dialog_fragment_search_greater_less_than_table"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg">
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/dialog_fragment_search_filesize_lower_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/dialog_background"
-                        android:paddingStart="14dp"
-                        android:paddingTop="@dimen/layout_margin"
-                        android:paddingEnd="@dimen/layout_margin"
-                        android:paddingBottom="@dimen/layout_margin"
-                        android:text="@string/greater_than"
-                        android:textSize="15sp" />
-
-                    <TextView
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/layout_margin"
-                        android:paddingBottom="@dimen/layout_margin"
-                        android:text=": " />
-
-                    <EditText
-                        android:id="@+id/dialog_fragment_search_lower_bound"
-                        android:layout_width="60sp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/layout_margin"
-                        android:layout_marginEnd="@dimen/ten_dp"
-                        android:digits="0123456789"
-                        android:gravity="end"
-                        android:inputType="number"
-                        android:maxLength="4"
-                        android:maxLines="1"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        android:textSize="15sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-
-                        android:id="@+id/dialog_fragment_search_filesize_upper_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/dialog_background"
-                        android:paddingStart="14dp"
-                        android:paddingTop="@dimen/layout_margin"
-                        android:paddingEnd="@dimen/layout_margin"
-                        android:paddingBottom="@dimen/layout_margin"
-                        android:text="@string/lesser_than"
-                        android:textSize="15sp" />
-
-                    <TextView
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/layout_margin"
-                        android:paddingBottom="@dimen/layout_margin"
-                        android:text=": " />
-
-                    <EditText
-                        android:id="@+id/dialog_fragment_search_upper_bound"
-                        android:layout_width="60sp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/layout_margin"
-                        android:layout_marginEnd="@dimen/ten_dp"
-                        android:digits="0123456789"
-                        android:gravity="end"
-                        android:inputType="number"
-                        android:maxLength="4"
-                        android:maxLines="1"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        android:textSize="15sp" />
-                </TableRow>
-            </TableLayout>
-
-
-            <TextView
-                android:id="@+id/search_in_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingTop="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:paddingBottom="@dimen/layout_margin"
-                android:text="@string/search_in"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/dialog_fragment_search_storage_dir_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/dialog_background"
-                android:focusable="false"
-                android:padding="@dimen/layout_margin"
-                android:singleLine="true"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_in_label" />
-
-
-            <FrameLayout
-                android:id="@+id/fragment_search_parameters_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_storage_dir_recyclerview" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-
-</LinearLayout>
-
-
-    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/dialog_fragment_search_parameters_layout"
-
-
-        >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="19sp"
-            android:background="@color/dialog_title"
-            android:padding="@dimen/layout_margin"
+            android:background="?attr/dialog_title"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/layout_margin"
             android:text="@string/search"
+            android:textSize="19sp" />
 
-            />
-
-
-            <RelativeLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:layout_marginBottom="@dimen/layout_margin"
-                android:background="@color/dialog_background"
-                android:paddingStart="@dimen/layout_margin"
-                android:paddingEnd="@dimen/layout_margin"
-
-
-            >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_search_file_label"
-                    android:text="@string/name_colon"
-                    android:textSize="17sp"
-                />
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_search_file_edittext"
-                    android:textSize="17sp"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
-                    android:layout_below="@+id/dialog_fragment_search_file_label"
-                    android:textColor="@color/edit_text_color"
-                />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_search_wholeword_checkbox"
-                    android:text="@string/whole_word"
-                    android:textSize="15sp"
-                    android:layout_marginTop="-3dp"
-                    android:layout_marginStart="-3dp"
-                    android:layout_below="@+id/dialog_fragment_search_file_edittext"
-                    android:paddingEnd="10dp"
-
-                />
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_search_casesensitive_checkbox"
-                    android:text="@string/case_sensitive"
-                    android:textSize="15sp"
-                    android:layout_marginTop="-3dp"
-                    android:layout_below="@+id/dialog_fragment_search_file_edittext"
-                    android:layout_toEndOf="@+id/dialog_fragment_search_wholeword_checkbox"
-
-                />
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dialog_fragment_search_regex_checkbox"
-                    android:text="@string/regex"
-                    android:textSize="15sp"
-                    android:layout_marginTop="-3dp"
-                    android:layout_marginStart="-3dp"
-                    android:layout_below="@+id/dialog_fragment_search_wholeword_checkbox"
-                    android:paddingEnd="10dp"
-
-                />
-            </RelativeLayout>
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                >
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@color/dialog_background"
-
-                    android:padding="@dimen/layout_margin"
-
-                >
-
-                    <TextView
-
-                        android:id="@+id/dialog_fragment_search_filetype_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/type_colon"
-                        android:gravity="start"
-                        android:textSize="17sp"
-
-                    />
-
-                    <RadioGroup
-
-                        android:id="@+id/dialog_fragment_search_rg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                    >
-
-
-                        <RadioButton
-                            android:id="@+id/dialog_search_rb_filetype"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/file"
-                            android:paddingEnd="10dp"
-
-                        />
-
-                        <RadioButton
-
-                            android:id="@+id/dialog_search_rb_foldertype"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/directory"
-                            android:paddingEnd="10dp"
-
-                        />
-
-                        <RadioButton
-
-                            android:id="@+id/dialog_search_rb_filefoldertype"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/file_directory"
-
-                        />
-                    </RadioGroup>
-
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:text="@string/search_in_colon"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/dialog_fragment_search_storage_dir_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:singleLine="true"
-            android:focusable="false"
-
-            />
-                </LinearLayout>
-
-
-
-        <FrameLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
-            android:id="@+id/fragment_search_parameters_button_layout"
-            />
+            android:layout_marginBottom="@dimen/layout_margin">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
 
+                <View
+                    android:id="@+id/search_file_label_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="?attr/dialog_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_search_storage_dir_recyclerview"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/dialog_fragment_search_file_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/name"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/search_file_label_background" />
+
+                <EditText
+                    android:id="@+id/dialog_fragment_search_file_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:textColor="?attr/edit_text_color"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_file_label" />
+
+                <CheckBox
+                    android:id="@+id/dialog_fragment_search_wholeword_checkbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="-3dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:minHeight="36dp"
+                    android:text="@string/whole_word"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_casesensitive_checkbox"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
+
+                <CheckBox
+                    android:id="@+id/dialog_fragment_search_casesensitive_checkbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="-3dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:minHeight="36dp"
+                    android:text="@string/case_sensitive"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_wholeword_checkbox"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
+
+                <CheckBox
+                    android:id="@+id/dialog_fragment_search_regex_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginTop="-3dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:minHeight="36dp"
+                    android:text="@string/regex"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_wholeword_checkbox" />
+
+                <TextView
+
+                    android:id="@+id/dialog_fragment_search_filetype_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+
+                    android:gravity="start"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/type"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
+
+                    />
+
+                <RadioGroup
+
+                    android:id="@+id/dialog_fragment_search_rg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:minHeight="36dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_filetype_label">
+
+                    <RadioButton
+                        android:id="@+id/dialog_search_rb_filetype"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="10dp"
+                        android:text="@string/file"
+
+                        />
+
+                    <RadioButton
+
+                        android:id="@+id/dialog_search_rb_foldertype"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="10dp"
+                        android:text="@string/directory"
+
+                        />
+
+                    <RadioButton
+                        android:id="@+id/dialog_search_rb_filefoldertype"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/file_directory"
+
+                        />
+                </RadioGroup>
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/dialog_fragment_search_size_label_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="dialog_fragment_search_size_rg,dialog_fragment_search_greater_less_than_table"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg" />
+
+
+                <RadioGroup
+
+                    android:id="@+id/dialog_fragment_search_size_rg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:minHeight="36dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
+
+                    >
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/dialog_background"
+                        android:gravity="start"
+                        android:paddingEnd="@dimen/ten_dp"
+                        android:text="@string/size"
+                        android:textSize="17sp"
+
+                        />
+
+                    <RadioButton
+                        android:id="@+id/dialog_search_rb_size_kb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="15dp"
+                        android:text="KB"
+                        android:textSize="15sp" />
+
+                    <RadioButton
+
+                        android:id="@+id/dialog_search_rb_size_mb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="15dp"
+                        android:text="MB"
+                        android:textSize="15sp" />
+
+                    <RadioButton
+
+                        android:id="@+id/dialog_search_rb_size_gb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="15dp"
+                        android:text="GB"
+                        android:textSize="15sp" />
+
+                </RadioGroup>
+
+                <TableLayout
+                    android:id="@+id/dialog_fragment_search_greater_less_than_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg">
+
+                    <TableRow>
+
+                        <TextView
+                            android:id="@+id/dialog_fragment_search_filesize_lower_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/dialog_background"
+                            android:paddingStart="14dp"
+                            android:paddingTop="@dimen/layout_margin"
+                            android:paddingEnd="@dimen/layout_margin"
+                            android:paddingBottom="@dimen/layout_margin"
+                            android:text="@string/greater_than"
+                            android:textSize="15sp" />
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/layout_margin"
+                            android:paddingBottom="@dimen/layout_margin"
+                            android:text=": " />
+
+                        <EditText
+                            android:id="@+id/dialog_fragment_search_lower_bound"
+                            android:layout_width="60sp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/layout_margin"
+                            android:layout_marginEnd="@dimen/ten_dp"
+                            android:digits="0123456789"
+                            android:gravity="end"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:maxLines="1"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+
+                            android:id="@+id/dialog_fragment_search_filesize_upper_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/dialog_background"
+                            android:paddingStart="14dp"
+                            android:paddingTop="@dimen/layout_margin"
+                            android:paddingEnd="@dimen/layout_margin"
+                            android:paddingBottom="@dimen/layout_margin"
+                            android:text="@string/lesser_than"
+                            android:textSize="15sp" />
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/layout_margin"
+                            android:paddingBottom="@dimen/layout_margin"
+                            android:text=": " />
+
+                        <EditText
+                            android:id="@+id/dialog_fragment_search_upper_bound"
+                            android:layout_width="60sp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/layout_margin"
+                            android:layout_marginEnd="@dimen/ten_dp"
+                            android:digits="0123456789"
+                            android:gravity="end"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:maxLines="1"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:textSize="15sp" />
+                    </TableRow>
+                </TableLayout>
+
+
+                <TextView
+                    android:id="@+id/search_in_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingBottom="@dimen/layout_margin"
+                    android:text="@string/search_in"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dialog_fragment_search_storage_dir_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:focusable="false"
+                    android:padding="@dimen/layout_margin"
+                    android:singleLine="true"
+                    android:textSize="17sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/search_in_label" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
     </LinearLayout>
-        </ScrollView>
-    </LinearLayout-->
+</FrameLayout>

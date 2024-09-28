@@ -76,13 +76,11 @@ public class FileEditorSettingsDialog extends DialogFragment {
             not_wrap = savedInstanceState.getBoolean("not_wrap");
             selected_eol = savedInstanceState.getInt("selected_eol");
         }
-
         viewModel = new ViewModelProvider(requireActivity()).get(FileEditorViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_file_editor_settings, container, false);
         eol_group_expander = v.findViewById(R.id.file_editor_settings_advanced_expander);
         View advanced_label_group = v.findViewById(R.id.file_editor_settings_advanced_group);
@@ -131,23 +129,18 @@ public class FileEditorSettingsDialog extends DialogFragment {
                     }
                     Global.print(context, getString(R.string.cant_edit_this_file));
                 }
-
-
             }
-
         });
 
         unix_rb = v.findViewById(R.id.eol_rb_n);
         mac_rb = v.findViewById(R.id.eol_rb_r);
         wnd_rb = v.findViewById(R.id.eol_rb_rn);
 
-
         CheckBox wrap_check_box = v.findViewById(R.id.file_editor_settings_wrap_checkbox);
         wrap_check_box.setChecked(!not_wrap);
         wrap_check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton b, boolean checked) {
                 not_wrap = !checked;
-
             }
         });
 
@@ -189,7 +182,6 @@ public class FileEditorSettingsDialog extends DialogFragment {
         ok_button.setText(R.string.ok);
         ok_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-
                 if (FileEditorActivity.NOT_WRAP != not_wrap) {
                     FileEditorActivity.NOT_WRAP = not_wrap;
                     fileEditorActivity.tinyDB.putBoolean("file_editor_not_wrap", not_wrap);
@@ -198,11 +190,9 @@ public class FileEditorSettingsDialog extends DialogFragment {
                 }
 
                 if (FileEditorActivity.FILE_EDITOR_TEXT_SIZE != selected_text_size) {
-
                     fileEditorActivity.filetext_container_edittext.setTextSize(selected_text_size);
                     FileEditorActivity.FILE_EDITOR_TEXT_SIZE = selected_text_size;
                     fileEditorActivity.tinyDB.putFloat("file_editor_text_size", FileEditorActivity.FILE_EDITOR_TEXT_SIZE);
-
                 }
 
                 ((FileEditorActivity) context).viewModel.altered_eol = selected_eol;
@@ -231,7 +221,6 @@ public class FileEditorSettingsDialog extends DialogFragment {
             case FileEditorActivity.EOL_RN:
                 wnd_rb.setChecked(true);
                 break;
-
         }
 
         enable_disable_btns();
@@ -239,7 +228,6 @@ public class FileEditorSettingsDialog extends DialogFragment {
     }
 
     private void enable_disable_btns() {
-
         if (selected_text_size == MIN_TEXT_SIZE) {
             text_size_decrease_btn.setEnabled(false);
             text_size_decrease_btn.setAlpha(Global.DISABLE_ALFA);
@@ -265,7 +253,6 @@ public class FileEditorSettingsDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -276,6 +263,4 @@ public class FileEditorSettingsDialog extends DialogFragment {
     interface EOL_ChangeListener {
         void onEOLchanged(int eol);
     }
-
-
 }

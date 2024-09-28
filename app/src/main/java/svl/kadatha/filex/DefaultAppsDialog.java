@@ -111,7 +111,6 @@ public class DefaultAppsDialog extends DialogFragment {
                         }
                     }
                 });
-
             }
             tableLayout.addView(itemView);
         }
@@ -146,7 +145,6 @@ public class DefaultAppsDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
-
         return v;
     }
 
@@ -167,7 +165,6 @@ public class DefaultAppsDialog extends DialogFragment {
             TableRow itemView = (TableRow) tableLayout.getChildAt(i + 1);
             ((CheckBox) itemView.getChildAt(3)).setChecked(false);
         }
-
     }
 
 
@@ -185,7 +182,5 @@ public class DefaultAppsDialog extends DialogFragment {
             this.app_package_name = app_package_name;
             this.app_component_name = app_component_name;
         }
-
     }
-
 }

@@ -87,13 +87,10 @@ public class RenameFileDialog extends DialogFragment {
             overwriting = savedInstanceState.getBoolean("overwriting");
             isWritable = savedInstanceState.getBoolean("isWritable");
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
-
         View v = inflater.inflate(R.layout.fragment_create_rename_delete, container, false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -140,7 +137,7 @@ public class RenameFileDialog extends DialogFragment {
         getParentFragmentManager().setFragmentResultListener(REPLACEMENT_CONFIRMATION, RenameFileDialog.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (requestKey.equals(REPLACEMENT_CONFIRMATION) && result != null) {
+                if (requestKey.equals(REPLACEMENT_CONFIRMATION)) {
                     String new_name = result.getString("rename_file_name");
                     if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable) {
                         if (check_SAF_permission(parent_file_path, fileObjectType)) {
@@ -149,7 +146,6 @@ public class RenameFileDialog extends DialogFragment {
                     } else {
                         viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, isWritable, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
                     }
-
                 }
             }
         });
@@ -162,13 +158,11 @@ public class RenameFileDialog extends DialogFragment {
                     tree_uri_path = result.getString("tree_uri_path");
                     okbutton.callOnClick();
                 }
-
             }
         });
 
         okbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 new_name = new_file_name_edittext.getText().toString().trim();
                 if (new_name.equals(existing_name)) {
                     imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
@@ -239,14 +233,12 @@ public class RenameFileDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
-
         return v;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putString("new_file_path", new_file_path);
         outState.putBoolean("overwriting", overwriting);
         outState.putBoolean("isWritable", isWritable);
@@ -299,28 +291,22 @@ public class RenameFileDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         new_file_name_edittext.requestFocus();
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        // TODO: Implement this method
         super.onCancel(dialog);
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        // TODO: Implement this method
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
         super.onDismiss(dialog);
     }
-
-
 }

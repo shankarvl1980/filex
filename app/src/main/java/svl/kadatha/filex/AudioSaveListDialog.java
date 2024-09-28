@@ -56,7 +56,6 @@ public class AudioSaveListDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.audio_save_list_dialog, container, false);
         RecyclerView create_list_view = v.findViewById(R.id.audio_save_list_create_add_recyclerview);
         create_list_view.setAdapter(new CreateAddListRecyclerAdapter(create_add_array));
@@ -82,9 +81,7 @@ public class AudioSaveListDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
-
         Window window = getDialog().getWindow();
         if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
             window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
@@ -92,7 +89,6 @@ public class AudioSaveListDialog extends DialogFragment {
             window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
 
 
@@ -105,23 +101,18 @@ public class AudioSaveListDialog extends DialogFragment {
 
         @Override
         public CreateAddListRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
-
             View itemview = LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout, p1, false);
             return new ViewHolder(itemview);
         }
 
         @Override
         public void onBindViewHolder(CreateAddListRecyclerAdapter.ViewHolder p1, int p2) {
-            // TODO: Implement this method
             p1.textView.setText(audio_list.get(p2));
-
         }
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
-            return audio_list.size();
+           return audio_list.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -160,11 +151,8 @@ public class AudioSaveListDialog extends DialogFragment {
 
                     }
                 });
-
             }
-
         }
-
     }
 
     private class AudioSavedListRecyclerAdapter extends RecyclerView.Adapter<AudioSavedListRecyclerAdapter.ViewHolder> {
@@ -176,22 +164,17 @@ public class AudioSaveListDialog extends DialogFragment {
 
         @Override
         public AudioSavedListRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
-
             View itemview = LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout, p1, false);
             return new ViewHolder(itemview);
         }
 
         @Override
         public void onBindViewHolder(AudioSavedListRecyclerAdapter.ViewHolder p1, int p2) {
-            // TODO: Implement this method
-            p1.textView.setText(audio_list.get(p2));
-
+           p1.textView.setText(audio_list.get(p2));
         }
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
             return audio_list.size();
         }
 
@@ -221,14 +204,9 @@ public class AudioSaveListDialog extends DialogFragment {
                     public boolean onLongClick(View p) {
                         pos = getBindingAdapterPosition();
                         return true;
-
                     }
                 });
-
             }
-
         }
-
     }
-
 }

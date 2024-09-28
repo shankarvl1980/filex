@@ -67,19 +67,15 @@ public class RenameReplaceConfirmationDialog extends DialogFragment {
             public void onClick(View v) {
                 dismissAllowingStateLoss();
             }
-
         });
         return v;
     }
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
-
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
 }

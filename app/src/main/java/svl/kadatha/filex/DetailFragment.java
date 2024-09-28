@@ -374,8 +374,12 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 }
             }
         });
+        if(detailFragmentListener==null){
+            Global.print(context, "detailfragmentlistener is null");
+        }else{
+            detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
+        }
 
-        detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
         return v;
     }
 

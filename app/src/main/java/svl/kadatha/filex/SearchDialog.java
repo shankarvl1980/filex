@@ -76,7 +76,6 @@ public class SearchDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_search_parameters, container, false);
         search_file_name_edit_text = v.findViewById(R.id.dialog_fragment_search_file_edittext);
         wholeword_checkbox = v.findViewById(R.id.dialog_fragment_search_wholeword_checkbox);
@@ -267,7 +266,6 @@ public class SearchDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -283,24 +281,19 @@ public class SearchDialog extends DialogFragment {
 
 
     public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH> {
-
         final List<FilePOJO> storage_list;
-
         SearchRecyclerViewAdapter(List<FilePOJO> storage_list) {
             this.storage_list = storage_list;
         }
 
         @Override
         public SearchDialog.SearchRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
             View itemview = LayoutInflater.from(p1.getContext()).inflate(R.layout.search_storage_dir_recyclerview_layout, p1, false);
             return new VH(itemview);
-
         }
 
         @Override
         public void onBindViewHolder(SearchDialog.SearchRecyclerViewAdapter.VH p1, int p2) {
-            // TODO: Implement this method
             if (Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(storage_list.get(p2).getPath())) {
                 p1.iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
                 p1.tv.setText(storage_list.get(p2).getName());
@@ -310,16 +303,12 @@ public class SearchDialog extends DialogFragment {
             } else {
                 p1.iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
                 p1.tv.setText(storage_list.get(p2).getName());
-
             }
-
             p1.cb.setChecked(dir_selected_items.containsKey(p2));
-
         }
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
             return storage_list.size();
         }
 
@@ -348,13 +337,8 @@ public class SearchDialog extends DialogFragment {
                             //selected_search_dir_list.remove(storage_list.get(pos));
                         }
                     }
-
                 });
-
             }
-
         }
-
     }
-
 }

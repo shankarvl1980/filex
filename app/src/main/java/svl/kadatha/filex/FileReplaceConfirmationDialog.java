@@ -126,9 +126,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
                     }
                 }
-
             }
-
         });
 
         fileDuplicationViewModel = new ViewModelProvider(this).get(FileDuplicationViewModel.class);

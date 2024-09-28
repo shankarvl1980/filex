@@ -2,15 +2,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_gravity="top"
-
         android:background="?attr/dialog_title"
         android:paddingStart="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
@@ -18,7 +15,6 @@
         android:paddingBottom="@dimen/layout_margin"
         android:text="@string/replace_file"
         android:textSize="19sp"
-
         />
 
     <TextView
@@ -29,11 +25,7 @@
         android:background="?attr/dialog_background"
         android:padding="@dimen/ten_dp"
         android:textSize="17sp"
-
-
         />
-
-
 
     <FrameLayout
         android:id="@+id/fragment_archive_replace_confirmation_button_layout"

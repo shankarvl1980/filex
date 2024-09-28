@@ -124,18 +124,15 @@ public class SAFPermissionHelperDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
-
         return v;
     }
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
 
     private void seekSAFPermission() {
@@ -174,9 +171,6 @@ public class SAFPermissionHelperDialog extends DialogFragment {
         } else {
             return false;
         }
-
-
         return !tree_uri_path.isEmpty();
     }
-
 }

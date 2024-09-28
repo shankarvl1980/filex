@@ -62,7 +62,6 @@ public class CancelableProgressBarDialog extends DialogFragment {
                 getParentFragmentManager().setFragmentResult(request_code, bundle);
                 dismissAllowingStateLoss();
             }
-
         });
 
         getParentFragmentManager().setFragmentResultListener(CPBD_CANCEL_REQUEST_CODE, this, new FragmentResultListener() {
@@ -79,7 +78,6 @@ public class CancelableProgressBarDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -94,5 +92,4 @@ public class CancelableProgressBarDialog extends DialogFragment {
             title.setText(title_string);
         }
     }
-
 }

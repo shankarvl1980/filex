@@ -46,7 +46,6 @@ public class YesOrNoAlertDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_archivereplace_confirmation, container, false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_archive_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_archive_replace_confirmation_button_layout);
@@ -62,7 +61,6 @@ public class YesOrNoAlertDialog extends DialogFragment {
                 getParentFragmentManager().setFragmentResult(request_code, bundle);
                 dismissAllowingStateLoss();
             }
-
         });
 
         no_button.setOnClickListener(new View.OnClickListener() {

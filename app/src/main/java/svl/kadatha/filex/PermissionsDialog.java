@@ -81,17 +81,13 @@ public class PermissionsDialog extends DialogFragment {
                 } else if (i == 9 && file_permissions_split[i].matches("\\w")) {
                     other_exe = true;
                     other_permission_int += 1;
-
                 }
-
             }
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_permissions, container, false);
         CheckBox owner_read_chkbox = v.findViewById(R.id.fragment_permissions_owner_read_chkbox);
         CheckBox owner_write_chkbox = v.findViewById(R.id.fragment_permissions_owner_write_chkbox);
@@ -142,7 +138,6 @@ public class PermissionsDialog extends DialogFragment {
         other_write_chkbox.setChecked(other_write);
         other_exe_chkbox.setChecked(other_exe);
 
-
         owner_read_chkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton btn, boolean b) {
                 owner_read = b;
@@ -164,9 +159,7 @@ public class PermissionsDialog extends DialogFragment {
                 } else {
                     owner_permission_int -= 2;
                 }
-
             }
-
         });
 
         owner_exe_chkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
@@ -245,19 +238,14 @@ public class PermissionsDialog extends DialogFragment {
                 }
             }
         });
-
-
         return v;
     }
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
-
 }

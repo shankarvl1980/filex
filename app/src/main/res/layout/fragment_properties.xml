@@ -1,65 +1,71 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
 
     >
 
-    <TextView
-        android:id="@+id/properties_heading"
+    <FrameLayout
+        android:id="@+id/fragment_properties_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/layout_margin" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
-        android:text="@string/properties"
-        android:textSize="19sp"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:orientation="vertical">
 
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        >
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/properties_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="?attr/dialog_title"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/layout_margin"
+            android:text="@string/properties"
+            android:textSize="19sp"
+            />
 
-            <TableLayout
-                android:id="@+id/fragment_properties_details_table_layout"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/four_dp"
+            android:layout_marginBottom="@dimen/layout_margin">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:background="?attr/dialog_background"
-                android:padding="@dimen/ten_dp"
+                android:orientation="vertical">
 
-                >
+                <TableLayout
+                    android:id="@+id/fragment_properties_details_table_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/dialog_background"
+                    android:padding="@dimen/ten_dp"
 
-            </TableLayout>
+                    >
 
-            <TableLayout
-                android:id="@+id/fragment_properties_rwh_tablelayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:background="?attr/dialog_background"
-                android:padding="@dimen/ten_dp"
-                android:visibility="gone">
+                </TableLayout>
 
-            </TableLayout>
+                <TableLayout
+                    android:id="@+id/fragment_properties_rwh_tablelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/dialog_background"
+                    android:padding="@dimen/ten_dp"
+                    android:visibility="gone">
+
+                </TableLayout>
 
 
-            <FrameLayout
-                android:id="@+id/fragment_properties_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin" />
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

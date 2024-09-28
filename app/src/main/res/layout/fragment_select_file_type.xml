@@ -1,34 +1,42 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-
     >
 
+    <FrameLayout
+        android:id="@+id/fragment_file_type_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/layout_margin" />
 
-    <TextView
-        android:id="@+id/open_as_label"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="?attr/dialog_title"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
-        android:text="@string/open_as"
-        android:textSize="19sp"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:orientation="vertical">
 
-        />
+        <TextView
+            android:id="@+id/open_as_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?attr/dialog_title"
+            android:paddingStart="@dimen/ten_dp"
+            android:paddingTop="@dimen/layout_margin"
+            android:paddingEnd="@dimen/ten_dp"
+            android:paddingBottom="@dimen/layout_margin"
+            android:text="@string/open_as"
+            android:textSize="19sp"
+            />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/layout_margin"
             android:background="@null">
 
 
@@ -59,104 +67,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
                 >
-
                 <ProgressBar
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@null" />
             </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fragment_file_type_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_file_type_RecyclerView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </LinearLayout>
+</FrameLayout>
 
-</LinearLayout>
-
-    <!--androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/open_as_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/open_as"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
-        android:background="?attr/dialog_title"
-        android:textSize="19sp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/fragment_file_type_RecyclerView"
-        android:choiceMode="singleChoice"
-        android:background="?attr/dialog_background"
-        android:layout_marginTop="@dimen/layout_margin"
-        android:layout_marginBottom="@dimen/layout_margin"
-        android:padding="@dimen/layout_margin"
-        android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@drawable/scrollbar"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/open_as_label"
-        app:layout_constraintBottom_toTopOf="@id/fragment_file_type_button_layout"
-        />
-    <FrameLayout
-        android:id="@+id/fragment_file_type_select_progressbar"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:foregroundGravity="center"
-        android:elevation="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        >
-        <ProgressBar
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:layout_gravity="center"
-            />
-    </FrameLayout>
-
-
-    <FrameLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_margin"
-        android:id="@+id/fragment_file_type_button_layout"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:elevation="6dp"
-
-        />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout-->

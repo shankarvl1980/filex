@@ -70,7 +70,6 @@ public class FileTypeSelectDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_select_file_type, container, false);
         FrameLayout progress_bar = v.findViewById(R.id.fragment_file_type_select_progressbar);
         progress_bar.setVisibility(View.GONE);
@@ -95,7 +94,6 @@ public class FileTypeSelectDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, GridLayout.LayoutParams.WRAP_CONTENT);
@@ -106,20 +104,17 @@ public class FileTypeSelectDialog extends DialogFragment {
     private class FileTypeRecyclerViewAdapter extends RecyclerView.Adapter<FileTypeRecyclerViewAdapter.VH> {
         @Override
         public FileTypeSelectDialog.FileTypeRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
             View v = LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout, p1, false);
             return new VH(v);
         }
 
         @Override
         public void onBindViewHolder(FileTypeSelectDialog.FileTypeRecyclerViewAdapter.VH p1, int p2) {
-            // TODO: Implement this method
             p1.file_type_tv.setText(mimePOJOList.get(p2).getFile_type());
         }
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
             return mimePOJOList.size();
         }
 
@@ -146,7 +141,5 @@ public class FileTypeSelectDialog extends DialogFragment {
                 });
             }
         }
-
     }
-
 }

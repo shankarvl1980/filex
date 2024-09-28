@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
-    private Intent send_intent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -803,7 +803,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         super.onNewIntent(intent);
         String action = intent.getAction();
         if (action.equals(Intent.ACTION_SEND_MULTIPLE) || action.equals(Intent.ACTION_SEND)) {
-            send_intent = intent;
+            viewModel.send_intent = intent;
         }
     }
 
@@ -903,8 +903,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     @Override
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
-        if (send_intent != null) {
-            on_intent(send_intent, null);
+        if (viewModel.send_intent != null) {
+            on_intent(viewModel.send_intent, null);
         }
     }
 
@@ -2019,12 +2019,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
 
                 //if intent comes from outside
-                if (send_intent != null) {
-                    send_intent.putExtra("folderclickselected", df.fileclickselected);
-                    send_intent.putExtra("destFileObjectType", df.fileObjectType);
-                    send_intent.setClass(context, CopyToActivity.class);
-                    startActivity(send_intent);
-                    send_intent = null;
+                if (viewModel.send_intent != null) {
+                    viewModel.send_intent.putExtra("folderclickselected", df.fileclickselected);
+                    viewModel.send_intent.putExtra("destFileObjectType", df.fileObjectType);
+                    viewModel.send_intent.setClass(context, CopyToActivity.class);
+                    startActivity(viewModel.send_intent);
+                    viewModel.send_intent = null;
                 } else {
                     FileObjectType sourceFileObjectType = DetailFragment.CUT_COPY_FILE_OBJECT_TYPE;
                     String source_folder = DetailFragment.CUT_COPY_FILE_CLICK_SELECTED;
@@ -2054,7 +2054,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     Global.print(context, getString(R.string.select_files_to_delete));
                 }
             } else if (id == R.id.toolbar_btn_5) {
-                send_intent=null;
+                viewModel.send_intent=null;
                 paste_pastecancel_view_procedure(df);
             }
             df.clearSelectionAndNotifyDataSetChanged();

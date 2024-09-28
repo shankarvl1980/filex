@@ -39,8 +39,6 @@ public class StorageAnalyserSortDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
-
         View v = inflater.inflate(R.layout.fragment_storage_analyser_sort, container, false);
         TextView lable = v.findViewById(R.id.storage_analyser_sort_heading);
         lable.setText(getString(R.string.sort));
@@ -71,16 +69,12 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
-
-
         set_selection();
-
         return v;
     }
 
     private void set_selection() {
         switch (Global.STORAGE_ANALYSER_SORT) {
-
             case "d_name_asc":
             case "f_name_asc":
                 name_asc_btn.setSelected(true);
@@ -152,7 +146,6 @@ public class StorageAnalyserSortDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -163,7 +156,6 @@ public class StorageAnalyserSortDialog extends DialogFragment {
 
         @Override
         public void onClick(View button) {
-            // TODO: Implement this method
             String selected_sort;
             int id = button.getId();
             if (id == R.id.storage_analyser_name_asc) {
@@ -196,10 +188,8 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                 } else {
                     Global.print(context, getString(R.string.wait_ellipse));
                 }
-
             }
         }
     }
-
 }
 
