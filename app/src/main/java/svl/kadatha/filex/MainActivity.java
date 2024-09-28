@@ -804,10 +804,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         String action = intent.getAction();
         if (action.equals(Intent.ACTION_SEND_MULTIPLE) || action.equals(Intent.ACTION_SEND)) {
             viewModel.send_intent = intent;
+            on_intent(viewModel.send_intent);
         }
     }
 
-    private void on_intent(Intent intent, Bundle savedInstanceState) {
+    private void on_intent(Intent intent) {
         if (intent != null) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_SEND_MULTIPLE) || action.equals(Intent.ACTION_SEND)) {
@@ -904,7 +905,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     @Override
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
         if (viewModel.send_intent != null) {
-            on_intent(viewModel.send_intent, null);
+            on_intent(viewModel.send_intent);
         }
     }
 
