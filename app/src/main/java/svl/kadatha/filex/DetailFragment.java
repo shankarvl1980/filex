@@ -82,11 +82,11 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     public DetailFragmentListener detailFragmentListener;
-    LinearLayoutManager llm;
-    GridLayoutManager glm;
-    TextView folder_empty;
-    DetailRecyclerViewAdapter adapter;
-    boolean is_toolbar_visible = true;
+    public LinearLayoutManager llm;
+    public GridLayoutManager glm;
+    public TextView folder_empty;
+    public DetailRecyclerViewAdapter adapter;
+    public boolean is_toolbar_visible = true;
     private TinyDB tinyDB;
     private long search_lower_limit_size = 0;
     private long search_upper_limit_size = 0;
@@ -374,12 +374,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 }
             }
         });
-        if(detailFragmentListener==null){
-            Global.print(context, "detailfragmentlistener is null");
-        }else{
-            detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
-        }
-
+        detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
         return v;
     }
 
