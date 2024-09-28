@@ -269,7 +269,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     publishProgress(null);
                 } else {
                     File destFile = new File(destPath);
-                    String parent_path_segment=getParentPath(destPath);
+                    String parent_path_segment=Global.getParentPath(destPath);
                     FileModel destParentModel = createDirectory(destFileModel, parent_path_segment, destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
                     if (success) {
@@ -314,22 +314,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
             }
         }
-    }
-
-    private String getParentPath(String path) {
-        String[] segments = path.split("/");
-        StringBuilder parentPathBuilder = new StringBuilder();
-
-        // Iterate through all segments except the last one
-        for (int i = 0; i < segments.length - 1; i++) {
-            if (!segments[i].isEmpty()) {  // Skip empty segments
-                parentPathBuilder.append("/").append(segments[i]);
-            }
-        }
-
-        // If the path starts with a slash, make sure we keep it
-        String parentPath = parentPathBuilder.toString();
-        return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
     }
 
     // createDirectory and copyFile methods remain the same as in the previous version

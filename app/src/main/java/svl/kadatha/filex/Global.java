@@ -1186,4 +1186,20 @@ public class Global {
         float factor = height / (float) bitmap.getHeight();
         return Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * factor), height, true);
     }
+
+    public static String getParentPath(String path) {
+        String[] segments = path.split("/");
+        StringBuilder parentPathBuilder = new StringBuilder();
+
+        // Iterate through all segments except the last one
+        for (int i = 0; i < segments.length - 1; i++) {
+            if (!segments[i].isEmpty()) {  // Skip empty segments
+                parentPathBuilder.append("/").append(segments[i]);
+            }
+        }
+
+        // If the path starts with a slash, make sure we keep it
+        String parentPath = parentPathBuilder.toString();
+        return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
+    }
 }

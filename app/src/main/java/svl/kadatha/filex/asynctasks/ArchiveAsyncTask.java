@@ -75,9 +75,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     Iterate.populate(new File(path), file_array, false);
                     try {
                         put_zip_entry_file_type(path, file_array, zipOutputStream);
-                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
-                        }
                     } catch (IOException e) {
                         return false;
                     }
@@ -86,11 +83,14 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 try {
                     filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name), destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_file_name)));
                     return true;
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 } finally {
                     try {
                         zipOutputStream.closeEntry();
                         zipOutputStream.close();
+                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+                        }
                     } catch (Exception e) {
                         // ignore exception
                     }
@@ -122,27 +122,25 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                             zip_entry_path = (lengthParentPath != 0) ? fileModel.getPath().substring(lengthParentPath + 1) : fileModel.getPath().substring(fileModel.getParentPath().length() + 1);
                         }
 
-
                         ZipEntry zipEntry;
 
                         if (fileModel.isDirectory()) {
                             zipEntry = new ZipEntry(zip_entry_path + File.separator);
                             zipOutputStream.putNextEntry(zipEntry);
                         } else {
-                            zipEntry = new ZipEntry(zip_entry_path);
+                            zipEntry=new ZipEntry(zip_entry_path);
                             zipOutputStream.putNextEntry(zipEntry);
-                            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileModel.getInputStream());
-                            byte[] b = new byte[8192];
-                            int bytesread;
-                            while ((bytesread = bufferedInputStream.read(b)) != -1) {
-                                zipOutputStream.write(b, 0, bytesread);
-                                counter_size_files += bytesread;
-                                publishProgress(null);
+                            try(BufferedInputStream bufferedInputStream=new BufferedInputStream(fileModel.getInputStream())){
+                                byte [] b=new byte[8192];
+                                int bytesread;
+                                while((bytesread=bufferedInputStream.read(b))!=-1)
+                                {
+                                    zipOutputStream.write(b,0,bytesread);
+                                    counter_size_files+=bytesread;
+                                    publishProgress(null);
+                                }
                             }
-
-                            bufferedInputStream.close();
                         }
-
                     }
 
                     filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name), destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_file_name)));
@@ -153,28 +151,15 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     try {
                         zipOutputStream.closeEntry();
                         zipOutputStream.close();
+                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+                        }
                     } catch (Exception e) {
                         // ignore exception
                     }
                 }
             }
-//            else if(sourceFileObjectType==FileObjectType.FTP_TYPE)
-//            {
-//                Global.print_background_thread(context,context.getString(R.string.not_supported));
-//                try
-//                {
-//                    zipOutputStream.closeEntry();
-//                    zipOutputStream.close();
-//                }
-//                catch (Exception e)
-//                {
-//                    // ignore exception
-//                }
-//                return false;
-//            }
-
         }
-
         return false;
     }
 
@@ -228,29 +213,25 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 zip_entry_path = (lengthParentPath != 0) ? file.getCanonicalPath().substring(lengthParentPath + 1) : file.getCanonicalPath().substring(file.getParentFile().getCanonicalPath().length() + 1);
             }
 
-
             ZipEntry zipEntry;
-
             if (file.isDirectory()) {
-                zipEntry = new ZipEntry(zip_entry_path + File.separator);
+                zipEntry = new ZipEntry(zip_entry_path + "/");
                 zipOutputStream.putNextEntry(zipEntry);
             } else {
-                zipEntry = new ZipEntry(zip_entry_path);
+                zipEntry=new ZipEntry(zip_entry_path);
                 zipOutputStream.putNextEntry(zipEntry);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
-                byte[] b = new byte[8192];
-                int bytesread;
-                while ((bytesread = bufferedInputStream.read(b)) != -1) {
-                    zipOutputStream.write(b, 0, bytesread);
-                    counter_size_files += bytesread;
-                    publishProgress(null);
+                try(BufferedInputStream bufferedInputStream=new BufferedInputStream(new FileInputStream(file))){
+                    byte [] b=new byte[8192];
+                    int bytesread;
+                    while((bytesread=bufferedInputStream.read(b))!=-1)
+                    {
+                        zipOutputStream.write(b,0,bytesread);
+                        counter_size_files+=bytesread;
+                        publishProgress(null);
+                    }
                 }
-
-                bufferedInputStream.close();
             }
         }
     }
-
-
 }
 
