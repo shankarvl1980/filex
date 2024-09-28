@@ -75,9 +75,7 @@ public abstract class AlternativeAsyncTask<Params, Progress, Result> {
                                     onPostExecute(result);
                                 }
                             });
-
                         }
-
                     }
                 });
             }

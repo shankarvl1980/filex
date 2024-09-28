@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 
@@ -55,8 +56,17 @@ public class FileDuplicationViewModel extends ViewModel {
             }
         }
 
-        // If all checks fail, assume it's not a directory
-        return false;
+        try {
+            Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri,
+                    DocumentsContract.getDocumentId(uri));
+            try (Cursor cursor = context.getContentResolver().query(childrenUri, new String[]{
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID}, null, null, null)) {
+                return (cursor != null && cursor.getCount() > 0);
+            }
+        } catch (Exception e) {
+            // An exception here likely means it's not a directory
+            return false;
+        }
     }
 
     @Override

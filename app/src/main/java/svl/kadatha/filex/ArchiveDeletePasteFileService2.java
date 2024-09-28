@@ -118,8 +118,8 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                     tree_uri_path = bundle.getString("tree_uri_path");
                     tree_uri = bundle.getParcelable("tree_uri");
                     files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-                    if (bundle.getStringArrayList("zipentry_selected_array") != null) {
-                        zipentry_selected_array.addAll(bundle.getStringArrayList("zipentry_selected_array"));
+                    if (bundle.getStringArrayList("zip_entry_selected_array") != null) {
+                        zipentry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
                     }
 
                     unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zipentry_selected_array, destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
