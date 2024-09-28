@@ -47,7 +47,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
     private final static String ARCHIVE_REPLACE_REQUEST_CODE = "archive_replace_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE = "archive_set_up_saf_permission_request_code";
     private final ArrayList<String> files_selected_array = new ArrayList<>();
-    private final ArrayList<String> zipentry_selected_array = new ArrayList<>();
+    private final ArrayList<String> zip_entry_selected_array = new ArrayList<>();
     private Context context;
     private CheckBox create_folder_checkbox;
     private EditText zip_file_edittext, customdir_edittext;
@@ -79,11 +79,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
         }
     });
 
-    public static ArchiveSetUpDialog getInstance(ArrayList<String> files_selected_array, ArrayList<String> zipentry_selected_array, FileObjectType sourceFileObjectType, String archive_action) {
+    public static ArchiveSetUpDialog getInstance(ArrayList<String> files_selected_array, ArrayList<String> zip_entry_selected_array, FileObjectType sourceFileObjectType, String archive_action) {
         ArchiveSetUpDialog archiveSetUpDialog = new ArchiveSetUpDialog();
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("files_selected_array", files_selected_array);
-        bundle.putStringArrayList("zipentry_selected_array", zipentry_selected_array);
+        bundle.putStringArrayList("zip_entry_selected_array", zip_entry_selected_array);
         bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
         bundle.putString("archive_action", archive_action);
         archiveSetUpDialog.setArguments(bundle);
@@ -124,8 +124,8 @@ public class ArchiveSetUpDialog extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-            if (bundle.getStringArrayList("zipentry_selected_array") != null) {
-                zipentry_selected_array.addAll(bundle.getStringArrayList("zipentry_selected_array"));
+            if (bundle.getStringArrayList("zip_entry_selected_array") != null) {
+                zip_entry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
             }
             sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
             archive_action = bundle.getString("archive_action");
@@ -393,7 +393,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             return;
                         }
                         destFileObjectType = rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-                        if (destFileObjectType == FileObjectType.USB_TYPE || destFileObjectType == FileObjectType.FTP_TYPE || destFileObjectType == FileObjectType.SFTP_TYPE) {
+                        if (destFileObjectType == FileObjectType.USB_TYPE){// || destFileObjectType == FileObjectType.FTP_TYPE || destFileObjectType == FileObjectType.SFTP_TYPE) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }
@@ -412,7 +412,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                         String zip_output_folder = zip_file_edittext.getText().toString().trim();
                         final Bundle bundle = new Bundle();
                         bundle.putStringArrayList("files_selected_array", files_selected_array);
-                        bundle.putStringArrayList("zipentry_selected_array", zipentry_selected_array);
+                        bundle.putStringArrayList("zip_entry_selected_array", zip_entry_selected_array);
                         bundle.putString("zip_file_path", zip_file_path);
                         bundle.putString("archive_action", archive_action);
                         bundle.putBoolean("archive_view", false);
