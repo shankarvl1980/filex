@@ -171,24 +171,6 @@ public final class FileUtil {
             success = true;
         } catch (Exception e) {
             Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
-        } finally {
-            // Close streams
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
-                    success = false;  // Mark as failed if we couldn't close the input stream
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
-                    success = false;  // Mark as failed if we couldn't close the output stream
-                }
-            }
         }
         return success;
     }
@@ -217,24 +199,6 @@ public final class FileUtil {
             success = true;
         } catch (Exception e) {
             Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
-        } finally {
-            // Close streams
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
-                    success = false;  // Mark as failed if we couldn't close the input stream
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
-                    success = false;  // Mark as failed if we couldn't close the output stream
-                }
-            }
         }
         return success;
     }
@@ -259,24 +223,6 @@ public final class FileUtil {
             Timber.tag(TAG).e("Error during URI to FileModel copy: %s", e.getMessage());
             return false;
 
-        } finally {
-            // Close streams
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing input stream: %s", e.getMessage());
-                    // Mark as failed if we couldn't close the input stream
-                }
-            }
-            if (fileOutStream != null) {
-                try {
-                    fileOutStream.close();
-                } catch (IOException e) {
-                    Timber.tag(TAG).e("Error closing output stream: %s", e.getMessage());
-                    // Mark as failed if we couldn't close the output stream
-                }
-            }
         }
     }
 
@@ -315,12 +261,6 @@ public final class FileUtil {
             }
         } catch (Exception e) {
             return false;
-        } finally {
-            try {
-                if (outStream != null) outStream.close();
-            } catch (Exception e) {
-                // ignore exception
-            }
         }
         return true;
     }
@@ -781,23 +721,5 @@ public final class FileUtil {
             throw e;
         }
     }
-
-
-//	public static void bufferedCopy(InputStream inputStream, OutputStream outputStream, boolean fromUsbFile, long[] bytes_read) throws IOException {
-//		byte[] buffer = (fromUsbFile) ? new byte[USB_CHUNK_SIZE] : new byte[BUFFER_SIZE];
-//		int count;
-//		try (BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-//			 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
-//			while ((count = bufferedInputStream.read(buffer)) != -1) {
-//				bufferedOutputStream.write(buffer, 0, count);
-//				bytes_read[0] += count;
-//			}
-//			bufferedOutputStream.flush(); // Explicit flush at the end of the transfer
-//		} catch (IOException e) {
-//			Timber.tag(TAG).e("Error during buffered copy: %s", e.getMessage());
-//			throw e; // Re-throw the exception to be handled by the caller
-//		}
-//	}
-
 }
 	
