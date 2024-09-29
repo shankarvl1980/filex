@@ -67,6 +67,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     private GestureDetector.OnDoubleTapListener doubleTapListener = null;
     private OnTouchListener userTouchListener = null;
     private OnTouchImageViewListener touchImageViewListener = null;
+
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);

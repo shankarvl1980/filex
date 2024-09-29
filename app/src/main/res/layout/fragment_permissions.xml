@@ -44,8 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/dialog_background"
-                    android:padding="@dimen/ten_dp"
-                    >
+                    android:padding="@dimen/ten_dp">
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -53,8 +52,7 @@
 
                         <TextView
                             android:layout_height="wrap_content"
-                            android:text=""
-                            />
+                            android:text="" />
 
                         <TextView
                             android:layout_height="wrap_content"

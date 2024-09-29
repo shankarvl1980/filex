@@ -112,7 +112,7 @@ public class AudioSaveListDialog extends DialogFragment {
 
         @Override
         public int getItemCount() {
-           return audio_list.size();
+            return audio_list.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -170,7 +170,7 @@ public class AudioSaveListDialog extends DialogFragment {
 
         @Override
         public void onBindViewHolder(AudioSavedListRecyclerAdapter.ViewHolder p1, int p2) {
-           p1.textView.setText(audio_list.get(p2));
+            p1.textView.setText(audio_list.get(p2));
         }
 
         @Override

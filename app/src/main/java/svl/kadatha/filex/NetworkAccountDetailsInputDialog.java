@@ -135,7 +135,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_ftp_details_input, container, false);
+        View v = inflater.inflate(R.layout.fragment_network_details_input, container, false);
         LinearLayout ftp_group = v.findViewById(R.id.fragment_network_details_input_ftp_group);
         LinearLayout sftp_group = v.findViewById(R.id.fragment_network_details_input_sftp_group);
         LinearLayout webdav_group = v.findViewById(R.id.fragment_network_details_input_webdav_group);
@@ -290,7 +290,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         host = server_tv.getText().toString().trim();
         user_name = user_name_tv.getText().toString().trim();
         if (host.isEmpty() || port_tv.getText().toString().trim().isEmpty() || user_name.isEmpty()) {
-            Global.print(context, getString(R.string.host_port_username_fields_can_not_be_empty));
+            Global.print(context, getString(R.string.enter_host_port_username_fields));
             return;
         }
 

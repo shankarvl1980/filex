@@ -15,8 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-
 
 public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.ViewHolder> implements Filterable {
 
@@ -31,27 +29,22 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
             df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + df.file_list_size);
             if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 df.detailFragmentListener.enableParentDirImageButton(false);
-            } else if (df.fileObjectType == FileObjectType.USB_TYPE) {
-                UsbFile f = df.currentUsbFile;
-                UsbFile parent_file = null;
-                if (f != null) {
-                    parent_file = f.getParent();
-                }
-
-                if (parent_file != null) {
-                    df.detailFragmentListener.enableParentDirImageButton(true);
-                } else {
-                    df.detailFragmentListener.setCurrentDirText(DetailFragment.USB_FILE_PREFIX + File.separator);
-                    df.detailFragmentListener.enableParentDirImageButton(false);
-                }
             } else if (df.fileObjectType == FileObjectType.FILE_TYPE) {
                 File f = new File(df.fileclickselected);
                 File parent_file = f.getParentFile();
                 if (parent_file != null) {
                     df.detailFragmentListener.enableParentDirImageButton(true);
                 } else {
-                    df.detailFragmentListener.setCurrentDirText(String.valueOf(R.string.root_directory));
+                    df.detailFragmentListener.setCurrentDirText(context.getString(R.string.root_directory));
                     df.detailFragmentListener.enableParentDirImageButton(false);
+                }
+            } else {
+                String parent_path = df.fileclickselected;
+                if (parent_path.equals("/")) {
+                    df.detailFragmentListener.setCurrentDirText(context.getString(R.string.root_directory));
+                    df.detailFragmentListener.enableParentDirImageButton(false);
+                } else {
+                    df.detailFragmentListener.enableParentDirImageButton(true);
                 }
             }
         }
@@ -78,7 +71,6 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults filterResults) {
-
                 df.filePOJO_list = new ArrayList<>();
                 if ((constraint == null || constraint.length() == 0) && df.viewModel.library_filter_path != null) {
                     for (int i = 0; i < df.totalFilePOJO_list_Size; ++i) {

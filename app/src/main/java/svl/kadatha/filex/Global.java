@@ -135,6 +135,7 @@ public class Global {
     static public boolean DETAILED_SEARCH_LIBRARY;
     static public boolean SHARE_USB;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
+    public static List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;
@@ -609,40 +610,7 @@ public class Global {
     }
 
     public static void REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType) {
-        List<FileObjectType> net_work_protocols = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
-//		NetworkAccountsDetailsDialog.NetworkAccountPOJO source_network_account_pojo = null;
-//		NetworkAccountsDetailsDialog.NetworkAccountPOJO dest_network_account_pojo=null;
-//		if(net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)){
-//			if(sourceFileObjectType==FileObjectType.FTP_TYPE){
-//				source_network_account_pojo= NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO;
-//			}
-//			else if(sourceFileObjectType==FileObjectType.SFTP_TYPE){
-//				source_network_account_pojo= NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO;
-//			}
-//
-//			if(destFileObjectType==FileObjectType.FTP_TYPE){
-//				dest_network_account_pojo= NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO;
-//			}
-//			else if(destFileObjectType==FileObjectType.SFTP_TYPE){
-//				dest_network_account_pojo= NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO;
-//			}
-//
-//			boolean sameFileSystem=isSameFileSystem(source_network_account_pojo,sourceFileObjectType,dest_network_account_pojo,destFileObjectType);
-//			if(sameFileSystem){
-//				String dest_path = normalizePath(dest_folder, destFileObjectType);
-//				Iterator<String> iterator=files_selected_array.iterator();
-//				while(iterator.hasNext())
-//				{
-//					String sourcePath = normalizePath(iterator.next(), sourceFileObjectType);
-//					if(IS_CHILD_FILE(dest_path,sourcePath))
-//					{
-//						iterator.remove();
-//					}
-//				}
-//			}
-//		}
-
-        if (net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)) {
+        if (NETWORK_FILE_OBJECT_TYPES.contains(sourceFileObjectType) && NETWORK_FILE_OBJECT_TYPES.contains(destFileObjectType)) {
             if (!sourceFileObjectType.equals(destFileObjectType)) {
                 return;
             }
@@ -914,8 +882,7 @@ public class Global {
     }
 
     public static boolean WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(FileObjectType fileObjectType) {
-        List<FileObjectType> network_file_object_types = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
-        if (network_file_object_types.contains(fileObjectType)) {
+        if (NETWORK_FILE_OBJECT_TYPES.contains(fileObjectType)) {
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
             Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
             while (iterator.hasNext()) {

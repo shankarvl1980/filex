@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/dialog_background"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <!-- Common Fields -->
                 <!-- Host -->
@@ -56,7 +56,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_server"
-                        android:text="@string/host"
+                        android:text="@string/host_asterisk"
                         android:textSize="17sp" />
 
                     <EditText
@@ -80,7 +80,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_port"
-                        android:text="@string/port"
+                        android:text="@string/port_asterisk"
                         android:textSize="17sp" />
 
                     <EditText
@@ -104,7 +104,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_username"
-                        android:text="@string/user_name"
+                        android:text="@string/user_name_asterisk"
                         android:textSize="17sp" />
 
                     <EditText

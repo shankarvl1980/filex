@@ -19,8 +19,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     private final TinyDB tinyDB;
     public boolean archive_view, working_dir_open, library_or_search_shown, network_shown;
     public String toolbar_shown = "bottom";
-    private boolean isCancelled;
     public Intent send_intent;
+    private boolean isCancelled;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10;
 
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+
     <style name="MyLightBaseTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="android:textColor">@color/light_recycler_text_color</item>
@@ -19,8 +20,11 @@
         <item name="heading_text_color">@color/light_heading_text_color</item>
         <item name="edit_text_color">@color/light_edit_text_color</item>
         <item name="activity_background">@color/light_activity_background</item>
-        <item name="dialog_recyclerview_background">@color/light_dialog_recyclerview_background</item>
-        <item name="filepath_recyclerview_background">@color/light_filepath_recyclerview_background</item>
+        <item name="dialog_recyclerview_background">@color/light_dialog_recyclerview_background
+        </item>
+        <item name="filepath_recyclerview_background">
+            @color/light_filepath_recyclerview_background
+        </item>
         <item name="drawer_title">@color/light_drawer_title</item>
         <item name="drawer_item_pressed">@color/light_drawer_item_pressed</item>
         <item name="dialog_title">@color/light_dialog_title</item>
@@ -33,8 +37,12 @@
         <item name="tab_select_text_color">@color/light_tab_select_text_color</item>
         <item name="item_select_text_color">@color/light_item_select_text_color</item>
         <item name="video_play_overlay_background">@color/light_video_play_overlay_background</item>
-        <item name="select_color_picture_recyclerview">@color/light_select_color_picture_recyclerview</item>
-        <item name="select_detail_recyclerview_pressed">@color/light_select_detail_recyclerview_pressed</item>
+        <item name="select_color_picture_recyclerview">
+            @color/light_select_color_picture_recyclerview
+        </item>
+        <item name="select_detail_recyclerview_pressed">
+            @color/light_select_detail_recyclerview_pressed
+        </item>
         <item name="select_dialog_button_pressed">@color/light_select_dialog_button_pressed</item>
         <item name="select_rectangle_shape">@color/light_select_rectangle_shape</item>
         <item name="drawer_icon_color">@color/light_drawer_icon_color</item>
@@ -43,7 +51,9 @@
 
         <item name="water_color">@color/light_water_color</item>
 
-        <item name="storage_analyser_item_background">@color/light_storage_analyser_item_background</item>
+        <item name="storage_analyser_item_background">
+            @color/light_storage_analyser_item_background
+        </item>
 
     </style>
 
@@ -60,7 +70,6 @@
 
 
     </style>
-
 
 
     <style name="MyLightDialog" parent="@style/Theme.AppCompat.DayNight.Dialog">
@@ -82,8 +91,11 @@
         <item name="heading_text_color">@color/light_heading_text_color</item>
         <item name="edit_text_color">@color/light_edit_text_color</item>
         <item name="activity_background">@color/light_activity_background</item>
-        <item name="dialog_recyclerview_background">@color/light_dialog_recyclerview_background</item>
-        <item name="filepath_recyclerview_background">@color/light_filepath_recyclerview_background</item>
+        <item name="dialog_recyclerview_background">@color/light_dialog_recyclerview_background
+        </item>
+        <item name="filepath_recyclerview_background">
+            @color/light_filepath_recyclerview_background
+        </item>
         <item name="drawer_title">@color/light_drawer_title</item>
         <item name="dialog_title">@color/light_dialog_title</item>
         <item name="dialog_background">@color/light_dialog_background</item>
@@ -93,11 +105,7 @@
         <item name="seek_bar_thumb">@color/light_seek_bar_thumb</item>
 
 
-
-
     </style>
-
-
 
 
     <style name="MyLightCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
@@ -140,8 +148,6 @@
         <item name="android:scrollbars">vertical</item>
         <item name="android:scrollbarThumbVertical">@drawable/scroll_thumb_icon</item>
     </style>
-
-
 
 
 </resources>

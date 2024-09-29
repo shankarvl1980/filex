@@ -156,7 +156,6 @@ public class SftpChannelRepository {
             keepAliveScheduler.shutdownNow();
         }
 
-
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
         while (iterator.hasNext()) {

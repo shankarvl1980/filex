@@ -40,6 +40,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <View
                     android:id="@+id/fragment_apk_install_dialog_background"
                     android:layout_width="match_parent"
@@ -49,6 +50,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <ImageView
                     android:id="@+id/fragment_apk_install_icon_imageview"
                     android:layout_width="@dimen/image_preview_dimen"

@@ -136,7 +136,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                 current_dir_fileObjectType = FileObjectType.FILE_TYPE;
             } else {
                 current_dir_fileObjectType = sourceFileObjectType;
-                parent_file_path = getParentFilePath(first_file_path);
+                parent_file_path = Global.getParentPath(first_file_path);
             }
 
             String s = new File(parent_file_path).getName();
@@ -393,7 +393,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             return;
                         }
                         destFileObjectType = rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
-                        if (destFileObjectType == FileObjectType.USB_TYPE){// || destFileObjectType == FileObjectType.FTP_TYPE || destFileObjectType == FileObjectType.SFTP_TYPE) {
+                        if (destFileObjectType == FileObjectType.USB_TYPE) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }
@@ -493,10 +493,6 @@ public class ArchiveSetUpDialog extends DialogFragment {
     private String getDestFileObjectType() {
         FileObjectType fileObjectType = rb_current_dir.isChecked() ? current_dir_fileObjectType : viewModel.custom_dir_fileObjectType;
         return Global.GET_FileObjectType(fileObjectType);
-    }
-
-    private String getParentFilePath(String file_path) {
-        return new File(file_path).getParent();
     }
 
     private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType) {

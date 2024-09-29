@@ -128,15 +128,14 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                             zipEntry = new ZipEntry(zip_entry_path + File.separator);
                             zipOutputStream.putNextEntry(zipEntry);
                         } else {
-                            zipEntry=new ZipEntry(zip_entry_path);
+                            zipEntry = new ZipEntry(zip_entry_path);
                             zipOutputStream.putNextEntry(zipEntry);
-                            try(BufferedInputStream bufferedInputStream=new BufferedInputStream(fileModel.getInputStream())){
-                                byte [] b=new byte[8192];
+                            try (BufferedInputStream bufferedInputStream = new BufferedInputStream(fileModel.getInputStream())) {
+                                byte[] b = new byte[8192];
                                 int bytesread;
-                                while((bytesread=bufferedInputStream.read(b))!=-1)
-                                {
-                                    zipOutputStream.write(b,0,bytesread);
-                                    counter_size_files+=bytesread;
+                                while ((bytesread = bufferedInputStream.read(b)) != -1) {
+                                    zipOutputStream.write(b, 0, bytesread);
+                                    counter_size_files += bytesread;
                                     publishProgress(null);
                                 }
                             }
@@ -218,15 +217,14 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 zipEntry = new ZipEntry(zip_entry_path + "/");
                 zipOutputStream.putNextEntry(zipEntry);
             } else {
-                zipEntry=new ZipEntry(zip_entry_path);
+                zipEntry = new ZipEntry(zip_entry_path);
                 zipOutputStream.putNextEntry(zipEntry);
-                try(BufferedInputStream bufferedInputStream=new BufferedInputStream(new FileInputStream(file))){
-                    byte [] b=new byte[8192];
+                try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file))) {
+                    byte[] b = new byte[8192];
                     int bytesread;
-                    while((bytesread=bufferedInputStream.read(b))!=-1)
-                    {
-                        zipOutputStream.write(b,0,bytesread);
-                        counter_size_files+=bytesread;
+                    while ((bytesread = bufferedInputStream.read(b)) != -1) {
+                        zipOutputStream.write(b, 0, bytesread);
+                        counter_size_files += bytesread;
                         publishProgress(null);
                     }
                 }

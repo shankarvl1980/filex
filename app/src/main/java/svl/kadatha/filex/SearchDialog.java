@@ -282,6 +282,7 @@ public class SearchDialog extends DialogFragment {
 
     public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.VH> {
         final List<FilePOJO> storage_list;
+
         SearchRecyclerViewAdapter(List<FilePOJO> storage_list) {
             this.storage_list = storage_list;
         }

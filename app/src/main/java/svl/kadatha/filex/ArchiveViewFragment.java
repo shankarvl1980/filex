@@ -321,18 +321,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             }
 
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
+    }
 
     public void set_adapter() {
         filepath_recyclerview.setAdapter(filepath_adapter);
@@ -386,7 +375,18 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 is_toolbar_visible = true;
             }
         });
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     public void clearSelectionAndNotifyDataSetChanged() {
         viewModel.mselecteditems = new IndexedLinkedHashMap<>();
@@ -490,6 +490,8 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             }
         }
     }
+
+
 
 
 }

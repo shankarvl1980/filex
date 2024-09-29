@@ -1145,6 +1145,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         } else {
             parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("custom_dir_selected_hash_map", workingDirRecyclerAdapter.custom_dir_selected_hash_map);
+        outState.putStringArrayList("custom_dir_selected_array", workingDirRecyclerAdapter.custom_dir_selected_array);
+        outState.putBoolean("clear_cache", clear_cache);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1184,14 +1192,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("custom_dir_selected_hash_map", workingDirRecyclerAdapter.custom_dir_selected_hash_map);
-        outState.putStringArrayList("custom_dir_selected_array", workingDirRecyclerAdapter.custom_dir_selected_array);
-        outState.putBoolean("clear_cache", clear_cache);
-    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -1646,7 +1646,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-
     interface RecentDialogListener {
         void onMediaAttachedAndRemoved();
     }
@@ -1677,7 +1676,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private class TopToolbarClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            // TODO: Implement this method
             final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
             int id = v.getId();
             if (id == R.id.top_toolbar_home_button) {
@@ -1687,14 +1685,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     drawerLayout.openDrawer(drawer);
                 }
             } else if (id == R.id.top_toolbar_parent_dir_imagebutton) {
-
-                File f = new File(df.fileclickselected);
-                String parent_file_path = f.getParent();
-                if (parent_file_path == null) return;
+                String parent_file_path = Global.getParentPath(df.fileclickselected);
                 if (df.fileObjectType == FileObjectType.FILE_TYPE) {
-
                     File parent_file = new File(parent_file_path);
-                    if (parent_file != null && parent_file.list() != null) {
+                    if (parent_file.list() != null) {
                         createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                     }
                 } else if (df.fileObjectType == FileObjectType.USB_TYPE) {
@@ -1704,11 +1698,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     try {
                         UsbFile usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
                         createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
 
                     }
-                } else if (df.fileObjectType == FileObjectType.ROOT_TYPE) {
-                    createFragmentTransaction(parent_file_path, FileObjectType.ROOT_TYPE);
+                } else {
+                    createFragmentTransaction(parent_file_path, df.fileObjectType);
                 }
             } else if (id == R.id.top_toolbar_current_dir_label) {
                 RecentDialog recentDialogFragment = new RecentDialog();
@@ -1743,7 +1737,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
 
             } else if (id == R.id.toolbar_btn_2) {
-
                 if (search_toolbar_visible) {
                     setSearchBarVisibility(false);
                 }
@@ -1757,7 +1750,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
                 CreateFileAlertDialog dialog = CreateFileAlertDialog.getInstance(df.fileclickselected, df.fileObjectType);
                 dialog.show(fm, "create_file_dialog");
-
             } else if (id == R.id.toolbar_btn_3) {
                 if (df.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
@@ -2055,7 +2047,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     Global.print(context, getString(R.string.select_files_to_delete));
                 }
             } else if (id == R.id.toolbar_btn_5) {
-                viewModel.send_intent=null;
+                viewModel.send_intent = null;
                 paste_pastecancel_view_procedure(df);
             }
             df.clearSelectionAndNotifyDataSetChanged();
@@ -2374,6 +2366,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 
 
 }

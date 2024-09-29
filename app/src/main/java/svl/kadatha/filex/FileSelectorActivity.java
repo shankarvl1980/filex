@@ -49,11 +49,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener {
     public static final int FOLDER_SELECT_REQUEST_CODE = 1564;
@@ -89,6 +92,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
+    private ImageButton parent_dir_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,6 +162,35 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
+        parent_dir_btn = findViewById(R.id.file_selector_parent_dir_btn);
+        parent_dir_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment != null) {
+                    String parent_file_path = Global.getParentPath(fileSelectorFragment.fileclickselected);
+                    if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
+                        File parent_file = new File(parent_file_path);
+                        if (parent_file.list() != null) {
+                            createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
+                        }
+                    } else if (fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
+                        if (MainActivity.usbFileRoot == null) {
+                            return;
+                        }
+                        try {
+                            UsbFile usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
+                            createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
+                        } catch (IOException ignored) {
+
+                        }
+                    } else {
+                        createFragmentTransaction(parent_file_path, fileSelectorFragment.fileObjectType);
+                    }
+                }
+            }
+        });
+
         View containerLayout = findViewById(R.id.file_selector_container_layout);
         keyBoardUtil = new KeyBoardUtil(containerLayout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -219,8 +252,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         storage_filePOJO_list = getFilePOJO_list();
         listPopWindow = new PopupWindow(context);
         ListView listView = new ListView(context);
-        PopupWindowAdapter popupWindowAdapater = new PopupWindowAdapter(context, storage_filePOJO_list);
-        listView.setAdapter(popupWindowAdapater);
+        PopupWindowAdapter popupWindowAdapter = new PopupWindowAdapter(context, storage_filePOJO_list);
+        listView.setAdapter(popupWindowAdapter);
         listPopWindow.setContentView(listView);
         listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popup_window_width));
         listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -529,7 +562,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     @Override
     public void enableParentDirImageButton(boolean enable) {
-
+        parent_dir_btn.setEnabled(enable);
+        if (enable) {
+            parent_dir_btn.setAlpha(Global.ENABLE_ALFA);
+        } else {
+            parent_dir_btn.setAlpha(Global.DISABLE_ALFA);
+        }
     }
 
     @Override
@@ -550,6 +588,42 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastManager.unregisterReceiver(usbReceiver);
         unregisterReceiver(networkStateReceiver);
         context.unregisterReceiver(mediaMountReceiver);
+    }
+
+    private void onbackpressed(boolean onBackPressed) {
+        if (keyBoardUtil.getKeyBoardVisibility()) {
+            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
+        } else if (search_toolbar_visible) {
+            setSearchBarVisibility(false);
+        } else {
+            if (fm.getBackStackEntryCount() > 1) {
+                fm.popBackStack();
+                int frag = 2, entry_count = fm.getBackStackEntryCount();
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
+                String tag = fileSelectorFragment.getTag();
+
+                while (tag != null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
+                    fm.popBackStack();
+                    ++frag;
+                    if (frag > entry_count) break;
+                    fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
+                    tag = fileSelectorFragment.getTag();
+                }
+                countBackPressed = 0;
+            } else {
+                if (onBackPressed) {
+                    countBackPressed++;
+                    if (countBackPressed == 1) {
+                        Global.print(context, getString(R.string.press_again_to_close_activity));
+                    } else {
+                        finish();
+                    }
+                } else {
+                    Global.print(context, getString(R.string.click_OK_cancel_button_to_exit));
+                }
+            }
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -590,42 +664,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    private void onbackpressed(boolean onBackPressed) {
-        if (keyBoardUtil.getKeyBoardVisibility()) {
-            imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-        } else if (search_toolbar_visible) {
-            setSearchBarVisibility(false);
-        } else {
-            if (fm.getBackStackEntryCount() > 1) {
-                fm.popBackStack();
-                int frag = 2, entry_count = fm.getBackStackEntryCount();
-                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                String tag = fileSelectorFragment.getTag();
-
-                while (tag != null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
-                    fm.popBackStack();
-                    ++frag;
-                    if (frag > entry_count) break;
-                    fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                    tag = fileSelectorFragment.getTag();
-                }
-                countBackPressed = 0;
-            } else {
-                if (onBackPressed) {
-                    countBackPressed++;
-                    if (countBackPressed == 1) {
-                        Global.print(context, getString(R.string.press_again_to_close_activity));
-                    } else {
-                        finish();
-                    }
-                } else {
-                    Global.print(context, getString(R.string.click_OK_cancel_button_to_exit));
-                }
-            }
-        }
-    }
 
     public List<FilePOJO> getFilePOJO_list() {
         List<FilePOJO> filePOJOS = new ArrayList<>();
@@ -849,6 +887,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
 
 
 

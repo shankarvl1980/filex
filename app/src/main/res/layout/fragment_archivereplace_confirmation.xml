@@ -1,8 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,8 +13,7 @@
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
         android:text="@string/replace_file"
-        android:textSize="19sp"
-        />
+        android:textSize="19sp" />
 
     <TextView
         android:id="@+id/dialog_fragment_archive_replace_message"
@@ -24,8 +22,7 @@
         android:layout_marginTop="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:padding="@dimen/ten_dp"
-        android:textSize="17sp"
-        />
+        android:textSize="17sp" />
 
     <FrameLayout
         android:id="@+id/fragment_archive_replace_confirmation_button_layout"

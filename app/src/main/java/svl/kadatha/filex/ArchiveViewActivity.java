@@ -452,6 +452,12 @@ public class ArchiveViewActivity extends BaseActivity {
 
     public void clearCache(String file_path, FileObjectType fileObjectType) {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path), fileObjectType); //no need of broad cast here, as the method includes broadcast
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("clear_cache", clear_cache);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -492,12 +498,6 @@ public class ArchiveViewActivity extends BaseActivity {
             }
         }
     });
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("clear_cache", clear_cache);
-    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -584,7 +584,6 @@ public class ArchiveViewActivity extends BaseActivity {
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -627,7 +626,7 @@ public class ArchiveViewActivity extends BaseActivity {
             archiveViewFragment = (ArchiveViewFragment) archiveViewActivity.fm.findFragmentById(R.id.archive_detail_fragment);
             archiveViewActivity.current_dir_textview.setText(archiveViewFragment.file_click_selected_name);
             archiveViewActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size() + "/" + archiveViewFragment.file_list_size);
-            if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE || archiveViewFragment.fileObjectType == FileObjectType.ROOT_TYPE) {
+            if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
                 File f = new File(archiveViewFragment.fileclickselected);
                 File parent_file = f.getParentFile();
                 if (parent_file != null) {
@@ -943,6 +942,8 @@ public class ArchiveViewActivity extends BaseActivity {
             }
         }
     }
+
+
 
 
 }

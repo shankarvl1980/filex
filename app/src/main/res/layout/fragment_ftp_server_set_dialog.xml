@@ -48,8 +48,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/fragment_server_background_padding"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/ftp_server_port_label"

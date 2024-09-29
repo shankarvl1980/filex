@@ -8,7 +8,6 @@ import androidx.core.util.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -60,7 +59,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         this.cut = cut;
         this.overwritten_file_path_list = overwritten_file_path_list;
         this.listener = listener;
-
         copied_files_name = new ArrayList<>();
         copied_source_file_path_list = new ArrayList<>();
     }
@@ -69,8 +67,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected Boolean doInBackground(Void... params) {
         boolean copy_result = false;
         boolean whether_copy_between_network_file_systems = true;
-        List<FileObjectType> net_work_protocols = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
-        if (net_work_protocols.contains(sourceFileObjectType) && net_work_protocols.contains(destFileObjectType)) {
+        if (Global.NETWORK_FILE_OBJECT_TYPES.contains(sourceFileObjectType) && Global.NETWORK_FILE_OBJECT_TYPES.contains(destFileObjectType)) {
             if (!sourceFileObjectType.equals(destFileObjectType)) {
                 whether_copy_between_network_file_systems = true;
             }
@@ -206,7 +203,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
                 if (success) {
                     ++counter_no_files;
-                    copied_file_name=source.getName();
+                    copied_file_name = source.getName();
                     publishProgress(null);
                 }
 
@@ -269,13 +266,13 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     publishProgress(null);
                 } else {
                     File destFile = new File(destPath);
-                    String parent_path_segment=Global.getParentPath(destPath);
+                    String parent_path_segment = Global.getParentPath(destPath);
                     FileModel destParentModel = createDirectory(destFileModel, parent_path_segment, destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
                     if (success) {
                         Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
-                        copied_file_name=source.getName();
+                        copied_file_name = source.getName();
                         Timber.tag("published").d("this is published: %s", source.getName());
                         publishProgress(null);
                     }

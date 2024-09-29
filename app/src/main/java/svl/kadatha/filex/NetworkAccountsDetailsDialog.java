@@ -57,6 +57,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     private FrameLayout progress_bar;
     private TextView ftp_number_text_view, empty_ftp_list_tv;
     private NetworkAccountDetailsViewModel viewModel;
+    private NetworkAccountPOJO connected_network_account_pojo = null;
 
     public static NetworkAccountsDetailsDialog getInstance(String type) {
         Bundle bundle = new Bundle();
@@ -92,6 +93,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             heading.setText(R.string.ftp);
         } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
             heading.setText(R.string.sftp);
+        } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+            heading.setText(R.string.webdav);
+        } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+            heading.setText(R.string.smb);
         }
         ftp_number_text_view = v.findViewById(R.id.ftp_details_ftp_number);
         empty_ftp_list_tv = v.findViewById(R.id.ftp_details_empty);
@@ -124,7 +129,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
 
@@ -161,7 +165,17 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         viewModel = new ViewModelProvider(this).get(NetworkAccountDetailsViewModel.class);
         viewModel.type = type;
         viewModel.fetchNetworkAccountPojoList(type);
-        if (viewModel.networkAccountPOJO != null) {
+
+        if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
+            connected_network_account_pojo = NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO;
+        } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
+            connected_network_account_pojo = NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO;
+        } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+            connected_network_account_pojo = NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO;
+        } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+            connected_network_account_pojo = NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO;
+        }
+        if (connected_network_account_pojo != null) {
             progress_bar.setVisibility(View.VISIBLE);
             viewModel.testServiceConnection();
         } else {
@@ -685,10 +699,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     deleteFtpAlertDialog.show(getParentFragmentManager(), "");
                 }
             } else if (id == R.id.toolbar_btn_3) {
-                if (viewModel.networkAccountPOJO == null) return;
+                if (connected_network_account_pojo == null) return;
                 switch (type) {
                     case FTP:
-
                         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(viewModel.networkAccountPOJO);
                         ftpClientRepository.shutdown();
                         break;
@@ -700,7 +713,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
                 disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                 disconnect_btn.setEnabled(false);
-                Global.print(context, "ftp connection disconnected");
+                Global.print(context, getString(R.string.network_connection_disconnected));
             } else if (id == R.id.toolbar_btn_4) {
                 int s = viewModel.mselecteditems.size();
                 if (s == 1) {

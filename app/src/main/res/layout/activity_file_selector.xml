@@ -17,6 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageButton
+            android:id="@+id/file_selector_parent_dir_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:background="?attr/toolbar_background"
+            android:clickable="false"
+            android:focusable="false"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/up_icon" />
+
         <TextView
             android:id="@+id/file_selector_heading"
             android:layout_width="match_parent"

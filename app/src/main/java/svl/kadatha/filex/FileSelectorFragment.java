@@ -329,6 +329,29 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     }
 
     public abstract class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
+
+        FileSelectorAdapter() {
+            FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) ((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.file_selector_container);
+            if (fileSelectorFragment != null) {
+                if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
+                    File f = new File(fileSelectorFragment.fileclickselected);
+                    File parent_file = f.getParentFile();
+                    if (parent_file != null) {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
+                    } else {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
+                    }
+                } else {
+                    String parent_path = fileSelectorFragment.fileclickselected;
+                    if (parent_path.equals("/")) {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
+                    } else {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
+                    }
+                }
+            }
+        }
+
         @Override
         public abstract FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
 

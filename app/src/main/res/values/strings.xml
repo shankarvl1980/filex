@@ -2,314 +2,314 @@
 <resources>
 
     <string name="package_name">svl.kadatha.filex</string>
-	<string name="application_name">FileX Manager</string>
+    <string name="application_name">FileX Manager</string>
 
     <string name="hide">Hide</string>
-	<string name="cancel">Cancel</string>
+    <string name="cancel">Cancel</string>
 
-	<string name="yes">Yes</string>
-	<string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="close">Close</string>
 
-	<string name="ok">OK</string>
-	<string name="list_name_colon">List Name</string>
-	<string name="enter_name">Enter name</string>
+    <string name="ok">OK</string>
+    <string name="list_name_colon">List Name</string>
+    <string name="enter_name">Enter name</string>
 
 
-	<string name="save">Save</string>
-	<string name="file_has_been_modified_do_you_want_save_the_file">File has been modified. Do you want to save the file?</string>
+    <string name="save">Save</string>
+    <string name="file_has_been_modified_do_you_want_save_the_file">File has been modified. Do you want to save the file?</string>
     <string name="deleted_selected_audios">Deleted selected audios.</string>
-	<string name="wait_till_all_audios_populated">Wait till all audios are populated in All Songs tab.</string>
-	<string name="added_audios_current_play_list">Added selected audios to the current playing list.</string>
-	<string name="added_audios_to">Added selected audios to</string>
-	<string name="permission_not_granted">Permission was not granted.</string>
-	<string name="audio_list_created">audio list created.</string>
+    <string name="wait_till_all_audios_populated">Wait till all audios are populated in All Songs tab.</string>
+    <string name="added_audios_current_play_list">Added selected audios to the current playing list.</string>
+    <string name="added_audios_to">Added selected audios to</string>
+    <string name="permission_not_granted">Permission was not granted.</string>
+    <string name="audio_list_created">audio list created.</string>
 
-	<string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/\' and new line characters</string>
-	<string name="maximum_3_services_processed">Maximum 3 services only be processed at a time.</string>
-	<string name="directory_not_exist_not_valid">Directory does not exist or not valid.</string>
-	<string name="extract">Extract</string>
+    <string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/\' and new line characters</string>
+    <string name="maximum_3_services_processed">Maximum 3 services only be processed at a time.</string>
+    <string name="directory_not_exist_not_valid">Directory does not exist or not valid.</string>
+    <string name="extract">Extract</string>
 
-	<string name="enter_output_folder_name">Enter output folder name.</string>
-	<string name="a_file_with_folder_name_exists_in_selected_directory">A file with output folder name already exists in the selected directory.</string>
+    <string name="enter_output_folder_name">Enter output folder name.</string>
+    <string name="a_file_with_folder_name_exists_in_selected_directory">A file with output folder name already exists in the selected directory.</string>
     <string name="archiving">Archiving</string>
-	<string name="archive_file">Archive File</string>
-	<string name="extracting">Extracting</string>
-	<string name="output_folder">Output Folder</string>
-	<string name="deleting">Deleting</string>
-	<string name="moving">Moving</string>
-	<string name="copying">Copying</string>
-	<string name="extracted">Extracted</string>
-	<string name="deleted">Deleted</string>
+    <string name="archive_file">Archive File</string>
+    <string name="extracting">Extracting</string>
+    <string name="output_folder">Output Folder</string>
+    <string name="deleting">Deleting</string>
+    <string name="moving">Moving</string>
+    <string name="copying">Copying</string>
+    <string name="extracted">Extracted</string>
+    <string name="deleted">Deleted</string>
 
-	<string name="choose_directory">Choose directory</string>
-	<string name="archive">Archive</string>
-	<string name="output_file">Output file</string>
+    <string name="choose_directory">Choose directory</string>
+    <string name="archive">Archive</string>
+    <string name="output_file">Output file</string>
 
-	<string name="enter_file_name">Enter file name</string>
-	<string name="file_name">File name</string>
-	<string name="enter_folder_name">Enter folder name</string>
-	<string name="folder_name">Folder name</string>
+    <string name="enter_file_name">Enter file name</string>
+    <string name="file_name">File name</string>
+    <string name="enter_folder_name">Enter folder name</string>
+    <string name="folder_name">Folder name</string>
 
-	<string name="delete">Delete</string>
+    <string name="delete">Delete</string>
 
-	<string name="back">Back</string>
+    <string name="back">Back</string>
 
-	<string name="root_directory">Root Directory</string>
+    <string name="root_directory">Root Directory</string>
 
     <string name="clear">Clear</string>
-	<string name="rename">Rename</string>
-	<string name="add_to_list">Add to list</string>
-	<string name="saved_lists">Saved lists</string>
-	<string name="no_file_found">No file found</string>
-	<string name="select_app">Select app</string>
-	<string name="remember_the_choice">Remember the choice</string>
-	<string name="create_folder">Create folder</string>
-	<string name="destination_folder">Destination folder</string>
-	<string name="replace_file">Replace File</string>
-	<string name="wait_till_the_process_completes">Wait till the process completes…</string>
-	<string name="create_file">Create File</string>
-	<string name="from">From</string>
-	<string name="to">To</string>
-	<string name="current_file">Current File</string>
-	<string name="settings">Settings</string>
-	<string name="end_of_line">End of line</string>
-	<string name="wrap_text">Wrap text</string>
-	<string name="text_size">Text size</string>
-	<string name="edit">Edit</string>
-	<string name="choose_folder">Choose Folder</string>
-	<string name="current_folder">Current Folder</string>
-	<string name="folder_is_empty">Folder is empty.</string>
-	<string name="permissions">Permissions</string>
-	<string name="read">Read</string>
-	<string name="write">Write</string>
-	<string name="execute">Execute</string>
-	<string name="owner">Owner</string>
-	<string name="group">Group</string>
-	<string name="other">Other</string>
-	<string name="file_size_display">File size display</string>
-	<string name="block_1024">Block 1024</string>
-	<string name="block_1000">Block 1000</string>
-	<string name="default_apps_to_open_files">Default apps to open files</string>
-	<string name="remove_defaults">Remove defaults</string>
-	<string name="properties">Properties</string>
+    <string name="rename">Rename</string>
+    <string name="add_to_list">Add to list</string>
+    <string name="saved_lists">Saved lists</string>
+    <string name="no_file_found">No file found</string>
+    <string name="select_app">Select app</string>
+    <string name="remember_the_choice">Remember the choice</string>
+    <string name="create_folder">Create folder</string>
+    <string name="destination_folder">Destination folder</string>
+    <string name="replace_file">Replace File</string>
+    <string name="wait_till_the_process_completes">Wait till the process completes…</string>
+    <string name="create_file">Create File</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="current_file">Current File</string>
+    <string name="settings">Settings</string>
+    <string name="end_of_line">End of line</string>
+    <string name="wrap_text">Wrap text</string>
+    <string name="text_size">Text size</string>
+    <string name="edit">Edit</string>
+    <string name="choose_folder">Choose Folder</string>
+    <string name="current_folder">Current Folder</string>
+    <string name="folder_is_empty">Folder is empty.</string>
+    <string name="permissions">Permissions</string>
+    <string name="read">Read</string>
+    <string name="write">Write</string>
+    <string name="execute">Execute</string>
+    <string name="owner">Owner</string>
+    <string name="group">Group</string>
+    <string name="other">Other</string>
+    <string name="file_size_display">File size display</string>
+    <string name="block_1024">Block 1024</string>
+    <string name="block_1000">Block 1000</string>
+    <string name="default_apps_to_open_files">Default apps to open files</string>
+    <string name="remove_defaults">Remove defaults</string>
+    <string name="properties">Properties</string>
 
 
-	<string name="directories">Directories</string>
-	<string name="recent">Recent</string>
-	<string name="apply_to_all_similarly_named_files">Apply to all similarly named files</string>
-	<string name="storage_access_permission">Storage Access Permission</string>
-	<string name="search">Search</string>
-	<string name="whole_word">Whole word</string>
-	<string name="case_sensitive">Case sensitive</string>
-	<string name="regex">Regex</string>
+    <string name="directories">Directories</string>
+    <string name="recent">Recent</string>
+    <string name="apply_to_all_similarly_named_files">Apply to all similarly named files</string>
+    <string name="storage_access_permission">Storage Access Permission</string>
+    <string name="search">Search</string>
+    <string name="whole_word">Whole word</string>
+    <string name="case_sensitive">Case sensitive</string>
+    <string name="regex">Regex</string>
 
-	<string name="file_directory">File/Directory</string>
-	<string name="search_in">Search in</string>
-	<string name="open_as">Open as</string>
-	<string name="view">View</string>
-	<string name="layout">Layout</string>
-	<string name="list">List</string>
-	<string name="grid">Grid</string>
-	<string name="font_size">Font size</string>
-	<string name="small">Small</string>
-	<string name="medium">Medium</string>
-	<string name="large">Large</string>
-	<string name="date">Date</string>
-	<string name="working_directory">Working Directory</string>
-	<string name="add">Add</string>
-	<string name="remove">Remove</string>
-	<string name="library">Library</string>
-	<string name="show_hidden_files">Show hidden files</string>
-	<string name="access_from_pc">Access from PC</string>
-	<string name="browse">Browse</string>
-	<string name="are_you_sure_to_delete_the_selected_file">Are you sure to delete the selected file?</string>
-	<string name="are_you_sure_to_delete_the_selected_files">Are you sure to delete the selected files?</string>
-	<string name="a_file_with_same_already_exists_do_you_want_to_replace_it">A file with same name already exists. Do you want to replace it?</string>
-	<string name="a_folder_with_same_already_exists_do_you_want_to_overwrite_it">A folder with same name already exists. Do you want to overwrite it?</string>
-	<string name="remove_selected">Remove selected</string>
+    <string name="file_directory">File/Directory</string>
+    <string name="search_in">Search in</string>
+    <string name="open_as">Open as</string>
+    <string name="view">View</string>
+    <string name="layout">Layout</string>
+    <string name="list">List</string>
+    <string name="grid">Grid</string>
+    <string name="font_size">Font size</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
+    <string name="date">Date</string>
+    <string name="working_directory">Working Directory</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="library">Library</string>
+    <string name="show_hidden_files">Show hidden files</string>
+    <string name="access_from_pc">Access from PC</string>
+    <string name="browse">Browse</string>
+    <string name="are_you_sure_to_delete_the_selected_file">Are you sure to delete the selected file?</string>
+    <string name="are_you_sure_to_delete_the_selected_files">Are you sure to delete the selected files?</string>
+    <string name="a_file_with_same_already_exists_do_you_want_to_replace_it">A file with same name already exists. Do you want to replace it?</string>
+    <string name="a_folder_with_same_already_exists_do_you_want_to_overwrite_it">A folder with same name already exists. Do you want to overwrite it?</string>
+    <string name="remove_selected">Remove selected</string>
     <string name="file_type">File type</string>
-	<string name="app_name">App name</string>
-	<string name="total_files">Total files</string>
-	<string name="size">Size</string>
-	<string name="modified">Modified</string>
-	<string name="readable">Readable</string>
-	<string name="writable">Writable</string>
-	<string name="hidden">Hidden</string>
-	<string name="symbolic_link">Symbolic link</string>
-	<string name="remove_default_apps">Remove default apps</string>
-	<string name="external_sd_card_permission_message">You need to give permission by selecting \'SD card\' to access files on external SD card.</string>
-	<string name="external_usb_permission_message">You need to give permission by selecting \'USB device\' to access files on USB storage.</string>
-	<string name="name">Name</string>
-	<string name="type">Type</string>
-	<string name="document">Document</string>
-	<string name="image">Image</string>
-	<string name="audio">Audio</string>
-	<string name="video">Video</string>
-	<string name="apk">APK</string>
-	<string name="large_files">Large Files</string>
+    <string name="app_name">App name</string>
+    <string name="total_files">Total files</string>
+    <string name="size">Size</string>
+    <string name="modified">Modified</string>
+    <string name="readable">Readable</string>
+    <string name="writable">Writable</string>
+    <string name="hidden">Hidden</string>
+    <string name="symbolic_link">Symbolic link</string>
+    <string name="remove_default_apps">Remove default apps</string>
+    <string name="external_sd_card_permission_message">You need to give permission by selecting \'SD card\' to access files on external SD card.</string>
+    <string name="external_usb_permission_message">You need to give permission by selecting \'USB device\' to access files on USB storage.</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+    <string name="document">Document</string>
+    <string name="image">Image</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+    <string name="apk">APK</string>
+    <string name="large_files">Large Files</string>
 
-	<string name="deleted_selected_files">Deleted selected files at</string>
-	<string name="could_not_delete_selected_files">Could not delete selected files at</string>
-	<string name="moved_selected_files">Moved selected files to</string>
-	<string name="could_not_move_selected_files">Could not move selected files to</string>
-	<string name="copied_selected_files">Copied selected files to</string>
-	<string name="could_not_copy_selected_files">Could not copy selected files to</string>
-	<string name="could_not_create">Could not create</string>
-	<string name="could_not_extract">Could not extract</string>
-	<string name="created">Created</string>
-	<string name="unzipped">Unzipped</string>
-	<string name="to_symbol">=></string>
-	<string name="at">-></string>
-	<string name="moving_files">Moving files</string>
-	<string name="copying_files">Copying files</string>
-	<string name="deleting_files">Deleting files</string>
-	<string name="a_directory_with_output_file_name_already_exists">A directory with output file name already exists.</string>
-	<string name="enter_zip_file_name">Enter zip file name</string>
-	<string name="album_colon">Album:</string>
-	<string name="artists_colon">Artists:</string>
-	<string name="next_audio_colon">Next audio:</string>
+    <string name="deleted_selected_files">Deleted selected files at</string>
+    <string name="could_not_delete_selected_files">Could not delete selected files at</string>
+    <string name="moved_selected_files">Moved selected files to</string>
+    <string name="could_not_move_selected_files">Could not move selected files to</string>
+    <string name="copied_selected_files">Copied selected files to</string>
+    <string name="could_not_copy_selected_files">Could not copy selected files to</string>
+    <string name="could_not_create">Could not create</string>
+    <string name="could_not_extract">Could not extract</string>
+    <string name="created">Created</string>
+    <string name="unzipped">Unzipped</string>
+    <string name="to_symbol">=></string>
+    <string name="at">-></string>
+    <string name="moving_files">Moving files</string>
+    <string name="copying_files">Copying files</string>
+    <string name="deleting_files">Deleting files</string>
+    <string name="a_directory_with_output_file_name_already_exists">A directory with output file name already exists.</string>
+    <string name="enter_zip_file_name">Enter zip file name</string>
+    <string name="album_colon">Album:</string>
+    <string name="artists_colon">Artists:</string>
+    <string name="next_audio_colon">Next audio:</string>
 
-	<string name="files">files</string>
-	<string name="file1">file</string>
+    <string name="files">files</string>
+    <string name="file1">file</string>
 
-	<string name="refresh">Refresh</string>
+    <string name="refresh">Refresh</string>
 
-	<string name="exit">Exit</string>
+    <string name="exit">Exit</string>
 
-	<string name="paste">Paste</string>
-	<string name="new_">New</string>
-	<string name="cut">Cut</string>
-	<string name="copy">Copy</string>
-	<string name="more">More</string>
-	<string name="compress">Compress</string>
-	<string name="play">Play</string>
+    <string name="paste">Paste</string>
+    <string name="new_">New</string>
+    <string name="cut">Cut</string>
+    <string name="copy">Copy</string>
+    <string name="more">More</string>
+    <string name="compress">Compress</string>
+    <string name="play">Play</string>
 
 
-	<string name="tracks">Tracks</string>
+    <string name="tracks">Tracks</string>
 
-	<string name="duration">Duration</string>
+    <string name="duration">Duration</string>
 
-	<string name="not_able_to_process">not able to process</string>
-	<string name="wait_till_all_audios_populated_in_all_songs_tab">wait till all audios are populated in All Songs tab</string>
+    <string name="not_able_to_process">not able to process</string>
+    <string name="wait_till_all_audios_populated_in_all_songs_tab">wait till all audios are populated in All Songs tab</string>
 
-	<string name="removed_the_selected_audios">Removed the selected audios</string>
+    <string name="removed_the_selected_audios">Removed the selected audios</string>
 
-	<string name="create_new_list">Create new list</string>
-	<string name="add_to_current_play_list">Add to current play list</string>
+    <string name="create_new_list">Create new list</string>
+    <string name="add_to_current_play_list">Add to current play list</string>
 
-	<string name="undo">Undo</string>
-	<string name="redo">Redo</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
 
-	<string name="file_not_found">File not found</string>
-	<string name="cant_edit_this_file">can\'t edit this file</string>
-	<string name="file_is_large">File is large</string>
-	<string name="maximum_2_services_only_be_processed_at_a_time">Maximum 2 services only be processed at a time.</string>
-	<string name="file_could_not_be_saved">File could not be saved.</string>
-	<string name="opening_the_file">Opening the file</string>
-	<string name="file_could_not_be_opened">File could not be opened.</string>
+    <string name="file_not_found">File not found</string>
+    <string name="cant_edit_this_file">can\'t edit this file</string>
+    <string name="file_is_large">File is large</string>
+    <string name="maximum_2_services_only_be_processed_at_a_time">Maximum 2 services only be processed at a time.</string>
+    <string name="file_could_not_be_saved">File could not be saved.</string>
+    <string name="opening_the_file">Opening the file</string>
+    <string name="file_could_not_be_opened">File could not be opened.</string>
 
-	<string name="set_wallpaper">Set Wallpaper</string>
+    <string name="set_wallpaper">Set Wallpaper</string>
 
-	<string name="could_not_be_set_as_wallpaper">could not be set as wallpaper</string>
+    <string name="could_not_be_set_as_wallpaper">could not be set as wallpaper</string>
     <string name="set_as_ringtone">Set as ringtone</string>
-	<string name="now_ringtone_can_be_set">Now ringtone can be set</string>
-	<string name="ringtone_set">Ringtone is set</string>
+    <string name="now_ringtone_can_be_set">Now ringtone can be set</string>
+    <string name="ringtone_set">Ringtone is set</string>
     <string name="up">Up</string>
-	<string name="down">Down</string>
+    <string name="down">Down</string>
     <string name="text_editor">Text Editor</string>
-	<string name="pdf_viewer">PDF Viewer</string>
-	<string name="audio_player">Audio Player</string>
-	<string name="image_viewer">Image Viewer</string>
-	<string name="video_player">Video Player</string>
-	<string name="file_selector">File Selector</string>
-	<string name="archive_viewer">Archive Viewer</string>
+    <string name="pdf_viewer">PDF Viewer</string>
+    <string name="audio_player">Audio Player</string>
+    <string name="image_viewer">Image Viewer</string>
+    <string name="video_player">Video Player</string>
+    <string name="file_selector">File Selector</string>
+    <string name="archive_viewer">Archive Viewer</string>
     <string name="renamed">Renamed</string>
-	<string name="could_not_be_renamed">could not be renamed</string>
+    <string name="could_not_be_renamed">could not be renamed</string>
     <string name="file">File</string>
-	<string name="directory">Directory</string>
-	<string name="file_can_not_be_created_here">File can not be created here.</string>
-	<string name="new_file_can_not_be_created_a_file_with_the_specified_name_exists">New file can not be created. A file with the specified name already exists</string>
-	<string name="folder">Folder</string>
-	<string name="please_wait">please wait</string>
-	<string name="current_play">Current Play</string>
-	<string name="album">Album</string>
-	<string name="audio_list">Audio list</string>
-	<string name="all_songs">All songs</string>
+    <string name="directory">Directory</string>
+    <string name="file_can_not_be_created_here">File can not be created here.</string>
+    <string name="new_file_can_not_be_created_a_file_with_the_specified_name_exists">New file can not be created. A file with the specified name already exists</string>
+    <string name="folder">Folder</string>
+    <string name="please_wait">please wait</string>
+    <string name="current_play">Current Play</string>
+    <string name="album">Album</string>
+    <string name="audio_list">Audio list</string>
+    <string name="all_songs">All songs</string>
     <string name="searching">Searching</string>
     <string name="can_not_open_file">can\'t open file</string>
     <string name="wait_ellipse">Wait…</string>
     <string name="more_than_20_directories_cannot_be_added">More than 20 directories cannot be added</string>
-	<string name="select_directories_by_long_pressing">Select directories by long pressing</string>
+    <string name="select_directories_by_long_pressing">Select directories by long pressing</string>
     <string name="send">Send</string>
-	<string name="app_installation">App Installation</string>
-	<string name="version">Version</string>
-	<string name="installed_version">Installed version</string>
-	<string name="na">NA</string>
+    <string name="app_installation">App Installation</string>
+    <string name="version">Version</string>
+    <string name="installed_version">Installed version</string>
+    <string name="na">NA</string>
     <string name="do_you_install_a_new_app">Do you want install a new app?</string>
-	<string name="do_you_want_update_the_app">Do you want to update the app?</string>
-	<string name="read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions">Read and write permissions are must for the app to work. Please grant the permissions</string>
-	<string name="could_not_open_zipe_file">Could not open the zip file</string>
-	<string name="directories_can_not_be_sent_select_one_file">Directories can not be sent. Select at least one file.</string>
-	<string name="directories_can_not_be_sent_select_only_one_file">Directories can not be sent. Select only one file.</string>
-	<string name="select_only_a_zip_file">Select only a zip file</string>
-	<string name="selected_files_have_been_copied">Selected files have been copied.</string>
-	<string name="selected_filed_have_been_moved">Selected files have been moved.</string>
-	<string name="select_files_to_delete">Select files to delete</string>
-	<string name="directory_does_not_exist">Directory does not exist.</string>
-	<string name="selected_audios_deleted">Selected audios deleted</string>
-	<string name="selected_audios_could_not_be_deleted">Selected audios could not be deleted</string>
+    <string name="do_you_want_update_the_app">Do you want to update the app?</string>
+    <string name="read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions">Read and write permissions are must for the app to work. Please grant the permissions</string>
+    <string name="could_not_open_zipe_file">Could not open the zip file</string>
+    <string name="directories_can_not_be_sent_select_one_file">Directories can not be sent. Select at least one file.</string>
+    <string name="directories_can_not_be_sent_select_only_one_file">Directories can not be sent. Select only one file.</string>
+    <string name="select_only_a_zip_file">Select only a zip file</string>
+    <string name="selected_files_have_been_copied">Selected files have been copied.</string>
+    <string name="selected_filed_have_been_moved">Selected files have been moved.</string>
+    <string name="select_files_to_delete">Select files to delete</string>
+    <string name="directory_does_not_exist">Directory does not exist.</string>
+    <string name="selected_audios_deleted">Selected audios deleted</string>
+    <string name="selected_audios_could_not_be_deleted">Selected audios could not be deleted</string>
     <string name="cannot_be_hidden">cannot be hidden</string>
-	<string name="process_cancelled">process cancelled</string>
+    <string name="process_cancelled">process cancelled</string>
     <string name="removed_default_apps_to_open_files">Removed default apps to open files</string>
     <string name="theme">Theme</string>
-	<string name="blue">Blue</string>
-	<string name="dark">Dark</string>
-	<string name="download">Download</string>
-	<string name="select_directories_to_search_in">Select directories to be searched in</string>
-	<string name="a_file_with_given_name_already_exists">A file with the given name already exists</string>
-	<string name="file_can_not_be_renamed_here">File can not be renamed here</string>
+    <string name="blue">Blue</string>
+    <string name="dark">Dark</string>
+    <string name="download">Download</string>
+    <string name="select_directories_to_search_in">Select directories to be searched in</string>
+    <string name="a_file_with_given_name_already_exists">A file with the given name already exists</string>
+    <string name="file_can_not_be_renamed_here">File can not be renamed here</string>
     <string name="zipping">Zipping</string>
-	<string name="unzipping">Unzipping</string>
+    <string name="unzipping">Unzipping</string>
     <string name="files_can_not_be_pasted_here">Files can not be pasted here</string>
     <string name="select">Select</string>
     <string name="being_updated">Being updated</string>
     <string name="move_to">Move to</string>
-	<string name="copy_to">Copy to</string>
+    <string name="copy_to">Copy to</string>
     <string name="root_access_not_avaialable">root access not available</string>
     <string name="light">Light</string>
-	<string name="system_default">System default</string>
+    <string name="system_default">System default</string>
     <string name="seems_permissions_were_not_granted_goto_settings_grant_permissions_to_app">Seems that read and write permissions were not granted. Go to Settings and grant permissions to this app</string>
     <string name="path_copied">Path copied</string>
     <string name="path">Path</string>
     <string name="show_file_path_for_library_files">Show file path for library files</string>
     <string name="analyse_storage">Analyse Storage</string>
     <string name="file_to_storage">File/Storage</string>
-	<string name="files_">Files</string>
+    <string name="files_">Files</string>
     <string name="sort">Sort</string>
     <string name="analysing">Analysing</string>
     <string name="could_not_delete_file">could not delete the file</string>
     <string name="security_exception_thrown">Security exception thrown.</string>
-	<string name="may_be_password_protected">May be password protected</string>
+    <string name="may_be_password_protected">May be password protected</string>
     <string name="ftp_server_is_not_connected">FTP server is not connected</string>
     <string name="ftp">FTP</string>
-	<string name="sftp">SFTP</string>
+    <string name="sftp">SFTP</string>
     <string name="new_ftp_server">New FTP Server</string>
-	<string name="new_sftp_server">New SFTP Server</string>
+    <string name="new_sftp_server">New SFTP Server</string>
     <string name="host">Host</string>
-	<string name="port">Port</string>
-	<string name="active">Active</string>
-	<string name="passive">Passive</string>
+    <string name="port">Port</string>
+    <string name="active">Active</string>
+    <string name="passive">Passive</string>
     <string name="mode">Mode</string>
-	<string name="user_name">User name</string>
-	<string name="password">Password</string>
-	<string name="user">User</string>
-	<string name="anonymous">Anonymous</string>
-	<string name="display">Display</string>
-    <string name="host_port_username_fields_can_not_be_empty">Host,port,username fields can not be empty</string>
+    <string name="user_name">User name</string>
+    <string name="password">Password</string>
+    <string name="user">User</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="display">Display</string>
+    <string name="enter_host_port_username_fields">Enter host, port, username fields</string>
     <string name="encoding">Encoding</string>
     <string name="are_you_sure_to_delete_ftp_details">Are you sure to delete the selected ftp details?</string>
-	<string name="ftp_server_details">FTP server details</string>
+    <string name="ftp_server_details">FTP server details</string>
     <string name="scan">Scan</string>
     <string name="server_could_not_be_connected">server could not be connected</string>
     <string name="not_connected_to_network">not connected to network</string>
@@ -324,178 +324,183 @@
     <string name="no_app_found">No app found</string>
     <string name="app_action">App action</string>
     <string name="could_not_perform_action">could not perform the action</string>
-	<string name="pick_file">Pick File</string>
+    <string name="pick_file">Pick File</string>
     <string name="could_not_be_uninstalled">could not be uninstalled</string>
     <string name="uninstalled">Uninstalled</string>
 
-	<string name="backup">Back up</string>
-	<string name="uninstall">Uninstall</string>
-	<string name="control_panel">Control Panel</string>
-	<string name="play_store">Play Store</string>
-	<string name="share">Share</string>
+    <string name="backup">Back up</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="control_panel">Control Panel</string>
+    <string name="play_store">Play Store</string>
+    <string name="share">Share</string>
     <string name="file_is_large_please_extract_to_view">File is large. Please extract to view</string>
     <string name="click_exit_button_to_exit">click Exit button to exit</string>
-	<string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
-	<string name="press_again_to_close_activity">press again to close the activity</string>
-	<string name="click_close_button_to_exit">click Close button to exit</string>
-	<string name="volume">Volume</string>
+    <string name="click_OK_cancel_button_to_exit">click OK/Cancel button to exit</string>
+    <string name="press_again_to_close_activity">press again to close the activity</string>
+    <string name="click_close_button_to_exit">click Close button to exit</string>
+    <string name="volume">Volume</string>
     <string name="cannot_open_here">cannot open here</string>
     <string name="greater_than">Greater than</string>
-	<string name="lesser_than">Lesser than</string>
-	<string name="deleted_audio_file">Deleted the audio file</string>
-	<string name="deleted_file">Deleted the file</string>
+    <string name="lesser_than">Lesser than</string>
+    <string name="deleted_audio_file">Deleted the audio file</string>
+    <string name="deleted_file">Deleted the file</string>
     <string name="name_contains_space">name contains space</string>
-	<string name="name_field_cannot_be_empty">Name field cannot be empty</string>
-	<string name="a_list_exists_with_given_name">A list already exists with the given name</string>
-	<string name="name_should_contain_only_alphabets_without_spaces">Name should contain only alphabets without spaces</string>
-	<string name="copied_apk_file">Copied APK file</string>
+    <string name="name_field_cannot_be_empty">Name field cannot be empty</string>
+    <string name="a_list_exists_with_given_name">A list already exists with the given name</string>
+    <string name="name_should_contain_only_alphabets_without_spaces">Name should contain only alphabets without spaces</string>
+    <string name="copied_apk_file">Copied APK file</string>
     <string name="exception_thrown_colon_could_not_extract_entries">Exception thrown: could not extract entries</string>
     <string name="enter_name_or_size_parameters">Enter name or size parameters</string>
     <string name="open_with">Open with</string>
-	<string name="select_only_a_file">Select only a file</string>
+    <string name="select_only_a_file">Select only a file</string>
     <string name="eject_usb">Eject Usb</string>
     <string name="enable_usb_flash_drive">Enable Usb Flash Drive</string>
     <string name="file_is_large_copy_to_device_storage">File is large. Copy to device storage</string>
     <string name="wait_till_completion_on_going_operation_on_usb">Wait till completion of ongoing operation on USB drive</string>
     <string name="rescan_library">Rescan Library</string>
-	<string name="scanning_started">Scanning started</string>
+    <string name="scanning_started">Scanning started</string>
     <string name="rescan">Rescan</string>
     <string name="select_album">Select album</string>
-	<string name="parent_directory">Parent directory</string>
+    <string name="parent_directory">Parent directory</string>
     <string name="network">Network</string>
-	<string name="want_to_stop_ftp_server_service">Want to stop the FTP Server service?</string>
-	<string name="ftp_setting_already_exists_want_to_replace_it">An FTP setting already exists. Want to replace it?</string>
-	<string name="optional_in_bracket">(optional)</string>
-	<string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
-	<string name="system_apps">System Apps</string>
-	<string name="user_installed_apps">User-installed Apps</string>
-	<string name="copy_file_to_device_to_view">copy the file to device to view</string>
+    <string name="want_to_stop_ftp_server_service">Want to stop the FTP Server service?</string>
+    <string name="ftp_setting_already_exists_want_to_replace_it">An FTP setting already exists. Want to replace it?</string>
+    <string name="optional_in_bracket">(optional)</string>
+    <string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
+    <string name="system_apps">System Apps</string>
+    <string name="user_installed_apps">User-installed Apps</string>
+    <string name="copy_file_to_device_to_view">copy the file to device to view</string>
 
 
-
-	<string name="ftp_server">FTP Server</string>
-	<string name="ftp_client">FTP</string>
-	<string name="sftp_client">SFTP</string>
+    <string name="ftp_server">FTP Server</string>
+    <string name="ftp_client">FTP</string>
+    <string name="sftp_client">SFTP</string>
 
     <string-array name="library_categories">
-		<item>@string/download</item>
-		<item>@string/document</item>
-		<item>@string/image</item>
-		<item>@string/audio</item>
-		<item>@string/video</item>
-		<item>@string/archive</item>
-		<item>@string/apk</item>
-	</string-array>
+        <item>@string/download</item>
+        <item>@string/document</item>
+        <item>@string/image</item>
+        <item>@string/audio</item>
+        <item>@string/video</item>
+        <item>@string/archive</item>
+        <item>@string/apk</item>
+    </string-array>
 
-	<string-array name="network_types">
-		<item>@string/ftp_client</item>
-		<item>@string/sftp_client</item>
-	</string-array>
+    <string-array name="network_types">
+        <item>@string/ftp_client</item>
+        <item>@string/sftp_client</item>
+    </string-array>
 
-	<string-array name="smb_versions">
-		<item>Automatic</item>
-		<item>SMB1</item>
-		<item>SMB2</item>
-		<item>SMB3</item>
-	</string-array>
+    <string-array name="smb_versions">
+        <item>Automatic</item>
+        <item>SMB1</item>
+        <item>SMB2</item>
+        <item>SMB3</item>
+    </string-array>
 
 
-
-	<string name="running_label">FTP Server</string>
-	<string name="running_summary_stopped">Toggle the state of the ftp server</string>
-	<string name="running_summary_started">at %s</string>
-	<string name="running_summary_failed">
+    <string name="running_label">FTP Server</string>
+    <string name="running_summary_stopped">Toggle the state of the ftp server</string>
+    <string name="running_summary_started">at %s</string>
+    <string name="running_summary_failed">
         Failed to start the FTP server, not connected to the local network (wifi or ethernet)?
     </string>
-	<string name="running_summary_failed_to_get_ip_address">
+    <string name="running_summary_failed_to_get_ip_address">
         Failed to start the FTP server, unable to get IP address
     </string>
 
 
-	<string name="settings_label">Settings</string>
-	<string name="user_label">User</string>
-	<string name="login_settings_label">Login settings…</string>
-	<string name="username_label">Username</string>
-	<string name="password_label">Password</string>
-	<string name="show_password_label">Display password</string>
-	<string name="username_validation_error">
+    <string name="settings_label">Settings</string>
+    <string name="user_label">User</string>
+    <string name="login_settings_label">Login settings…</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="show_password_label">Display password</string>
+    <string name="username_validation_error">
         Username must consist of only alphanumeric characters without spaces.
     </string>
-	<string name="password_validation_error">
+    <string name="password_validation_error">
         Password must consist of only alphanumeric characters without spaces.
     </string>
-	<string name="allow_anonymous_label">Allow anonymous login</string>
-	<string name="anonymous_summary">Anonymous logins are allowed only read access</string>
-	<string name="advanced_settings_label">Advanced settings…</string>
-	<string name="port_number_label">Port Number</string>
-	<string name="port_validation_error">Port number must be in the range 1 to 65535.</string>
-	<string name="set_port_credentials_and_directory">Set port, credentials and directory</string>
-	<string name="notification_server_starting">Starting at %s</string>
-	<string name="notification_title">FTP Server is running</string>
-	<string name="notification_text">at %s</string>
-	<string name="notification_stop_text">Stop server</string>
+    <string name="allow_anonymous_label">Allow anonymous login</string>
+    <string name="anonymous_summary">Anonymous logins are allowed only read access</string>
+    <string name="advanced_settings_label">Advanced settings…</string>
+    <string name="port_number_label">Port Number</string>
+    <string name="port_validation_error">Port number must be in the range 1 to 65535.</string>
+    <string name="set_port_credentials_and_directory">Set port, credentials and directory</string>
+    <string name="notification_server_starting">Starting at %s</string>
+    <string name="notification_title">FTP Server is running</string>
+    <string name="notification_text">at %s</string>
+    <string name="notification_stop_text">Stop server</string>
 
-	<string name="nsd_servername_postfix">FTP Server</string>
-
-
-	<string name="feedback">Send feedback</string>
-	<string name="about">About</string>
+    <string name="nsd_servername_postfix">FTP Server</string>
 
 
-	<string name="storage_warning">
+    <string name="feedback">Send feedback</string>
+    <string name="about">About</string>
+
+
+    <string name="storage_warning">
         Warning: storage is not available. You may want to unmount it.
     </string>
 
 
-	<!-- auto added strings by AS -->
-	<string name="notif_settings_text">Settings</string>
-	<string name="write_external_storage_old_android_version_summary">On these devices, all store is available using the file hierarchy.</string>
+    <!-- auto added strings by AS -->
+    <string name="notif_settings_text">Settings</string>
+    <string name="write_external_storage_old_android_version_summary">On these devices, all store is available using the file hierarchy.</string>
     <string name="start">Start</string>
-	<string name="stop">Stop</string>
-	<string name="select_directory">Select Directory</string>
-	<string name="enter_below_host_address_in_file_explorer_of_pc_to_access_files">Enter the below host address in the file explorer of PC to access files</string>
+    <string name="stop">Stop</string>
+    <string name="select_directory">Select Directory</string>
+    <string name="enter_below_host_address_in_file_explorer_of_pc_to_access_files">Enter the below host address in the file explorer of PC to access files</string>
 
 
-	<string name="permission_rationale_for_notification">Permission is requested control Audio Player, FTP Server and services taking longer time to complete through Notifications.</string>
+    <string name="permission_rationale_for_notification">Permission is requested control Audio Player, FTP Server and services taking longer time to complete through Notifications.</string>
     <string name="notification_not_enabled_grant_permission_in_device_settings">Notifications are not enabled. Grant permission for app in Device settings</string>
-	<string name="enable_specified_notification_channel_for_better_control">Enable specified notification channel for better control</string>
-	<string name="server_service_started">Server service started</string>
-	<string name="host_address_should_not_contain_spaces">Host address should not contain spaces</string>
+    <string name="enable_specified_notification_channel_for_better_control">Enable specified notification channel for better control</string>
+    <string name="server_service_started">Server service started</string>
+    <string name="host_address_should_not_contain_spaces">Host address should not contain spaces</string>
     <string name="connect">Connect</string>
-	<string name="disconnect">Disconnect</string>
+    <string name="disconnect">Disconnect</string>
     <string name="nothing_found_here">Nothing found here</string>
     <string name="advanced">Advanced</string>
     <string name="not_supported">not supported</string>
     <string name="update_ftp_server">Update FTP Server</string>
-	<string name="update_sftp_server">Update SFTP Server</string>
+    <string name="update_sftp_server">Update SFTP Server</string>
     <string name="set">Set</string>
     <string name="error_setting_up_device">error setting up device</string>
     <string name="clean_storage">Clean Storage</string>
     <string name="duplicates">Duplicates</string>
     <string name="cannot_sort_here">Cannot sort here</string>
 
-	<string name="sd_card">SD Card</string>
-	<string name="internal">Internal</string>
+    <string name="sd_card">SD Card</string>
+    <string name="internal">Internal</string>
     <string name="default_choices_can_be_removed_from_the_settings">Default choices can be removed from the Settings</string>
     <string name="rotate">Rotate</string>
     <string name="enter_pdf_password">Enter Pdf password</string>
-	<string name="could_not_be_rotated">could not be rotated</string>
+    <string name="could_not_be_rotated">could not be rotated</string>
     <string name="removed_directories">Removed directories</string>
-	<string name="there_are_no_files_to_copy">There are no files to copy</string>
+    <string name="there_are_no_files_to_copy">There are no files to copy</string>
     <string name="select_a_directory_to_copy">select a directory to copy</string>
     <string name="update_webdav_server">Update WebDAV Server</string>
-	<string name="new_webdav_server">New WebDAV Server</string>
-	<string name="update_smb_server">Update SMB Server</string>
-	<string name="new_smb_server">New SMB Server</string>
+    <string name="new_webdav_server">New WebDAV Server</string>
+    <string name="update_smb_server">Update SMB Server</string>
+    <string name="new_smb_server">New SMB Server</string>
     <string name="use_ftps">Use FTPS</string>
-	<string name="private_key">Private Key</string>
-	<string name="private_key_path">Private Key Path</string>
-	<string name="private_key_passphrase">Private Key Passphrase:</string>
-	<string name="known_hosts_path">Known Hosts Path</string>
-	<string name="base_path">Base Path</string>
-	<string name="use_https">Use HTTPS</string>
-	<string name="domain">Domain</string>
-	<string name="share_name">Share Name</string>
-	<string name="smb_version">SMB Version</string>
+    <string name="private_key">Private Key</string>
+    <string name="private_key_path">Private Key Path</string>
+    <string name="private_key_passphrase">Private Key Passphrase:</string>
+    <string name="known_hosts_path">Known Hosts Path</string>
+    <string name="base_path">Base Path</string>
+    <string name="use_https">Use HTTPS</string>
+    <string name="domain">Domain</string>
+    <string name="share_name">Share Name</string>
+    <string name="smb_version">SMB Version</string>
+    <string name="host_asterisk">Host*</string>
+    <string name="port_asterisk">Port*</string>
+    <string name="user_name_asterisk">User name*</string>
+    <string name="password_asterisk">Password*</string>
+    <string name="webdav">WebDAV</string>
+    <string name="smb">SMB</string>
+    <string name="network_connection_disconnected">Network connection disconnected</string>
 
 </resources>
