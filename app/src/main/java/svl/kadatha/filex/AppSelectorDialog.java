@@ -247,14 +247,6 @@ public class AppSelectorDialog extends DialogFragment {
                             AppCompatActivity appCompatActivity = (AppCompatActivity) context;
                             appInstallAlertDialog.show(getParentFragmentManager(), "");
                         } else {
-//                            if(fileObjectType!=null && fileObjectType.equals(FileObjectType.USB_TYPE) && app_package_name.equals(Global.FILEX_PACKAGE) &&  file_size>Global.CACHE_FILE_MAX_LIMIT)
-//                            {
-//                                Global.print(context,context.getString(R.string.file_is_large_copy_to_device_storage));
-//                                defaultAppDatabaseHelper.close();
-//                                dismissAllowingStateLoss();
-//                                return;
-//                            }
-
                             if (Global.FILEX_PACKAGE.equals(app_package_name)) {
                                 AppCompatActivity appCompatActivity = (AppCompatActivity) context;
                                 if (appCompatActivity instanceof MainActivity) {

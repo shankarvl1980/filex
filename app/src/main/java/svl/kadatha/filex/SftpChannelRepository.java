@@ -27,7 +27,7 @@ public class SftpChannelRepository {
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
     private final Map<ChannelSftp, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private final NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private int initialChannels;
 
     private SftpChannelRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {

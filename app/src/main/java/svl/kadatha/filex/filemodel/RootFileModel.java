@@ -212,8 +212,8 @@ public class RootFileModel implements FileModel {
 
 
     public class RootFileInputStream extends InputStream {
-        private Process process;
-        private InputStream processInputStream;
+        private final Process process;
+        private final InputStream processInputStream;
 
         public RootFileInputStream(String path) throws IOException {
             // Start the 'su' process and execute 'cat' to read the file
@@ -245,8 +245,8 @@ public class RootFileModel implements FileModel {
 
 
     public class RootFileOutputStream extends OutputStream {
-        private Process process;
-        private OutputStream processOutputStream;
+        private final Process process;
+        private final OutputStream processOutputStream;
 
         public RootFileOutputStream(String path) throws IOException {
             // Start the 'su' process and execute 'sh -c "cat > 'path'"' to write to the file
