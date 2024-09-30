@@ -77,19 +77,19 @@
         <activity
             android:name=".ArchiveDeletePasteProgressActivity1"
             android:excludeFromRecents="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/MyLightDialog" />
 
         <activity
             android:name=".ArchiveDeletePasteProgressActivity2"
             android:excludeFromRecents="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/MyLightDialog" />
 
         <activity
             android:name=".ArchiveDeletePasteProgressActivity3"
             android:excludeFromRecents="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/MyLightDialog" />
 
         <activity
