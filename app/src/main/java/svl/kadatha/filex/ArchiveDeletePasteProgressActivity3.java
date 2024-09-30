@@ -92,7 +92,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                 PROGRESS_ACTIVITY_SHOWN = false;
                 finish();
             }
-
         });
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +102,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                 Global.print(context, getString(R.string.process_cancelled));
                 PROGRESS_ACTIVITY_SHOWN = false;
                 finish();
-
             }
         });
 
@@ -136,7 +134,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                         }
                         finish();
                     }
-
                 });
 
                 if (archiveDeletePasteFileService != null) {
@@ -149,9 +146,7 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                 archiveDeletePasteFileService.setServiceCompletionListener(null);
                 archiveDeletePasteFileService = null;
             }
-
         };
-
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
     }
@@ -269,7 +264,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
                             }
-
                             break;
 
                             case CutCopyAsyncTask.TASK_TYPE_CUT:
@@ -281,10 +275,8 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                                 copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
-
                             }
                             break;
-
 
                             case CopyToAsyncTask.TASK_TYPE: {
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
@@ -293,14 +285,11 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                                 copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
-
                             }
                             break;
                         }
-
                     }
                     handler.postDelayed(this, 250);
-
                 }
             }
         });
@@ -316,13 +305,10 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                 }
             });
         }
-
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // TODO: Implement this method
         super.onSaveInstanceState(outState);
         outState.putString("intent_action", intent_action);
         outState.putSerializable("sourceFileObjectType", sourceFileObjectType);
@@ -331,7 +317,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
 
     @Override
     protected void onPause() {
-        // TODO: Implement this method
         super.onPause();
         if (serviceConnection != null) unbindService(serviceConnection);
         PROGRESS_ACTIVITY_SHOWN = false;
@@ -340,7 +325,6 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
 
     @Override
     protected void onStart() {
-        // TODO: Implement this method
         super.onStart();
         clear_cache = true;
         Global.WORKOUT_AVAILABLE_SPACE();
@@ -364,5 +348,4 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
-
 }
