@@ -7,6 +7,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -58,7 +59,6 @@ public class FtpClientRepository {
             ftpClients.offer(client);
             lastUsedTimes.put(client, System.currentTimeMillis());
         } catch (IOException e) {
-            Timber.tag(TAG).e("Failed to initialize the first FTP client: %s", e.getMessage());
             throw new RuntimeException("Failed to initialize the first FTP client.", e);
         }
 
@@ -131,7 +131,15 @@ public class FtpClientRepository {
     }
 
     private FTPClient createAndConnectFtpClient() throws IOException {
-        FTPClient client = new FTPClient();
+        FTPClient client;
+        if (networkAccountPOJO.useFTPS) {
+            // Initialize FTPSClient for FTPS connections
+            client = new FTPSClient(false);
+        } else {
+            // Initialize FTPClient for standard FTP connections
+            client = new FTPClient();
+        }
+
         client.setConnectTimeout(5000);
         client.connect(networkAccountPOJO.host, networkAccountPOJO.port);
 
@@ -157,7 +165,7 @@ public class FtpClientRepository {
         boolean loginSuccess;
         if (networkAccountPOJO.anonymous) {
             // Anonymous Login
-            String anonymousPassword = networkAccountPOJO.password != null && !networkAccountPOJO.password.isEmpty()
+            String anonymousPassword = (networkAccountPOJO.password != null && !networkAccountPOJO.password.isEmpty())
                     ? networkAccountPOJO.password
                     : "anonymous@"; // Default anonymous password
 
@@ -171,6 +179,16 @@ public class FtpClientRepository {
             int replyCode = client.getReplyCode();
             String replyString = client.getReplyString();
             throw new IOException("Failed to log in to the FTP server. Reply code: " + replyCode + ", Reply string: " + replyString);
+        }
+
+        // If using FTPS, configure additional security settings
+        if (networkAccountPOJO.useFTPS) {
+            FTPSClient ftps = (FTPSClient) client;
+            ftps.execPBSZ(0);
+            ftps.execPROT("P"); // Private data connection
+
+            // Optionally, set SSL protocols and cipher suites
+            ftps.setEnabledProtocols(new String[]{"TLSv1.2", "TLSv1.3"});
         }
 
         // Set File Type to Binary

@@ -43,6 +43,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
     private TextView size_files;
     private TextView total_no_of_files;
     private TextView total_size_files;
+    private TextView current_file_label;
     private EditText current_file;
     private ServiceConnection serviceConnection;
     private ArchiveDeletePasteFileService1 archiveDeletePasteFileService;
@@ -68,6 +69,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
         to_label = findViewById(R.id.dialog_fragment_cut_copy_delete_to_label);
         from_textview = findViewById(R.id.dialog_fragment_cut_copy_from);
         to_textview = findViewById(R.id.dialog_fragment_cut_copy_to);
+        current_file_label = findViewById(R.id.dialog_fragment_cut_copy_current_file_label);
         current_file = findViewById(R.id.dialog_fragment_cut_copy_archive_current_file);
         current_file.setKeyListener(null);
         copied_textview = findViewById(R.id.dialog_fragment_copied_file);
@@ -147,9 +149,7 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
                 archiveDeletePasteFileService.setServiceCompletionListener(null);
                 archiveDeletePasteFileService = null;
             }
-
         };
-
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
     }
@@ -180,23 +180,28 @@ public class ArchiveDeletePasteProgressActivity1 extends BaseActivity {
             switch (intent_action) {
                 case ArchiveAsyncTask.TASK_TYPE:
                     dialog_title.setText(R.string.archiving);
+                    current_file_label.setText(R.string.archiving);
                     to_label.setText(R.string.archive_file);
                     break;
                 case UnarchiveAsyncTask.TASK_TYPE:
                     dialog_title.setText(R.string.extracting);
+                    current_file_label.setText(R.string.extracting);
                     from_label.setText(R.string.archive_file);
                     to_label.setText(R.string.output_folder);
                     break;
                 case DeleteAsyncTask.TASK_TYPE:
                     dialog_title.setText(R.string.deleting);
+                    current_file_label.setText(R.string.deleting);
                     to_table_row.setVisibility(View.GONE);
                     break;
                 case CutCopyAsyncTask.TASK_TYPE_CUT:
                     dialog_title.setText(R.string.moving);
+                    current_file_label.setText(R.string.moving);
                     break;
                 case CutCopyAsyncTask.TASK_TYPE_COPY:
                 case CopyToAsyncTask.TASK_TYPE:
                     dialog_title.setText(R.string.copying);
+                    current_file_label.setText(R.string.copying);
                     break;
             }
         }

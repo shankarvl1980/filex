@@ -232,19 +232,19 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     private void replaceNetworkAccountPojo(Bundle bundle) {
         long row_number;
-        String original_server = bundle.getString("original_server");
+        String original_host = bundle.getString("original_host");
         String original_user_name = bundle.getString("original_user_name");
         int original_port = bundle.getInt("original_port");
         NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
         boolean update = bundle.getBoolean("update");
         boolean replace = bundle.getBoolean("replace");
-        if (original_server == null) original_server = "";
+        if (original_host == null) original_host = "";
         if (original_user_name == null) original_user_name = "";
         if (replace) {
             networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, networkAccountPOJO.type);
         }
         if (update) {
-            row_number = networkAccountsDatabaseHelper.update(original_server, original_port, original_user_name, networkAccountPOJO.type, networkAccountPOJO);
+            row_number = networkAccountsDatabaseHelper.updateOrInsert(original_host, original_port, original_user_name, networkAccountPOJO.type, networkAccountPOJO);
         } else {
             row_number = networkAccountsDatabaseHelper.insert(networkAccountPOJO);
         }

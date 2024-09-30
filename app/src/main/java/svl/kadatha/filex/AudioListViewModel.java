@@ -257,7 +257,7 @@ public class AudioListViewModel extends AndroidViewModel {
                     while (it.hasNext()) {
                         AudioPOJO audio = it.next();
                         if (!new File(audio.getData()).exists()) {
-                            int removed_row = audioDatabaseHelper.delete_by_audio_id(list_name, audio.getId());
+                            int removed_row = audioDatabaseHelper.deleteByAudioId(list_name, audio.getId());
                             audio_rowid_list.remove(removed_row);
                             it.remove();
                         }
@@ -301,7 +301,7 @@ public class AudioListViewModel extends AndroidViewModel {
             while (it.hasNext()) {
                 AudioPOJO audio = it.next();
                 if (!new File(audio.getData()).exists()) {
-                    int removed_row = audioDatabaseHelper.delete_by_audio_id(list_name, audio.getId());
+                    int removed_row = audioDatabaseHelper.deleteByAudioId(list_name, audio.getId());
                     audio_rowid_list.remove(removed_row);
                     it.remove();
                 }

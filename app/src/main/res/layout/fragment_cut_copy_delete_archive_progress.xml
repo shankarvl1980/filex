@@ -75,13 +75,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/from"
                             android:textSize="17sp"
-
-
                             />
 
                         <TextView
-
-
                             android:layout_height="wrap_content"
                             android:text=" : "
                             android:textSize="17sp" />
@@ -92,8 +88,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textSize="17sp"
-
-
                             />
                     </TableRow>
 
@@ -108,12 +102,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/to"
                             android:textSize="17sp"
-
                             />
 
                         <TextView
-
-
                             android:layout_height="wrap_content"
                             android:text=" : "
                             android:textSize="17sp" />

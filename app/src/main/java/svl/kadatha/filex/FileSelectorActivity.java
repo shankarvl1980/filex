@@ -624,6 +624,16 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 }
             }
         }
+    }
+
+    public List<FilePOJO> getFilePOJO_list() {
+        List<FilePOJO> filePOJOS = new ArrayList<>();
+        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
+            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
+                filePOJOS.add(filePOJO);
+            }
+        }
+        return filePOJOS;
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -664,16 +674,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    public List<FilePOJO> getFilePOJO_list() {
-        List<FilePOJO> filePOJOS = new ArrayList<>();
-        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
-                filePOJOS.add(filePOJO);
-            }
-        }
-        return filePOJOS;
-    }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
         String fragment_tag;

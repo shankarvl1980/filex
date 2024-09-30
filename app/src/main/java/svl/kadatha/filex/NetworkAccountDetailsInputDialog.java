@@ -331,7 +331,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
             dismissAllowingStateLoss();
             //request_code gets changed on yesornodialog orientation change. so request_code be hardcoded.
-            getParentFragmentManager().setFragmentResult(NetworkAccountsDetailsDialog.FTP_INPUT_DETAILS_REQUEST_CODE, bundle);
+            getParentFragmentManager().setFragmentResult(NetworkAccountsDetailsDialog.NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, bundle);
         }
     }
 

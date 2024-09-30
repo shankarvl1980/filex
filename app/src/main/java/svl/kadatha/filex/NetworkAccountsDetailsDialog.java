@@ -39,9 +39,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     public final static String SFTP = "sftp";
     public final static String WebDAV = "webdav";
     public final static String SMB = "smb";
-    public final static String FTP_INPUT_DETAILS_REQUEST_CODE = "ftp_input_details_request_code";
-    private final static String FTP_DELETE_REQUEST_CODE = "ftp_delete_request_code";
-    private final static String FTP_RENAME_REQUEST_CODE = "ftp_rename_request_code";
+    public final static String NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE = "network_account_input_details_request_code";
+    private final static String NETWORK_ACCOUNT_DELETE_REQUEST_CODE = "network_account_delete_request_code";
+    private final static String NETWORK_ACCOUNT_RENAME_REQUEST_CODE = "network_account_rename_request_code";
     private Context context;
     private String type;
     private Toolbar bottom_toolbar;
@@ -328,10 +328,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-        getParentFragmentManager().setFragmentResultListener(FTP_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(NETWORK_ACCOUNT_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (requestKey.equals(FTP_DELETE_REQUEST_CODE)) {
+                if (requestKey.equals(NETWORK_ACCOUNT_DELETE_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
                     networkAccountPOJO_selected_for_delete = new ArrayList<>();
                     networkAccountPOJO_selected_for_delete.addAll(viewModel.mselecteditems.values());
@@ -340,10 +340,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-        getParentFragmentManager().setFragmentResultListener(FTP_INPUT_DETAILS_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (requestKey.equals(FTP_INPUT_DETAILS_REQUEST_CODE)) {
+                if (requestKey.equals(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
                     if (result.getBoolean("whetherToConnect")) {
                         if (type.equals(FTP)) {
@@ -357,10 +357,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         });
 
 
-        getParentFragmentManager().setFragmentResultListener(FTP_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(NETWORK_ACCOUNT_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (requestKey.equals(FTP_RENAME_REQUEST_CODE)) {
+                if (requestKey.equals(NETWORK_ACCOUNT_RENAME_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
                     String new_name = result.getString("new_name");
                     String host = result.getString("host");
@@ -688,14 +688,14 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             int id = v.getId();
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
-                NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE, viewModel.type, null);
+                NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, null);
                 networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");
             } else if (id == R.id.toolbar_btn_2) {
                 int s = viewModel.mselecteditems.size();
                 if (s > 0) {
                     NetworkAccountPOJO networkAccountPOJO = viewModel.mselecteditems.getValueAtIndex(0);
                     String display = networkAccountPOJO.display;
-                    DeleteFtpAlertDialog deleteFtpAlertDialog = DeleteFtpAlertDialog.getInstance(FTP_DELETE_REQUEST_CODE, (display == null || display.isEmpty()) ? networkAccountPOJO.host : display, s);
+                    DeleteFtpAlertDialog deleteFtpAlertDialog = DeleteFtpAlertDialog.getInstance(NETWORK_ACCOUNT_DELETE_REQUEST_CODE, (display == null || display.isEmpty()) ? networkAccountPOJO.host : display, s);
                     deleteFtpAlertDialog.show(getParentFragmentManager(), "");
                 }
             } else if (id == R.id.toolbar_btn_3) {
@@ -720,7 +720,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     NetworkAccountPOJO tobe_replaced_ftp = viewModel.mselecteditems.getValueAtIndex(0);
                     String ftp_host = tobe_replaced_ftp.host;
                     String ftp_user_name = tobe_replaced_ftp.user_name;
-                    NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(FTP_INPUT_DETAILS_REQUEST_CODE, viewModel.type, viewModel.networkAccountPOJOList.get(viewModel.mselecteditems.getKeyAtIndex(0)));
+                    NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, viewModel.networkAccountPOJOList.get(viewModel.mselecteditems.getKeyAtIndex(0)));
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");
                 }
                 clear_selection();

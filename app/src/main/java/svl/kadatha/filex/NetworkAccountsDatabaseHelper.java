@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -64,15 +65,31 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insert(TABLE, null, contentValues);
     }
 
-    // Update method
-    public long update(String original_server, int original_port, String original_user_name, String original_type,
-                       NetworkAccountsDetailsDialog.NetworkAccountPOJO pojo) {
+    // UpdateOrInsert method
+    public long updateOrInsert(String original_host, int original_port, String original_user_name, String original_type,
+                               NetworkAccountsDetailsDialog.NetworkAccountPOJO pojo) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues contentValues = createContentValues(pojo);
-        return sqLiteDatabase.update(TABLE, contentValues,
+
+        // Attempt to update the existing record
+        int rowsAffected = sqLiteDatabase.update(TABLE, contentValues,
                 "host=? AND port=? AND user_name=? AND type=?",
-                new String[]{original_server, String.valueOf(original_port), original_user_name, original_type});
+                new String[]{original_host, String.valueOf(original_port), original_user_name, original_type});
+
+        if (rowsAffected == 0) {
+            // No existing record found; insert a new one
+            try {
+                return sqLiteDatabase.insert(TABLE, null, contentValues);
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+                return -1; // Indicate failure
+            }
+        } else {
+            // Update was successful; return the number of rows updated
+            return rowsAffected;
+        }
     }
+
 
     // Delete method
     public int delete(String host, int port, String user_name, String type) {

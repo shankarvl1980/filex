@@ -153,18 +153,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
+    }
 
     private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, long file_size) {
         int idx = file_name.lastIndexOf(".");
@@ -210,7 +199,18 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     @Override
     public void onMediaAttachedAndRemoved() {

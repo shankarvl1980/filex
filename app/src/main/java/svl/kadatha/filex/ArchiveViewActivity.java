@@ -458,6 +458,12 @@ public class ArchiveViewActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("clear_cache", clear_cache);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        clear_cache = savedInstanceState.getBoolean("clear_cache");
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -498,12 +504,6 @@ public class ArchiveViewActivity extends BaseActivity {
             }
         }
     });
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        clear_cache = savedInstanceState.getBoolean("clear_cache");
-    }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
         String fragment_tag;

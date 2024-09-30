@@ -377,7 +377,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
 
         if (whether_saved_play_list) {
             if (activity instanceof AudioPlayerActivity) {
-                ((AudioPlayerActivity) activity).audioDatabaseHelper.delete_by_rowid(list_name, rowid_list);
+                ((AudioPlayerActivity) activity).audioDatabaseHelper.deleteByRowId(list_name, rowid_list);
             }
 
         }
