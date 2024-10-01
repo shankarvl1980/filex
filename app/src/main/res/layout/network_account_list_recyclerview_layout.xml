@@ -6,7 +6,7 @@
     android:padding="@dimen/layout_margin">
 
     <ImageView
-        android:id="@+id/ftp_list_recyclerview_image_ftp"
+        android:id="@+id/network_list_recyclerview_network_image"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginStart="10dp"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ftp_list_recyclerview_display"
+        android:id="@+id/network_list_recyclerview_display"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -29,11 +29,11 @@
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_main_text_color"
         android:textSize="17sp"
-        app:layout_constraintStart_toEndOf="@+id/ftp_list_recyclerview_image_ftp"
+        app:layout_constraintStart_toEndOf="@+id/network_list_recyclerview_network_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ftp_list_recyclerview_server"
+        android:id="@+id/network_list_recyclerview_host"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -43,13 +43,13 @@
         android:textColor="?attr/recycler_text_color"
 
         android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@id/ftp_list_recyclerview_display"
-        app:layout_constraintTop_toBottomOf="@id/ftp_list_recyclerview_display"
+        app:layout_constraintStart_toStartOf="@id/network_list_recyclerview_display"
+        app:layout_constraintTop_toBottomOf="@id/network_list_recyclerview_display"
 
         />
 
     <TextView
-        android:id="@+id/ftp_list_recyclerview_user_name"
+        android:id="@+id/network_list_recyclerview_user_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -60,13 +60,13 @@
         android:textColor="?attr/recycler_text_color"
 
         android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@id/ftp_list_recyclerview_display"
-        app:layout_constraintTop_toBottomOf="@id/ftp_list_recyclerview_server"
+        app:layout_constraintStart_toStartOf="@id/network_list_recyclerview_display"
+        app:layout_constraintTop_toBottomOf="@id/network_list_recyclerview_host"
 
         />
 
     <ImageView
-        android:id="@+id/ftp_list_recyclerview_select_indicator"
+        android:id="@+id/network_list_recyclerview_select_indicator"
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginStart="10dp"
@@ -75,6 +75,20 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <ImageView
+        android:id="@+id/network_list_recyclerview_connected_indicator"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/green_dot"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/network_list_recyclerview_select_indicator"
         app:layout_constraintTop_toTopOf="parent"
 
         />

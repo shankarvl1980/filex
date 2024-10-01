@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/fragment_ftp_list_heading"
+        android:id="@+id/fragment_network_list_heading"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/dialog_title"
@@ -20,17 +20,17 @@
 
     <Button
 
-        android:id="@+id/fragment_ftp_scan_btn"
+        android:id="@+id/fragment_network_scan_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/scan"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_list_heading" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_list_heading" />
 
     <androidx.recyclerview.widget.RecyclerView
 
-        android:id="@+id/fragment_ftp_recyclerview"
+        android:id="@+id/fragment_network_account_recyclerview"
         style="@style/my_scrollbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -43,13 +43,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn"
 
         />
 
 
     <TextView
-        android:id="@+id/ftp_details_ftp_number"
+        android:id="@+id/network_details_network_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -58,12 +58,12 @@
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn"
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn"
 
         />
 
     <TextView
-        android:id="@+id/ftp_details_empty"
+        android:id="@+id/network_details_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/dialog_recyclerview_background"
@@ -74,10 +74,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ftp_scan_btn" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/fragment_ftp_toolbar"
+        android:id="@+id/fragment_network_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -90,7 +90,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
-        android:id="@+id/fragment_ftp_list_progressbar"
+        android:id="@+id/fragment_network_list_progressbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -111,7 +111,7 @@
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_action_ftp_list"
+        android:id="@+id/floating_action_network_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
