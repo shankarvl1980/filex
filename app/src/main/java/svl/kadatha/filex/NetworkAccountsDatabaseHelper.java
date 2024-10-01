@@ -81,7 +81,6 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
             try {
                 return sqLiteDatabase.insert(TABLE, null, contentValues);
             } catch (SQLiteException e) {
-                e.printStackTrace();
                 return -1; // Indicate failure
             }
         } else {

@@ -135,7 +135,7 @@ public class Global {
     static public boolean DETAILED_SEARCH_LIBRARY;
     static public boolean SHARE_USB;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
-    public static List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
+    public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;

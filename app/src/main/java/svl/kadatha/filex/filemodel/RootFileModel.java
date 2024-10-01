@@ -117,7 +117,6 @@ public class RootFileModel implements FileModel {
         try {
             return new RootFileInputStream(path);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -128,7 +127,6 @@ public class RootFileModel implements FileModel {
         try {
             return new RootFileOutputStream(childPath);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -211,7 +209,7 @@ public class RootFileModel implements FileModel {
     }
 
 
-    public class RootFileInputStream extends InputStream {
+    public static class RootFileInputStream extends InputStream {
         private final Process process;
         private final InputStream processInputStream;
 
@@ -244,7 +242,7 @@ public class RootFileModel implements FileModel {
     }
 
 
-    public class RootFileOutputStream extends OutputStream {
+    public static class RootFileOutputStream extends OutputStream {
         private final Process process;
         private final OutputStream processOutputStream;
 

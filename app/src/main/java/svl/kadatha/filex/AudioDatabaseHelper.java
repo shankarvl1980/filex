@@ -64,7 +64,6 @@ public class AudioDatabaseHelper {
         try {
             db.execSQL(createTableSQL);
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error (e.g., notify the user or retry)
         }
     }
@@ -93,7 +92,6 @@ public class AudioDatabaseHelper {
         try {
             return db.insertOrThrow(table, null, contentValues);
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error (e.g., log it or notify the user)
             return -1;
         }
@@ -126,7 +124,6 @@ public class AudioDatabaseHelper {
             }
             db.setTransactionSuccessful();
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error (e.g., log it or notify the user)
         } finally {
             db.endTransaction();
@@ -148,7 +145,6 @@ public class AudioDatabaseHelper {
         try {
             return db.delete(table, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error
             return 0;
         }
@@ -190,7 +186,6 @@ public class AudioDatabaseHelper {
             db.delete(table, whereClause.toString(), whereArgs);
             db.setTransactionSuccessful();
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error
         } finally {
             db.endTransaction();
@@ -220,7 +215,6 @@ public class AudioDatabaseHelper {
         try {
             db.execSQL(dropTableSQL);
         } catch (SQLiteException e) {
-            e.printStackTrace();
             // Optionally, handle the error
         }
     }
@@ -241,7 +235,6 @@ public class AudioDatabaseHelper {
                 } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
-            e.printStackTrace();
             Global.print(context, "Exception thrown: could not extract entries");
         }
         return tables;
@@ -287,8 +280,7 @@ public class AudioDatabaseHelper {
                 } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
-            e.printStackTrace();
-            Global.print(context, context.getString(R.string.exception_thrown_colon_could_not_extract_entries));
+
         }
 
         return audioList;

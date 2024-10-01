@@ -168,7 +168,7 @@
 
         <activity
             android:name=".InstaCropperActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <activity
             android:name=".FileSelectorActivity"
@@ -233,7 +233,7 @@
         <activity
             android:name=".FtpServerActivity"
             android:exported="true"
-            android:label="@string/ftp_server"></activity>
+            android:label="@string/ftp_server" />
 
         <service
             android:name=".AudioPlayerService"

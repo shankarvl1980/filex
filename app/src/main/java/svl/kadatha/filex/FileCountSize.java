@@ -153,7 +153,6 @@ public class FileCountSize {
                         channelSftp = sftpChannelRepository.getSftpChannel();
                         for (int i = 0; i < size; ++i) {
                             String filePath = files_selected_array.get(i);
-                            ;
                             ChannelSftp.LsEntry entry = FileUtil.getSftpEntry(channelSftp, filePath);
                             if (entry != null) {
                                 ls_entries[i] = entry;
@@ -418,47 +417,4 @@ public class FileCountSize {
         }
         return dir + file;
     }
-
-
-//    private void populate(List<String> source_list_files, boolean include_folder) {
-//        Stack<String> stack = new Stack<>();
-//        for (String filePath : source_list_files) {
-//            stack.push(filePath);
-//        }
-//
-//        while (!stack.isEmpty()) {
-//            if (isCancelled()) {
-//                return;
-//            }
-//
-//            String parent_file_path = stack.pop();
-//            int no_of_files = 0;
-//            long size_of_files = 0L;
-//
-//            Uri uri = FileUtil.getDocumentUri(parent_file_path, target_uri, target_uri_path);
-//            if (FileUtil.isDirectoryUri(context, uri)) {
-//                Uri children_uri = DocumentsContract.buildChildDocumentsUriUsingTree(target_uri, FileUtil.getDocumentID(parent_file_path, target_uri, target_uri_path));
-//                Cursor cursor = context.getContentResolver().query(children_uri, new String[]{DocumentsContract.Document.COLUMN_DISPLAY_NAME}, null, null, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//                    while (cursor.moveToNext()) {
-//                        String displayName = cursor.getString(0);
-//                        stack.push(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, displayName));
-//                    }
-//                    cursor.close();
-//                }
-//
-//                if (include_folder) {
-//                    no_of_files++;
-//                }
-//            } else {
-//                no_of_files++;
-//                size_of_files += FileUtil.getSizeUri(context, uri);
-//            }
-//
-//            total_no_of_files += no_of_files;
-//            total_size_of_files += size_of_files;
-//            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-//        }
-//    }
-
 }
