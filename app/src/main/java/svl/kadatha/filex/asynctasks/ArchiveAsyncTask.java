@@ -104,7 +104,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 try {
                     if (!zip_file_path.isEmpty()) {
                         lengthParentPath = new File(zip_file_path).getParent().length();
-
                     }
                     int size1 = fileModels.size();
                     for (int i = 0; i < size1; ++i) {

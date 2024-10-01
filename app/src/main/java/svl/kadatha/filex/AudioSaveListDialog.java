@@ -136,11 +136,8 @@ public class AudioSaveListDialog extends DialogFragment {
                             bundle.putString("list_name", "");
                             getParentFragmentManager().setFragmentResult(request_code, bundle);
                         }
-
                         dismissAllowingStateLoss();
-
                     }
-
                 });
 
 
@@ -148,7 +145,6 @@ public class AudioSaveListDialog extends DialogFragment {
                     public boolean onLongClick(View p) {
                         pos = getBindingAdapterPosition();
                         return true;
-
                     }
                 });
             }
@@ -196,9 +192,7 @@ public class AudioSaveListDialog extends DialogFragment {
                         getParentFragmentManager().setFragmentResult(request_code, bundle);
                         dismissAllowingStateLoss();
                     }
-
                 });
-
 
                 view.setOnLongClickListener(new View.OnLongClickListener() {
                     public boolean onLongClick(View p) {

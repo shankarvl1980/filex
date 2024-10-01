@@ -84,17 +84,21 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
                 progressHandler.postDelayed(this, 1000); // Run every 1 second
             }
         };
-
+        progressHandler.post(progressRunnable);
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
         boolean onlyOneUri = data_list.size() == 1;
         boolean copy_result = false;
         for (Uri data : data_list) {
+            if(isCancelled()){
+                progressHandler.removeCallbacks(progressRunnable);
+                return false;
+            }
             if (!onlyOneUri) {
                 file_name = CopyToActivity.getFileNameOfUri(context, data);
             } else {
                 if (file_name.isEmpty()) file_name = CopyToActivity.getFileNameOfUri(context, data);
             }
-            progressHandler.post(progressRunnable);
+
             copy_result = FileUtil.CopyUriFileModel(data, destFileModel, file_name, counter_size_files);
 
             if (copy_result) {
@@ -110,7 +114,6 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         if (counter_no_files > 0) {
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
         }
-
 
         copied_files_name.clear();
         copied_source_file_path_list.clear();

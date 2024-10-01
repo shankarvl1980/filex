@@ -76,9 +76,22 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
 
+        // Create a handler for regular progress updates
+        Handler progressHandler = new Handler(Looper.getMainLooper());
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishProgress(null);
+                progressHandler.postDelayed(this, 1000); // Run every 1 second
+            }
+        };
+        progressHandler.post(progressRunnable);
         int size = sourceFileModels.length;
         for (int i = 0; i < size; ++i) {
-            if (isCancelled()) return false;
+            if (isCancelled()) {
+                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
+                return false;
+            }
             FileModel sourceFileModel = sourceFileModels[i];
             String file_path = sourceFileModel.getPath();
             current_file_name = sourceFileModel.getName();
@@ -114,6 +127,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             copied_files_name.clear();
             copied_source_file_path_list.clear();
         }
+        progressHandler.removeCallbacks(progressRunnable); // Stop the handler
         return copy_result;
     }
 
@@ -143,27 +157,13 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
-
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
         stack.push(new Pair<>(sourceFileModel, destFileModel));
-
         boolean allCopiesSuccessful = true;
 
-        // Create a handler for regular progress updates
-        Handler progressHandler = new Handler(Looper.getMainLooper());
-        Runnable progressRunnable = new Runnable() {
-            @Override
-            public void run() {
-                publishProgress(null);
-                progressHandler.postDelayed(this, 1000); // Run every 1 second
-            }
-        };
-        // Start the progress handler
-        progressHandler.post(progressRunnable);
         while (!stack.isEmpty()) {
             if (isCancelled()) {
                 Timber.tag("CopyFileModel").d("Operation cancelled");
-                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
                 return false;
             }
 
@@ -214,8 +214,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
             }
         }
-        // Stop the progress handler
-        progressHandler.removeCallbacks(progressRunnable);
+
         if (cut && allCopiesSuccessful) {
             Timber.tag("CopyFileModel").d("Deleting source after successful cut operation: " + sourceFileModel.getPath());
             FileUtil.deleteFileModel(sourceFileModel);
@@ -229,30 +228,18 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
-
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
 
         Timber.tag("CopyFileModel").d("Collected %d files/directories to copy.", filesToCopy.size());
 
         boolean allCopiesSuccessful = true;
-        // Create a handler for regular progress updates
-        Handler progressHandler = new Handler(Looper.getMainLooper());
-        Runnable progressRunnable = new Runnable() {
-            @Override
-            public void run() {
-                publishProgress(null);
-                progressHandler.postDelayed(this, 1000); // Run every 1 second
-            }
-        };
         String sourceRootPath = sourceFileModel.getPath();
         String sourceName = new File(sourceRootPath).getName();
-        // Start the progress handler
-        progressHandler.post(progressRunnable);
+
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
                 Timber.tag("CopyFileModel").d("Operation cancelled by user.");
-                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
                 return false;
             }
 
@@ -279,14 +266,11 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
             } catch (CopyFailedException e) {
                 Timber.tag("CopyFileModel").e("Operation failed: %s", e.getMessage());
-                // Stop the progress handler
-                progressHandler.removeCallbacks(progressRunnable);
                 allCopiesSuccessful = false;
                 break;
             }
         }
-        // Stop the progress handler
-        progressHandler.removeCallbacks(progressRunnable);
+
         if (cut && allCopiesSuccessful) {
             try {
                 sourceFileModel.delete();
@@ -348,7 +332,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return new File(new File(sourceName), relativePath).getPath();
     }
 
-    // Other methods (deleteSource, collectFilesToCopy, and exception classes) remain the same
     private static class CopyFailedException extends Exception {
         public CopyFailedException(String message) {
             super(message);
