@@ -86,9 +86,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_ftp_list, container, false);
-        progress_bar = v.findViewById(R.id.fragment_ftp_list_progressbar);
-        TextView heading = v.findViewById(R.id.fragment_ftp_list_heading);
+        View v = inflater.inflate(R.layout.fragment_network_account_list, container, false);
+        progress_bar = v.findViewById(R.id.fragment_network_list_progressbar);
+        TextView heading = v.findViewById(R.id.fragment_network_list_heading);
         if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
             heading.setText(R.string.ftp);
         } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
@@ -98,9 +98,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
             heading.setText(R.string.smb);
         }
-        ftp_number_text_view = v.findViewById(R.id.ftp_details_ftp_number);
-        empty_ftp_list_tv = v.findViewById(R.id.ftp_details_empty);
-        ftp_list_recyclerview = v.findViewById(R.id.fragment_ftp_recyclerview);
+        ftp_number_text_view = v.findViewById(R.id.network_details_network_number);
+        empty_ftp_list_tv = v.findViewById(R.id.network_details_empty);
+        ftp_list_recyclerview = v.findViewById(R.id.fragment_network_account_recyclerview);
         ftp_list_recyclerview.setLayoutManager(new LinearLayoutManager(context));
         ftp_list_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
         ftp_list_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -125,14 +125,14 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         });
 
 
-        Button scan_btn = v.findViewById(R.id.fragment_ftp_scan_btn);
+        Button scan_btn = v.findViewById(R.id.fragment_network_scan_btn);
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
 
-        FloatingActionButton floatingActionButton = v.findViewById(R.id.floating_action_ftp_list);
+        FloatingActionButton floatingActionButton = v.findViewById(R.id.floating_action_network_list);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,7 +149,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         int[] bottom_drawables = {R.drawable.document_add_icon, R.drawable.delete_icon, R.drawable.connect_icon, R.drawable.edit_icon};
         String[] titles = new String[]{getString(R.string.new_), getString(R.string.delete), getString(R.string.disconnect), getString(R.string.edit)};
         tb_layout.setResourceImageDrawables(bottom_drawables, titles);
-        bottom_toolbar = v.findViewById(R.id.fragment_ftp_toolbar);
+        bottom_toolbar = v.findViewById(R.id.fragment_network_toolbar);
         bottom_toolbar.addView(tb_layout);
         Button add_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         delete_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
@@ -410,9 +410,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
     public void clear_selection() {
         viewModel.mselecteditems = new IndexedLinkedHashMap<>();
-
-        if (networkAccountPojoListAdapter != null)
+        if (networkAccountPojoListAdapter != null) {
             networkAccountPojoListAdapter.notifyDataSetChanged();
+        }
+
         enable_disable_buttons(false, 0);
         ftp_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_ftp);
     }
@@ -576,7 +577,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new VH(LayoutInflater.from(context).inflate(R.layout.ftp_list_recyclerview_layout, parent, false));
+            return new VH(LayoutInflater.from(context).inflate(R.layout.network_account_list_recyclerview_layout, parent, false));
         }
 
         @Override
@@ -585,12 +586,17 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             String display = networkAccountPOJO.display;
             String host = networkAccountPOJO.host;
             String user_name = networkAccountPOJO.user_name;
-            holder.ftp_display.setText((display == null || display.isEmpty()) ? host : display);
-            holder.ftp_server.setText(host);
-            holder.ftp_user_name.setText(user_name);
+            holder.network_account_display.setText((display == null || display.isEmpty()) ? host : display);
+            holder.network_account_host.setText(host);
+            holder.network_account_user_name.setText(user_name);
             boolean item_selected = viewModel.mselecteditems.containsKey(position);
             holder.v.setSelected(item_selected);
-            holder.ftp_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
+            holder.network_account_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
+            if (connected_network_account_pojo != null) {
+                holder.green_dot.setVisibility(networkAccountPOJO.host.equals(connected_network_account_pojo.host) && networkAccountPOJO.user_name.equals(connected_network_account_pojo.user_name) ? View.VISIBLE : View.INVISIBLE);
+            } else {
+                holder.green_dot.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
@@ -600,21 +606,24 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         private class VH extends RecyclerView.ViewHolder {
             final View v;
-            final ImageView ftp_image;
-            final ImageView ftp_select_indicator;
-            final TextView ftp_display;
-            final TextView ftp_server;
-            final TextView ftp_user_name;
+            final ImageView network_image;
+            final ImageView network_account_select_indicator;
+            final TextView network_account_display;
+            final TextView network_account_host;
+            final TextView network_account_user_name;
+            final ImageView green_dot;
             int pos;
 
             VH(View view) {
                 super(view);
                 v = view;
-                ftp_image = v.findViewById(R.id.ftp_list_recyclerview_image_ftp);
-                ftp_display = v.findViewById(R.id.ftp_list_recyclerview_display);
-                ftp_server = v.findViewById(R.id.ftp_list_recyclerview_server);
-                ftp_user_name = v.findViewById(R.id.ftp_list_recyclerview_user_name);
-                ftp_select_indicator = v.findViewById(R.id.ftp_list_recyclerview_select_indicator);
+                network_image = v.findViewById(R.id.network_list_recyclerview_network_image);
+                network_account_display = v.findViewById(R.id.network_list_recyclerview_display);
+                network_account_host = v.findViewById(R.id.network_list_recyclerview_host);
+                network_account_user_name = v.findViewById(R.id.network_list_recyclerview_user_name);
+                network_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);
+                green_dot = v.findViewById(R.id.network_list_recyclerview_connected_indicator);
+
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         pos = getBindingAdapterPosition();
@@ -651,7 +660,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 pos = getBindingAdapterPosition();
                 if (viewModel.mselecteditems.containsKey(pos)) {
                     v.setSelected(false);
-                    ftp_select_indicator.setVisibility(View.INVISIBLE);
+                    network_account_select_indicator.setVisibility(View.INVISIBLE);
                     viewModel.mselecteditems.remove(pos);
                     --size;
                     if (size >= 1) {
@@ -666,7 +675,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     }
                 } else {
                     v.setSelected(true);
-                    ftp_select_indicator.setVisibility(View.VISIBLE);
+                    network_account_select_indicator.setVisibility(View.VISIBLE);
                     viewModel.mselecteditems.put(pos, viewModel.networkAccountPOJOList.get(pos));
 
                     bottom_toolbar.setVisibility(View.VISIBLE);
@@ -710,16 +719,14 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         sftpChannelRepository.shutdown();
                         break;
                 }
-
                 disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                 disconnect_btn.setEnabled(false);
+                connected_network_account_pojo=null;
+                clear_selection();
                 Global.print(context, getString(R.string.network_connection_disconnected));
             } else if (id == R.id.toolbar_btn_4) {
                 int s = viewModel.mselecteditems.size();
                 if (s == 1) {
-                    NetworkAccountPOJO tobe_replaced_ftp = viewModel.mselecteditems.getValueAtIndex(0);
-                    String ftp_host = tobe_replaced_ftp.host;
-                    String ftp_user_name = tobe_replaced_ftp.user_name;
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, viewModel.networkAccountPOJOList.get(viewModel.mselecteditems.getKeyAtIndex(0)));
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");
                 }
