@@ -2011,10 +2011,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     return;
                 }
 
-                //if intent comes from outside
+                //if intent is originated from outside
                 if (viewModel.send_intent != null) {
                     clear_cache=false;
-                    Timber.tag("CCopyToActivity").d( "starting copytoactivity from mainactivity: %s", this);
                     viewModel.send_intent.putExtra("folderclickselected", df.fileclickselected);
                     viewModel.send_intent.putExtra("destFileObjectType", df.fileObjectType);
                     viewModel.send_intent.setClass(context, CopyToActivity.class);
