@@ -172,7 +172,7 @@ ImageViewFragment extends Fragment {
                         Uri src_uri = null;
                         if (viewModel.fromThirdPartyApp) {
                             src_uri = data;
-                        } else if (Global.whether_file_cached(viewModel.fileObjectType)) {
+                        } else {
                             src_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (src_uri == null) {
@@ -187,7 +187,7 @@ ImageViewFragment extends Fragment {
                         Uri copy_uri = null;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = data;
-                        } else if (Global.whether_file_cached(viewModel.fileObjectType)) {
+                        } else {
                             copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (copy_uri == null) {
@@ -224,7 +224,7 @@ ImageViewFragment extends Fragment {
                         Uri uri = null;
                         if (viewModel.fromThirdPartyApp) {
                             uri = data;
-                        } else if (Global.whether_file_cached(viewModel.fileObjectType)) {
+                        } else{
                             uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (uri == null) {

@@ -191,7 +191,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                         Uri src_uri = null;
                         if (viewModel.fromThirdPartyApp) {
                             src_uri = viewModel.data;
-                        } else if (Global.whether_file_cached(viewModel.fileObjectType)) {
+                        } else {
                             src_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (src_uri == null) {
@@ -207,7 +207,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                         Uri copy_uri = null;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = viewModel.data;
-                        } else if (Global.whether_file_cached(viewModel.fileObjectType)) {
+                        } else {
                             copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (copy_uri == null) {

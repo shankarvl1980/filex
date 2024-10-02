@@ -3,6 +3,8 @@ package svl.kadatha.filex;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
+import timber.log.Timber;
 
 public class CopyToActivity extends BaseActivity {
 
@@ -53,6 +56,7 @@ public class CopyToActivity extends BaseActivity {
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
     private String folderclickselected;
+    private boolean isOrientationLocked = false;
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -95,6 +99,7 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.tag("CCopyToActivity").d( "onCreate called: %s", this);
         context = this;
         setContentView(R.layout.activity_copy_to);
         setFinishOnTouchOutside(false);
@@ -162,10 +167,6 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
-                if (CheckString.whetherStringContainsSpecialCharacters(file_name)) {
-                    Global.print(context, getString(R.string.avoid_name_involving_special_characters));
-                    return;
-                }
 
                 String dest_folder = destination_folder_edittext.getText().toString().trim();
                 if (dest_folder.isEmpty()) {
@@ -310,6 +311,7 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Timber.tag("CCopyToActivity").d( "onNewIntent called: %s", this);
         try {
             on_intent(intent, null);
         } catch (Exception e) {
@@ -342,9 +344,13 @@ public class CopyToActivity extends BaseActivity {
                         file_name_edit_text.setText(f_name == null ? "" : f_name);
                     }
 
-                    if (folderclickselected.isEmpty()) {
+                    if (folderclickselected==null || folderclickselected.isEmpty()) {
                         browse_button.callOnClick();
                     } else {
+                        if (!isOrientationLocked) {
+                            lockCurrentOrientation();
+                            isOrientationLocked = true;
+                        }
                         folderclickselected = intent.getStringExtra("folderclickselected");
                         destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
                         destination_folder_edittext.setText(folderclickselected);
@@ -382,6 +388,18 @@ public class CopyToActivity extends BaseActivity {
         }
     }
 
+    private void lockCurrentOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            // Fallback to a default orientation if needed
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
+    }
     public void clearCache() {
         Global.CLEAR_CACHE();
     }

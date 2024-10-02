@@ -374,7 +374,10 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 }
             }
         });
-        detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
+
+        if (detailFragmentListener != null) {
+            detailFragmentListener.onCreateView(fileclickselected, fileObjectType);
+        }
         return v;
     }
 
@@ -626,7 +629,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 folder_empty.setVisibility(View.GONE);
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
@@ -767,8 +772,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         }
     }
-
-
 
 
 }

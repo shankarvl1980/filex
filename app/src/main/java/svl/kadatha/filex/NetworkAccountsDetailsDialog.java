@@ -236,10 +236,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if (viewModel.loggedInStatus) {
                         viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if (type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()) {
+                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
-                        } else if (type.equals(SFTP) && NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty()) {
+                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         }
@@ -261,10 +261,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if (viewModel.loggedInStatus) {
                         viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if (type.equals(FTP) && NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty()) {
+                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
-                        } else if (type.equals(SFTP) && NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty()) {
+                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         }

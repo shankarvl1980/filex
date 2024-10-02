@@ -131,6 +131,9 @@ public class FileDuplicationViewModel extends ViewModel {
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array, sourceFileObjectType, dest_folder, destFileObjectType);
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 filePOJOS = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
+                if(filePOJOS==null){
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                }
                 int filePojoSize = filePOJOS.size();
                 int fileSelectedSize = files_selected_array.size();
                 FilePOJO filePOJO;

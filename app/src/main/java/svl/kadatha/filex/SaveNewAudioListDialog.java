@@ -70,7 +70,7 @@ public class SaveNewAudioListDialog extends DialogFragment {
         okbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String new_name = new_file_name_edittext.getText().toString().trim();
-                if (new_name.isEmpty() || new_name.equals(null)) {
+                if (new_name.isEmpty()) {
                     Global.print(context, getString(R.string.name_field_cannot_be_empty));
                     return;
                 }

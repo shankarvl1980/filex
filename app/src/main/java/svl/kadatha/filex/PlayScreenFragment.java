@@ -762,7 +762,6 @@ public class PlayScreenFragment extends Fragment {
                     ArrayList<Uri> uri_list = new ArrayList<>();
                     uri_list.add(src_uri);
                     FileIntentDispatch.sendUri(context, uri_list);
-
                     break;
                 case 2:
                     Uri copy_uri;
@@ -826,11 +825,8 @@ public class PlayScreenFragment extends Fragment {
                     break;
                 default:
                     break;
-
             }
             listPopWindow.dismiss();
         }
-
     }
-
 }
