@@ -56,7 +56,6 @@ public class CopyToActivity extends BaseActivity {
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
     private String folderclickselected;
-    private boolean isOrientationLocked = false;
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -99,7 +98,6 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.tag("CCopyToActivity").d( "onCreate called: %s", this);
         context = this;
         setContentView(R.layout.activity_copy_to);
         setFinishOnTouchOutside(false);
@@ -311,7 +309,6 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Timber.tag("CCopyToActivity").d( "onNewIntent called: %s", this);
         try {
             on_intent(intent, null);
         } catch (Exception e) {
@@ -347,10 +344,6 @@ public class CopyToActivity extends BaseActivity {
                     if (folderclickselected==null || folderclickselected.isEmpty()) {
                         browse_button.callOnClick();
                     } else {
-                        if (!isOrientationLocked) {
-                            lockCurrentOrientation();
-                            isOrientationLocked = true;
-                        }
                         folderclickselected = intent.getStringExtra("folderclickselected");
                         destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
                         destination_folder_edittext.setText(folderclickselected);
@@ -388,18 +381,6 @@ public class CopyToActivity extends BaseActivity {
         }
     }
 
-    private void lockCurrentOrientation() {
-        int currentOrientation = getResources().getConfiguration().orientation;
-
-        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-            // Fallback to a default orientation if needed
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        }
-    }
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
