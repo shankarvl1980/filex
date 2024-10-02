@@ -165,6 +165,11 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
+                if(CheckString.whetherStringContainsSpecialCharacters(file_name))
+                {
+                    Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+                    return;
+                }
 
                 String dest_folder = destination_folder_edittext.getText().toString().trim();
                 if (dest_folder.isEmpty()) {

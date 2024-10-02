@@ -202,7 +202,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
             sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJOCopy);
             sftpChannelRepository.shutdown();
-            sftpChannelRepository = sftpChannelRepository.getInstance(networkAccountPOJO);
+            sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJO);
             SFTP_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 

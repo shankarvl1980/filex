@@ -25,7 +25,7 @@
     <string name="permission_not_granted">Permission was not granted.</string>
     <string name="audio_list_created">audio list created.</string>
 
-    <string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/\' and new line characters</string>
+    <string name="avoid_name_involving_special_characters">Avoid name involving characters \'\\*:?/|\' and new line characters</string>
     <string name="maximum_3_services_processed">Maximum 3 services only be processed at a time.</string>
     <string name="directory_not_exist_not_valid">Directory does not exist or not valid.</string>
     <string name="extract">Extract</string>

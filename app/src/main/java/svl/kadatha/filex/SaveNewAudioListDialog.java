@@ -80,7 +80,7 @@ public class SaveNewAudioListDialog extends DialogFragment {
                     return;
                 }
 
-                if (CheckString.whetherStringContainsSpecialCharacters(new_name)) {
+                if (CheckString.whetherStringContainsSpecialCharactersForTableName(new_name)) {
                     Global.print(context, getString(R.string.avoid_name_involving_special_characters));
                     return;
                 }
