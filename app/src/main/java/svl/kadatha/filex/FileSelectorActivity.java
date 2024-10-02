@@ -286,11 +286,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         Button cancel_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
 
 
-//
-//        ViewGroup buttons_layout = findViewById(R.id.file_selector_button_layout);
-//        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context,3,Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT));
-//        Button searchbutton=buttons_layout.findViewById(R.id.first_button);
-//        searchbutton.setText(getString(R.string.search));
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -313,8 +308,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 if (search_toolbar_visible) {
                     setSearchBarVisibility(false);
                 }
-                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
 
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
                 if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
@@ -397,7 +392,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     private void on_intent(Intent intent, Bundle savedInstanceState) {
         if (intent != null) {
-            action_sought_request_code = intent.getIntExtra(ACTION_SOUGHT, MOVE_COPY_REQUEST_CODE);
+            action_sought_request_code = intent.getIntExtra(ACTION_SOUGHT, PICK_FILE_REQUEST_CODE);
             bundle = intent.getBundleExtra("bundle");
         }
         if (savedInstanceState == null) {

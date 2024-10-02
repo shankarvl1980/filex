@@ -180,10 +180,8 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
                     tree_uri = result.getParcelable("tree_uri");
                     tree_uri_path = result.getString("tree_uri_path");
                 }
-
             }
         });
-
         return v;
     }
 
@@ -206,7 +204,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
                     FilePOJOUtil.UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(fileclickselected, fileObjectType);
                 }
             });
-
         }
     }
 
@@ -420,7 +417,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
                             if (detailFragmentListener != null) {
                                 detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
                             }
-
                             FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
                         } else {
                             AppCompatActivity activity = (AppCompatActivity) context;
