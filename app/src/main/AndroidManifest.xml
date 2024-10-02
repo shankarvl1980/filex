@@ -205,7 +205,7 @@
 
         <activity
             android:name=".CopyToActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/copy_to"
             android:theme="@style/MyLightDialog">
             <!--intent-filter>
