@@ -30,10 +30,7 @@ public class DuplicateFiles {
             if (map == null)
                 fileMap.put(checksum, map = new ArrayList<>());
             map.add(file_path);
-
         }
-
-
         return fileMap;
     }
 
@@ -64,5 +61,4 @@ public class DuplicateFiles {
         String checksum = sb.toString();
         return file.getName() + checksum;
     }
-
 }

@@ -586,8 +586,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             String display = networkAccountPOJO.display;
             String host = networkAccountPOJO.host;
             String user_name = networkAccountPOJO.user_name;
+            String port=String.valueOf(networkAccountPOJO.port);
             holder.network_account_display.setText((display == null || display.isEmpty()) ? host : display);
             holder.network_account_host.setText(host);
+            holder.network_account_port.setText(port);
             holder.network_account_user_name.setText(user_name);
             boolean item_selected = viewModel.mselecteditems.containsKey(position);
             holder.v.setSelected(item_selected);
@@ -610,6 +612,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             final ImageView network_account_select_indicator;
             final TextView network_account_display;
             final TextView network_account_host;
+            final TextView network_account_port;
             final TextView network_account_user_name;
             final ImageView green_dot;
             int pos;
@@ -620,6 +623,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 network_image = v.findViewById(R.id.network_list_recyclerview_network_image);
                 network_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 network_account_host = v.findViewById(R.id.network_list_recyclerview_host);
+                network_account_port=v.findViewById(R.id.network_list_recyclerview_port);
                 network_account_user_name = v.findViewById(R.id.network_list_recyclerview_user_name);
                 network_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);
                 green_dot = v.findViewById(R.id.network_list_recyclerview_connected_indicator);

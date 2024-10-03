@@ -80,9 +80,8 @@ public class FtpClientRepository {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             try {
                 FTPClient client = getOrCreateClient();
-                if (validateAndPrepareClient(client)) {
-                    return client;
-                }
+                client = validateAndPrepareClient(client);
+                return client;
             } catch (IOException e) {
                 Timber.tag(TAG).w("FTP connection attempt %d failed: %s", attempt + 1, e.getMessage());
                 if (attempt == MAX_RETRIES - 1) {
@@ -107,27 +106,20 @@ public class FtpClientRepository {
         return client;
     }
 
-    private boolean validateAndPrepareClient(FTPClient client) throws IOException {
+    private FTPClient validateAndPrepareClient(FTPClient client) throws IOException {
         if (!client.isConnected()) {
-            reconnectClient(client);
+            client = reconnectClient(client);
         }
 
-        if (!testConnection(client)) {
-            disconnectAndCloseClient(client);
-            client = createAndConnectFtpClient();
-        }
-
-        // Ensure we're in the correct mode and have the right settings
-        client.setFileType(FTP.BINARY_FILE_TYPE);
-        if (networkAccountPOJO.mode.equals("active")) {
-            client.enterLocalActiveMode();
-        } else {
-            client.enterLocalPassiveMode();
-        }
+// for latency issued the following is removed
+//        if (!testConnection(client)) {
+//            disconnectAndCloseClient(client);
+//            client = createAndConnectFtpClient();
+//        }
 
         lastUsedTimes.put(client, System.currentTimeMillis());
         inUseClients.offer(client);
-        return true;
+        return client;
     }
 
     private FTPClient createAndConnectFtpClient() throws IOException {
@@ -141,24 +133,34 @@ public class FtpClientRepository {
         }
 
         client.setConnectTimeout(5000);
+        connectAndLogin(client);
+        configureFtpClient(client);
+
+        return client;
+    }
+
+    private FTPClient reconnectClient(FTPClient client) throws IOException {
+        disconnectAndCloseClient(client);
+
+        // Re-create the FTPClient instance
+        if (networkAccountPOJO.useFTPS) {
+            client = new FTPSClient(false);
+        } else {
+            client = new FTPClient();
+        }
+
+        client.setConnectTimeout(5000);
+        connectAndLogin(client);
+        configureFtpClient(client);
+
+        return client;
+    }
+
+    private void connectAndLogin(FTPClient client) throws IOException {
         client.connect(networkAccountPOJO.host, networkAccountPOJO.port);
 
         if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
             throw new IOException("Failed to connect to the FTP server. Reply code: " + client.getReplyCode());
-        }
-
-        // Set Control Keep Alive Timeout
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
-        } else {
-            client.setControlKeepAliveTimeout(10);
-        }
-
-        // Set Control Keep Alive Reply Timeout
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            client.setControlKeepAliveReplyTimeout(Duration.ofMillis(500));
-        } else {
-            client.setControlKeepAliveReplyTimeout(500);
         }
 
         // Handle Login: Anonymous or Authenticated
@@ -180,9 +182,20 @@ public class FtpClientRepository {
             String replyString = client.getReplyString();
             throw new IOException("Failed to log in to the FTP server. Reply code: " + replyCode + ", Reply string: " + replyString);
         }
+    }
+
+    private void configureFtpClient(FTPClient client) throws IOException {
+        // Set Control Keep Alive Timeout
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
+            client.setControlKeepAliveReplyTimeout(Duration.ofMillis(500));
+        } else {
+            client.setControlKeepAliveTimeout(10);
+            client.setControlKeepAliveReplyTimeout(500);
+        }
 
         // If using FTPS, configure additional security settings
-        if (networkAccountPOJO.useFTPS) {
+        if (networkAccountPOJO.useFTPS && client instanceof FTPSClient) {
             FTPSClient ftps = (FTPSClient) client;
             ftps.execPBSZ(0);
             ftps.execPROT("P"); // Private data connection
@@ -199,9 +212,7 @@ public class FtpClientRepository {
         } else {
             client.enterLocalPassiveMode();
         }
-        return client;
     }
-
 
     private void disconnectAndCloseClient(FTPClient client) {
         try {
@@ -214,43 +225,6 @@ public class FtpClientRepository {
             lastUsedTimes.remove(client);
         }
     }
-
-    private void reconnectClient(FTPClient client) throws IOException {
-        disconnectAndCloseClient(client);
-
-        client.connect(networkAccountPOJO.host, networkAccountPOJO.port);
-
-        if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
-            throw new IOException("Failed to connect to the FTP server. Reply code: " + client.getReplyCode());
-        }
-
-        // Handle Login: Anonymous or Authenticated
-        boolean loginSuccess;
-        if (networkAccountPOJO.anonymous) {
-            // Anonymous Login
-            String anonymousPassword = networkAccountPOJO.password != null && !networkAccountPOJO.password.isEmpty()
-                    ? networkAccountPOJO.password
-                    : "anonymous@"; // Default anonymous password
-
-            loginSuccess = client.login("anonymous", anonymousPassword);
-        } else {
-            // Authenticated Login
-            loginSuccess = client.login(networkAccountPOJO.user_name, networkAccountPOJO.password);
-        }
-
-        if (!loginSuccess) {
-            throw new IOException("Failed to log in to the FTP server. Reply code: " + client.getReplyCode() + ", Reply string: " + client.getReplyString());
-        }
-
-        // Reapply FTP Settings
-        client.setFileType(FTP.BINARY_FILE_TYPE);
-        if (networkAccountPOJO.mode.equals("active")) {
-            client.enterLocalActiveMode();
-        } else {
-            client.enterLocalPassiveMode();
-        }
-    }
-
 
     public synchronized void releaseFtpClient(FTPClient client) {
         inUseClients.remove(client);
@@ -279,7 +253,6 @@ public class FtpClientRepository {
             }
         }
     }
-
 
     private boolean isClientValid(FTPClient client) {
         if (!client.isConnected()) {

@@ -277,13 +277,18 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         String[] titles = {getString(R.string.search), getString(R.string.new_), getString(R.string.refresh), getString(R.string.ok), getString(R.string.cancel)};
         tb_layout.setResourceImageDrawables(bottom_drawables, titles);
 
-        bottom_toolbar.addView(tb_layout);
 
+        bottom_toolbar.addView(tb_layout);
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         Button add_folder_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
         Button refresh_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         Button ok_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
         Button cancel_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_5);
+
+        if(action_sought_request_code==PICK_FILE_REQUEST_CODE){
+            add_folder_btn.setVisibility(View.GONE);
+            ok_btn.setVisibility(View.GONE);
+        }
 
 
         search_btn.setOnClickListener(new View.OnClickListener() {

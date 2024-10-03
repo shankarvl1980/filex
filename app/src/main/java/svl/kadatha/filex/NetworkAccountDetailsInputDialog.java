@@ -203,21 +203,17 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         smbVersion_spinner = v.findViewById(R.id.fragment_network_details_input_smb_version);
         smbVersionArrayAdapter = ArrayAdapter.createFromResource(context, R.array.smb_versions, android.R.layout.simple_spinner_item);
 
-//        Button connect_button = v.findViewById(R.id.ftp_details_connect);
-//        connect_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onOkButtonClick(true);
-//            }
-//        });
-
         server_tv.setText(host);
-        if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
-            port_tv.setText("21");
-        } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
-            port_tv.setText("22");
+        if(port==0){
+            if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
+                port=21;
+            } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
+                port=22;
+            }
         }
-        if (mode == null) mode = "passive";
+        port_tv.setText(String.valueOf(port));
+
+        if (mode == null || mode.isEmpty()) mode = "passive";
         if (mode.equals("active")) {
             mode_active_radio_btn.setChecked(true);
         } else {
