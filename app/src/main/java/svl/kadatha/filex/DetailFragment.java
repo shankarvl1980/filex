@@ -214,8 +214,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 if (viewModel.filePOJOS.isEmpty()) {
                     return;
                 }
-                if (detailFragmentListener != null)
+                if (detailFragmentListener != null){
                     detailFragmentListener.setSearchBarVisibility(false);
+                }
                 LibraryAlbumSelectDialog libraryAlbumSelectDialog = LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE, file_click_selected_name);
                 libraryAlbumSelectDialog.show(getParentFragmentManager(), "");
             }

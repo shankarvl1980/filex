@@ -550,7 +550,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                             if (df.progress_bar.getVisibility() == View.VISIBLE) {
                                 Global.print(context, getString(R.string.please_wait));
                             } else {
-                                actionmode_finish(df, df.fileclickselected);
+                                actionmode_finish(df);
                                 rescanLibrary();
                             }
                         } else {
@@ -573,7 +573,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         MainActivity.SHOW_HIDDEN_FILE = checked;
                         tinyDB.putBoolean("show_hidden_file", MainActivity.SHOW_HIDDEN_FILE);
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         if (df.fileObjectType == FileObjectType.FILE_TYPE || df.fileObjectType == FileObjectType.ROOT_TYPE) {
                             fm.beginTransaction().detach(df).commit();
                             fm.beginTransaction().attach(df).commit();
@@ -597,7 +597,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         Intent intent = new Intent(context, AudioPlayerActivity.class);
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
@@ -619,7 +619,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         Intent intent = new Intent(context, StorageAnalyserActivity.class);
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
@@ -640,7 +640,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         CleanStorageDialog cleanMemoryDialog = new CleanStorageDialog();
                         cleanMemoryDialog.show(fm, "clean_storage_dialog");
                         pbf.dismissAllowingStateLoss();
@@ -662,7 +662,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         Intent intent = new Intent(context, AppManagerActivity.class);
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
@@ -683,7 +683,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         SearchDialog searchDialog = new SearchDialog();
                         searchDialog.show(fm, "search_dialog");
                         pbf.dismissAllowingStateLoss();
@@ -704,7 +704,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     @Override
                     public void run() {
                         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        actionmode_finish(df, df.fileclickselected);
+                        actionmode_finish(df);
                         Intent intent = new Intent(context, FtpServerActivity.class);
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
@@ -817,7 +817,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     df.clearSelectionAndNotifyDataSetChanged();
                     paste_pastecancel_view_procedure(df);
                     DetailFragment.COPY_SELECTED = true;
-                    actionmode_finish(df, df.fileclickselected);
+                    actionmode_finish(df);
                 }
             }
         }
@@ -886,7 +886,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             if (df.progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
             } else {
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
                 if (type.equals("large")) {
                     rescan_large_files_library();
                 } else if (type.equals("duplicate")) {
@@ -995,7 +995,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             search_toolbar.setVisibility(View.VISIBLE);
             search_view.requestFocus();
         } else {
-            actionmode_finish(df, df.fileclickselected);
+            actionmode_finish(df);
         }
     }
 
@@ -1244,7 +1244,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (df != null) {
             fragment_tag = df.getTag();
             existingFilePOJOkey = df.fileObjectType + fragment_tag;
-            actionmode_finish(df, file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+            actionmode_finish(df); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
         }
 
         if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
@@ -1268,7 +1268,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (df != null) {
             fragment_tag = df.getTag();
             existingFilePOJOkey = df.fileObjectType + fragment_tag;
-            actionmode_finish(df, file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+            actionmode_finish(df); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
         }
 
         if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
@@ -1294,7 +1294,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         } else if (keyBoardUtil.getKeyBoardVisibility()) {
             imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
         } else if (!df.viewModel.mselecteditems.isEmpty()) {
-            actionmode_finish(df, df.fileclickselected);
+            actionmode_finish(df);
         } else if (search_toolbar_visible) {
             setSearchBarVisibility(false);
         } else if (df.viewModel.library_filter_path != null) {
@@ -1391,7 +1391,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    public void actionmode_finish(DetailFragment df, String detailgfrag_tag) {
+    public void actionmode_finish(DetailFragment df) {
         DeselectAllAndAdjustToolbars(df);
         imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
         search_view.setText("");
@@ -1470,7 +1470,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     @Override
     public void deleteDialogOKButtonClick() {
         final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        actionmode_finish(df, df.fileclickselected);
+        actionmode_finish(df);
     }
 
     @Override
@@ -1505,7 +1505,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {
         if (fragment instanceof DetailFragment)
-            actionmode_finish((DetailFragment) fragment, fileclickeselected);
+            actionmode_finish((DetailFragment) fragment);
     }
 
     @Override
@@ -1788,7 +1788,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
             if (df.viewModel.mselecteditems.isEmpty()) {
                 Global.print(context, getString(R.string.could_not_perform_action));
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
                 return;
             }
             final ArrayList<String> files_selected_array = new ArrayList<>();
@@ -1805,7 +1805,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
                 DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = df.fileObjectType;
                 DetailFragment.CUT_COPY_FILE_CLICK_SELECTED = df.fileclickselected;
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
             } else if (id == R.id.toolbar_btn_2) {
                 DetailFragment.COPY_SELECTED = true;
                 DetailFragment.CUT_SELECTED = false;
@@ -1816,7 +1816,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
                 DetailFragment.CUT_COPY_FILE_OBJECT_TYPE = df.fileObjectType;
                 DetailFragment.CUT_COPY_FILE_CLICK_SELECTED = df.fileclickselected;
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
             } else if (id == R.id.toolbar_btn_3) {
                 FilePOJO filePOJO = df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0)); //take file pojo from df.adapter.filepojolist, not from df.filepojolist
                 String parent_file_path = new File(filePOJO.getPath()).getParent();
@@ -1824,7 +1824,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 boolean isDirectory = filePOJO.getIsDirectory();
                 RenameFileDialog renameFileAlertDialog = RenameFileDialog.getInstance(parent_file_path, existing_name, isDirectory, filePOJO.getFileObjectType(), df.fileclickselected);
                 renameFileAlertDialog.show(fm, "rename_dialog");
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
             } else if (id == R.id.toolbar_btn_4) {
                 size = df.viewModel.mselecteditems.size();
                 for (int i = 0; i < size; ++i) {
@@ -1835,7 +1835,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, df.fileObjectType, df.fileclickselected, false);
                 deleteFileAlertDialog.show(fm, "delete_dialog");
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
             } else if (id == R.id.toolbar_btn_5) {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -1932,7 +1932,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 break;
 
                         }
-                        if (item_id != 2) actionmode_finish(df, df.fileclickselected);
+                        if (item_id != 2) actionmode_finish(df);
                         listPopWindow.dismiss();
                     }
                 });
@@ -2005,7 +2005,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
-                actionmode_finish(df, df.fileclickselected);
+                actionmode_finish(df);
                 if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                     Global.print(context, getString(R.string.files_can_not_be_pasted_here));
                     return;
@@ -2272,7 +2272,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                             @Override
                             public void run() {
                                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                                actionmode_finish(df, df.fileclickselected);
+                                actionmode_finish(df);
                                 if (position[0] == 0) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.FTP);
                                     networkAccountsDetailsDialog.show(fm, "");

@@ -76,7 +76,7 @@ public class PdfViewFragment extends Fragment {
     private int preview_image_offset;
     private int floating_button_height;
     private int recyclerview_height;
-    private LinearLayout image_view_selector_butt;
+    private LinearLayout toolbar_group;
     private AppCompatActivity activity;
 
     public static PdfViewFragment getNewInstance(String file_path, FileObjectType fileObjectType) {
@@ -266,7 +266,7 @@ public class PdfViewFragment extends Fragment {
         });
         progress_bar = v.findViewById(R.id.activity_picture_progressbar);
         current_page_tv = v.findViewById(R.id.image_view_current_view);
-        image_view_selector_butt = v.findViewById(R.id.image_view_selector_recyclerview_group);
+        toolbar_group = v.findViewById(R.id.image_view_toolbar_group);
         recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
         new LinearSnapHelper().attachToRecyclerView(recyclerview);
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -310,9 +310,9 @@ public class PdfViewFragment extends Fragment {
         runnable = new Runnable() {
             public void run() {
                 if (!is_menu_opened) {
-                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+                    toolbar_group.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
                     floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-                    image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+                    recyclerview.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
 
                     //toolbar.setVisibility(View.GONE);
                     //recyclerview.setVisibility(View.GONE);
@@ -433,9 +433,9 @@ public class PdfViewFragment extends Fragment {
     private void image_view_on_click_procedure() {
         if (toolbar_visible) {
             //disappear
-            toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+            toolbar_group.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
             floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-            image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+            recyclerview.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
 
 
             //toolbar.setVisibility(View.GONE);
@@ -447,9 +447,9 @@ public class PdfViewFragment extends Fragment {
             handler.removeCallbacks(runnable);
         } else {
             //appear
-            toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            toolbar_group.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
             floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            recyclerview.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
 
             //toolbar.setVisibility(View.VISIBLE);
             //recyclerview.setVisibility(View.VISIBLE);

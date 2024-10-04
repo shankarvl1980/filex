@@ -92,12 +92,12 @@ ImageViewFragment extends Fragment {
     private int recyclerview_height;
     private FloatingActionButton floating_back_button;
     private boolean toolbar_visible;
-    private LinearLayout image_view_selector_butt;
+    private LinearLayout toolbar_group;
     private TextView current_image_tv;
     private AppCompatActivity activity;
     private String tree_uri_path;
     private Uri tree_uri;
-
+    private RecyclerView recyclerview;
     public static ImageViewFragment getNewInstance(String file_path, FileObjectType fileObjectType) {
         ImageViewFragment frag = new ImageViewFragment();
         Bundle bundle = new Bundle();
@@ -169,7 +169,7 @@ ImageViewFragment extends Fragment {
                         deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(), "deletefilealertotheractivity");
                         break;
                     case 1:
-                        Uri src_uri = null;
+                        Uri src_uri;
                         if (viewModel.fromThirdPartyApp) {
                             src_uri = data;
                         } else {
@@ -184,7 +184,7 @@ ImageViewFragment extends Fragment {
                         FileIntentDispatch.sendUri(context, uri_list);
                         break;
                     case 2:
-                        Uri copy_uri = null;
+                        Uri copy_uri;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = data;
                         } else {
@@ -221,7 +221,7 @@ ImageViewFragment extends Fragment {
                         propertiesDialog.show(getParentFragmentManager(), "properties_dialog");
                         break;
                     case 4:
-                        Uri uri = null;
+                        Uri uri;
                         if (viewModel.fromThirdPartyApp) {
                             uri = data;
                         } else{
@@ -312,11 +312,11 @@ ImageViewFragment extends Fragment {
             }
         });
 
-        image_view_selector_butt = v.findViewById(R.id.image_view_selector_recyclerview_group);
+        toolbar_group = v.findViewById(R.id.image_view_toolbar_group);
         current_image_tv = v.findViewById(R.id.image_view_current_view);
         progress_bar = v.findViewById(R.id.activity_picture_progressbar);
 
-        final RecyclerView recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
+        recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
         new LinearSnapHelper().attachToRecyclerView(recyclerview);
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             public void onScrolled(RecyclerView rv, int dx, int dy) {
@@ -360,11 +360,11 @@ ImageViewFragment extends Fragment {
         runnable = new Runnable() {
             public void run() {
                 if (!is_menu_opened) {
-                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+                    toolbar_group.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
                     floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-                    image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+                    recyclerview.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
 
-                    //toolbar.setVisibility(View.GONE);
+                    //toolbar_group.setVisibility(View.GONE);
                     //recyclerview.setVisibility(View.GONE);
                     //floating_back_button.setVisibility(View.GONE);
                     toolbar_visible = false;
@@ -534,12 +534,12 @@ ImageViewFragment extends Fragment {
     private void image_view_on_click_procedure() {
         if (toolbar_visible) {
             //disappear
-            toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+            toolbar_group.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
             floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-            image_view_selector_butt.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
+            recyclerview.animate().translationY(recyclerview_height).setInterpolator(new DecelerateInterpolator(1));
 
 
-            //toolbar.setVisibility(View.GONE);
+            //toolbar_group.setVisibility(View.GONE);
             //recyclerview.setVisibility(View.GONE);
             //floating_back_button.setVisibility(View.GONE);
             is_menu_opened = false;
@@ -547,9 +547,9 @@ ImageViewFragment extends Fragment {
             handler.removeCallbacks(runnable);
         } else {
             //appear
-            toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            toolbar_group.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
             floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            image_view_selector_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            recyclerview.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
 
             //toolbar.setVisibility(View.VISIBLE);
             //recyclerview.setVisibility(View.VISIBLE);

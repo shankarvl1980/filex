@@ -19,7 +19,6 @@ public class ImageViewActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_blank_view);

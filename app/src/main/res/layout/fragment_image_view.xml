@@ -11,7 +11,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <LinearLayout
+        android:id="@+id/image_view_toolbar_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/activity_picture_toolbar"
         android:layout_width="match_parent"
@@ -52,16 +59,6 @@
             />
     </androidx.appcompat.widget.Toolbar>
 
-
-    <LinearLayout
-        android:id="@+id/image_view_selector_recyclerview_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
         <TextView
             android:id="@+id/image_view_current_view"
             android:layout_width="wrap_content"
@@ -69,7 +66,11 @@
             android:layout_margin="@dimen/layout_margin"
             android:background="@drawable/rounded_rectangle_shape"
             android:padding="@dimen/layout_margin"
+            android:layout_gravity="end"
             android:textColor="?attr/recycler_text_color" />
+
+    </LinearLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/activity_picture_view_recyclerview"
@@ -77,10 +78,12 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_light"
             android:clipToPadding="false"
-
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
 
             />
-    </LinearLayout>
+
 
     <FrameLayout
         android:id="@+id/activity_picture_progressbar"
