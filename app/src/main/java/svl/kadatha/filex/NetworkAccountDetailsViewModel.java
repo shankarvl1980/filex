@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.github.sardine.Sardine;
 import com.jcraft.jsch.ChannelSftp;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -26,6 +27,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SMB_NETWORK_ACCOUNT_POJO;
     public static String FTP_WORKING_DIR_PATH;
     public static String SFTP_WORKING_DIR_PATH;
+    public static String WEBDAV_WORKING_DIR_PATH;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> networkConnectAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -130,6 +132,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     connectFtp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
+                }else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                    connectWebDav(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
         });
@@ -153,6 +157,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     connectSftp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
+                } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                    connectWebDav(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 }
             }
         });
@@ -226,6 +232,38 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 sftpChannelRepository.releaseChannel(channelSftp);
                 Timber.tag(TAG).d("SFTP client released");
             }
+            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+        }
+    }
+
+    private void connectWebDav(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+        loggedInStatus = false;
+        WebDavClientRepository webDavClientRepository = null;
+        Sardine sardine;
+        try {
+            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJOCopy);
+            webDavClientRepository.shutdown();
+            webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJO);
+            WEBDAV_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
+            NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
+
+            sardine=webDavClientRepository.getSardine();
+            if (sardine != null) {
+                loggedInStatus = true;
+            } else {
+                loggedInStatus = false;
+                throw new Exception("WebDAV client is not connected");
+            }
+            SFTP_WORKING_DIR_PATH = webDavClientRepository.getBasePath(sardine);
+            if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.WEBDAV_TYPE)) {
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+                repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.WEBDAV_TYPE, WEBDAV_WORKING_DIR_PATH));
+            }
+        } catch (Exception e) {
+            loggedInStatus = false;
+            Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
+        } finally {
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         }
     }

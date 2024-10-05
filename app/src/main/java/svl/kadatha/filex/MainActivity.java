@@ -2279,6 +2279,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 } else if (position[0] == 1) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SFTP);
                                     networkAccountsDetailsDialog.show(fm, "");
+                                }else if (position[0] == 2) {
+                                    NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.WebDAV);
+                                    networkAccountsDetailsDialog.show(fm, "");
                                 }
                                 pbf.dismissAllowingStateLoss();
                             }

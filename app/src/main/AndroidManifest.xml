@@ -6,6 +6,7 @@
 
 
     <uses-feature android:name="android.hardware.usb.host" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.USB_PERMISSION" />
@@ -49,11 +50,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyLightBaseTheme"
+        android:usesCleartextTraffic="true"
         tools:node="replace">
 
         <meta-data
             android:name="svl.kadatha.filex.GlideConfiguration"
             android:value="GlideModule" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name=".MainActivity"
@@ -73,8 +78,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -181,8 +188,10 @@
             android:label="@string/file_selector">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.OPENABLE" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -209,8 +218,7 @@
             android:name=".CopyToActivity"
             android:exported="false"
             android:label="@string/copy_to"
-            android:theme="@style/MyLightDialog">
-        </activity>
+            android:theme="@style/MyLightDialog"></activity>
 
         <activity
             android:name=".ArchiveViewActivity"

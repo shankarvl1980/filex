@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -236,13 +237,17 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if (viewModel.loggedInStatus) {
                         viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
+                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
-                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
+                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
+                            Global.print(context, getString(R.string.server_could_not_be_connected));
+                            return;
+                        } else if (type.equals(WebDAV) && (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         }
+
                         initiateCreateFragmentTransactions();
                         dismissAllowingStateLoss();
                     } else {
@@ -261,10 +266,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.GONE);
                     if (viewModel.loggedInStatus) {
                         viewModel.networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
+                        if (type.equals(FTP) && (NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
-                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH==null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
+                        } else if (type.equals(SFTP) && (NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH.isEmpty())) {
+                            Global.print(context, getString(R.string.server_could_not_be_connected));
+                            return;
+                        } else if (type.equals(WebDAV) && (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         }
@@ -394,6 +402,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
+            }else if (type.equals(WebDAV)) {
+                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             }
         } else if (appCompatActivity instanceof FileSelectorActivity) {
             ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -404,6 +414,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
+            }else if (type.equals(WebDAV)) {
+                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             }
         }
     }
@@ -586,7 +598,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             String display = networkAccountPOJO.display;
             String host = networkAccountPOJO.host;
             String user_name = networkAccountPOJO.user_name;
-            String port=String.valueOf(networkAccountPOJO.port);
+            String port = String.valueOf(networkAccountPOJO.port);
             holder.network_account_display.setText((display == null || display.isEmpty()) ? host : display);
             holder.network_account_host.setText(host);
             holder.network_account_port.setText(port);
@@ -623,7 +635,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 network_image = v.findViewById(R.id.network_list_recyclerview_network_image);
                 network_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 network_account_host = v.findViewById(R.id.network_list_recyclerview_host);
-                network_account_port=v.findViewById(R.id.network_list_recyclerview_port);
+                network_account_port = v.findViewById(R.id.network_list_recyclerview_port);
                 network_account_user_name = v.findViewById(R.id.network_list_recyclerview_user_name);
                 network_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);
                 green_dot = v.findViewById(R.id.network_list_recyclerview_connected_indicator);
@@ -645,6 +657,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                             if (type.equals(FTP)) {
                                 viewModel.connectNetworkAccount(networkAccountPOJO);
                             } else if (type.equals(SFTP)) {
+                                viewModel.connectNetworkAccount(networkAccountPOJO);
+                            }else if (type.equals(WebDAV)) {
                                 viewModel.connectNetworkAccount(networkAccountPOJO);
                             }
                         }
@@ -722,10 +736,20 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(viewModel.networkAccountPOJO);
                         sftpChannelRepository.shutdown();
                         break;
+                    case WebDAV:
+                        WebDavClientRepository webDavClientRepository = null;
+                        try {
+                            webDavClientRepository = WebDavClientRepository.getInstance(viewModel.networkAccountPOJO);
+                            webDavClientRepository.shutdown();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        break;
                 }
                 disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                 disconnect_btn.setEnabled(false);
-                connected_network_account_pojo=null;
+                connected_network_account_pojo = null;
                 clear_selection();
                 Global.print(context, getString(R.string.network_connection_disconnected));
             } else if (id == R.id.toolbar_btn_4) {

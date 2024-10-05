@@ -375,6 +375,7 @@
     <string name="ftp_server">FTP Server</string>
     <string name="ftp_client">FTP</string>
     <string name="sftp_client">SFTP</string>
+    <string name="webdav_client">WebDAV</string>
 
     <string-array name="library_categories">
         <item>@string/download</item>
