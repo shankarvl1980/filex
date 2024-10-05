@@ -1,7 +1,7 @@
 package svl.kadatha.filex.filemodel;
 
-import com.github.sardine.Sardine;
 import com.github.sardine.DavResource;
+import com.github.sardine.Sardine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.WebDavClientRepository;
 import svl.kadatha.filex.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.WebDavClientRepository;
 import timber.log.Timber;
 
 public class WebDavFileModel implements FileModel {
@@ -222,8 +222,8 @@ public class WebDavFileModel implements FileModel {
 //                return new WebDavOutputStreamWrapper(sardine, filePath, false);
 //            }
 //            else {
-                // Use in-memory buffering
-                return new WebDavOutputStreamWrapper(sardine, filePath, true);
+            // Use in-memory buffering
+            return new WebDavOutputStreamWrapper(sardine, filePath, true);
             //}
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "Failed to create OutputStream wrapper: %s", e.getMessage());
@@ -437,9 +437,9 @@ public class WebDavFileModel implements FileModel {
         /**
          * Constructor for WebDavOutputStreamWrapper.
          *
-         * @param sardine   The Sardine client instance.
-         * @param filePath  The destination path on the WebDAV server.
-         * @param inMemory  Flag indicating whether to buffer data in memory.
+         * @param sardine  The Sardine client instance.
+         * @param filePath The destination path on the WebDAV server.
+         * @param inMemory Flag indicating whether to buffer data in memory.
          * @throws IOException If an I/O error occurs.
          */
         public WebDavOutputStreamWrapper(Sardine sardine, String filePath, boolean inMemory) throws IOException {

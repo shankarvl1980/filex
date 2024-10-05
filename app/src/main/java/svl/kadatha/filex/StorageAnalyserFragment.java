@@ -593,7 +593,9 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
 
 
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
@@ -605,8 +607,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             }
         }
     });
-
-
 
 
 }

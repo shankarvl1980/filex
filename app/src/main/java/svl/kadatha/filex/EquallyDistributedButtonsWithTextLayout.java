@@ -102,7 +102,7 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
 
         for (int i = 0; i < child_count; ++i) {
             View child = getChildAt(i);
-            if (child.getVisibility() != View.GONE){
+            if (child.getVisibility() != View.GONE) {
                 child.layout(x, y, x + child.getMeasuredWidth(), y + child.getMeasuredHeight());
                 x += child.getMeasuredWidth();
                 child.setBackground(ContextCompat.getDrawable(context, R.drawable.select_icon_selection));

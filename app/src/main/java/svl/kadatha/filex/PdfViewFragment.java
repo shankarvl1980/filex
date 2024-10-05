@@ -68,7 +68,6 @@ public class PdfViewFragment extends Fragment {
     private RecyclerView recyclerview;
     private boolean toolbar_visible, is_menu_opened;
     private TextView title, current_page_tv;
-    private Toolbar toolbar;
     private FloatingActionButton floating_back_button;
     private Runnable runnable;
     private ViewPager view_pager;
@@ -116,7 +115,7 @@ public class PdfViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_image_view, container, false);
         toolbar_visible = true;
         handler = new Handler();
-        toolbar = v.findViewById(R.id.activity_picture_toolbar);
+        Toolbar toolbar = v.findViewById(R.id.activity_picture_toolbar);
         title = v.findViewById(R.id.activity_picture_name);
         ImageView overflow = v.findViewById(R.id.activity_picture_overflow);
         overflow.setOnClickListener(new View.OnClickListener() {

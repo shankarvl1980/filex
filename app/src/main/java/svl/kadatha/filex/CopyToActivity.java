@@ -3,8 +3,6 @@ package svl.kadatha.filex;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -36,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
-import timber.log.Timber;
 
 public class CopyToActivity extends BaseActivity {
 
@@ -165,9 +162,8 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
-                if(CheckString.whetherStringContainsSpecialCharacters(file_name))
-                {
-                    Global.print(context,getString(R.string.avoid_name_involving_special_characters));
+                if (CheckString.whetherStringContainsSpecialCharacters(file_name)) {
+                    Global.print(context, getString(R.string.avoid_name_involving_special_characters));
                     return;
                 }
 
@@ -346,7 +342,7 @@ public class CopyToActivity extends BaseActivity {
                         file_name_edit_text.setText(f_name == null ? "" : f_name);
                     }
 
-                    if (folderclickselected==null || folderclickselected.isEmpty()) {
+                    if (folderclickselected == null || folderclickselected.isEmpty()) {
                         browse_button.callOnClick();
                     } else {
                         folderclickselected = intent.getStringExtra("folderclickselected");

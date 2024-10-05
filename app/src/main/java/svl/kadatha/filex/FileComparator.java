@@ -121,9 +121,11 @@ public class FileComparator {
                 if (isDigitA && isDigitB) {
                     // Remove leading zeros
                     int nonZeroA = 0;
-                    while (nonZeroA < chunkAStr.length() && chunkAStr.charAt(nonZeroA) == '0') nonZeroA++;
+                    while (nonZeroA < chunkAStr.length() && chunkAStr.charAt(nonZeroA) == '0')
+                        nonZeroA++;
                     int nonZeroB = 0;
-                    while (nonZeroB < chunkBStr.length() && chunkBStr.charAt(nonZeroB) == '0') nonZeroB++;
+                    while (nonZeroB < chunkBStr.length() && chunkBStr.charAt(nonZeroB) == '0')
+                        nonZeroB++;
 
                     // Compare lengths of remaining digits
                     int lenA = chunkAStr.length() - nonZeroA;

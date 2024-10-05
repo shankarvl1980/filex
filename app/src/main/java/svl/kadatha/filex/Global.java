@@ -68,6 +68,7 @@ public class Global {
     static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION = FILEX_PACKAGE + ".MODIFICATION_OBSERVED";
     static public final String LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION = FILEX_PACKAGE + ".STORAGE_DIR_REFRESH";
     static public final String TAG = "shankar";
+    public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
     static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
     static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
@@ -135,7 +136,6 @@ public class Global {
     static public boolean DETAILED_SEARCH_LIBRARY;
     static public boolean SHARE_USB;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
-    public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;

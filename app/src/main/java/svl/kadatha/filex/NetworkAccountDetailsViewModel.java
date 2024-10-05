@@ -132,7 +132,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     connectFtp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
-                }else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
                     connectWebDav(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
@@ -248,7 +248,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             WEBDAV_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 
-            sardine=webDavClientRepository.getSardine();
+            sardine = webDavClientRepository.getSardine();
             if (sardine != null) {
                 loggedInStatus = true;
             } else {

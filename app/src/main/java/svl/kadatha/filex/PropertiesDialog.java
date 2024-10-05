@@ -37,8 +37,6 @@ public class PropertiesDialog extends DialogFragment {
     private String filename_str, file_path_str, file_type_str, file_no_str, file_size_str, file_date_str, file_permissions_str, symbolic_link_str, readable_str, writable_str, hidden_str;
     private ArrayList<String> files_selected_array = new ArrayList<>();
     private FileObjectType fileObjectType;
-    private String source_folder;
-    private int size;
 
     public static PropertiesDialog getInstance(ArrayList<String> files_selected_array, FileObjectType fileObjectType) {
         PropertiesDialog propertiesDialog = new PropertiesDialog();
@@ -61,8 +59,8 @@ public class PropertiesDialog extends DialogFragment {
         setCancelable(false);
         Bundle bundle = getArguments();
         files_selected_array = bundle.getStringArrayList("files_selected_array");
-        size = files_selected_array.size();
-        source_folder = new File(files_selected_array.get(0)).getParent();
+        int size = files_selected_array.size();
+        String source_folder = new File(files_selected_array.get(0)).getParent();
         fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
 
         if (files_selected_array.size() == 1) {

@@ -18,7 +18,7 @@ public class CheckString {
 
     public static boolean whetherStringContainsSpecialCharacters(String input) {
         // Define the prohibited characters
-        char[] prohibitedChars = { '/', '\\', ':', '*', '?', '"', '<', '>', '|', '\0' };
+        char[] prohibitedChars = {'/', '\\', ':', '*', '?', '"', '<', '>', '|', '\0'};
 
         // Check each character in the input string
         for (char c : input.toCharArray()) {

@@ -464,6 +464,22 @@ public class ArchiveViewActivity extends BaseActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         clear_cache = savedInstanceState.getBoolean("clear_cache");
+    }
+
+    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
+        String fragment_tag;
+        String existingFilePOJOkey = "";
+        ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+        if (archiveViewFragment != null) {
+            fragment_tag = archiveViewFragment.getTag();
+            existingFilePOJOkey = archiveViewFragment.fileObjectType + fragment_tag;
+            actionmode_finish(archiveViewFragment, file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+        }
+
+        if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+            fm.beginTransaction().replace(R.id.archive_detail_fragment, ArchiveViewFragment.getInstance(fileObjectType), file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -504,22 +520,6 @@ public class ArchiveViewActivity extends BaseActivity {
             }
         }
     });
-
-    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
-        String existingFilePOJOkey = "";
-        ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-        if (archiveViewFragment != null) {
-            fragment_tag = archiveViewFragment.getTag();
-            existingFilePOJOkey = archiveViewFragment.fileObjectType + fragment_tag;
-            actionmode_finish(archiveViewFragment, file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
-        }
-
-        if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.archive_detail_fragment, ArchiveViewFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-        }
-    }
 
     private void onbackpressed(boolean onBackPressed) {
         ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);

@@ -1197,6 +1197,30 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         }
         clear_cache = savedInstanceState.getBoolean("clear_cache");
+    }
+
+    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
+        String fragment_tag;
+        String existingFilePOJOkey = "";
+        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        if (df != null) {
+            fragment_tag = df.getTag();
+            existingFilePOJOkey = df.fileObjectType + fragment_tag;
+            actionmode_finish(df); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+        }
+
+        if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
+            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+
+        } else if (DetailFragment.TO_BE_MOVED_TO_FILE_POJO != null && !(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
+
+        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1236,30 +1260,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
-        String existingFilePOJOkey = "";
-        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        if (df != null) {
-            fragment_tag = df.getTag();
-            existingFilePOJOkey = df.fileObjectType + fragment_tag;
-            actionmode_finish(df); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
-        }
-
-        if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-
-        } else if (DetailFragment.TO_BE_MOVED_TO_FILE_POJO != null && !(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
-
-        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-        }
-    }
 
     public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
         String fragment_tag;
@@ -2013,7 +2013,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                 //if intent is originated from outside
                 if (viewModel.send_intent != null) {
-                    clear_cache=false;
+                    clear_cache = false;
                     viewModel.send_intent.putExtra("folderclickselected", df.fileclickselected);
                     viewModel.send_intent.putExtra("destFileObjectType", df.fileObjectType);
                     viewModel.send_intent.setClass(context, CopyToActivity.class);
@@ -2279,7 +2279,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 } else if (position[0] == 1) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SFTP);
                                     networkAccountsDetailsDialog.show(fm, "");
-                                }else if (position[0] == 2) {
+                                } else if (position[0] == 2) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.WebDAV);
                                     networkAccountsDetailsDialog.show(fm, "");
                                 }

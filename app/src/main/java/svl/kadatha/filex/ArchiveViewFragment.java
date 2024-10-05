@@ -393,18 +393,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 folder_empty.setVisibility(View.GONE);
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
+    }
 
     private boolean check_SAF_permission(String new_file_path, FileObjectType fileObjectType) {
         UriPOJO uriPOJO = Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path, fileObjectType);
@@ -420,7 +409,18 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         } else {
             return true;
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     private class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder> {
         final String[] filepath_string_array;

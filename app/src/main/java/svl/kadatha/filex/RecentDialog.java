@@ -199,6 +199,14 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
             }
         }
+    }
+
+    @Override
+    public void onMediaAttachedAndRemoved() {
+        root_dir_linkedlist.clear();
+        root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
+        rootdirrecycleradapter.notifyDataSetChanged();
+        recentRecyclerAdapter.notifyDataSetChanged();
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -211,14 +219,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     });
-
-    @Override
-    public void onMediaAttachedAndRemoved() {
-        root_dir_linkedlist.clear();
-        root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
-        rootdirrecycleradapter.notifyDataSetChanged();
-        recentRecyclerAdapter.notifyDataSetChanged();
-    }
 
     private void discoverDevice() {
 

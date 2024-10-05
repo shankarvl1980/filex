@@ -18,8 +18,8 @@ public class WebDavClientRepository {
     private static final String TAG = "WebDavClientRepository";
     private static WebDavClientRepository instance;
     private final Sardine sardine;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private final String baseUrl;
+    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private String discoveredBasePath; // Cached base path
 
     private WebDavClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) throws IOException {
@@ -95,6 +95,7 @@ public class WebDavClientRepository {
             Timber.tag(TAG).d("Exiting testWebDavServerConnection method");
         }
     }
+
     // Build the base URL from the POJO properties
     private String buildBaseUrl() {
         String protocol = networkAccountPOJO.useHTTPS ? "https" : "http";
@@ -124,9 +125,6 @@ public class WebDavClientRepository {
 
         return urlBuilder.toString();
     }
-
-
-
 
 
     // Helper method to construct full URL

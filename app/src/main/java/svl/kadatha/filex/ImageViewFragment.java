@@ -76,7 +76,6 @@ ImageViewFragment extends Fragment {
         }
     });
     private ImageViewPagerAdapter image_view_adapter;
-    private Toolbar toolbar;
     private LinearLayoutManager lm;
     private PictureSelectorAdapter picture_selector_adapter;
     private int preview_image_offset;
@@ -98,6 +97,7 @@ ImageViewFragment extends Fragment {
     private String tree_uri_path;
     private Uri tree_uri;
     private RecyclerView recyclerview;
+
     public static ImageViewFragment getNewInstance(String file_path, FileObjectType fileObjectType) {
         ImageViewFragment frag = new ImageViewFragment();
         Bundle bundle = new Bundle();
@@ -137,7 +137,7 @@ ImageViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_image_view, container, false);
         toolbar_visible = true;
         handler = new Handler();
-        toolbar = v.findViewById(R.id.activity_picture_toolbar);
+        Toolbar toolbar = v.findViewById(R.id.activity_picture_toolbar);
         title = v.findViewById(R.id.activity_picture_name);
         ImageView overflow = v.findViewById(R.id.activity_picture_overflow);
         overflow.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +224,7 @@ ImageViewFragment extends Fragment {
                         Uri uri;
                         if (viewModel.fromThirdPartyApp) {
                             uri = data;
-                        } else{
+                        } else {
                             uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
                         if (uri == null) {

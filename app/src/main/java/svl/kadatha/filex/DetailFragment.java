@@ -214,7 +214,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 if (viewModel.filePOJOS.isEmpty()) {
                     return;
                 }
-                if (detailFragmentListener != null){
+                if (detailFragmentListener != null) {
                     detailFragmentListener.setSearchBarVisibility(false);
                 }
                 LibraryAlbumSelectDialog libraryAlbumSelectDialog = LibraryAlbumSelectDialog.getInstance(ALBUM_SELECT_REQUEST_CODE, file_click_selected_name);
@@ -632,19 +632,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
-
     private boolean check_SAF_permission(String new_file_path, FileObjectType fileObjectType) {
         UriPOJO uriPOJO = Global.CHECK_AVAILABILITY_URI_PERMISSION(new_file_path, fileObjectType);
         if (uriPOJO != null) {
@@ -659,7 +646,18 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         } else {
             return true;
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     public boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType) {
         if (MainActivity.usbFileRoot == null) {
@@ -773,5 +771,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         }
     }
+
+
 }
 

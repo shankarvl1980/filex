@@ -204,11 +204,11 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         smbVersionArrayAdapter = ArrayAdapter.createFromResource(context, R.array.smb_versions, android.R.layout.simple_spinner_item);
 
         server_tv.setText(host);
-        if(port==0){
+        if (port == 0) {
             if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
-                port=21;
+                port = 21;
             } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
-                port=22;
+                port = 22;
             }
         }
         port_tv.setText(String.valueOf(port));

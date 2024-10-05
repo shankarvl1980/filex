@@ -402,7 +402,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
-            }else if (type.equals(WebDAV)) {
+            } else if (type.equals(WebDAV)) {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             }
         } else if (appCompatActivity instanceof FileSelectorActivity) {
@@ -414,7 +414,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
-            }else if (type.equals(WebDAV)) {
+            } else if (type.equals(WebDAV)) {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             }
         }
@@ -658,7 +658,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                                 viewModel.connectNetworkAccount(networkAccountPOJO);
                             } else if (type.equals(SFTP)) {
                                 viewModel.connectNetworkAccount(networkAccountPOJO);
-                            }else if (type.equals(WebDAV)) {
+                            } else if (type.equals(WebDAV)) {
                                 viewModel.connectNetworkAccount(networkAccountPOJO);
                             }
                         }
