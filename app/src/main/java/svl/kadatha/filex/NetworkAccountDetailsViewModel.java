@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.github.sardine.Sardine;
 import com.jcraft.jsch.ChannelSftp;
+import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -255,7 +255,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 loggedInStatus = false;
                 throw new Exception("WebDAV client is not connected");
             }
-            SFTP_WORKING_DIR_PATH = webDavClientRepository.getBasePath(sardine);
+            WEBDAV_WORKING_DIR_PATH = webDavClientRepository.getBasePath(sardine);
             if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.WEBDAV_TYPE)) {
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.WEBDAV_TYPE, WEBDAV_WORKING_DIR_PATH));

@@ -740,7 +740,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         networkRecyclerView = findViewById(R.id.network_recyclerview);
         networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon};
+        int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon};
         networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES, network_icon_image_array));
 
 
@@ -1221,7 +1221,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
                     .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -2114,6 +2116,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
                 p1.textView_storage_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName());
+            } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                p1.textView_storage_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
                 p1.textView_storage_dir.setText(R.string.root_directory);
@@ -2370,8 +2375,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
-
-
 
 
 }

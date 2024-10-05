@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
+import com.thegrizzlylabs.sardineandroid.DavResource;
+import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -23,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -548,6 +551,66 @@ public class MakeFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
+    static FilePOJO MAKE_FilePOJO(DavResource resource, boolean extract_icon, FileObjectType fileObjectType, String file_path, Sardine sardine) {
+        Timber.tag(TAG).d("Creating FilePOJO for WebDAV resource: %s", file_path);
+        String name = resource.getName();
+        String path = file_path;
+        boolean isDirectory = resource.isDirectory();
+        long dateLong = 0L;
+        String date = "";
+        try {
+            Date modifiedDate = resource.getModified();
+            if (modifiedDate != null) {
+                dateLong = modifiedDate.getTime();
+                date = Global.SDF.format(modifiedDate);
+            }
+        } catch (Exception e) {
+            Timber.tag(TAG).e("Error getting modification time for WebDAV resource: %s", e.getMessage());
+        }
+
+        long sizeLong = 0L;
+        String si = "";
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(isDirectory, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                } else if (extract_icon && type == 0) {
+                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                }
+            }
+            sizeLong = resource.getContentLength();
+            si = FileUtil.humanReadableByteCount(sizeLong);
+        } else {
+            String sub_file_count = null;
+            try {
+                List<DavResource> resources = sardine.list(resource.getHref().toString());
+                if (resources != null) {
+                    // Subtract 1 to exclude the current directory itself
+                    sub_file_count = "(" + (resources.size() - 1) + ")";
+                }
+                si = sub_file_count;
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error listing WebDAV directory contents: %s", e.getMessage());
+            }
+        }
+
+        if (name.startsWith(".")) {
+            alfa = Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
+    }
+
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
         FilePOJO filePOJO = null;
         if (fileObjectType == FileObjectType.FILE_TYPE) {
@@ -602,6 +665,34 @@ public class MakeFilePOJOUtil {
                     sftpChannelRepository.releaseChannel(channelSftp);
                     Timber.tag(TAG).d("SFTP channel released");
                 }
+            }
+        } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
+            WebDavClientRepository webDavClientRepository = null;
+            Sardine sardine = null;
+            try {
+                webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
+                sardine = webDavClientRepository.getSardine();
+                String basePath = webDavClientRepository.getBasePath(sardine);
+                //String fullPath = basePath + (file_path.startsWith("/") ? file_path : "/" + file_path);
+                String url= webDavClientRepository.baseUrl;
+
+                // Use exists() to check if the resource exists
+                if (false)
+                {
+                    // If it exists, get its properties
+                    List<DavResource> resources = sardine.getResources(url);
+                    if (!resources.isEmpty()) {
+                        DavResource resource = resources.get(0);
+                        filePOJO = MAKE_FilePOJO(resource, false, fileObjectType, file_path, sardine);
+                    }
+                } else if (file_path.equals("/")) {
+                    // Special case for root directory
+                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                }
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error creating FilePOJO for WebDAV resource: %s", e.getMessage());
+            } finally {
+                // Note: We don't release the Sardine instance here as it's managed by WebDavClientRepository
             }
         }
         return filePOJO;

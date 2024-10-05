@@ -390,6 +390,7 @@
     <string-array name="network_types">
         <item>@string/ftp_client</item>
         <item>@string/sftp_client</item>
+        <item>@string/webdav_client</item>
     </string-array>
 
     <string-array name="smb_versions">

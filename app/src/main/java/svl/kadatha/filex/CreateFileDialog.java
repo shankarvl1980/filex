@@ -145,7 +145,6 @@ public class CreateFileDialog extends DialogFragment {
                     imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
                     dismissAllowingStateLoss();
                 }
-
             }
         });
 

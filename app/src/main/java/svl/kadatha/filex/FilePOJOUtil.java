@@ -3,6 +3,8 @@ package svl.kadatha.filex;
 import android.os.Build;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.thegrizzlylabs.sardineandroid.DavResource;
+import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -459,6 +461,37 @@ public class FilePOJOUtil {
                     sftpChannelRepository.releaseChannel(channelSftp);
                     Timber.tag(TAG).d("SFTP channel released");
                 }
+            }
+        } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
+            Timber.tag(TAG).d("Filling FilePOJO for WebDAV directory: %s", fileclickselected);
+            WebDavClientRepository webDavClientRepository = null;
+            Sardine sardine;
+            try {
+                webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
+                sardine = webDavClientRepository.getSardine();
+                String basePath = webDavClientRepository.getBasePath(sardine);
+                String fullPath = basePath + (fileclickselected.startsWith("/") ? fileclickselected : "/" + fileclickselected);
+                String url=webDavClientRepository.buildUrl(fullPath);
+                List<DavResource> resources = sardine.list(url);
+                Timber.tag(TAG).d("Retrieved %d resources from WebDAV directory", resources.size());
+                if (!resources.isEmpty()) {
+                    resources.remove(0);// Safely remove the first element
+                }
+                for (DavResource resource : resources) {
+                    String name = resource.getName();
+                    String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                    Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
+
+                    FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
+                    if (!filePOJO.getName().startsWith(".")) {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+                Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error filling FilePOJO for WebDAV directory: %s", e.getMessage());
+                return;
             }
         } else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);

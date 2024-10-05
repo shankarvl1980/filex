@@ -43,8 +43,8 @@ android {
         }
 
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             signingConfig signingConfigs.release_config
@@ -52,11 +52,6 @@ android {
     }
     namespace 'svl.kadatha.filex'
 
-    packaging {
-        packagingOptions {
-            resources.excludes.add("META-INF/*")
-        }
-    }
 }
 
 dependencies {
@@ -92,6 +87,6 @@ dependencies {
     implementation 'com.caverock:androidsvg-aar:1.4'
 
     implementation 'com.github.mwiede:jsch:0.2.9'
-    implementation 'com.github.lookfirst:sardine:5.12'
+    implementation 'com.github.thegrizzlylabs:sardine-android:0.9'
 
 }

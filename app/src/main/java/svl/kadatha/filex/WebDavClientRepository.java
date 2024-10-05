@@ -2,9 +2,10 @@ package svl.kadatha.filex;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.github.sardine.DavResource;
-import com.github.sardine.Sardine;
-import com.github.sardine.SardineFactory;
+import com.thegrizzlylabs.sardineandroid.DavResource;
+import com.thegrizzlylabs.sardineandroid.Sardine;
+import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +19,7 @@ public class WebDavClientRepository {
     private static final String TAG = "WebDavClientRepository";
     private static WebDavClientRepository instance;
     private final Sardine sardine;
-    private final String baseUrl;
+    public final String baseUrl;
     private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private String discoveredBasePath; // Cached base path
 
@@ -40,6 +41,7 @@ public class WebDavClientRepository {
             throw new IOException("Unable to connect to the WebDAV server with the provided credentials.");
         }
         Timber.tag(TAG).d("WebDavClientRepository constructor completed successfully");
+        discoveredBasePath=discoverBasePath(sardine);
     }
 
     public static synchronized WebDavClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) throws IOException {
@@ -63,11 +65,12 @@ public class WebDavClientRepository {
 
         try {
             Timber.tag(TAG).d("Attempting to create Sardine client");
-            Sardine sardine = SardineFactory.begin(networkAccountPOJO.user_name, networkAccountPOJO.password);
+            Sardine sardine = new OkHttpSardine();
+            sardine.setCredentials(networkAccountPOJO.user_name, networkAccountPOJO.password);
             if (sardine != null) {
                 Timber.tag(TAG).d("Sardine client created successfully");
             } else {
-                Timber.tag(TAG).e("SardineFactory.begin() returned null");
+                Timber.tag(TAG).e("OkHttpSardine creation returned null");
             }
             return sardine;
         } catch (IllegalArgumentException e) {
@@ -126,6 +129,30 @@ public class WebDavClientRepository {
         return urlBuilder.toString();
     }
 
+    /**
+     * Builds a full URL from the given relative path.
+     *
+     * @param relativePath The relative path to append to the base URL.
+     * @return The full URL.
+     */
+    public String buildUrl(String relativePath) {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(baseUrl); // Use the base URL already built in the class
+
+        // Ensure the relativePath starts with '/'
+        if (!relativePath.startsWith("/")) {
+            urlBuilder.append("/");
+        }
+        urlBuilder.append(relativePath);
+
+        // Remove trailing slash if present (optional, based on how you want the URLs formatted)
+        if (urlBuilder.charAt(urlBuilder.length() - 1) == '/') {
+            urlBuilder.deleteCharAt(urlBuilder.length() - 1);
+        }
+
+        return urlBuilder.toString(); // Return the full constructed URL
+    }
+
 
     // Helper method to construct full URL
     private String buildFullPath(String relativePath) {
@@ -141,7 +168,7 @@ public class WebDavClientRepository {
     // Shutdown the repository (if needed)
     public void shutdown() {
         Timber.tag(TAG).d("Shutting down WebDAV client repository");
-        // Sardine uses OkHttpClient which manages its own connections.
+        // OkHttpSardine manages its own connections, so no explicit shutdown is needed.
         // If you have any additional resources, clean them up here.
 
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -200,7 +227,7 @@ public class WebDavClientRepository {
 
         // Discover base path dynamically
         discoveredBasePath = discoverBasePath(sardine);
-        if (discoveredBasePath != null && !discoveredBasePath.isEmpty()) {
+        if (!discoveredBasePath.isEmpty()) {
             Timber.tag(TAG).d("Dynamically discovered base path: %s", discoveredBasePath);
             return discoveredBasePath;
         }
@@ -217,15 +244,13 @@ public class WebDavClientRepository {
      */
     private String discoverBasePath(Sardine sardine) {
         Timber.tag(TAG).d("Attempting to discover base path dynamically.");
-        String initialPath = "/";
         try {
-            List<DavResource> resources = sardine.list(initialPath, 0); // Depth=0
+            List<DavResource> resources = sardine.list(baseUrl, 0); // Depth=0
 
             if (!resources.isEmpty()) {
                 DavResource rootResource = resources.get(0);
-                URI hrefUri = rootResource.getHref(); // Changed to URI
+                URI hrefUri = rootResource.getHref();
 
-                // Option 1: Pass URI directly
                 String discoveredPath = parsePathFromHref(hrefUri);
 
                 // Fallback to '/' if parsing fails
@@ -246,12 +271,6 @@ public class WebDavClientRepository {
         }
     }
 
-    /**
-     * Parses the path component from the href URI.
-     *
-     * @param hrefUri The href URI from DavResource.
-     * @return The path component, or null if parsing fails.
-     */
     private String parsePathFromHref(URI hrefUri) {
         try {
             String path = hrefUri.getPath();
@@ -261,6 +280,8 @@ public class WebDavClientRepository {
             return null;
         }
     }
+
+
 
     /**
      * Sanitizes the provided path by ensuring it starts with '/' and does not end with '/'.

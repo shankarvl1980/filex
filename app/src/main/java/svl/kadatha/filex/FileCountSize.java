@@ -8,12 +8,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
+import com.thegrizzlylabs.sardineandroid.DavResource;
+import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -161,7 +164,7 @@ public class FileCountSize {
                                 // Optionally, handle invalid paths as needed
                             }
                         }
-                        populateSFTP(ls_entries, include_folder, source_folder);
+                        populate(ls_entries, include_folder, source_folder);
                     } catch (Exception e) {
                         Timber.tag("ViewModelFileCount").e("Exception during SFTP processing: %s", e.getMessage());
                         throw new RuntimeException(e);
@@ -169,6 +172,31 @@ public class FileCountSize {
                         if (sftpChannelRepository != null && channelSftp != null) {
                             sftpChannelRepository.releaseChannel(channelSftp);
                         }
+                    }
+                } else if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE) {
+                    Timber.tag(TAG).d("Starting file count for WebDAV files");
+
+                    Sardine sardine = null;
+                    String url;
+                    try {
+                        WebDavClientRepository webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
+                        sardine = webDavClientRepository.getSardine();
+                        Timber.tag(TAG).d("WebDAV client acquired");
+                        List<DavResource> resources = new ArrayList<>();
+                        for (int i = 0; i < size; ++i) {
+                            Timber.tag(TAG).d("Getting WebDAV resource info for: %s", files_selected_array.get(i));
+                            String fullPath = webDavClientRepository.getBasePath(sardine) + files_selected_array.get(i);
+                            url=webDavClientRepository.buildUrl(fullPath);
+                            List<DavResource> resourceList = sardine.list(url);
+                            if (!resourceList.isEmpty()) {
+                                resources.add(resourceList.get(0));
+                            }
+                        }
+                        Timber.tag(TAG).d("Starting populate method for WebDAV resources");
+                        populate(resources.toArray(new DavResource[0]), include_folder, source_folder, sardine, webDavClientRepository);
+                    } catch (IOException e) {
+                        Timber.tag(TAG).e("Error during WebDAV file count: %s", e.getMessage());
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -320,7 +348,7 @@ public class FileCountSize {
         Timber.tag(TAG).d("FTP file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
 
-    private void populateSFTP(ChannelSftp.LsEntry[] source_list_entries, boolean include_folder, String initialPath) {
+    private void populate(ChannelSftp.LsEntry[] source_list_entries, boolean include_folder, String initialPath) {
         Timber.tag("ViewModelFileCount").d("Starting populateSFTP method with " + source_list_entries.length + " entries");
 
         Stack<Pair<ChannelSftp.LsEntry, String>> stack = new Stack<>();
@@ -410,6 +438,67 @@ public class FileCountSize {
         Timber.tag("ViewModelFileCount").d("populateSFTP method completed");
     }
 
+    private void populate(DavResource[] source_list_resources, boolean include_folder, String initialPath, Sardine sardine, WebDavClientRepository webDavClientRepository) {
+        Timber.tag(TAG).d("Starting populateWebDAV method. Initial path: %s", initialPath);
+        Stack<Pair<DavResource, String>> stack = new Stack<>();
+        for (DavResource resource : source_list_resources) {
+            stack.push(new Pair<>(resource, initialPath));
+        }
+
+        while (!stack.isEmpty()) {
+            if (isCancelled()) {
+                Timber.tag(TAG).d("WebDAV file count cancelled");
+                return;
+            }
+
+            Pair<DavResource, String> pair = stack.pop();
+            DavResource resource = pair.first;
+            String path = pair.second;
+
+            if (resource == null) {
+                Timber.tag(TAG).w("Null DavResource encountered. Skipping.");
+                continue;
+            }
+
+            int no_of_files = 0;
+            long size_of_files = 0L;
+
+            if (resource.isDirectory()) {
+                Timber.tag(TAG).d("Processing WebDAV directory: %s", resource.getName());
+                try {
+                    String name = resource.getName();
+                    String newPath = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
+                    String fullPath = webDavClientRepository.getBasePath(sardine) + newPath;
+                    String url=webDavClientRepository.buildUrl(fullPath);
+                    Timber.tag(TAG).d("Listing resources in WebDAV directory: %s", fullPath);
+                    List<DavResource> subResources = sardine.list(url);
+                    if(!subResources.isEmpty()){
+                        subResources.remove(0);
+                    }
+                    Timber.tag(TAG).d("Found %d resources in WebDAV directory: %s", subResources.size(), fullPath);
+                    for (DavResource subResource : subResources) {
+                        stack.push(new Pair<>(subResource, newPath));
+                    }
+                } catch (IOException e) {
+                    Timber.tag(TAG).e("Error processing WebDAV directory: %s", e.getMessage());
+                }
+                if (include_folder) {
+                    no_of_files++;
+                }
+            } else {
+                Timber.tag(TAG).d("Processing WebDAV file: %s, Size: %d", resource.getName(), resource.getContentLength());
+                no_of_files++;
+                size_of_files += resource.getContentLength();
+            }
+
+            total_no_of_files += no_of_files;
+            total_size_of_files += size_of_files;
+            Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
+            mutable_total_no_of_files.postValue(total_no_of_files);
+            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+        }
+        Timber.tag(TAG).d("WebDAV file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
+    }
 
     private String combinePaths(String dir, String file) {
         if (!dir.endsWith("/")) {

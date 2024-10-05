@@ -207,7 +207,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         root_dir_linkedlist.addAll(RepositoryClass.getRepositoryClass().storage_dir); //adding all because root_dir_linkedlist is linkedlist where as Storage_Dir is array list
         rootdirrecycleradapter.notifyDataSetChanged();
         recentRecyclerAdapter.notifyDataSetChanged();
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
@@ -282,6 +284,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
                     p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName() + space);
+                } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
                 RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.overlay_fileimageview);
@@ -291,6 +296,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath());
                 } else if (filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
                     p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath());
+                } else if (filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName());
                 } else {
                     p1.textView_recent_dir.setText(filePOJO.getPath());
                 }
@@ -342,8 +350,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     }
-
-
 
 
 }

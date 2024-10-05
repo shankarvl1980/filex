@@ -27,6 +27,8 @@ public class FileModelFactory {
                 break;
             case SFTP_TYPE:
                 fileModel = new SftpFileModel(path);
+            case WEBDAV_TYPE:
+                fileModel=new WebDavFileModel(path);
         }
         return fileModel;
     }

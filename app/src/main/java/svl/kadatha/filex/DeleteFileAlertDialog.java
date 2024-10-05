@@ -178,7 +178,7 @@ public class DeleteFileAlertDialog extends DialogFragment {
                         Global.print(context, getString(R.string.root_access_not_avaialable));
                         return;
                     }
-                } else if (sourceFileObjectType == FileObjectType.FTP_TYPE || sourceFileObjectType == FileObjectType.SFTP_TYPE) {
+                } else if (sourceFileObjectType == FileObjectType.FTP_TYPE || sourceFileObjectType == FileObjectType.SFTP_TYPE || sourceFileObjectType==FileObjectType.WEBDAV_TYPE) {
                     Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
                     if (emptyService == null) {
                         Global.print(context, getString(R.string.maximum_3_services_processed));
