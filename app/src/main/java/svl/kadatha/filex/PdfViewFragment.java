@@ -103,6 +103,7 @@ public class PdfViewFragment extends Fragment {
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon, getString(R.string.copy_to), 3));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon, getString(R.string.properties), 4));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon, getString(R.string.rotate), 5));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.undo_icon, getString(R.string.rotate), 6));
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float height = getResources().getDimension(R.dimen.floating_button_margin_bottom) + 56;
@@ -148,7 +149,7 @@ public class PdfViewFragment extends Fragment {
                         break;
 
                     case 1:
-                        Uri src_uri = null;
+                        Uri src_uri;
                         if (viewModel.fromThirdPartyApp) {
                             src_uri = data;
                         } else {
@@ -163,7 +164,7 @@ public class PdfViewFragment extends Fragment {
                         FileIntentDispatch.sendUri(context, uri_list);
                         break;
                     case 2:
-                        Uri copy_uri = null;
+                        Uri copy_uri;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = data;
                         } else {
@@ -199,48 +200,11 @@ public class PdfViewFragment extends Fragment {
                         PropertiesDialog propertiesDialog = PropertiesDialog.getInstance(files_selected_array, FileObjectType.FILE_TYPE);
                         propertiesDialog.show(getParentFragmentManager(), "properties_dialog");
                         break;
-                    case 4: // Rotate
-                        int currentItem = view_pager.getCurrentItem();
-                        View currentView = null;
-                        for (int i = 0; i < view_pager.getChildCount(); i++) {
-                            View child = view_pager.getChildAt(i);
-                            if (child.getTag() != null && child.getTag().equals(currentItem)) {
-                                currentView = child;
-                                break;
-                            }
-                        }
-
-                        if (currentView != null) {
-                            TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
-                            if (imageView != null) {
-                                Drawable drawable = imageView.getDrawable();
-                                if (drawable instanceof BitmapDrawable) {
-                                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-
-                                    // Rotate the bitmap
-                                    Matrix matrix = new Matrix();
-                                    matrix.postRotate(90); // Rotate by 90 degrees
-                                    Bitmap rotatedBitmap = Bitmap.createBitmap(
-                                            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-                                    // Set the rotated bitmap to the ImageView
-                                    imageView.setImageBitmap(rotatedBitmap);
-
-                                    // Reset zoom and center the image
-                                    imageView.resetZoom();
-                                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-                                    // Force layout update
-                                    imageView.requestLayout();
-                                } else {
-                                    Global.print(context, getString(R.string.could_not_be_rotated));
-                                }
-                            } else {
-                                Global.print(context, getString(R.string.could_not_be_rotated));
-                            }
-                        } else {
-                            Global.print(context, getString(R.string.could_not_be_rotated));
-                        }
+                    case 4:
+                        rotateImage(90);
+                        break;
+                    case 5:
+                        rotateImage(-90);
                         break;
                     default:
                         break;
@@ -413,6 +377,49 @@ public class PdfViewFragment extends Fragment {
                 });
 
         return v;
+    }
+
+    private void rotateImage(int degrees) {
+        int currentItem = view_pager.getCurrentItem();
+        View currentView = null;
+        for (int i = 0; i < view_pager.getChildCount(); i++) {
+            View child = view_pager.getChildAt(i);
+            if (child.getTag() != null && child.getTag().equals(currentItem)) {
+                currentView = child;
+                break;
+            }
+        }
+
+        if (currentView != null) {
+            TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
+            if (imageView != null) {
+                Drawable drawable = imageView.getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+                    // Rotate the bitmap
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(degrees);
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(
+                            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+                    // Set the rotated bitmap to the ImageView
+                    imageView.setImageBitmap(rotatedBitmap);
+                    // Reset zoom and center the image
+                    imageView.resetZoom();
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                    // Force layout update
+                    imageView.requestLayout();
+                } else {
+                    Global.print(context, getString(R.string.could_not_be_rotated));
+                }
+            } else {
+                Global.print(context, getString(R.string.could_not_be_rotated));
+            }
+        } else {
+            Global.print(context, getString(R.string.could_not_be_rotated));
+        }
     }
 
     @Override

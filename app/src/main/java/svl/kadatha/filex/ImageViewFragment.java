@@ -98,6 +98,7 @@ ImageViewFragment extends Fragment {
     private Uri tree_uri;
     private RecyclerView recyclerview;
 
+
     public static ImageViewFragment getNewInstance(String file_path, FileObjectType fileObjectType) {
         ImageViewFragment frag = new ImageViewFragment();
         Bundle bundle = new Bundle();
@@ -125,6 +126,7 @@ ImageViewFragment extends Fragment {
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon, getString(R.string.properties), 4));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.wallpaper_icon, getString(R.string.set_wallpaper), 5));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.redo_icon, getString(R.string.rotate), 6));
+        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.undo_icon, getString(R.string.rotate), 7));
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float height = getResources().getDimension(R.dimen.floating_button_margin_bottom) + 56;
@@ -243,53 +245,10 @@ ImageViewFragment extends Fragment {
                         activityResultLauncher_crop_request.launch(intent);
                         break;
                     case 5:
-                        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
-                            TouchImageView currentView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
-                            if (currentView != null) {
-                                TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
-                                if (imageView != null) {
-                                    Drawable drawable = imageView.getDrawable();
-                                    if (drawable instanceof BitmapDrawable) {
-                                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-
-                                        // Rotate the bitmap
-                                        Matrix matrix = new Matrix();
-                                        matrix.postRotate(90); // Rotate by 90 degrees
-                                        Bitmap rotatedBitmap = Bitmap.createBitmap(
-                                                bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-                                        // Set the rotated bitmap to the ImageView
-                                        imageView.setImageBitmap(rotatedBitmap);
-
-                                        // Reset zoom and center the image
-                                        imageView.resetZoom();
-                                        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-                                        // Force layout update
-                                        imageView.requestLayout();
-                                    } else {
-                                        Global.print(context, getString(R.string.could_not_be_rotated));
-                                    }
-                                } else {
-                                    Global.print(context, getString(R.string.could_not_be_rotated));
-                                }
-                            } else {
-                                Global.print(context, getString(R.string.could_not_be_rotated));
-                            }
-                        } else {
-                            if (!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(), viewModel.currently_shown_file.getPath())) {
-                                if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) {
-                                    listPopWindow.dismiss();
-                                    return;
-                                } else {
-                                    progress_bar.setVisibility(View.VISIBLE);
-                                    viewModel.rotate(tree_uri, tree_uri_path);
-                                }
-                            } else {
-                                progress_bar.setVisibility(View.VISIBLE);
-                                viewModel.rotate(tree_uri, tree_uri_path);
-                            }
-                        }
+                        handleImageRotation(90);
+                        break;
+                    case 6:
+                        handleImageRotation(-90);
                         break;
                     default:
                         break;
@@ -487,7 +446,7 @@ ImageViewFragment extends Fragment {
                             return;
                     } else {
                         progress_bar.setVisibility(View.VISIBLE);
-                        viewModel.rotate(tree_uri, tree_uri_path);
+                        viewModel.rotate(viewModel.rotation_degrees,tree_uri, tree_uri_path);
                     }
                 }
             }
@@ -522,6 +481,61 @@ ImageViewFragment extends Fragment {
         } else {
             return true;
         }
+    }
+
+    private void handleImageRotation(int degrees) {
+        viewModel.rotation_degrees = degrees;
+        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
+            rotateImageInMemory(degrees);
+        } else {
+            rotateImageFile(degrees);
+        }
+    }
+
+    private void rotateImageInMemory(int degrees) {
+        TouchImageView currentView = (TouchImageView) ((ViewGroup) view_pager.getChildAt(0)).getChildAt(view_pager.getCurrentItem());
+        if (currentView != null) {
+            TouchImageView imageView = currentView.findViewById(R.id.picture_viewpager_layout_imageview);
+            if (imageView != null) {
+                Drawable drawable = imageView.getDrawable();
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+                    // Rotate the bitmap
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(degrees);
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(
+                            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+                    // Set the rotated bitmap to the ImageView
+                    imageView.setImageBitmap(rotatedBitmap);
+
+                    // Reset zoom and center the image
+                    imageView.resetZoom();
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                    // Force layout update
+                    imageView.requestLayout();
+                } else {
+                    Global.print(context, getString(R.string.could_not_be_rotated));
+                }
+            } else {
+                Global.print(context, getString(R.string.could_not_be_rotated));
+            }
+        } else {
+            Global.print(context, getString(R.string.could_not_be_rotated));
+        }
+    }
+
+    private void rotateImageFile(int degrees) {
+        if (!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(), viewModel.currently_shown_file.getPath())) {
+            if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) {
+                listPopWindow.dismiss();
+                return;
+            }
+        }
+        progress_bar.setVisibility(View.VISIBLE);
+        viewModel.rotate(degrees,tree_uri, tree_uri_path);
     }
 
     @Override
