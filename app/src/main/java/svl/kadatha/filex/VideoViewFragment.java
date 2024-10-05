@@ -598,7 +598,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 }
                 break;
         }
-
     }
 
 
@@ -609,7 +608,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     @Override
     public boolean onError(MediaPlayer p1, int p2, int p3) {
-        // TODO: Implement this method
         switch (p2) {
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
 
@@ -628,13 +626,11 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             }
             initiateMediaPlayer();
         }
-
         return true;
     }
 
     @Override
     public void onCompletion(MediaPlayer p1) {
-        // TODO: Implement this method
         viewModel.completed = true;
         viewModel.playmode = false;
         if (!bottom_butt_visible) {
@@ -643,13 +639,10 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
         }
         refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-        //play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-
     }
 
     @Override
     public boolean onInfo(MediaPlayer p1, int p2, int p3) {
-        // TODO: Implement this method
         return false;
     }
 
@@ -673,5 +666,4 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     interface VideoPositionListener {
         void setPosition(Integer idx, Integer position);
     }
-
 }

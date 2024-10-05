@@ -2096,6 +2096,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         @Override
         public void onBindViewHolder(StorageRecyclerAdapter.ViewHolder p1, int p2) {
             FilePOJO filePOJO = storage_dir_arraylist.get(p2);
+            if(filePOJO==null)return;
             String file_path = filePOJO.getPath();
             FileObjectType fileObjectType = filePOJO.getFileObjectType();
 

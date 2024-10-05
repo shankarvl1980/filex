@@ -57,21 +57,11 @@ public class WebDavClientRepository {
 
     private Sardine createAndConfigureSardineClient() {
         Timber.tag(TAG).d("Entering createAndConfigureSardineClient method");
-        if (networkAccountPOJO.user_name == null || networkAccountPOJO.user_name.isEmpty() ||
-                networkAccountPOJO.password == null || networkAccountPOJO.password.isEmpty()) {
-            Timber.tag(TAG).e("Username or password is null or empty");
-            return null;
-        }
-
         try {
             Timber.tag(TAG).d("Attempting to create Sardine client");
             Sardine sardine = new OkHttpSardine();
             sardine.setCredentials(networkAccountPOJO.user_name, networkAccountPOJO.password);
-            if (sardine != null) {
-                Timber.tag(TAG).d("Sardine client created successfully");
-            } else {
-                Timber.tag(TAG).e("OkHttpSardine creation returned null");
-            }
+            Timber.tag(TAG).d("Sardine client created successfully");
             return sardine;
         } catch (IllegalArgumentException e) {
             Timber.tag(TAG).e(e, "Invalid arguments for Sardine client creation: %s", e.getMessage());

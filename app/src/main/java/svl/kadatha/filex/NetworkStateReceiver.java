@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 
+import java.io.IOException;
+
 public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -21,6 +23,15 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 if (NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO != null) {
                     SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
                     sftpChannelRepository.shutdown();
+                }
+                if (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH != null) {
+                    WebDavClientRepository webDavClientRepository = null;
+                    try {
+                        webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
+                        webDavClientRepository.shutdown();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

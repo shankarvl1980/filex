@@ -43,7 +43,6 @@ public class FileModifyObserver extends FileObserver {
                 if (fileObserverListener != null) fileObserverListener.onFileModified();
                 break;
         }
-
     }
 
     public void setFileObserverListener(FileObserverListener listener) {

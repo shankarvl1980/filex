@@ -241,7 +241,6 @@ public class PlayScreenFragment extends Fragment {
                                 break;
                             case AudioPlayerService.STOP:
                                 setTitleArt(0, "", null);
-                                //total_time_tv.setText("00.00");
                                 break;
                             default:
                                 break;

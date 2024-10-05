@@ -56,7 +56,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 if (MainActivity.RECENT.size() >= RECENT_SIZE) {
                     MainActivity.RECENT.removeLast();
                 }
-
                 MainActivity.RECENT.addFirst(filePOJO);
             }
         } else {
@@ -256,6 +255,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         @Override
         public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2) {
             FilePOJO filePOJO = dir_linkedlist.get(p2);
+            if(filePOJO==null)return;
             if (storage_dir) {
                 FileObjectType fileObjectType = filePOJO.getFileObjectType();
                 String space = "";
@@ -297,8 +297,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 } else if (filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
                     p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath());
                 } else if (filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
-                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
-                    p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName());
+                    p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath());
                 } else {
                     p1.textView_recent_dir.setText(filePOJO.getPath());
                 }
@@ -333,6 +332,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     public void onClick(View p) {
                         pos = getBindingAdapterPosition();
                         final FilePOJO filePOJO = dir_linkedlist.get(pos);
+                        if(filePOJO==null)return;
                         clicked_filepojo = filePOJO;
                         if (filePOJO.getIsDirectory()) {
                             AppCompatActivity activity = (AppCompatActivity) getActivity();

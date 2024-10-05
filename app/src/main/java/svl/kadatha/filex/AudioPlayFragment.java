@@ -670,7 +670,7 @@ public class AudioPlayFragment extends Fragment {
                     deleteFileAlertDialogOtherActivity.show(getParentFragmentManager(), "deletefilealertotheractivity");
                     break;
                 case 1:
-                    Uri src_uri = null;
+                    Uri src_uri;
                     if (AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null) {
                         src_uri = data;
 

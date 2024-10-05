@@ -86,7 +86,6 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                 size_desc_btn.setSelected(false);
                 break;
 
-
             case "d_name_desc":
             case "f_name_desc":
                 name_desc_btn.setSelected(true);
@@ -130,7 +129,6 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                 date_desc_btn.setSelected(false);
                 size_desc_btn.setSelected(false);
                 break;
-
 
             default:
                 size_desc_btn.setSelected(true);

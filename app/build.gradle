@@ -51,7 +51,6 @@ android {
         }
     }
     namespace 'svl.kadatha.filex'
-
 }
 
 dependencies {

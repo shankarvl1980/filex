@@ -458,7 +458,7 @@ public class WebDavFileModel implements FileModel {
     }
 
     // Inner class to handle OutputStream for WebDAV
-    public class WebDavOutputStreamWrapper extends OutputStream {
+    public static class WebDavOutputStreamWrapper extends OutputStream {
         private final ByteArrayOutputStream memoryBuffer;
         private final File tempFile;
         private final OutputStream outputStream;

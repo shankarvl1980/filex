@@ -729,19 +729,14 @@ public class AppManagerListFragment extends Fragment {
                     break;
                 default:
                     break;
-
             }
-
             listPopWindow.dismiss();
         }
-
     }
 
     private class ToolBarClickListener implements View.OnClickListener {
         @Override
         public void onClick(View p1) {
-            // TODO: Implement this method
-
             int id = p1.getId();
             clear_selection();
             if (id == R.id.toolbar_btn_1) {

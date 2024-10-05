@@ -502,7 +502,6 @@ public class AllAudioListFragment extends Fragment {
                     break;
                 default:
                     break;
-
             }
 
             listPopWindow.dismiss();

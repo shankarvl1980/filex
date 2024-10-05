@@ -144,7 +144,6 @@ public class SearchDialog extends DialogFragment {
                     file_rb.setChecked(true);
                     size_group.setVisibility(View.VISIBLE);
                     break;
-
             }
         } else {
             file_rb.setChecked(true);
@@ -181,6 +180,7 @@ public class SearchDialog extends DialogFragment {
                 case "gb":
                     gb_radio_button.setChecked(true);
                     size_multiplying_factor = 1024 * 1024 * 1024;
+                    break;
                 default:
                     kb_radio_button.setChecked(true);
                     size_multiplying_factor = 1024;

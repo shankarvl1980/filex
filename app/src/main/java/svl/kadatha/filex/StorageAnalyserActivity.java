@@ -439,7 +439,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 case "actionmode":
                     actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     break;
-
             }
 
         } else {
@@ -451,10 +450,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
                     break;
             }
-
         }
-
-
     }
 
     @Override
@@ -465,7 +461,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     public void onLongClickItem(int size) {
-
         if (size >= 1) {
             bottom_toolbar.setVisibility(View.GONE);
             actionmode_toolbar.setVisibility(View.VISIBLE);
@@ -479,14 +474,11 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 }
                 DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
             }
-
         }
-
     }
 
     @Override
     public void setFileNumberView(String file_number_string) {
-
         file_number.setText(file_number_string);
     }
 
@@ -768,6 +760,4 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
         }
     }
-
-
 }

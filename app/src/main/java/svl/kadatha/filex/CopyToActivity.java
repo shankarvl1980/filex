@@ -62,6 +62,8 @@ public class CopyToActivity extends BaseActivity {
                 destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
                 destination_folder_edittext.setText(folderclickselected);
                 destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
+            } else{
+                finish();
             }
         }
     });

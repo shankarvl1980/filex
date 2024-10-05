@@ -744,7 +744,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                                     filepath_adapter = new FilePathRecyclerViewAdapter(fileclickselected);
                                     filepath_recyclerview.setAdapter(filepath_adapter);
                                     adapter.getFilter().filter(null);
-
                                 }
                             }
                         } else if (fileObjectType == FileObjectType.USB_TYPE) {
@@ -771,7 +770,5 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         }
     }
-
-
 }
 

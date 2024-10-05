@@ -629,7 +629,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public List<FilePOJO> getFilePOJO_list() {
         List<FilePOJO> filePOJOS = new ArrayList<>();
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
+            if (filePOJO == null) continue;
+            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE
+                    || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE
+                    || filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE || filePOJO.getFileObjectType() == FileObjectType.SMB_TYPE) {
                 filePOJOS.add(filePOJO);
             }
         }
@@ -654,7 +657,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -838,7 +843,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         fileSelectorFragment.modification_observed = true;
                     break;
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
-                    //storageRecyclerAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -887,8 +891,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
-
-
 
 
 }

@@ -502,7 +502,6 @@ public class AlbumDetailsDialog extends DialogFragment {
 
                 default:
                     break;
-
             }
 
             listPopWindow.dismiss();

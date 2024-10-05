@@ -151,7 +151,6 @@ public class PropertiesDialog extends DialogFragment {
                     no_files_textview.setText(file_no_str);
                     break;
                 case 4:
-
                     size_files_textview = row_item.findViewById(R.id.properties_description);
                     label.setText(R.string.size);
                     size_files_textview.setText(file_size_str);
@@ -198,13 +197,11 @@ public class PropertiesDialog extends DialogFragment {
                             permissionsDialog.show(getParentFragmentManager().beginTransaction(), "permissions_dialog");
                         }
                     });
-
                     break;
                 case 4:
                     label.setText(R.string.symbolic_link);
                     property.setText(symbolic_link_str);
                     break;
-
             }
             properties_rwh_table_layout.addView(row_item);
         }

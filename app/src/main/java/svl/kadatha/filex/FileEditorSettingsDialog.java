@@ -125,7 +125,6 @@ public class FileEditorSettingsDialog extends DialogFragment {
                         case FileEditorActivity.EOL_RN:
                             wnd_rb.setChecked(true);
                             break;
-
                     }
                     Global.print(context, getString(R.string.cant_edit_this_file));
                 }

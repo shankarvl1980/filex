@@ -336,7 +336,7 @@ public abstract class FtpServerFileUtil {
         if (!file.exists()) return true;
 
         File[] files = file.listFiles();
-        if (files != null && files.length > 0) {
+        if (files != null) {
             for (File child : files) {
                 rmdir(child, context);
             }

@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -209,6 +210,9 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
                 port = 21;
             } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                 port = 22;
+            } else if(type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                if(useHTTPS) port=443;
+                else port=80;
             }
         }
         port_tv.setText(String.valueOf(port));
@@ -248,6 +252,15 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
                 Intent intent = new Intent(context, FileSelectorActivity.class);
                 intent.putExtra(FileSelectorActivity.ACTION_SOUGHT, FileSelectorActivity.FILE_PATH_REQUEST_CODE);
                 activityResultLauncher_file_select.launch(intent);
+            }
+        });
+
+        useHTTPS_check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) port=443;
+                else port=80;
+                port_tv.setText(String.valueOf(port));
             }
         });
 

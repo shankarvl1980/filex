@@ -124,8 +124,6 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
                     return 0;
             }
         } catch (IOException e) {
-            Timber.tag(TAG).w("Failed to get image orientation from file.", e);
-
             return 0;
         }
     }

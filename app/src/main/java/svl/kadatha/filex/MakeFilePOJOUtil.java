@@ -32,6 +32,7 @@ import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
+import svl.kadatha.filex.filemodel.WebDavFileModel;
 import timber.log.Timber;
 
 public class MakeFilePOJOUtil {
@@ -672,27 +673,22 @@ public class MakeFilePOJOUtil {
             try {
                 webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
                 sardine = webDavClientRepository.getSardine();
-                String basePath = webDavClientRepository.getBasePath(sardine);
                 //String fullPath = basePath + (file_path.startsWith("/") ? file_path : "/" + file_path);
-                String url= webDavClientRepository.baseUrl;
+                String url = webDavClientRepository.buildUrl(file_path);
 
-                // Use exists() to check if the resource exists
-                if (false)
-                {
+                if (file_path.equals("/")) {
+                    // Special case for root directory
+                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                } else if (new WebDavFileModel(file_path).exists()) {
                     // If it exists, get its properties
                     List<DavResource> resources = sardine.getResources(url);
                     if (!resources.isEmpty()) {
                         DavResource resource = resources.get(0);
                         filePOJO = MAKE_FilePOJO(resource, false, fileObjectType, file_path, sardine);
                     }
-                } else if (file_path.equals("/")) {
-                    // Special case for root directory
-                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, 0, 0L, null, 0, null, null);
                 }
             } catch (IOException e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for WebDAV resource: %s", e.getMessage());
-            } finally {
-                // Note: We don't release the Sardine instance here as it's managed by WebDavClientRepository
             }
         }
         return filePOJO;
