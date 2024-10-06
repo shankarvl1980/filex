@@ -95,7 +95,6 @@ public class PasteSetUpDialog extends DialogFragment {
             checkedSAFPermissionPasteSetUp = true;
         }
 
-
         getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE_DEST, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -105,9 +104,7 @@ public class PasteSetUpDialog extends DialogFragment {
                     if (check_permission_for_destination(dest_folder, destFileObjectType) && check_permission_for_source(source_folder, sourceFileObjectType)) {
                         initiate_startActivity();
                     }
-
                 }
-
             }
         });
 
@@ -120,9 +117,7 @@ public class PasteSetUpDialog extends DialogFragment {
                     if (check_permission_for_destination(dest_folder, destFileObjectType) && check_permission_for_source(source_folder, sourceFileObjectType)) {
                         initiate_startActivity();
                     }
-
                 }
-
             }
         });
 
@@ -133,7 +128,6 @@ public class PasteSetUpDialog extends DialogFragment {
                     Global.print(context, getString(R.string.permission_not_granted));
                     dismissAllowingStateLoss();
                 }
-
             }
         });
 
@@ -201,7 +195,6 @@ public class PasteSetUpDialog extends DialogFragment {
             } else {
                 return true;
             }
-
         }
         return true;
     }
@@ -261,7 +254,6 @@ public class PasteSetUpDialog extends DialogFragment {
             return;
         }
 
-
         Intent intent = new Intent(context, emptyService);
         intent.setAction(cut ? CutCopyAsyncTask.TASK_TYPE_CUT : CutCopyAsyncTask.TASK_TYPE_COPY);
         bundle.putString("tree_uri_path", tree_uri_path);
@@ -274,6 +266,4 @@ public class PasteSetUpDialog extends DialogFragment {
         context.startActivity(intent);
         dismissAllowingStateLoss();
     }
-
-
 }

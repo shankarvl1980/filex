@@ -178,20 +178,18 @@ public class DeleteFileAlertDialog extends DialogFragment {
                         Global.print(context, getString(R.string.root_access_not_avaialable));
                         return;
                     }
-                } else if (sourceFileObjectType == FileObjectType.FTP_TYPE || sourceFileObjectType == FileObjectType.SFTP_TYPE || sourceFileObjectType==FileObjectType.WEBDAV_TYPE) {
+                } else {
                     Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
                     if (emptyService == null) {
                         Global.print(context, getString(R.string.maximum_3_services_processed));
                         return;
                     }
                     start_delete_progress_activity(emptyService);
-
                 }
                 if (okButtonClickListener != null)
                     okButtonClickListener.deleteDialogOKButtonClick();
                 dismissAllowingStateLoss();
             }
-
         });
 
         cancelbutton.setOnClickListener(new View.OnClickListener() {
@@ -209,7 +207,6 @@ public class DeleteFileAlertDialog extends DialogFragment {
                     tree_uri_path = result.getString("tree_uri_path");
                     okbutton.callOnClick();
                 }
-
             }
         });
         return v;
@@ -218,7 +215,6 @@ public class DeleteFileAlertDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
