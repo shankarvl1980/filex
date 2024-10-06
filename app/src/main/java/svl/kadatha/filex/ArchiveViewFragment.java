@@ -195,7 +195,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 }
             }
         });
-
         return v;
     }
 
@@ -308,18 +307,16 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     Global.print(context, context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
-
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size,true);
             } else if (Global.whether_file_cached(fileObjectType)) {
                 if (file_size > Global.CACHE_FILE_MAX_LIMIT) {
                     Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
+                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, false, file_size,true);
             } else if (fileObjectType == FileObjectType.FILE_TYPE) {
-                FileIntentDispatch.openFile(context, file_path, "", false, fileObjectType, false, file_size);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size,true);
             }
-
         }
     }
 

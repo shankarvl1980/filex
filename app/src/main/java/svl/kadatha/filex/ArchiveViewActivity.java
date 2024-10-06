@@ -290,7 +290,6 @@ public class ArchiveViewActivity extends BaseActivity {
         } else {
             actionmode_finish(archiveViewFragment, archiveViewFragment.fileclickselected);
         }
-
     }
 
     @Override
@@ -382,11 +381,8 @@ public class ArchiveViewActivity extends BaseActivity {
                             }
                         }
                 }
-
             }
-
         }
-
     }
 
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {

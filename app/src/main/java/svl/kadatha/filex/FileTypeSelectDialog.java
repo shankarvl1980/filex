@@ -135,7 +135,7 @@ public class FileTypeSelectDialog extends DialogFragment {
                         MimePOJO mimePOJO = mimePOJOList.get(pos);
                         mime_type = mimePOJO.getMime_type();
 
-                        FileIntentDispatch.openFile(context, file_path, mime_type, false, fileObjectType, select_app, file_size);
+                        FileIntentDispatch.openFile(context, file_path, mime_type, fileObjectType, select_app, file_size,false);
                         dismissAllowingStateLoss();
                     }
                 });

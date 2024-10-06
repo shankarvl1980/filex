@@ -238,6 +238,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
             data = intent.getData();
             fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+            boolean fromArchive=intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             if (file_path == null) file_path = RealPathUtil.getLastSegmentPath(data);
             if (fileObjectType == null || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 fileObjectType = FileObjectType.FILE_TYPE;
@@ -251,6 +252,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
                     audioPlayViewModel.fileObjectType = fileObjectType;
                     audioPlayViewModel.fromThirdPartyApp = fromThirdPartyApp;
+                    audioPlayViewModel.fromArchive=fromArchive;
                     audioPlayViewModel.file_path = file_path;
                     audioPlayViewModel.album_id = AudioPlayerActivity.AUDIO_FILE.getAlbumId();
                     String source_folder = new File(audioPlayViewModel.file_path).getParent();

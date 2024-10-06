@@ -639,7 +639,6 @@ public class AudioPlayFragment extends Fragment {
             Uri addedUri = cr.insert(url, contentValues);
             RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, addedUri);
         }
-
         Global.print(context, getString(R.string.ringtone_set));
     }
 
@@ -654,7 +653,7 @@ public class AudioPlayFragment extends Fragment {
 
             switch (p3) {
                 case 0:
-                    if (!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(), Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath())) {
+                    if (audioPlayViewModel.fromArchive || !new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }
@@ -718,7 +717,7 @@ public class AudioPlayFragment extends Fragment {
                     break;
 
                 case 3:
-                    if (AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
+                    if (audioPlayViewModel.fromArchive || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }

@@ -39,12 +39,12 @@ public class ImageViewActivity extends BaseActivity {
     private void on_intent(Intent intent, Bundle savedInstanceState) {
         if (intent != null) {
             data = intent.getData();
-            //boolean fromArchiveView = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
+            boolean fromArchive = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
             fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
             if (file_path == null) file_path = RealPathUtil.getLastSegmentPath(data);
             if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fileObjectType), "picture_fragment").commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, ImageViewFragment.getNewInstance(file_path, fileObjectType,fromArchive), "picture_fragment").commit();
             }
         }
     }

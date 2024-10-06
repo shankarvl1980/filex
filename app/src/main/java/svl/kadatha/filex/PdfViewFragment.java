@@ -78,11 +78,12 @@ public class PdfViewFragment extends Fragment {
     private LinearLayout toolbar_group;
     private AppCompatActivity activity;
 
-    public static PdfViewFragment getNewInstance(String file_path, FileObjectType fileObjectType) {
+    public static PdfViewFragment getNewInstance(String file_path, FileObjectType fileObjectType, boolean fromArchive) {
         PdfViewFragment pdfViewFragment = new PdfViewFragment();
         Bundle bundle = new Bundle();
         bundle.putString("file_path", file_path);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE, fileObjectType);
+        bundle.putBoolean("fromArchive",fromArchive);
         pdfViewFragment.setArguments(bundle);
         return pdfViewFragment;
     }
@@ -139,7 +140,7 @@ public class PdfViewFragment extends Fragment {
                 final ArrayList<String> files_selected_array = new ArrayList<>();
                 switch (p1) {
                     case 0:
-                        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
+                        if (viewModel.fromArchive || viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
                             Global.print(context, getString(R.string.not_able_to_process));
                             break;
                         }
@@ -170,10 +171,12 @@ public class PdfViewFragment extends Fragment {
                         } else {
                             copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(viewModel.currently_shown_file.getPath()));
                         }
+
                         if (copy_uri == null) {
                             Global.print(context, getString(R.string.not_able_to_process));
                             break;
                         }
+
                         if (activity instanceof PdfViewActivity) {
                             ((PdfViewActivity) activity).clear_cache = false;
                         }
@@ -192,7 +195,7 @@ public class PdfViewFragment extends Fragment {
                         break;
 
                     case 3:
-                        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
+                        if (viewModel.fromArchive || viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
                             Global.print(context, getString(R.string.not_able_to_process));
                             break;
                         }
@@ -295,6 +298,7 @@ public class PdfViewFragment extends Fragment {
         if (bundle != null) {
             viewModel.file_path = bundle.getString("file_path");
             viewModel.fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
+            viewModel.fromArchive = bundle.getBoolean("fromArchive");
             if (viewModel.fileObjectType == null || viewModel.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 viewModel.fileObjectType = FileObjectType.FILE_TYPE;
                 viewModel.fromThirdPartyApp = true;

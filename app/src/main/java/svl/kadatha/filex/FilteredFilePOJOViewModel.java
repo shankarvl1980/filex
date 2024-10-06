@@ -47,6 +47,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public boolean firststart;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
+    public boolean fromArchive;
     public String file_path;
     public boolean video_refreshed;
     private boolean isCancelled;
@@ -229,7 +230,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                 if (fileObjectType == FileObjectType.FILE_TYPE || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE || fileObjectType == FileObjectType.ROOT_TYPE) {
                     currently_shown_file = MakeFilePOJOUtil.MAKE_FilePOJO(new File(file_path), false, FileObjectType.FILE_TYPE);
                 } else {
-                    File cache_file = Global.COPY_TO_CACHE(file_path, fileObjectType);//Global.COPY_TO_FTP_CACHE(file_path);
+                    File cache_file = Global.COPY_TO_CACHE(file_path, fileObjectType);
                     currently_shown_file = MakeFilePOJOUtil.MAKE_FilePOJO(cache_file, false, FileObjectType.FILE_TYPE);
                 }
 

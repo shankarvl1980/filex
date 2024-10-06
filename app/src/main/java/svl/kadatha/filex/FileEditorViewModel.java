@@ -40,6 +40,7 @@ public class FileEditorViewModel extends AndroidViewModel {
     public String source_folder;
     public boolean isWritable, isFileBig;
     public boolean fromThirdPartyApp;
+    public boolean fromArchive;
     public Uri data;
     public FileObjectType fileObjectType;
     public int eol, altered_eol;

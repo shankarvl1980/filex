@@ -17,8 +17,9 @@ import java.util.List;
 class FileIntentDispatch {
     static final String EXTRA_FILE_OBJECT_TYPE = "fileObjectType";
     static final String EXTRA_FILE_PATH = "file_path";
+    static final String EXTRA_FROM_ARCHIVE="fromArchive";
 
-    public static void openFile(Context context, String file_path, String mime_type, boolean clear_top, FileObjectType fileObjectType, boolean select_app, long file_size) {
+    public static void openFile(Context context, String file_path, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size,boolean fromArchive) {
         String file_extn = "";
         Uri uri;
         int file_extn_idx = file_path.lastIndexOf(".");
@@ -28,18 +29,18 @@ class FileIntentDispatch {
 
         File file = new File(file_path);
         uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
-        dispatch_intent(context, uri, file_path, file_extn, mime_type, clear_top, fileObjectType, select_app, file_size);
+        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size,fromArchive);
 
     }
 
-    public static void openUri(Context context, String file_path, String mime_type, boolean clear_top, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path, boolean select_app, long file_size) {
+    public static void openUri(Context context, String file_path, String mime_type, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path, boolean select_app, long file_size, boolean fromArchive) {
         String file_extn = "";
         int file_extn_idx = file_path.lastIndexOf(".");
         if (file_extn_idx != -1) {
             file_extn = file_path.substring(file_extn_idx + 1);
         }
         Uri uri = FileUtil.getDocumentUri(file_path, tree_uri, tree_uri_path);
-        dispatch_intent(context, uri, file_path, file_extn, mime_type, clear_top, fileObjectType, select_app, file_size);
+        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size,fromArchive);
     }
 
     public static void sendFile(Context context, ArrayList<File> file_list) {
@@ -76,16 +77,16 @@ class FileIntentDispatch {
         }
     }
 
-    private static void dispatch_intent(final Context context, Uri uri, String file_path, String file_extn, String mime_type, boolean clear_top, FileObjectType fileObjectType, boolean select_app, long file_size) {
+    private static void dispatch_intent(final Context context, Uri uri, String file_path, String file_extn, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size, boolean fromArchive) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        mime_type = SET_INTENT_FOR_VIEW(intent, mime_type, file_path, file_extn, fileObjectType, clear_top, uri);
+        mime_type = SET_INTENT_FOR_VIEW(intent, mime_type, file_path, file_extn, fileObjectType, fromArchive, uri);
         if (mime_type == null || mime_type.isEmpty()) return;
 
         DefaultAppDatabaseHelper defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(context);
         final String package_name = defaultAppDatabaseHelper.getPackageName(mime_type);
         final String app_component_name = defaultAppDatabaseHelper.getComponentName(mime_type);
         if (package_name == null || select_app) {
-            launch_app_selector_dialog(context, uri, file_path, mime_type, clear_top, fileObjectType, file_size);
+            launch_app_selector_dialog(context, uri, file_path, mime_type, fromArchive, fileObjectType, file_size);
         } else {
             final List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(intent, 0);
             final int size = resolveInfoList.size();
@@ -102,7 +103,7 @@ class FileIntentDispatch {
                         bundle.putString("app_component_name", app_component_name);
                         bundle.putString("file_path", file_path);
                         bundle.putString("mime_type", mime_type);
-                        bundle.putBoolean("clear_top", clear_top);
+                        bundle.putBoolean("fromArchive", fromArchive);
                         bundle.putSerializable("fileObjectType", fileObjectType);
                         AppInstallAlertDialog appInstallAlertDialog = AppInstallAlertDialog.getInstance(bundle);
                         appInstallAlertDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
@@ -136,19 +137,19 @@ class FileIntentDispatch {
 
             if (!package_found) {
                 defaultAppDatabaseHelper.delete_row(mime_type);
-                launch_app_selector_dialog(context, uri, file_path, mime_type, clear_top, fileObjectType, file_size);
+                launch_app_selector_dialog(context, uri, file_path, mime_type, fromArchive, fileObjectType, file_size);
             }
         }
         defaultAppDatabaseHelper.close();
     }
 
-    private static void launch_app_selector_dialog(Context context, Uri uri, String file_path, String mime_type, boolean clear_top, FileObjectType fileObjectType, long file_size) {
-        AppSelectorDialog appSelectorDialog = AppSelectorDialog.getInstance(uri, file_path, mime_type, clear_top, fileObjectType, file_size);
+    private static void launch_app_selector_dialog(Context context, Uri uri, String file_path, String mime_type, boolean fromArchive, FileObjectType fileObjectType, long file_size) {
+        AppSelectorDialog appSelectorDialog = AppSelectorDialog.getInstance(uri, file_path, mime_type, fromArchive, fileObjectType, file_size);
         appSelectorDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
     }
 
     public static String SET_INTENT_FOR_VIEW(Intent intent, String mime_type, String file_path, String file_extn, FileObjectType fileObjectType,
-                                             boolean clear_top, Uri uri) {
+                                             boolean fromArchive, Uri uri) {
         if (mime_type == null || mime_type.isEmpty()) {
             for (MimePOJO mimePOJO : Global.MIME_POJOS) {
                 if (file_extn.matches(mimePOJO.getRegex())) {
@@ -162,13 +163,9 @@ class FileIntentDispatch {
 
         intent.putExtra(EXTRA_FILE_OBJECT_TYPE, fileObjectType != null ? fileObjectType.toString() : null);
         intent.putExtra(EXTRA_FILE_PATH, file_path);
+        intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchive);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if (clear_top) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        } else {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
         return mime_type;
     }
 

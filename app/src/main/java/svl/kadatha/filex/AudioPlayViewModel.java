@@ -21,6 +21,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
     public FilePOJO currently_shown_file;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
+    public boolean fromArchive;
     public String file_path;
     public String album_id;
     public String audio_file_name = "";

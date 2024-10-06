@@ -178,7 +178,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                 final ArrayList<String> files_selected_array = new ArrayList<>();
                 switch (p1) {
                     case 0:
-                        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
+                        if (viewModel.fromArchive || viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
                             Global.print(context, getString(R.string.not_able_to_process));
                             break;
                         }
@@ -188,7 +188,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                         break;
 
                     case 1:
-                        Uri src_uri = null;
+                        Uri src_uri;
                         if (viewModel.fromThirdPartyApp) {
                             src_uri = viewModel.data;
                         } else {
@@ -204,7 +204,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
                         break;
                     case 2:
-                        Uri copy_uri = null;
+                        Uri copy_uri;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = viewModel.data;
                         } else {
@@ -228,7 +228,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                         }
                         break;
                     case 3:
-                        if (viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
+                        if (viewModel.fromArchive || viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
                             Global.print(context, getString(R.string.not_able_to_process));
                             break;
                         }
@@ -488,6 +488,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
             viewModel.data = intent.getData();
             viewModel.fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             viewModel.file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
+            viewModel.fromArchive=intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
             if (viewModel.file_path == null)
                 viewModel.file_path = RealPathUtil.getLastSegmentPath(viewModel.data);
 
@@ -791,7 +792,6 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
     private class BottomToolbarListener implements View.OnClickListener {
         @Override
         public void onClick(View p1) {
-            // TODO: Implement this method
             if (progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
                 return;
@@ -799,7 +799,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
             int id = p1.getId();
             if (id == R.id.toolbar_btn_1) {
-                if (viewModel.fromThirdPartyApp) {
+                if (viewModel.fromArchive || viewModel.fromThirdPartyApp) {
                     Global.print(context, getString(R.string.cant_edit_this_file));
                     return;
                 }

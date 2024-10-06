@@ -129,12 +129,10 @@ public class Global {
             return !s.startsWith(".");
         }
     };
-    private static final String FTP_TAG = "Ftp-Global";
     public static File ARCHIVE_EXTRACT_DIR;
     static public int ACTION_BAR_HEIGHT;
     static public int ACTION_BAR_HEIGHT_IN_DP;
     static public boolean DETAILED_SEARCH_LIBRARY;
-    static public boolean SHARE_USB;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
@@ -166,7 +164,6 @@ public class Global {
     static int GRID_COUNT_SMALL, GRID_COUNT_MEDIUM, GRID_COUNT_LARGE, GRID_COUNT;
     static int BUTTON_HEIGHT;
     static float ONE_DP;
-    //static float ONE_SP;
     static int TWO_DP;
     static int THIRTY_SIX_DP;
     static int SELECTOR_ICON_DIMENSION;
