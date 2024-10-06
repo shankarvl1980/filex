@@ -622,7 +622,6 @@ public class AudioPlayFragment extends Fragment {
                     if (MainActivity.usbFileRoot != null) {
                         usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
                     }
-
                     bufferedInputStream = UsbFileStreamFactory.createBufferedInputStream(usbFile, MainActivity.usbCurrentFs);
                 }
 
@@ -631,7 +630,6 @@ public class AudioPlayFragment extends Fragment {
                 bufferedInputStream.close();
                 outputStream.flush();
                 outputStream.close();
-
             } catch (IOException e) {
 
             }
@@ -687,7 +685,6 @@ public class AudioPlayFragment extends Fragment {
                     ArrayList<Uri> uri_list = new ArrayList<>();
                     uri_list.add(src_uri);
                     FileIntentDispatch.sendUri(context, uri_list);
-
                     break;
                 case 2:
                     Uri copy_uri;

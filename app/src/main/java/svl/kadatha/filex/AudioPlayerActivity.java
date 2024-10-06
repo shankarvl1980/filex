@@ -229,7 +229,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                             break;
                     }
                 }
-
             }
         });
     }
@@ -306,7 +305,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO: Implement this method
         super.onActivityResult(requestCode, resultCode, data);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (requestCode == WRITE_SETTINGS_PERMISSION_REQUEST_CODE && Settings.System.canWrite(this)) {
@@ -414,7 +412,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         } else if (AudioPlayerService.CURRENT_PLAY_NUMBER > AudioPlayerService.AUDIO_QUEUED_ARRAY.size() - 1) {
             AudioPlayerService.CURRENT_PLAY_NUMBER = AudioPlayerService.AUDIO_QUEUED_ARRAY.size() - 1;
         }
-
     }
 
     public void addAudioCompletionListener(AudioCompletionListener listener) {
@@ -473,7 +470,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         @Override
         public int getCount() {
-            // TODO: Implement this method
             return 4;
         }
 

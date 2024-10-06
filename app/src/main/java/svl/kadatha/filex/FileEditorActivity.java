@@ -280,6 +280,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
         page_number = findViewById(R.id.file_editor_page_number);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) page_number.getLayoutParams();
+        params.topMargin = Global.ACTION_BAR_HEIGHT+Global.FOUR_DP;
+        page_number.setLayoutParams(params);
 
         viewModel.textViewUndoRedo = new TextViewUndoRedoBatch(filetext_container_edittext.getEditText());
         viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
