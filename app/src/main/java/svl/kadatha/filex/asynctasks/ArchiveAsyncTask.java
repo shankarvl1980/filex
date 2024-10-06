@@ -24,7 +24,7 @@ import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 import svl.kadatha.filex.filemodel.FtpFileModel;
 
-// ArchiveAsyncTask.java
+
 public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     public static final String TASK_TYPE = "archive-zip";
     private final ArrayList<String> files_selected_array;
@@ -122,7 +122,6 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                         }
 
                         ZipEntry zipEntry;
-
                         if (fileModel.isDirectory()) {
                             zipEntry = new ZipEntry(zip_entry_path + File.separator);
                             zipOutputStream.putNextEntry(zipEntry);
