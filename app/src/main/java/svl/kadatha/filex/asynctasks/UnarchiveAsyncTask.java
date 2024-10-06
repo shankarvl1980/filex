@@ -72,7 +72,6 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         } else {
             zip_dest_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_folder_name);
         }
-
         current_file_name = new File(zip_file_path).getName();
     }
 
@@ -123,8 +122,9 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             written_file_name_list.add(zip_folder_name);
             written_file_path_list.add(zip_dest_path);
         }
-        if (counter_no_files > 0)
+        if (counter_no_files > 0){
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, written_file_name_list, destFileObjectType, written_file_path_list);
+        }
         return success;
     }
 
@@ -168,7 +168,8 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             inStream = zipfile.getInputStream(zipEntry);
             bufferedInputStream = new BufferedInputStream(inStream);
             String zip_entry_name = UNARCHIVE(zip_dest_path, zipEntry, destFileObjectType, uri, uri_path, bufferedInputStream, counter_size_files);
-            counter_no_files++;
+            ++counter_no_files;
+            publishProgress(null);
             current_file_name = zip_entry_name;
             int idx = zip_entry_name.indexOf(File.separator);
             if (idx != -1) {
@@ -179,7 +180,6 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 first_part_entry_name_set.add(zip_entry_name);
                 first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_folder_name, zip_entry_name));
             }
-
             return true;
         } catch (IOException e) {
             return false;
@@ -217,7 +217,8 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null && !isCancelled()) {
                 String zip_entry_name = UNARCHIVE(zip_dest_path, zipEntry, destFileObjectType, uri, uri_path, zipInputStream, counter_size_files);
-                counter_no_files++;
+                ++counter_no_files;
+                publishProgress(null);
                 current_file_name = zip_entry_name;
                 String entry_name = zipEntry.getName();
                 int idx = entry_name.indexOf(File.separator);
@@ -295,5 +296,4 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         }
         return zip_entry_name;
     }
-
 }

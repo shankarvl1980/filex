@@ -257,8 +257,8 @@ public class ArchiveDeletePasteServiceUtil {
                         df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.FILE_TYPE);
                     } else if (destFileObjectType == FileObjectType.USB_TYPE && MainActivity.usbFileRoot != null) {
                         df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.USB_TYPE);
-                    } else if (destFileObjectType == FileObjectType.FTP_TYPE) {
-                        df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.FTP_TYPE);
+                    } else {
+                        df.detailFragmentListener.createFragmentTransaction(dest_folder, destFileObjectType);
                     }
                 }
             } else {
