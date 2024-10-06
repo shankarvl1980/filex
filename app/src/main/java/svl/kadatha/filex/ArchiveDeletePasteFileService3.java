@@ -122,7 +122,7 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
                         zipentry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
                     }
 
-                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zipentry_selected_array, destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
+                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zipentry_selected_array,sourceFileObjectType ,destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
                     unarchiveAsyncTask.execute(null);
                     notification_content = getString(R.string.unzipping) + " '" + zip_file_path + " " + getString(R.string.at) + " " + dest_folder;
 

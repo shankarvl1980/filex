@@ -37,6 +37,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private final String zip_dest_path;
     private final String dest_folder;
     private final FileObjectType destFileObjectType;
+    private final FileObjectType sourceFileObjectType;
     private final Uri tree_uri;
     private final String tree_uri_path;
     private final List<String> written_file_name_list;
@@ -52,10 +53,11 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private int counter_no_files;
 
 
-    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entry_selected_array, FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, TaskProgressListener listener) {
+    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entry_selected_array,FileObjectType sourceFileObjectType ,FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, TaskProgressListener listener) {
         this.dest_folder = dest_folder;
         this.zip_entry_selected_array = zip_entry_selected_array;
         this.destFileObjectType = destFileObjectType;
+        this.sourceFileObjectType=sourceFileObjectType;
         this.zip_folder_name = zip_folder_name;
         this.zip_file_path = zip_file_path;
         this.tree_uri = tree_uri;
@@ -198,8 +200,8 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private boolean unzip(String zip_file_path, Uri uri, String uri_path, String zip_dest_path) {
         BufferedInputStream bufferedInputStream;
         ZipInputStream zipInputStream;
-        FileModel destZipFileModel = FileModelFactory.getFileModel(zip_file_path, destFileObjectType, uri, uri_path);
-        InputStream inputStream = destZipFileModel.getInputStream();
+        FileModel sourceZipFileModel = FileModelFactory.getFileModel(zip_file_path, sourceFileObjectType, uri, uri_path);
+        InputStream inputStream = sourceZipFileModel.getInputStream();
         if (inputStream == null) return false;
         bufferedInputStream = new BufferedInputStream(inputStream);
         zipInputStream = new ZipInputStream(bufferedInputStream);
