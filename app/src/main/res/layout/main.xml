@@ -173,7 +173,7 @@
 
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/actionmode_toolbar"
+            android:id="@+id/action_mode_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/toolbar_background"
