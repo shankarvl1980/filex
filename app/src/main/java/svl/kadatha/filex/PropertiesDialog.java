@@ -88,7 +88,7 @@ public class PropertiesDialog extends DialogFragment {
                     hidden_str = getString(R.string.yes);
                 }
 
-            } else if (fileObjectType == FileObjectType.FTP_TYPE || fileObjectType == FileObjectType.SFTP_TYPE) {
+            } else {
                 //FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
                 filename_str = new File(files_selected_array.get(0)).getName();
                 file_path_str = files_selected_array.get(0);

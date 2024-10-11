@@ -2,6 +2,9 @@ package svl.kadatha.filex;
 
 import android.os.Build;
 
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
@@ -493,6 +496,63 @@ public class FilePOJOUtil {
                 Timber.tag(TAG).e("Error filling FilePOJO for WebDAV directory: %s", e.getMessage());
                 return;
             }
+        } else if (fileObjectType == FileObjectType.SMB_TYPE) {
+            Timber.tag(TAG).d("Filling FilePOJO for SMB directory: %s", fileclickselected);
+            SmbClientRepository smbClientRepository = null;
+            Session session = null;
+            String shareName = null;
+            try {
+                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                session = smbClientRepository.getSession();
+                shareName = smbClientRepository.getShareName();
+                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                    // Adjust fileclickselected to remove leading "/" if necessary
+                    String adjustedPath = fileclickselected.startsWith("/") ? fileclickselected.substring(1) : fileclickselected;
+
+                    // List files in the directory
+                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
+                    Timber.tag(TAG).d("Retrieved %d files from SMB directory", fileList.size());
+
+                    for (FileIdBothDirectoryInformation info : fileList) {
+                        String name = info.getFileName();
+                        // Exclude "." and ".."
+                        if (name.equals(".") || name.equals("..")) {
+                            continue;
+                        }
+                        String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                        Timber.tag(TAG).d("Processing SMB file: %s", path);
+
+                        // Create SmbFileInfo
+                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
+                                name,
+                                path,
+                                info.getFileAttributes(),
+                                info.getEndOfFile(),
+                                info.getCreationTime().toEpochMillis(),
+                                info.getLastAccessTime().toEpochMillis(),
+                                info.getLastWriteTime().toEpochMillis(),
+                                info.getChangeTime().toEpochMillis()
+                        );
+
+                        // Create FilePOJO
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
+
+                        if (!filePOJO.getName().startsWith(".")) {
+                            filePOJOS_filtered.add(filePOJO);
+                        }
+                        filePOJOS.add(filePOJO);
+                    }
+                    Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);
+                }
+            } catch (Exception e) {
+                Timber.tag(TAG).e("Error filling FilePOJO for SMB directory: %s", e.getMessage());
+                return;
+            } finally {
+                if (smbClientRepository != null && session != null) {
+                    smbClientRepository.releaseSession(session);
+                    Timber.tag(TAG).d("SMB session released");
+                }
+            }
         } else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
             FileModel[] fileModels = fileModel.list();
@@ -638,6 +698,94 @@ public class FilePOJOUtil {
                 if (sftpChannelRepository != null && channelSftp != null) {
                     sftpChannelRepository.releaseChannel(channelSftp);
                     Timber.tag(TAG).d("SFTP channel released");
+                }
+            }
+        } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
+            Timber.tag(TAG).d("Filling FilePOJO for WebDAV directory: %s", fileclickselected);
+            WebDavClientRepository webDavClientRepository = null;
+            Sardine sardine;
+            try {
+                webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
+                sardine = webDavClientRepository.getSardine();
+                String basePath = webDavClientRepository.getBasePath(sardine);
+                String fullPath = basePath + (fileclickselected.startsWith("/") ? fileclickselected : "/" + fileclickselected);
+                String url = webDavClientRepository.buildUrl(fullPath);
+                List<DavResource> resources = sardine.list(url);
+                Timber.tag(TAG).d("Retrieved %d resources from WebDAV directory", resources.size());
+                if (!resources.isEmpty()) {
+                    resources.remove(0);// Safely remove the first element
+                }
+                for (DavResource resource : resources) {
+                    String name = resource.getName();
+                    String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                    Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
+
+                    FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
+                    if (!filePOJO.getName().startsWith(".")) {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+                Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error filling FilePOJO for WebDAV directory: %s", e.getMessage());
+                return;
+            }
+        } else if (fileObjectType == FileObjectType.SMB_TYPE) {
+            Timber.tag(TAG).d("Filling FilePOJO for SMB directory: %s", fileclickselected);
+            SmbClientRepository smbClientRepository = null;
+            Session session = null;
+            String shareName = null;
+            try {
+                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                session = smbClientRepository.getSession();
+                shareName = smbClientRepository.getShareName();
+                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                    // Adjust fileclickselected to remove leading "/" if necessary
+                    String adjustedPath = fileclickselected.startsWith("/") ? fileclickselected.substring(1) : fileclickselected;
+
+                    // List files in the directory
+                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
+                    Timber.tag(TAG).d("Retrieved %d files from SMB directory", fileList.size());
+
+                    for (FileIdBothDirectoryInformation info : fileList) {
+                        String name = info.getFileName();
+                        // Exclude "." and ".."
+                        if (name.equals(".") || name.equals("..")) {
+                            continue;
+                        }
+                        String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                        Timber.tag(TAG).d("Processing SMB file: %s", path);
+
+                        // Create SmbFileInfo
+                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
+                                name,
+                                path,
+                                info.getFileAttributes(),
+                                info.getEndOfFile(),
+                                info.getCreationTime().toEpochMillis(),
+                                info.getLastAccessTime().toEpochMillis(),
+                                info.getLastWriteTime().toEpochMillis(),
+                                info.getChangeTime().toEpochMillis()
+                        );
+
+                        // Create FilePOJO
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
+
+                        if (!filePOJO.getName().startsWith(".")) {
+                            filePOJOS_filtered.add(filePOJO);
+                        }
+                        filePOJOS.add(filePOJO);
+                    }
+                    Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);
+                }
+            } catch (Exception e) {
+                Timber.tag(TAG).e("Error filling FilePOJO for SMB directory: %s", e.getMessage());
+                return;
+            } finally {
+                if (smbClientRepository != null && session != null) {
+                    smbClientRepository.releaseSession(session);
+                    Timber.tag(TAG).d("SMB session released");
                 }
             }
         }

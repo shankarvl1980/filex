@@ -7,6 +7,12 @@ import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
+import com.hierynomus.msfscc.FileAttributes;
+import com.hierynomus.msfscc.fileinformation.FileAllInformation;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.smbj.common.SMBRuntimeException;
+import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
@@ -25,7 +31,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -606,6 +614,53 @@ public class MakeFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
+    public static FilePOJO MAKE_FilePOJO(SmbFileInfo smbFileInfo, boolean extract_icon, FileObjectType fileObjectType) {
+        String TAG = "MAKE_FilePOJO_SMB";
+
+        String name = smbFileInfo.getFileName();
+        String path = smbFileInfo.getFilePath();
+        boolean isDirectory = smbFileInfo.getFileAttributes().contains(FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
+        long dateLong = smbFileInfo.getChangeTime();
+        String date = Global.SDF.format(new Date(dateLong));
+
+        long sizeLong = 0L;
+        String si = "";
+
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(isDirectory, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                } else if (extract_icon && type == 0) {
+                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                }
+            }
+            sizeLong = smbFileInfo.getFileSize();
+            si = FileUtil.humanReadableByteCount(sizeLong);
+        } else {
+            String sub_file_count = null;
+            // Handle directory sub-file count if needed
+            si = sub_file_count;
+        }
+
+        if (name.startsWith(".")) {
+            alfa = Global.DISABLE_ALFA;
+        }
+
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
+    }
+
+
+
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
         FilePOJO filePOJO = null;
         if (fileObjectType == FileObjectType.FILE_TYPE) {
@@ -684,6 +739,48 @@ public class MakeFilePOJOUtil {
             } catch (IOException e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for WebDAV resource: %s", e.getMessage());
             }
+        } else if (fileObjectType == FileObjectType.SMB_TYPE) {
+            SmbClientRepository smbClientRepository = null;
+            Session session = null;
+            String shareName = null;
+            try {
+                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                session = smbClientRepository.getSession();
+                shareName = smbClientRepository.getShareName();
+                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                    // Adjust file_path if necessary (e.g., remove leading "/")
+                    String adjustedPath = file_path.startsWith("/") ? file_path.substring(1) : file_path;
+
+                    // Check if the path is root
+                    if (adjustedPath.isEmpty()) {
+                        filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                    } else if (share.folderExists(adjustedPath) || share.fileExists(adjustedPath)) {
+                        // Get file information
+                        FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
+
+                        // Create SmbFileInfo object
+                        SmbFileInfo smbFileInfo = new SmbFileInfo(
+                                adjustedPath.substring(adjustedPath.lastIndexOf('/') + 1),
+                                file_path,
+                                fileInfo.getBasicInformation().getFileAttributes(),
+                                fileInfo.getStandardInformation().getEndOfFile(),
+                                fileInfo.getBasicInformation().getCreationTime().toEpochMillis(),
+                                fileInfo.getBasicInformation().getLastAccessTime().toEpochMillis(),
+                                fileInfo.getBasicInformation().getLastWriteTime().toEpochMillis(),
+                                fileInfo.getBasicInformation().getChangeTime().toEpochMillis()
+                        );
+
+                        filePOJO = MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
+                    }
+                }
+            } catch (IOException | SMBRuntimeException e) {
+                Timber.tag(TAG).e("Error creating FilePOJO for SMB file: %s", e.getMessage());
+            } finally {
+                if (smbClientRepository != null && session != null) {
+                    smbClientRepository.releaseSession(session);
+                    Timber.tag(TAG).d("SMB session released");
+                }
+            }
         }
         return filePOJO;
     }
@@ -731,4 +828,73 @@ public class MakeFilePOJOUtil {
             return R.drawable.unknown_file_icon;
         }
     }
+
+
+
+
+    public static class SmbFileInfo {
+        private final String fileName;
+        private final String filePath;
+        private final Set<FileAttributes> fileAttributes;
+        private final long fileSize;
+        private final long creationTime;
+        private final long lastAccessTime;
+        private final long lastWriteTime;
+        private final long changeTime;
+
+        public SmbFileInfo(String fileName, String filePath, long fileAttributesLong, long fileSize,
+                           long creationTime, long lastAccessTime, long lastWriteTime, long changeTime) {
+            this.fileName = fileName;
+            this.filePath = filePath;
+            this.fileAttributes = parseAttributes(fileAttributesLong);
+            this.fileSize = fileSize;
+            this.creationTime = creationTime;
+            this.lastAccessTime = lastAccessTime;
+            this.lastWriteTime = lastWriteTime;
+            this.changeTime = changeTime;
+        }
+
+        private static Set<FileAttributes> parseAttributes(long fileAttributesLong) {
+            Set<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
+            for (FileAttributes attr : FileAttributes.values()) {
+                if ((fileAttributesLong & attr.getValue()) == attr.getValue()) {
+                    attrs.add(attr);
+                }
+            }
+            return attrs;
+        }
+        // Getters for all fields
+        public String getFileName() {
+            return fileName;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
+
+        public Set<FileAttributes> getFileAttributes() {
+            return fileAttributes;
+        }
+
+        public long getFileSize() {
+            return fileSize;
+        }
+
+        public long getCreationTime() {
+            return creationTime;
+        }
+
+        public long getLastAccessTime() {
+            return lastAccessTime;
+        }
+
+        public long getLastWriteTime() {
+            return lastWriteTime;
+        }
+
+        public long getChangeTime() {
+            return changeTime;
+        }
+    }
+
 }
