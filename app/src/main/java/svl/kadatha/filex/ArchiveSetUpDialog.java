@@ -153,6 +153,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
         if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
         create_folder_checkbox = zipdialogview.findViewById(R.id.dialog_archive_checkbox);
         zip_file_edittext = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_name);
+        if(archive_action.equals(ARCHIVE_ACTION_UNZIP)){
+            ViewGroup.MarginLayoutParams layoutParams=(ViewGroup.MarginLayoutParams) zip_file_edittext.getLayoutParams();
+            layoutParams.setMarginEnd(Global.TEN_DP);
+            zip_file_edittext.setLayoutParams(layoutParams);
+        }
         destFileObjectType_text_view = zipdialogview.findViewById(R.id.dialog_archive_destination_file_object_type);
         RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
         rb_current_dir = zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
