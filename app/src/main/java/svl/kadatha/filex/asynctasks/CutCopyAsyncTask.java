@@ -112,9 +112,9 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 copied_files_name.add(current_file_name);
                 copied_source_file_path_list.add(file_path);
             }
-
             files_selected_array.remove(file_path);
         }
+
         if (counter_no_files > 0) {
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
             if (cut) {

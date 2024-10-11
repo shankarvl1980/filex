@@ -207,7 +207,7 @@
 
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/storage_analyser_actionmode_toolbar"
+        android:id="@+id/storage_analyser_action_mode_toolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_background"

@@ -237,7 +237,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                         switch (intent_action) {
                             case ArchiveAsyncTask.TASK_TYPE: {
                                 current_file.setText(archiveDeletePasteFileService.zip_folder_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+                                copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
 
                                 from_textview.setText(archiveDeletePasteFileService.zip_file_path);
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
@@ -251,7 +251,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                                 from_textview.setText(archiveDeletePasteFileService.zip_file_path);
                                 to_textview.setText(archiveDeletePasteFileService.zip_folder_name != null ? archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+                                copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText(getString(R.string.extracted) + " " + archiveDeletePasteFileService.counter_no_files + (archiveDeletePasteFileService.counter_no_files < 2 ? " file" : " files"));
                                 size_files.setText(getString(R.string.size) + " " + size_progress);
                             }
@@ -260,7 +260,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                             case DeleteAsyncTask.TASK_TYPE: {
                                 from_textview.setText(archiveDeletePasteFileService.source_folder);
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+                                copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
                             }
@@ -272,7 +272,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
 
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+                                copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
                             }
@@ -282,7 +282,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
 
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
-                                copied_textview.setText(archiveDeletePasteFileService.copied_file_name);
+                                copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
                             }

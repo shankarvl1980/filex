@@ -32,18 +32,17 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private final String tree_uri_path;
     private final List<String> copied_files_name;
     private final Context context;
-    private final List<String> copied_source_file_path_list;
     private final long[] counter_size_files = new long[1];
     private final List<String> overwritten_file_path_list;
     private int counter_no_files;
     private FilePOJO filePOJO;
-    private String file_name;
+    private String current_file_name;
     private String copied_file;
 
     public CopyToAsyncTask(Context context, List<Uri> data_list, String file_name, String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, List<String> overwritten_file_path_list, TaskProgressListener listener) {
         this.context = context;
         this.data_list = data_list;
-        this.file_name = file_name;
+        this.current_file_name = file_name;
         this.dest_folder = dest_folder;
         this.destFileObjectType = destFileObjectType;
         this.tree_uri = tree_uri;
@@ -51,7 +50,6 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         this.overwritten_file_path_list = overwritten_file_path_list;
         this.listener = listener;
         this.copied_files_name = new ArrayList<>();
-        this.copied_source_file_path_list = new ArrayList<>();
         this.counter_no_files = 0;
         this.counter_size_files[0] = 0;
     }
@@ -72,6 +70,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         if (destFileObjectType == FileObjectType.ROOT_TYPE) {
             return false;
         }
+
         if (isCancelled() || data_list == null || data_list.isEmpty()) {
             return false;
         }
@@ -94,29 +93,26 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
                 return false;
             }
             if (!onlyOneUri) {
-                file_name = CopyToActivity.getFileNameOfUri(context, data);
+                current_file_name = CopyToActivity.getFileNameOfUri(context, data);
             } else {
-                if (file_name.isEmpty()) file_name = CopyToActivity.getFileNameOfUri(context, data);
+                if (current_file_name.isEmpty()) current_file_name = CopyToActivity.getFileNameOfUri(context, data);
             }
 
-            copy_result = FileUtil.CopyUriFileModel(data, destFileModel, file_name, counter_size_files);
+            copy_result = FileUtil.CopyUriFileModel(data, destFileModel, current_file_name, counter_size_files);
 
             if (copy_result) {
-                String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
-                copied_files_name.add(file_name);
-                copied_source_file_path_list.add(dest_file_path);
+                copied_files_name.add(current_file_name);
                 counter_no_files++;
-                copied_file = file_name;
+                copied_file = current_file_name;
                 publishProgress(null);
             }
-
         }
+
         if (counter_no_files > 0) {
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
         }
 
         copied_files_name.clear();
-        copied_source_file_path_list.clear();
         progressHandler.removeCallbacks(progressRunnable);
         return copy_result;
     }
@@ -125,7 +121,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], file_name, copied_file);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files[0], current_file_name, copied_file);
         }
     }
 

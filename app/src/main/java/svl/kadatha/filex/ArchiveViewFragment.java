@@ -218,7 +218,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             time_image_view.setSelected(viewModel.library_time_desc);
             adapter.notifyDataSetChanged();
         } else if (modification_observed) {
-            archiveViewActivity.actionmode_finish(this, fileclickselected);
+            archiveViewActivity.action_mode_finish(this, fileclickselected);
             modification_observed = false;
             local_activity_delete = false;
             progress_bar.setVisibility(View.VISIBLE);

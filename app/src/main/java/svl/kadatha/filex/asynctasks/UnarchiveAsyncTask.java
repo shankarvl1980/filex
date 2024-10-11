@@ -117,6 +117,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 success = read_zip_entry(zipEntry, zip_dest_path, tree_uri, tree_uri_path);
             }
         }
+
         if (zip_folder_name == null) {
             written_file_name_list.addAll(first_part_entry_name_set);
             written_file_path_list.addAll(first_part_entry_path_set);
@@ -124,6 +125,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             written_file_name_list.add(zip_folder_name);
             written_file_path_list.add(zip_dest_path);
         }
+
         if (counter_no_files > 0){
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, written_file_name_list, destFileObjectType, written_file_path_list);
         }

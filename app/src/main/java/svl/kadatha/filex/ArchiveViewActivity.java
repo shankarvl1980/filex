@@ -288,7 +288,7 @@ public class ArchiveViewActivity extends BaseActivity {
             search_toolbar.setVisibility(View.VISIBLE);
             search_edittext.requestFocus();
         } else {
-            actionmode_finish(archiveViewFragment, archiveViewFragment.fileclickselected);
+            action_mode_finish(archiveViewFragment, archiveViewFragment.fileclickselected);
         }
     }
 
@@ -469,7 +469,7 @@ public class ArchiveViewActivity extends BaseActivity {
         if (archiveViewFragment != null) {
             fragment_tag = archiveViewFragment.getTag();
             existingFilePOJOkey = archiveViewFragment.fileObjectType + fragment_tag;
-            actionmode_finish(archiveViewFragment, file_path); //string provided to actionmode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+            action_mode_finish(archiveViewFragment, file_path); //string provided to action_mode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
         }
 
         if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
@@ -527,7 +527,7 @@ public class ArchiveViewActivity extends BaseActivity {
         } else if (keyBoardUtil.getKeyBoardVisibility()) {
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
         } else if (!archiveViewFragment.viewModel.mselecteditems.isEmpty()) {
-            actionmode_finish(archiveViewFragment, archiveViewFragment.fileclickselected);
+            action_mode_finish(archiveViewFragment, archiveViewFragment.fileclickselected);
         } else if (search_toolbar_visible) {
             set_visibility_searchbar(false);
         } else {
@@ -596,7 +596,7 @@ public class ArchiveViewActivity extends BaseActivity {
         }
     }
 
-    public void actionmode_finish(ArchiveViewFragment archiveViewFragment, String archiveViewfrag_tag) {
+    public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archiveViewfrag_tag) {
         DeselectAllAndAdjustToolbars(archiveViewFragment, archiveViewfrag_tag);
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
         search_edittext.setText("");
@@ -878,7 +878,7 @@ public class ArchiveViewActivity extends BaseActivity {
                 }
 
                 ArrayList<String> files_selected_array = new ArrayList<>();
-                ArrayList<String> zipentry_selected_array = new ArrayList<>();
+                ArrayList<String> zip_entry_selected_array = new ArrayList<>();
                 if (ZIP_FILE != null) {
                     files_selected_array.add(ZIP_FILE.getAbsolutePath());
                     int size = archiveViewFragment.viewModel.mselecteditems.size();
@@ -887,10 +887,10 @@ public class ArchiveViewActivity extends BaseActivity {
                         for (int i = 0; i < size; ++i) {
                             file_list.add(new File(archiveViewFragment.viewModel.mselecteditems.getValueAtIndex(i)));
                         }
-                        ArchiveViewActivity.recursivefilepath(zipentry_selected_array, file_list);
+                        ArchiveViewActivity.recursivefilepath(zip_entry_selected_array, file_list);
                     }
 
-                    ArchiveSetUpDialog unziparchiveDialog = ArchiveSetUpDialog.getInstance(files_selected_array, zipentry_selected_array, archiveViewFragment.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+                    ArchiveSetUpDialog unziparchiveDialog = ArchiveSetUpDialog.getInstance(files_selected_array, zip_entry_selected_array, archiveViewFragment.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
                     unziparchiveDialog.show(fm, null);
                     archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
                 } else {

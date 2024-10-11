@@ -98,6 +98,4 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
             }
         });
     }
-
-
 }

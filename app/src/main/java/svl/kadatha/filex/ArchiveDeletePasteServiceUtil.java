@@ -6,7 +6,6 @@ import android.net.Uri;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import svl.kadatha.filex.filemodel.FileModel;
@@ -343,25 +342,29 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
-                                                       List<String> deleted_file_names, List<String> deleted_files_path_list, boolean cancelled, boolean storage_analyser_delete) {
+    public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context,boolean result ,int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
+                                                       boolean cancelled, boolean storage_analyser_delete) {
         String notification_content;
         if (cancelled) {
             CLEAR_CACHE_AND_REFRESH(source_folder, sourceFileObjectType);
             return null;
         }
+
+        if(result){
+            notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.deleted_selected_files) : context.getString(R.string.deleted_selected_files) + " " + source_folder;
+        }else{
+            notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.could_not_delete_selected_files) : context.getString(R.string.could_not_delete_selected_files) + " " + source_folder;
+        }
+
         if (counter_no_files > 0) {
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(source_folder, sourceFileObjectType);
-            notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.deleted_selected_files) : context.getString(R.string.deleted_selected_files) + " " + source_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
-        } else {
-            notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.could_not_delete_selected_files) : context.getString(R.string.could_not_delete_selected_files) + " " + source_folder;
         }
         return notification_content;
     }
 
 
-    public static String ON_CUT_COPY_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, String source_folder, String dest_folder,
+    public static String ON_CUT_COPY_ASYNC_TASK_COMPLETE(Context context,boolean result ,int counter_no_files, String source_folder, String dest_folder,
                                                          FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, FilePOJO filePOJO,
                                                          boolean cut, boolean cancelled) {
         String notification_content;
@@ -372,13 +375,16 @@ public class ArchiveDeletePasteServiceUtil {
                 CLEAR_CACHE_AND_REFRESH(source_folder, sourceFileObjectType);  // for source_folder
             return null;
         }
-        if (counter_no_files > 0) {
 
-            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder, source_folder, destFileObjectType, sourceFileObjectType, filePOJO);
+        if(result){
             notification_content = (cut ? context.getString(R.string.moved_selected_files) + " " + dest_folder : context.getString(R.string.copied_selected_files) + " " + dest_folder);
-            Global.WORKOUT_AVAILABLE_SPACE();
-        } else {
+        }else{
             notification_content = (cut ? context.getString(R.string.could_not_move_selected_files) + " " + dest_folder : context.getString(R.string.could_not_copy_selected_files) + " " + dest_folder);
+        }
+
+        if (counter_no_files > 0) {
+            NOTIFY_ALL_DIALOG_FRAGMENTS_ON_CUT_COPY(dest_folder, source_folder, destFileObjectType, sourceFileObjectType, filePOJO);
+            Global.WORKOUT_AVAILABLE_SPACE();
         }
         return notification_content;
     }
@@ -413,7 +419,7 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_UNARCHIVE_ASYNC_TASK_COMPLETE(Context context, int counter_no_files, FilePOJO filePOJO, String dest_folder,
+    public static String ON_UNARCHIVE_ASYNC_TASK_COMPLETE(Context context, boolean result, int counter_no_files, FilePOJO filePOJO, String dest_folder,
                                                           FileObjectType destFileObjectType,
                                                           String zip_file_path, boolean cancelled) {
         String notification_content;
@@ -421,12 +427,17 @@ public class ArchiveDeletePasteServiceUtil {
             CLEAR_CACHE_AND_REFRESH(dest_folder, destFileObjectType);
             return null;
         }
+
+        if(result){
+            notification_content = context.getString(R.string.unzipped) + " '" + new File(zip_file_path).getName() + "' " + context.getString(R.string.at) + " " + dest_folder;
+        } else{
+            notification_content = context.getString(R.string.could_not_extract) + " '" + new File(zip_file_path).getName() + "'";
+        }
+
         if (counter_no_files > 0) {
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(dest_folder, destFileObjectType, filePOJO);
-            notification_content = context.getString(R.string.unzipped) + " '" + new File(zip_file_path).getName() + "' " + context.getString(R.string.at) + " " + dest_folder;
             Global.WORKOUT_AVAILABLE_SPACE();
         } else {
-            notification_content = context.getString(R.string.could_not_extract) + " '" + new File(zip_file_path).getName() + "'";
             NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(dest_folder, destFileObjectType);
         }
         return notification_content;

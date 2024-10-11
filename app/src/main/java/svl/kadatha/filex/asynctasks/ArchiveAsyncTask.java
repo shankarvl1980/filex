@@ -38,7 +38,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final FileObjectType sourceFileObjectType;
     private int counter_no_files;
     private long counter_size_files;
-    private String copied_file_name;
+    private String current_file_name,processed_file_name;
     private FilePOJO filePOJO;
 
 
@@ -112,7 +112,8 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                         }
                         FileModel fileModel = fileModels.get(i);
                         counter_no_files++;
-                        copied_file_name = fileModel.getName();
+                        current_file_name = fileModel.getName();
+                        processed_file_name = current_file_name;
                         publishProgress(null);
                         String zip_entry_path;
                         if (lengthParentPath == 1) {
@@ -165,7 +166,7 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     protected void onProgressUpdate(Void value) {
         super.onProgressUpdate(value);
         if (listener != null) {
-            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, zip_file_name, copied_file_name);
+            listener.onProgressUpdate(TASK_TYPE, counter_no_files, counter_size_files, zip_file_name, processed_file_name);
         }
     }
 
@@ -201,7 +202,8 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
             File file = file_array.get(i);
             counter_no_files++;
-            copied_file_name = file.getName();
+            current_file_name = file.getName();
+            processed_file_name=current_file_name;
             publishProgress(null);
             String zip_entry_path;
             if (lengthParentPath == 1) {

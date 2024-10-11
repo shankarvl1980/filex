@@ -302,11 +302,11 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         });
 
         tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 2, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
-        int[] actionmode_drawables = {R.drawable.delete_icon, R.drawable.properties_icon};
+        int[] action_mode_drawables = {R.drawable.delete_icon, R.drawable.properties_icon};
         titles = new String[]{getString(R.string.delete), getString(R.string.properties)};
-        tb_layout.setResourceImageDrawables(actionmode_drawables, titles);
+        tb_layout.setResourceImageDrawables(action_mode_drawables, titles);
 
-        actionmode_toolbar = findViewById(R.id.storage_analyser_actionmode_toolbar);
+        actionmode_toolbar = findViewById(R.id.storage_analyser_action_mode_toolbar);
         actionmode_toolbar.addView(tb_layout);
         Button delete_btn = actionmode_toolbar.findViewById(R.id.toolbar_btn_1);
         delete_btn.setOnClickListener(new View.OnClickListener() {
@@ -385,7 +385,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 bottom_toolbar.setVisibility(View.VISIBLE);
                 actionmode_toolbar.setVisibility(View.GONE);
                 break;
-            case "actionmode":
+            case "action_mode":
                 actionmode_toolbar.setVisibility(View.VISIBLE);
                 bottom_toolbar.setVisibility(View.GONE);
                 break;
@@ -436,7 +436,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 case "bottom":
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     break;
-                case "actionmode":
+                case "action_mode":
                     actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     break;
             }
@@ -446,7 +446,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 case "bottom":
                     bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
                     break;
-                case "actionmode":
+                case "action_mode":
                     actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
                     break;
             }
@@ -464,7 +464,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         if (size >= 1) {
             bottom_toolbar.setVisibility(View.GONE);
             actionmode_toolbar.setVisibility(View.VISIBLE);
-            toolbar_shown = "actionmode";
+            toolbar_shown = "action_mode";
             actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
         } else {
             StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
@@ -622,7 +622,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     bottom_toolbar.setVisibility(View.VISIBLE);
                     storageAnalyserFragment.is_toolbar_visible = true;
                     break;
-                case "actionmode":
+                case "action_mode":
                     actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     actionmode_toolbar.setVisibility(View.VISIBLE);
                     storageAnalyserFragment.is_toolbar_visible = true;

@@ -139,7 +139,7 @@ public class ViewDialog extends DialogFragment {
                             MainActivity.SHOW_HIDDEN_FILE = isChecked;
                             tinyDB.putBoolean("show_hidden_file", MainActivity.SHOW_HIDDEN_FILE);
                             DetailFragment df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
-                            ((MainActivity) appCompatActivity).actionmode_finish(df);
+                            ((MainActivity) appCompatActivity).action_mode_finish(df);
                             if (df.fileObjectType == FileObjectType.FILE_TYPE || df.fileObjectType == FileObjectType.ROOT_TYPE) {
                                 getParentFragmentManager().beginTransaction().detach(df).commit();
                                 getParentFragmentManager().beginTransaction().attach(df).commit();
