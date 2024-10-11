@@ -50,8 +50,8 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public boolean fromArchive;
     public String file_path;
     public boolean video_refreshed;
-    private boolean isCancelled;
     public int rotation_degrees;
+    private boolean isCancelled;
     private Future<?> future1, future2, future3, future4, future5, future6;
 
 
@@ -262,7 +262,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         });
     }
 
-    public void rotate(int degrees,Uri tree_uri, String tree_uri_path) {
+    public void rotate(int degrees, Uri tree_uri, String tree_uri_path) {
         if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         isRotated.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();

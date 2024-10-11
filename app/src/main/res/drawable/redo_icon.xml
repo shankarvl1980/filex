@@ -1,7 +1,9 @@
-<vector android:height="30dp"
-    android:viewportHeight="24"
-    android:viewportWidth="24"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="30dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="M22,7L18.3848,10.6152C16.5429,8.998 14.1457,8 11.5,8C6.862,8 2.9378,11.0126 1.5488,15.1836L3.4395,15.8125C4.5655,12.4365 7.745,10 11.5,10C13.592,10 15.4986,10.7671 16.9785,12.0215L13,16L22,16L22,7z"/>
+    android:height="30dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="?attr/toolbar_icon_color"
+        android:pathData="M22,7L18.3848,10.6152C16.5429,8.998 14.1457,8 11.5,8C6.862,8 2.9378,11.0126 1.5488,15.1836L3.4395,15.8125C4.5655,12.4365 7.745,10 11.5,10C13.592,10 15.4986,10.7671 16.9785,12.0215L13,16L22,16L22,7z" />
 </vector>

@@ -42,26 +42,18 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <View
-                    android:id="@+id/storage_analyser_sort_layout_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toBottomOf="@id/storage_analyser_sort_table_layout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/storage_analyser_layout_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="storage_analyser_layout_lable,storage_analyser_dialog_view_layout_rg" />
+                    app:constraint_referenced_ids="storage_analyser_layout_label,storage_analyser_dialog_view_layout_rg" />
 
                 <TextView
-                    android:id="@+id/storage_analyser_layout_lable"
+                    android:id="@+id/storage_analyser_layout_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/dialog_background"
@@ -73,7 +65,7 @@
                     android:text="@string/layout"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/storage_analyser_sort_layout_background"
+                    app:layout_constraintTop_toTopOf="parent"
 
                     />
 
@@ -88,7 +80,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/storage_analyser_layout_lable">
+                    app:layout_constraintTop_toBottomOf="@id/storage_analyser_layout_label">
 
                     <RadioButton
                         android:id="@+id/storage_analyser_view_rb_list"

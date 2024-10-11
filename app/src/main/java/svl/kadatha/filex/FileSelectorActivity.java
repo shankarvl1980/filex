@@ -659,7 +659,25 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
+        String fragment_tag;
+        String existingFilePOJOkey = "";
+
+        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+        if (fileSelectorFragment != null) {
+            fragment_tag = fileSelectorFragment.getTag();
+            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
+            setSearchBarVisibility(false);
+        }
+
+
+        //this will force create new transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
+        {
+            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
+            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+        }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -699,26 +717,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
-        String existingFilePOJOkey = "";
-
-        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if (fileSelectorFragment != null) {
-            fragment_tag = fileSelectorFragment.getTag();
-            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
-            setSearchBarVisibility(false);
-        }
-
-
-        //this will force create new transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
-        {
-            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
-            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-        }
-    }
 
     @Override
     public void onMediaMount(String action) {
@@ -891,6 +889,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
+
 
 
 }

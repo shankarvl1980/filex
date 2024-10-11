@@ -342,7 +342,7 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context,boolean result ,int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
+    public static String ON_DELETE_ASYNC_TASK_COMPLETE(Context context, boolean result, int counter_no_files, String source_folder, FileObjectType sourceFileObjectType,
                                                        boolean cancelled, boolean storage_analyser_delete) {
         String notification_content;
         if (cancelled) {
@@ -350,9 +350,9 @@ public class ArchiveDeletePasteServiceUtil {
             return null;
         }
 
-        if(result){
+        if (result) {
             notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.deleted_selected_files) : context.getString(R.string.deleted_selected_files) + " " + source_folder;
-        }else{
+        } else {
             notification_content = sourceFileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) ? context.getString(R.string.could_not_delete_selected_files) : context.getString(R.string.could_not_delete_selected_files) + " " + source_folder;
         }
 
@@ -364,7 +364,7 @@ public class ArchiveDeletePasteServiceUtil {
     }
 
 
-    public static String ON_CUT_COPY_ASYNC_TASK_COMPLETE(Context context,boolean result ,int counter_no_files, String source_folder, String dest_folder,
+    public static String ON_CUT_COPY_ASYNC_TASK_COMPLETE(Context context, boolean result, int counter_no_files, String source_folder, String dest_folder,
                                                          FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, FilePOJO filePOJO,
                                                          boolean cut, boolean cancelled) {
         String notification_content;
@@ -376,9 +376,9 @@ public class ArchiveDeletePasteServiceUtil {
             return null;
         }
 
-        if(result){
+        if (result) {
             notification_content = (cut ? context.getString(R.string.moved_selected_files) + " " + dest_folder : context.getString(R.string.copied_selected_files) + " " + dest_folder);
-        }else{
+        } else {
             notification_content = (cut ? context.getString(R.string.could_not_move_selected_files) + " " + dest_folder : context.getString(R.string.could_not_copy_selected_files) + " " + dest_folder);
         }
 
@@ -428,9 +428,9 @@ public class ArchiveDeletePasteServiceUtil {
             return null;
         }
 
-        if(result){
+        if (result) {
             notification_content = context.getString(R.string.unzipped) + " '" + new File(zip_file_path).getName() + "' " + context.getString(R.string.at) + " " + dest_folder;
-        } else{
+        } else {
             notification_content = context.getString(R.string.could_not_extract) + " '" + new File(zip_file_path).getName() + "'";
         }
 

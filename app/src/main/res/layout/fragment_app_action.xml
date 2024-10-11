@@ -40,16 +40,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null">
-
-                <View
-                    android:id="@+id/fragment_app_action_dialog_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_recyclerView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <ImageView
                     android:id="@+id/fragment_app_action_app_image"
@@ -57,7 +49,7 @@
                     android:layout_height="@dimen/image_preview_dimen"
                     android:layout_margin="10dp"
                     app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
-                    app:layout_constraintStart_toStartOf="@id/fragment_app_action_dialog_background"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name"
 
                     />
@@ -71,7 +63,7 @@
                     android:textSize="19sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
-                    app:layout_constraintTop_toTopOf="@id/fragment_app_action_dialog_background" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/fragment_app_action_package_name"

@@ -6,7 +6,6 @@ import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
@@ -18,8 +17,8 @@ import timber.log.Timber;
 public class WebDavClientRepository {
     private static final String TAG = "WebDavClientRepository";
     private static WebDavClientRepository instance;
-    private final Sardine sardine;
     public final String baseUrl;
+    private final Sardine sardine;
     private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private String discoveredBasePath; // Cached base path
 
@@ -41,7 +40,7 @@ public class WebDavClientRepository {
             throw new IOException("Unable to connect to the WebDAV server with the provided credentials.");
         }
         Timber.tag(TAG).d("WebDavClientRepository constructor completed successfully");
-        discoveredBasePath=discoverBasePath(sardine);
+        discoveredBasePath = discoverBasePath(sardine);
     }
 
     public static synchronized WebDavClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) throws IOException {
@@ -270,7 +269,6 @@ public class WebDavClientRepository {
             return null;
         }
     }
-
 
 
     /**

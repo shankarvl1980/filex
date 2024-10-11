@@ -357,7 +357,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
             }
 
-            FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, select_app, file_size,false);
+            FileIntentDispatch.openFile(context, file_path, "", fileObjectType, select_app, file_size, false);
         }
     }
 

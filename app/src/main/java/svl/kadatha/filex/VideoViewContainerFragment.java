@@ -66,7 +66,7 @@ public class VideoViewContainerFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString("file_path", file_path);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE, fileObjectType);
-        bundle.putBoolean("fromArchive",fromArchive);
+        bundle.putBoolean("fromArchive", fromArchive);
         frag.setArguments(bundle);
         return frag;
     }
@@ -213,7 +213,7 @@ public class VideoViewContainerFragment extends Fragment {
         if (bundle != null) {
             viewModel.file_path = bundle.getString("file_path");
             viewModel.fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-            viewModel.fromArchive= bundle.getBoolean("fromArchive");
+            viewModel.fromArchive = bundle.getBoolean("fromArchive");
             if (viewModel.fileObjectType == null || viewModel.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 viewModel.fromThirdPartyApp = true;
                 viewModel.fileObjectType = FileObjectType.FILE_TYPE;

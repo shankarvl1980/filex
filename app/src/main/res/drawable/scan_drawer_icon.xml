@@ -3,19 +3,19 @@
     android:height="36dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path
-      android:fillColor="?attr/drawer_icon_color"
-      android:pathData="M5.905,2.894C3.5671,2.894 1.714,4.7471 1.714,7.085V9.91h2.268V7.085C3.982,6.0375 4.8575,5.162 5.905,5.162H8.73v-2.268H5.905z" />
-  <path
-      android:fillColor="?attr/drawer_icon_color"
-      android:pathData="M18.095,2.894H15.27v2.268h2.825C19.1425,5.162 20.018,6.0375 20.018,7.085V9.91h2.268V7.085C22.286,4.7471 20.4329,2.894 18.095,2.894z" />
-  <path
-      android:fillColor="?attr/drawer_icon_color"
-      android:pathData="M5.905,21.106C3.5671,21.106 1.714,19.2529 1.714,16.915V14.09h2.268v2.825C3.982,17.9625 4.8575,18.838 5.905,18.838H8.73v2.268H5.905z" />
-  <path
-      android:fillColor="?attr/drawer_icon_color"
-      android:pathData="M18.095,21.106H15.27v-2.268h2.825c1.0475,0 1.923,-0.8755 1.923,-1.923V14.09h2.268v2.825C22.286,19.2529 20.4329,21.106 18.095,21.106z" />
-  <path
-      android:fillColor="?attr/drawer_icon_color"
-      android:pathData="M6.598,11.34h10.804v2.16h-10.804z" />
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M5.905,2.894C3.5671,2.894 1.714,4.7471 1.714,7.085V9.91h2.268V7.085C3.982,6.0375 4.8575,5.162 5.905,5.162H8.73v-2.268H5.905z" />
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M18.095,2.894H15.27v2.268h2.825C19.1425,5.162 20.018,6.0375 20.018,7.085V9.91h2.268V7.085C22.286,4.7471 20.4329,2.894 18.095,2.894z" />
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M5.905,21.106C3.5671,21.106 1.714,19.2529 1.714,16.915V14.09h2.268v2.825C3.982,17.9625 4.8575,18.838 5.905,18.838H8.73v2.268H5.905z" />
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M18.095,21.106H15.27v-2.268h2.825c1.0475,0 1.923,-0.8755 1.923,-1.923V14.09h2.268v2.825C22.286,19.2529 20.4329,21.106 18.095,21.106z" />
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M6.598,11.34h10.804v2.16h-10.804z" />
 </vector>

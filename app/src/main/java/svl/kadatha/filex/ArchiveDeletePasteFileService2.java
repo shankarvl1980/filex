@@ -120,7 +120,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                         zip_entry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
                     }
 
-                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zip_entry_selected_array,sourceFileObjectType ,destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
+                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zip_entry_selected_array, sourceFileObjectType, destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
                     unarchiveAsyncTask.execute(null);
                     notification_content = getString(R.string.unzipping) + " '" + zip_file_path + " " + getString(R.string.at) + " " + dest_folder;
                 }
@@ -286,7 +286,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                 nm.notify(notification_content, notification_id);
             }
         } else if (taskType.equals(UnarchiveAsyncTask.TASK_TYPE)) {
-            String notification_content = ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNC_TASK_COMPLETE(context,result ,counter_no_files, filePOJO, dest_folder, destFileObjectType, zip_file_path, !result);
+            String notification_content = ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNC_TASK_COMPLETE(context, result, counter_no_files, filePOJO, dest_folder, destFileObjectType, zip_file_path, !result);
             if (serviceCompletionListener != null) {
                 serviceCompletionListener.onServiceCompletion(intent_action, counter_no_files > 0, new File(zip_file_path).getName(), dest_folder);
             } else {
@@ -294,7 +294,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
             }
         } else if (taskType.equals(DeleteAsyncTask.TASK_TYPE)) {
             int s = delete_async_task.deleted_file_names.size();
-            String notification_content = ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNC_TASK_COMPLETE(context,result ,counter_no_files, source_folder, sourceFileObjectType, !result, storage_analyser_delete);
+            String notification_content = ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNC_TASK_COMPLETE(context, result, counter_no_files, source_folder, sourceFileObjectType, !result, storage_analyser_delete);
             if (serviceCompletionListener != null) {
                 if (sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                     serviceCompletionListener.onServiceCompletion(intent_action, s > 0, null, "");
@@ -305,7 +305,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                 nm.notify(notification_content, notification_id);
             }
         } else if (taskType.equals(CutCopyAsyncTask.TASK_TYPE_CUT) || taskType.equals(CutCopyAsyncTask.TASK_TYPE_COPY)) {
-            String notification_content = ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNC_TASK_COMPLETE(context, result ,counter_no_files, source_folder, dest_folder, sourceFileObjectType, destFileObjectType, filePOJO, cut, !result);
+            String notification_content = ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNC_TASK_COMPLETE(context, result, counter_no_files, source_folder, dest_folder, sourceFileObjectType, destFileObjectType, filePOJO, cut, !result);
             if (serviceCompletionListener != null) {
                 serviceCompletionListener.onServiceCompletion(intent_action, counter_no_files > 0, null, dest_folder);
             } else {
@@ -333,13 +333,13 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
             ArchiveDeletePasteServiceUtil.ON_ARCHIVE_ASYNC_TASK_CANCEL(context, dest_folder, zip_file_name, destFileObjectType, tree_uri, tree_uri_path);
             nm.notify(getString(R.string.could_not_create) + " '" + zip_file_name + "'", notification_id);
         } else if (taskType.equals(UnarchiveAsyncTask.TASK_TYPE)) {
-            String notification_content = ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNC_TASK_COMPLETE(context, false ,counter_no_files, filePOJO, dest_folder, destFileObjectType, zip_file_path, true);
+            String notification_content = ArchiveDeletePasteServiceUtil.ON_UNARCHIVE_ASYNC_TASK_COMPLETE(context, false, counter_no_files, filePOJO, dest_folder, destFileObjectType, zip_file_path, true);
             nm.notify(getString(R.string.could_not_extract) + " '" + new File(zip_file_path).getName() + "'", notification_id);
         } else if (taskType.equals(DeleteAsyncTask.TASK_TYPE)) {
-            ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNC_TASK_COMPLETE(context, false,counter_no_files, source_folder, sourceFileObjectType, true, storage_analyser_delete);
+            ArchiveDeletePasteServiceUtil.ON_DELETE_ASYNC_TASK_COMPLETE(context, false, counter_no_files, source_folder, sourceFileObjectType, true, storage_analyser_delete);
             nm.notify(getString(R.string.could_not_delete_selected_files) + " " + source_folder, notification_id);
         } else if (taskType.equals(CutCopyAsyncTask.TASK_TYPE_CUT) || taskType.equals(CutCopyAsyncTask.TASK_TYPE_COPY)) {
-            String notification_content = ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNC_TASK_COMPLETE(context,false ,counter_no_files, source_folder, dest_folder, sourceFileObjectType, destFileObjectType, filePOJO, cut, true);
+            String notification_content = ArchiveDeletePasteServiceUtil.ON_CUT_COPY_ASYNC_TASK_COMPLETE(context, false, counter_no_files, source_folder, dest_folder, sourceFileObjectType, destFileObjectType, filePOJO, cut, true);
             if (cut) {
                 nm.notify(R.string.could_not_move_selected_files + " " + dest_folder, notification_id);
             } else {

@@ -575,7 +575,7 @@ public class Global {
     static void WORKOUT_AVAILABLE_SPACE() {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if(filePOJO==null)continue;
+            if (filePOJO == null) continue;
             long totalspace = 0, availabelspace = 0;
             FileObjectType fileObjectType = filePOJO.getFileObjectType();
             if (fileObjectType == FileObjectType.FILE_TYPE) {

@@ -148,11 +148,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View zipdialogview = inflater.inflate(R.layout.fragment_archive_setup, container, false);
         TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
-        TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_outputfilename);
+        TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_output_filename);
         TextView zip_name_suffix = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_suffix);
         if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
         create_folder_checkbox = zipdialogview.findViewById(R.id.dialog_archive_checkbox);
-        zip_file_edittext = zipdialogview.findViewById(R.id.dialog_archive_textview_zipname);
+        zip_file_edittext = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_name);
         destFileObjectType_text_view = zipdialogview.findViewById(R.id.dialog_archive_destination_file_object_type);
         RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
         rb_current_dir = zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);

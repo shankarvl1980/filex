@@ -524,16 +524,16 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                     Global.print(context, context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, select_app, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, select_app, file_size, false);
 
             } else if (Global.whether_file_cached(fileObjectType)) {
                 if (file_size > Global.CACHE_FILE_MAX_LIMIT) {
                     Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, select_app, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, select_app, file_size, false);
             } else if (fileObjectType == FileObjectType.FILE_TYPE) {
-                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, select_app, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, select_app, file_size, false);
             }
         }
     }
@@ -646,18 +646,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         } else {
             return true;
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
+    }
 
     public boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType) {
         if (MainActivity.usbFileRoot == null) {
@@ -676,7 +665,18 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         } else {
             return true;
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     public class FilePathRecyclerViewAdapter extends RecyclerView.Adapter<FilePathRecyclerViewAdapter.ViewHolder> {
         final String[] filepath_string_array;
@@ -770,5 +770,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         }
     }
+
+
 }
 

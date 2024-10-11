@@ -44,19 +44,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
 
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <View
-                    android:id="@+id/file_editor_settings_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    android:minHeight="44dp"
-                    app:layout_constraintBottom_toBottomOf="@id/fragment_file_editor_background_padding"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
 
                 <CheckBox
@@ -73,7 +63,7 @@
                     android:text="@string/wrap_text"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/file_editor_settings_background"
+                    app:layout_constraintTop_toTopOf="parent"
 
                     />
 

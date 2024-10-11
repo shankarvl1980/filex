@@ -3,7 +3,7 @@
     android:height="30dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path
-      android:fillColor="?attr/toolbar_icon_color"
-      android:pathData="M20.431,12.032 L15.833,16.759L15.833,7.304ZM23.5,12.032 L13.917,2.181L13.917,21.882ZM8.167,16.759 L3.569,12.032 8.167,7.304ZM10.083,21.882L10.083,2.181l-9.583,9.851z"/>
+    <path
+        android:fillColor="?attr/toolbar_icon_color"
+        android:pathData="M20.431,12.032 L15.833,16.759L15.833,7.304ZM23.5,12.032 L13.917,2.181L13.917,21.882ZM8.167,16.759 L3.569,12.032 8.167,7.304ZM10.083,21.882L10.083,2.181l-9.583,9.851z" />
 </vector>

@@ -471,7 +471,7 @@ public class FilePOJOUtil {
                 sardine = webDavClientRepository.getSardine();
                 String basePath = webDavClientRepository.getBasePath(sardine);
                 String fullPath = basePath + (fileclickselected.startsWith("/") ? fileclickselected : "/" + fileclickselected);
-                String url=webDavClientRepository.buildUrl(fullPath);
+                String url = webDavClientRepository.buildUrl(fullPath);
                 List<DavResource> resources = sardine.list(url);
                 Timber.tag(TAG).d("Retrieved %d resources from WebDAV directory", resources.size());
                 if (!resources.isEmpty()) {

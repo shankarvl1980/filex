@@ -37,18 +37,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <View
-                    android:id="@+id/search_file_label_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_search_storage_dir_recyclerview"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <TextView
                     android:id="@+id/dialog_fragment_search_file_label"
@@ -62,7 +53,7 @@
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/search_file_label_background" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/dialog_fragment_search_file_edittext"
@@ -142,6 +133,7 @@
                     android:id="@+id/dialog_fragment_search_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/four_dp"
                     android:background="?attr/dialog_background"
                     android:minHeight="36dp"
                     android:orientation="horizontal"

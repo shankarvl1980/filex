@@ -16,7 +16,6 @@ import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.FileUtil;
-import svl.kadatha.filex.Global;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
@@ -88,14 +87,15 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         boolean onlyOneUri = data_list.size() == 1;
         boolean copy_result = false;
         for (Uri data : data_list) {
-            if(isCancelled()){
+            if (isCancelled()) {
                 progressHandler.removeCallbacks(progressRunnable);
                 return false;
             }
             if (!onlyOneUri) {
                 current_file_name = CopyToActivity.getFileNameOfUri(context, data);
             } else {
-                if (current_file_name.isEmpty()) current_file_name = CopyToActivity.getFileNameOfUri(context, data);
+                if (current_file_name.isEmpty())
+                    current_file_name = CopyToActivity.getFileNameOfUri(context, data);
             }
 
             copy_result = FileUtil.CopyUriFileModel(data, destFileModel, current_file_name, counter_size_files);

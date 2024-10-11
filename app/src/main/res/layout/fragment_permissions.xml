@@ -44,11 +44,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/dialog_background"
-                    android:padding="@dimen/ten_dp">
+                    android:padding="@dimen/dialog_inner_padding">
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/ten_dp"
+                        android:paddingTop="@dimen/ten_dp"
+                        android:paddingEnd="@dimen/ten_dp">
 
                         <TextView
                             android:layout_height="wrap_content"
@@ -84,8 +87,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        >
+                        android:padding="@dimen/ten_dp">
 
                         <TextView
                             android:layout_height="wrap_content"
@@ -118,8 +120,7 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        >
+                        android:padding="@dimen/ten_dp">
 
                         <TextView
                             android:layout_height="wrap_content"
@@ -151,7 +152,8 @@
 
                     <TableRow
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/ten_dp">
 
                         <TextView
                             android:layout_height="wrap_content"

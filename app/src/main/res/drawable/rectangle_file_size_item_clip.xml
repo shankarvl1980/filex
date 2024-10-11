@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<clip xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/rectangle_file_size_item_foreground"
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
     android:clipOrientation="horizontal"
-    android:gravity="start"
-    >
+    android:drawable="@drawable/rectangle_file_size_item_foreground"
+    android:gravity="start">
 
 
 </clip>

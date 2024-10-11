@@ -38,19 +38,11 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <View
-                    android:id="@+id/progress_bar_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/layout_margin"
-                    android:layout_marginBottom="4dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toTopOf="@id/barrier"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_cancelable_pbf_title" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginBottom="4dp"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <ProgressBar
                     android:id="@+id/fragment_cancelable_progressbar_pb"
@@ -59,9 +51,9 @@
 
                     android:padding="@dimen/ten_dp"
 
-                    app:layout_constraintBottom_toBottomOf="@+id/progress_bar_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/progress_bar_background" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
                 <TextView
@@ -77,10 +69,10 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/wait_till_the_process_completes"
                     android:textSize="17sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/progress_bar_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/fragment_cancelable_progressbar_pb"
-                    app:layout_constraintTop_toTopOf="@id/progress_bar_background" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier"

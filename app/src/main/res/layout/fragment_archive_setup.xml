@@ -39,21 +39,13 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <View
-
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toBottomOf="@id/background_padding"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <TextView
 
-                    android:id="@+id/dialog_archive_outputfilename"
+                    android:id="@+id/dialog_archive_output_filename"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="@dimen/ten_dp"
@@ -68,15 +60,14 @@
                     />
 
                 <EditText
-                    android:id="@+id/dialog_archive_textview_zipname"
+                    android:id="@+id/dialog_archive_textview_zip_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
-                    android:layout_marginEnd="@dimen/ten_dp"
                     android:textColor="?attr/edit_text_color"
                     app:layout_constraintEnd_toStartOf="@id/dialog_archive_textview_zip_suffix"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_outputfilename" />
+                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_output_filename" />
 
                 <TextView
                     android:id="@+id/dialog_archive_textview_zip_suffix"
@@ -85,9 +76,9 @@
                     android:paddingEnd="@dimen/ten_dp"
                     android:text=".zip"
                     android:textSize="17sp"
-                    app:layout_constraintBottom_toBottomOf="@id/dialog_archive_textview_zipname"
+                    app:layout_constraintBottom_toBottomOf="@id/dialog_archive_textview_zip_name"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_outputfilename"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_output_filename"
 
                     />
 
@@ -101,7 +92,7 @@
                     android:text="@string/create_folder"
                     android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_textview_zipname" />
+                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_textview_zip_name" />
 
 
                 <TextView

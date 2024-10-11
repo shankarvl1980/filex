@@ -83,7 +83,7 @@ public class PdfViewFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString("file_path", file_path);
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE, fileObjectType);
-        bundle.putBoolean("fromArchive",fromArchive);
+        bundle.putBoolean("fromArchive", fromArchive);
         pdfViewFragment.setArguments(bundle);
         return pdfViewFragment;
     }

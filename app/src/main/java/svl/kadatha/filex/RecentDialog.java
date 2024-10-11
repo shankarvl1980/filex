@@ -186,16 +186,16 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     Global.print(context, context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, false, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size, false);
 
             } else if (Global.whether_file_cached(fileObjectType)) {
                 if (file_size > Global.CACHE_FILE_MAX_LIMIT) {
                     Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
                     return;
                 }
-                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size, false);
             } else if (fileObjectType == FileObjectType.FILE_TYPE) {
-                FileIntentDispatch.openFile(context, file_path, "",  fileObjectType, false, file_size,false);
+                FileIntentDispatch.openFile(context, file_path, "", fileObjectType, false, file_size, false);
             }
         }
     }
@@ -207,19 +207,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         rootdirrecycleradapter.notifyDataSetChanged();
         recentRecyclerAdapter.notifyDataSetChanged();
     }
-
-    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
 
     private void discoverDevice() {
 
@@ -235,7 +222,18 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 }
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
         final boolean storage_dir;
@@ -255,7 +253,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         @Override
         public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2) {
             FilePOJO filePOJO = dir_linkedlist.get(p2);
-            if(filePOJO==null)return;
+            if (filePOJO == null) return;
             if (storage_dir) {
                 FileObjectType fileObjectType = filePOJO.getFileObjectType();
                 String space = "";
@@ -332,7 +330,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     public void onClick(View p) {
                         pos = getBindingAdapterPosition();
                         final FilePOJO filePOJO = dir_linkedlist.get(pos);
-                        if(filePOJO==null)return;
+                        if (filePOJO == null) return;
                         clicked_filepojo = filePOJO;
                         if (filePOJO.getIsDirectory()) {
                             AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -350,6 +348,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     }
+
+
 
 
 }

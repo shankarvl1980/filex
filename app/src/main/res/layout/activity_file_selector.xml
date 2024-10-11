@@ -163,15 +163,4 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <!--FrameLayout
-        android:id="@+id/file_selector_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        /-->
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

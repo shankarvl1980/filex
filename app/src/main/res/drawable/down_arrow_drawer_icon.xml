@@ -3,7 +3,7 @@
     android:height="30dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path
-      android:pathData="M4,9L12,17L20,9L4,9z"
-      android:fillColor="?attr/drawer_icon_color"/>
+    <path
+        android:fillColor="?attr/drawer_icon_color"
+        android:pathData="M4,9L12,17L20,9L4,9z" />
 </vector>

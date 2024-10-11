@@ -42,19 +42,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null">
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:background="?attr/dialog_background"
-                    app:layout_constraintBottom_toBottomOf="@+id/dialog_fragment_size_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-
-
-                    />
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <TableLayout
                     android:id="@+id/fragment_cut_copy_delete_tablelayout"
@@ -74,8 +63,7 @@
                             android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
                             android:layout_height="wrap_content"
                             android:text="@string/from"
-                            android:textSize="17sp"
-                            />
+                            android:textSize="17sp" />
 
                         <TextView
                             android:layout_height="wrap_content"
@@ -87,8 +75,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textSize="17sp"
-                            />
+                            android:textSize="17sp" />
                     </TableRow>
 
 
@@ -101,8 +88,7 @@
                             android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
                             android:layout_height="wrap_content"
                             android:text="@string/to"
-                            android:textSize="17sp"
-                            />
+                            android:textSize="17sp" />
 
                         <TextView
                             android:layout_height="wrap_content"

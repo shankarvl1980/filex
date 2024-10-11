@@ -281,7 +281,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
         page_number = findViewById(R.id.file_editor_page_number);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) page_number.getLayoutParams();
-        params.topMargin = Global.ACTION_BAR_HEIGHT+Global.FOUR_DP;
+        params.topMargin = Global.ACTION_BAR_HEIGHT + Global.FOUR_DP;
         page_number.setLayoutParams(params);
 
         viewModel.textViewUndoRedo = new TextViewUndoRedoBatch(filetext_container_edittext.getEditText());
@@ -488,7 +488,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
             viewModel.data = intent.getData();
             viewModel.fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             viewModel.file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
-            viewModel.fromArchive=intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE,false);
+            viewModel.fromArchive = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
             if (viewModel.file_path == null)
                 viewModel.file_path = RealPathUtil.getLastSegmentPath(viewModel.data);
 

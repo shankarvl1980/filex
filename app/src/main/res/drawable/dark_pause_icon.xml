@@ -11,7 +11,7 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
+        android:fillColor="@color/light_icon_color"
         android:pathData="M6,4.091L6,19.844h4L10,4.091ZM14,4.091L14,19.844h4L18,4.091Z"
-        android:strokeWidth="1.06079"
-        android:fillColor="@color/light_icon_color"/>
+        android:strokeWidth="1.06079" />
 </vector>

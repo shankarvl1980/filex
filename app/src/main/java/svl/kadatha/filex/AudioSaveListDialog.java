@@ -61,7 +61,7 @@ public class AudioSaveListDialog extends DialogFragment {
         create_list_view.setAdapter(new CreateAddListRecyclerAdapter(create_add_array));
         create_list_view.setLayoutManager(new LinearLayoutManager(context));
         create_list_view.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        RecyclerView audio_list_view = v.findViewById(R.id.audio_save_list_savedlist_recyclerview);
+        RecyclerView audio_list_view = v.findViewById(R.id.audio_save_list_saved_list_recyclerview);
         audio_list_view.setAdapter(new AudioSavedListRecyclerAdapter(saved_audio_list));
         audio_list_view.setLayoutManager(new LinearLayoutManager(context));
         audio_list_view.addItemDecoration(Global.DIVIDERITEMDECORATION);

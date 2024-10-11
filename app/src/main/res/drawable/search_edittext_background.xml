@@ -4,17 +4,14 @@
         <shape android:shape="rectangle">
             <!-- Draw a 2dp width border around shape -->
             <stroke
-                android:color="@android:color/darker_gray"
                 android:width="2dp"
-                />
+                android:color="@android:color/darker_gray" />
         </shape>
     </item>
     <!-- Overlap the left, top and right border using background color  -->
-    <item
-        android:bottom="2dp"
-        >
+    <item android:bottom="2dp">
         <shape android:shape="rectangle">
-            <solid android:color="?attr/toolbar_background"/>
+            <solid android:color="?attr/toolbar_background" />
         </shape>
     </item>
 </layer-list>

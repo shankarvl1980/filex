@@ -43,7 +43,6 @@ public class SearchDialog extends DialogFragment {
     boolean search_whole_word, search_case_sensitive, search_regex;
     private EditText search_file_name_edit_text, lower_bound_edit_text, upper_bound_edit_text;
     private CheckBox wholeword_checkbox, casesensitive_checkbox, regex_checkbox;
-    //private final Set<FilePOJO> selected_search_dir_list= new HashSet<>();
     private Context context;
     private InputMethodManager imm;
     private long search_lower_limit_size = 0;

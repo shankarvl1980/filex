@@ -99,7 +99,7 @@ ImageViewFragment extends Fragment {
     private RecyclerView recyclerview;
 
 
-    public static ImageViewFragment getNewInstance(String file_path, FileObjectType fileObjectType,boolean fromArchive) {
+    public static ImageViewFragment getNewInstance(String file_path, FileObjectType fileObjectType, boolean fromArchive) {
         ImageViewFragment frag = new ImageViewFragment();
         Bundle bundle = new Bundle();
         bundle.putString("file_path", file_path);
@@ -342,7 +342,7 @@ ImageViewFragment extends Fragment {
         if (bundle != null) {
             viewModel.file_path = bundle.getString("file_path");
             viewModel.fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
-            viewModel.fromArchive=bundle.getBoolean("fromArchive");
+            viewModel.fromArchive = bundle.getBoolean("fromArchive");
             if (viewModel.fileObjectType == null || viewModel.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 viewModel.fileObjectType = FileObjectType.FILE_TYPE;
                 viewModel.fromThirdPartyApp = true;
@@ -447,7 +447,7 @@ ImageViewFragment extends Fragment {
                             return;
                     } else {
                         progress_bar.setVisibility(View.VISIBLE);
-                        viewModel.rotate(viewModel.rotation_degrees,tree_uri, tree_uri_path);
+                        viewModel.rotate(viewModel.rotation_degrees, tree_uri, tree_uri_path);
                     }
                 }
             }
@@ -536,7 +536,7 @@ ImageViewFragment extends Fragment {
             }
         }
         progress_bar.setVisibility(View.VISIBLE);
-        viewModel.rotate(degrees,tree_uri, tree_uri_path);
+        viewModel.rotate(degrees, tree_uri, tree_uri_path);
     }
 
     @Override

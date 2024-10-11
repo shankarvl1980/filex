@@ -38,13 +38,14 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
 
                 <TextView
                     android:id="@+id/layout_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/dialog_background"
                     android:gravity="start"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
@@ -62,7 +63,6 @@
                     android:id="@+id/dialog_view_layout_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/dialog_background"
                     android:minHeight="36dp"
                     android:orientation="horizontal"
                     android:paddingStart="20dp"
@@ -183,7 +183,7 @@
 
 
                 <View
-                    android:id="@+id/sort_layout_backgroundd"
+                    android:id="@+id/sort_layout_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="?attr/dialog_background"
@@ -205,7 +205,7 @@
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd" />
+                    app:layout_constraintTop_toTopOf="@id/sort_layout_background" />
 
 
                 <TableLayout
@@ -215,7 +215,7 @@
                     android:paddingTop="@dimen/ten_dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/sort_layout_backgroundd"
+                    app:layout_constraintTop_toTopOf="@id/sort_layout_background"
 
                     >
 

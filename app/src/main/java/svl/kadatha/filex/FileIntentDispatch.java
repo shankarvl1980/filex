@@ -17,9 +17,9 @@ import java.util.List;
 class FileIntentDispatch {
     static final String EXTRA_FILE_OBJECT_TYPE = "fileObjectType";
     static final String EXTRA_FILE_PATH = "file_path";
-    static final String EXTRA_FROM_ARCHIVE="fromArchive";
+    static final String EXTRA_FROM_ARCHIVE = "fromArchive";
 
-    public static void openFile(Context context, String file_path, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size,boolean fromArchive) {
+    public static void openFile(Context context, String file_path, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size, boolean fromArchive) {
         String file_extn = "";
         Uri uri;
         int file_extn_idx = file_path.lastIndexOf(".");
@@ -29,7 +29,7 @@ class FileIntentDispatch {
 
         File file = new File(file_path);
         uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
-        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size,fromArchive);
+        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size, fromArchive);
 
     }
 
@@ -40,7 +40,7 @@ class FileIntentDispatch {
             file_extn = file_path.substring(file_extn_idx + 1);
         }
         Uri uri = FileUtil.getDocumentUri(file_path, tree_uri, tree_uri_path);
-        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size,fromArchive);
+        dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size, fromArchive);
     }
 
     public static void sendFile(Context context, ArrayList<File> file_list) {
@@ -163,7 +163,7 @@ class FileIntentDispatch {
 
         intent.putExtra(EXTRA_FILE_OBJECT_TYPE, fileObjectType != null ? fileObjectType.toString() : null);
         intent.putExtra(EXTRA_FILE_PATH, file_path);
-        intent.putExtra(EXTRA_FROM_ARCHIVE,fromArchive);
+        intent.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         return mime_type;

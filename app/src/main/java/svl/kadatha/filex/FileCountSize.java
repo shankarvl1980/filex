@@ -186,7 +186,7 @@ public class FileCountSize {
                         for (int i = 0; i < size; ++i) {
                             Timber.tag(TAG).d("Getting WebDAV resource info for: %s", files_selected_array.get(i));
                             String fullPath = webDavClientRepository.getBasePath(sardine) + files_selected_array.get(i);
-                            url=webDavClientRepository.buildUrl(fullPath);
+                            url = webDavClientRepository.buildUrl(fullPath);
                             List<DavResource> resourceList = sardine.list(url);
                             if (!resourceList.isEmpty()) {
                                 resources.add(resourceList.get(0));
@@ -469,10 +469,10 @@ public class FileCountSize {
                     String name = resource.getName();
                     String newPath = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
                     String fullPath = webDavClientRepository.getBasePath(sardine) + newPath;
-                    String url=webDavClientRepository.buildUrl(fullPath);
+                    String url = webDavClientRepository.buildUrl(fullPath);
                     Timber.tag(TAG).d("Listing resources in WebDAV directory: %s", fullPath);
                     List<DavResource> subResources = sardine.list(url);
-                    if(!subResources.isEmpty()){
+                    if (!subResources.isEmpty()) {
                         subResources.remove(0);
                     }
                     Timber.tag(TAG).d("Found %d resources in WebDAV directory: %s", subResources.size(), fullPath);
