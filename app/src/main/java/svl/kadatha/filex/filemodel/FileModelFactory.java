@@ -31,6 +31,9 @@ public class FileModelFactory {
             case WEBDAV_TYPE:
                 fileModel=new WebDavFileModel(path);
                 break;
+            case SMB_TYPE:
+                fileModel=new SmbFileModel(path);
+                break;
         }
         return fileModel;
     }

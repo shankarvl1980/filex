@@ -246,6 +246,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         } else if (type.equals(WebDAV) && (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
+                        } else if (type.equals(SMB) && (NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH.isEmpty())) {
+                            Global.print(context, getString(R.string.server_could_not_be_connected));
+                            return;
                         }
 
                         initiateCreateFragmentTransactions();
@@ -273,6 +276,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         } else if (type.equals(WebDAV) && (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH.isEmpty())) {
+                            Global.print(context, getString(R.string.server_could_not_be_connected));
+                            return;
+                        } else if (type.equals(SMB) && (NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH == null || NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH.isEmpty())) {
                             Global.print(context, getString(R.string.server_could_not_be_connected));
                             return;
                         }
@@ -404,6 +410,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
             } else if (type.equals(WebDAV)) {
                 ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
+            } else if (type.equals(SMB)) {
+                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
             }
         } else if (appCompatActivity instanceof FileSelectorActivity) {
             ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -416,6 +424,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
             } else if (type.equals(WebDAV)) {
                 ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
+            } else if (type.equals(SMB)) {
+                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
             }
         }
     }
@@ -651,13 +661,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
                             progress_bar.setVisibility(View.VISIBLE);
                             NetworkAccountPOJO networkAccountPOJO = viewModel.networkAccountPOJOList.get(pos);
-                            if (type.equals(FTP)) {
-                                viewModel.connectNetworkAccount(networkAccountPOJO);
-                            } else if (type.equals(SFTP)) {
-                                viewModel.connectNetworkAccount(networkAccountPOJO);
-                            } else if (type.equals(WebDAV)) {
-                                viewModel.connectNetworkAccount(networkAccountPOJO);
-                            }
+                            viewModel.connectNetworkAccount(networkAccountPOJO);
                         }
                     }
                 });
@@ -741,6 +745,10 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
+                        break;
+                    case SMB:
+                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                        smbClientRepository.shutdown();
                         break;
                 }
                 disconnect_btn.setAlpha(Global.DISABLE_ALFA);

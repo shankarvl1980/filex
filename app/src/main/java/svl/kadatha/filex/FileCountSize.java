@@ -6,6 +6,12 @@ import android.net.Uri;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
+import com.hierynomus.msfscc.FileAttributes;
+import com.hierynomus.msfscc.fileinformation.FileAllInformation;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.mssmb2.SMBApiException;
+import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import com.thegrizzlylabs.sardineandroid.DavResource;
@@ -18,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -198,7 +205,78 @@ public class FileCountSize {
                         Timber.tag(TAG).e("Error during WebDAV file count: %s", e.getMessage());
                         throw new RuntimeException(e);
                     }
+                } else if (sourceFileObjectType == FileObjectType.SMB_TYPE) {
+                    Timber.tag(TAG).d("Starting file count for SMB files");
+                    SmbClientRepository smbClientRepository = null;
+                    Session session = null;
+                    String shareName = null;
+                    try {
+                        smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                        session = smbClientRepository.getSession();
+                        shareName = smbClientRepository.getShareName();
+                        try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                            for (String filePath : files_selected_array) {
+                                if (isCancelled()) {
+                                    Timber.tag(TAG).d("Operation cancelled during SMB file count.");
+                                    return;
+                                }
+
+                                Timber.tag(TAG).d("Processing SMB path: %s", filePath);
+
+                                String adjustedPath;
+                                if (filePath.equals("/") || filePath.isEmpty()) {
+                                    adjustedPath = "";
+                                } else {
+                                    adjustedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+                                }
+
+                                // Determine if the path is a directory or a file
+                                boolean isDirectory = share.folderExists(adjustedPath);
+                                boolean isFile = share.fileExists(adjustedPath);
+
+                                if (isDirectory) {
+                                    Timber.tag(TAG).d("Path is a directory. Starting traversal.");
+                                    // Start traversing the directory
+                                    populate(share, adjustedPath, include_folder);
+                                } else if (isFile) {
+                                    Timber.tag(TAG).d("Path is a file. Processing single file.");
+                                    // Path is a file; get its size and count as one
+                                    FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
+
+                                    // Optionally, exclude hidden/system files
+                                    Set<FileAttributes> attributes = MakeFilePOJOUtil.parseAttributes(fileInfo.getBasicInformation().getFileAttributes());
+                                    if (attributes.contains(FileAttributes.FILE_ATTRIBUTE_HIDDEN) ||
+                                            attributes.contains(FileAttributes.FILE_ATTRIBUTE_SYSTEM)) {
+                                        Timber.tag(TAG).d("Skipping hidden/system file: %s", filePath);
+                                    } else {
+                                        total_no_of_files += 1;
+                                        total_size_of_files += fileInfo.getStandardInformation().getEndOfFile();
+
+                                        // Update LiveData
+                                        mutable_total_no_of_files.postValue(total_no_of_files);
+                                        mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+
+                                        Timber.tag(TAG).d("Processed file - Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
+                                    }
+                                } else {
+                                    // Path does not exist or is inaccessible
+                                    Timber.tag(TAG).w("SMB path does not exist or is inaccessible: %s", filePath);
+                                }
+
+                                Timber.tag(TAG).d("Completed processing SMB path: %s", filePath);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Timber.tag(TAG).e("Error during SMB file count: %s", e.getMessage());
+                        return;
+                    } finally {
+                        if (smbClientRepository != null && session != null) {
+                            smbClientRepository.releaseSession(session);
+                            Timber.tag(TAG).d("SMB session released");
+                        }
+                    }
                 }
+
             }
         });
     }
@@ -499,6 +577,74 @@ public class FileCountSize {
         }
         Timber.tag(TAG).d("WebDAV file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
+
+
+    private void populate(DiskShare share, String startPath, boolean include_folder) {
+        Stack<String> stack = new Stack<>();
+        stack.push(startPath);
+
+        while (!stack.isEmpty()) {
+            if (isCancelled()) {
+                Timber.tag(TAG).d("SMB file count cancelled.");
+                return;
+            }
+
+            String currentPath = stack.pop();
+            Timber.tag(TAG).d("Traversing SMB directory: %s", currentPath);
+
+            List<FileIdBothDirectoryInformation> fileList;
+            try {
+                fileList = share.list(currentPath);
+            } catch (SMBApiException e) {
+                Timber.tag(TAG).e("Error listing SMB directory: %s, Error: %s", currentPath, e.getMessage());
+                continue; // Skip this directory and continue with others
+            }
+
+            for (FileIdBothDirectoryInformation info : fileList) {
+                String name = info.getFileName();
+
+                // Skip special entries "." and ".."
+                if (name.equals(".") || name.equals("..")) {
+                    continue;
+                }
+
+                // Retrieve file attributes
+                Set<FileAttributes> attributes = MakeFilePOJOUtil.parseAttributes(info.getFileAttributes());
+
+                // Optionally skip hidden and system files
+                if (attributes.contains(FileAttributes.FILE_ATTRIBUTE_HIDDEN) ||
+                        attributes.contains(FileAttributes.FILE_ATTRIBUTE_SYSTEM)) {
+                    Timber.tag(TAG).d("Skipping hidden/system entry: %s", name);
+                    continue;
+                }
+
+                String fullPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, name);
+                Timber.tag(TAG).d("Processing SMB entry: %s", fullPath);
+
+                if (attributes.contains(FileAttributes.FILE_ATTRIBUTE_DIRECTORY)) {
+                    // Entry is a directory
+                    if (include_folder) {
+                        total_no_of_files += 1;
+                    }
+                    // Push the directory path onto the stack for traversal
+                    stack.push(fullPath);
+                    Timber.tag(TAG).d("Added directory to stack: %s", fullPath);
+                } else {
+                    // Entry is a file
+                    total_no_of_files += 1;
+                    total_size_of_files += info.getEndOfFile();
+                    Timber.tag(TAG).d("Added file - Name: %s, Size: %d", name, info.getEndOfFile());
+                }
+
+                // Update LiveData after each entry
+                mutable_total_no_of_files.postValue(total_no_of_files);
+                mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+            }
+        }
+
+        Timber.tag(TAG).d("Completed traversal of SMB directory structure.");
+    }
+
 
     private String combinePaths(String dir, String file) {
         if (!dir.endsWith("/")) {

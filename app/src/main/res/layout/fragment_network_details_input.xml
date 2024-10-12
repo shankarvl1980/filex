@@ -71,6 +71,7 @@
 
                 <!-- Port -->
                 <LinearLayout
+                    android:id="@+id/fragment_network_account_port_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
@@ -452,19 +453,33 @@
                     </LinearLayout>
 
                     <!-- SMB Version -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="@string/smb_version"
-                        android:textSize="17sp" />
-
-                    <Spinner
-                        android:id="@+id/fragment_network_details_input_smb_version"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:entries="@array/smb_versions" />
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="4dp"
+                            android:text="@string/smb_version"
+                            android:textSize="17sp" />
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp" />
+                        <Spinner
+                            android:id="@+id/fragment_network_details_input_smb_version"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="10dp"
+                            android:entries="@array/smb_versions"
+                            android:textSize="17sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- FrameLayout for buttons (to be added in DialogFragment) -->

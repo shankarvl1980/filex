@@ -122,7 +122,7 @@ public class Global {
             new MimePOJO("Video", "video/*", VIDEO_REGEX),
             new MimePOJO("PDF", "application/pdf", PDF_REGEX)));
     static final LinkedHashMap<String, SpacePOJO> SPACE_ARRAY = new LinkedHashMap<>();
-    static final long CACHE_FILE_MAX_LIMIT = 1024 * 1024 * 10;
+    static final long CACHE_FILE_MAX_LIMIT = 1024 * 1024 * 20;
     static final FilenameFilter File_NAME_FILTER = new FilenameFilter() {
         @Override
         public boolean accept(File file, String s) {
@@ -938,7 +938,7 @@ public class Global {
                 return FileObjectType.SFTP_TYPE;
             case "WEBDAV_TYPE":
                 return FileObjectType.WEBDAV_TYPE;
-            case "SMB_CACHE":
+            case "SMB_TYPE":
                 return FileObjectType.SMB_TYPE;
             default:
                 return null;

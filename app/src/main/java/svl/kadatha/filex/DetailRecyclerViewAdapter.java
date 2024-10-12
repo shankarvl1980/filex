@@ -235,5 +235,4 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
             return true;
         }
     }
-
 }

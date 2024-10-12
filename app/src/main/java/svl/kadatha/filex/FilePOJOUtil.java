@@ -500,7 +500,7 @@ public class FilePOJOUtil {
             Timber.tag(TAG).d("Filling FilePOJO for SMB directory: %s", fileclickselected);
             SmbClientRepository smbClientRepository = null;
             Session session = null;
-            String shareName = null;
+            String shareName;
             try {
                 smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                 session = smbClientRepository.getSession();
@@ -523,16 +523,7 @@ public class FilePOJOUtil {
                         Timber.tag(TAG).d("Processing SMB file: %s", path);
 
                         // Create SmbFileInfo
-                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
-                                name,
-                                path,
-                                info.getFileAttributes(),
-                                info.getEndOfFile(),
-                                info.getCreationTime().toEpochMillis(),
-                                info.getLastAccessTime().toEpochMillis(),
-                                info.getLastWriteTime().toEpochMillis(),
-                                info.getChangeTime().toEpochMillis()
-                        );
+                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(name, path, info.getFileAttributes(), info.getEndOfFile(), info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(), info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
 
                         // Create FilePOJO
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
@@ -758,16 +749,7 @@ public class FilePOJOUtil {
                         Timber.tag(TAG).d("Processing SMB file: %s", path);
 
                         // Create SmbFileInfo
-                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
-                                name,
-                                path,
-                                info.getFileAttributes(),
-                                info.getEndOfFile(),
-                                info.getCreationTime().toEpochMillis(),
-                                info.getLastAccessTime().toEpochMillis(),
-                                info.getLastWriteTime().toEpochMillis(),
-                                info.getChangeTime().toEpochMillis()
-                        );
+                        MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(name, path, info.getFileAttributes(), info.getEndOfFile(), info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(), info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
 
                         // Create FilePOJO
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);

@@ -30,7 +30,6 @@ class FileIntentDispatch {
         File file = new File(file_path);
         uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
         dispatch_intent(context, uri, file_path, file_extn, mime_type, fileObjectType, select_app, file_size, fromArchive);
-
     }
 
     public static void openUri(Context context, String file_path, String mime_type, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path, boolean select_app, long file_size, boolean fromArchive) {
@@ -160,7 +159,6 @@ class FileIntentDispatch {
         }
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, mime_type);
-
         intent.putExtra(EXTRA_FILE_OBJECT_TYPE, fileObjectType != null ? fileObjectType.toString() : null);
         intent.putExtra(EXTRA_FILE_PATH, file_path);
         intent.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
@@ -168,6 +166,5 @@ class FileIntentDispatch {
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         return mime_type;
     }
-
 }
 

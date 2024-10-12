@@ -47,7 +47,7 @@ public class MakeFilePOJOUtil {
     static final SimpleDateFormat SDF_FTP = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final String TAG = "Ftp-MakeFilePOJOUtil";
 
-    static FilePOJO MAKE_FilePOJO(FileModel f, boolean extracticon, FileObjectType fileObjectType) {
+    static FilePOJO MAKE_FilePOJO(FileModel f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
         String path = f.getPath();
         boolean isDirectory = f.isDirectory();
@@ -70,7 +70,7 @@ public class MakeFilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -100,7 +100,7 @@ public class MakeFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
-    static FilePOJO MAKE_FilePOJO(File f, boolean extracticon, FileObjectType fileObjectType) {
+    static FilePOJO MAKE_FilePOJO(File f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
         String path = f.getAbsolutePath();
         boolean isDirectory = f.isDirectory();
@@ -122,7 +122,7 @@ public class MakeFilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -144,7 +144,7 @@ public class MakeFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
-    static FilePOJO MAKE_FilePOJO_ZIP(File f, boolean extracticon, FileObjectType fileObjectType) {
+    static FilePOJO MAKE_FilePOJO_ZIP(File f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
         String path = f.getAbsolutePath();
         boolean isDirectory = f.isDirectory();
@@ -166,7 +166,7 @@ public class MakeFilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -194,7 +194,7 @@ public class MakeFilePOJOUtil {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static FilePOJO MAKE_FilePOJO(Path p, boolean extracticon, FileObjectType fileObjectType) {
+    static FilePOJO MAKE_FilePOJO(Path p, boolean extract_icon, FileObjectType fileObjectType) {
         String name = p.getFileName().toString();
         String path = p.toAbsolutePath().toString();
         boolean isDirectory;
@@ -230,7 +230,7 @@ public class MakeFilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -256,7 +256,7 @@ public class MakeFilePOJOUtil {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static FilePOJO MAKE_FilePOJO_ZIP(Path p, boolean extracticon, FileObjectType fileObjectType) {
+    static FilePOJO MAKE_FilePOJO_ZIP(Path p, boolean extract_icon, FileObjectType fileObjectType) {
         String name = p.getFileName().toString();
         String path = p.toAbsolutePath().toString();
         boolean isDirectory;
@@ -292,7 +292,7 @@ public class MakeFilePOJOUtil {
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
-                } else if (extracticon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
                 }
             }
@@ -615,7 +615,6 @@ public class MakeFilePOJOUtil {
     }
 
     public static FilePOJO MAKE_FilePOJO(SmbFileInfo smbFileInfo, boolean extract_icon, FileObjectType fileObjectType) {
-        String TAG = "MAKE_FilePOJO_SMB";
 
         String name = smbFileInfo.getFileName();
         String path = smbFileInfo.getFilePath();
@@ -647,18 +646,41 @@ public class MakeFilePOJOUtil {
             sizeLong = smbFileInfo.getFileSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            // Handle directory sub-file count if needed
-            si = sub_file_count;
-        }
+            String sub_file_count;
+            SmbClientRepository smbClientRepository = null;
+            Session session = null;
+            String shareName;
+            try {
+                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                session = smbClientRepository.getSession();
+                shareName = smbClientRepository.getShareName();
+                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                    // Adjust fileclickselected to remove leading "/" if necessary
+                    String adjustedPath = path.startsWith("/") ? path.substring(1) : path;
 
+                    // List files in the directory
+                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
+                    sub_file_count = "(" + (fileList.size()-2) + ")";
+                    si = sub_file_count;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (smbClientRepository != null && session != null) {
+                    smbClientRepository.releaseSession(session);
+                    Timber.tag(TAG).d("SMB session released");
+                }
+            }
+        }
         if (name.startsWith(".")) {
             alfa = Global.DISABLE_ALFA;
         }
 
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
-
 
 
     static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
@@ -717,8 +739,8 @@ public class MakeFilePOJOUtil {
                 }
             }
         } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-            WebDavClientRepository webDavClientRepository = null;
-            Sardine sardine = null;
+            WebDavClientRepository webDavClientRepository;
+            Sardine sardine;
             try {
                 webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
                 sardine = webDavClientRepository.getSardine();
@@ -742,7 +764,7 @@ public class MakeFilePOJOUtil {
         } else if (fileObjectType == FileObjectType.SMB_TYPE) {
             SmbClientRepository smbClientRepository = null;
             Session session = null;
-            String shareName = null;
+            String shareName;
             try {
                 smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                 session = smbClientRepository.getSession();
@@ -830,8 +852,6 @@ public class MakeFilePOJOUtil {
     }
 
 
-
-
     public static class SmbFileInfo {
         private final String fileName;
         private final String filePath;
@@ -854,15 +874,8 @@ public class MakeFilePOJOUtil {
             this.changeTime = changeTime;
         }
 
-        private static Set<FileAttributes> parseAttributes(long fileAttributesLong) {
-            Set<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
-            for (FileAttributes attr : FileAttributes.values()) {
-                if ((fileAttributesLong & attr.getValue()) == attr.getValue()) {
-                    attrs.add(attr);
-                }
-            }
-            return attrs;
-        }
+
+
         // Getters for all fields
         public String getFileName() {
             return fileName;
@@ -896,5 +909,13 @@ public class MakeFilePOJOUtil {
             return changeTime;
         }
     }
-
+    public static Set<FileAttributes> parseAttributes(long fileAttributesLong) {
+        Set<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
+        for (FileAttributes attr : FileAttributes.values()) {
+            if ((fileAttributesLong & attr.getValue()) == attr.getValue()) {
+                attrs.add(attr);
+            }
+        }
+        return attrs;
+    }
 }

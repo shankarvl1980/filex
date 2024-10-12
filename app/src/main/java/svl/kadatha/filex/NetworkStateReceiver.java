@@ -33,6 +33,10 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                         throw new RuntimeException(e);
                     }
                 }
+                if (NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH != null) {
+                    SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                    smbClientRepository.shutdown();
+                }
             }
         }
     }

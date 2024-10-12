@@ -364,7 +364,7 @@
     <string name="parent_directory">Parent directory</string>
     <string name="network">Network</string>
     <string name="want_to_stop_ftp_server_service">Want to stop the FTP Server service?</string>
-    <string name="ftp_setting_already_exists_want_to_replace_it">An FTP setting already exists. Want to replace it?</string>
+    <string name="network_account_setting_already_exists_want_to_replace_it">A Network account setting already exists. Want to replace it?</string>
     <string name="optional_in_bracket">(optional)</string>
     <string name="wait_till_current_service_on_ftp_finishes">Wait till the current service on FTP finishes</string>
     <string name="system_apps">System Apps</string>
@@ -376,6 +376,7 @@
     <string name="ftp_client">FTP</string>
     <string name="sftp_client">SFTP</string>
     <string name="webdav_client">WebDAV</string>
+    <string name="smb_client">SMB</string>"
 
     <string-array name="library_categories">
         <item>@string/download</item>
@@ -391,10 +392,10 @@
         <item>@string/ftp_client</item>
         <item>@string/sftp_client</item>
         <item>@string/webdav_client</item>
+        <item>@string/smb_client</item>
     </string-array>
 
     <string-array name="smb_versions">
-        <item>Automatic</item>
         <item>SMB1</item>
         <item>SMB2</item>
         <item>SMB3</item>
@@ -504,5 +505,6 @@
     <string name="webdav">WebDAV</string>
     <string name="smb">SMB</string>
     <string name="network_connection_disconnected">Network connection disconnected</string>
+    <string name="enter_share_name">Enter Share name</string>
 
 </resources>

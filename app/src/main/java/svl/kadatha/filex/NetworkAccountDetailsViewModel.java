@@ -7,11 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.hierynomus.smbj.session.Session;
 import com.jcraft.jsch.ChannelSftp;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -28,6 +30,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     public static String FTP_WORKING_DIR_PATH;
     public static String SFTP_WORKING_DIR_PATH;
     public static String WEBDAV_WORKING_DIR_PATH;
+    public static String SMB_WORKING_DIR_PATH;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> networkConnectAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -134,6 +137,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
                     connectWebDav(networkAccountPOJO, networkConnectAsyncTaskStatus);
+                } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+                    connectSmb(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
         });
@@ -159,6 +164,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     connectSftp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
                     connectWebDav(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
+                } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+                    connectSmb(networkAccountPOJO, networkConnectAsyncTaskStatus);
                 }
             }
         });
@@ -238,7 +245,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     private void connectWebDav(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
-        WebDavClientRepository webDavClientRepository = null;
+        WebDavClientRepository webDavClientRepository;
         Sardine sardine;
         try {
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
@@ -264,6 +271,42 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             loggedInStatus = false;
             Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
         } finally {
+            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+        }
+    }
+
+    private void connectSmb(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+        loggedInStatus = false;
+        SmbClientRepository smbClientRepository = null;
+        Session session = null;
+        try {
+            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJOCopy);
+            smbClientRepository.shutdown();
+            smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
+            SMB_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
+            NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
+
+            session = smbClientRepository.getSession();
+            if (smbClientRepository.isSessionConnected(session)) {
+                loggedInStatus = true;
+                SMB_WORKING_DIR_PATH = "/";
+            } else {
+                loggedInStatus = false;
+                throw new Exception("Smb client is not connected");
+            }
+
+            if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.SMB_TYPE)) {
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+                repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SMB_TYPE, SMB_WORKING_DIR_PATH));
+            }
+        } catch (Exception e) {
+            loggedInStatus = false;
+            Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
+        } finally {
+            if (session != null) {
+                smbClientRepository.releaseSession(session);
+            }
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         }
     }
@@ -349,6 +392,15 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     isNetworkConnected = FtpClientRepository.getInstance(FTP_NETWORK_ACCOUNT_POJO).testFtpServerConnection();
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     isNetworkConnected = SftpChannelRepository.getInstance(SFTP_NETWORK_ACCOUNT_POJO).testSftpServerConnection();
+                }else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                    try {
+                        isNetworkConnected = WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).getSardine()!=null;
+                    } catch (IOException e) {
+                        isNetworkConnected=false;
+                        throw new RuntimeException(e);
+                    }
+                }else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+                    isNetworkConnected = SmbClientRepository.getInstance(SMB_NETWORK_ACCOUNT_POJO).testSmbServerConnection();
                 }
                 testServiceConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

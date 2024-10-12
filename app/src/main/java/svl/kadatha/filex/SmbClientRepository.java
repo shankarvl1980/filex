@@ -38,7 +38,7 @@ public class SmbClientRepository {
     private int initialSessions;
 
     // Added property for shareName
-    private String shareName;
+    private final String shareName;
 
     private SmbClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         this.networkAccountPOJO = networkAccountPOJO;
@@ -48,7 +48,7 @@ public class SmbClientRepository {
             this.shareName = networkAccountPOJO.shareName;
         } else {
             // Set to default or root directory if shareName is not provided
-            this.shareName = ""; // or set to a default share name if applicable
+            this.shareName = "/"; // or set to a default share name if applicable
         }
 
         // Build SmbConfig with custom dialects if smbVersion is specified
@@ -173,7 +173,7 @@ public class SmbClientRepository {
         return session;
     }
 
-    private boolean isSessionConnected(Session session) {
+    public boolean isSessionConnected(Session session) {
         return session != null && session.getConnection() != null && session.getConnection().isConnected();
     }
 

@@ -141,7 +141,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         LinearLayout sftp_group = v.findViewById(R.id.fragment_network_details_input_sftp_group);
         LinearLayout webdav_group = v.findViewById(R.id.fragment_network_details_input_webdav_group);
         LinearLayout smb_group = v.findViewById(R.id.fragment_network_details_input_smb_group);
-
+        LinearLayout port_container=v.findViewById(R.id.fragment_network_account_port_container);
         switch (type) {
             case NetworkAccountsDetailsDialog.FTP:
                 ftp_group.setVisibility(View.VISIBLE);
@@ -154,6 +154,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
                 break;
             case NetworkAccountsDetailsDialog.SMB:
                 smb_group.setVisibility(View.VISIBLE);
+                port_container.setVisibility(View.GONE);
                 break;
         }
 
@@ -237,7 +238,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         useHTTPS_check_box.setChecked(useHTTPS);
         domain_tv.setText(domain);
         share_name_tv.setText(shareName);
-        if (smbVersion.isEmpty()) smbVersion = "Automatic";
+        if (smbVersion.isEmpty()) smbVersion = "SMB2";
         smbVersion_spinner.setSelection(smbVersionArrayAdapter.getPosition(smbVersion));
 
         private_key_select_button = v.findViewById(R.id.fragment_network_details_input_select_private_key);
@@ -308,6 +309,11 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             return;
         }
 
+        if(type.equals(NetworkAccountsDetailsDialog.SMB) && share_name_tv.getText().toString().trim().isEmpty()){
+            Global.print(context, getString(R.string.enter_share_name));
+            return;
+        }
+
         port = Integer.parseInt(port_tv.getText().toString().trim());
         mode = mode_active_radio_btn.isChecked() ? "active" : "passive";
         password = password_tv.getText().toString().trim();
@@ -321,12 +327,13 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         knownHostsPath = known_hosts_path_tv.getText().toString().trim();
         basePath = base_path_tv.getText().toString().trim();
         domain = domain_tv.getText().toString().trim();
-        shareName = share_name_tv.toString().trim();
+        shareName = share_name_tv.getText().toString().trim();
         smbVersion = smbVersion_spinner.getSelectedItem().toString();
+        //if(smbVersion.equals("Automatic")) smbVersion="SMB2";
 
         bundle.putBoolean("whetherToConnect", whetherToConnect);
         if (!update && whetherFtpPOJOAlreadyExists(host, user_name, type) && !replace) {
-            YesOrNoAlertDialog ftpServerCloseAlertDialog = YesOrNoAlertDialog.getInstance(NETWORK_ACCOUNT_REPLACE_REQUEST_CODE, R.string.ftp_setting_already_exists_want_to_replace_it, bundle);
+            YesOrNoAlertDialog ftpServerCloseAlertDialog = YesOrNoAlertDialog.getInstance(NETWORK_ACCOUNT_REPLACE_REQUEST_CODE, R.string.network_account_setting_already_exists_want_to_replace_it, bundle);
             ftpServerCloseAlertDialog.show(getParentFragmentManager(), "");
         } else {
             bundle.putString("original_host", original_host);

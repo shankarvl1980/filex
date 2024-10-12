@@ -244,6 +244,9 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
                     p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName() + space);
+                } else if (fileObjectType == FileObjectType.SMB_TYPE) {
+                    p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                    p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
                 FileSelectorRecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.overlay_fileimageview);
@@ -255,6 +258,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                     p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath());
                 } else if (filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
                     p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath());
+                } else if (filePOJO.getFileObjectType() == FileObjectType.SMB_TYPE) {
+                    p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath());
                 } else {
                     p1.textView_recent_dir.setText(filePOJO.getPath());
                 }
