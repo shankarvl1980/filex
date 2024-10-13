@@ -161,27 +161,27 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         TextView title_tv = v.findViewById(R.id.fragment_network_details_input_heading);
         if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
             if (update) {
-                title_tv.setText(R.string.update_ftp_server);
+                title_tv.setText(R.string.update_ftp_client);
             } else {
-                title_tv.setText(R.string.new_ftp_server);
+                title_tv.setText(R.string.new_ftp_client);
             }
         } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
             if (update) {
-                title_tv.setText(R.string.update_sftp_server);
+                title_tv.setText(R.string.update_sftp_client);
             } else {
-                title_tv.setText(R.string.new_sftp_server);
+                title_tv.setText(R.string.new_sftp_client);
             }
         } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
             if (update) {
-                title_tv.setText(R.string.update_webdav_server);
+                title_tv.setText(R.string.update_webdav_client);
             } else {
-                title_tv.setText(R.string.new_webdav_server);
+                title_tv.setText(R.string.new_webdav_client);
             }
         } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
             if (update) {
-                title_tv.setText(R.string.update_smb_server);
+                title_tv.setText(R.string.update_smb_client);
             } else {
-                title_tv.setText(R.string.new_smb_server);
+                title_tv.setText(R.string.new_smb_client);
             }
         }
 

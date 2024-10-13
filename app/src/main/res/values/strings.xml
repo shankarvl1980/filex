@@ -294,8 +294,8 @@
     <string name="ftp_server_is_not_connected">FTP server is not connected</string>
     <string name="ftp">FTP</string>
     <string name="sftp">SFTP</string>
-    <string name="new_ftp_server">New FTP Server</string>
-    <string name="new_sftp_server">New SFTP Server</string>
+    <string name="new_ftp_client">New FTP client</string>
+    <string name="new_sftp_client">New SFTP client</string>
     <string name="host">Host</string>
     <string name="port">Port</string>
     <string name="active">Active</string>
@@ -466,8 +466,8 @@
     <string name="nothing_found_here">Nothing found here</string>
     <string name="advanced">Advanced</string>
     <string name="not_supported">not supported</string>
-    <string name="update_ftp_server">Update FTP Server</string>
-    <string name="update_sftp_server">Update SFTP Server</string>
+    <string name="update_ftp_client">Update FTP client</string>
+    <string name="update_sftp_client">Update SFTP client</string>
     <string name="set">Set</string>
     <string name="error_setting_up_device">error setting up device</string>
     <string name="clean_storage">Clean Storage</string>
@@ -483,10 +483,10 @@
     <string name="removed_directories">Removed directories</string>
     <string name="there_are_no_files_to_copy">There are no files to copy</string>
     <string name="select_a_directory_to_copy">select a directory to copy</string>
-    <string name="update_webdav_server">Update WebDAV Server</string>
-    <string name="new_webdav_server">New WebDAV Server</string>
-    <string name="update_smb_server">Update SMB Server</string>
-    <string name="new_smb_server">New SMB Server</string>
+    <string name="update_webdav_client">Update WebDAV client</string>
+    <string name="new_webdav_client">New WebDAV client</string>
+    <string name="update_smb_client">Update SMB client</string>
+    <string name="new_smb_client">New SMB client</string>
     <string name="use_ftps">Use FTPS</string>
     <string name="private_key">Private Key</string>
     <string name="private_key_path">Private Key Path</string>
