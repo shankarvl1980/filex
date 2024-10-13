@@ -396,7 +396,6 @@
     </string-array>
 
     <string-array name="smb_versions">
-        <item>SMB1</item>
         <item>SMB2</item>
         <item>SMB3</item>
     </string-array>
@@ -436,7 +435,7 @@
     <string name="notification_text">at %s</string>
     <string name="notification_stop_text">Stop server</string>
 
-    <string name="nsd_servername_postfix">FTP Server</string>
+    <string name="nsd_server_name_postfix">FTP Server</string>
 
 
     <string name="feedback">Send feedback</string>
@@ -496,7 +495,7 @@
     <string name="base_path">Base Path</string>
     <string name="use_https">Use HTTPS</string>
     <string name="domain">Domain</string>
-    <string name="share_name">Share Name</string>
+    <string name="share_name_asterisk">Share name*</string>
     <string name="smb_version">SMB Version</string>
     <string name="host_asterisk">Host*</string>
     <string name="port_asterisk">Port*</string>

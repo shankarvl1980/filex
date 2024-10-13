@@ -39,6 +39,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
 
         if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());

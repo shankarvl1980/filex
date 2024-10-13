@@ -264,7 +264,7 @@ public class ArchiveViewActivity extends BaseActivity {
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if (intent != null) {
-                onNewIntent(intent);
+               onInitiate(intent);
             }
         }
 
@@ -394,13 +394,7 @@ public class ArchiveViewActivity extends BaseActivity {
                 .show();
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent == null) {
-            return;
-        }
-
+    private void onInitiate(Intent intent){
         String receivedAction = intent.getAction();
         Uri uri = intent.getData();
         if (receivedAction != null && receivedAction.equals(Intent.ACTION_VIEW) && uri != null) {
@@ -422,7 +416,6 @@ public class ArchiveViewActivity extends BaseActivity {
             viewModel.extractArchive(zipfile);
         }
     }
-
     @Override
     protected void onStart() {
         super.onStart();

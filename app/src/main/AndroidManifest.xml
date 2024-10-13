@@ -220,6 +220,7 @@
         <activity
             android:name=".ArchiveViewActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:label="@string/archive_viewer">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

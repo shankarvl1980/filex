@@ -70,7 +70,7 @@ public class NsdService extends Service {
         running = true;
 
         Resources res = getResources();
-        String serviceNamePostfix = res.getString(R.string.nsd_servername_postfix);
+        String serviceNamePostfix = res.getString(R.string.nsd_server_name_postfix);
         String serviceName = Build.MODEL + " " + serviceNamePostfix;
 
         final NsdServiceInfo serviceInfo = new NsdServiceInfo();

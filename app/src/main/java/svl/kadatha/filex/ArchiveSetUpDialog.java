@@ -372,6 +372,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
+                        if(sourceFileObjectType==FileObjectType.SMB_TYPE && destFileObjectType==FileObjectType.SMB_TYPE){
+                            Global.print(context, getString(R.string.not_supported));
+                            return;
+                        }
+
                         if (!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null, destFileObjectType)) {
                             Global.print(context, context.getString(R.string.wait_till_completion_on_going_operation_on_usb));
                             return;
@@ -408,6 +413,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
                                 Global.print(context, getString(R.string.root_access_not_avaialable));
                                 return;
                             }
+                        }
+
+                        if(sourceFileObjectType==FileObjectType.SMB_TYPE && destFileObjectType==FileObjectType.SMB_TYPE){
+                            Global.print(context, getString(R.string.not_supported));
+                            return;
                         }
 
                         if (!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(null, destFileObjectType)) {

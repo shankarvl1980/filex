@@ -151,33 +151,19 @@ public class SmbFileModel implements FileModel {
             session = smbClientRepository.getSession();
             shareName = smbClientRepository.getShareName();
             try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                if (share.fileExists(new_file_path) || share.folderExists(new_file_path)) {
-                    if (overwrite) {
-                        if (share.fileExists(new_file_path)) {
-                            share.rm(new_file_path);
-                        } else if (share.folderExists(new_file_path)) {
-                            share.rmdir(new_file_path, true);
-                        }
-                    } else {
-                        Timber.tag(TAG).w("File already exists and overwrite is false: %s", new_file_path);
-                        return false;
-                    }
-                }
-
-                // Open the source file or directory with DELETE access
+                // Open the source file or directory with appropriate access
                 File smbFile = share.openFile(
                         path,
-                        EnumSet.of(AccessMask.DELETE),
+                        EnumSet.of(AccessMask.GENERIC_ALL),
                         null,
-                        EnumSet.of(SMB2ShareAccess.FILE_SHARE_DELETE),
+                        EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE, SMB2ShareAccess.FILE_SHARE_DELETE),
                         SMB2CreateDisposition.FILE_OPEN,
                         null
                 );
 
                 // Perform the rename operation
-                smbFile.rename(new_file_path, overwrite);
+                smbFile.rename(new_name, overwrite);
                 smbFile.close();
-
                 Timber.tag(TAG).d("Rename operation successful");
                 return true;
             }
