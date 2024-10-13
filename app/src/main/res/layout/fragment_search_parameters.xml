@@ -192,7 +192,7 @@
                     android:minHeight="36dp"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/layout_margin"
+                    android:paddingTop="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
                     app:layout_constraintEnd_toEndOf="parent"

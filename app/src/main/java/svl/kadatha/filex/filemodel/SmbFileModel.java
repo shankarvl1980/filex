@@ -7,6 +7,7 @@ import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.mssmb2.SMB2CreateDisposition;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
+import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.smbj.common.SMBRuntimeException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
@@ -142,33 +143,41 @@ public class SmbFileModel implements FileModel {
     @Override
     public boolean rename(String new_name, boolean overwrite) {
         String new_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(), new_name);
-        Timber.tag(TAG).d("Attempting to rename from %s to %s", path, new_file_path);
+        Timber.tag(TAG).d("Attempting to rename from '%s' to '%s'", path, new_file_path);
+        String old_file_path=path;
+        String sanitizedPath = old_file_path.startsWith("/") ? old_file_path.substring(1) : old_file_path;
+        String sanitizedNewFilePath = new_file_path.startsWith("/") ? new_file_path.substring(1) : new_file_path;
+        Timber.tag(TAG).d("after sanitization,attempting to rename from '%s' to '%s'", sanitizedPath, sanitizedNewFilePath);
         SmbClientRepository smbClientRepository = null;
         Session session = null;
-        String shareName = null;
+        String shareName;
         try {
             smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
             session = smbClientRepository.getSession();
             shareName = smbClientRepository.getShareName();
             try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                // Open the source file or directory with appropriate access
+                // Open the source file with DELETE access
                 File smbFile = share.openFile(
-                        path,
-                        EnumSet.of(AccessMask.GENERIC_ALL),
+                        sanitizedPath,
+                        EnumSet.of(AccessMask.DELETE, AccessMask.FILE_WRITE_ATTRIBUTES),
                         null,
-                        EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE, SMB2ShareAccess.FILE_SHARE_DELETE),
+                        SMB2ShareAccess.ALL,
                         SMB2CreateDisposition.FILE_OPEN,
                         null
                 );
 
                 // Perform the rename operation
-                smbFile.rename(new_name, overwrite);
+                smbFile.rename(sanitizedNewFilePath, true);
                 smbFile.close();
                 Timber.tag(TAG).d("Rename operation successful");
                 return true;
             }
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Rename operation failed: %s", e.getMessage());
+        } catch (SMBApiException e) {
+            Timber.tag(TAG).e(e, "SMBApiException during rename operation");
+            Timber.tag(TAG).e("Error Code: %s", e.getStatus());
+            return false;
+        } catch (IOException e) {
+            Timber.tag(TAG).e(e, "IOException during rename operation");
             return false;
         } finally {
             if (smbClientRepository != null && session != null) {
@@ -177,6 +186,7 @@ public class SmbFileModel implements FileModel {
             }
         }
     }
+
 
     @Override
     public boolean delete() {

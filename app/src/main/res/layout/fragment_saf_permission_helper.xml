@@ -40,6 +40,7 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
                 android:padding="@dimen/dialog_inner_padding">
 
 
@@ -47,7 +48,6 @@
                     android:id="@+id/fragment_saf_permission_helper_imageview1"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
-                    android:background="?attr/dialog_background"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/layout_margin"
                     android:paddingEnd="@dimen/layout_margin"
@@ -62,7 +62,6 @@
                     android:id="@+id/fragment_saf_permission_helper_imageview2"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
-                    android:background="?attr/dialog_background"
                     android:paddingStart="@dimen/layout_margin"
                     android:paddingTop="@dimen/layout_margin"
                     android:paddingEnd="@dimen/ten_dp"
@@ -78,7 +77,6 @@
                     android:id="@+id/fragment_saf_permission_helper_imageview3"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
-                    android:background="?attr/dialog_background"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/layout_margin"
                     android:paddingEnd="@dimen/layout_margin"
@@ -93,14 +91,12 @@
                     android:id="@+id/fragment_saf_permission_helper_imageview4"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
-                    android:background="?attr/dialog_background"
                     android:paddingStart="@dimen/layout_margin"
                     android:paddingTop="@dimen/layout_margin"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
                     android:scaleType="fitXY"
                     android:src="@drawable/ak4"
-
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/fragment_saf_permission_helper_imageview3"
                     app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_imageview2" />
@@ -109,10 +105,8 @@
                     android:id="@+id/fragment_saf_permission_helper_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/dialog_background"
                     android:padding="@dimen/ten_dp"
                     android:text="@string/external_sd_card_permission_message"
-
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_saf_permission_helper_imageview3" />
