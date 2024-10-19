@@ -108,29 +108,24 @@ public class PlayScreenFragment extends Fragment {
         if (activity instanceof AudioFragmentListener) {
             audioFragmentListener = (AudioFragmentListener) activity;
         }
-        Timber.tag(Global.TAG).d("attached to the activity");
-        audioPlayViewModel = new ViewModelProvider(PlayScreenFragment.this).get(AudioPlayViewModel.class);
+        Timber.tag(TAG).d("attached to the activity");
+        audioPlayViewModel = new ViewModelProvider(requireActivity()).get(AudioPlayViewModel.class);
         audioPlayViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
-                    if (progress_bar != null) {
+                    if (progress_bar != null)
                         progress_bar.setVisibility(View.VISIBLE);  //because on_intent is called before inflation of view
-                        Timber.tag(Global.TAG).d("progress bar is made visible - fetching library");
-                    }
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
-                    if (progress_bar != null) {
+                    if (progress_bar != null)
                         progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
-                        Timber.tag(Global.TAG).d("asynctask is complete and progress bar made gone");
-                    }
-                    Timber.tag(Global.TAG).d("asynctask completed");
                     if (Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         if (activity instanceof AudioPlayerActivity) {
                             ((AudioPlayerActivity) activity).data = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(audioPlayViewModel.currently_shown_file.getPath()));
                             data = ((AudioPlayerActivity) activity).data;
                         }
-
                     }
+                    Timber.tag(TAG).d("audio service being started");
                     Intent service_intent = new Intent(context, AudioPlayerService.class);
                     service_intent.setData(data);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -139,7 +134,6 @@ public class PlayScreenFragment extends Fragment {
                         context.startService(service_intent);
                     }
                     audioPlayViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-
                 }
             }
         });
@@ -154,7 +148,6 @@ public class PlayScreenFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));
@@ -174,29 +167,15 @@ public class PlayScreenFragment extends Fragment {
     }
 
     public void initiate_audio() {
-        Timber.tag(Global.TAG).d("initiating audio");
+        Timber.tag(TAG).d("initiating audio");
         if (activity instanceof AudioPlayerActivity) {
             data = ((AudioPlayerActivity) activity).data;
         }
 
         if (data != null) {
-            if (progress_bar != null) {
+            if (progress_bar != null)
                 progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
-                Timber.tag(Global.TAG).d("progress bar is made visible - initiating audio");
-            }
-
-            if (activity instanceof AudioPlayerActivity) {
-                audioPlayViewModel.fileObjectType = ((AudioPlayerActivity) activity).fileObjectType;
-                audioPlayViewModel.fromThirdPartyApp = ((AudioPlayerActivity) activity).fromThirdPartyApp;
-                audioPlayViewModel.file_path = ((AudioPlayerActivity) activity).file_path;
-            }
-
-            audioPlayViewModel.album_id = AudioPlayerActivity.AUDIO_FILE.getAlbumId();
-
-            String source_folder = new File(audioPlayViewModel.file_path).getParent();
-            audioPlayViewModel.albumPolling(source_folder, audioPlayViewModel.fileObjectType, audioPlayViewModel.fromThirdPartyApp);
         }
-
     }
 
     @Nullable
@@ -371,10 +350,10 @@ public class PlayScreenFragment extends Fragment {
 
         progress_bar = v.findViewById(R.id.audio_play_progressbar);
         progress_bar.setVisibility(View.GONE);
-        Timber.tag(Global.TAG).d("progress bar is now set");
+        Timber.tag(TAG).d("progress bar is now set");
         previous_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Timber.tag(Global.TAG).d("previous clicked");
+                Timber.tag(TAG).d("previous clicked");
                 if (progress_bar.getVisibility() == View.VISIBLE) return;
                 audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_PREVIOUS).sendToTarget();
             }
@@ -382,7 +361,7 @@ public class PlayScreenFragment extends Fragment {
 
         backward_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Timber.tag(Global.TAG).d("next clicked");
+                Timber.tag(TAG).d("next clicked");
                 if (progress_bar.getVisibility() == View.VISIBLE) return;
                 audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_BACKWARD).sendToTarget();
             }
@@ -421,10 +400,9 @@ public class PlayScreenFragment extends Fragment {
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    Timber.tag(Global.TAG).d("progress bar is made visible - album art fetching");
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
-                    Timber.tag(Global.TAG).d("progress bar is made invisible - album art fetching");
+                    Timber.tag(TAG).d("progress bar is made invisible - album art fetching");
                     if (audio_name_min_tv != null) {
                         audio_name_tv.setText(audioPlayViewModel.audio_file_name);
                         audio_name_min_tv.setText(audioPlayViewModel.audio_file_name);
@@ -442,7 +420,7 @@ public class PlayScreenFragment extends Fragment {
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    Timber.tag(Global.TAG).d("progress bar is made visible - deleting");
+                    Timber.tag(TAG).d("progress bar is made visible - deleting");
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty()) {
@@ -467,7 +445,7 @@ public class PlayScreenFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(DELETE_FILE_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    Timber.tag(Global.TAG).d("progress bar is made visible - delete file request");
+                    Timber.tag(TAG).d("progress bar is made visible - delete file request");
                     Uri tree_uri = result.getParcelable("tree_uri");
                     String tree_uri_path = result.getString("tree_uri_path");
                     String source_folder = result.getString("source_folder");
@@ -501,7 +479,7 @@ public class PlayScreenFragment extends Fragment {
         });
 
 
-        Timber.tag(Global.TAG).d("create view completed");
+        Timber.tag(TAG).d("create view completed");
         return v;
     }
 
@@ -559,7 +537,7 @@ public class PlayScreenFragment extends Fragment {
         if (AudioPlayerService.CURRENT_PLAY_NUMBER <= 0) {
             previous_btn.setEnabled(false);
             previous_btn.setAlpha(Global.DISABLE_ALFA);
-            Timber.tag(Global.TAG).d("previous disabled");
+            Timber.tag(TAG).d("previous disabled");
         } else {
             previous_btn.setEnabled(true);
             previous_btn.setAlpha(Global.ENABLE_ALFA);
@@ -567,7 +545,7 @@ public class PlayScreenFragment extends Fragment {
         if (AudioPlayerService.CURRENT_PLAY_NUMBER >= AudioPlayerService.AUDIO_QUEUED_ARRAY.size() - 1) {
             next_btn.setEnabled(false);
             next_btn.setAlpha(Global.DISABLE_ALFA);
-            Timber.tag(Global.TAG).d("next disabled");
+            Timber.tag(TAG).d("next disabled");
         } else {
             next_btn.setEnabled(true);
             next_btn.setAlpha(Global.ENABLE_ALFA);
@@ -598,7 +576,6 @@ public class PlayScreenFragment extends Fragment {
 
     @Override
     public void onStart() {
-        // TODO: Implement this method
         super.onStart();
         Intent service_intent = new Intent(context, AudioPlayerService.class);
         service_bound = context.bindService(service_intent, service_connection, Context.BIND_AUTO_CREATE);
@@ -629,9 +606,7 @@ public class PlayScreenFragment extends Fragment {
 
             }
         };
-
         onserviceconnection_handler.post(runnable);
-
     }
 
     @Override
@@ -661,7 +636,7 @@ public class PlayScreenFragment extends Fragment {
     }
 
     public void setTitleArt(int audio_id, String audiofilename, final String audiofilepath) {
-        Timber.tag(Global.TAG).d("setting title and album art");
+        Timber.tag(TAG).d("setting title and album art");
         audioPlayViewModel.fetchAlbumArt(audio_id, audiofilename, audiofilepath);
     }
 
@@ -695,7 +670,6 @@ public class PlayScreenFragment extends Fragment {
                     if (MainActivity.usbFileRoot != null) {
                         usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
                     }
-
                     bufferedInputStream = UsbFileStreamFactory.createBufferedInputStream(usbFile, MainActivity.usbCurrentFs);
                 }
 
@@ -704,7 +678,6 @@ public class PlayScreenFragment extends Fragment {
                 bufferedInputStream.close();
                 outputStream.flush();
                 outputStream.close();
-
             } catch (IOException e) {
 
             }
@@ -714,15 +687,12 @@ public class PlayScreenFragment extends Fragment {
             Uri addedUri = cr.insert(url, contentValues);
             RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, addedUri);
         }
-
         Global.print(context, getString(R.string.ringtone_set));
     }
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener {
-
         @Override
         public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
-            // TODO: Implement this method
             final ArrayList<String> files_selected_array = new ArrayList<>();
             if (AudioPlayerActivity.AUDIO_FILE == null) return;
             if (activity instanceof AudioPlayerActivity) {
@@ -731,10 +701,11 @@ public class PlayScreenFragment extends Fragment {
 
             switch (p3) {
                 case 0:
-                    if (!new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.IS_CHILD_FILE(AudioPlayerActivity.AUDIO_FILE.getData(), Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath())) {
+                    if (audioPlayViewModel.fromArchive || !new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }
+
                     if (!AllAudioListFragment.FULLY_POPULATED) {
                         Global.print(context, getString(R.string.wait_till_all_audios_populated_in_all_songs_tab));
                         break;
@@ -794,7 +765,7 @@ public class PlayScreenFragment extends Fragment {
                     break;
 
                 case 3:
-                    if (AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
+                    if (audioPlayViewModel.fromArchive || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }
@@ -807,7 +778,7 @@ public class PlayScreenFragment extends Fragment {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         permission = Settings.System.canWrite(context);
                     } else {
-                        permission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
+                        permission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
                     }
                     if (permission) {
                         set_ring_tone();

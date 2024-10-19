@@ -65,6 +65,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     private AllAudioListFragment aalf;
     private AlbumListFragment albumlf;
     private AudioSavedListFragment aslf;
+    private PlayScreenFragment psf;
     private AudioPlayViewModel audioPlayViewModel;
 
     @Override
@@ -154,12 +155,13 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         audioPlayViewModel = new ViewModelProvider(AudioPlayerActivity.this).get(AudioPlayViewModel.class);
         adapter.startUpdate(view_pager);
-        apf = (AudioPlayFragment) adapter.instantiateItem(view_pager, 0);
-        aalf = (AllAudioListFragment) adapter.instantiateItem(view_pager, 1);
-        albumlf = (AlbumListFragment) adapter.instantiateItem(view_pager, 2);
-        aslf = (AudioSavedListFragment) adapter.instantiateItem(view_pager, 3);
+        //apf = (AudioPlayFragment) adapter.instantiateItem(view_pager, 0);
+        aalf = (AllAudioListFragment) adapter.instantiateItem(view_pager, 0);
+        albumlf = (AlbumListFragment) adapter.instantiateItem(view_pager, 1);
+        aslf = (AudioSavedListFragment) adapter.instantiateItem(view_pager, 2);
         adapter.finishUpdate(view_pager);
 
+        psf= (PlayScreenFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_fragment_container);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
         AUDIO_SAVED_LIST = audioDatabaseHelper.getTables();
@@ -257,11 +259,28 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                     audioPlayViewModel.album_id = AudioPlayerActivity.AUDIO_FILE.getAlbumId();
                     String source_folder = new File(audioPlayViewModel.file_path).getParent();
                     audioPlayViewModel.albumPolling(source_folder, audioPlayViewModel.fileObjectType, audioPlayViewModel.fromThirdPartyApp);
-                    apf.initiate_audio();
+
+
+                    // Start the AudioPlayerService immediately
+//                    Intent service_intent = new Intent(context, AudioPlayerService.class);
+//                    service_intent.setData(data);
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        startForegroundService(service_intent);
+//                    } else {
+//                        startService(service_intent);
+//                    }
+
+                    // Update the fragment's UI and state
+                    if (psf != null) {
+                        psf.initiate_audio();
+                       // psf.set_audio(AUDIO_FILE);
+                    }
+
+                    //apf.initiate_audio();
                 }
-                if (AUDIO_FILE == null) {
-                    view_pager.setCurrentItem(1);
-                }
+//                if (AUDIO_FILE == null) {
+//                    view_pager.setCurrentItem(1);
+//                }
             }
         }
     }
@@ -380,9 +399,13 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         }
 
         AUDIO_FILE = audio;
-        if (apf != null) {
-            apf.set_audio(audio);
-        }
+//        if (apf != null) {
+//            apf.set_audio(audio);
+//        }
+                if (psf != null) {
+           psf.set_audio(audio);
+       }
+
     }
 
     @Override
@@ -392,7 +415,8 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
     @Override
     public void refreshAudioPlayNavigationButtons() {
-        apf.enable_disable_previous_next_btn();
+        //apf.enable_disable_previous_next_btn();
+        psf.enable_disable_previous_next_btn();
     }
 
     @Override
@@ -456,13 +480,13 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         @Override
         public Fragment getItem(int p1) {
             switch (p1) {
-                case 0:
-                    return new AudioPlayFragment();
+//                case 0:
+//                    return new AudioPlayFragment();
 
-                case 2:
+                case 1:
                     return new AlbumListFragment();
 
-                case 3:
+                case 2:
                     return new AudioSavedListFragment();
 
                 default:
@@ -472,19 +496,19 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
-                    return getString(R.string.current_play);
+//                case 0:
+//                    return getString(R.string.current_play);
 
-                case 2:
+                case 1:
                     return getString(R.string.album);
 
-                case 3:
+                case 2:
                     return getString(R.string.audio_list);
 
                 default:
