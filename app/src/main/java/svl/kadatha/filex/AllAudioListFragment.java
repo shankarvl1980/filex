@@ -89,7 +89,6 @@ public class AllAudioListFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         list_popupwindowpojos = new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));
@@ -99,7 +98,6 @@ public class AllAudioListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_all_audio_list, container, false);
         file_number_view = v.findViewById(R.id.all_audio_file_number);
         FloatingActionButton refresh_btn = v.findViewById(R.id.floating_action_all_audio_refresh);

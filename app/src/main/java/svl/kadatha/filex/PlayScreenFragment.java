@@ -21,8 +21,10 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -64,9 +66,9 @@ public class PlayScreenFragment extends Fragment {
     public static String TAG = "PlayScreenFragment";
     public AudioPlayerService audio_player_service;
     private ImageView album_art_imageview;
-    private ImageView previous_btn;
-    private ImageView play_pause_btn;
-    private ImageView next_btn;
+    private ImageButton previous_btn;
+    private ImageButton play_pause_btn;
+    private ImageButton next_btn;
     private TextView audio_name_tv, audio_name_min_tv, audio_album_tv, audio_artists_tv, audio_artists_min_tv, next_audio_tv, total_time_tv, current_progress_tv;
     private SeekBar seekbar;
     private int total_duration;
@@ -181,7 +183,7 @@ public class PlayScreenFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        PlayerScreenMotionLayout v = (PlayerScreenMotionLayout) inflater.inflate(R.layout.fragment_play_screen, container, false);
+        View v = inflater.inflate(R.layout.fragment_play_screen, container, false);
         handler = new Handler();
         onserviceconnection_handler = new Handler();
         handler_for_art = new Handler();
@@ -261,12 +263,23 @@ public class PlayScreenFragment extends Fragment {
 //        });
 
         audio_name_tv = v.findViewById(R.id.current_play_audio_name);
-        audio_name_min_tv = v.findViewById(R.id.current_play_audio_name_min);
+//        audio_name_min_tv = v.findViewById(R.id.current_play_audio_name_min);
 //        audio_album_tv=v.findViewById(R.id.current_play_album);
         audio_artists_tv = v.findViewById(R.id.current_play_artists);
-        audio_artists_min_tv = v.findViewById(R.id.current_play_artists_min);
+ //       audio_artists_min_tv = v.findViewById(R.id.current_play_artists_min);
 //        next_audio_tv=v.findViewById(R.id.current_play_next_audio_title);
 
+        ImageButton exit_btn = v.findViewById(R.id.exit_image_button);
+        exit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((AudioPlayerActivity) context).keyBoardUtil.getKeyBoardVisibility()) {
+                    ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity) context).search_edittext.getWindowToken(), 0);
+                }
+                ((AudioPlayerActivity) context).getOnBackPressedDispatcher().onBackPressed();
+                audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
+            }
+        });
 
 //        ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
 //        overflow_btn.setOnClickListener(new View.OnClickListener()
@@ -317,11 +330,11 @@ public class PlayScreenFragment extends Fragment {
 //
 //        Toolbar bottom_toolbar = v.findViewById(R.id.current_play_bottom_toolbar);
 //        bottom_toolbar.addView(tb_layout);
-        previous_btn = v.findViewById(R.id.prev_image_view);
-        ImageView backward_btn = v.findViewById(R.id.back_15_image_view);
-        play_pause_btn = v.findViewById(R.id.play_pause_image_view);
-        ImageView forward_btn = v.findViewById(R.id.forward_15_image_view);
-        next_btn = v.findViewById(R.id.next_image_view);
+        previous_btn = v.findViewById(R.id.prev_image_button);
+        ImageButton backward_btn = v.findViewById(R.id.back_15_image_button);
+        play_pause_btn = v.findViewById(R.id.play_pause_image_button);
+        ImageButton forward_btn = v.findViewById(R.id.forward_15_image_button);
+        next_btn = v.findViewById(R.id.next_image_button);
         album_art_imageview = v.findViewById(R.id.fragment_current_play_albumart);
 //        total_time_tv=v.findViewById(R.id.audio_player_total_time);
 //        current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
@@ -402,12 +415,7 @@ public class PlayScreenFragment extends Fragment {
                     progress_bar.setVisibility(View.VISIBLE);
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
-                    Timber.tag(TAG).d("progress bar is made invisible - album art fetching");
-                    if (audio_name_min_tv != null) {
-                        audio_name_tv.setText(audioPlayViewModel.audio_file_name);
-                        audio_name_min_tv.setText(audioPlayViewModel.audio_file_name);
-                    }
-
+                    audio_name_tv.setText(audioPlayViewModel.audio_file_name);
                     GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(audioPlayViewModel.album_id)).placeholder(R.drawable.woofer_icon).error(R.drawable.woofer_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(album_art_imageview);
                     audioPlayViewModel.isAlbumArtFetched.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
@@ -529,7 +537,7 @@ public class PlayScreenFragment extends Fragment {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null";
             audio_artists_tv.setText(artists);
-            audio_artists_min_tv.setText(artists);
+            //audio_artists_min_tv.setText(artists);
             //next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
 
             return;
@@ -554,12 +562,12 @@ public class PlayScreenFragment extends Fragment {
         if (audio_player_service != null && audio_player_service.current_audio != null) {
             //audio_album_tv.setText(getString(R.string.album_colon)+" "+audio_player_service.current_audio.getAlbum());
             audio_artists_tv.setText(audio_player_service.current_audio.getArtist());
-            audio_artists_min_tv.setText(audio_player_service.current_audio.getArtist());
+//            audio_artists_min_tv.setText(audio_player_service.current_audio.getArtist());
         } else {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null"
             audio_artists_tv.setText(artists);
-            audio_artists_min_tv.setText(artists);
+ //           audio_artists_min_tv.setText(artists);
 
         }
 //        if(next_btn.isEnabled() && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()>AudioPlayerService.CURRENT_PLAY_NUMBER+1)
