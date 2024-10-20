@@ -37,6 +37,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -183,7 +184,13 @@ public class PlayScreenFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_play_screen, container, false);
+        View v;
+        if(audioPlayViewModel.play_screen_expanded_view){
+            v= inflater.inflate(R.layout.fragment_play_screen_expanded, container, false);
+        } else{
+            v= inflater.inflate(R.layout.fragment_play_screen, container, false);
+        }
+
         handler = new Handler();
         onserviceconnection_handler = new Handler();
         handler_for_art = new Handler();
@@ -192,10 +199,10 @@ public class PlayScreenFragment extends Fragment {
                 audio_player_service = ((AudioPlayerService.AudioBinder) binder).getService();
                 audio_player_service.setMediaPlayerPrepareListener(new AudioPlayerService.MediaPlayerServicePrepareListener() {
                     public void onMediaPrepare() {
-//                        total_duration=audio_player_service.get_duration();
-//                        isDurationMoreThanHour=(total_duration/1000)>3599;
-//                        total_time_tv.setText(convertSecondsToHMmSs(total_duration));
-//                        seekbar.setMax(total_duration);
+                        total_duration = audio_player_service.get_duration();
+                        isDurationMoreThanHour = (total_duration / 1000) > 3599;
+                        total_time_tv.setText(convertSecondsToHMmSs(total_duration));
+                        seekbar.setMax(total_duration);
                         play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
                     }
                 });
@@ -222,11 +229,11 @@ public class PlayScreenFragment extends Fragment {
                                 break;
                             case AudioPlayerService.STOP:
                                 setTitleArt(0, "", null);
+                                total_time_tv.setText("00.00");
                                 break;
                             default:
                                 break;
                         }
-
                         enable_disable_previous_next_btn();
                     }
                 });
@@ -241,6 +248,20 @@ public class PlayScreenFragment extends Fragment {
             }
         };
 
+        ConstraintLayout expansion_stub=v.findViewById(R.id.fragment_current_play_expansion_stub);
+        expansion_stub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(audioPlayViewModel.play_screen_expanded_view){
+                    audioPlayViewModel.play_screen_expanded_view=false;
+                } else{
+                    audioPlayViewModel.play_screen_expanded_view=true;
+                }
+                if (activity instanceof AudioPlayerActivity) {
+                    ((AudioPlayerActivity)activity).instantiatePlayScreenFragment();
+                }
+            }
+        });
 
 //        SeekBar volumeControlSeekbar = v.findViewById(R.id.current_play_volume_seekbar);
 //        volumeControlSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -269,7 +290,7 @@ public class PlayScreenFragment extends Fragment {
  //       audio_artists_min_tv = v.findViewById(R.id.current_play_artists_min);
 //        next_audio_tv=v.findViewById(R.id.current_play_next_audio_title);
 
-        ImageButton exit_btn = v.findViewById(R.id.exit_image_button);
+        ImageButton exit_btn = v.findViewById(R.id.audio_player_exit_btn);
         exit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -336,30 +357,30 @@ public class PlayScreenFragment extends Fragment {
         ImageButton forward_btn = v.findViewById(R.id.forward_15_image_button);
         next_btn = v.findViewById(R.id.next_image_button);
         album_art_imageview = v.findViewById(R.id.fragment_current_play_albumart);
-//        total_time_tv=v.findViewById(R.id.audio_player_total_time);
-//        current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
-//        seekbar=v.findViewById(R.id.audio_player_seekbar);
-//
-//        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-//        {
-//            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
-//            {
-//                if(fromUser)
-//                {
-//                    audio_player_service.seek_to(progress);
-//                }
-//            }
-//
-//            public void onStartTrackingTouch(SeekBar sb)
-//            {
-//
-//            }
-//            public void onStopTrackingTouch(SeekBar sb)
-//            {
-//
-//            }
-//
-//        });
+        total_time_tv=v.findViewById(R.id.audio_player_total_time);
+        current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
+        seekbar=v.findViewById(R.id.audio_player_seekbar);
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
+            {
+                if(fromUser)
+                {
+                    audio_player_service.seek_to(progress);
+                }
+            }
+
+            public void onStartTrackingTouch(SeekBar sb)
+            {
+
+            }
+            public void onStopTrackingTouch(SeekBar sb)
+            {
+
+            }
+
+        });
 
         progress_bar = v.findViewById(R.id.audio_play_progressbar);
         progress_bar.setVisibility(View.GONE);
@@ -485,32 +506,25 @@ public class PlayScreenFragment extends Fragment {
                 }
             }
         });
-
-
-        Timber.tag(TAG).d("create view completed");
         return v;
     }
 
     private void update_position() {
         handler.post(new Runnable() {
             public void run() {
-
                 int current_pos = audio_player_service.get_current_position(); //audio_player;_service.get_current_position();
-//                seekbar.setProgress(current_pos);
-//                current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
+                seekbar.setProgress(current_pos);
+                current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
 
                 if (audio_player_service.completed) {
                     play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.play_icon));
-//                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
-                    //seekbar.setProgress(0);
+                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d", 0, 0, 0) : String.format("%d:%d", 0, 0));
+                    seekbar.setProgress(0);
                     handler.removeCallbacks(this);
                 } else {
                     handler.postDelayed(this, 1000);
                 }
-
-
             }
-
         });
     }
 
@@ -525,7 +539,6 @@ public class PlayScreenFragment extends Fragment {
         } else {
             return String.format("%02d:%02d", m, s);
         }
-
     }
 
     public void enable_disable_previous_next_btn() {
@@ -595,14 +608,13 @@ public class PlayScreenFragment extends Fragment {
                     if (AudioPlayerActivity.AUDIO_FILE != null) {
                         String path = AudioPlayerActivity.AUDIO_FILE.getData();
                         setTitleArt(AudioPlayerActivity.AUDIO_FILE.getId(), AudioPlayerActivity.AUDIO_FILE.getTitle(), path); // dont try audio_player_service.current_audio, it may not have been instantiated.
-
                     }
-//                    total_duration=audio_player_service.get_duration();
-//                    isDurationMoreThanHour=(total_duration/1000)>3599;
-//                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
-//                    total_time_tv.setText(convertSecondsToHMmSs(total_duration));
-//
-//                    seekbar.setMax(total_duration);
+                   total_duration=audio_player_service.get_duration();
+                    isDurationMoreThanHour=(total_duration/1000)>3599;
+                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
+                    total_time_tv.setText(convertSecondsToHMmSs(total_duration));
+
+                   seekbar.setMax(total_duration);
                     enable_disable_previous_next_btn();
                     if (audio_player_service.playmode) {
                         play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
@@ -611,7 +623,6 @@ public class PlayScreenFragment extends Fragment {
                     update_position();
                     onserviceconnection_handler.removeCallbacks(this);
                 }
-
             }
         };
         onserviceconnection_handler.post(runnable);
@@ -637,14 +648,12 @@ public class PlayScreenFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        // TODO: Implement this method
         super.onDestroy();
         if (audio_player_service != null)
             audio_player_service.removeAudioPlayerServiceBroadcastListener();
     }
 
     public void setTitleArt(int audio_id, String audiofilename, final String audiofilepath) {
-        Timber.tag(TAG).d("setting title and album art");
         audioPlayViewModel.fetchAlbumArt(audio_id, audiofilename, audiofilepath);
     }
 

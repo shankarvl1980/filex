@@ -440,6 +440,10 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         }
     }
 
+    public void instantiatePlayScreenFragment(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.bottom_fragment_container,psf=new PlayScreenFragment()).commit();
+    }
+
     public void addAudioCompletionListener(AudioCompletionListener listener) {
         audioCompletionListeners.add(listener);
     }
