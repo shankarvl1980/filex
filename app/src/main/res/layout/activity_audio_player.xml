@@ -19,16 +19,16 @@
         app:tabSelectedTextColor="?attr/tab_select_text_color"
         app:tabTextColor="#FFFFFFFF" />
 
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/activity_audio_player_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:paddingTop="49dp"
         android:paddingBottom="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/all_audio_search_toolbar"
@@ -93,7 +93,7 @@
         android:id="@+id/bottom_fragment_container"
         android:name="svl.kadatha.filex.PlayScreenFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

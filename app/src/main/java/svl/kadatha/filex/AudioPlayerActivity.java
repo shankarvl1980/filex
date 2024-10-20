@@ -160,7 +160,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         albumlf = (AlbumListFragment) adapter.instantiateItem(view_pager, 1);
         aslf = (AudioSavedListFragment) adapter.instantiateItem(view_pager, 2);
         adapter.finishUpdate(view_pager);
-
         psf= (PlayScreenFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_fragment_container);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
