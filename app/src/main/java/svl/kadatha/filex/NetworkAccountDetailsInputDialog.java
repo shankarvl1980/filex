@@ -238,7 +238,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         useHTTPS_check_box.setChecked(useHTTPS);
         domain_tv.setText(domain);
         share_name_tv.setText(shareName);
-        if (smbVersion.isEmpty()) smbVersion = "SMB2";
+        if (smbVersion == null || smbVersion.isEmpty()) smbVersion = "SMB2";
         smbVersion_spinner.setSelection(smbVersionArrayAdapter.getPosition(smbVersion));
 
         private_key_select_button = v.findViewById(R.id.fragment_network_details_input_select_private_key);
@@ -328,8 +328,12 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         basePath = base_path_tv.getText().toString().trim();
         domain = domain_tv.getText().toString().trim();
         shareName = share_name_tv.getText().toString().trim();
-        smbVersion = smbVersion_spinner.getSelectedItem().toString();
-        //if(smbVersion.equals("Automatic")) smbVersion="SMB2";
+        if(smbVersion_spinner.getSelectedItem()!=null){
+            smbVersion = smbVersion_spinner.getSelectedItem().toString();
+        } else{
+            smbVersion="SMB2";
+        }
+
 
         bundle.putBoolean("whetherToConnect", whetherToConnect);
         if (!update && whetherFtpPOJOAlreadyExists(host, user_name, type) && !replace) {
