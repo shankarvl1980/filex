@@ -23,6 +23,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -441,8 +442,22 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         }
     }
 
-    public void instantiatePlayScreenFragment(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.bottom_fragment_container,psf=new PlayScreenFragment()).commit();
+    public void instantiatePlayScreenFragment(boolean expansion) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Set custom animations based on the expansion value
+        if (expansion) {
+            transaction.setCustomAnimations(R.anim.slide_up, R.anim.fade_out, R.anim.fade_in, R.anim.slide_down);
+        } else {
+            transaction.setCustomAnimations(R.anim.slide_down, R.anim.fade_out, R.anim.fade_in, R.anim.slide_up);
+        }
+
+        // Replace the fragment
+        psf = new PlayScreenFragment();
+        transaction.replace(R.id.bottom_fragment_container, psf);
+
+        // Commit the transaction
+        transaction.commit();
     }
 
     public void addAudioCompletionListener(AudioCompletionListener listener) {

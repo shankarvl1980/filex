@@ -260,7 +260,7 @@ public class PlayScreenFragment extends Fragment {
                     audioPlayViewModel.play_screen_expanded_view=true;
                 }
                 if (activity instanceof AudioPlayerActivity) {
-                    ((AudioPlayerActivity)activity).instantiatePlayScreenFragment();
+                    ((AudioPlayerActivity)activity).instantiatePlayScreenFragment(audioPlayViewModel.play_screen_expanded_view);
                 }
             }
         });
