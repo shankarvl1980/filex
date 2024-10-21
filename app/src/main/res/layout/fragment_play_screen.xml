@@ -33,7 +33,7 @@
             android:paddingStart="@dimen/ten_dp"
             android:paddingEnd="@dimen/ten_dp"
             android:singleLine="true"
-            android:textColor="?attr/recycler_main_text_color"
+            android:textColor="?attr/toolbar_text_color"
             android:textSize="17sp"
             app:layout_constraintBottom_toBottomOf="parent"
 
@@ -65,18 +65,8 @@
             android:src="@drawable/overflow_icon"
             />
 
-        <TextView
-            android:id="@+id/current_play_artists"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:paddingBottom="@dimen/layout_margin"
-            android:textColor="?attr/recycler_text_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_play_album" />
+
+
         <ImageButton
             android:id="@+id/current_play_list_image_btn"
             android:layout_width="50dp"

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/toolbar_background"
+    android:background="?attr/dialog_background"
     android:clickable="true"
     android:focusable="true"
-    android:paddingTop="?attr/actionBarSize">
+    android:paddingTop="49dp">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/current_play_toolbar"
@@ -30,8 +30,7 @@
             android:paddingEnd="@dimen/ten_dp"
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
-            android:textSize="17sp"
-            />
+            android:textSize="17sp" />
 
         <ImageButton
             android:id="@+id/audio_player_exit_btn"
@@ -72,8 +71,9 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
+            android:layout_margin="@dimen/layout_margin"
             android:elevation="10dp"
-            android:src="@drawable/down_caret_icon"
+            android:src="@drawable/collapse_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +82,16 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/current_play_list_image_btn_background"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="?attr/toolbar_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
+
+        />
     <ImageButton
         android:id="@+id/current_play_list_image_btn"
         android:layout_width="50dp"
@@ -110,17 +120,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_play_list_image_btn" />
+
     <TextView
         android:id="@+id/current_play_artists"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:lines="1"
-        android:textAlignment="center"
         android:padding="@dimen/ten_dp"
+        android:textAlignment="center"
         android:textColor="?attr/recycler_text_color"
+        app:layout_constraintBottom_toTopOf="@id/audio_player_current_progress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/audio_player_current_progress" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/fragment_play_screen_hide_group"
@@ -130,8 +141,7 @@
         android:visibility="gone"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_current_play_expansion_stub">
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/fragment_current_play_expansion_stub" />
 
 
     <TextView
@@ -175,6 +185,8 @@
         android:id="@+id/current_play_bottom_toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -264,7 +276,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:elevation="6dp"
+        android:elevation="7dp"
         android:focusable="true"
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
