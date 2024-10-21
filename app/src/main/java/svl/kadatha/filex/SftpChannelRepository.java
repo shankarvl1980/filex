@@ -27,7 +27,7 @@ public class SftpChannelRepository {
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
     private final Map<ChannelSftp, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler;
-    private final NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
     private int initialChannels;
 
     private SftpChannelRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
@@ -192,6 +192,9 @@ public class SftpChannelRepository {
         sftpChannels.clear();
         inUseChannels.clear();
         lastUsedTimes.clear();
+        networkAccountPOJO=null;
+        NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO=null;
+        instance=null;
     }
 
     public boolean testConnection(ChannelSftp channel) {

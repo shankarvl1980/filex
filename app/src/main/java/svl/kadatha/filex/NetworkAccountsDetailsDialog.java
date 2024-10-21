@@ -747,7 +747,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         }
                         break;
                     case SMB:
-                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(viewModel.networkAccountPOJO);
                         smbClientRepository.shutdown();
                         break;
                 }

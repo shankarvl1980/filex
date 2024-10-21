@@ -24,8 +24,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
                     sftpChannelRepository.shutdown();
                 }
-                if (NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH != null) {
-                    WebDavClientRepository webDavClientRepository = null;
+                if (NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO != null) {
+                    WebDavClientRepository webDavClientRepository;
                     try {
                         webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
                         webDavClientRepository.shutdown();
@@ -33,7 +33,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                         throw new RuntimeException(e);
                     }
                 }
-                if (NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH != null) {
+                if (NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO != null) {
                     SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                     smbClientRepository.shutdown();
                 }
