@@ -3,47 +3,124 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/toolbar_background"
     android:clickable="true"
     android:focusable="true"
-    android:background="?attr/toolbar_background">
+    android:paddingTop="?attr/actionBarSize">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_current_play_expansion_stub"
-        android:layout_width="0dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/current_play_toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/prev_image_button">
-        <ImageView
-            android:id="@+id/fragment_current_play_albumart"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:src="@drawable/woofer_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/current_play_audio_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             android:ellipsize="end"
-            android:outlineProvider="none"
+            android:gravity="center_vertical"
             android:paddingStart="@dimen/ten_dp"
             android:paddingEnd="@dimen/ten_dp"
             android:singleLine="true"
-            android:textColor="?attr/recycler_main_text_color"
-            android:textSize="19sp"
+            android:textColor="?attr/toolbar_text_color"
+            android:textSize="17sp"
+            />
+
+        <ImageButton
+            android:id="@+id/audio_player_exit_btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/exit_icon"
+
+            />
+
+        <ImageButton
+            android:id="@+id/current_play_overflow"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/toolbar_background"
+            android:padding="10dp"
+            android:src="@drawable/overflow_icon"
+
+            />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_current_play_expansion_stub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/ten_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar">
+
+        <ImageView
+            android:id="@+id/collapse_image_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:elevation="10dp"
+            android:src="@drawable/down_caret_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-
-
-            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_albumart"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ImageButton
+        android:id="@+id/current_play_list_image_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="@drawable/select_detail_recyclerview"
+        android:padding="10dp"
+        android:src="@drawable/play_list_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/fragment_current_play_albumart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+
+        android:paddingTop="@dimen/layout_margin"
+        android:scaleType="fitCenter"
+
+        android:src="@drawable/woofer_icon"
+        app:layout_constraintBottom_toTopOf="@+id/current_play_artists"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_play_list_image_btn" />
+    <TextView
+        android:id="@+id/current_play_artists"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:textAlignment="center"
+        android:padding="@dimen/ten_dp"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/audio_player_current_progress" />
 
     <LinearLayout
         android:id="@+id/fragment_play_screen_hide_group"
@@ -51,222 +128,136 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/prev_image_button"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_current_play_expansion_stub" >
+        app:layout_constraintTop_toBottomOf="@id/fragment_current_play_expansion_stub">
+    </LinearLayout>
 
+
+    <TextView
+        android:id="@+id/audio_player_current_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="start"
+        android:padding="10dp"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar_layout"
+        app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+        android:id="@+id/audio_player_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        android:progressDrawable="@drawable/seek_bar_progress"
+        android:thumb="@drawable/seek_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/audio_player_total_time"
+        app:layout_constraintEnd_toStartOf="@+id/audio_player_total_time"
+        app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
+        app:layout_constraintTop_toTopOf="@+id/audio_player_total_time" />
+
+    <TextView
+        android:id="@+id/audio_player_total_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="end"
+        android:padding="10dp"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/current_play_bottom_toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Previous Button -->
         <ImageButton
-            android:id="@+id/current_play_list_image_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="@dimen/layout_margin"
-            android:background="@drawable/select_detail_recyclerview"
-            android:padding="10dp"
-            android:src="@drawable/play_list_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
-
-            />
-        <TextView
-            android:id="@+id/current_play_artists"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:elevation="10dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:outlineProvider="none"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:textAlignment="center"
-            android:textColor="?attr/recycler_text_color"
-            android:textSize="18sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/prev_image_button"
-
-
-            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_albumart"
-            app:layout_constraintTop_toBottomOf="@id/current_play_audio_name" />
-
-        <ImageButton
-            android:id="@+id/back_15_image_button"
+            android:id="@+id/prev_image_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:background="@drawable/select_detail_recyclerview"
+            android:elevation="10dp"
+            android:outlineProvider="none"
+            android:src="@drawable/previous_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/back_10_image_button"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
+        <!-- Back 15 Seconds Button -->
+        <ImageButton
+            android:id="@+id/back_10_image_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/select_detail_recyclerview"
             android:elevation="10dp"
             android:outlineProvider="none"
             android:src="@drawable/backward_10_icon"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/play_pause_layout"
             app:layout_constraintStart_toEndOf="@id/prev_image_button"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-            />
-
-
-        <ImageButton
-            android:id="@+id/forward_15_image_button"
+        <!-- Play/Pause Button within FrameLayout -->
+        <FrameLayout
+            android:id="@+id/play_pause_layout"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
+            android:background="@drawable/select_detail_recyclerview"
+            android:elevation="10dp"
+            android:outlineProvider="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/forward_10_image_button"
+            app:layout_constraintStart_toEndOf="@id/back_10_image_button"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/play_pause_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/select_detail_recyclerview"
+                android:src="@drawable/play_icon" />
+        </FrameLayout>
+
+        <!-- Forward 15 Seconds Button -->
+        <ImageButton
+            android:id="@+id/forward_10_image_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/select_detail_recyclerview"
             android:elevation="10dp"
             android:outlineProvider="none"
             android:src="@drawable/forward_10_icon"
-
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/next_image_button"
+            app:layout_constraintStart_toEndOf="@id/play_pause_layout"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            app:layout_constraintEnd_toStartOf="@+id/next_image_button"
-
-
-            app:layout_constraintStart_toEndOf="@+id/play_pause_layout"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-        <TextView
-            android:id="@+id/audio_player_current_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="start"
-            android:padding="10dp"
-            android:textColor="?attr/recycler_text_color"
-            app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
-            app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <SeekBar
-            android:id="@+id/audio_player_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:elevation="6dp"
-            android:progressDrawable="@drawable/seek_bar_progress"
-            android:thumb="@drawable/seek_thumb"
-            app:layout_constraintBottom_toBottomOf="@+id/audio_player_total_time"
-            app:layout_constraintEnd_toStartOf="@+id/audio_player_total_time"
-            app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
-            app:layout_constraintTop_toTopOf="@+id/audio_player_total_time" />
-
-        <TextView
-            android:id="@+id/audio_player_total_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="end"
-            android:padding="10dp"
-            android:textColor="?attr/recycler_text_color"
-            app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />
-
-    </LinearLayout>
-
-
-
-
-
-    <ImageButton
-        android:id="@+id/prev_image_button"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
-        android:elevation="10dp"
-
-        android:outlineProvider="none"
-        android:src="@drawable/previous_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/play_pause_layout"
-
-        app:layout_constraintStart_toEndOf="@id/fragment_current_play_expansion_stub"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-
-
-
-    <FrameLayout
-        android:id="@+id/play_pause_layout"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
-
-        android:elevation="10dp"
-        android:outlineProvider="none"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/next_image_button"
-
-        app:layout_constraintStart_toEndOf="@+id/prev_image_button"
-        app:layout_constraintTop_toTopOf="parent">
-
+        <!-- Next Button -->
         <ImageButton
-            android:id="@+id/play_pause_image_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:id="@+id/next_image_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/select_detail_recyclerview"
-            android:src="@drawable/play_icon" />
-    </FrameLayout>
+            android:elevation="10dp"
+            android:outlineProvider="none"
+            android:src="@drawable/next_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/forward_10_image_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-
-
-    <ImageButton
-        android:id="@+id/next_image_button"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
-        android:elevation="10dp"
-
-        android:outlineProvider="none"
-        android:src="@drawable/next_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/audio_player_exit_btn"
-
-
-        app:layout_constraintStart_toEndOf="@+id/play_pause_layout"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/audio_player_exit_btn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
-        android:elevation="10dp"
-
-        android:outlineProvider="none"
-        android:src="@drawable/exit_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-
-
-        app:layout_constraintStart_toEndOf="@+id/next_image_button"
-        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/audio_play_progressbar"
@@ -278,10 +269,11 @@
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
 
-        >
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <ProgressBar
 

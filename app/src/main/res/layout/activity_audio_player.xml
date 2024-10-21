@@ -86,8 +86,17 @@
         app:backgroundTint="?attr/toolbar_background"
         app:elevation="6dp"
         app:layout_anchorGravity="end"
-        app:layout_constraintBottom_toTopOf="@id/bottom_fragment_container"
+        app:layout_constraintBottom_toTopOf="@id/floating_action_audio_player_padding"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Space
+        android:id="@+id/floating_action_audio_player_padding"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/bottom_fragment_container"

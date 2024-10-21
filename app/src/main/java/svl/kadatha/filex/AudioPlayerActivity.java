@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import timber.log.Timber;
+
 
 public class AudioPlayerActivity extends BaseActivity implements AudioSelectListener, AudioFragmentListener {
 
@@ -137,7 +139,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         view_pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageSelected(int p1) {
-                if (p1 == 1) {
+                if (p1 == 0) {
                     aalf.whether_audios_set_to_current_list = false;
                 }
             }

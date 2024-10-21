@@ -591,7 +591,7 @@ public class AlbumDetailsDialog extends DialogFragment {
                     AudioPOJO audio = audio_list.get(pos);
                     File f = new File(audio.getData());
                     if (f.exists()) {
-                        if (!audioListViewModel.whether_audios_set_to_current_list) {
+                        if (!audioListViewModel.whether_audios_set_to_current_list || AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
                             AudioPlayerService.AUDIO_QUEUED_ARRAY = audio_list;
                             audioListViewModel.whether_audios_set_to_current_list = true;
                         }

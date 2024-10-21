@@ -281,8 +281,6 @@ public class AllAudioListFragment extends Fragment {
                 }
             }
         });
-
-
         return v;
     }
 
@@ -316,7 +314,6 @@ public class AllAudioListFragment extends Fragment {
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).addSearchFilterListener(searchFilterListener);
         }
-
     }
 
     @Override
@@ -327,11 +324,12 @@ public class AllAudioListFragment extends Fragment {
                 audioFragmentListener.setSearchBarVisibility(false);
             }
         }
+
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).removeSearchFilterListener(searchFilterListener);
         }
-
     }
+
 
     @Override
     public void onDestroyView() {
@@ -359,7 +357,6 @@ public class AllAudioListFragment extends Fragment {
     private class ToolBarClickListener implements View.OnClickListener {
         @Override
         public void onClick(View p1) {
-            // TODO: Implement this method
             if (progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
                 return;
@@ -591,7 +588,7 @@ public class AllAudioListFragment extends Fragment {
                     Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     Uri data = Uri.withAppendedPath(uri, String.valueOf(id));
 
-                    if (!whether_audios_set_to_current_list) {
+                    if (!whether_audios_set_to_current_list || AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty()) {
                         AudioPlayerService.AUDIO_QUEUED_ARRAY = audio_list;
                         whether_audios_set_to_current_list = true;
                     }

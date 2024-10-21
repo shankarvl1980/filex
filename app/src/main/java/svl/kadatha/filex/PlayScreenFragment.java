@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -70,7 +71,7 @@ public class PlayScreenFragment extends Fragment {
     private ImageButton previous_btn;
     private ImageButton play_pause_btn;
     private ImageButton next_btn;
-    private TextView audio_name_tv, audio_name_min_tv, audio_album_tv, audio_artists_tv, audio_artists_min_tv, next_audio_tv, total_time_tv, current_progress_tv;
+    private TextView audio_name_tv, audio_name_min_tv, audio_album_tv, audio_artists_tv, next_audio_tv, total_time_tv, current_progress_tv;
     private SeekBar seekbar;
     private int total_duration;
     private Handler handler, onserviceconnection_handler, handler_for_art;
@@ -88,6 +89,7 @@ public class PlayScreenFragment extends Fragment {
         }
     });
     private PopupWindow listPopWindow;
+    private ArrayList<ListPopupWindowPOJO> list_popup_window_pojos;
     private List<AudioPOJO> files_selected_for_delete;
     private boolean isDurationMoreThanHour;
     private Uri data;
@@ -152,11 +154,11 @@ public class PlayScreenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
-        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));
-        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon, getString(R.string.send), 2));
-        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon, getString(R.string.copy_to), 3));
-        list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon, getString(R.string.properties), 4));
+        list_popup_window_pojos = new ArrayList<>();
+        list_popup_window_pojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));
+        list_popup_window_pojos.add(new ListPopupWindowPOJO(R.drawable.share_icon, getString(R.string.send), 2));
+        list_popup_window_pojos.add(new ListPopupWindowPOJO(R.drawable.copy_icon, getString(R.string.copy_to), 3));
+        list_popup_window_pojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon, getString(R.string.properties), 4));
     }
 
     public void set_audio(AudioPOJO audioPOJO) {
@@ -284,11 +286,18 @@ public class PlayScreenFragment extends Fragment {
 //        });
 
         audio_name_tv = v.findViewById(R.id.current_play_audio_name);
+        audio_name_tv.setText(audioPlayViewModel.audio_file_name);
 //        audio_name_min_tv = v.findViewById(R.id.current_play_audio_name_min);
 //        audio_album_tv=v.findViewById(R.id.current_play_album);
         audio_artists_tv = v.findViewById(R.id.current_play_artists);
- //       audio_artists_min_tv = v.findViewById(R.id.current_play_artists_min);
-//        next_audio_tv=v.findViewById(R.id.current_play_next_audio_title);
+        next_audio_tv = v.findViewById(R.id.current_play_next_audio_title);
+
+        ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
+        overflow_btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                listPopWindow.showAsDropDown(v, 0, Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
+            }
+        });
 
         ImageButton exit_btn = v.findViewById(R.id.audio_player_exit_btn);
         exit_btn.setOnClickListener(new View.OnClickListener() {
@@ -302,81 +311,55 @@ public class PlayScreenFragment extends Fragment {
             }
         });
 
-//        ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
-//        overflow_btn.setOnClickListener(new View.OnClickListener()
-//        {
-//            public void onClick(View v)
-//            {
-//                listPopWindow.showAsDropDown(v,0,Global.LIST_POPUP_WINDOW_DROP_DOWN_OFFSET);
-//            }
-//        });
-//
-//        ImageButton exit_btn = v.findViewById(R.id.audio_player_exit_btn);
-//        exit_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(((AudioPlayerActivity)context).keyBoardUtil.getKeyBoardVisibility())
-//                {
-//                    ((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((AudioPlayerActivity)context).search_edittext.getWindowToken(),0);
-//                }
-//                ((AudioPlayerActivity)context).getOnBackPressedDispatcher().onBackPressed();
-//                audio_player_service.handler.obtainMessage(AudioPlayerService.STOP).sendToTarget();
-//
-//            }
-//        });
-//
-//        ImageButton audio_play_list_btn = v.findViewById(R.id.current_play_list_image_btn);
-//        audio_play_list_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AudioSavedListDetailsDialog audioSavedListDetailsDialog=AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE,0,AudioPlayerActivity.CURRENT_PLAY_LIST);
-//                audioSavedListDetailsDialog.show(getParentFragmentManager(),"audioSavedListDetailsDialog");
-//            }
-//        });
-//
-//        listPopWindow=new PopupWindow(context);
-//        ListView listView=new ListView(context);
-//        listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context,list_popupwindowpojos));
-//        listPopWindow.setContentView(listView);
-//        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popupwindow_width));
-//        listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-//        listPopWindow.setFocusable(true);
-//        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.list_popup_background));
-//        listView.setOnItemClickListener(new AudioPlayFragment.ListPopupWindowClickListener());
-//
-//
-//        EquallyDistributedImageButtonsLayout tb_layout =new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH,Global.SCREEN_HEIGHT);
-//        int[] drawables ={R.drawable.previous_icon,R.drawable.backward_icon,R.drawable.play_icon,R.drawable.forward_icon,R.drawable.next_icon};
+        ImageButton audio_play_list_btn = v.findViewById(R.id.current_play_list_image_btn);
+        audio_play_list_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioSavedListDetailsDialog audioSavedListDetailsDialog = AudioSavedListDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE, 0, AudioPlayerActivity.CURRENT_PLAY_LIST);
+                audioSavedListDetailsDialog.show(getParentFragmentManager(), "audioSavedListDetailsDialog");
+            }
+        });
+
+        listPopWindow = new PopupWindow(context);
+        ListView listView = new ListView(context);
+        listView.setAdapter(new ListPopupWindowPOJO.PopupWindowAdapter(context, list_popup_window_pojos));
+        listPopWindow.setContentView(listView);
+        listPopWindow.setWidth(getResources().getDimensionPixelSize(R.dimen.list_popup_window_width));
+        listPopWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        listPopWindow.setFocusable(true);
+        listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));
+        listView.setOnItemClickListener(new ListPopupWindowClickListener());
+
+//        EquallyDistributedImageButtonsLayout tb_layout = new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+//        int[] drawables = {R.drawable.previous_icon, R.drawable.backward_10_icon, R.drawable.play_icon, R.drawable.forward_10_icon, R.drawable.next_icon};
 //        tb_layout.setResourceImageDrawables(drawables);
 //
 //        Toolbar bottom_toolbar = v.findViewById(R.id.current_play_bottom_toolbar);
 //        bottom_toolbar.addView(tb_layout);
         previous_btn = v.findViewById(R.id.prev_image_button);
-        ImageButton backward_btn = v.findViewById(R.id.back_15_image_button);
+        ImageButton backward_btn = v.findViewById(R.id.back_10_image_button);
         play_pause_btn = v.findViewById(R.id.play_pause_image_button);
-        ImageButton forward_btn = v.findViewById(R.id.forward_15_image_button);
+        ImageButton forward_btn = v.findViewById(R.id.forward_10_image_button);
         next_btn = v.findViewById(R.id.next_image_button);
+
+        enable_disable_previous_next_btn();
         album_art_imageview = v.findViewById(R.id.fragment_current_play_albumart);
         total_time_tv=v.findViewById(R.id.audio_player_total_time);
         current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
         seekbar=v.findViewById(R.id.audio_player_seekbar);
 
-        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-        {
-            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser)
-            {
-                if(fromUser)
-                {
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
+                if (fromUser) {
                     audio_player_service.seek_to(progress);
                 }
             }
 
-            public void onStartTrackingTouch(SeekBar sb)
-            {
+            public void onStartTrackingTouch(SeekBar sb) {
 
             }
-            public void onStopTrackingTouch(SeekBar sb)
-            {
+
+            public void onStopTrackingTouch(SeekBar sb) {
 
             }
 
@@ -459,7 +442,6 @@ public class PlayScreenFragment extends Fragment {
                         if (audioFragmentListener != null) {
                             audioFragmentListener.onDeleteAudio(deleteFileOtherActivityViewModel.deleted_audio_files);
                         }
-
                         AudioPlayerActivity.AUDIO_FILE = null;
                     }
 
@@ -571,6 +553,7 @@ public class PlayScreenFragment extends Fragment {
             next_btn.setEnabled(true);
             next_btn.setAlpha(Global.ENABLE_ALFA);
         }
+
         // Below is placed here instead of at setTittleArt method because, AudioPlayerService.AUDIO_QUEUED_ARRAY and CURRENT_PLAY not yet updated on selection of audio
         if (audio_player_service != null && audio_player_service.current_audio != null) {
             //audio_album_tv.setText(getString(R.string.album_colon)+" "+audio_player_service.current_audio.getAlbum());
@@ -603,18 +586,18 @@ public class PlayScreenFragment extends Fragment {
         Runnable runnable = new Runnable() {
             public void run() {
                 if (audio_player_service == null) {
-                    onserviceconnection_handler.postDelayed(this, 1000);
+                    onserviceconnection_handler.postDelayed(this, 500);
                 } else {
                     if (AudioPlayerActivity.AUDIO_FILE != null) {
                         String path = AudioPlayerActivity.AUDIO_FILE.getData();
                         setTitleArt(AudioPlayerActivity.AUDIO_FILE.getId(), AudioPlayerActivity.AUDIO_FILE.getTitle(), path); // dont try audio_player_service.current_audio, it may not have been instantiated.
                     }
-                   total_duration=audio_player_service.get_duration();
-                    isDurationMoreThanHour=(total_duration/1000)>3599;
-                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d",0, 0, 0) : String.format("%d:%d", 0, 0));
+                    total_duration = audio_player_service.get_duration();
+                    isDurationMoreThanHour = (total_duration / 1000) > 3599;
+                    current_progress_tv.setText(isDurationMoreThanHour ? String.format("%d:%d:%d", 0, 0, 0) : String.format("%d:%d", 0, 0));
                     total_time_tv.setText(convertSecondsToHMmSs(total_duration));
 
-                   seekbar.setMax(total_duration);
+                    seekbar.setMax(total_duration);
                     enable_disable_previous_next_btn();
                     if (audio_player_service.playmode) {
                         play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
@@ -643,7 +626,7 @@ public class PlayScreenFragment extends Fragment {
         handler.removeCallbacksAndMessages(null);
         handler_for_art.removeCallbacksAndMessages(null);
         onserviceconnection_handler.removeCallbacksAndMessages(null);
-        //listPopWindow.dismiss(); // to avoid memory leak on orientation change
+        listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
     @Override

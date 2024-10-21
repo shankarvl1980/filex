@@ -657,7 +657,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     File f = new File(audio.getData());
                     if (f.exists()) {
 
-                        if (whether_saved_play_list && !audioListViewModel.whether_audios_set_to_current_list) {
+                        if (whether_saved_play_list && (!audioListViewModel.whether_audios_set_to_current_list || AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())) {
                             AudioPlayerService.AUDIO_QUEUED_ARRAY = clicked_audio_list;
                             audioListViewModel.whether_audios_set_to_current_list = true;
                         }
