@@ -78,7 +78,7 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:visibility="gone"
-            android:src="@drawable/select_icon"
+            android:src="@drawable/select_interval_icon"
             app:layout_constraintEnd_toStartOf="@id/detail_fragment_all_select"
             app:layout_constraintStart_toEndOf="@+id/top_toolbar_current_dir_label"
             app:layout_constraintTop_toTopOf="parent" />
