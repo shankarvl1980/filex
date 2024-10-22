@@ -19,7 +19,6 @@ import java.util.zip.ZipFile;
 public class ArchiveViewerViewModel extends AndroidViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean zipFileExtracted;
     private boolean isCancelled;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9;
@@ -86,16 +85,4 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
         });
     }
 
-    public void deleteDirectory(File dir) {
-        if (isDeletionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
-        isDeletionCompleted.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService = MyExecutorService.getExecutorService();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                FileUtil.deleteNativeDirectory(dir);
-                isDeletionCompleted.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
-    }
 }

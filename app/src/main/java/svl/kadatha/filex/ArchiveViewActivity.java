@@ -241,29 +241,11 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     activity_progress_bar.setVisibility(View.GONE);
                     if (viewModel.zipFileExtracted) {
                         createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(), FileObjectType.FILE_TYPE);
-                    } else {
-                        if (Global.ARCHIVE_EXTRACT_DIR.exists()) {
-                            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-                        }
+                        viewModel.zipFileExtracted=false;
                     }
                 }
             }
         });
-
-        viewModel.isDeletionCompleted.observe(this, new Observer<AsyncTaskStatus>() {
-            @Override
-            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-                if (archiveViewFragment == null) return;
-                if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
-                    archiveViewFragment.progress_bar.setVisibility(View.VISIBLE);
-                } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
-                    archiveViewFragment.progress_bar.setVisibility(View.GONE);
-                    viewModel.isDeletionCompleted.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                }
-            }
-        });
-
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
@@ -1050,8 +1032,4 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     }
-
-
-
-
 }
