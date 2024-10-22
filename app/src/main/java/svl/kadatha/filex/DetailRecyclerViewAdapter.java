@@ -22,8 +22,8 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
 
     private CardViewClickListener cardViewClickListener;
 
-    DetailRecyclerViewAdapter(Context context) {
-        df = (DetailFragment) ((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
+    DetailRecyclerViewAdapter(Context context,DetailFragment df) {
+        this.df = df;
         if (df.detailFragmentListener != null) {
             df.detailFragmentListener.setCurrentDirText(df.file_click_selected_name);
             df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + df.file_list_size);
@@ -153,9 +153,28 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
             df.detailFragmentListener.setFileNumberView(s + "/" + size);
             df.detailFragmentListener.onLongClickItem(s);
         }
-
         notifyDataSetChanged();
+    }
 
+    public void selectInterval(){
+        int size=df.viewModel.mselecteditems.size();
+        if(size<2) return;
+        int last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-1);
+        int previous_to_last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-2);
+        if(last_key==previous_to_last_key)return;
+        int min = Math.min(last_key, previous_to_last_key);
+        int max = Math.max(last_key, previous_to_last_key);
+        if(max-min==1)return;
+        for(int i=min+1; i<max; ++i){
+            df.viewModel.mselecteditems.put(i, df.filePOJO_list.get(i).getPath());
+        }
+        int s = df.viewModel.mselecteditems.size();
+
+        if (df.detailFragmentListener != null) {
+            df.detailFragmentListener.setFileNumberView(s + "/" + size);
+            df.detailFragmentListener.onLongClickItem(s);
+        }
+        notifyDataSetChanged();
     }
 
     public void deselectAll() {

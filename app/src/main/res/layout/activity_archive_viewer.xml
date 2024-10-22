@@ -57,8 +57,22 @@
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
-        app:layout_constraintEnd_toStartOf="@+id/archive_detail_fragment_all_select"
+        app:layout_constraintEnd_toStartOf="@+id/archive_detail_fragment_interval_select"
         app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_parent_dir_imagebutton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageButton
+        android:id="@+id/archive_detail_fragment_interval_select"
+        android:layout_width="50dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@null"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:src="@drawable/select_icon"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_current_dir_label"
+        app:layout_constraintEnd_toStartOf="@id/archive_detail_fragment_all_select"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -70,7 +84,7 @@
         android:paddingEnd="10dp"
         android:src="@drawable/select_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_current_dir_label"
+        app:layout_constraintStart_toEndOf="@+id/archive_detail_fragment_interval_select"
         app:layout_constraintTop_toTopOf="parent" />
 
 

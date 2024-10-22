@@ -18,6 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +38,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -68,7 +71,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
-    private ImageButton all_select;
+    private ImageButton all_select,interval_select;
     private int countBackPressed = 0;
     private Group search_toolbar;
     private KeyBoardUtil keyBoardUtil;
@@ -181,6 +184,24 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 }
             }
         });
+
+        interval_select = findViewById(R.id.storage_analyser_interval_select);
+        interval_select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+                if (storageAnalyserFragment.adapter == null || storageAnalyserFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
+                    return;
+                }
+
+                interval_select.setEnabled(false);
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                storageAnalyserFragment.selectInterval();
+            }
+        });
+
+
 
         int imageview_dimension;
         if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 0)
@@ -390,6 +411,25 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 bottom_toolbar.setVisibility(View.GONE);
                 break;
         }
+
+        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        int size=storageAnalyserFragment.viewModel.mselecteditems.size();
+        if (size > 1) {
+            interval_select.setVisibility(View.VISIBLE);
+            int last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
+            int previous_to_last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
+            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+                interval_select.setAlpha(Global.ENABLE_ALFA);
+                interval_select.setEnabled(true);
+            }else{
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                interval_select.setEnabled(false);
+            }
+
+        }
+        if (size == storageAnalyserFragment.file_list_size) {
+            all_select.setImageResource(R.drawable.deselect_icon);
+        }
     }
 
     @Override
@@ -461,19 +501,38 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     public void onLongClickItem(int size) {
+        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        if(storageAnalyserFragment==null)return;
         if (size >= 1) {
             bottom_toolbar.setVisibility(View.GONE);
             actionmode_toolbar.setVisibility(View.VISIBLE);
             toolbar_shown = "action_mode";
             actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-        } else {
-            StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-            if (storageAnalyserFragment != null) {
-                if (size == storageAnalyserFragment.file_list_size) {
-                    //mainActivity.all_select.setImageResource(R.drawable.deselect_icon);
+            if(size==1){
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                interval_select.setEnabled(false);
+            } else{
+                interval_select.setVisibility(View.VISIBLE);
+                int last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
+                int previous_to_last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
+                if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+                    interval_select.setAlpha(Global.ENABLE_ALFA);
+                    interval_select.setEnabled(true);
+                } else{
+                    interval_select.setAlpha(Global.DISABLE_ALFA);
+                    interval_select.setEnabled(false);
                 }
-                DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
             }
+            if (size == storageAnalyserFragment.file_list_size) {
+                all_select.setImageResource(R.drawable.deselect_icon);
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                interval_select.setEnabled(false);
+            }else{
+                all_select.setImageResource(R.drawable.select_icon);
+            }
+
+        } else {
+            DeselectAllAndAdjustToolbars(storageAnalyserFragment, storageAnalyserFragment.fileclickselected);
         }
     }
 
@@ -696,6 +755,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             sad.clearSelectionAndNotifyDataSetChanged();
             sad.is_toolbar_visible = true;
             all_select.setImageResource(R.drawable.select_icon);
+            interval_select.setVisibility(View.GONE);
         }
     }
 
@@ -760,4 +820,182 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
         }
     }
+
+
+    public static class StorageAnalyserAdapter extends AbstractStorageAnalyserAdapter {
+        StorageAnalyserFragment storageAnalyserFragment;
+        StorageAnalyserAdapter(Context context,StorageAnalyserFragment storageAnalyserFragment) {
+            super(context,storageAnalyserFragment);
+            this.storageAnalyserFragment=storageAnalyserFragment;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder p1, int p2) {
+            {
+                FilePOJO file = storageAnalyserFragment.filePOJO_list.get(p2);
+                boolean selected = storageAnalyserFragment.viewModel.mselecteditems.containsKey(p2);
+                p1.v.setData(file, selected);
+                p1.v.setSelected(selected);
+            }
+        }
+    }
+
+    public static class StorageAnalyserAdapterDivider extends AbstractStorageAnalyserAdapter {
+        StorageAnalyserFragment storageAnalyserFragment;
+        StorageAnalyserAdapterDivider(Context context,StorageAnalyserFragment storageAnalyserFragment) {
+            super(context,storageAnalyserFragment);
+            this.storageAnalyserFragment=storageAnalyserFragment;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder p1, int p2) {
+            {
+                FilePOJO file = storageAnalyserFragment.filePOJO_list.get(p2);
+                boolean selected = storageAnalyserFragment.viewModel.mselecteditems.containsKey(p2);
+                p1.v.setData(file, selected);
+                p1.v.setWhetherExternal(file);
+                p1.v.setSelected(selected);
+                String next_file_name = "";
+                String next_file_checksum = "";
+
+                try {
+                    next_file_name = storageAnalyserFragment.filePOJO_list.get(p2 + 1).getName();
+                    next_file_checksum = storageAnalyserFragment.filePOJO_list.get(p2 + 1).getChecksum();
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+                boolean whetherToShowDivider = !(next_file_name.equals(file.getName()) && next_file_checksum.equals(file.getChecksum()));
+                p1.v.setDivider(whetherToShowDivider);
+            }
+        }
+    }
+
+    public static abstract class AbstractStorageAnalyserAdapter extends RecyclerView.Adapter<AbstractStorageAnalyserAdapter.ViewHolder> implements Filterable {
+        final StorageAnalyserFragment storageAnalyserFragment;
+        Context context;
+        AbstractStorageAnalyserAdapter(Context context,StorageAnalyserFragment storageAnalyserFragment) {
+            this.context=context;
+            this.storageAnalyserFragment = storageAnalyserFragment;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            return new ViewHolder(new StorageAnalyserRecyclerViewLayout(context, false));
+        }
+
+        @Override
+        public abstract void onBindViewHolder(final AbstractStorageAnalyserAdapter.ViewHolder p1, int p2);
+
+        @Override
+        public int getItemCount() {
+            return storageAnalyserFragment.filePOJO_list.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    return new FilterResults();
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    storageAnalyserFragment.filePOJO_list = new ArrayList<>();
+                    if (constraint == null || constraint.length() == 0) {
+                        storageAnalyserFragment.filePOJO_list = storageAnalyserFragment.totalFilePOJO_list;
+                    } else {
+                        String pattern = constraint.toString().toLowerCase().trim();
+                        for (int i = 0; i < storageAnalyserFragment.totalFilePOJO_list_Size; ++i) {
+                            FilePOJO filePOJO = storageAnalyserFragment.totalFilePOJO_list.get(i);
+                            if (filePOJO.getLowerName().contains(pattern)) {
+                                storageAnalyserFragment.filePOJO_list.add(filePOJO);
+                            }
+                        }
+                    }
+
+                    int t = storageAnalyserFragment.filePOJO_list.size();
+
+                    if (!storageAnalyserFragment.viewModel.mselecteditems.isEmpty()) {
+                        storageAnalyserFragment.deselectAll();
+                    } else {
+                        notifyDataSetChanged();
+                    }
+
+                    if (t > 0) {
+                        storageAnalyserFragment.recycler_view.setVisibility(View.VISIBLE);
+                        storageAnalyserFragment.folder_empty_textview.setVisibility(View.GONE);
+                    }
+
+                    if (storageAnalyserFragment.detailFragmentListener != null) {
+                        storageAnalyserFragment.detailFragmentListener.setFileNumberView("" + t);
+                    }
+
+                }
+            };
+        }
+
+
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+            final StorageAnalyserRecyclerViewLayout v;
+            FileObjectType fileObjectType;
+
+            int pos;
+
+            ViewHolder(StorageAnalyserRecyclerViewLayout v) {
+                super(v);
+                this.v = v;
+                v.setOnClickListener(this);
+                v.setOnLongClickListener(this);
+            }
+
+            @Override
+            public void onClick(View p1) {
+                pos = getBindingAdapterPosition();
+                int size = storageAnalyserFragment.viewModel.mselecteditems.size();
+                if (size > 0) {
+                    longClickMethod(p1, size);
+                } else {
+                    FilePOJO filePOJO = storageAnalyserFragment.filePOJO_list.get(pos);
+                    storageAnalyserFragment.clicked_filepojo = filePOJO;
+                    fileObjectType = filePOJO.getFileObjectType();
+                    if (filePOJO.getIsDirectory()) {
+                        if (storageAnalyserFragment.detailFragmentListener != null) {
+                            storageAnalyserFragment.detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
+                        }
+                    } else {
+                        storageAnalyserFragment.file_open_intent_dispatch(filePOJO.getPath(), filePOJO.getFileObjectType(), filePOJO.getName(), false, filePOJO.getSizeLong());
+                    }
+                    FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.STORAGE_ANALYSER);
+                }
+            }
+
+            @Override
+            public boolean onLongClick(View view) {
+                longClickMethod(view, storageAnalyserFragment.viewModel.mselecteditems.size());
+                return true;
+            }
+
+            private void longClickMethod(View v, int size) {
+                pos = getBindingAdapterPosition();
+                if (storageAnalyserFragment.viewModel.mselecteditems.containsKey(pos)) {
+                    storageAnalyserFragment.viewModel.mselecteditems.remove(pos);
+                    v.setSelected(false);
+                    ((StorageAnalyserRecyclerViewLayout) v).set_selected(false);
+                    --size;
+                } else {
+                    storageAnalyserFragment.viewModel.mselecteditems.put(pos, storageAnalyserFragment.filePOJO_list.get(pos).getPath());
+                    v.setSelected(true);
+                    ((StorageAnalyserRecyclerViewLayout) v).set_selected(true);
+                    ++size;
+                }
+                if (storageAnalyserFragment.detailFragmentListener != null) {
+                    storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
+                    storageAnalyserFragment.detailFragmentListener.setFileNumberView(size + "/" + storageAnalyserFragment.file_list_size);
+                }
+
+            }
+        }
+    }
+
 }

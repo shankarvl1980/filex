@@ -37,7 +37,6 @@ import java.util.regex.PatternSyntaxException;
 import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FilePOJOViewModel extends AndroidViewModel {
-    private static final int MAX_FTP_EMPTY_REFRESH_ATTEMPTS = 3; // You can adjust this value
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     final List<FilePOJO> path = new ArrayList<>();
     private final Application application;
@@ -53,7 +52,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
     private String media_category = null;
-    private int ftpEmptyRefreshAttempts = 0;
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
@@ -697,21 +695,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     }
 
-    public int getFtpEmptyRefreshAttempts() {
-        return ftpEmptyRefreshAttempts;
-    }
-
-    public void incrementFtpEmptyRefreshAttempts() {
-        ftpEmptyRefreshAttempts++;
-    }
-
-    public void resetFtpEmptyRefreshAttempts() {
-        ftpEmptyRefreshAttempts = 0;
-    }
-
-    public boolean canAttemptFtpEmptyRefresh() {
-        return ftpEmptyRefreshAttempts < MAX_FTP_EMPTY_REFRESH_ATTEMPTS;
-    }
 
     static class FileStoragePOJO {
         final int number_of_files;

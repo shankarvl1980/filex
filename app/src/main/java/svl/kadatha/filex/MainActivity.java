@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
-    public ImageButton parent_dir_image_button, all_select;
+    public ImageButton parent_dir_image_button, all_select,interval_select;
     public TinyDB tinyDB;
     public StorageRecyclerAdapter storageRecyclerAdapter;
     public PackageManager pm;
@@ -286,12 +286,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         parent_dir_image_button = findViewById(R.id.top_toolbar_parent_dir_imagebutton);
         current_dir_textview = findViewById(R.id.top_toolbar_current_dir_label);
         all_select = findViewById(R.id.detail_fragment_all_select);
-
+        interval_select=findViewById(R.id.detail_fragment_interval_select);
         TopToolbarClickListener topToolbarClickListener = new TopToolbarClickListener();
         home_button.setOnClickListener(topToolbarClickListener);
         parent_dir_image_button.setOnClickListener(topToolbarClickListener);
         current_dir_textview.setOnClickListener(topToolbarClickListener);
         all_select.setOnClickListener(topToolbarClickListener);
+        interval_select.setOnClickListener(topToolbarClickListener);
 
         floating_button_back = findViewById(R.id.floating_action_button_back);
         floating_button_back.setOnClickListener(new View.OnClickListener() {
@@ -1172,9 +1173,24 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 break;
         }
 
-        if (df.viewModel.mselecteditems.size() > 1) {
+        int size=df.viewModel.mselecteditems.size();
+        if (size > 1) {
             rename.setEnabled(false);
             rename.setAlpha(Global.DISABLE_ALFA);
+            interval_select.setVisibility(View.VISIBLE);
+            int last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-1);
+            int previous_to_last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-2);
+            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+                interval_select.setAlpha(Global.ENABLE_ALFA);
+                interval_select.setEnabled(true);
+            }else{
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                interval_select.setEnabled(false);
+            }
+
+        }
+        if (size == df.file_list_size) {
+            all_select.setImageResource(R.drawable.deselect_icon);
         }
 
         if (viewModel.working_dir_open) {
@@ -1390,6 +1406,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             df.clearSelectionAndNotifyDataSetChanged();
             df.is_toolbar_visible = true;
             all_select.setImageResource(R.drawable.select_icon);
+            interval_select.setVisibility(View.GONE);
         }
     }
 
@@ -1522,17 +1539,35 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
         }
 
+        final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
         if (size == 1) {
             rename.setEnabled(true);
             rename.setAlpha(Global.ENABLE_ALFA);
+            interval_select.setAlpha(Global.DISABLE_ALFA);
+            interval_select.setEnabled(false);
         } else if (size > 1) {
             rename.setEnabled(false);
             rename.setAlpha(Global.DISABLE_ALFA);
+            interval_select.setVisibility(View.VISIBLE);
+            int last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-1);
+            int previous_to_last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-2);
+            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+                interval_select.setAlpha(Global.ENABLE_ALFA);
+                interval_select.setEnabled(true);
+            } else{
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                interval_select.setEnabled(false);
+            }
         }
 
-        final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+
         if (size == df.file_list_size) {
             all_select.setImageResource(R.drawable.deselect_icon);
+            interval_select.setAlpha(Global.DISABLE_ALFA);
+            interval_select.setEnabled(false);
+        }
+        else{
+            all_select.setImageResource(R.drawable.select_icon);
         }
         if (size == 0) {
             DeselectAllAndAdjustToolbars(df);
@@ -1722,6 +1757,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     all_select.setImageResource(R.drawable.select_icon);
                     df.adapter.deselectAll();
                 }
+            } else if(id == R.id.detail_fragment_interval_select){
+                if (df.adapter == null || df.progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
+                    return;
+                }
+                interval_select.setEnabled(false);
+                interval_select.setAlpha(Global.DISABLE_ALFA);
+                df.adapter.selectInterval();
             }
         }
     }

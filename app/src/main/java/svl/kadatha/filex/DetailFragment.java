@@ -445,15 +445,15 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
         if (grid_layout) {
             if (fileclickselected.equals("Duplicate Files")) {
-                adapter = new DetailRecyclerViewDuplicateAdapterGrid(context, show_file_path, this);
+                adapter = new DetailRecyclerViewDuplicateAdapterGrid(context, this,show_file_path);
             } else {
-                adapter = new DetailRecyclerViewAdapterGrid(context, show_file_path);
+                adapter = new DetailRecyclerViewAdapterGrid(context,this ,show_file_path);
             }
         } else {
             if (fileclickselected.equals("Duplicate Files")) {
-                adapter = new DetailRecyclerViewDuplicateAdapterList(context, show_file_path, this);
+                adapter = new DetailRecyclerViewDuplicateAdapterList(context,this ,show_file_path);
             } else {
-                adapter = new DetailRecyclerViewAdapterList(context, show_file_path);
+                adapter = new DetailRecyclerViewAdapterList(context,this ,show_file_path);
             }
         }
 

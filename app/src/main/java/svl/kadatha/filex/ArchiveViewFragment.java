@@ -21,6 +21,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -54,6 +55,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public boolean local_activity_delete, modification_observed;
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
+    public DetailFragmentListener detailFragmentListener;
     LinearLayoutManager llm;
     GridLayoutManager glm;
     TextView folder_empty;
@@ -80,17 +82,21 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         super.onAttach(context);
         this.context = context;
         archiveViewActivity = (ArchiveViewActivity) context;
+        AppCompatActivity activity = (AppCompatActivity) context;
+        if (activity instanceof DetailFragmentListener) {
+            detailFragmentListener = (DetailFragmentListener) activity;
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         archiveViewActivity = null;
+        detailFragmentListener = null;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
@@ -367,9 +373,12 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 }
             }
 
-            public void onLongClick(FilePOJO filePOJO) {
+            public void onLongClick(FilePOJO filePOJO, int size) {
                 archiveViewActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                 is_toolbar_visible = true;
+                if(detailFragmentListener!=null){
+                    detailFragmentListener.onLongClickItem(size);
+                }
             }
         });
     }
@@ -487,9 +496,5 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             }
         }
     });
-
-
-
-
 }
 

@@ -39,7 +39,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class StorageAnalyserFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     private final static String SAF_PERMISSION_REQUEST_CODE = "storage_analyser_dialog_saf_permission_request_code";
-    public AbstractStorageAnalyserAdapter adapter;
+    public StorageAnalyserActivity.AbstractStorageAnalyserAdapter adapter;
     public List<FilePOJO> filePOJO_list, totalFilePOJO_list;
     public int totalFilePOJO_list_Size;
     public String fileclickselected;
@@ -52,13 +52,13 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     public FrameLayout progress_bar;
     public FilePOJOViewModel viewModel;
     public DetailFragmentListener detailFragmentListener;
-    private RecyclerView recycler_view;
-    private TextView folder_empty_textview;
+    public RecyclerView recycler_view;
+    public TextView folder_empty_textview;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
-    private FilePOJO clicked_filepojo;
+    public FilePOJO clicked_filepojo;
 
     public static StorageAnalyserFragment getInstance(FileObjectType fileObjectType) {
         StorageAnalyserFragment storageAnalyserFragment = new StorageAnalyserFragment();
@@ -258,9 +258,9 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
 
         if (fileclickselected.equals("Duplicate Files")) {
-            adapter = new StorageAnalyserAdapterDivider(this);
+            adapter = new StorageAnalyserActivity.StorageAnalyserAdapterDivider(context,this);
         } else {
-            adapter = new StorageAnalyserAdapter(this);
+            adapter = new StorageAnalyserActivity.StorageAnalyserAdapter(context,this);
         }
         set_adapter();
         progress_bar.setVisibility(View.GONE);
@@ -322,6 +322,27 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         onLongClickAdjustToolbars(size);
     }
 
+    public void selectInterval(){
+        int size=viewModel.mselecteditems.size();
+        if(size<2) return;
+        int last_key=viewModel.mselecteditems.getKeyAtIndex(size-1);
+        int previous_to_last_key=viewModel.mselecteditems.getKeyAtIndex(size-2);
+        if(last_key==previous_to_last_key)return;
+        int min = Math.min(last_key, previous_to_last_key);
+        int max = Math.max(last_key, previous_to_last_key);
+        if(max-min==1)return;
+        for(int i=min+1; i<max; ++i){
+            viewModel.mselecteditems.put(i, filePOJO_list.get(i).getPath());
+        }
+        int s = viewModel.mselecteditems.size();
+
+        if (detailFragmentListener != null) {
+            detailFragmentListener.setFileNumberView(s + "/" + size);
+            detailFragmentListener.onLongClickItem(s);
+        }
+        notifyDataSetChanged();
+    }
+
     public void deselectAll() {
         if (detailFragmentListener != null) {
             detailFragmentListener.actionModeFinish(this, fileclickselected);
@@ -334,7 +355,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
     }
 
-    private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
+    public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
         int idx = file_name.lastIndexOf(".");
         String file_ext = "";
         if (idx != -1) {
@@ -410,190 +431,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
-    public class StorageAnalyserAdapter extends AbstractStorageAnalyserAdapter {
-
-        StorageAnalyserAdapter(StorageAnalyserFragment storageAnalyserFragment) {
-            super(storageAnalyserFragment);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder p1, int p2) {
-            {
-                // TODO: Implement this method
-                FilePOJO file = filePOJO_list.get(p2);
-                boolean selected = viewModel.mselecteditems.containsKey(p2);
-                p1.v.setData(file, selected);
-                p1.v.setSelected(selected);
-            }
-
-        }
-    }
-
-    public class StorageAnalyserAdapterDivider extends AbstractStorageAnalyserAdapter {
-
-        StorageAnalyserAdapterDivider(StorageAnalyserFragment storageAnalyserFragment) {
-            super(storageAnalyserFragment);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder p1, int p2) {
-            {
-                // TODO: Implement this method
-                FilePOJO file = filePOJO_list.get(p2);
-                boolean selected = viewModel.mselecteditems.containsKey(p2);
-                p1.v.setData(file, selected);
-                p1.v.setWhetherExternal(file);
-                p1.v.setSelected(selected);
-                String next_file_name = "";
-                String next_file_checksum = "";
-
-                try {
-                    next_file_name = filePOJO_list.get(p2 + 1).getName();
-                    next_file_checksum = filePOJO_list.get(p2 + 1).getChecksum();
-                } catch (IndexOutOfBoundsException e) {
-
-                }
-                boolean whetherToShowDivider = !(next_file_name.equals(file.getName()) && next_file_checksum.equals(file.getChecksum()));
-                p1.v.setDivider(whetherToShowDivider);
-
-
-            }
-
-        }
-    }
-
-    public abstract class AbstractStorageAnalyserAdapter extends RecyclerView.Adapter<AbstractStorageAnalyserAdapter.ViewHolder> implements Filterable {
-        final StorageAnalyserFragment storageAnalyserFragment;
-
-        AbstractStorageAnalyserAdapter(StorageAnalyserFragment storageAnalyserFragment) {
-            this.storageAnalyserFragment = storageAnalyserFragment;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
-            return new ViewHolder(new StorageAnalyserRecyclerViewLayout(context, false));
-        }
-
-        @Override
-        public abstract void onBindViewHolder(final AbstractStorageAnalyserAdapter.ViewHolder p1, int p2);
-
-        @Override
-        public int getItemCount() {
-            // TODO: Implement this method
-            return filePOJO_list.size();
-        }
-
-        @Override
-        public Filter getFilter() {
-            return new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    return new FilterResults();
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    filePOJO_list = new ArrayList<>();
-                    if (constraint == null || constraint.length() == 0) {
-                        filePOJO_list = totalFilePOJO_list;
-                    } else {
-                        String pattern = constraint.toString().toLowerCase().trim();
-                        for (int i = 0; i < totalFilePOJO_list_Size; ++i) {
-                            FilePOJO filePOJO = totalFilePOJO_list.get(i);
-                            if (filePOJO.getLowerName().contains(pattern)) {
-                                filePOJO_list.add(filePOJO);
-                            }
-                        }
-                    }
-
-                    int t = filePOJO_list.size();
-
-                    if (!viewModel.mselecteditems.isEmpty()) {
-                        deselectAll();
-                    } else {
-                        notifyDataSetChanged();
-                    }
-
-                    if (t > 0) {
-                        recycler_view.setVisibility(View.VISIBLE);
-                        folder_empty_textview.setVisibility(View.GONE);
-                    }
-
-                    if (detailFragmentListener != null) {
-                        detailFragmentListener.setFileNumberView("" + t);
-                    }
-
-                }
-            };
-        }
-
-
-        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-            final StorageAnalyserRecyclerViewLayout v;
-            FileObjectType fileObjectType;
-
-            int pos;
-
-            ViewHolder(StorageAnalyserRecyclerViewLayout v) {
-                super(v);
-                this.v = v;
-                v.setOnClickListener(this);
-                v.setOnLongClickListener(this);
-            }
-
-            @Override
-            public void onClick(View p1) {
-                pos = getBindingAdapterPosition();
-                int size = viewModel.mselecteditems.size();
-                if (size > 0) {
-                    longClickMethod(p1, size);
-                } else {
-                    FilePOJO filePOJO = filePOJO_list.get(pos);
-                    clicked_filepojo = filePOJO;
-                    fileObjectType = filePOJO.getFileObjectType();
-                    if (filePOJO.getIsDirectory()) {
-                        if (detailFragmentListener != null) {
-                            detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
-                        }
-                    } else {
-                        file_open_intent_dispatch(filePOJO.getPath(), filePOJO.getFileObjectType(), filePOJO.getName(), false, filePOJO.getSizeLong());
-                    }
-                    FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.STORAGE_ANALYSER);
-                }
-            }
-
-            @Override
-            public boolean onLongClick(View view) {
-                longClickMethod(view, viewModel.mselecteditems.size());
-                return true;
-            }
-
-            private void longClickMethod(View v, int size) {
-                pos = getBindingAdapterPosition();
-                if (viewModel.mselecteditems.containsKey(pos)) {
-                    viewModel.mselecteditems.remove(pos);
-                    v.setSelected(false);
-                    ((StorageAnalyserRecyclerViewLayout) v).set_selected(false);
-                    --size;
-                    onLongClickAdjustToolbars(size);
-                } else {
-                    viewModel.mselecteditems.put(pos, filePOJO_list.get(pos).getPath());
-                    v.setSelected(true);
-                    ((StorageAnalyserRecyclerViewLayout) v).set_selected(true);
-                    ++size;
-                    onLongClickAdjustToolbars(size);
-                }
-
-                if (detailFragmentListener != null) {
-                    detailFragmentListener.setFileNumberView(size + "/" + file_list_size);
-                }
-
-            }
-        }
-
-
-    }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -607,8 +444,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             }
         }
     });
-
-
 }
 
 
