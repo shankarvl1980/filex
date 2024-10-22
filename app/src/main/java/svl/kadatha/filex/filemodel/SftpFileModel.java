@@ -147,16 +147,6 @@ public class SftpFileModel implements FileModel {
         try {
             sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
-
-            if (overwrite) {
-                try {
-                    channelSftp.rm(newFilePath);
-                } catch (SftpException e) {
-                    if (e.id != ChannelSftp.SSH_FX_NO_SUCH_FILE) {
-                        throw e;
-                    }
-                }
-            }
             channelSftp.rename(path, newFilePath);
             Timber.tag(TAG).d("Rename operation successful");
             return true;

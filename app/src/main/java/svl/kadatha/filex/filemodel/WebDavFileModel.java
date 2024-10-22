@@ -120,13 +120,6 @@ public class WebDavFileModel implements FileModel {
         }
 
         try {
-            if (overwrite && new WebDavFileModel(new_file_path).exists()) {
-                boolean deleted = new WebDavFileModel(new_file_path).delete();
-                if (!deleted) {
-                    Timber.tag(TAG).w("Failed to delete existing resource at path: %s", new_file_path);
-                    return false;
-                }
-            }
             sardine.move(url, dest_url);
             Timber.tag(TAG).d("Rename operation succeeded from %s to %s", path, new_file_path);
             return true;
