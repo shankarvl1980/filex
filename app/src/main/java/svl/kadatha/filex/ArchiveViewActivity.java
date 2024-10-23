@@ -65,7 +65,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     public static PackageManager PM;
     public static FragmentManager FM;
     static File ZIP_FILE;
-    public ImageButton back_button, parent_dir_image_button, all_select,interval_select;
+    public ImageButton back_button, parent_dir_image_button, all_select, interval_select;
     public TinyDB tinyDB;
     public PackageManager pm;
     public FragmentManager fm;
@@ -195,7 +195,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         parent_dir_image_button = findViewById(R.id.archive_top_toolbar_parent_dir_imagebutton);
         current_dir_textview = findViewById(R.id.archive_top_toolbar_current_dir_label);
         all_select = findViewById(R.id.archive_detail_fragment_all_select);
-        interval_select=findViewById(R.id.archive_detail_fragment_interval_select);
+        interval_select = findViewById(R.id.archive_detail_fragment_interval_select);
 
         TopToolbarClickListener topToolbarClickListener = new TopToolbarClickListener();
         back_button.setOnClickListener(topToolbarClickListener);
@@ -241,7 +241,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     activity_progress_bar.setVisibility(View.GONE);
                     if (viewModel.zipFileExtracted) {
                         createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(), FileObjectType.FILE_TYPE);
-                        viewModel.zipFileExtracted=false;
+                        viewModel.zipFileExtracted = false;
                     }
                 }
             }
@@ -250,7 +250,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if (intent != null) {
-               onInitiate(intent);
+                onInitiate(intent);
             }
         }
 
@@ -380,7 +380,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 .show();
     }
 
-    private void onInitiate(Intent intent){
+    private void onInitiate(Intent intent) {
         String receivedAction = intent.getAction();
         Uri uri = intent.getData();
         if (receivedAction != null && receivedAction.equals(Intent.ACTION_VIEW) && uri != null) {
@@ -402,6 +402,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             viewModel.extractArchive(zipfile);
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -460,16 +461,16 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         super.onRestoreInstanceState(savedInstanceState);
         clear_cache = savedInstanceState.getBoolean("clear_cache");
         ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-        int size=archiveViewFragment.viewModel.mselecteditems.size();
+        int size = archiveViewFragment.viewModel.mselecteditems.size();
         if (size > 1) {
 
             interval_select.setVisibility(View.VISIBLE);
-            int last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+            int last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                 interval_select.setAlpha(Global.ENABLE_ALFA);
                 interval_select.setEnabled(true);
-            }else{
+            } else {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
@@ -493,17 +494,17 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     @Override
     public void onLongClickItem(int size) {
         ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-        if(size==1){
+        if (size == 1) {
             interval_select.setAlpha(Global.DISABLE_ALFA);
             interval_select.setEnabled(false);
-        } else if(size>1){
+        } else if (size > 1) {
             interval_select.setVisibility(View.VISIBLE);
-            int last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+            int last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                 interval_select.setAlpha(Global.ENABLE_ALFA);
                 interval_select.setEnabled(true);
-            } else{
+            } else {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
@@ -514,7 +515,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             all_select.setImageResource(R.drawable.deselect_icon);
             interval_select.setAlpha(Global.DISABLE_ALFA);
             interval_select.setEnabled(false);
-        } else{
+        } else {
             all_select.setImageResource(R.drawable.select_icon);
         }
 
@@ -609,6 +610,12 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 }
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -649,12 +656,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     });
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-    }
 
     @Override
     protected void onDestroy() {
@@ -783,16 +784,16 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             archiveViewActivity.bottom_toolbar.setVisibility(View.VISIBLE);
         }
 
-        public void selectInterval(){
-            int size=archiveViewFragment.viewModel.mselecteditems.size();
-            if(size<2) return;
-            int last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key==previous_to_last_key)return;
+        public void selectInterval() {
+            int size = archiveViewFragment.viewModel.mselecteditems.size();
+            if (size < 2) return;
+            int last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key == previous_to_last_key) return;
             int min = Math.min(last_key, previous_to_last_key);
             int max = Math.max(last_key, previous_to_last_key);
-            if(max-min==1)return;
-            for(int i=min+1; i<max; ++i){
+            if (max - min == 1) return;
+            for (int i = min + 1; i < max; ++i) {
                 archiveViewFragment.viewModel.mselecteditems.put(i, archiveViewFragment.filePOJO_list.get(i).getPath());
             }
             int s = archiveViewFragment.viewModel.mselecteditems.size();
@@ -851,12 +852,12 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     if (size == 1) {
                         if (cardViewClickListener != null) {
                             FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
-                            cardViewClickListener.onLongClick(filePOJO,size);
+                            cardViewClickListener.onLongClick(filePOJO, size);
                         }
                     } else if (size > 1) {
                         if (cardViewClickListener != null) {
                             FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
-                            cardViewClickListener.onLongClick(filePOJO,size);
+                            cardViewClickListener.onLongClick(filePOJO, size);
                         }
                     }
 
@@ -869,7 +870,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
                     if (cardViewClickListener != null) {
                         FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
-                        cardViewClickListener.onLongClick(filePOJO,size);
+                        cardViewClickListener.onLongClick(filePOJO, size);
                     }
                 }
                 archiveViewActivity.file_number_view.setText(size + "/" + archiveViewFragment.file_list_size);
@@ -920,7 +921,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     all_select.setImageResource(R.drawable.select_icon);
                     archiveViewFragment.adapter.deselectAll();
                 }
-            } else if(id==R.id.archive_detail_fragment_interval_select){
+            } else if (id == R.id.archive_detail_fragment_interval_select) {
                 if (archiveViewFragment.adapter == null || archiveViewFragment.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
@@ -1032,4 +1033,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     }
+
+
 }

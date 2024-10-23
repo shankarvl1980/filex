@@ -71,7 +71,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
     private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
-    private ImageButton all_select,interval_select;
+    private ImageButton all_select, interval_select;
     private int countBackPressed = 0;
     private Group search_toolbar;
     private KeyBoardUtil keyBoardUtil;
@@ -200,7 +200,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 storageAnalyserFragment.selectInterval();
             }
         });
-
 
 
         int imageview_dimension;
@@ -413,15 +412,15 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         }
 
         StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        int size=storageAnalyserFragment.viewModel.mselecteditems.size();
+        int size = storageAnalyserFragment.viewModel.mselecteditems.size();
         if (size > 1) {
             interval_select.setVisibility(View.VISIBLE);
-            int last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+            int last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                 interval_select.setAlpha(Global.ENABLE_ALFA);
                 interval_select.setEnabled(true);
-            }else{
+            } else {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
@@ -502,23 +501,23 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     @Override
     public void onLongClickItem(int size) {
         StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if(storageAnalyserFragment==null)return;
+        if (storageAnalyserFragment == null) return;
         if (size >= 1) {
             bottom_toolbar.setVisibility(View.GONE);
             actionmode_toolbar.setVisibility(View.VISIBLE);
             toolbar_shown = "action_mode";
             actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-            if(size==1){
+            if (size == 1) {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
-            } else{
+            } else {
                 interval_select.setVisibility(View.VISIBLE);
-                int last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-1);
-                int previous_to_last_key=storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size-2);
-                if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+                int last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+                int previous_to_last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+                if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                     interval_select.setAlpha(Global.ENABLE_ALFA);
                     interval_select.setEnabled(true);
-                } else{
+                } else {
                     interval_select.setAlpha(Global.DISABLE_ALFA);
                     interval_select.setEnabled(false);
                 }
@@ -527,7 +526,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 all_select.setImageResource(R.drawable.deselect_icon);
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
-            }else{
+            } else {
                 all_select.setImageResource(R.drawable.select_icon);
             }
 
@@ -801,32 +800,12 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         void onMediaAttachedAndRemoved();
     }
 
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-            String activity_name = intent.getStringExtra("activity_name");
-            String file_path = intent.getStringExtra("file_path");
-            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
-            switch (intent.getAction()) {
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    if (storageAnalyserFragment != null)
-                        storageAnalyserFragment.local_activity_delete = true;
-                    break;
-                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (storageAnalyserFragment != null)
-                        storageAnalyserFragment.modification_observed = true;
-                    break;
-            }
-        }
-    }
-
-
     public static class StorageAnalyserAdapter extends AbstractStorageAnalyserAdapter {
         StorageAnalyserFragment storageAnalyserFragment;
-        StorageAnalyserAdapter(Context context,StorageAnalyserFragment storageAnalyserFragment) {
-            super(context,storageAnalyserFragment);
-            this.storageAnalyserFragment=storageAnalyserFragment;
+
+        StorageAnalyserAdapter(Context context, StorageAnalyserFragment storageAnalyserFragment) {
+            super(context, storageAnalyserFragment);
+            this.storageAnalyserFragment = storageAnalyserFragment;
         }
 
         @Override
@@ -842,9 +821,10 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     public static class StorageAnalyserAdapterDivider extends AbstractStorageAnalyserAdapter {
         StorageAnalyserFragment storageAnalyserFragment;
-        StorageAnalyserAdapterDivider(Context context,StorageAnalyserFragment storageAnalyserFragment) {
-            super(context,storageAnalyserFragment);
-            this.storageAnalyserFragment=storageAnalyserFragment;
+
+        StorageAnalyserAdapterDivider(Context context, StorageAnalyserFragment storageAnalyserFragment) {
+            super(context, storageAnalyserFragment);
+            this.storageAnalyserFragment = storageAnalyserFragment;
         }
 
         @Override
@@ -873,8 +853,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     public static abstract class AbstractStorageAnalyserAdapter extends RecyclerView.Adapter<AbstractStorageAnalyserAdapter.ViewHolder> implements Filterable {
         final StorageAnalyserFragment storageAnalyserFragment;
         Context context;
-        AbstractStorageAnalyserAdapter(Context context,StorageAnalyserFragment storageAnalyserFragment) {
-            this.context=context;
+
+        AbstractStorageAnalyserAdapter(Context context, StorageAnalyserFragment storageAnalyserFragment) {
+            this.context = context;
             this.storageAnalyserFragment = storageAnalyserFragment;
         }
 
@@ -930,7 +911,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     if (storageAnalyserFragment.detailFragmentListener != null) {
                         storageAnalyserFragment.detailFragmentListener.setFileNumberView("" + t);
                     }
-
                 }
             };
         }
@@ -993,7 +973,26 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
                     storageAnalyserFragment.detailFragmentListener.setFileNumberView(size + "/" + storageAnalyserFragment.file_list_size);
                 }
+            }
+        }
+    }
 
+    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+            String activity_name = intent.getStringExtra("activity_name");
+            String file_path = intent.getStringExtra("file_path");
+            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            switch (intent.getAction()) {
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    if (storageAnalyserFragment != null)
+                        storageAnalyserFragment.local_activity_delete = true;
+                    break;
+                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
+                    if (storageAnalyserFragment != null)
+                        storageAnalyserFragment.modification_observed = true;
+                    break;
             }
         }
     }

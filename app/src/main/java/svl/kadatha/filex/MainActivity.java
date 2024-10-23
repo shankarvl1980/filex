@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
-    public ImageButton parent_dir_image_button, all_select,interval_select;
+    public ImageButton parent_dir_image_button, all_select, interval_select;
     public TinyDB tinyDB;
     public StorageRecyclerAdapter storageRecyclerAdapter;
     public PackageManager pm;
@@ -286,7 +286,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         parent_dir_image_button = findViewById(R.id.top_toolbar_parent_dir_imagebutton);
         current_dir_textview = findViewById(R.id.top_toolbar_current_dir_label);
         all_select = findViewById(R.id.detail_fragment_all_select);
-        interval_select=findViewById(R.id.detail_fragment_interval_select);
+        interval_select = findViewById(R.id.detail_fragment_interval_select);
         TopToolbarClickListener topToolbarClickListener = new TopToolbarClickListener();
         home_button.setOnClickListener(topToolbarClickListener);
         parent_dir_image_button.setOnClickListener(topToolbarClickListener);
@@ -741,7 +741,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         networkRecyclerView = findViewById(R.id.network_recyclerview);
         networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon,R.drawable.ftp_file_icon};
+        int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon};
         networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES, network_icon_image_array));
 
 
@@ -1173,17 +1173,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 break;
         }
 
-        int size=df.viewModel.mselecteditems.size();
+        int size = df.viewModel.mselecteditems.size();
         if (size > 1) {
             rename.setEnabled(false);
             rename.setAlpha(Global.DISABLE_ALFA);
             interval_select.setVisibility(View.VISIBLE);
-            int last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+            int last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                 interval_select.setAlpha(Global.ENABLE_ALFA);
                 interval_select.setEnabled(true);
-            }else{
+            } else {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
@@ -1264,46 +1264,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    repositoryClass.storage_dir.clear();
-                    repositoryClass.hashmap_file_pojo.clear();
-                    repositoryClass.hashmap_file_pojo_filtered.clear();
-                    Intent in = getIntent();
-                    finish();
-                    startActivity(in);
-                } else {
-                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    try {
-                                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                                        intent.addCategory("android.intent.category.DEFAULT");
-                                        intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
-                                        activityResultLauncher_all_file_access_permission.launch(intent);
-                                    } catch (Exception e) {
-                                        Intent intent = new Intent();
-                                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                                        activityResultLauncher_all_file_access_permission.launch(intent);
-                                    }
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    Global.print(context, getString(R.string.permission_not_granted));
-                                    finish();
-                                    break;
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    });
-
     private void onbackpressed(boolean onBackPressed) {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
         boolean drawerOpen = drawerLayout.isDrawerOpen(drawer);
@@ -1362,7 +1322,45 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
+                    Intent in = getIntent();
+                    finish();
+                    startActivity(in);
+                } else {
+                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    try {
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                                        intent.addCategory("android.intent.category.DEFAULT");
+                                        intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+                                        activityResultLauncher_all_file_access_permission.launch(intent);
+                                    } catch (Exception e) {
+                                        Intent intent = new Intent();
+                                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                        activityResultLauncher_all_file_access_permission.launch(intent);
+                                    }
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    Global.print(context, getString(R.string.permission_not_granted));
+                                    finish();
+                                    break;
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
 
     @Override
     protected void onPause() {
@@ -1549,12 +1547,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             rename.setEnabled(false);
             rename.setAlpha(Global.DISABLE_ALFA);
             interval_select.setVisibility(View.VISIBLE);
-            int last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-1);
-            int previous_to_last_key=df.viewModel.mselecteditems.getKeyAtIndex(size-2);
-            if(last_key-previous_to_last_key<-1 || last_key-previous_to_last_key>1){
+            int last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key - previous_to_last_key < -1 || last_key - previous_to_last_key > 1) {
                 interval_select.setAlpha(Global.ENABLE_ALFA);
                 interval_select.setEnabled(true);
-            } else{
+            } else {
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
@@ -1565,8 +1563,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             all_select.setImageResource(R.drawable.deselect_icon);
             interval_select.setAlpha(Global.DISABLE_ALFA);
             interval_select.setEnabled(false);
-        }
-        else{
+        } else {
             all_select.setImageResource(R.drawable.select_icon);
         }
         if (size == 0) {
@@ -1757,7 +1754,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     all_select.setImageResource(R.drawable.select_icon);
                     df.adapter.deselectAll();
                 }
-            } else if(id == R.id.detail_fragment_interval_select){
+            } else if (id == R.id.detail_fragment_interval_select) {
                 if (df.adapter == null || df.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
@@ -2334,7 +2331,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 } else if (position[0] == 2) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.WebDAV);
                                     networkAccountsDetailsDialog.show(fm, "");
-                                }else if (position[0] == 3) {
+                                } else if (position[0] == 3) {
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SMB);
                                     networkAccountsDetailsDialog.show(fm, "");
                                 }
@@ -2424,4 +2421,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 }

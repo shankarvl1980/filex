@@ -224,19 +224,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
-
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
         final boolean storage_dir;
         LinkedList<FilePOJO> dir_linkedlist;
@@ -354,7 +341,20 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 });
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null)
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
+
+
 
 
 }

@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import timber.log.Timber;
-
 
 public class AudioPlayerActivity extends BaseActivity implements AudioSelectListener, AudioFragmentListener {
 
@@ -163,7 +161,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         albumlf = (AlbumListFragment) adapter.instantiateItem(view_pager, 1);
         aslf = (AudioSavedListFragment) adapter.instantiateItem(view_pager, 2);
         adapter.finishUpdate(view_pager);
-        psf= (PlayScreenFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_fragment_container);
+        psf = (PlayScreenFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_fragment_container);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
         AUDIO_SAVED_LIST = audioDatabaseHelper.getTables();
@@ -275,7 +273,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                     // Update the fragment's UI and state
                     if (psf != null) {
                         psf.initiate_audio();
-                       // psf.set_audio(AUDIO_FILE);
+                        // psf.set_audio(AUDIO_FILE);
                     }
 
                     //apf.initiate_audio();
@@ -404,9 +402,9 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 //        if (apf != null) {
 //            apf.set_audio(audio);
 //        }
-                if (psf != null) {
-           psf.set_audio(audio);
-       }
+        if (psf != null) {
+            psf.set_audio(audio);
+        }
 
     }
 

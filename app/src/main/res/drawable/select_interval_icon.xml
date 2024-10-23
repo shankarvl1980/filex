@@ -12,11 +12,11 @@
         android:pathData="M8.5,12L15.5,12"
         android:strokeWidth="2.2"
         android:strokeColor="?attr/toolbar_icon_color"
-        android:strokeLineCap="square"/>
+        android:strokeLineCap="square" />
     <path
-        android:pathData="M8.5,7L5,12L8.5,17z"
-        android:fillColor="?attr/toolbar_icon_color"/>
+        android:fillColor="?attr/toolbar_icon_color"
+        android:pathData="M8.5,7L5,12L8.5,17z" />
     <path
-        android:pathData="M15.5,7L19,12L15.5,17z"
-        android:fillColor="?attr/toolbar_icon_color"/>
+        android:fillColor="?attr/toolbar_icon_color"
+        android:pathData="M15.5,7L19,12L15.5,17z" />
 </vector>

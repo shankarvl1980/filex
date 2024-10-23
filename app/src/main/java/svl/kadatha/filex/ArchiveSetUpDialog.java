@@ -153,8 +153,8 @@ public class ArchiveSetUpDialog extends DialogFragment {
         if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
         create_folder_checkbox = zipdialogview.findViewById(R.id.dialog_archive_checkbox);
         zip_file_edittext = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_name);
-        if(archive_action.equals(ARCHIVE_ACTION_UNZIP)){
-            ViewGroup.MarginLayoutParams layoutParams=(ViewGroup.MarginLayoutParams) zip_file_edittext.getLayoutParams();
+        if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) {
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) zip_file_edittext.getLayoutParams();
             layoutParams.setMarginEnd(Global.TEN_DP);
             zip_file_edittext.setLayoutParams(layoutParams);
         }
@@ -372,7 +372,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
-                        if(sourceFileObjectType==FileObjectType.SMB_TYPE && destFileObjectType==FileObjectType.SMB_TYPE){
+                        if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }
@@ -415,7 +415,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
-                        if(sourceFileObjectType==FileObjectType.SMB_TYPE && destFileObjectType==FileObjectType.SMB_TYPE){
+                        if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }

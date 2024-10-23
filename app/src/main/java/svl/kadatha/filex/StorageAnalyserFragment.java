@@ -10,8 +10,6 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -30,7 +28,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -54,11 +51,11 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     public DetailFragmentListener detailFragmentListener;
     public RecyclerView recycler_view;
     public TextView folder_empty_textview;
+    public FilePOJO clicked_filepojo;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
-    public FilePOJO clicked_filepojo;
 
     public static StorageAnalyserFragment getInstance(FileObjectType fileObjectType) {
         StorageAnalyserFragment storageAnalyserFragment = new StorageAnalyserFragment();
@@ -258,9 +255,9 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
 
         if (fileclickselected.equals("Duplicate Files")) {
-            adapter = new StorageAnalyserActivity.StorageAnalyserAdapterDivider(context,this);
+            adapter = new StorageAnalyserActivity.StorageAnalyserAdapterDivider(context, this);
         } else {
-            adapter = new StorageAnalyserActivity.StorageAnalyserAdapter(context,this);
+            adapter = new StorageAnalyserActivity.StorageAnalyserAdapter(context, this);
         }
         set_adapter();
         progress_bar.setVisibility(View.GONE);
@@ -316,22 +313,21 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
 
         if (detailFragmentListener != null) {
             detailFragmentListener.setFileNumberView(s + "/" + size);
+            detailFragmentListener.onLongClickItem(size);
         }
         notifyDataSetChanged();
-
-        onLongClickAdjustToolbars(size);
     }
 
-    public void selectInterval(){
-        int size=viewModel.mselecteditems.size();
-        if(size<2) return;
-        int last_key=viewModel.mselecteditems.getKeyAtIndex(size-1);
-        int previous_to_last_key=viewModel.mselecteditems.getKeyAtIndex(size-2);
-        if(last_key==previous_to_last_key)return;
+    public void selectInterval() {
+        int size = viewModel.mselecteditems.size();
+        if (size < 2) return;
+        int last_key = viewModel.mselecteditems.getKeyAtIndex(size - 1);
+        int previous_to_last_key = viewModel.mselecteditems.getKeyAtIndex(size - 2);
+        if (last_key == previous_to_last_key) return;
         int min = Math.min(last_key, previous_to_last_key);
         int max = Math.max(last_key, previous_to_last_key);
-        if(max-min==1)return;
-        for(int i=min+1; i<max; ++i){
+        if (max - min == 1) return;
+        for (int i = min + 1; i < max; ++i) {
             viewModel.mselecteditems.put(i, filePOJO_list.get(i).getPath());
         }
         int s = viewModel.mselecteditems.size();
@@ -349,11 +345,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
     }
 
-    private void onLongClickAdjustToolbars(int size) {
-        if (detailFragmentListener != null) {
-            detailFragmentListener.onLongClickItem(size);
-        }
-    }
 
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
         int idx = file_name.lastIndexOf(".");

@@ -9,8 +9,8 @@ public class DetailRecyclerViewDuplicateAdapterGrid extends DetailRecyclerViewAd
     private final boolean show_file_path;
     private final DetailFragment df;
 
-    DetailRecyclerViewDuplicateAdapterGrid(Context context,DetailFragment df,boolean show_file_path) {
-        super(context,df);
+    DetailRecyclerViewDuplicateAdapterGrid(Context context, DetailFragment df, boolean show_file_path) {
+        super(context, df);
         this.context = context;
         this.df = df;
         this.show_file_path = show_file_path;

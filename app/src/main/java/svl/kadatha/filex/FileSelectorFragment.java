@@ -1,21 +1,16 @@
 package svl.kadatha.filex;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
@@ -27,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,7 +30,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 
 public class FileSelectorFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     private final static String SAF_PERMISSION_REQUEST_CODE = "file_selector_dialog_saf_permission_request_code";
-    public FileSelectorAdapter adapter;
+    public FileSelectorActivity.FileSelectorAdapter adapter;
     public List<FilePOJO> filePOJO_list, totalFilePOJO_list;
     public int totalFilePOJO_list_Size;
     public String fileclickselected;
@@ -50,8 +44,8 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     public DetailFragmentListener detailFragmentListener;
     public GridLayoutManager glm;
     public LinearLayoutManager llm;
-    private RecyclerView recycler_view;
-    private TextView folder_empty_textview;
+    public RecyclerView recycler_view;
+    public TextView folder_empty_textview;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
@@ -224,9 +218,9 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
         Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));
         if (FileSelectorActivity.FILE_GRID_LAYOUT) {
-            adapter = new FileSelectorAdapterGrid();
+            adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this);
         } else {
-            adapter = new FileSelectorAdapterList();
+            adapter = new FileSelectorActivity.FileSelectorAdapterList(context, this);
         }
 
         set_adapter();
@@ -322,158 +316,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
             return false;
         } else {
             return true;
-        }
-    }
-
-    public abstract class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
-
-        FileSelectorAdapter() {
-            FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) ((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.file_selector_container);
-            if (fileSelectorFragment != null) {
-                if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
-                    File f = new File(fileSelectorFragment.fileclickselected);
-                    File parent_file = f.getParentFile();
-                    if (parent_file != null) {
-                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
-                    } else {
-                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
-                    }
-                } else {
-                    String parent_path = fileSelectorFragment.fileclickselected;
-                    if (parent_path.equals("/")) {
-                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
-                    } else {
-                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public abstract FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
-
-        @Override
-        public void onBindViewHolder(final FileSelectorFragment.FileSelectorAdapter.ViewHolder p1, int p2) {
-            FilePOJO file = filePOJO_list.get(p2);
-            p1.v.setData(file, false);
-        }
-
-        @Override
-        public int getItemCount() {
-            return filePOJO_list.size();
-        }
-
-        @Override
-        public Filter getFilter() {
-            return new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    return new FilterResults();
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    filePOJO_list = new ArrayList<>();
-                    if (constraint == null || constraint.length() == 0) {
-                        filePOJO_list = totalFilePOJO_list;
-                    } else {
-                        String pattern = constraint.toString().toLowerCase().trim();
-                        for (int i = 0; i < totalFilePOJO_list_Size; ++i) {
-                            FilePOJO filePOJO = totalFilePOJO_list.get(i);
-                            if (filePOJO.getLowerName().contains(pattern)) {
-                                filePOJO_list.add(filePOJO);
-                            }
-                        }
-                    }
-
-                    int t = filePOJO_list.size();
-                    clearSelectionAndNotifyDataSetChanged();
-                    if (t > 0) {
-                        recycler_view.setVisibility(View.VISIBLE);
-                        folder_empty_textview.setVisibility(View.GONE);
-                    }
-
-                    if (detailFragmentListener != null) {
-                        detailFragmentListener.setFileNumberView("" + t);
-                    }
-
-                }
-            };
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final RecyclerViewLayout v;
-            FileObjectType fileObjectType;
-
-            ViewHolder(RecyclerViewLayout v) {
-                super(v);
-                this.v = v;
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        int pos = getBindingAdapterPosition();
-                        FilePOJO filePOJO = filePOJO_list.get(pos);
-                        fileObjectType = filePOJO.getFileObjectType();
-                        if (filePOJO.getIsDirectory()) {
-                            if (detailFragmentListener != null) {
-                                detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
-                            }
-                            FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
-                        } else {
-                            AppCompatActivity activity = (AppCompatActivity) context;
-                            if (!(activity instanceof FileSelectorActivity)) return;
-                            if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
-                                Uri uri = null;
-                                if (Global.whether_file_cached(fileObjectType)) {
-                                    Global.print(context, context.getString(R.string.not_supported));
-                                } else if (fileObjectType == FileObjectType.FILE_TYPE) {
-                                    File file = new File(filePOJO.getPath());
-                                    uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
-                                }
-
-                                if (uri != null) {
-                                    String file_extn = "";
-                                    String file_path = filePOJO.getPath();
-                                    int file_extn_idx = file_path.lastIndexOf(".");
-                                    if (file_extn_idx != -1) {
-                                        file_extn = file_path.substring(file_extn_idx + 1);
-                                    }
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    FileIntentDispatch.SET_INTENT_FOR_VIEW(intent, null, filePOJO.getPath(), file_extn, filePOJO.getFileObjectType(), false, uri);
-                                    getActivity().setResult(Activity.RESULT_OK, intent);
-                                } else {
-                                    getActivity().setResult(Activity.RESULT_CANCELED);
-                                }
-                                getActivity().finish();
-                            } else if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.FILE_PATH_REQUEST_CODE) {
-                                if (fileObjectType != FileObjectType.FILE_TYPE) {
-                                    getActivity().setResult(Activity.RESULT_CANCELED);
-                                }
-                                Intent intent = new Intent();
-                                intent.putExtra("filepathclickselected", filePOJO.getPath());
-                                intent.putExtra("destFileObjectType", fileObjectType);
-                                getActivity().setResult(Activity.RESULT_OK, intent);
-                                getActivity().finish();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    public class FileSelectorAdapterGrid extends FileSelectorAdapter {
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context, false));
-        }
-    }
-
-    public class FileSelectorAdapterList extends FileSelectorAdapter {
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context, false));
         }
     }
 }

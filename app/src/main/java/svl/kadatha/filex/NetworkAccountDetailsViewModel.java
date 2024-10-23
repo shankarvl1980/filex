@@ -392,14 +392,14 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     isNetworkConnected = FtpClientRepository.getInstance(FTP_NETWORK_ACCOUNT_POJO).testFtpServerConnection();
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                     isNetworkConnected = SftpChannelRepository.getInstance(SFTP_NETWORK_ACCOUNT_POJO).testSftpServerConnection();
-                }else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
                     try {
-                        isNetworkConnected = WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).getSardine()!=null;
+                        isNetworkConnected = WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).getSardine() != null;
                     } catch (IOException e) {
-                        isNetworkConnected=false;
+                        isNetworkConnected = false;
                         throw new RuntimeException(e);
                     }
-                }else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+                } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
                     isNetworkConnected = SmbClientRepository.getInstance(SMB_NETWORK_ACCOUNT_POJO).testSmbServerConnection();
                 }
                 testServiceConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);

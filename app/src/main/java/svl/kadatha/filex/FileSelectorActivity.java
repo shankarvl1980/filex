@@ -24,6 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -38,13 +40,16 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -677,6 +682,38 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
+    }
+
+    @Override
+    public void onMediaMount(String action) {
+        switch (action) {
+            case "android.intent.action.MEDIA_MOUNTED":
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                Global.WORKOUT_AVAILABLE_SPACE();
+                storage_filePOJO_list = getFilePOJO_list();
+                if (recentDialogListener != null) {
+                    recentDialogListener.onMediaAttachedAndRemoved();
+                }
+                break;
+
+            case "android.intent.action.MEDIA_EJECT":
+            case "android.intent.action.MEDIA_REMOVED":
+            case "android.intent.action.MEDIA_BAD_REMOVAL":
+                repositoryClass.storage_dir.clear();
+                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                Global.WORKOUT_AVAILABLE_SPACE();
+                storage_filePOJO_list = getFilePOJO_list();
+
+                if (recentDialogListener != null) {
+                    recentDialogListener.onMediaAttachedAndRemoved();
+                }
+                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (fileSelectorFragment != null)
+                    fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                break;
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -717,38 +754,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    @Override
-    public void onMediaMount(String action) {
-        switch (action) {
-            case "android.intent.action.MEDIA_MOUNTED":
-                repositoryClass.storage_dir.clear();
-                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
-                Global.WORKOUT_AVAILABLE_SPACE();
-                storage_filePOJO_list = getFilePOJO_list();
-                if (recentDialogListener != null) {
-                    recentDialogListener.onMediaAttachedAndRemoved();
-                }
-                break;
-
-            case "android.intent.action.MEDIA_EJECT":
-            case "android.intent.action.MEDIA_REMOVED":
-            case "android.intent.action.MEDIA_BAD_REMOVAL":
-                repositoryClass.storage_dir.clear();
-                repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
-                Global.WORKOUT_AVAILABLE_SPACE();
-                storage_filePOJO_list = getFilePOJO_list();
-
-                if (recentDialogListener != null) {
-                    recentDialogListener.onMediaAttachedAndRemoved();
-                }
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
-                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if (fileSelectorFragment != null)
-                    fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
-                break;
-        }
-    }
 
     interface RecentDialogListener {
         void onMediaAttachedAndRemoved();
@@ -821,6 +826,168 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public static class ViewHolder {
             ImageView imageView;
             TextView textView;
+        }
+    }
+
+    public abstract static class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
+        Context context;
+        FileSelectorFragment fileSelectorFragment;
+
+        FileSelectorAdapter(Context context, FileSelectorFragment fileSelectorFragment) {
+            this.context = context;
+            this.fileSelectorFragment = fileSelectorFragment;
+            if (fileSelectorFragment != null) {
+                if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
+                    File f = new File(fileSelectorFragment.fileclickselected);
+                    File parent_file = f.getParentFile();
+                    if (parent_file != null) {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
+                    } else {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
+                    }
+                } else {
+                    String parent_path = fileSelectorFragment.fileclickselected;
+                    if (parent_path.equals("/")) {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
+                    } else {
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public abstract FileSelectorAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2);
+
+        @Override
+        public void onBindViewHolder(final FileSelectorAdapter.ViewHolder p1, int p2) {
+            FilePOJO file = fileSelectorFragment.filePOJO_list.get(p2);
+            p1.v.setData(file, false);
+        }
+
+        @Override
+        public int getItemCount() {
+            return fileSelectorFragment.filePOJO_list.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    return new FilterResults();
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    fileSelectorFragment.filePOJO_list = new ArrayList<>();
+                    if (constraint == null || constraint.length() == 0) {
+                        fileSelectorFragment.filePOJO_list = fileSelectorFragment.totalFilePOJO_list;
+                    } else {
+                        String pattern = constraint.toString().toLowerCase().trim();
+                        for (int i = 0; i < fileSelectorFragment.totalFilePOJO_list_Size; ++i) {
+                            FilePOJO filePOJO = fileSelectorFragment.totalFilePOJO_list.get(i);
+                            if (filePOJO.getLowerName().contains(pattern)) {
+                                fileSelectorFragment.filePOJO_list.add(filePOJO);
+                            }
+                        }
+                    }
+
+                    int t = fileSelectorFragment.filePOJO_list.size();
+                    fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                    if (t > 0) {
+                        fileSelectorFragment.recycler_view.setVisibility(View.VISIBLE);
+                        fileSelectorFragment.folder_empty_textview.setVisibility(View.GONE);
+                    }
+
+                    if (fileSelectorFragment.detailFragmentListener != null) {
+                        fileSelectorFragment.detailFragmentListener.setFileNumberView("" + t);
+                    }
+                }
+            };
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final RecyclerViewLayout v;
+            FileObjectType fileObjectType;
+
+            ViewHolder(RecyclerViewLayout v) {
+                super(v);
+                this.v = v;
+                v.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        int pos = getBindingAdapterPosition();
+                        FilePOJO filePOJO = fileSelectorFragment.filePOJO_list.get(pos);
+                        fileObjectType = filePOJO.getFileObjectType();
+                        if (filePOJO.getIsDirectory()) {
+                            if (fileSelectorFragment.detailFragmentListener != null) {
+                                fileSelectorFragment.detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
+                            }
+                            FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
+                        } else {
+                            AppCompatActivity activity = (AppCompatActivity) context;
+                            if (!(activity instanceof FileSelectorActivity)) return;
+                            if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
+                                Uri uri = null;
+                                if (Global.whether_file_cached(fileObjectType)) {
+                                    Global.print(context, context.getString(R.string.not_supported));
+                                } else if (fileObjectType == FileObjectType.FILE_TYPE) {
+                                    File file = new File(filePOJO.getPath());
+                                    uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
+                                }
+
+                                if (uri != null) {
+                                    String file_extn = "";
+                                    String file_path = filePOJO.getPath();
+                                    int file_extn_idx = file_path.lastIndexOf(".");
+                                    if (file_extn_idx != -1) {
+                                        file_extn = file_path.substring(file_extn_idx + 1);
+                                    }
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    FileIntentDispatch.SET_INTENT_FOR_VIEW(intent, null, filePOJO.getPath(), file_extn, filePOJO.getFileObjectType(), false, uri);
+                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_OK, intent);
+                                } else {
+                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                                }
+                                fileSelectorFragment.getActivity().finish();
+                            } else if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.FILE_PATH_REQUEST_CODE) {
+                                if (fileObjectType != FileObjectType.FILE_TYPE) {
+                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                                }
+                                Intent intent = new Intent();
+                                intent.putExtra("filepathclickselected", filePOJO.getPath());
+                                intent.putExtra("destFileObjectType", fileObjectType);
+                                fileSelectorFragment.getActivity().setResult(Activity.RESULT_OK, intent);
+                                fileSelectorFragment.getActivity().finish();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
+
+        FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment) {
+            super(context, fileSelectorFragment);
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context, false));
+        }
+    }
+
+    public static class FileSelectorAdapterList extends FileSelectorAdapter {
+
+        FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment) {
+            super(context, fileSelectorFragment);
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context, false));
         }
     }
 

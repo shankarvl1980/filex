@@ -376,7 +376,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             public void onLongClick(FilePOJO filePOJO, int size) {
                 archiveViewActivity.bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                 is_toolbar_visible = true;
-                if(detailFragmentListener!=null){
+                if (detailFragmentListener != null) {
                     detailFragmentListener.onLongClickItem(size);
                 }
             }
@@ -484,7 +484,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                 });
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {

@@ -467,10 +467,12 @@
                             android:layout_marginEnd="4dp"
                             android:text="@string/smb_version"
                             android:textSize="17sp" />
+
                         <EditText
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp" />
+
                         <Spinner
                             android:id="@+id/fragment_network_details_input_smb_version"
                             android:layout_width="wrap_content"

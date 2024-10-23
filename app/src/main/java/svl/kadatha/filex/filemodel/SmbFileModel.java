@@ -144,7 +144,7 @@ public class SmbFileModel implements FileModel {
     public boolean rename(String new_name, boolean overwrite) {
         String new_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(getParentPath(), new_name);
         Timber.tag(TAG).d("Attempting to rename from '%s' to '%s'", path, new_file_path);
-        String old_file_path=path;
+        String old_file_path = path;
         String sanitizedPath = old_file_path.startsWith("/") ? old_file_path.substring(1) : old_file_path;
         String sanitizedNewFilePath = new_file_path.startsWith("/") ? new_file_path.substring(1) : new_file_path;
         Timber.tag(TAG).d("after sanitization,attempting to rename from '%s' to '%s'", sanitizedPath, sanitizedNewFilePath);

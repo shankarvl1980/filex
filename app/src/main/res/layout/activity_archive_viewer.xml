@@ -71,8 +71,8 @@
         android:paddingEnd="10dp"
         android:src="@drawable/select_interval_icon"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_current_dir_label"
         app:layout_constraintEnd_toStartOf="@id/archive_detail_fragment_all_select"
+        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_current_dir_label"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton

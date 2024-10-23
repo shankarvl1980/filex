@@ -141,7 +141,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         LinearLayout sftp_group = v.findViewById(R.id.fragment_network_details_input_sftp_group);
         LinearLayout webdav_group = v.findViewById(R.id.fragment_network_details_input_webdav_group);
         LinearLayout smb_group = v.findViewById(R.id.fragment_network_details_input_smb_group);
-        LinearLayout port_container=v.findViewById(R.id.fragment_network_account_port_container);
+        LinearLayout port_container = v.findViewById(R.id.fragment_network_account_port_container);
         switch (type) {
             case NetworkAccountsDetailsDialog.FTP:
                 ftp_group.setVisibility(View.VISIBLE);
@@ -309,7 +309,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             return;
         }
 
-        if(type.equals(NetworkAccountsDetailsDialog.SMB) && share_name_tv.getText().toString().trim().isEmpty()){
+        if (type.equals(NetworkAccountsDetailsDialog.SMB) && share_name_tv.getText().toString().trim().isEmpty()) {
             Global.print(context, getString(R.string.enter_share_name));
             return;
         }
@@ -328,10 +328,10 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         basePath = base_path_tv.getText().toString().trim();
         domain = domain_tv.getText().toString().trim();
         shareName = share_name_tv.getText().toString().trim();
-        if(smbVersion_spinner.getSelectedItem()!=null){
+        if (smbVersion_spinner.getSelectedItem() != null) {
             smbVersion = smbVersion_spinner.getSelectedItem().toString();
-        } else{
-            smbVersion="SMB2";
+        } else {
+            smbVersion = "SMB2";
         }
 
 

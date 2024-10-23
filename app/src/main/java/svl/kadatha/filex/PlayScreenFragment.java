@@ -187,10 +187,10 @@ public class PlayScreenFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v;
-        if(audioPlayViewModel.play_screen_expanded_view){
-            v= inflater.inflate(R.layout.fragment_play_screen_expanded, container, false);
-        } else{
-            v= inflater.inflate(R.layout.fragment_play_screen, container, false);
+        if (audioPlayViewModel.play_screen_expanded_view) {
+            v = inflater.inflate(R.layout.fragment_play_screen_expanded, container, false);
+        } else {
+            v = inflater.inflate(R.layout.fragment_play_screen, container, false);
         }
 
         handler = new Handler();
@@ -250,17 +250,17 @@ public class PlayScreenFragment extends Fragment {
             }
         };
 
-        ConstraintLayout expansion_stub=v.findViewById(R.id.fragment_current_play_expansion_stub);
+        ConstraintLayout expansion_stub = v.findViewById(R.id.fragment_current_play_expansion_stub);
         expansion_stub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(audioPlayViewModel.play_screen_expanded_view){
-                    audioPlayViewModel.play_screen_expanded_view=false;
-                } else{
-                    audioPlayViewModel.play_screen_expanded_view=true;
+                if (audioPlayViewModel.play_screen_expanded_view) {
+                    audioPlayViewModel.play_screen_expanded_view = false;
+                } else {
+                    audioPlayViewModel.play_screen_expanded_view = true;
                 }
                 if (activity instanceof AudioPlayerActivity) {
-                    ((AudioPlayerActivity)activity).instantiatePlayScreenFragment(audioPlayViewModel.play_screen_expanded_view);
+                    ((AudioPlayerActivity) activity).instantiatePlayScreenFragment(audioPlayViewModel.play_screen_expanded_view);
                 }
             }
         });
@@ -344,9 +344,9 @@ public class PlayScreenFragment extends Fragment {
 
         enable_disable_previous_next_btn();
         album_art_imageview = v.findViewById(R.id.fragment_current_play_albumart);
-        total_time_tv=v.findViewById(R.id.audio_player_total_time);
-        current_progress_tv=v.findViewById(R.id.audio_player_current_progress);
-        seekbar=v.findViewById(R.id.audio_player_seekbar);
+        total_time_tv = v.findViewById(R.id.audio_player_total_time);
+        current_progress_tv = v.findViewById(R.id.audio_player_current_progress);
+        seekbar = v.findViewById(R.id.audio_player_seekbar);
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
@@ -563,7 +563,7 @@ public class PlayScreenFragment extends Fragment {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null"
             audio_artists_tv.setText(artists);
- //           audio_artists_min_tv.setText(artists);
+            //           audio_artists_min_tv.setText(artists);
 
         }
 //        if(next_btn.isEnabled() && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()>AudioPlayerService.CURRENT_PLAY_NUMBER+1)

@@ -29,10 +29,10 @@ public class FileModelFactory {
                 fileModel = new SftpFileModel(path);
                 break;
             case WEBDAV_TYPE:
-                fileModel=new WebDavFileModel(path);
+                fileModel = new WebDavFileModel(path);
                 break;
             case SMB_TYPE:
-                fileModel=new SmbFileModel(path);
+                fileModel = new SmbFileModel(path);
                 break;
         }
         return fileModel;

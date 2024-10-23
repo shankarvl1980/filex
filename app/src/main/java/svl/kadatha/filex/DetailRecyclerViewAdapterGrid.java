@@ -8,8 +8,8 @@ public class DetailRecyclerViewAdapterGrid extends DetailRecyclerViewAdapter {
     private final Context context;
     private final boolean show_file_path;
 
-    DetailRecyclerViewAdapterGrid(Context context,DetailFragment df, boolean show_file_path) {
-        super(context,df);
+    DetailRecyclerViewAdapterGrid(Context context, DetailFragment df, boolean show_file_path) {
+        super(context, df);
         this.context = context;
         this.show_file_path = show_file_path;
 

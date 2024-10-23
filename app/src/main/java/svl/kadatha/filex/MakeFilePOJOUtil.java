@@ -660,7 +660,7 @@ public class MakeFilePOJOUtil {
 
                     // List files in the directory
                     List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-                    sub_file_count = "(" + (fileList.size()-2) + ")";
+                    sub_file_count = "(" + (fileList.size() - 2) + ")";
                     si = sub_file_count;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -851,6 +851,15 @@ public class MakeFilePOJOUtil {
         }
     }
 
+    public static Set<FileAttributes> parseAttributes(long fileAttributesLong) {
+        Set<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
+        for (FileAttributes attr : FileAttributes.values()) {
+            if ((fileAttributesLong & attr.getValue()) == attr.getValue()) {
+                attrs.add(attr);
+            }
+        }
+        return attrs;
+    }
 
     public static class SmbFileInfo {
         private final String fileName;
@@ -873,7 +882,6 @@ public class MakeFilePOJOUtil {
             this.lastWriteTime = lastWriteTime;
             this.changeTime = changeTime;
         }
-
 
 
         // Getters for all fields
@@ -908,14 +916,5 @@ public class MakeFilePOJOUtil {
         public long getChangeTime() {
             return changeTime;
         }
-    }
-    public static Set<FileAttributes> parseAttributes(long fileAttributesLong) {
-        Set<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
-        for (FileAttributes attr : FileAttributes.values()) {
-            if ((fileAttributesLong & attr.getValue()) == attr.getValue()) {
-                attrs.add(attr);
-            }
-        }
-        return attrs;
     }
 }

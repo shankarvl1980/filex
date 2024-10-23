@@ -18,27 +18,30 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
 public class SmbClientRepository {
     private static final String TAG = "Smb-SmbClientRepository";
+    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
+    private static final int MAX_IDLE_SESSIONS = 5;
+    private static final int MAX_RETRIES = 3;
+    private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
     private static SmbClientRepository instance;
     private final SMBClient smbClient;
     private final ConcurrentLinkedQueue<Session> sessionPool;
     private final ConcurrentLinkedQueue<Session> inUseSessions;
     private final Map<Session, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
-    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
-    private static final int MAX_IDLE_SESSIONS = 5;
-    private static final int MAX_RETRIES = 3;
-    private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
-    private int initialSessions;
-
     // Added property for shareName
     private final String shareName;
+    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private int initialSessions;
 
     private SmbClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         this.networkAccountPOJO = networkAccountPOJO;

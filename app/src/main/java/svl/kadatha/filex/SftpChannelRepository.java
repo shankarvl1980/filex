@@ -192,9 +192,9 @@ public class SftpChannelRepository {
         sftpChannels.clear();
         inUseChannels.clear();
         lastUsedTimes.clear();
-        networkAccountPOJO=null;
-        NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO=null;
-        instance=null;
+        networkAccountPOJO = null;
+        NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO = null;
+        instance = null;
     }
 
     public boolean testConnection(ChannelSftp channel) {

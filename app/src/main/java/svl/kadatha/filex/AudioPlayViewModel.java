@@ -25,9 +25,9 @@ public class AudioPlayViewModel extends AndroidViewModel {
     public String file_path;
     public String album_id;
     public String audio_file_name = "";
+    public boolean play_screen_expanded_view;
     private boolean isCancelled;
     private Future<?> future1, future2;
-    public boolean play_screen_expanded_view;
 
     public AudioPlayViewModel(@NonNull Application application) {
         super(application);
