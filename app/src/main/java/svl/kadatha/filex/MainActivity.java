@@ -1299,8 +1299,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 int frag = 2;
                 df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String df_tag = df.getTag();
-                while (!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files") && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) //!df_tag.equals(DetailFragment.SEARCH_RESULT) &&
+                while (!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
+                        && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType))
                 {
                     fm.popBackStack();
                     ++frag;
@@ -1322,7 +1323,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1898,17 +1901,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                     FileIntentDispatch.sendFile(MainActivity.this, file_list_excluding_dir);
                                 } else {
                                     Global.print(context, getString(R.string.not_supported));
-//									String file_path=df.viewModel.mselecteditems.getValueAtIndex(0);
-//									if(file_path!=null && df.check_availability_USB_SAF_permission(file_path,FileObjectType.USB_TYPE))
-//									{
-//										ArrayList<Uri> uri_list_excluding_dir;
-//										uri_list_excluding_dir=iterate_to_attach_usb_file(df.viewModel.mselecteditems,df);
-//										if (uri_list_excluding_dir.isEmpty()) {
-//											Global.print(context,getString(R.string.directories_can_not_be_sent_select_only_one_file));
-//											break;
-//										}
-//										FileIntentDispatch.sendUri(MainActivity.this,uri_list_excluding_dir);
-//									}
                                 }
                                 break;
                             case 2:

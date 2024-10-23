@@ -24,7 +24,6 @@ public class VideoViewActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_blank_view);
@@ -67,13 +66,11 @@ public class VideoViewActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO: Implement this method
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onStart() {
-        // TODO: Implement this method
         super.onStart();
         clear_cache = true;
         videoViewContainerFragment = (VideoViewContainerFragment) getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);

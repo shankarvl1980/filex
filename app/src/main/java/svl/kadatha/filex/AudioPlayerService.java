@@ -536,12 +536,10 @@ public class AudioPlayerService extends Service {
         @Override
         public void onSeekComplete(MediaPlayer p1) {
             // TODO: Implement this method
-
         }
 
         @Override
         public void onAudioFocusChange(int focusState) {
-            // TODO: Implement this method
             switch (focusState) {
                 case AudioManager.AUDIOFOCUS_GAIN:
 
@@ -583,7 +581,6 @@ public class AudioPlayerService extends Service {
 
         @Override
         public boolean onError(MediaPlayer p1, int p2, int p3) {
-            // TODO: Implement this method
             switch (p2) {
                 case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
 
@@ -601,7 +598,6 @@ public class AudioPlayerService extends Service {
 
         @Override
         public void onCompletion(MediaPlayer p1) {
-            // TODO: Implement this method
             completed = true;
             playmode = false;
             nPanel = new NotificationPanel(audioPlayerService);
@@ -612,7 +608,6 @@ public class AudioPlayerService extends Service {
 
         @Override
         public boolean onInfo(MediaPlayer p1, int p2, int p3) {
-            // TODO: Implement this method
             return false;
         }
 
@@ -682,7 +677,6 @@ public class AudioPlayerService extends Service {
 
 
         public NotificationPanel(Context parent) {
-            // TODO Auto-generated constructor stub
             this.parent = parent;
             nManager = (android.app.NotificationManager) parent.getSystemService(Context.NOTIFICATION_SERVICE);
             int priority = Notification.PRIORITY_HIGH;

@@ -59,7 +59,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_library_filter, container, false);
         progress_bar = v.findViewById(R.id.fragment_library_filter_progressbar);
         TextView label_text_view = v.findViewById(R.id.fragment_library_filter_label);
@@ -103,7 +102,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
@@ -143,14 +141,12 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
         @Override
         public LibraryRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
             View v = LayoutInflater.from(context).inflate(R.layout.album_recyclerview_layout, p1, false);
             return new VH(v);
         }
 
         @Override
         public void onBindViewHolder(LibraryRecyclerViewAdapter.VH p1, int p2) {
-            // TODO: Implement this method
             if (viewModel.libraryDirPOJOS.get(p2).getPath().equals("All")) {
                 p1.album_dir_image.setImageDrawable(null);
             } else if (viewModel.libraryDirPOJOS.get(p2).isFromSDCard()) {
@@ -165,7 +161,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
             return viewModel.libraryDirPOJOS.size();
         }
 

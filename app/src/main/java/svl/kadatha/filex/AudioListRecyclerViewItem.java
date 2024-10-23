@@ -127,7 +127,6 @@ public class AudioListRecyclerViewItem extends ViewGroup {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        // TODO: Implement this method
         int x = Global.FOURTEEN_DP, y = Global.RECYCLERVIEW_ITEM_SPACING;
 
         View v = audioimageview;

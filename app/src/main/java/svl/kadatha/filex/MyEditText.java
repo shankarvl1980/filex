@@ -44,7 +44,6 @@ public class MyEditText extends AppCompatEditText {
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-        // TODO: Implement this method
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && onKeyBoardDownListener != null) {
             onKeyBoardDownListener.onKeyDown();
             return false;

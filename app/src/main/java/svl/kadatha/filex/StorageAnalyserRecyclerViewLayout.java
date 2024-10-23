@@ -152,7 +152,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        // TODO: Implement this method
         int x = Global.FOURTEEN_DP, y = 0;
 
         int top_for_icon = (itemHeight - imageview_dimension) / 2;

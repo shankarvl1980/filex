@@ -21,12 +21,10 @@ public class ObservableScrollView extends ScrollView {
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        // TODO: Implement this method
         super.onScrollChanged(l, t, oldl, oldt);
         if (scrollViewListener != null) {
             scrollViewListener.onScrollChange(this, l, t, oldl, oldt);
         }
-
     }
 
     public void setScrollViewListener(ScrollViewListener listener) {

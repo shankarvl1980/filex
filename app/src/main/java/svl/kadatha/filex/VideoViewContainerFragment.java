@@ -80,7 +80,6 @@ public class VideoViewContainerFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         list_popupwindowpojos = new ArrayList<>();
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));

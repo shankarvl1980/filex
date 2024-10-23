@@ -67,7 +67,6 @@ public class CustomToolbarLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // TODO: Implement this method
         int widthUsed = 0, maxHeight = 0, heightUsed = 0;
 
         for (int i = 0; i < viewCount; ++i) {
@@ -86,7 +85,6 @@ public class CustomToolbarLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean p1, int p2, int p3, int p4, int p5) {
-        // TODO: Implement this method
         int child_count = getChildCount();
         int x = 0, y = 0;
 
@@ -103,25 +101,21 @@ public class CustomToolbarLayout extends ViewGroup {
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        // TODO: Implement this method
         return p instanceof MarginLayoutParams;
     }
 
     @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
-        // TODO: Implement this method
         return new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
     }
 
     @Override
     protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
-        // TODO: Implement this method
         return generateDefaultLayoutParams();
     }
 
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
-        // TODO: Implement this method
         return new MarginLayoutParams(context, attrs);
     }
 

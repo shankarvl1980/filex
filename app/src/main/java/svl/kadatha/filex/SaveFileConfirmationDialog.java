@@ -48,7 +48,6 @@ public class SaveFileConfirmationDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_create_rename_delete, container, false);
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
@@ -99,12 +98,9 @@ public class SaveFileConfirmationDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
-
 }

@@ -91,7 +91,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(VideoViewFragmentViewModel.class);
 
@@ -109,8 +108,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
-
         View v = inflater.inflate(R.layout.fragment_video_view, container, false);
         refresh_play_pause_group = v.findViewById(R.id.video_play_refresh_play_pause_group);
         handler = new Handler();
@@ -425,7 +422,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        // TODO: Implement this method
         prepared = true;
         stopped = false;
         total_duration = mp.getDuration();
@@ -570,12 +566,10 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     @Override
     public void onSeekComplete(MediaPlayer p1) {
         // TODO: Implement this method
-
     }
 
     @Override
     public void onAudioFocusChange(int focusState) {
-        // TODO: Implement this method
         switch (focusState) {
             case AudioManager.AUDIOFOCUS_GAIN:
 

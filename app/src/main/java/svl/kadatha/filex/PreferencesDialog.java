@@ -197,7 +197,6 @@ public class PreferencesDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
 
         Window window = getDialog().getWindow();

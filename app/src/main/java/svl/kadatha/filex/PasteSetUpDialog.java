@@ -80,8 +80,6 @@ public class PasteSetUpDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
-
         if (savedInstanceState != null) {
             checkedSAFPermissionPasteSetUp = savedInstanceState.getBoolean(KEY_CHECKED_SAF_PERMISSION, false);
         }

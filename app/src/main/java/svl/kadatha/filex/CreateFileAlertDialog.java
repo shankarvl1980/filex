@@ -80,7 +80,6 @@ public class CreateFileAlertDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, WindowManager.LayoutParams.WRAP_CONTENT);

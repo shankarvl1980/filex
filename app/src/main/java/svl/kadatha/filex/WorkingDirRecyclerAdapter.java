@@ -28,14 +28,12 @@ public class WorkingDirRecyclerAdapter extends RecyclerView.Adapter<WorkingDirRe
 
     @Override
     public WorkingDirRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-        // TODO: Implement this method
         View itemview = LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout, p1, false);
         return new ViewHolder(itemview);
     }
 
     @Override
     public void onBindViewHolder(WorkingDirRecyclerAdapter.ViewHolder p1, int p2) {
-        // TODO: Implement this method
         p1.textView_working_dir.setText(working_dir_arraylist.get(p2));
         if (custom_dir_selected_hash_map.get(p2) != null) {
             p1.view.setSelected(true);
@@ -49,7 +47,6 @@ public class WorkingDirRecyclerAdapter extends RecyclerView.Adapter<WorkingDirRe
 
     @Override
     public int getItemCount() {
-        // TODO: Implement this method
         return working_dir_arraylist.size();
     }
 

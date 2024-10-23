@@ -64,7 +64,6 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // TODO: Implement this method
         int widthUsed = 0, maxHeight = 0, heightUsed = 0;
         int visibleChildCount = 0;
 

@@ -444,7 +444,6 @@ public class AlbumDetailsDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
@@ -473,7 +472,6 @@ public class AlbumDetailsDialog extends DialogFragment {
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
-            // TODO: Implement this method
             final ArrayList<String> files_selected_array = new ArrayList<>();
             switch (p3) {
                 case 0:
@@ -664,7 +662,6 @@ public class AlbumDetailsDialog extends DialogFragment {
     private class ToolbarButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View p1) {
-            // TODO: Implement this method
             if (progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
                 return;

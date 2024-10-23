@@ -382,7 +382,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     protected void onStart() {
-        // TODO: Implement this method
         super.onStart();
         clear_cache = true;
     }

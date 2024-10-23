@@ -190,7 +190,6 @@ public class AppManagerActivity extends BaseActivity {
 
     @Override
     protected void onStart() {
-        // TODO: Implement this method
         super.onStart();
         clear_cache = true;
         Global.WORKOUT_AVAILABLE_SPACE();

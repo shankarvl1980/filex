@@ -96,14 +96,11 @@ public class AudioSavedListFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: Implement this method
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
-
         View v = inflater.inflate(R.layout.fragment_audio_saved_list, container, false);
         bottom_toolbar = v.findViewById(R.id.audio_saved_list_bottom_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout = new EquallyDistributedButtonsWithTextLayout(context, 3, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
@@ -237,7 +234,6 @@ public class AudioSavedListFragment extends Fragment {
 
 
     public void onSaveAudioList() {
-        // TODO: Implement this method
         saved_audio_list = new ArrayList<>();
         saved_audio_list.add(AudioPlayerActivity.CURRENT_PLAY_LIST);
         saved_audio_list.addAll(AudioPlayerActivity.AUDIO_SAVED_LIST);
@@ -257,7 +253,6 @@ public class AudioSavedListFragment extends Fragment {
     private class ToolbarClickListener implements View.OnClickListener {
         @Override
         public void onClick(View p1) {
-            // TODO: Implement this method
             if (progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
                 return;
@@ -342,15 +337,12 @@ public class AudioSavedListFragment extends Fragment {
 
         @Override
         public AudioSavedListRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            // TODO: Implement this method
             View itemview = LayoutInflater.from(context).inflate(R.layout.working_dir_recyclerview_layout, p1, false);
             return new ViewHolder(itemview);
         }
 
         @Override
         public void onBindViewHolder(AudioSavedListRecyclerAdapter.ViewHolder p1, int p2) {
-            // TODO: Implement this method
-
             if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 0) {
                 first_line_font_size = Global.FONT_SIZE_SMALL_FIRST_LINE;
                 second_line_font_size = Global.FONT_SIZE_SMALL_DETAILS_LINE;
@@ -374,7 +366,6 @@ public class AudioSavedListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            // TODO: Implement this method
             num_all_audio_list = saved_audio_list.size();
             return num_all_audio_list;
         }

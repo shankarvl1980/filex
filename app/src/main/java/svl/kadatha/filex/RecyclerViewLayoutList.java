@@ -146,7 +146,6 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        // TODO: Implement this method
         int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
 
         x = Global.FOURTEEN_DP;

@@ -173,7 +173,6 @@ public class AppManagerSortDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -185,7 +184,6 @@ public class AppManagerSortDialog extends DialogFragment {
 
         @Override
         public void onClick(View button) {
-            // TODO: Implement this method
             String selected_sort;
             int id = button.getId();
             if (id == R.id.storage_analyser_name_asc) {

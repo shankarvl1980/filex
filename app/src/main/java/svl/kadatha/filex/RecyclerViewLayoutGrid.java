@@ -133,7 +133,6 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        // TODO: Implement this method
         int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
 
         int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / Global.GRID_COUNT; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp

@@ -99,7 +99,6 @@ public class ApkBackUpNameDialog extends DialogFragment {
 
     @Override
     public void onResume() {
-        // TODO: Implement this method
         super.onResume();
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
@@ -111,7 +110,6 @@ public class ApkBackUpNameDialog extends DialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        // TODO: Implement this method
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
         super.onCancel(dialog);
     }
@@ -119,7 +117,6 @@ public class ApkBackUpNameDialog extends DialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        // TODO: Implement this method
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
         super.onDismiss(dialog);
     }

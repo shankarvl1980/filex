@@ -50,7 +50,6 @@ public class CancelableProgressBarDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Implement this method
         View v = inflater.inflate(R.layout.fragment_cancelable_progressbar, container, false);
         title = v.findViewById(R.id.fragment_cancelable_pbf_title);
         ViewGroup button_layout = v.findViewById(R.id.fragment_cancelable_pbf_button_layout);

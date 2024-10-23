@@ -740,7 +740,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                         Intent intent = new Intent();
                                         intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                                         activityResultLauncher_all_files_access_permission.launch(intent);
-
                                     }
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:

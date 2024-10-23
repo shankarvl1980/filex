@@ -67,9 +67,6 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // TODO: Implement this method
-
-
         int width_used = 0, height_used = 0;
 
         for (int i = 0; i < child_count; ++i) {
@@ -90,7 +87,6 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean p1, int p2, int p3, int p4, int p5) {
-        // TODO: Implement this method
         int x = 0, y = 0;
         int child_count = Math.min(number_of_buttons, getChildCount());
         for (int i = 0; i < child_count; ++i) {
@@ -104,27 +100,21 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
 
     @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
-        // TODO: Implement this method
         return new MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT);
     }
 
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
-        // TODO: Implement this method
         return new MarginLayoutParams(context, attrs);
     }
 
     @Override
     protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
-        // TODO: Implement this method
         return generateDefaultLayoutParams();
     }
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        // TODO: Implement this method
         return p instanceof MarginLayoutParams;
     }
-
-
 }
