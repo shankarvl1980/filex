@@ -189,7 +189,7 @@ public class FileEditorSettingsDialog extends DialogFragment {
                 }
 
                 if (FileEditorActivity.FILE_EDITOR_TEXT_SIZE != selected_text_size) {
-                    fileEditorActivity.filetext_container_edittext.setTextSize(selected_text_size);
+                    fileEditorActivity.file_text_container_edittext.setTextSize(selected_text_size);
                     FileEditorActivity.FILE_EDITOR_TEXT_SIZE = selected_text_size;
                     fileEditorActivity.tinyDB.putFloat("file_editor_text_size", FileEditorActivity.FILE_EDITOR_TEXT_SIZE);
                 }

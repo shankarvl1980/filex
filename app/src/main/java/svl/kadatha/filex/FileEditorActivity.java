@@ -67,7 +67,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
     public boolean clear_cache;
     public FileEditorViewModel viewModel;
     FileSaveServiceConnection serviceConnection;
-    LineNumberedEditText filetext_container_edittext;
+    LineNumberedEditText file_text_container_edittext;
     TinyDB tinyDB;
     private List<FilePOJO> files_selected_for_delete;
     private String tree_uri_path = "";
@@ -276,15 +276,15 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         up_button.setOnClickListener(bottomToolbarListener);
         down_button.setOnClickListener(bottomToolbarListener);
 
-        filetext_container_edittext = findViewById(R.id.textfile_edittext);
-        filetext_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
+        file_text_container_edittext = findViewById(R.id.textfile_edittext);
+        file_text_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
         page_number = findViewById(R.id.file_editor_page_number);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) page_number.getLayoutParams();
         params.topMargin = Global.ACTION_BAR_HEIGHT + Global.FOUR_DP;
         page_number.setLayoutParams(params);
 
-        viewModel.textViewUndoRedo = new TextViewUndoRedoBatch(filetext_container_edittext.getEditText());
+        viewModel.textViewUndoRedo = new TextViewUndoRedoBatch(file_text_container_edittext.getEditText());
         viewModel.textViewUndoRedo.setEditTextUndoRedoListener(new TextViewUndoRedoBatch.EditTextRedoUndoListener() {
             @Override
             public void onEditTextChange() {
@@ -386,9 +386,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                     }
                     viewModel.updated = true;
                     page_number.setText(String.valueOf(viewModel.current_page));
-                    filetext_container_edittext.setContent(viewModel.stringBuilder.toString(), viewModel.current_page, FileEditorViewModel.MAX_LINES_TO_DISPLAY);
+                    file_text_container_edittext.setContent(viewModel.stringBuilder.toString(), viewModel.current_page, FileEditorViewModel.MAX_LINES_TO_DISPLAY);
                     scrollview.smoothScrollTo(0, 0);
-                    filetext_container_edittext.setEditable(false);
+                    file_text_container_edittext.setEditable(false);
                     onClick_edit_button();
                     viewModel.textViewUndoRedo.startListening();
                 }
@@ -628,7 +628,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
     public void next_action(boolean save) {
         if (save) {
             progress_bar.setVisibility(View.VISIBLE);
-            viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
+            viewModel.saveContentInTempFile(file_text_container_edittext.getContent());
         } else {
             save_button.setEnabled(false);
             save_button.setAlpha(Global.DISABLE_ALFA);
@@ -645,7 +645,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
         if (to_close_after_save) {
             viewModel.to_be_closed_after_save = to_close_after_save;
             progress_bar.setVisibility(View.VISIBLE);
-            viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
+            viewModel.saveContentInTempFile(file_text_container_edittext.getContent());
         } else {
             viewModel.textViewUndoRedo.disconnect();
             clear_cache = false;
@@ -655,7 +655,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
     private void file_close_procedure() {
         if (keyBoardUtil.getKeyBoardVisibility()) {
-            imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(file_text_container_edittext.getWindowToken(), 0);
         } else if (!FileSaveService1.SERVICE_COMPLETED || !FileSaveService2.SERVICE_COMPLETED || !FileSaveService3.SERVICE_COMPLETED) {
             Global.print(context, getString(R.string.please_wait));
         } else if (!viewModel.updated) {
@@ -709,26 +709,26 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
             // API 21
             //filetext_container_edittext.setShowSoftInputOnFocus(true);
-            filetext_container_edittext.setEditable(true);
-            filetext_container_edittext.requestFocus();
+            file_text_container_edittext.setEditable(true);
+            file_text_container_edittext.requestFocus();
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             viewModel.textViewUndoRedo.startListening();
         } else {
-            filetext_container_edittext.clearFocus();
+            file_text_container_edittext.clearFocus();
             save_button.setEnabled(false);
             undo_button.setEnabled(false);
             redo_button.setEnabled(false);
 
             // API 21
             //filetext_container_edittext.setShowSoftInputOnFocus(false);
-            filetext_container_edittext.setEditable(false);
-            imm.hideSoftInputFromWindow(filetext_container_edittext.getWindowToken(), 0);
+            file_text_container_edittext.setEditable(false);
+            imm.hideSoftInputFromWindow(file_text_container_edittext.getWindowToken(), 0);
             viewModel.textViewUndoRedo.stopListening();
         }
         edit_button.setSelected(viewModel.edit_mode);
         setAlfaFileEditMenuItem();
         lockScreen(viewModel.edit_mode);
-        filetext_container_edittext.setOnTouchListener(new View.OnTouchListener() {
+        file_text_container_edittext.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent me) {
                 return !viewModel.edit_mode;
             }
@@ -848,7 +848,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                 }
             } else if (id == R.id.toolbar_btn_4) {
                 progress_bar.setVisibility(View.VISIBLE);
-                viewModel.saveContentInTempFile(filetext_container_edittext.getContent());
+                viewModel.saveContentInTempFile(file_text_container_edittext.getContent());
 
             } else if (id == R.id.toolbar_btn_5) {
                 if (!viewModel.updated) {

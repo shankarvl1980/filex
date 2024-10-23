@@ -378,8 +378,8 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         if (adapter != null) {
             modification_observed = false;
             local_activity_delete = false;
-            totalFilePOJO_list = viewModel.filePOJOS;
-            filePOJO_list = viewModel.filePOJOS;
+//            totalFilePOJO_list = viewModel.filePOJOS;
+//            filePOJO_list = viewModel.filePOJOS;
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
             file_list_size = filePOJO_list.size();
             if (!viewModel.filePOJOS.isEmpty() && viewModel.filePOJOS.get(0).getTotalSizePercentage() == null && !fileclickselected.equals("Large Files") && !fileclickselected.equals("Duplicate Files")) {

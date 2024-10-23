@@ -616,7 +616,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     protected void onPause() {
         super.onPause();
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -848,20 +850,10 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     v.setSelected(false);
                     ((RecyclerViewLayout) v).set_selected(false);
                     --size;
-
-                    if (size == 1) {
-                        if (cardViewClickListener != null) {
-                            FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
-                            cardViewClickListener.onLongClick(filePOJO, size);
-                        }
-                    } else if (size > 1) {
-                        if (cardViewClickListener != null) {
-                            FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
-                            cardViewClickListener.onLongClick(filePOJO, size);
-                        }
+                    if (cardViewClickListener != null) {
+                        FilePOJO filePOJO = archiveViewFragment.filePOJO_list.get(pos);
+                        cardViewClickListener.onLongClick(filePOJO, size);
                     }
-
-
                 } else {
                     archiveViewFragment.viewModel.mselecteditems.put(pos, archiveViewFragment.filePOJO_list.get(pos).getPath());
                     v.setSelected(true);

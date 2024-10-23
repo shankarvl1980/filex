@@ -600,13 +600,13 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         if (adapter != null) {
             modification_observed = false;
             local_activity_delete = false;
-            if (MainActivity.SHOW_HIDDEN_FILE) {
-                filePOJO_list = viewModel.filePOJOS;
-                totalFilePOJO_list = viewModel.filePOJOS;
-            } else {
-                filePOJO_list = viewModel.filePOJOS_filtered;
-                totalFilePOJO_list = viewModel.filePOJOS_filtered;
-            }
+//            if (MainActivity.SHOW_HIDDEN_FILE) {
+//                filePOJO_list = viewModel.filePOJOS;
+//                totalFilePOJO_list = viewModel.filePOJOS;
+//            } else {
+//                filePOJO_list = viewModel.filePOJOS_filtered;
+//                totalFilePOJO_list = viewModel.filePOJOS_filtered;
+//            }
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
             file_list_size = totalFilePOJO_list_Size;
             if (detailFragmentListener != null)

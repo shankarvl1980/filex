@@ -62,6 +62,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener {
     public static final int FOLDER_SELECT_REQUEST_CODE = 1564;
@@ -893,7 +894,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     }
 
                     int t = fileSelectorFragment.filePOJO_list.size();
-                    fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                    notifyDataSetChanged();
                     if (t > 0) {
                         fileSelectorFragment.recycler_view.setVisibility(View.VISIBLE);
                         fileSelectorFragment.folder_empty_textview.setVisibility(View.GONE);

@@ -264,20 +264,19 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
         if (adapter != null) {
             modification_observed = false;
             local_activity_delete = false;
-            if (FileSelectorActivity.SHOW_HIDDEN_FILE) {
-                filePOJO_list = viewModel.filePOJOS;
-                totalFilePOJO_list = viewModel.filePOJOS;
-            } else {
-                filePOJO_list = viewModel.filePOJOS_filtered;
-                totalFilePOJO_list = viewModel.filePOJOS_filtered;
-            }
+//            if (FileSelectorActivity.SHOW_HIDDEN_FILE) {
+//                filePOJO_list = viewModel.filePOJOS;
+//                totalFilePOJO_list = viewModel.filePOJOS;
+//            } else {
+//                filePOJO_list = viewModel.filePOJOS_filtered;
+//                totalFilePOJO_list = viewModel.filePOJOS_filtered;
+//            }
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
             file_list_size = filePOJO_list.size();
 
             if (detailFragmentListener != null) {
                 detailFragmentListener.setFileNumberView("" + file_list_size);
             }
-
 
             Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));
             adapter.notifyDataSetChanged();
