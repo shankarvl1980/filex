@@ -151,7 +151,7 @@ public class AlbumListFragment extends Fragment {
                     albumListRecyclerViewAdapter = new AlbumListRecyclerViewAdapter();
                     recyclerview.setAdapter(albumListRecyclerViewAdapter);
                     num_all_album = total_album_list.size();
-                    if (num_all_album <= 0) {
+                    if (num_all_album == 0) {
                         recyclerview.setVisibility(View.GONE);
                         empty_tv.setVisibility(View.VISIBLE);
                         enable_disable_buttons(false);

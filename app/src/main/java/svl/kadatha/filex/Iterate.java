@@ -113,10 +113,8 @@ public class Iterate {
             if (currentFile.isDirectory()) {
                 File[] files_array = currentFile.listFiles();
                 if (files_array != null) {
-                    if (files_array.length != 0) {
-                        for (File subFile : files_array) {
-                            stack.push(subFile);
-                        }
+                    for (File subFile : files_array) {
+                        stack.push(subFile);
                     }
                     target_list_files.add(currentFile);
                     if (include_folder) {

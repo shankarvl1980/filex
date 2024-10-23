@@ -801,7 +801,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     }
 
     public static class StorageAnalyserAdapter extends AbstractStorageAnalyserAdapter {
-        StorageAnalyserFragment storageAnalyserFragment;
+        final StorageAnalyserFragment storageAnalyserFragment;
 
         StorageAnalyserAdapter(Context context, StorageAnalyserFragment storageAnalyserFragment) {
             super(context, storageAnalyserFragment);
@@ -820,7 +820,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     }
 
     public static class StorageAnalyserAdapterDivider extends AbstractStorageAnalyserAdapter {
-        StorageAnalyserFragment storageAnalyserFragment;
+        final StorageAnalyserFragment storageAnalyserFragment;
 
         StorageAnalyserAdapterDivider(Context context, StorageAnalyserFragment storageAnalyserFragment) {
             super(context, storageAnalyserFragment);
@@ -852,7 +852,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     public static abstract class AbstractStorageAnalyserAdapter extends RecyclerView.Adapter<AbstractStorageAnalyserAdapter.ViewHolder> implements Filterable {
         final StorageAnalyserFragment storageAnalyserFragment;
-        Context context;
+        final Context context;
 
         AbstractStorageAnalyserAdapter(Context context, StorageAnalyserFragment storageAnalyserFragment) {
             this.context = context;

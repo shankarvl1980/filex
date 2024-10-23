@@ -291,7 +291,7 @@ public class CopyToActivity extends BaseActivity {
         }
         String file_name = file_name_edit_text.getText().toString().trim();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("data_list", (ArrayList<? extends Parcelable>) data_list);
+        bundle.putParcelableArrayList("data_list", data_list);
         bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
         bundle.putString("dest_folder", folderclickselected);
         bundle.putString("file_name", file_name);

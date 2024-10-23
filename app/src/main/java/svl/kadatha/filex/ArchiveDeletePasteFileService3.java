@@ -41,8 +41,8 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
     private int notification_id;
     private ArchiveAsyncTask archiveAsyncTask;
     private UnarchiveAsyncTask unarchiveAsyncTask;
-    private String tree_uri_path = "", source_uri_path = "";
-    private Uri tree_uri, source_uri;
+    private String tree_uri_path = "";
+    private Uri tree_uri;
     private ArchiveDeletePasteBinder binder = new ArchiveDeletePasteBinder();
     private ServiceCompletionListener serviceCompletionListener;
     private String intent_action;
@@ -82,6 +82,8 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
         Bundle bundle = intent.getBundleExtra("bundle");
         intent_action = intent.getAction();
 
+        Uri source_uri;
+        String source_uri_path = "";
         switch (intent_action) {
             case ArchiveAsyncTask.TASK_TYPE:
                 if (bundle != null) {

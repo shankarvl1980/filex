@@ -65,13 +65,18 @@ public class PlayScreenFragment extends Fragment {
 
     private static final String DELETE_FILE_REQUEST_CODE = "audio_play_file_delete_request_code";
     private static final String AUDIO_SELECT_REQUEST_CODE = "audio_play_audio_select_request_code";
-    public static String TAG = "PlayScreenFragment";
+    public static final String TAG = "PlayScreenFragment";
     public AudioPlayerService audio_player_service;
     private ImageView album_art_imageview;
     private ImageButton previous_btn;
     private ImageButton play_pause_btn;
     private ImageButton next_btn;
-    private TextView audio_name_tv, audio_name_min_tv, audio_album_tv, audio_artists_tv, next_audio_tv, total_time_tv, current_progress_tv;
+    private TextView audio_name_tv;
+    private TextView audio_name_min_tv;
+    private TextView audio_album_tv;
+    private TextView audio_artists_tv;
+    private TextView total_time_tv;
+    private TextView current_progress_tv;
     private SeekBar seekbar;
     private int total_duration;
     private Handler handler, onserviceconnection_handler, handler_for_art;
@@ -290,7 +295,7 @@ public class PlayScreenFragment extends Fragment {
 //        audio_name_min_tv = v.findViewById(R.id.current_play_audio_name_min);
 //        audio_album_tv=v.findViewById(R.id.current_play_album);
         audio_artists_tv = v.findViewById(R.id.current_play_artists);
-        next_audio_tv = v.findViewById(R.id.current_play_next_audio_title);
+        TextView next_audio_tv = v.findViewById(R.id.current_play_next_audio_title);
 
         ImageButton overflow_btn = v.findViewById(R.id.current_play_overflow);
         overflow_btn.setOnClickListener(new View.OnClickListener() {

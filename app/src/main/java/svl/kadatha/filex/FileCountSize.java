@@ -268,7 +268,6 @@ public class FileCountSize {
                         }
                     } catch (Exception e) {
                         Timber.tag(TAG).e("Error during SMB file count: %s", e.getMessage());
-                        return;
                     } finally {
                         if (smbClientRepository != null && session != null) {
                             smbClientRepository.releaseSession(session);

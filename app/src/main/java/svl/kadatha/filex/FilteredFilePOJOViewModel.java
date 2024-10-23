@@ -191,7 +191,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                         if (wm.isWallpaperSupported() && wm.isSetWallpaperAllowed()) {
                             set_wallpaper(wm, uri);
                         }
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
                         if (wm.isWallpaperSupported()) {
                             set_wallpaper(wm, uri);
                         }

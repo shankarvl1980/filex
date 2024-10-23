@@ -197,7 +197,7 @@ public class AllAudioListFragment extends Fragment {
                     audioListRecyclerViewAdapter = new AudioListRecyclerViewAdapter();
                     recyclerview.setAdapter(audioListRecyclerViewAdapter);
                     num_all_audio = total_audio_list.size();
-                    if (num_all_audio <= 0) {
+                    if (num_all_audio == 0) {
                         recyclerview.setVisibility(View.GONE);
                         empty_tv.setVisibility(View.VISIBLE);
                         enable_disable_buttons(false);

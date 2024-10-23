@@ -57,15 +57,12 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
     //smb specific fields
     private String domain = "", shareName = "", smbVersion = "";
     private Spinner smbVersion_spinner;
-    private Button private_key_select_button;
     private TextView server_tv, port_tv, user_name_tv, password_tv, encoding_tv, display_tv, private_key_path_tv, private_key_passphrase_tv, known_hosts_path_tv;
     private TextView base_path_tv, domain_tv, share_name_tv;
     private RadioButton mode_active_radio_btn;
     private CheckBox anonymous_check_box, useFTPS_check_box, useHTTPS_check_box;
     private boolean update, replace;
     private Bundle bundle;
-    private ArrayAdapter<CharSequence> smbVersionArrayAdapter;
-    private String request_code;
 
     public static NetworkAccountDetailsInputDialog getInstance(String request_code, String type, NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
         NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = new NetworkAccountDetailsInputDialog();
@@ -97,7 +94,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         setCancelable(false);
         bundle = getArguments();
         if (bundle != null) {
-            request_code = bundle.getString("request_code");
+            String request_code = bundle.getString("request_code");
             type = bundle.getString("type");
             NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
 
@@ -203,7 +200,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         domain_tv = v.findViewById(R.id.fragment_network_details_input_domain);
         share_name_tv = v.findViewById(R.id.fragment_network_details_input_share_name);
         smbVersion_spinner = v.findViewById(R.id.fragment_network_details_input_smb_version);
-        smbVersionArrayAdapter = ArrayAdapter.createFromResource(context, R.array.smb_versions, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> smbVersionArrayAdapter = ArrayAdapter.createFromResource(context, R.array.smb_versions, android.R.layout.simple_spinner_item);
 
         server_tv.setText(host);
         if (port == 0) {
@@ -241,7 +238,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         if (smbVersion == null || smbVersion.isEmpty()) smbVersion = "SMB2";
         smbVersion_spinner.setSelection(smbVersionArrayAdapter.getPosition(smbVersion));
 
-        private_key_select_button = v.findViewById(R.id.fragment_network_details_input_select_private_key);
+        Button private_key_select_button = v.findViewById(R.id.fragment_network_details_input_select_private_key);
         private_key_select_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

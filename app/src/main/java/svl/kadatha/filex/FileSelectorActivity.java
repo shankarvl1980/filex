@@ -830,8 +830,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     public abstract static class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
-        Context context;
-        FileSelectorFragment fileSelectorFragment;
+        final Context context;
+        final FileSelectorFragment fileSelectorFragment;
 
         FileSelectorAdapter(Context context, FileSelectorFragment fileSelectorFragment) {
             this.context = context;
