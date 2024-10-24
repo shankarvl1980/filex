@@ -498,6 +498,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     protected void onStop() {
         super.onStop();
+        if (search_toolbar_visible) {
+            setSearchBarVisibility(false);
+        }
+
         if (!isFinishing() && !isChangingConfigurations() && clear_cache) {
             clearCache();
         }
