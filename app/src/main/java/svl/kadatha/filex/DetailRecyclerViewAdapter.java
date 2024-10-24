@@ -178,9 +178,8 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
 
     public void deselectAll() {
         if (df.detailFragmentListener != null) {
-            df.detailFragmentListener.actionModeFinish(df, df.fileclickselected);
+            df.detailFragmentListener.onDeselectAll(df);
         }
-
     }
 
     public void setCardViewClickListener(CardViewClickListener listener) {

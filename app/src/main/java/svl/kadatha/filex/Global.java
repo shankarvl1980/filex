@@ -22,6 +22,8 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -1166,5 +1168,34 @@ public class Global {
         // If the path starts with a slash, make sure we keep it
         String parentPath = parentPathBuilder.toString();
         return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
+    }
+
+    public static void TOGGLE_VIEW(Context context, View view, boolean show) {
+        // Load animations from XML
+        Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down);
+        Animation slideUp = AnimationUtils.loadAnimation(context, R.anim.slide_up);
+
+        Animation animation = show ? slideDown : slideUp;
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (show) {
+                    view.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (!show) {
+                    view.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        view.startAnimation(animation);
     }
 }

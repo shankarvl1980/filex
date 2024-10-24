@@ -26,4 +26,6 @@ public interface DetailFragmentListener {
     void rescanLargeDuplicateFilesLibrary(String type);
 
     void onCreateView(String fileclickselected, FileObjectType fileObjectType);
+
+    void onDeselectAll(Fragment fragment);
 }

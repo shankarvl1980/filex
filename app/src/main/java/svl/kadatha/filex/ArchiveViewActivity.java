@@ -17,6 +17,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -94,7 +95,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
         while (!stack.isEmpty()) {
             File currentFile = stack.pop();
-
             if (currentFile.isDirectory()) {
                 File[] innerFiles = currentFile.listFiles();
                 if (innerFiles == null || innerFiles.length == 0) {
@@ -432,12 +432,17 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
     @Override
     public void setCurrentDirText(String current_dir_name) {
-
+        current_dir_textview.setText(current_dir_name);
     }
 
     @Override
     public void enableParentDirImageButton(boolean enable) {
-
+        parent_dir_image_button.setEnabled(enable);
+        if (enable) {
+            parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
+        } else {
+            parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+        }
     }
 
     @Override
@@ -448,6 +453,11 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     @Override
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
 
+    }
+
+    @Override
+    public void onDeselectAll(Fragment fragment) {
+        DeselectAllAndAdjustToolbars((ArchiveViewFragment) fragment,((ArchiveViewFragment)fragment).fileclickselected);
     }
 
     @Override
@@ -463,7 +473,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
         int size = archiveViewFragment.viewModel.mselecteditems.size();
         if (size > 1) {
-
             interval_select.setVisibility(View.VISIBLE);
             int last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
             int previous_to_last_key = archiveViewFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
@@ -474,8 +483,8 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
-
         }
+
         if (size == archiveViewFragment.file_list_size) {
             all_select.setImageResource(R.drawable.deselect_icon);
         }
@@ -483,12 +492,16 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
     @Override
     public void onScrollRecyclerView(boolean showToolBar) {
-
+        if(showToolBar){
+            bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+        } else{
+            bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+        }
     }
 
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {
-
+        action_mode_finish((ArchiveViewFragment) fragment,fileclickeselected);
     }
 
     @Override
@@ -508,7 +521,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 interval_select.setAlpha(Global.DISABLE_ALFA);
                 interval_select.setEnabled(false);
             }
-
         }
 
         if (size == archiveViewFragment.file_list_size) {
@@ -526,7 +538,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
     @Override
     public void setFileNumberView(String file_number_string) {
-
+        file_number_view.setText(file_number_string);
     }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
@@ -676,8 +688,8 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         }
     }
 
-    public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archiveViewfrag_tag) {
-        DeselectAllAndAdjustToolbars(archiveViewFragment, archiveViewfrag_tag);
+    public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archive_view_fragment_tag) {
+        DeselectAllAndAdjustToolbars(archiveViewFragment, archive_view_fragment_tag);
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
         search_edittext.setText("");
         search_edittext.clearFocus();
@@ -691,26 +703,25 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     public static class ArchiveDetailRecyclerViewAdapter extends RecyclerView.Adapter<ArchiveDetailRecyclerViewAdapter.ViewHolder> implements Filterable {
         private final Context context;
         private final ArchiveViewFragment archiveViewFragment;
-        private final ArchiveViewActivity archiveViewActivity;
 
         private CardViewClickListener cardViewClickListener;
         private boolean show_file_path;
 
-        ArchiveDetailRecyclerViewAdapter(Context context) {
+        ArchiveDetailRecyclerViewAdapter(Context context, ArchiveViewFragment archiveViewFragment) {
             this.context = context;
-            archiveViewActivity = (ArchiveViewActivity) context;
-            archiveViewFragment = (ArchiveViewFragment) archiveViewActivity.fm.findFragmentById(R.id.archive_detail_fragment);
-            archiveViewActivity.current_dir_textview.setText(archiveViewFragment.file_click_selected_name);
-            archiveViewActivity.file_number_view.setText(archiveViewFragment.viewModel.mselecteditems.size() + "/" + archiveViewFragment.file_list_size);
-            if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
-                File f = new File(archiveViewFragment.fileclickselected);
-                File parent_file = f.getParentFile();
-                if (parent_file != null) {
+            this.archiveViewFragment = archiveViewFragment;
+            if(archiveViewFragment.detailFragmentListener!=null){
+                archiveViewFragment.detailFragmentListener.setCurrentDirText(archiveViewFragment.file_click_selected_name);
+                archiveViewFragment.detailFragmentListener.setFileNumberView(archiveViewFragment.viewModel.mselecteditems.size() + "/" + archiveViewFragment.file_list_size);
+                if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
+                    File f = new File(archiveViewFragment.fileclickselected);
+                    File parent_file = f.getParentFile();
+                    if (parent_file != null) {
 
-                } else {
-                    archiveViewActivity.current_dir_textview.setText(R.string.root_directory);
-                    archiveViewActivity.parent_dir_image_button.setEnabled(false);
-                    archiveViewActivity.parent_dir_image_button.setAlpha(Global.DISABLE_ALFA);
+                    } else {
+                        archiveViewFragment.detailFragmentListener.setCurrentDirText(context.getString(R.string.root_directory));
+                        archiveViewFragment.detailFragmentListener.enableParentDirImageButton(false);
+                    }
                 }
             }
         }
@@ -756,12 +767,19 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     }
 
                     int t = archiveViewFragment.filePOJO_list.size();
-                    archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
+                    if (!archiveViewFragment.viewModel.mselecteditems.isEmpty()) {
+                        archiveViewFragment.adapter.deselectAll();
+                    } else {
+                        notifyDataSetChanged();
+                    }
                     if (t > 0) {
                         archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
                         archiveViewFragment.folder_empty.setVisibility(View.GONE);
                     }
-                    archiveViewActivity.file_number_view.setText("" + t);
+
+                    if(archiveViewFragment.detailFragmentListener!=null){
+                        archiveViewFragment.detailFragmentListener.setFileNumberView("" + t);
+                    }
                 }
             };
         }
@@ -780,10 +798,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
 
             int s = archiveViewFragment.viewModel.mselecteditems.size();
-
-            archiveViewActivity.file_number_view.setText(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.onLongClickItem(size);
             notifyDataSetChanged();
-            archiveViewActivity.bottom_toolbar.setVisibility(View.VISIBLE);
         }
 
         public void selectInterval() {
@@ -799,13 +816,13 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 archiveViewFragment.viewModel.mselecteditems.put(i, archiveViewFragment.filePOJO_list.get(i).getPath());
             }
             int s = archiveViewFragment.viewModel.mselecteditems.size();
-            archiveViewActivity.file_number_view.setText(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.onLongClickItem(s);
             notifyDataSetChanged();
-            archiveViewActivity.bottom_toolbar.setVisibility(View.VISIBLE);
         }
 
         public void deselectAll() {
-            archiveViewActivity.DeselectAllAndAdjustToolbars(archiveViewFragment, archiveViewFragment.fileclickselected);
+            archiveViewFragment.detailFragmentListener.onDeselectAll(archiveViewFragment);
         }
 
         public void setCardViewClickListener(CardViewClickListener listener) {
@@ -865,7 +882,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                         cardViewClickListener.onLongClick(filePOJO, size);
                     }
                 }
-                archiveViewActivity.file_number_view.setText(size + "/" + archiveViewFragment.file_list_size);
+                archiveViewFragment.detailFragmentListener.setFileNumberView(size + "/" + archiveViewFragment.file_list_size);
             }
 
             @Override

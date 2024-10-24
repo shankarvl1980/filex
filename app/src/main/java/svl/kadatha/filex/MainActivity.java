@@ -283,7 +283,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         file_number_view = findViewById(R.id.detail_fragment_file_number);
 
         ImageButton home_button = findViewById(R.id.top_toolbar_home_button);
-        parent_dir_image_button = findViewById(R.id.top_toolbar_parent_dir_imagebutton);
+        parent_dir_image_button = findViewById(R.id.top_toolbar_parent_dir_image_button);
         current_dir_textview = findViewById(R.id.top_toolbar_current_dir_label);
         all_select = findViewById(R.id.detail_fragment_all_select);
         interval_select = findViewById(R.id.detail_fragment_interval_select);
@@ -907,6 +907,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
         if (viewModel.send_intent != null) {
             on_intent(viewModel.send_intent);
+        }
+    }
+
+    @Override
+    public void onDeselectAll(Fragment fragment) {
+        if(fragment instanceof DetailFragment){
+            DeselectAllAndAdjustToolbars((DetailFragment) fragment);
         }
     }
 

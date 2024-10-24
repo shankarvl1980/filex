@@ -587,6 +587,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     @Override
+    public void onDeselectAll(Fragment fragment) {
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mediaMountReceiver.removeMediaMountListener(this);

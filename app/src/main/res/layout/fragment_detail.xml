@@ -19,7 +19,6 @@
         android:layout_gravity="end"
         android:background="?attr/filepath_recyclerview_background"
         android:elevation="6dp"
-
         android:orientation="horizontal">
 
         <ImageView
@@ -71,7 +70,7 @@
         android:background="@null"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
-        android:paddingTop="40sp"
+        android:paddingTop="36sp"
         android:paddingBottom="100dp"
         android:scrollbars="vertical" />
 
@@ -80,7 +79,7 @@
         android:layout_width="20dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:paddingTop="40sp"
+        android:paddingTop="36sp"
         android:paddingBottom="100dp" />
 
     <TextView

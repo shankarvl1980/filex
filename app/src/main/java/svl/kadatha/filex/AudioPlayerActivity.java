@@ -173,7 +173,11 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
                 } else if (search_toolbar_visible) {
                     setSearchBarVisibility(false);
-                } else {
+                } else if (audioPlayViewModel.play_screen_expanded_view){
+                    audioPlayViewModel.play_screen_expanded_view = false;
+                    instantiatePlayScreenFragment(false);
+                }
+                else {
                     int current_item = view_pager.getCurrentItem();
                     switch (current_item) {
                         case 1:
@@ -445,9 +449,9 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         // Set custom animations based on the expansion value
         if (expansion) {
-            transaction.setCustomAnimations(R.anim.slide_up, R.anim.fade_out, R.anim.fade_in, R.anim.slide_down);
+            transaction.setCustomAnimations(R.anim.slide_up_with_fade, 0, 0, R.anim.slide_down_with_fade);
         } else {
-            transaction.setCustomAnimations(R.anim.slide_down, R.anim.fade_out, R.anim.fade_in, R.anim.slide_up);
+            transaction.setCustomAnimations(R.anim.slide_down_with_fade, R.anim.slide_down_with_fade, 0, R.anim.slide_up_with_fade);
         }
 
         // Replace the fragment

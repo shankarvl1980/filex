@@ -80,7 +80,7 @@
     <EditText
         android:id="@+id/file_selector_search_view_edit_text"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
@@ -98,7 +98,7 @@
 
         android:id="@+id/file_selector_search_view_cancel_button"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:background="?attr/toolbar_background"

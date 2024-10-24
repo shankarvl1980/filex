@@ -129,7 +129,7 @@
 
         android:id="@+id/archive_viewer_search_view_edit_text"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
@@ -144,19 +144,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-
         android:id="@+id/archive_viewer_search_view_cancel_button"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:background="?attr/toolbar_background"
-        android:elevation="6dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
         android:src="@drawable/cancel_icon"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/archive_view_search_bar_space"
         app:layout_constraintStart_toEndOf="@id/archive_viewer_search_view_edit_text"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Space
+        android:id="@+id/archive_view_search_bar_space"
+        android:layout_width="50dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/archive_viewer_search_view_cancel_button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout

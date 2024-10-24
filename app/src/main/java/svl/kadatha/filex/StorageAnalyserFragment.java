@@ -301,49 +301,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
     }
 
-    public void selectAll() {
-        viewModel.mselecteditems = new IndexedLinkedHashMap<>();
-        int size = filePOJO_list.size();
-
-        for (int i = 0; i < size; ++i) {
-            viewModel.mselecteditems.put(i, filePOJO_list.get(i).getPath());
-        }
-
-        int s = viewModel.mselecteditems.size();
-
-        if (detailFragmentListener != null) {
-            detailFragmentListener.setFileNumberView(s + "/" + size);
-            detailFragmentListener.onLongClickItem(size);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void selectInterval() {
-        int size = viewModel.mselecteditems.size();
-        if (size < 2) return;
-        int last_key = viewModel.mselecteditems.getKeyAtIndex(size - 1);
-        int previous_to_last_key = viewModel.mselecteditems.getKeyAtIndex(size - 2);
-        if (last_key == previous_to_last_key) return;
-        int min = Math.min(last_key, previous_to_last_key);
-        int max = Math.max(last_key, previous_to_last_key);
-        if (max - min == 1) return;
-        for (int i = min + 1; i < max; ++i) {
-            viewModel.mselecteditems.put(i, filePOJO_list.get(i).getPath());
-        }
-        int s = viewModel.mselecteditems.size();
-
-        if (detailFragmentListener != null) {
-            detailFragmentListener.setFileNumberView(s + "/" + size);
-            detailFragmentListener.onLongClickItem(s);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void deselectAll() {
-        if (detailFragmentListener != null) {
-            detailFragmentListener.actionModeFinish(this, fileclickselected);
-        }
-    }
 
 
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
@@ -368,7 +325,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                     }
                 }
             }
-
             FileIntentDispatch.openFile(context, file_path, "", fileObjectType, select_app, file_size, false);
         }
     }
