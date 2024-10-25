@@ -220,17 +220,7 @@ public class WebDavFileModel implements FileModel {
         }
 
         try {
-            // Define a threshold for in-memory vs. disk-based buffering (e.g., 10MB)
-            final long MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
-
-//            if (sourceLength > MEMORY_THRESHOLD) {
-//                // Use disk-based buffering with a temporary file
-//                return new WebDavOutputStreamWrapper(sardine, filePath, false);
-//            }
-//            else {
-            // Use in-memory buffering
             return new WebDavOutputStreamWrapper(sardine, url, true);
-            //}
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "Failed to create OutputStream wrapper: %s", e.getMessage());
             return null;

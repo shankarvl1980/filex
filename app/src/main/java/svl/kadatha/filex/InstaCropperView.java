@@ -901,11 +901,6 @@ public class InstaCropperView extends View {
 
 
     private float getMaximumAllowedScale() {
-//        float maximumAllowedWidth = mImageRawWidth;
-//        float maximumAllowedHeight = mImageRawHeight;
-//
-//        float baseScale=Math.min(maximumAllowedWidth / (float) mWidth, maximumAllowedHeight / (float) mHeight);
-//        return baseScale*2.0f;
         return getMinimumAllowedScale() * 4.0f;
     }
 

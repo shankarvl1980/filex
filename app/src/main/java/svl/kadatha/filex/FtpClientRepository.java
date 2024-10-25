@@ -111,12 +111,6 @@ public class FtpClientRepository {
             client = reconnectClient(client);
         }
 
-// for latency issued the following is removed
-//        if (!testConnection(client)) {
-//            disconnectAndCloseClient(client);
-//            client = createAndConnectFtpClient();
-//        }
-
         lastUsedTimes.put(client, System.currentTimeMillis());
         inUseClients.offer(client);
         return client;

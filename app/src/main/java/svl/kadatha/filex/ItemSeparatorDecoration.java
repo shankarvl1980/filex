@@ -42,19 +42,3 @@ public class ItemSeparatorDecoration extends RecyclerView.ItemDecoration {
         }
     }
 }
-
-//
-//        if (includeEdge) {
-//outRect.left = spacingPx - column * spacingPx / spanCount;
-//outRect.right = (column + 1) * spacingPx / spanCount;
-//            if (position < spanCount) {
-//outRect.top = spacingPx;
-//            }
-//outRect.bottom = spacingPx;
-//        } else {
-//outRect.left = column * spacingPx / spanCount;
-//outRect.right = spacingPx - (column + 1) * spacingPx / spanCount;
-//            if (position >= spanCount) {
-//outRect.top = spacingPx;
-//            }
-//                    }

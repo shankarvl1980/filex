@@ -265,16 +265,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                     audioPlayViewModel.albumPolling(source_folder, audioPlayViewModel.fileObjectType, audioPlayViewModel.fromThirdPartyApp);
 
 
-                    // Start the AudioPlayerService immediately
-//                    Intent service_intent = new Intent(context, AudioPlayerService.class);
-//                    service_intent.setData(data);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        startForegroundService(service_intent);
-//                    } else {
-//                        startService(service_intent);
-//                    }
-
-                    // Update the fragment's UI and state
                     if (psf != null) {
                         psf.initiate_audio();
                         // psf.set_audio(AUDIO_FILE);
@@ -282,9 +272,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
                     //apf.initiate_audio();
                 }
-//                if (AUDIO_FILE == null) {
-//                    view_pager.setCurrentItem(1);
-//                }
+
             }
         }
     }

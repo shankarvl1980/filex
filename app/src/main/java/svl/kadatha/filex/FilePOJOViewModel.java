@@ -83,46 +83,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-//    public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
-//        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
-//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-//        ExecutorService executorService = MyExecutorService.getExecutorService();
-//        future1 = executorService.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                filePOJOS = new ArrayList<>();
-//                filePOJOS_filtered = new ArrayList<>();
-//                FilePOJOUtil.FILL_FILE_POJO(filePOJOS, filePOJOS_filtered, fileObjectType, fileclickselected, currentUsbFile, archive_view);
-//
-//                if (fill_file_size_also) {
-//                    long storage_space = 0L;
-//                    String key = fileObjectType + fileclickselected;
-//                    for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
-//                        if (Global.IS_CHILD_FILE(key, entry.getKey())) {
-//                            storage_space = entry.getValue().getTotalSpace();
-//                            break;
-//                        }
-//                    }
-//
-//                    final long final_storage_space = storage_space;
-//                    dir_count = filePOJOS.size();
-//                    half_dir_count = filePOJOS.size() / 2;
-//                    future4 = executorService.submit(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
-//                        }
-//                    });
-//
-//                    try {
-//                        future4.get();
-//                    } catch (ExecutionException | InterruptedException e) {
-//                    }
-//                }
-//                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-//            }
-//        });
-//    }
 
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -158,44 +118,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         });
     }
-
-
-//    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
-//        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
-//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-//        ExecutorService executorService = MyExecutorService.getExecutorService();
-//        future2 = executorService.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                long storage_space = 0L;
-//                String key = fileObjectType + fileclickselected;
-//                for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
-//                    if (Global.IS_CHILD_FILE(key, entry.getKey())) {
-//                        storage_space = entry.getValue().getTotalSpace();
-//                        break;
-//                    }
-//                }
-//
-//                final long final_storage_space = storage_space;
-//                dir_count = filePOJOS.size();
-//                half_dir_count = filePOJOS.size() / 2;
-//                future6 = executorService.submit(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
-//                    }
-//                });
-//
-//                try {
-//                    future6.get();
-//                } catch (ExecutionException | InterruptedException e) {
-//                }
-//                finally{
-//                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-//                }
-//            }
-//        });
-//    }
 
 
     public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
@@ -592,7 +514,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
-                        //mutable_file_count.postValue(count);
                     }
                 }
             } else {
@@ -608,7 +529,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
-                        //        mutable_file_count.postValue(count);
                     }
                 }
             }
@@ -630,7 +550,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                         f_pojos.add(filePOJO);
                         f_pojos_filtered.add(filePOJO);
                         count++;
-                        //mutable_file_count.postValue(count);
                     }
                 } catch (IOException e) {
 
@@ -650,11 +569,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     f_pojos.add(filePOJO);
                     f_pojos_filtered.add(filePOJO);
                     count++;
-                    //  mutable_file_count.postValue(count);
                 }
             }
         }
-
     }
 
     private void search_file(String search_name, String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException {
@@ -721,7 +638,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                             count++;
                         }
                     }
-                    //mutable_file_count.postValue(count);
                 } catch (final PatternSyntaxException e) {
                     Global.print_background_thread(application, e.getMessage());
                 }
@@ -796,13 +712,11 @@ public class FilePOJOViewModel extends AndroidViewModel {
                             count++;
                         }
                     }
-                    //mutable_file_count.postValue(count);
                 } catch (final PatternSyntaxException e) {
                     Global.print_background_thread(application, e.getMessage());
                 }
             }
         }
-
     }
 
 
