@@ -465,9 +465,10 @@ public class PlayScreenFragment extends Fragment {
                     Uri tree_uri = result.getParcelable("tree_uri");
                     String tree_uri_path = result.getString("tree_uri_path");
                     String source_folder = result.getString("source_folder");
+                    FileObjectType fileObjectType = (FileObjectType) result.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
                     files_selected_for_delete = new ArrayList<>();
                     files_selected_for_delete.add(AudioPlayerActivity.AUDIO_FILE);
-                    deleteFileOtherActivityViewModel.deleteAudioPOJO(source_folder, files_selected_for_delete, audioPlayViewModel.fileObjectType, tree_uri, tree_uri_path);
+                    deleteFileOtherActivityViewModel.deleteAudioPOJO(source_folder, files_selected_for_delete, fileObjectType, tree_uri, tree_uri_path);
                 }
             }
         });
@@ -537,11 +538,10 @@ public class PlayScreenFragment extends Fragment {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null";
             audio_artists_tv.setText(artists);
-            //audio_artists_min_tv.setText(artists);
             //next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
-
             return;
         }
+
         if (AudioPlayerService.CURRENT_PLAY_NUMBER <= 0) {
             previous_btn.setEnabled(false);
             previous_btn.setAlpha(Global.DISABLE_ALFA);
@@ -563,12 +563,10 @@ public class PlayScreenFragment extends Fragment {
         if (audio_player_service != null && audio_player_service.current_audio != null) {
             //audio_album_tv.setText(getString(R.string.album_colon)+" "+audio_player_service.current_audio.getAlbum());
             audio_artists_tv.setText(audio_player_service.current_audio.getArtist());
-//            audio_artists_min_tv.setText(audio_player_service.current_audio.getArtist());
         } else {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null"
             audio_artists_tv.setText(artists);
-            //           audio_artists_min_tv.setText(artists);
 
         }
 //        if(next_btn.isEnabled() && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()>AudioPlayerService.CURRENT_PLAY_NUMBER+1)

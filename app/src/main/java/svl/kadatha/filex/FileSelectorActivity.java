@@ -62,7 +62,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener {
     public static final int FOLDER_SELECT_REQUEST_CODE = 1564;
@@ -87,7 +86,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public KeyBoardUtil keyBoardUtil;
     public EditText search_edittext;
     private Context context;
-    private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
+    private LocalBroadcastReceiver localBroadcastReceiver;
     private USBReceiver usbReceiver;
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
@@ -135,12 +134,13 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
-        otherActivityBroadcastReceiver = new OtherActivityBroadcastReceiver();
+        localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
-        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver, localBroadcastIntentFilter);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();
         IntentFilter usbIntentFilter = new IntentFilter();
@@ -599,7 +599,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     protected void onDestroy() {
         super.onDestroy();
         mediaMountReceiver.removeMediaMountListener(this);
-        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
         localBroadcastManager.unregisterReceiver(usbReceiver);
         unregisterReceiver(networkStateReceiver);
         context.unregisterReceiver(mediaMountReceiver);
@@ -617,7 +617,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String tag = fileSelectorFragment.getTag();
 
-                while (tag != null && !new File(tag).exists() && fileSelectorFragment.currentUsbFile == null
+                while (tag != null && !(fileSelectorFragment.fileObjectType==FileObjectType.FILE_TYPE && new File(tag).exists()) && fileSelectorFragment.currentUsbFile == null
                         && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
@@ -672,26 +672,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
 
-    }
-
-    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
-        String existingFilePOJOkey = "";
-
-        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if (fileSelectorFragment != null) {
-            fragment_tag = fileSelectorFragment.getTag();
-            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
-            setSearchBarVisibility(false);
-        }
-
-
-        //this will force create new transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
-        {
-            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
-            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-        }
     }
 
     @Override
@@ -1000,7 +980,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
@@ -1017,6 +997,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         fileSelectorFragment.modification_observed = true;
                     break;
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
+                    break;
+                case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
+                    if(fileSelectorFragment!=null && Global.NETWORK_FILE_OBJECT_TYPES.contains(fileSelectorFragment.fileObjectType)){
+                        onbackpressed(false);
+                    }
                     break;
             }
         }

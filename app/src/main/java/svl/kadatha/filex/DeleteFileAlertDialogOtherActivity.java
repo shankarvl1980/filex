@@ -88,7 +88,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment {
 
         ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, fileObjectType);
         ViewModelFileCount viewModel = new ViewModelProvider(this, factory).get(ViewModelFileCount.class);
-        //viewModel.countFile(files_selected_array.get(0),fileObjectType,files_selected_array,size,true);
 
         viewModel.total_no_of_files.observe(this, new Observer<Integer>() {
             @Override
@@ -100,7 +99,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment {
         viewModel.size_of_files_formatted.observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
-
                 size_files_textview.setText(getString(R.string.size) + " " + s);
             }
         });
@@ -125,7 +123,6 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment {
                             if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) return;
                         }
                     }
-
                 }
 
                 bundle.putParcelable("tree_uri", tree_uri);
@@ -133,16 +130,13 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment {
                 bundle.putString("source_folder", source_folder);
                 getParentFragmentManager().setFragmentResult(request_code, bundle);
                 dismissAllowingStateLoss();
-
             }
-
         });
 
         cancelbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dismissAllowingStateLoss();
             }
-
         });
 
 

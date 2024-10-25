@@ -84,7 +84,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     private Group search_toolbar;
     private KeyBoardUtil keyBoardUtil;
     private LocalBroadcastManager localBroadcastManager;
-    private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
+    private LocalBroadcastReceiver localBroadcastReceiver;
     private InputMethodManager imm;
 
     public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array) {
@@ -143,11 +143,11 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         PM = pm;
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
-        otherActivityBroadcastReceiver = new OtherActivityBroadcastReceiver();
+        localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
-        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver, localBroadcastIntentFilter);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         activity_progress_bar = findViewById(R.id.activity_archive_detail_progressbar);
         keyBoardUtil = new KeyBoardUtil(root_layout);
@@ -674,7 +674,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
     }
 
     public void DeselectAllAndAdjustToolbars(ArchiveViewFragment archiveViewFragment, String detailfrag_tag) {
@@ -1022,7 +1022,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         }
     }
 
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);

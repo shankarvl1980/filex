@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private EditText search_view;
     private KeyBoardUtil keyBoardUtil;
     private LocalBroadcastManager localBroadcastManager;
-    private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
+    private LocalBroadcastReceiver localBroadcastReceiver;
     private USBReceiver usbReceiver;
     private InputMethodManager imm;
     private ListView listView;
@@ -213,12 +213,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             context.registerReceiver(mediaMountReceiver, intentFilter);
         }
 
-        otherActivityBroadcastReceiver = new OtherActivityBroadcastReceiver();
+        localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
-        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver, localBroadcastIntentFilter);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();
         IntentFilter usbIntentFilter = new IntentFilter();
@@ -1246,31 +1247,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    public void createNewFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
-        String existingFilePOJOkey = "";
-        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        if (df != null) {
-            fragment_tag = df.getTag();
-            existingFilePOJOkey = df.fileObjectType + fragment_tag;
-            action_mode_finish(df); //string provided to action_mode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
-        }
-
-        if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-
-        } else if (DetailFragment.TO_BE_MOVED_TO_FILE_POJO != null && !(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
-
-        } else // this will force create new fragment despite existence of transaction//if(!(fileObjectType+file_path).equals(existingFilePOJOkey))
-        {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-        }
-    }
-
     private void onbackpressed(boolean onBackPressed) {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
         boolean drawerOpen = drawerLayout.isDrawerOpen(drawer);
@@ -1306,7 +1282,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 int frag = 2;
                 df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String df_tag = df.getTag();
-                while (!new File(df_tag).exists() && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
+                while (!(df.fileObjectType==FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
                         && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
                         && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType))
                 {
@@ -1384,7 +1360,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         workingDirRecyclerAdapter.setOnItemClickListenerForWorkingDirAdapter(null);
         mediaMountReceiver.removeMediaMountListener(this);
         localBroadcastManager.unregisterReceiver(usbReceiver);
-        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
         unregisterReceiver(networkStateReceiver);
         context.unregisterReceiver(mediaMountReceiver);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
@@ -2398,7 +2374,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
@@ -2416,10 +2392,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     storageRecyclerAdapter.notifyDataSetChanged();
                     break;
-
+                case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
+                    if(df!=null && Global.NETWORK_FILE_OBJECT_TYPES.contains(df.fileObjectType)){
+                        onbackpressed(false);
+                    }
+                    break;
             }
         }
     }
-
-
 }

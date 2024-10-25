@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RepositoryClass {
 
@@ -59,8 +60,8 @@ public class RepositoryClass {
     private final Object duplicate_file_lock = new Object();
     int download_count, document_count, image_count, audio_count, video_count, archive_count, apk_count, large_count, duplicate_count;
     ArrayList<FilePOJO> storage_dir = new ArrayList<>();
-    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_internal_directory_size = new HashMap<>();
-    HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_external_directory_size = new HashMap<>();
+    ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_internal_directory_size = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_external_directory_size = new ConcurrentHashMap<>();
 
 
     private RepositoryClass() {

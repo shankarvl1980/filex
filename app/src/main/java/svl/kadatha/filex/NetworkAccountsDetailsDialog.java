@@ -25,6 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -398,6 +399,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     }
 
     private void initiateCreateFragmentTransactions() {
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()),"");
         AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
         if (appCompatActivity instanceof MainActivity) {
             ((MainActivity) context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -405,13 +407,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((MainActivity) context).recentDialogListener.onMediaAttachedAndRemoved();
             }
             if (type.equals(FTP)) {
-                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
+                ((MainActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
-                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
+                ((MainActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
             } else if (type.equals(WebDAV)) {
-                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
+                ((MainActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             } else if (type.equals(SMB)) {
-                ((MainActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
+                ((MainActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
             }
         } else if (appCompatActivity instanceof FileSelectorActivity) {
             ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -419,13 +421,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((FileSelectorActivity) context).recentDialogListener.onMediaAttachedAndRemoved();
             }
             if (type.equals(FTP)) {
-                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
+                ((FileSelectorActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.FTP_WORKING_DIR_PATH, FileObjectType.FTP_TYPE);
             } else if (type.equals(SFTP)) {
-                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
+                ((FileSelectorActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.SFTP_WORKING_DIR_PATH, FileObjectType.SFTP_TYPE);
             } else if (type.equals(WebDAV)) {
-                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
+                ((FileSelectorActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.WEBDAV_WORKING_DIR_PATH, FileObjectType.WEBDAV_TYPE);
             } else if (type.equals(SMB)) {
-                ((FileSelectorActivity) context).createNewFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
+                ((FileSelectorActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
             }
         }
     }
@@ -520,24 +522,24 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         // Copy Constructor for deep copy
         public NetworkAccountPOJO(NetworkAccountPOJO other) {
-            this.host = other.host != null ? new String(other.host) : null;
+            this.host = other.host != null ? other.host : null;
             this.port = other.port;
-            this.user_name = other.user_name != null ? new String(other.user_name) : null;
-            this.password = other.password != null ? new String(other.password) : null;
-            this.encoding = other.encoding != null ? new String(other.encoding) : null;
-            this.display = other.display != null ? new String(other.display) : null;
-            this.type = other.type != null ? new String(other.type) : null;
-            this.mode = other.mode != null ? new String(other.mode) : null;
+            this.user_name = other.user_name != null ? other.user_name : null;
+            this.password = other.password != null ? other.password : null;
+            this.encoding = other.encoding != null ? other.encoding : null;
+            this.display = other.display != null ? other.display : null;
+            this.type = other.type != null ? other.type : null;
+            this.mode = other.mode != null ? other.mode : null;
             this.anonymous = other.anonymous;
             this.useFTPS = other.useFTPS;
-            this.privateKeyPath = other.privateKeyPath != null ? new String(other.privateKeyPath) : null;
-            this.privateKeyPassphrase = other.privateKeyPassphrase != null ? new String(other.privateKeyPassphrase) : null;
-            this.knownHostsPath = other.knownHostsPath != null ? new String(other.knownHostsPath) : null;
-            this.basePath = other.basePath != null ? new String(other.basePath) : null;
+            this.privateKeyPath = other.privateKeyPath != null ? other.privateKeyPath : null;
+            this.privateKeyPassphrase = other.privateKeyPassphrase != null ? other.privateKeyPassphrase : null;
+            this.knownHostsPath = other.knownHostsPath != null ? other.knownHostsPath : null;
+            this.basePath = other.basePath != null ? other.basePath : null;
             this.useHTTPS = other.useHTTPS;
-            this.domain = other.domain != null ? new String(other.domain) : null;
-            this.shareName = other.shareName != null ? new String(other.shareName) : null;
-            this.smbVersion = other.smbVersion != null ? new String(other.smbVersion) : null;
+            this.domain = other.domain != null ? other.domain : null;
+            this.shareName = other.shareName != null ? other.shareName : null;
+            this.smbVersion = other.smbVersion != null ? other.smbVersion : null;
         }
 
         // Parcelable implementation

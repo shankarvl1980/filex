@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -23,8 +24,8 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
         super.onCleared();
         cancel(true);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        repositoryClass.hashmap_internal_directory_size = new HashMap<>();
-        repositoryClass.hashmap_external_directory_size = new HashMap<>();
+        repositoryClass.hashmap_internal_directory_size = new ConcurrentHashMap<>();
+        repositoryClass.hashmap_external_directory_size = new ConcurrentHashMap<>();
     }
 
     public void cancel(boolean mayInterruptRunning) {

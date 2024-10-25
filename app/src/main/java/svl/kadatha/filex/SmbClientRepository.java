@@ -300,7 +300,7 @@ public class SmbClientRepository {
         }
 
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), "");
-
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,LocalBroadcastManager.getInstance(App.getAppContext()),"");
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.SMB_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
 

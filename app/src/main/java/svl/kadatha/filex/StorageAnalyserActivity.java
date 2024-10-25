@@ -70,7 +70,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     private Context context;
     private LocalBroadcastManager localBroadcastManager;
     private MediaMountReceiver mediaMountReceiver;
-    private OtherActivityBroadcastReceiver otherActivityBroadcastReceiver;
+    private LocalBroadcastReceiver localBroadcastReceiver;
     private ImageButton all_select, interval_select;
     private int countBackPressed = 0;
     private Group search_toolbar;
@@ -100,11 +100,11 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         }
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
-        otherActivityBroadcastReceiver = new OtherActivityBroadcastReceiver();
+        localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
-        localBroadcastManager.registerReceiver(otherActivityBroadcastReceiver, localBroadcastIntentFilter);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         fm = getSupportFragmentManager();
         FM = fm;
@@ -669,7 +669,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     protected void onDestroy() {
         super.onDestroy();
         mediaMountReceiver.removeMediaMountListener(this);
-        localBroadcastManager.unregisterReceiver(otherActivityBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
         context.unregisterReceiver(mediaMountReceiver);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
@@ -1030,7 +1030,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     }
 
-    private class OtherActivityBroadcastReceiver extends BroadcastReceiver {
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);

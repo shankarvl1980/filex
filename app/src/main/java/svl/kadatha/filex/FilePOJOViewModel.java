@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -47,7 +48,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public boolean library_time_desc = false, library_size_desc = false;
     int count;
     int dir_count;
-    int half_dir_count;
     private boolean isCancelled = false;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
@@ -83,56 +83,62 @@ public class FilePOJOViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
+//    public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
+//        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+//        ExecutorService executorService = MyExecutorService.getExecutorService();
+//        future1 = executorService.submit(new Runnable() {
+//            @Override
+//            public void run() {
+//                filePOJOS = new ArrayList<>();
+//                filePOJOS_filtered = new ArrayList<>();
+//                FilePOJOUtil.FILL_FILE_POJO(filePOJOS, filePOJOS_filtered, fileObjectType, fileclickselected, currentUsbFile, archive_view);
+//
+//                if (fill_file_size_also) {
+//                    long storage_space = 0L;
+//                    String key = fileObjectType + fileclickselected;
+//                    for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
+//                        if (Global.IS_CHILD_FILE(key, entry.getKey())) {
+//                            storage_space = entry.getValue().getTotalSpace();
+//                            break;
+//                        }
+//                    }
+//
+//                    final long final_storage_space = storage_space;
+//                    dir_count = filePOJOS.size();
+//                    half_dir_count = filePOJOS.size() / 2;
+//                    future4 = executorService.submit(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
+//                        }
+//                    });
+//
+//                    try {
+//                        future4.get();
+//                    } catch (ExecutionException | InterruptedException e) {
+//                    }
+//                }
+//                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+//            }
+//        });
+//    }
+
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        future1 = executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                filePOJOS = new ArrayList<>();
+
+        future1 = executorService.submit(() -> {
+            filePOJOS = new ArrayList<>();
                 filePOJOS_filtered = new ArrayList<>();
                 FilePOJOUtil.FILL_FILE_POJO(filePOJOS, filePOJOS_filtered, fileObjectType, fileclickselected, currentUsbFile, archive_view);
 
-                if (fill_file_size_also) {
-                    long storage_space = 0L;
-                    String key = fileObjectType + fileclickselected;
-                    for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
-                        if (Global.IS_CHILD_FILE(key, entry.getKey())) {
-                            storage_space = entry.getValue().getTotalSpace();
-                            break;
-                        }
-                    }
-
-                    final long final_storage_space = storage_space;
-                    dir_count = filePOJOS.size();
-                    half_dir_count = filePOJOS.size() / 2;
-                    future4 = executorService.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
-                        }
-                    });
-
-                    try {
-                        future4.get();
-                    } catch (ExecutionException | InterruptedException e) {
-                    }
-                }
-                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-            }
-        });
-    }
-
-    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
-        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        ExecutorService executorService = MyExecutorService.getExecutorService();
-        future2 = executorService.submit(new Runnable() {
-            @Override
-            public void run() {
+            if (fill_file_size_also) {
                 long storage_space = 0L;
                 String key = fileObjectType + fileclickselected;
+
+                // Determine storage space
                 for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
                     if (Global.IS_CHILD_FILE(key, entry.getKey())) {
                         storage_space = entry.getValue().getTotalSpace();
@@ -141,23 +147,127 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 }
 
                 final long final_storage_space = storage_space;
+
                 dir_count = filePOJOS.size();
-                half_dir_count = filePOJOS.size() / 2;
-                future6 = executorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
-                    }
-                });
-
                 try {
-                    future6.get();
-                } catch (ExecutionException | InterruptedException e) {
+                    // Process file sizes using the helper method
+                    processFileSizes(final_storage_space, fileclickselected, 0, dir_count);
+                } catch (InterruptedException | ExecutionException e) {
                 }
+            }
+            asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+        });
+    }
 
+
+//    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
+//        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+//        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+//        ExecutorService executorService = MyExecutorService.getExecutorService();
+//        future2 = executorService.submit(new Runnable() {
+//            @Override
+//            public void run() {
+//                long storage_space = 0L;
+//                String key = fileObjectType + fileclickselected;
+//                for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
+//                    if (Global.IS_CHILD_FILE(key, entry.getKey())) {
+//                        storage_space = entry.getValue().getTotalSpace();
+//                        break;
+//                    }
+//                }
+//
+//                final long final_storage_space = storage_space;
+//                dir_count = filePOJOS.size();
+//                half_dir_count = filePOJOS.size() / 2;
+//                future6 = executorService.submit(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        fill_file_size(final_storage_space, fileclickselected, 0, dir_count);
+//                    }
+//                });
+//
+//                try {
+//                    future6.get();
+//                } catch (ExecutionException | InterruptedException e) {
+//                }
+//                finally{
+//                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+//                }
+//            }
+//        });
+//    }
+
+
+    public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+
+        future2 = executorService.submit(() -> {
+            long storage_space = 0L;
+            String key = fileObjectType + fileclickselected;
+
+            // Determine storage space
+            for (Map.Entry<String, SpacePOJO> entry : Global.SPACE_ARRAY.entrySet()) {
+                if (Global.IS_CHILD_FILE(key, entry.getKey())) {
+                    storage_space = entry.getValue().getTotalSpace();
+                    break;
+                }
+            }
+
+            final long final_storage_space = storage_space;
+
+            // Count the number of directories (assuming all are directories)
+            int numDirs = filePOJOS.size();
+
+            try {
+                // Process file sizes using the helper method
+                processFileSizes(final_storage_space, fileclickselected, 0, numDirs);
+            } catch (InterruptedException | ExecutionException e) {
+                // Optionally, set the asyncTaskStatus to FAILED
+                // asyncTaskStatus.postValue(AsyncTaskStatus.FAILED);
+                return;
+            } finally{
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    private void processFileSizes(long storageSpace, String fileClickSelected, int start, int end) throws InterruptedException, ExecutionException {
+        // Count the number of directories
+        int numDirs = 0;
+        for (int i = start; i < end; i++) {
+            if (filePOJOS.get(i).getIsDirectory()) {
+                numDirs++;
+            } else {
+                break; // Assuming sorted: directories first
+            }
+        }
+
+        // Calculate the midpoint to split directories
+        int halfDirs = numDirs / 2;
+
+        // Define index ranges for the two threads
+        int endThread1 = start + halfDirs;
+
+        int startThread2 = start + halfDirs;
+
+        // Create two separate tasks for the threads
+        Runnable task1 = () -> {
+            fill_file_size(storageSpace, fileClickSelected, start, endThread1);
+        };
+
+        Runnable task2 = () -> {
+            fill_file_size(storageSpace, fileClickSelected, startThread2, end);
+        };
+
+        // Submit both tasks to the executor service
+        Future<?> futureTask1 = MyExecutorService.getExecutorService().submit(task1);
+        Future<?> futureTask2 = MyExecutorService.getExecutorService().submit(task2);
+
+        // Wait for both tasks to complete
+        futureTask1.get();
+        futureTask2.get();
     }
 
     private void fill_file_size(long volume_storage_size, String fileclickselected, int start, int end) {
@@ -165,7 +275,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         int[] total_no_of_files = new int[1];
         long[] total_size_of_files = new long[1];
-        HashMap<String, FilePOJOViewModel.FileStoragePOJO> hashMap_directory_size;
+        ConcurrentHashMap<String, FileStoragePOJO> hashMap_directory_size;
         if (Global.IS_CHILD_FILE(fileclickselected, Global.INTERNAL_PRIMARY_STORAGE_PATH)) {
             hashMap_directory_size = repositoryClass.hashmap_internal_directory_size;
         } else {
@@ -219,7 +329,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-    private void get_size_non_nio(File f, int[] total_no_of_files, long[] total_size_of_files, boolean include_folder, HashMap<String, FileStoragePOJO> storage_hashmap) {
+    private void get_size_non_nio(File f, int[] total_no_of_files, long[] total_size_of_files, boolean include_folder, ConcurrentHashMap<String, FileStoragePOJO> storage_hashmap) {
         Stack<File> stack = new Stack<>();
         stack.push(f);
 
@@ -710,9 +820,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
     public static class NioFileIteratorForSize extends SimpleFileVisitor<Path> {
         private final int[] count = new int[1];
         private final long[] size = new long[1];
-        private final HashMap<String, FilePOJOViewModel.FileStoragePOJO> storagePOJOHashMap;
+        private final ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> storagePOJOHashMap;
 
-        public NioFileIteratorForSize(String file_path, HashMap<String, FilePOJOViewModel.FileStoragePOJO> storagePOJOHashMap) throws IOException {
+        public NioFileIteratorForSize(String file_path, ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> storagePOJOHashMap) throws IOException {
             this.storagePOJOHashMap = storagePOJOHashMap;
             Files.walkFileTree(Paths.get(file_path), this);
         }
