@@ -325,7 +325,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-
     }
 
     public synchronized void populateLibrarySearchFilePOJO(FileObjectType fileObjectType, Set<FilePOJO> search_in_dir, String library_or_search, String fileclickselected, String search_file_name, String search_file_type, boolean search_whole_word, boolean search_case_sensitive, boolean search_regex, long search_lower_limit_size, long search_upper_limit_size) {
@@ -416,7 +415,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                             } else {
                                 search_file(what_to_find, file_type, f.getPath(), filePOJOS, filePOJOS_filtered, search_lower_limit_size, search_upper_limit_size);
                             }
-
                         }
                     }
                 } else {
@@ -508,7 +506,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
                     String data = cursor.getString(0);
                     Path path = Paths.get(data);
-                    //if(Files.exists(path))
                     {
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
@@ -523,7 +520,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                     String data = cursor.getString(0);
                     File f = new File(data);
-                    // if(f.exists())
                     {
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
                         f_pojos.add(filePOJO);
@@ -532,7 +528,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     }
                 }
             }
-
             cursor.close();
         }
     }
@@ -641,10 +636,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 } catch (final PatternSyntaxException e) {
                     Global.print_background_thread(application, e.getMessage());
                 }
-
             }
         }
-
     }
 
     private void search_file(String search_name, String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, long lower_limit_size, long upper_limit_size) throws PatternSyntaxException {

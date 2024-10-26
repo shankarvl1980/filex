@@ -294,7 +294,6 @@ public class RepositoryClass {
                 Set<Map.Entry<String, List<String>>> entry_set = duplicate_file_name_hashmap.entrySet();
                 Iterator<Map.Entry<String, List<String>>> iterator = entry_set.iterator();
                 while (iterator.hasNext()) {
-
                     List<String> values = iterator.next().getValue();
                     if (values.size() < 2) {
                         iterator.remove();
@@ -306,7 +305,6 @@ public class RepositoryClass {
                 TreeMap<String, List<String>> fileMap = DuplicateFiles.fillDuplicateFiles(duplicate_file_path_list, digest);
                 for (Map.Entry<String, List<String>> e : fileMap.entrySet()) {
                     List<String> v = e.getValue();
-
                     String checksum = e.getKey();
 
                     if (v.size() > 1) {
@@ -324,7 +322,6 @@ public class RepositoryClass {
                             }
                         }
                     }
-
                 }
             } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 while (cursor.moveToNext()) {
@@ -412,7 +409,6 @@ public class RepositoryClass {
                 }
             }
         }
-
     }
 
     public void populateAppsList() {
@@ -462,7 +458,6 @@ public class RepositoryClass {
             app_pojo_hashmap.put("user", userAppPOJOList);
             app_pojo_hashmap.put("system", systemAppPOJOList);
         }
-
     }
 
     public void getAudioPOJOList(boolean isCancelled) {
@@ -501,17 +496,13 @@ public class RepositoryClass {
                                 AudioPlayerActivity.EXISTING_AUDIOS_ID.put(id, album_id);
                             }
                         }
-
                         audio_cursor.close();
                     }
-
                 }
                 audio_pojo_hashmap.put("audio", audio_list);
                 cursor.close();
             }
-
         }
-
     }
 
     public void getAlbumList(boolean isCancelled) {
