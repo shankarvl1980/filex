@@ -489,7 +489,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
     @Override
     public void onFileModified() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), MainActivity.ACTIVITY_NAME);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), null);
     }
 
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {

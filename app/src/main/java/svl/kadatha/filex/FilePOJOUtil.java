@@ -486,9 +486,7 @@ public class FilePOJOUtil {
                     Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
 
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
-                    if (!filePOJO.getName().startsWith(".")) {
-                        filePOJOS_filtered.add(filePOJO);
-                    }
+                    filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
                 Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
@@ -527,10 +525,7 @@ public class FilePOJOUtil {
 
                         // Create FilePOJO
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
-
-                        if (!filePOJO.getName().startsWith(".")) {
-                            filePOJOS_filtered.add(filePOJO);
-                        }
+                        filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
                     }
                     Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);
@@ -603,10 +598,8 @@ public class FilePOJOUtil {
                                 filePOJOS_filtered.add(filePOJO);
                             }
                             filePOJOS.add(filePOJO);
-
                         }
                     }
-
                 } catch (IOException e) {
 
                 }
@@ -712,9 +705,7 @@ public class FilePOJOUtil {
                     Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
 
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
-                    if (!filePOJO.getName().startsWith(".")) {
-                        filePOJOS_filtered.add(filePOJO);
-                    }
+                    filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
                 Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
@@ -754,9 +745,7 @@ public class FilePOJOUtil {
                         // Create FilePOJO
                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
 
-                        if (!filePOJO.getName().startsWith(".")) {
-                            filePOJOS_filtered.add(filePOJO);
-                        }
+                        filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
                     }
                     Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);

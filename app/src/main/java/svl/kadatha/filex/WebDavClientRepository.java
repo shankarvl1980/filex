@@ -1,5 +1,7 @@
 package svl.kadatha.filex;
 
+import android.os.Bundle;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thegrizzlylabs.sardineandroid.DavResource;
@@ -182,8 +184,10 @@ public class WebDavClientRepository {
             }
         }
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), "");
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,LocalBroadcastManager.getInstance(App.getAppContext()),"");
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("fileObjectType",FileObjectType.WEBDAV_TYPE);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,LocalBroadcastManager.getInstance(App.getAppContext()),bundle);
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.WEBDAV_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
 

@@ -899,7 +899,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                                     save_button.setEnabled(false);
                                     save_button.setAlpha(Global.DISABLE_ALFA);
 
-                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
+                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
 
                                     Timber.tag(Global.TAG).d("File saved successfully");
                                     reloadCurrentChunk();
@@ -938,7 +938,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                                     save_button.setEnabled(false);
                                     save_button.setAlpha(Global.DISABLE_ALFA);
 
-                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, ACTIVITY_NAME);
+                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
 
                                     Timber.tag(Global.TAG).d("File saved successfully");
                                     reloadCurrentChunk();

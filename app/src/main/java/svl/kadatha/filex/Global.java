@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.DocumentsContract;
@@ -509,10 +510,12 @@ public class Global {
         }
     }
 
-    static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, String activity_name) {
+    static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, Bundle bundle) {
         Intent intent = new Intent();
         intent.setAction(action);
-        intent.putExtra("activity_name", activity_name);
+        if(bundle!=null){
+            intent.putExtras(bundle);
+        }
         localBroadcastManager.sendBroadcast(intent);
     }
 

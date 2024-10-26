@@ -675,10 +675,6 @@ public class MakeFilePOJOUtil {
                 }
             }
         }
-        if (name.startsWith(".")) {
-            alfa = Global.DISABLE_ALFA;
-        }
-
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 

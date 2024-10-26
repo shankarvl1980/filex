@@ -984,9 +984,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         @Override
         public void onReceive(Context context, Intent intent) {
             FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-            String activity_name = intent.getStringExtra("activity_name");
-            String file_path = intent.getStringExtra("file_path");
-            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            FileObjectType fileObjectType = null;
+            Bundle bundle=intent.getExtras();
+            if(bundle!=null){
+                fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+            }
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
                     if (fileSelectorFragment != null)
@@ -999,9 +1001,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if(fileSelectorFragment!=null && Global.NETWORK_FILE_OBJECT_TYPES.contains(fileSelectorFragment.fileObjectType)){
-                        onbackpressed(false);
-                    }
+                    if(fileSelectorFragment!=null && fileObjectType!=null && fileObjectType==fileSelectorFragment.fileObjectType){
+                    onbackpressed(false);
+                }
                     break;
             }
         }

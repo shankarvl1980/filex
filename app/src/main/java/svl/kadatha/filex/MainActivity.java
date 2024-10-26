@@ -2103,13 +2103,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
 
         @Override
-        public StorageRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
             return new ViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(StorageRecyclerAdapter.ViewHolder p1, int p2) {
+        public void onBindViewHolder(ViewHolder p1, int p2) {
             FilePOJO filePOJO = storage_dir_arraylist.get(p2);
             if (filePOJO == null) return;
             String file_path = filePOJO.getPath();
@@ -2180,13 +2180,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
 
         @Override
-        public LibraryRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
             return new ViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(LibraryRecyclerAdapter.ViewHolder p1, int p2) {
+        public void onBindViewHolder(ViewHolder p1, int p2) {
             p1.textView_library.setText(library_arraylist.get(p2));
             p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
         }
@@ -2255,13 +2255,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
 
         @Override
-        public NetworkRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
             return new ViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(NetworkRecyclerAdapter.ViewHolder p1, int p2) {
+        public void onBindViewHolder(ViewHolder p1, int p2) {
             p1.textView_network.setText(network_arraylist.get(p2));
             p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
         }
@@ -2378,11 +2378,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         @Override
         public void onReceive(Context context, Intent intent) {
             DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-            String activity_name = intent.getStringExtra("activity_name");
-            String file_path = intent.getStringExtra("file_path");
-            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
-            switch (intent.getAction()) {
+            FileObjectType fileObjectType = null;
+            Bundle bundle=intent.getExtras();
+            if(bundle!=null){
+                fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+            }
 
+            switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
                     if (df != null) df.local_activity_delete = true;
                     break;
@@ -2393,7 +2395,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     storageRecyclerAdapter.notifyDataSetChanged();
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if(df!=null && Global.NETWORK_FILE_OBJECT_TYPES.contains(df.fileObjectType)){
+                    if(df!=null && fileObjectType!=null && fileObjectType==df.fileObjectType){
                         onbackpressed(false);
                     }
                     break;

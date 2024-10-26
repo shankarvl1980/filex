@@ -286,7 +286,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
 
     @Override
     public void onFileModified() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), StorageAnalyserActivity.ACTIVITY_NAME);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), null);
     }
 
 

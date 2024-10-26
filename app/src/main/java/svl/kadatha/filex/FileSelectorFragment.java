@@ -246,7 +246,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
     @Override
     public void onFileModified() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), FileSelectorActivity.ACTIVITY_NAME);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION, LocalBroadcastManager.getInstance(context), null);
     }
 
     private void set_adapter() {

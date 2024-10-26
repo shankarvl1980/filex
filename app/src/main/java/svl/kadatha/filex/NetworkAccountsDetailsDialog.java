@@ -25,7 +25,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,17 +46,17 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     private Context context;
     private String type;
     private Toolbar bottom_toolbar;
-    private RecyclerView ftp_list_recyclerview;
+    private RecyclerView network_account_list_recyclerview;
     private NetworkAccountPojoListAdapter networkAccountPojoListAdapter;
     private List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJO_selected_for_delete = new ArrayList<>();
     private boolean toolbar_visible = true;
     private int scroll_distance;
-    private int num_all_ftp;
+    private int num_all_network_account;
     private Button delete_btn, disconnect_btn;
     private Button edit_btn;
     private PermissionsUtil permissionsUtil;
     private FrameLayout progress_bar;
-    private TextView ftp_number_text_view, empty_ftp_list_tv;
+    private TextView network_number_text_view, empty_network_account_list_tv;
     private NetworkAccountDetailsViewModel viewModel;
     private NetworkAccountPOJO connected_network_account_pojo = null;
 
@@ -100,12 +99,12 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
             heading.setText(R.string.smb);
         }
-        ftp_number_text_view = v.findViewById(R.id.network_details_network_number);
-        empty_ftp_list_tv = v.findViewById(R.id.network_details_empty);
-        ftp_list_recyclerview = v.findViewById(R.id.fragment_network_account_recyclerview);
-        ftp_list_recyclerview.setLayoutManager(new LinearLayoutManager(context));
-        ftp_list_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        ftp_list_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        network_number_text_view = v.findViewById(R.id.network_details_network_number);
+        empty_network_account_list_tv = v.findViewById(R.id.network_details_empty);
+        network_account_list_recyclerview = v.findViewById(R.id.fragment_network_account_recyclerview);
+        network_account_list_recyclerview.setLayoutManager(new LinearLayoutManager(context));
+        network_account_list_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        network_account_list_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             final int threshold = 5;
 
             public void onScrolled(RecyclerView rv, int dx, int dy) {
@@ -177,6 +176,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
             connected_network_account_pojo = NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO;
         }
+
         if (connected_network_account_pojo != null) {
             progress_bar.setVisibility(View.VISIBLE);
             viewModel.testServiceConnection();
@@ -186,7 +186,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         }
 
         int size = viewModel.mselecteditems.size();
-        ftp_number_text_view.setText(size + "/" + num_all_ftp);
+        network_number_text_view.setText(size + "/" + num_all_network_account);
         enable_disable_buttons(size != 0, size);
 
         viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -197,13 +197,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     networkAccountPojoListAdapter = new NetworkAccountPojoListAdapter();
-                    ftp_list_recyclerview.setAdapter(networkAccountPojoListAdapter);
-                    num_all_ftp = viewModel.networkAccountPOJOList.size();
-                    if (num_all_ftp == 0) {
-                        ftp_list_recyclerview.setVisibility(View.GONE);
-                        empty_ftp_list_tv.setVisibility(View.VISIBLE);
+                    network_account_list_recyclerview.setAdapter(networkAccountPojoListAdapter);
+                    num_all_network_account = viewModel.networkAccountPOJOList.size();
+                    if (num_all_network_account == 0) {
+                        network_account_list_recyclerview.setVisibility(View.GONE);
+                        empty_network_account_list_tv.setVisibility(View.VISIBLE);
                     }
-                    ftp_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_ftp);
+                    network_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_network_account);
                 }
             }
         });
@@ -215,13 +215,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.VISIBLE);
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
-                    num_all_ftp = viewModel.networkAccountPOJOList.size();
-                    if (num_all_ftp == 0) {
-                        ftp_list_recyclerview.setVisibility(View.GONE);
-                        empty_ftp_list_tv.setVisibility(View.VISIBLE);
+                    num_all_network_account = viewModel.networkAccountPOJOList.size();
+                    if (num_all_network_account == 0) {
+                        network_account_list_recyclerview.setVisibility(View.GONE);
+                        empty_network_account_list_tv.setVisibility(View.VISIBLE);
                     } else {
-                        ftp_list_recyclerview.setVisibility(View.VISIBLE);
-                        empty_ftp_list_tv.setVisibility(View.GONE);
+                        network_account_list_recyclerview.setVisibility(View.VISIBLE);
+                        empty_network_account_list_tv.setVisibility(View.GONE);
                     }
                     clear_selection();
                     viewModel.deleteAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -300,13 +300,13 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     progress_bar.setVisibility(View.VISIBLE);
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
-                    num_all_ftp = viewModel.networkAccountPOJOList.size();
-                    if (num_all_ftp == 0) {
-                        ftp_list_recyclerview.setVisibility(View.GONE);
-                        empty_ftp_list_tv.setVisibility(View.VISIBLE);
+                    num_all_network_account = viewModel.networkAccountPOJOList.size();
+                    if (num_all_network_account == 0) {
+                        network_account_list_recyclerview.setVisibility(View.GONE);
+                        empty_network_account_list_tv.setVisibility(View.VISIBLE);
                     } else {
-                        ftp_list_recyclerview.setVisibility(View.VISIBLE);
-                        empty_ftp_list_tv.setVisibility(View.GONE);
+                        network_account_list_recyclerview.setVisibility(View.VISIBLE);
+                        empty_network_account_list_tv.setVisibility(View.GONE);
                     }
                     clear_selection();
                     viewModel.replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -386,7 +386,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 }
             }
         });
-
         return v;
     }
 
@@ -399,7 +398,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     }
 
     private void initiateCreateFragmentTransactions() {
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()),"");
         AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
         if (appCompatActivity instanceof MainActivity) {
             ((MainActivity) context).storageRecyclerAdapter.notifyDataSetChanged();
@@ -439,7 +437,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         }
 
         enable_disable_buttons(false, 0);
-        ftp_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_ftp);
+        network_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_network_account);
     }
 
     private void enable_disable_buttons(boolean enable, int selection_size) {
@@ -707,7 +705,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     ++size;
                     enable_disable_buttons(true, size);
                 }
-                ftp_number_text_view.setText(size + "/" + num_all_ftp);
+                network_number_text_view.setText(size + "/" + num_all_network_account);
             }
         }
     }

@@ -67,7 +67,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 deleteFromFolder(src_file_list, fileObjectType, tree_uri, tree_uri_path);
                 if (!deleted_files.isEmpty()) {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder, deleted_file_name_list, fileObjectType);
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), "");
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
                     Global.print_background_thread(application, application.getString(R.string.deleted_file));
                 } else {
                     Global.print_background_thread(application, application.getString(R.string.could_not_delete_file));
@@ -115,7 +115,7 @@ public class DeleteFileOtherActivityViewModel extends AndroidViewModel {
                 deleteAudioPOJOFromFolder(src_audio_file_list, fileObjectType, tree_uri, tree_uri_path);
                 if (!deleted_audio_files.isEmpty()) {
                     FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(source_folder, deleted_file_name_list, fileObjectType);
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), AudioPlayerActivity.ACTIVITY_NAME);
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
                     Global.print_background_thread(application, application.getString(R.string.deleted_audio_file));
                 } else {
                     Global.print_background_thread(application, application.getString(R.string.could_not_delete_file));

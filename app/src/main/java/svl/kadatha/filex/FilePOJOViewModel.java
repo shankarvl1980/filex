@@ -332,7 +332,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         count = 0;
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        future11 = executorService.submit(new Runnable() {
+        future4 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 if (filePOJOS != null) {
@@ -409,25 +409,13 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     if (media_category != null && media_category.equals("Download")) {
                         search_download(filePOJOS, filePOJOS_filtered);
                     } else {
-                        for (FilePOJO f : path) {
-                            if (search_upper_limit_size == 0L && search_lower_limit_size == 0L) {
-                                search_file(what_to_find, file_type, f.getPath(), filePOJOS, filePOJOS_filtered);
-                            } else {
-                                search_file(what_to_find, file_type, f.getPath(), filePOJOS, filePOJOS_filtered, search_lower_limit_size, search_upper_limit_size);
-                            }
-                        }
+                        start_distributed_search(search_lower_limit_size,search_upper_limit_size);
                     }
                 } else {
                     if (media_category != null && media_category.equals("Download")) {
                         search_download(filePOJOS, filePOJOS_filtered);
                     } else if (library_or_search.equals(DetailFragment.SEARCH_RESULT)) {
-                        for (FilePOJO f : path) {
-                            if (search_upper_limit_size == 0L && search_lower_limit_size == 0L) {
-                                search_file(what_to_find, file_type, f.getPath(), filePOJOS, filePOJOS_filtered);
-                            } else {
-                                search_file(what_to_find, file_type, f.getPath(), filePOJOS, filePOJOS_filtered, search_lower_limit_size, search_upper_limit_size);
-                            }
-                        }
+                        start_distributed_search(search_lower_limit_size,search_upper_limit_size);
                     } else {
                         search_file(filePOJOS, filePOJOS_filtered);
                     }
@@ -439,6 +427,95 @@ public class FilePOJOViewModel extends AndroidViewModel {
             }
         });
     }
+
+    private void start_distributed_search(long search_lower_limit_size, long search_upper_limit_size) {
+        // Collect first-level subdirectories and files from the given paths
+        List<String> directories = new ArrayList<>();
+        List<String> files = new ArrayList<>();
+        for (FilePOJO f : path) {
+            collectFirstLevelDirectoriesAndFiles(f.getPath(), directories, files);
+        }
+
+        // Split directories into two halves
+        int dirSize = directories.size();
+        int midIndex = dirSize / 2;
+
+        // First half of directories
+        List<String> list1 = new ArrayList<>(directories.subList(0, midIndex));
+
+        // Second half of directories plus all files
+        List<String> list2 = new ArrayList<>(directories.subList(midIndex, dirSize));
+        list2.addAll(files);
+
+        // Create two background threads
+        List<FilePOJO> filePOJOS1 = new ArrayList<>();
+        List<FilePOJO> filePOJOS_filtered1 = new ArrayList<>();
+        List<FilePOJO> filePOJOS2 = new ArrayList<>();
+        List<FilePOJO> filePOJOS_filtered2 = new ArrayList<>();
+
+        ExecutorService executor1 = MyExecutorService.getExecutorService();
+        ExecutorService executor2 = MyExecutorService.getExecutorService();
+
+        future5 = executor1.submit(() -> {
+            for (String path : list1) {
+                if (isCancelled()) {
+                    return;
+                }
+                if (search_upper_limit_size == 0L && search_lower_limit_size == 0L) {
+                    search_file(what_to_find, file_type, path, filePOJOS1, filePOJOS_filtered1);
+                } else {
+                    search_file(what_to_find, file_type, path, filePOJOS1, filePOJOS_filtered1, search_lower_limit_size, search_upper_limit_size);
+                }
+            }
+        });
+
+        future6 = executor2.submit(() -> {
+            for (String path : list2) {
+                if (isCancelled()) {
+                    return;
+                }
+                if (search_upper_limit_size == 0L && search_lower_limit_size == 0L) {
+                    search_file(what_to_find, file_type, path, filePOJOS2, filePOJOS_filtered2);
+                } else {
+                    search_file(what_to_find, file_type, path, filePOJOS2, filePOJOS_filtered2, search_lower_limit_size, search_upper_limit_size);
+                }
+            }
+        });
+
+        // Wait for both threads to complete
+        try {
+            future5.get();
+            future6.get();
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle exceptions
+        }
+
+        // Combine results
+        filePOJOS.addAll(filePOJOS1);
+        filePOJOS.addAll(filePOJOS2);
+
+        filePOJOS_filtered.addAll(filePOJOS_filtered1);
+        filePOJOS_filtered.addAll(filePOJOS_filtered2);
+    }
+
+    private void collectFirstLevelDirectoriesAndFiles(String dirPath, List<String> directories, List<String> files) {
+        File dir = new File(dirPath);
+        if (dir.isDirectory()) {
+            File[] list = dir.listFiles();
+            if (list != null) {
+                for (File f : list) {
+                    if (f.isDirectory()) {
+                        directories.add(f.getAbsolutePath());
+                    } else if (f.isFile()) {
+                        files.add(f.getAbsolutePath());
+                    }
+                }
+            }
+        } else if (dir.isFile()) {
+            files.add(dir.getAbsolutePath());
+        }
+    }
+
 
     private void search_file(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) {
         if (media_category == null) return;
@@ -571,143 +648,238 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
     private void search_file(String search_name, String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) throws PatternSyntaxException {
         boolean extract_icon = media_category != null && media_category.equals("APK");
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Path searchPath = Paths.get(search_dir);
             try {
-                Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
-                        if ((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name, path.getFileName().toString())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
+                if (Files.isRegularFile(searchPath)) {
+                    // search_dir is a file
+                    BasicFileAttributes basicFileAttributes = Files.readAttributes(searchPath, BasicFileAttributes.class);
+                    if ((file_type.equals("f") || file_type.equals("fd")) &&
+                            Pattern.matches(search_name, searchPath.getFileName().toString())) {
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(searchPath, extract_icon, FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                    }
+                } else {
+                    // search_dir is a directory
+                    Files.walkFileTree(searchPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
+                            if ((file_type.equals("d") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, path.getFileName().toString())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
 
-                    @Override
-                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
-                        if ((file_type.equals("f") || file_type.equals("fd")) && Pattern.matches(search_name, path.getFileName().toString())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
+                        @Override
+                        public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
+                            if ((file_type.equals("f") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, path.getFileName().toString())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
 
-                    @Override
-                    public FileVisitResult visitFileFailed(Path path, IOException e) {
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                });
-            } catch (final PatternSyntaxException e) {
+                        @Override
+                        public FileVisitResult visitFileFailed(Path path, IOException e) {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
+            } catch (PatternSyntaxException e) {
                 Global.print_background_thread(application, e.getMessage());
             } catch (IOException e) {
-
+                // Handle or log the IOException if necessary
             }
         } else {
-            File[] list = new File(search_dir).listFiles();
-            if (list == null) return;
-            int size = list.length;
-            for (int i = 0; i < size; ++i) {
-                File f = list[i];
+            File file = new File(search_dir);
+            if (file.isFile()) {
+                // search_dir is a file
                 if (isCancelled()) {
                     return;
                 }
                 try {
-                    if (f.isDirectory()) {
-                        if ((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name, f.getName())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
-                        }
-                        search_file(search_name, file_type, f.getPath(), f_pojos, f_pojos_filtered);
-                    } else {
-                        if ((file_type.equals("f") || file_type.equals("fd")) && Pattern.matches(search_name, f.getName())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
-                        }
+                    if ((file_type.equals("f") || file_type.equals("fd")) &&
+                            Pattern.matches(search_name, file.getName())) {
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(file, extract_icon, FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
                     }
-                } catch (final PatternSyntaxException e) {
+                } catch (PatternSyntaxException e) {
                     Global.print_background_thread(application, e.getMessage());
                 }
+            } else if (file.isDirectory()) {
+                // search_dir is a directory
+                File[] list = file.listFiles();
+                if (list == null) return;
+                int size = list.length;
+                for (int i = 0; i < size; ++i) {
+                    File f = list[i];
+                    if (isCancelled()) {
+                        return;
+                    }
+                    try {
+                        if (f.isDirectory()) {
+                            if ((file_type.equals("d") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, f.getName())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            search_file(search_name, file_type, f.getPath(), f_pojos, f_pojos_filtered);
+                        } else {
+                            if ((file_type.equals("f") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, f.getName())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                        }
+                    } catch (PatternSyntaxException e) {
+                        Global.print_background_thread(application, e.getMessage());
+                    }
+                }
+            } else {
+                // search_dir does not exist or is not accessible
             }
         }
     }
 
-    private void search_file(String search_name, String file_type, String search_dir, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, long lower_limit_size, long upper_limit_size) throws PatternSyntaxException {
+    private void search_file(String search_name, String file_type, String search_dir,
+                             List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered,
+                             long lower_limit_size, long upper_limit_size) throws PatternSyntaxException {
         boolean extract_icon = media_category != null && media_category.equals("APK");
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Path searchPath = Paths.get(search_dir);
             try {
-                Files.walkFileTree(Paths.get(search_dir), new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
-                        if ((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name, path.getFileName().toString())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
+                if (Files.isRegularFile(searchPath)) {
+                    // search_dir is a file
+                    BasicFileAttributes basicFileAttributes = Files.readAttributes(searchPath, BasicFileAttributes.class);
+                    long length = basicFileAttributes.size();
+                    if ((file_type.equals("f") || file_type.equals("fd")) &&
+                            Pattern.matches(search_name, searchPath.getFileName().toString()) &&
+                            ((lower_limit_size == 0 || length >= lower_limit_size) &&
+                                    (upper_limit_size == 0 || length <= upper_limit_size))) {
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(searchPath, extract_icon, FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
+                    }
+                } else if (Files.isDirectory(searchPath)) {
+                    // search_dir is a directory
+                    Files.walkFileTree(searchPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
+                            if ((file_type.equals("d") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, path.getFileName().toString())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
 
-                    @Override
-                    public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
-                        long length = basicFileAttributes.size();
-                        if ((file_type.equals("f") || file_type.equals("fd")) && Pattern.matches(search_name, path.getFileName().toString()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size))) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
+                        @Override
+                        public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) {
+                            long length = basicFileAttributes.size();
+                            if ((file_type.equals("f") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, path.getFileName().toString()) &&
+                                    ((lower_limit_size == 0 || length >= lower_limit_size) &&
+                                            (upper_limit_size == 0 || length <= upper_limit_size))) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(path, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
 
-                    @Override
-                    public FileVisitResult visitFileFailed(Path path, IOException e) {
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            } catch (final PatternSyntaxException e) {
+                        @Override
+                        public FileVisitResult visitFileFailed(Path path, IOException e) {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                } else {
+                    // search_dir does not exist or is not accessible
+                }
+            } catch (PatternSyntaxException e) {
                 Global.print_background_thread(application, e.getMessage());
             } catch (IOException e) {
-
+                // Handle or log the IOException if necessary
             }
         } else {
-            File[] list = new File(search_dir).listFiles();
-            if (list == null) return;
-            int size = list.length;
-            for (int i = 0; i < size; ++i) {
-                File f = list[i];
+            File file = new File(search_dir);
+            if (file.isFile()) {
+                // search_dir is a file
                 if (isCancelled()) {
                     return;
                 }
                 try {
-                    if (f.isDirectory()) {
-                        if ((file_type.equals("d") || file_type.equals("fd")) && Pattern.matches(search_name, f.getName())) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
-                        }
-                        search_file(search_name, file_type, f.getPath(), f_pojos, f_pojos_filtered, lower_limit_size, upper_limit_size);
-                    } else {
-                        long length = f.length();
-                        if ((file_type.equals("f") || file_type.equals("fd")) && Pattern.matches(search_name, f.getName()) && ((lower_limit_size == 0 || length >= lower_limit_size) && (upper_limit_size == 0 || length <= upper_limit_size))) {
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
-                            f_pojos.add(filePOJO);
-                            f_pojos_filtered.add(filePOJO);
-                            count++;
-                        }
+                    long length = file.length();
+                    if ((file_type.equals("f") || file_type.equals("fd")) &&
+                            Pattern.matches(search_name, file.getName()) &&
+                            ((lower_limit_size == 0 || length >= lower_limit_size) &&
+                                    (upper_limit_size == 0 || length <= upper_limit_size))) {
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(file, extract_icon, FileObjectType.FILE_TYPE);
+                        f_pojos.add(filePOJO);
+                        f_pojos_filtered.add(filePOJO);
+                        count++;
                     }
-                } catch (final PatternSyntaxException e) {
+                } catch (PatternSyntaxException e) {
                     Global.print_background_thread(application, e.getMessage());
                 }
+            } else if (file.isDirectory()) {
+                // search_dir is a directory
+                File[] list = file.listFiles();
+                if (list == null) return;
+                int size = list.length;
+                for (int i = 0; i < size; ++i) {
+                    File f = list[i];
+                    if (isCancelled()) {
+                        return;
+                    }
+                    try {
+                        if (f.isDirectory()) {
+                            if ((file_type.equals("d") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, f.getName())) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                            search_file(search_name, file_type, f.getPath(), f_pojos, f_pojos_filtered, lower_limit_size, upper_limit_size);
+                        } else {
+                            long length = f.length();
+                            if ((file_type.equals("f") || file_type.equals("fd")) &&
+                                    Pattern.matches(search_name, f.getName()) &&
+                                    ((lower_limit_size == 0 || length >= lower_limit_size) &&
+                                            (upper_limit_size == 0 || length <= upper_limit_size))) {
+                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, extract_icon, FileObjectType.FILE_TYPE);
+                                f_pojos.add(filePOJO);
+                                f_pojos_filtered.add(filePOJO);
+                                count++;
+                            }
+                        }
+                    } catch (PatternSyntaxException e) {
+                        Global.print_background_thread(application, e.getMessage());
+                    }
+                }
+            } else {
+                // search_dir does not exist or is not accessible
             }
         }
     }
