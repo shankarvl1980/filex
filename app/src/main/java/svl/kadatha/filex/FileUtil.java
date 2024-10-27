@@ -336,7 +336,6 @@ public final class FileUtil {
             }
 
             // List entries in the parent directory
-            @SuppressWarnings("unchecked")
             Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(parentDir);
 
             // Iterate through entries to find the target

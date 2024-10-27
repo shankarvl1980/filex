@@ -475,7 +475,6 @@ public class FileCountSize {
                     Timber.tag("ViewModelFileCount").d("New folder path: " + newPath);
 
                     try {
-                        @SuppressWarnings("unchecked")
                         Vector<ChannelSftp.LsEntry> subEntries = channelSftp.ls(newPath);
                         Timber.tag("ViewModelFileCount").d("Subdirectory " + entryName + " contains " + subEntries.size() + " entries");
                         for (ChannelSftp.LsEntry subEntry : subEntries) {

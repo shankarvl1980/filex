@@ -20,7 +20,6 @@ public class VideoViewActivity extends BaseActivity {
     public boolean clear_cache;
     public FilteredFilePOJOViewModel viewModel;
     TinyDB tinyDB;
-    private VideoViewContainerFragment videoViewContainerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,7 @@ public class VideoViewActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         clear_cache = true;
-        videoViewContainerFragment = (VideoViewContainerFragment) getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);
+        VideoViewContainerFragment videoViewContainerFragment = (VideoViewContainerFragment) getSupportFragmentManager().findFragmentById(R.id.activity_blank_view_container);
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 

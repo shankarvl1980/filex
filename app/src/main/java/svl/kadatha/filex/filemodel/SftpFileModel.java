@@ -188,7 +188,6 @@ public class SftpFileModel implements FileModel {
     private void deleteRecursive(ChannelSftp channelSftp, String path) throws SftpException {
         SftpATTRS attrs = channelSftp.lstat(path);
         if (attrs.isDir()) {
-            @SuppressWarnings("unchecked")
             Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(path);
             if (entries != null) {
                 for (ChannelSftp.LsEntry entry : entries) {
@@ -260,7 +259,6 @@ public class SftpFileModel implements FileModel {
         try {
             sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
-            @SuppressWarnings("unchecked")
             Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(path);
             if (entries == null || entries.isEmpty()) {
                 Timber.tag(TAG).w("No files listed or directory is empty for path: %s", path);

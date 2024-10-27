@@ -546,7 +546,6 @@ public class MakeFilePOJOUtil {
         } else {
             String sub_file_count = null;
             try {
-                @SuppressWarnings("unchecked")
                 Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
                 if (entries != null) {
                     sub_file_count = "(" + entries.size() + ")";
