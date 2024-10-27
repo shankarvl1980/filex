@@ -397,7 +397,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         if (psf != null) {
             psf.set_audio(audio);
         }
-
     }
 
     @Override

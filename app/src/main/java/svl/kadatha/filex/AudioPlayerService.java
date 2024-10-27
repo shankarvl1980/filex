@@ -153,6 +153,10 @@ public class AudioPlayerService extends Service {
         mediaPlayerServicePrepareListener = listener;
     }
 
+    public void removeMediaPlayerPrepareListener() {
+        mediaPlayerServicePrepareListener = null;
+    }
+
     public void setAudioPlayerServiceBroadcastListener(AudioPlayerServiceBroadCastListener listener) {
         audioPlayerServiceBroadCastListener = listener;
     }

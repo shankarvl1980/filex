@@ -72,7 +72,6 @@ public class PlayScreenFragment extends Fragment {
     private ImageButton play_pause_btn;
     private ImageButton next_btn;
     private TextView audio_name_tv;
-    private TextView audio_name_min_tv;
     private TextView audio_album_tv;
     private TextView audio_artists_tv;
     private TextView total_time_tv;
@@ -204,46 +203,7 @@ public class PlayScreenFragment extends Fragment {
         service_connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName component_name, IBinder binder) {
                 audio_player_service = ((AudioPlayerService.AudioBinder) binder).getService();
-                audio_player_service.setMediaPlayerPrepareListener(new AudioPlayerService.MediaPlayerServicePrepareListener() {
-                    public void onMediaPrepare() {
-                        total_duration = audio_player_service.get_duration();
-                        isDurationMoreThanHour = (total_duration / 1000) > 3599;
-                        total_time_tv.setText(convertSecondsToHMmSs(total_duration));
-                        seekbar.setMax(total_duration);
-                        play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
-                    }
-                });
-
-                audio_player_service.setAudioPlayerServiceBroadcastListener(new AudioPlayerService.AudioPlayerServiceBroadCastListener() {
-                    @Override
-                    public void onBroadcast(int number) {
-                        switch (number) {
-                            case AudioPlayerService.GOTO_PREVIOUS:
-                            case AudioPlayerService.GOTO_NEXT:
-                                if (audio_player_service.current_audio != null) {
-                                    setTitleArt(audio_player_service.current_audio.getId(), audio_player_service.current_audio.getTitle(), audio_player_service.current_audio.getData());
-                                }
-                                ((AudioPlayerActivity) context).on_completion_audio();
-                                Timber.tag(Global.TAG).d("previous or next listened");
-                                break;
-                            case AudioPlayerService.START:
-                            case AudioPlayerService.PAUSE:
-                                if (audio_player_service.prepared && !audio_player_service.playmode) {
-                                    play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.play_icon));
-                                } else if (audio_player_service.prepared && audio_player_service.playmode) {
-                                    play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
-                                }
-                                break;
-                            case AudioPlayerService.STOP:
-                                setTitleArt(0, "", null);
-                                total_time_tv.setText("00.00");
-                                break;
-                            default:
-                                break;
-                        }
-                        enable_disable_previous_next_btn();
-                    }
-                });
+                setupAudioServiceListeners();
                 service_bound = true;
             }
 
@@ -291,8 +251,6 @@ public class PlayScreenFragment extends Fragment {
 //        });
 
         audio_name_tv = v.findViewById(R.id.current_play_audio_name);
-        audio_name_tv.setText(audioPlayViewModel.audio_file_name);
-//        audio_name_min_tv = v.findViewById(R.id.current_play_audio_name_min);
 //        audio_album_tv=v.findViewById(R.id.current_play_album);
         audio_artists_tv = v.findViewById(R.id.current_play_artists);
         TextView next_audio_tv = v.findViewById(R.id.current_play_next_audio_title);
@@ -500,7 +458,7 @@ public class PlayScreenFragment extends Fragment {
     private void update_position() {
         handler.post(new Runnable() {
             public void run() {
-                int current_pos = audio_player_service.get_current_position(); //audio_player;_service.get_current_position();
+                int current_pos = audio_player_service.get_current_position();
                 seekbar.setProgress(current_pos);
                 current_progress_tv.setText(convertSecondsToHMmSs(current_pos));
 
@@ -581,6 +539,57 @@ public class PlayScreenFragment extends Fragment {
 
     }
 
+    private void setupAudioServiceListeners() {
+        if (audio_player_service == null) return;
+
+        audio_player_service.setMediaPlayerPrepareListener(new AudioPlayerService.MediaPlayerServicePrepareListener() {
+            public void onMediaPrepare() {
+                total_duration = audio_player_service.get_duration();
+                isDurationMoreThanHour = (total_duration / 1000) > 3599;
+                total_time_tv.setText(convertSecondsToHMmSs(total_duration));
+                seekbar.setMax(total_duration);
+                play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
+            }
+        });
+
+        audio_player_service.setAudioPlayerServiceBroadcastListener(new AudioPlayerService.AudioPlayerServiceBroadCastListener() {
+            @Override
+            public void onBroadcast(int number) {
+                switch (number) {
+                    case AudioPlayerService.GOTO_PREVIOUS:
+                    case AudioPlayerService.GOTO_NEXT:
+                        if (audio_player_service.current_audio != null) {
+                            setTitleArt(
+                                    audio_player_service.current_audio.getId(),
+                                    audio_player_service.current_audio.getTitle(),
+                                    audio_player_service.current_audio.getData()
+                            );
+                        }
+                        if (getActivity() instanceof AudioPlayerActivity) {
+                            ((AudioPlayerActivity) getActivity()).on_completion_audio();
+                        }
+                        Timber.tag(Global.TAG).d("previous or next listened");
+                        break;
+                    case AudioPlayerService.START:
+                    case AudioPlayerService.PAUSE:
+                        if (audio_player_service.prepared && !audio_player_service.playmode) {
+                            play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.play_icon));
+                        } else if (audio_player_service.prepared && audio_player_service.playmode) {
+                            play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
+                        }
+                        break;
+                    case AudioPlayerService.STOP:
+                        setTitleArt(0, "", null);
+                        total_time_tv.setText("00:00");
+                        break;
+                    default:
+                        break;
+                }
+                enable_disable_previous_next_btn();
+            }
+        });
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -591,6 +600,7 @@ public class PlayScreenFragment extends Fragment {
                 if (audio_player_service == null) {
                     onserviceconnection_handler.postDelayed(this, 500);
                 } else {
+                    setupAudioServiceListeners();
                     if (AudioPlayerActivity.AUDIO_FILE != null) {
                         String path = AudioPlayerActivity.AUDIO_FILE.getData();
                         setTitleArt(AudioPlayerActivity.AUDIO_FILE.getId(), AudioPlayerActivity.AUDIO_FILE.getTitle(), path); // dont try audio_player_service.current_audio, it may not have been instantiated.
@@ -635,8 +645,10 @@ public class PlayScreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (audio_player_service != null)
+        if (audio_player_service != null){
+            audio_player_service.removeMediaPlayerPrepareListener();
             audio_player_service.removeAudioPlayerServiceBroadcastListener();
+        }
     }
 
     public void setTitleArt(int audio_id, String audiofilename, final String audiofilepath) {
@@ -766,7 +778,6 @@ public class PlayScreenFragment extends Fragment {
                         Global.print(context, getString(R.string.could_not_perform_action));
                     }
                     break;
-
                 case 3:
                     if (audioPlayViewModel.fromArchive || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         Global.print(context, getString(R.string.not_able_to_process));

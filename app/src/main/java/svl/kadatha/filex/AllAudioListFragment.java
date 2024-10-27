@@ -229,9 +229,7 @@ public class AllAudioListFragment extends Fragment {
                             audioFragmentListener.onDeleteAudio(deleteAudioViewModel.deleted_audio_files);
                             audioFragmentListener.refreshAudioPlayNavigationButtons();
                         }
-
                     }
-
                     deleteAudioViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
