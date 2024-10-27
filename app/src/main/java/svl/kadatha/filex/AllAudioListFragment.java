@@ -1,9 +1,11 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,8 @@ public class AllAudioListFragment extends Fragment {
     private AudioPlayerActivity.SearchFilterListener searchFilterListener;
     private AudioFragmentListener audioFragmentListener;
     private AppCompatActivity activity;
+    private int playing_audio_text_color, rest_audio_text_color;
+    private AudioPlayerActivity.AudioChangeListener audioChangeListener;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,6 +82,24 @@ public class AllAudioListFragment extends Fragment {
         if (activity instanceof AudioFragmentListener) {
             audioFragmentListener = (AudioFragmentListener) activity;
         }
+
+        audioChangeListener = new AudioPlayerActivity.AudioChangeListener() {
+            @Override
+            public void onAudioCompletion() {
+                if(audioListRecyclerViewAdapter!=null){
+                    audioListRecyclerViewAdapter.notifyDataSetChanged();
+                }
+//                if(recyclerview!=null){
+//                    int id=AudioPlayerActivity.AUDIO_FILE.getId();
+//                    recyclerview.scrollToPosition();
+//                }
+            }
+        };
+
+        activity = (AppCompatActivity) context;
+        if (activity instanceof AudioPlayerActivity) {
+            ((AudioPlayerActivity) activity).addAudioChangeListener(audioChangeListener);
+        }
     }
 
     @Override
@@ -85,6 +107,9 @@ public class AllAudioListFragment extends Fragment {
         super.onDetach();
         audioSelectListener = null;
         audioFragmentListener = null;
+        if (activity instanceof AudioPlayerActivity) {
+            ((AudioPlayerActivity) activity).removeAudioChangeListener(audioChangeListener);
+        }
     }
 
     @Override
@@ -94,6 +119,11 @@ public class AllAudioListFragment extends Fragment {
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.delete_icon, getString(R.string.delete), 1));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.share_icon, getString(R.string.send), 2));
         list_popupwindowpojos.add(new ListPopupWindowPOJO(R.drawable.properties_icon, getString(R.string.properties), 3));
+        playing_audio_text_color = getResources().getColor(R.color.light_item_select_text_color);
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.recycler_text_color, typedValue, true);
+        rest_audio_text_color = typedValue.data;
     }
 
     @Override
@@ -521,6 +551,20 @@ public class AllAudioListFragment extends Fragment {
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
             p1.view.setData(album_id, title, album, duration_str, artist, item_selected);
             p1.view.setSelected(item_selected);
+
+            if (AudioPlayerActivity.AUDIO_FILE!=null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
+                p1.view.titletextview.setTextColor(playing_audio_text_color);
+                p1.view.albumtextview.setTextColor(playing_audio_text_color);
+                p1.view.durationtextview.setTextColor(playing_audio_text_color);
+                p1.view.artisttextview.setTextColor(playing_audio_text_color);
+            } else {
+                p1.view.titletextview.setTextColor(rest_audio_text_color);
+                p1.view.albumtextview.setTextColor(rest_audio_text_color);
+                p1.view.durationtextview.setTextColor(rest_audio_text_color);
+                p1.view.artisttextview.setTextColor(rest_audio_text_color);
+            }
+
+
         }
 
         @Override
@@ -597,7 +641,6 @@ public class AllAudioListFragment extends Fragment {
                     if (audioFragmentListener != null) {
                         audioFragmentListener.refreshAudioPlayNavigationButtons();
                     }
-
                 }
             }
 

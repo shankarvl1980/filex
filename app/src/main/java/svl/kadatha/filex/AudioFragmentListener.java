@@ -16,4 +16,5 @@ public interface AudioFragmentListener {
     void hideKeyBoard();
 
     boolean getKeyBoardVisibility();
+
 }

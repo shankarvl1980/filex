@@ -47,7 +47,7 @@ public class AudioSavedListFragment extends Fragment {
     private boolean toolbar_visible = true;
     private int scroll_distance;
     private int num_all_audio_list;
-    private AudioPlayerActivity.AudioCompletionListener audioCompletionListener;
+    private AudioPlayerActivity.AudioChangeListener audioChangeListener;
     private AppCompatActivity activity;
 
 
@@ -55,22 +55,20 @@ public class AudioSavedListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        audioCompletionListener = new AudioPlayerActivity.AudioCompletionListener() {
+        audioChangeListener = new AudioPlayerActivity.AudioChangeListener() {
             @Override
             public void onAudioCompletion() {
                 AudioSavedListDetailsDialog audioSavedListDetailsDialog = (AudioSavedListDetailsDialog) getParentFragmentManager().findFragmentByTag("audioSavedListDetailsDialog");
                 if (audioSavedListDetailsDialog != null) {
                     audioSavedListDetailsDialog.onAudioChange();
                 }
-
             }
         };
 
         activity = (AppCompatActivity) context;
         if (activity instanceof AudioPlayerActivity) {
-            ((AudioPlayerActivity) activity).addAudioCompletionListener(audioCompletionListener);
+            ((AudioPlayerActivity) activity).addAudioChangeListener(audioChangeListener);
         }
-
 
         if (activity instanceof AudioSelectListener) {
             audioSelectListener = (AudioSelectListener) activity;
@@ -84,12 +82,9 @@ public class AudioSavedListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-
         if (activity instanceof AudioPlayerActivity) {
-            ((AudioPlayerActivity) activity).removeAudioCompletionListener(audioCompletionListener);
+            ((AudioPlayerActivity) activity).removeAudioChangeListener(audioChangeListener);
         }
-
-
         audioSelectListener = null;
         audioFragmentListener = null;
     }

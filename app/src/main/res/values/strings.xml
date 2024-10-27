@@ -244,6 +244,7 @@
     <string name="send">Send</string>
     <string name="app_installation">App Installation</string>
     <string name="version">Version</string>
+    <string name="app_size">App Size</string>
     <string name="installed_version">Installed version</string>
     <string name="na">NA</string>
     <string name="do_you_install_a_new_app">Do you want install a new app?</string>

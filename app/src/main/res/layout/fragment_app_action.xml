@@ -28,7 +28,6 @@
             android:paddingBottom="@dimen/layout_margin"
             android:text="@string/app_action"
             android:textSize="19sp"
-
             />
 
         <ScrollView

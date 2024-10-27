@@ -154,9 +154,7 @@ public class AppManagerListFragment extends Fragment {
                     }
                 }
             }
-
         }
-
     }
 
     @Override
@@ -189,7 +187,6 @@ public class AppManagerListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_app_manager, container, false);
         app_count_textview = v.findViewById(R.id.fragment_app_list_number);
         recyclerView = v.findViewById(R.id.fragment_app_list_recyclerview);
@@ -218,7 +215,6 @@ public class AppManagerListFragment extends Fragment {
                     toolbar_visible = false;
                     scroll_distance = 0;
                 } else if (scroll_distance < -threshold && !toolbar_visible) {
-
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
                     toolbar_visible = true;
                     scroll_distance = 0;
@@ -228,7 +224,6 @@ public class AppManagerListFragment extends Fragment {
                     scroll_distance += dy;
                 }
             }
-
         });
 
         empty_tv = v.findViewById(R.id.fragment_app_list_empty);
@@ -270,7 +265,7 @@ public class AppManagerListFragment extends Fragment {
                     if (AppManagerActivity.FILE_GRID_LAYOUT) {
                         adapter = new AppListAdapterGrid();
                     } else {
-                        adapter = new AppListAdpaterList();
+                        adapter = new AppListAdapterList();
                     }
 
                     recyclerView.setAdapter(adapter);
@@ -332,7 +327,6 @@ public class AppManagerListFragment extends Fragment {
             }
         });
 
-
         getParentFragmentManager().setFragmentResultListener(APK_REPLACEMENT_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -366,7 +360,6 @@ public class AppManagerListFragment extends Fragment {
                 }
             }
         });
-
         return v;
     }
 
@@ -382,13 +375,11 @@ public class AppManagerListFragment extends Fragment {
         if (activity instanceof AppManagerActivity) {
             ((AppManagerActivity) activity).addSearchFilterListener(searchFilterListener);
         }
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         if (activity instanceof AppManagerActivity) {
             if (((AppManagerActivity) activity).search_toolbar_visible) {
                 ((AppManagerActivity) activity).setSearchBarVisibility(false);
@@ -396,7 +387,6 @@ public class AppManagerListFragment extends Fragment {
 
             ((AppManagerActivity) activity).removeSearchFilterListener(searchFilterListener);
         }
-
     }
 
     @Override
@@ -423,10 +413,10 @@ public class AppManagerListFragment extends Fragment {
                 break;
             }
         }
+
         if (activity instanceof AppManagerActivity) {
             ((AppManagerActivity) activity).refresh_fragment_on_uninstall();
         }
-
     }
 
     public void clear_selection() {
@@ -548,7 +538,6 @@ public class AppManagerListFragment extends Fragment {
         private final String date;
         private final String version;
 
-
         AppPOJO(String app_name, String app_package, String app_path, long app_size_long, long app_date_long, String version) {
             this.name = app_name;
             this.lower_name = app_name.toLowerCase();
@@ -610,7 +599,6 @@ public class AppManagerListFragment extends Fragment {
             boolean selected = appManagerListFragmentViewModel.mselecteditems.containsKey(position);
             holder.v.setData(appPOJO, selected);
             holder.v.setSelected(selected);
-
         }
 
         @Override
@@ -679,13 +667,11 @@ public class AppManagerListFragment extends Fragment {
                         show_app_action_select_dialog(appPOJOList.get(pos));
                     }
                 });
-
             }
         }
     }
 
     public class AppListAdapterGrid extends AppListAdapter {
-
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -693,8 +679,7 @@ public class AppManagerListFragment extends Fragment {
         }
     }
 
-    public class AppListAdpaterList extends AppListAdapter {
-
+    public class AppListAdapterList extends AppListAdapter {
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -713,16 +698,13 @@ public class AppManagerListFragment extends Fragment {
 
             switch (p3) {
                 case 0:
-
                     break;
                 case 1:
                     break;
-
                 case 2:
                     for (AppPOJO app : appManagerListFragmentViewModel.mselecteditems.values()) {
                         files_selected_array.add(app.getPath());
                     }
-
                     PropertiesDialog propertiesDialog = PropertiesDialog.getInstance(files_selected_array, FileObjectType.FILE_TYPE);
                     propertiesDialog.show(getParentFragmentManager(), "properties_dialog");
                     break;
@@ -762,16 +744,11 @@ public class AppManagerListFragment extends Fragment {
                     return;
                 }
 
-
                 repositoryClass.app_pojo_hashmap.clear();
                 if (activity instanceof AppManagerActivity) {
                     ((AppManagerActivity) activity).refresh_adapter();
                 }
-
-
             }
         }
-
     }
-
 }

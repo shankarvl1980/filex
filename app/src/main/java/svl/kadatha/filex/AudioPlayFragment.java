@@ -521,7 +521,7 @@ public class AudioPlayFragment extends Fragment {
                             );
                         }
                         if (getActivity() instanceof AudioPlayerActivity) {
-                            ((AudioPlayerActivity) getActivity()).on_completion_audio();
+                            ((AudioPlayerActivity) getActivity()).on_audio_change();
                         }
                         Timber.tag(Global.TAG).d("previous or next listened");
                         break;

@@ -80,7 +80,7 @@ public class AppActionSelectDialog extends DialogFragment {
         app_name_tv.setText(app_name);
         package_name_tv.setText(package_name);
         app_version_tv.setText(getString(R.string.version) + " " + version);
-        app_size_tv.setText(getString(R.string.size) + " " + app_size);
+        app_size_tv.setText(getString(R.string.app_size) + " " + app_size);
 
         RecyclerView app_action_recyclerview = v.findViewById(R.id.fragment_app_action_recyclerView);
         app_action_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);

@@ -126,7 +126,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(R.attr.recycler_text_color, typedValue, true);
         rest_audio_text_color = typedValue.data;
-
     }
 
     @Override
@@ -339,12 +338,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
             toolbar_visible = false;
         } else {
-
             toolbar_visible = true;
         }
         file_number_view.setText(size + "/" + num_all_audio);
-
-
         return v;
     }
 
@@ -370,7 +366,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         }
         file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size() + "/" + num_all_audio);
 
-
         if (AudioPlayerService.CURRENT_PLAY_NUMBER < 0) {
             AudioPlayerService.CURRENT_PLAY_NUMBER = 0;
         }
@@ -379,7 +374,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             if (activity instanceof AudioPlayerActivity) {
                 ((AudioPlayerActivity) activity).audioDatabaseHelper.deleteByRowId(list_name, rowid_list);
             }
-
         }
         progress_bar.setVisibility(View.GONE);
     }
@@ -397,7 +391,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         } else {
             window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
         }
-
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
@@ -425,7 +418,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         scroll_distance = 0;
         file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size() + "/" + num_all_audio);
         all_select_btn.setImageResource(R.drawable.select_icon);
-
     }
 
     private void enable_disable_buttons(boolean enable) {
@@ -441,7 +433,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         remove_btn.setEnabled(enable);
         play_btn.setEnabled(enable);
         overflow_btn.setEnabled(enable);
-
     }
 
     private void set_visibility_searchbar(boolean visible) {
@@ -459,7 +450,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             clear_selection();
             currentAudioListRecyclerViewAdapter.getFilter().filter(null);
         }
-
     }
 
     private class ToolbarButtonClickListener implements View.OnClickListener {
@@ -513,7 +503,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             if (audioFragmentListener != null) {
                 audioFragmentListener.refreshAudioPlayNavigationButtons();
             }
-
         }
     }
 
@@ -551,10 +540,8 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     break;
 
             }
-
             listPopWindow.dismiss();
         }
-
     }
 
     private class CurrentListRecyclerViewAdapter extends RecyclerView.Adapter<CurrentListRecyclerViewAdapter.ViewHolder> implements Filterable {
@@ -576,7 +563,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
 
-            if (!whether_saved_play_list && p2 == AudioPlayerService.CURRENT_PLAY_NUMBER) {
+            if (!whether_saved_play_list && AudioPlayerActivity.AUDIO_FILE!=null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
                 p1.view.titletextview.setTextColor(playing_audio_text_color);
                 p1.view.albumtextview.setTextColor(playing_audio_text_color);
                 p1.view.durationtextview.setTextColor(playing_audio_text_color);
@@ -590,7 +577,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
 
             p1.view.setData(album_id, title, album, duration_str, artist, item_selected);
             p1.view.setSelected(item_selected);
-
         }
 
         @Override
@@ -654,20 +640,16 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     AudioPOJO audio = clicked_audio_list.get(pos);
                     File f = new File(audio.getData());
                     if (f.exists()) {
-
                         if (whether_saved_play_list && (!audioListViewModel.whether_audios_set_to_current_list || AudioPlayerService.AUDIO_QUEUED_ARRAY.isEmpty())) {
                             AudioPlayerService.AUDIO_QUEUED_ARRAY = clicked_audio_list;
                             audioListViewModel.whether_audios_set_to_current_list = true;
                         }
                         AudioPlayerService.CURRENT_PLAY_NUMBER = pos;
-                        currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
                         bundle.putParcelable("audio", audio);
                         getParentFragmentManager().setFragmentResult(request_code, bundle);
                         if (audioFragmentListener != null) {
                             audioFragmentListener.refreshAudioPlayNavigationButtons();
                         }
-
-
                     }
                 }
             }
@@ -716,13 +698,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     if (size == num_all_audio) {
                         all_select_btn.setImageResource(R.drawable.deselect_icon);
                     }
-
                 }
                 file_number_view.setText(size + "/" + num_all_audio);
             }
         }
-
     }
-
-
 }

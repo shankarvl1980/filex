@@ -25,14 +25,12 @@ public class AudioListViewModel extends AndroidViewModel {
     private final Object audio_pojo_lock = new Object();
     private final Object album_pojo_lock = new Object();
     public IndexedLinkedHashMap<Integer, AudioPOJO> audio_pojo_selected_items = new IndexedLinkedHashMap<>();
-    //public List<AudioPOJO> audio_selected_array=new ArrayList<>();
     public List<AudioPOJO> audio_list;
     public List<Long> audio_rowid_list = new ArrayList<>();
     public List<Long> selected_audio_rowid_list = new ArrayList<>();
 
 
     public IndexedLinkedHashMap<Integer, AlbumPOJO> album_pojo_selected_items = new IndexedLinkedHashMap<>();
-    //public List<AlbumPOJO> album_selected_array=new ArrayList<>();
     public List<AlbumPOJO> album_list;
 
     public IndexedLinkedHashMap<Integer, String> audio_saved_list_selected_items = new IndexedLinkedHashMap<>();

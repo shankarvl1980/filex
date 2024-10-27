@@ -46,7 +46,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     static AudioPOJO AUDIO_FILE;
     static ArrayList<String> AUDIO_SAVED_LIST = new ArrayList<>();
     static String AUDIO_NOTIFICATION_INTENT_ACTION;
-    private final List<AudioCompletionListener> audioCompletionListeners = new ArrayList<>();
+    private final List<AudioChangeListener> audioChangeListeners = new ArrayList<>();
     private final List<SearchFilterListener> searchFilterListeners = new ArrayList<>();
     public EditText search_edittext;
     public TinyDB tinyDB;
@@ -397,6 +397,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         if (psf != null) {
             psf.set_audio(audio);
         }
+        on_audio_change();
     }
 
     @Override
@@ -449,12 +450,12 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         transaction.commit();
     }
 
-    public void addAudioCompletionListener(AudioCompletionListener listener) {
-        audioCompletionListeners.add(listener);
+    public void addAudioChangeListener(AudioChangeListener listener) {
+        audioChangeListeners.add(listener);
     }
 
-    public void removeAudioCompletionListener(AudioCompletionListener listener) {
-        audioCompletionListeners.remove(listener);
+    public void removeAudioChangeListener(AudioChangeListener listener) {
+        audioChangeListeners.remove(listener);
     }
 
     public void addSearchFilterListener(SearchFilterListener listener) {
@@ -465,15 +466,15 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         searchFilterListeners.remove(listener);
     }
 
-    public void on_completion_audio() {
-        if (!audioCompletionListeners.isEmpty()) {
-            for (AudioCompletionListener listener : audioCompletionListeners) {
+    public void on_audio_change() {
+        if (!audioChangeListeners.isEmpty()) {
+            for (AudioChangeListener listener : audioChangeListeners) {
                 listener.onAudioCompletion();
             }
         }
     }
 
-    interface AudioCompletionListener {
+    interface AudioChangeListener {
         void onAudioCompletion();
     }
 
