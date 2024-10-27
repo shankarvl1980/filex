@@ -286,7 +286,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     private void setSurfaceViewSize() {
-
+        if(mp==null)return;
         // // Get the dimensions of the video
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
@@ -306,7 +306,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             lp.width = (int) (videoProportion * (float) screenHeight);
             lp.height = screenHeight;
         }
-
         surfaceView.setLayoutParams(lp);
     }
 
@@ -380,7 +379,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     private void initiateMediaPlayer() {
-
         mp = new MediaPlayer();
         mp.setOnCompletionListener(this);
         mp.setOnErrorListener(this);
@@ -389,8 +387,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         mp.setOnInfoListener(this);
         mp.setOnPreparedListener(this);
         mp.setScreenOnWhilePlaying(true);
-
-
     }
 
 
@@ -464,7 +460,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     public void mp_start() {
-        if (prepared) {
+        if (mp!=null && prepared) {
             if (request_focus()) {
                 mp.start();
                 viewModel.playmode = true;
