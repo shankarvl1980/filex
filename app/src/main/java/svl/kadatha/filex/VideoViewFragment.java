@@ -40,7 +40,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     private boolean prepared, stopped;
     private Context context;
     private String file_path;
-
+    private boolean firststart;
 
     private VideoPositionListener videoPositionListener;
     private AudioManager audio_manager;
@@ -101,7 +101,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         if (savedInstanceState == null) {
             viewModel.position = bundle.getInt("position");
             viewModel.idx = bundle.getInt("idx");
-            viewModel.firststart = bundle.getBoolean("firststart");
+            firststart = bundle.getBoolean("firststart");
         }
 
     }
@@ -447,17 +447,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             mp.seekTo(Math.max(viewModel.position, 50));
         }
 
-        if (viewModel.firststart || viewModel.wasPlaying) {
+        if (firststart || viewModel.wasPlaying) {
             mp_start();
-
-
         }
-        viewModel.firststart = false;
+        firststart = false;
         if (activity instanceof VideoViewActivity) {
             ((VideoViewActivity) activity).viewModel.video_refreshed = false;
         }
-
-
     }
 
     public void mp_start() {
@@ -470,7 +466,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_pause_icon));
                 handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
             }
-
         }
     }
 
@@ -492,7 +487,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             mp.stop();
             mp.reset();
             mp.release();
-
         }
         stopped = true;
         prepared = false;
@@ -502,40 +496,40 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     public void move_backward() {
         if (prepared) {
-            int backward_pos = mp.getCurrentPosition() - 10000;
-            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //mp.seekTo(Math.min(backward_pos, total_duration),MediaPlayer.SEEK_PREVIOUS_SYNC);
-            //}
-            //else
-            {
-                mp.seekTo(Math.min(backward_pos, total_duration));
+            int backward_pos = mp.getCurrentPosition() - 10000; // Move backward by 10 seconds
+            int seekPosition = Math.max(backward_pos, 0); // Clamp to zero if negative
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mp.seekTo(seekPosition, MediaPlayer.SEEK_PREVIOUS_SYNC);
+            } else {
+                mp.seekTo(seekPosition);
             }
-            seekbar.setProgress(backward_pos);
-            current_progress = convertSecondsToHMmSs(backward_pos);
+
+            seekbar.setProgress(seekPosition);
+            current_progress = convertSecondsToHMmSs(seekPosition);
             current_progress_tv.setText(current_progress + "/" + total_time);
         }
     }
 
     public void move_forward() {
         if (prepared) {
-            int forward_pos = mp.getCurrentPosition() + 10000;
+            int forward_pos = mp.getCurrentPosition() + 10000; // Move forward by 10 seconds
+            int seekPosition = Math.min(forward_pos, total_duration); // Clamp to total duration if exceeded
 
-            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //	mp.seekTo(Math.min(forward_pos, total_duration),MediaPlayer.SEEK_NEXT_SYNC);
-            //}
-            //else
-            {
-                mp.seekTo(Math.min(forward_pos, total_duration));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mp.seekTo(seekPosition, MediaPlayer.SEEK_NEXT_SYNC);
+            } else {
+                mp.seekTo(seekPosition);
             }
-            seekbar.setProgress(forward_pos);
-            current_progress = convertSecondsToHMmSs(forward_pos);
+
+            seekbar.setProgress(seekPosition);
+            current_progress = convertSecondsToHMmSs(seekPosition);
             current_progress_tv.setText(current_progress + "/" + total_time);
         }
     }
 
 
     private boolean request_focus() {
-        //if(!getUserVisibleHint()) return false;
         if (audio_manager == null) {
             audio_manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         }
@@ -546,7 +540,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         } else {
             result = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }
-
         return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
@@ -558,9 +551,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             } else {
                 audio_manager.abandonAudioFocus(this);
             }
-
         }
-
     }
 
     @Override

@@ -293,12 +293,7 @@ public class PlayScreenFragment extends Fragment {
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));
         listView.setOnItemClickListener(new ListPopupWindowClickListener());
 
-//        EquallyDistributedImageButtonsLayout tb_layout = new EquallyDistributedImageButtonsLayout(context, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
-//        int[] drawables = {R.drawable.previous_icon, R.drawable.backward_10_icon, R.drawable.play_icon, R.drawable.forward_10_icon, R.drawable.next_icon};
-//        tb_layout.setResourceImageDrawables(drawables);
-//
-//        Toolbar bottom_toolbar = v.findViewById(R.id.current_play_bottom_toolbar);
-//        bottom_toolbar.addView(tb_layout);
+
         previous_btn = v.findViewById(R.id.prev_image_button);
         ImageButton backward_btn = v.findViewById(R.id.back_10_image_button);
         play_pause_btn = v.findViewById(R.id.play_pause_image_button);

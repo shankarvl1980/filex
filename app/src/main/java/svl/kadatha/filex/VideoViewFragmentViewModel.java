@@ -9,7 +9,7 @@ public class VideoViewFragmentViewModel extends AndroidViewModel {
 
 
     public boolean playmode, completed;
-    public boolean firststart, surfaceCreated;
+    public boolean surfaceCreated;
     public boolean wasPlaying;
     public int idx;
     public int position;

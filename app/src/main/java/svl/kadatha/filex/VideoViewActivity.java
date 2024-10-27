@@ -52,9 +52,7 @@ public class VideoViewActivity extends BaseActivity {
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, VideoViewContainerFragment.getNewInstance(file_path, fileObjectType, fromArchive), "").commit();
             }
-
         }
-
     }
 
     @Override
@@ -107,5 +105,4 @@ public class VideoViewActivity extends BaseActivity {
             videoViewContainerFragment.onVideoViewClick();
         }
     }
-
 }

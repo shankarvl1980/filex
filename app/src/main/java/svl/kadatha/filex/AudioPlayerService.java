@@ -255,9 +255,7 @@ public class AudioPlayerService extends Service {
                         }
                     }, PhoneStateListener.LISTEN_CALL_STATE);
                 }
-
             }
-
         }
 
         public void onLooperPreparation() {
@@ -500,7 +498,6 @@ public class AudioPlayerService extends Service {
                 int backward_pos = mp.getCurrentPosition() - 10000;
                 mp.seekTo(Math.max(backward_pos, 0));
             }
-
         }
 
         private void move_forward() {

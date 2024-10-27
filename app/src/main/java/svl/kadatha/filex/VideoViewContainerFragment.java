@@ -375,24 +375,31 @@ public class VideoViewContainerFragment extends Fragment {
         }
 
         @Override
-        public Fragment getItem(int p1) {
-            final VideoViewFragment frag;
-            boolean b = viewModel.firststart;
-            FilePOJO filePOJO = viewModel.video_list.getKeyAtIndex(p1);
-            final String file_path = filePOJO.getPath();
-            int position = viewModel.video_list.get(filePOJO);
-            frag = VideoViewFragment.getNewInstance(viewModel.fileObjectType, viewModel.fromThirdPartyApp, file_path, position, p1, b);
-            viewModel.firststart = false;
+        public Fragment getItem(int position) {
+            boolean isFirstStart = (position == viewModel.file_selected_idx);
+            FilePOJO filePOJO = viewModel.video_list.getKeyAtIndex(position);
+            String filePath = filePOJO.getPath();
+            int filePosition = viewModel.video_list.get(filePOJO);
 
-            frag.setVideoPositionListener(new VideoViewFragment.VideoPositionListener() {
-                public void setPosition(Integer idx, Integer position) {
-                    if (viewModel.video_list.size() > idx) // condition is required, otherwise app crashes, when last video is removed
-                    {
-                        viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx), position);
+            VideoViewFragment fragment = VideoViewFragment.getNewInstance(
+                    viewModel.fileObjectType,
+                    viewModel.fromThirdPartyApp,
+                    filePath,
+                    filePosition,
+                    position,
+                    isFirstStart
+            );
+
+            fragment.setVideoPositionListener(new VideoViewFragment.VideoPositionListener() {
+                @Override
+                public void setPosition(Integer idx, Integer pos) {
+                    if (viewModel.video_list.size() > idx) {
+                        viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx), pos);
                     }
                 }
             });
-            return frag;
+
+            return fragment;
         }
 
 
