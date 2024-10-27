@@ -100,9 +100,9 @@ public class VideoViewActivity extends BaseActivity {
     }
 
 
-    public void onClickFragment() {
-        if (videoViewContainerFragment != null) {
-            videoViewContainerFragment.onVideoViewClick();
-        }
+    public interface VideoControlListener {
+        void showControls(boolean autoHide);
+        void hideControls();
     }
+
 }

@@ -62,8 +62,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     private boolean fromThirdPartyApp;
     private AppCompatActivity activity;
     private VideoViewFragmentViewModel viewModel;
-
     private Group refresh_play_pause_group;
+    private VideoViewActivity.VideoControlListener controlListener;
 
     public static VideoViewFragment getNewInstance(FileObjectType fileObjectType, boolean fromThirdPartyApp, String file_path, Integer position, Integer idx, boolean firststart) {
         VideoViewFragment frag = new VideoViewFragment();
@@ -86,6 +86,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         audio_manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this).build();
+        }
+
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment instanceof VideoViewActivity.VideoControlListener) {
+            controlListener = (VideoViewActivity.VideoControlListener) parentFragment;
+        } else {
+            throw new RuntimeException("Parent fragment must implement VideoControlListener");
         }
     }
 
@@ -118,29 +125,20 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         initiateMediaPlayer();
         v.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vi) {
-                if (viewModel.playmode) {
+                if (controlListener != null) {
                     if (bottom_butt_visible) {
-                        bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
-                        bottom_butt_visible = false;
-                        handler.removeCallbacks(runnable);
+                        if (viewModel.playmode) {
+                            // Video is playing; we can hide the controls
+                            controlListener.hideControls();
+                        }
+                        // If video is paused, do not hide bottom controls on click
                     } else {
-                        bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-                        bottom_butt_visible = true;
-                        handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-
+                        boolean autoHide = viewModel.playmode;
+                        controlListener.showControls(autoHide);
                     }
-                    refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-
                 }
-
-                if (activity instanceof VideoViewActivity) {
-                    ((VideoViewActivity) activity).onClickFragment();
-                }
-
-
             }
         });
-
 
         bottom_butt = v.findViewById(R.id.video_view_bottom_butt);
         ConstraintLayout toolbar_background = v.findViewById(R.id.video_play_toolbar_background);
@@ -228,14 +226,11 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             @Override
             public void run() {
                 if (viewModel.playmode) {
-                    bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
-                    bottom_butt_visible = false;
-                    refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-                    //play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+                    hideBottomControls();
                 }
-
             }
         };
+
         bottom_butt_visible = true;
         orientation_change_img_button = v.findViewById(R.id.video_player_orientation_change);
         orientation_change_img_button.setOnClickListener(new View.OnClickListener() {
@@ -313,6 +308,18 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         }
 
         surfaceView.setLayoutParams(lp);
+    }
+
+    public void showBottomControls() {
+        bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        bottom_butt_visible = true;
+        refresh_play_pause_group.setVisibility(View.VISIBLE);
+    }
+
+    public void hideBottomControls() {
+        bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
+        bottom_butt_visible = false;
+        refresh_play_pause_group.setVisibility(View.INVISIBLE);
     }
 
     private void update_position() {
@@ -464,7 +471,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 viewModel.completed = false;
                 update_position();
                 play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_pause_icon));
-                handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+                if (controlListener != null) {
+                    controlListener.showControls(true); // autoHide = true
+                }
             }
         }
     }
@@ -474,10 +483,18 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             if (mp.isPlaying()) mp.pause();
             viewModel.playmode = false;
             play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
-            bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            bottom_butt_visible = true;
-            refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
-            //play_pause_img_button.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
+            if (controlListener != null) {
+                controlListener.showControls(false); // autoHide = false
+            }
+        }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer p1) {
+        viewModel.completed = true;
+        viewModel.playmode = false;
+        if (controlListener != null) {
+            controlListener.showControls(false); // autoHide = false
         }
     }
 
@@ -612,18 +629,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             initiateMediaPlayer();
         }
         return true;
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer p1) {
-        viewModel.completed = true;
-        viewModel.playmode = false;
-        if (!bottom_butt_visible) {
-            bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            bottom_butt_visible = true;
-            handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-        }
-        refresh_play_pause_group.setVisibility(bottom_butt_visible ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override

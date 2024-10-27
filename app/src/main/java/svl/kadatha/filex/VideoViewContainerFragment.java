@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class VideoViewContainerFragment extends Fragment {
+public class VideoViewContainerFragment extends Fragment implements VideoViewActivity.VideoControlListener {
     public static final String REFRESH_VIDEO_CODE = "video_play_refresh_code";
     private static final String DELETE_FILE_REQUEST_CODE = "video_file_delete_request_code";
     public FrameLayout progress_bar;
@@ -60,6 +60,8 @@ public class VideoViewContainerFragment extends Fragment {
     private FloatingActionButton floating_back_button;
     private boolean toolbar_visible;
     private AppCompatActivity activity;
+    private ViewPager viewpager;
+
 
     public static VideoViewContainerFragment getNewInstance(String file_path, FileObjectType fileObjectType, boolean fromArchive) {
         VideoViewContainerFragment frag = new VideoViewContainerFragment();
@@ -97,7 +99,7 @@ public class VideoViewContainerFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_video_view_container, container, false);
         toolbar_visible = true;
         handler = new Handler();
-        ViewPager viewpager = v.findViewById(R.id.activity_video_view_viewpager);
+        viewpager = v.findViewById(R.id.activity_video_view_viewpager);
         toolbar = v.findViewById(R.id.activity_video_toolbar);
         title = v.findViewById(R.id.activity_video_name);
         ImageView overflow = v.findViewById(R.id.activity_video_overflow);
@@ -188,6 +190,7 @@ public class VideoViewContainerFragment extends Fragment {
                 listPopWindow.dismiss();
             }
         });
+
         listPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             public void onDismiss() {
                 is_menu_opened = false;
@@ -218,7 +221,6 @@ public class VideoViewContainerFragment extends Fragment {
                 viewModel.fileObjectType = FileObjectType.FILE_TYPE;
             }
         }
-
 
         viewModel.getAlbumFromCurrentFolder(Global.VIDEO_REGEX, true);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
@@ -296,12 +298,13 @@ public class VideoViewContainerFragment extends Fragment {
 
         runnable = new Runnable() {
             public void run() {
-                if (!is_menu_opened) {
-                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-                    //frag.toolbar.animate().translationY(toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
-                    toolbar_visible = false;
-                }
+                hideControls();
+//                if (!is_menu_opened) {
+//                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+//                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+//                    //frag.toolbar.animate().translationY(toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
+//                    toolbar_visible = false;
+//                }
             }
         };
 
@@ -337,22 +340,58 @@ public class VideoViewContainerFragment extends Fragment {
 
     public void onVideoViewClick() {
         if (toolbar_visible) {
-            //disappear
-            toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-            floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-            //frag.toolbar.animate().translationY(frag.toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
-            is_menu_opened = false;
-            toolbar_visible = false;
-            handler.removeCallbacks(runnable);
+            hideControls();
         } else {
-            //appear
-            toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            //frag.toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-            toolbar_visible = true;
+            showControls();
+        }
+    }
+
+    public void showControls() {
+        toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        toolbar_visible = true;
+        handler.removeCallbacks(runnable);
+        handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
+    }
+
+    @Override
+    public void showControls(boolean autoHide) {
+        toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        toolbar_visible = true;
+        handler.removeCallbacks(runnable);
+
+        VideoViewFragment currentFragment = getCurrentVideoViewFragment();
+        if (currentFragment != null) {
+            currentFragment.showBottomControls();
+        }
+
+        if (autoHide) {
             handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
         }
     }
+
+    @Override
+    public void hideControls() {
+        toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+        floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
+        toolbar_visible = false;
+        handler.removeCallbacks(runnable);
+
+        VideoViewFragment currentFragment = getCurrentVideoViewFragment();
+        if (currentFragment != null) {
+            currentFragment.hideBottomControls();
+        }
+    }
+
+    private VideoViewFragment getCurrentVideoViewFragment() {
+        if (viewpager != null && adapter != null) {
+            int currentItem = viewpager.getCurrentItem();
+            return (VideoViewFragment) adapter.instantiateItem(viewpager, currentItem);
+        }
+        return null;
+    }
+
 
     @Override
     public void onDestroyView() {
