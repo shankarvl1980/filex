@@ -89,10 +89,10 @@ public class AllAudioListFragment extends Fragment {
                 if(audioListRecyclerViewAdapter!=null){
                     audioListRecyclerViewAdapter.notifyDataSetChanged();
                 }
-//                if(recyclerview!=null){
-//                    int id=AudioPlayerActivity.AUDIO_FILE.getId();
-//                    recyclerview.scrollToPosition();
-//                }
+                if(recyclerview!=null && AudioPlayerActivity.AUDIO_FILE!=null){
+                    int position=AudioPlayerActivity.AUDIO_FILE.getPosition();
+                    recyclerview.scrollToPosition(position);
+                }
             }
         };
 
@@ -205,9 +205,7 @@ public class AllAudioListFragment extends Fragment {
                 if ((toolbar_visible && dy > 0) || (!toolbar_visible && dy < 0)) {
                     scroll_distance += dy;
                 }
-
             }
-
         });
 
         empty_tv = v.findViewById(R.id.all_audio_list_empty);
@@ -480,9 +478,7 @@ public class AllAudioListFragment extends Fragment {
                 }
                 file_number_view.setText(s + "/" + num_all_audio);
             }
-
         }
-
     }
 
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener {
@@ -525,10 +521,8 @@ public class AllAudioListFragment extends Fragment {
                 default:
                     break;
             }
-
             listPopWindow.dismiss();
         }
-
     }
 
     public class AudioListRecyclerViewAdapter extends RecyclerView.Adapter<AudioListRecyclerViewAdapter.ViewHolder> implements Filterable {
@@ -540,6 +534,7 @@ public class AllAudioListFragment extends Fragment {
         @Override
         public void onBindViewHolder(AudioListRecyclerViewAdapter.ViewHolder p1, int p2) {
             AudioPOJO audio = audio_list.get(p2);
+            audio.setPosition(p2);
             String album_id = audio.getAlbumId();
             String title = audio.getTitle();
             String album = getString(R.string.album_colon) + " " + audio.getAlbum();
@@ -563,8 +558,6 @@ public class AllAudioListFragment extends Fragment {
                 p1.view.durationtextview.setTextColor(rest_audio_text_color);
                 p1.view.artisttextview.setTextColor(rest_audio_text_color);
             }
-
-
         }
 
         @Override
@@ -685,7 +678,6 @@ public class AllAudioListFragment extends Fragment {
                 }
                 file_number_view.setText(size + "/" + num_all_audio);
             }
-
         }
     }
 }

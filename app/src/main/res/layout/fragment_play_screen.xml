@@ -185,82 +185,69 @@
     <ImageButton
         android:id="@+id/prev_image_button"
         android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/select_detail_recyclerview"
         android:elevation="10dp"
-
+        android:scaleType="center"
         android:outlineProvider="none"
         android:src="@drawable/previous_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/play_pause_layout"
+        app:layout_constraintEnd_toStartOf="@+id/play_pause_image_button"
 
         app:layout_constraintStart_toEndOf="@id/fragment_current_play_expansion_stub"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <FrameLayout
-        android:id="@+id/play_pause_layout"
+    <ImageButton
+        android:id="@+id/play_pause_image_button"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-
+        android:layout_height="match_parent"
+        android:scaleType="center"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/select_detail_recyclerview"
-
-        android:elevation="10dp"
-        android:outlineProvider="none"
-
+        android:src="@drawable/play_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/next_image_button"
 
         app:layout_constraintStart_toEndOf="@+id/prev_image_button"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/play_pause_image_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@drawable/select_detail_recyclerview"
-            android:src="@drawable/play_icon" />
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageButton
         android:id="@+id/next_image_button"
         android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/select_detail_recyclerview"
         android:elevation="10dp"
-
+        android:scaleType="center"
         android:outlineProvider="none"
         android:src="@drawable/next_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_exit_btn"
 
 
-        app:layout_constraintStart_toEndOf="@+id/play_pause_layout"
+        app:layout_constraintStart_toEndOf="@+id/play_pause_image_button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/audio_player_exit_btn"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
+        android:layout_height="match_parent"
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/select_detail_recyclerview"
         android:elevation="10dp"
-
+        android:scaleType="center"
         android:outlineProvider="none"
         android:src="@drawable/exit_icon"
         app:layout_constraintBottom_toBottomOf="parent"
