@@ -251,14 +251,12 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
     }
 
     public void setData(FilePOJO filePOJO, boolean item_selected) {
-
         overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         if (filePOJO.getType() == 0) {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-
         } else if (filePOJO.getType() < 0) {
-            GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(System.currentTimeMillis())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
+            GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
         } else {
             GlideApp.with(context).clear(fileimageview);
             fileimageview.setImageDrawable(ContextCompat.getDrawable(context, filePOJO.getType()));

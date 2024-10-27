@@ -92,7 +92,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-
                 if (fileObjectType == FileObjectType.FILE_TYPE || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE || fileObjectType == FileObjectType.ROOT_TYPE) {
                     currently_shown_file = MakeFilePOJOUtil.MAKE_FilePOJO(new File(file_path), false, FileObjectType.FILE_TYPE);
                 } else {

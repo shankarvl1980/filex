@@ -105,7 +105,6 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
         for (int i = 0; i < child_count; ++i) {
             ImageButton child = (ImageButton) getChildAt(i);
             child.setImageDrawable(ContextCompat.getDrawable(context, drawables[i]));
-
         }
     }
 

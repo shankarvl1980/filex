@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -611,10 +612,9 @@ ImageViewFragment extends Fragment {
                     GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
                 }
             } else if (f.getFileObjectType() == FileObjectType.FILE_TYPE) {
-                //GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
                 GlideApp.with(context)
                         .load(new File(f.getPath()))
-                        .signature(new ObjectKey(System.currentTimeMillis()))
+                        .signature(new ObjectKey(new File(f.getPath()).lastModified()))
                         .placeholder(R.drawable.picture_icon)
                         .error(R.drawable.picture_icon)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -622,12 +622,10 @@ ImageViewFragment extends Fragment {
                         .into(image_view);
             } else if (f.getFileObjectType() == FileObjectType.USB_TYPE) {
                 GlideApp.with(context).load(data).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
-
             } else if (f.getFileObjectType() == FileObjectType.ROOT_TYPE) {
-                //GlideApp.with(context).load(new File(f.getPath())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(image_view);
                 GlideApp.with(context)
                         .load(new File(f.getPath()))
-                        .signature(new ObjectKey(System.currentTimeMillis()))
+                        .signature(new ObjectKey(new File(f.getPath()).lastModified()))
                         .placeholder(R.drawable.picture_icon)
                         .error(R.drawable.picture_icon)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -678,10 +676,9 @@ ImageViewFragment extends Fragment {
                     GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
                 }
             } else if (f.getFileObjectType() == FileObjectType.FILE_TYPE) {
-                //GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
                 GlideApp.with(context)
                         .load(new File(f.getPath()))
-                        .signature(new ObjectKey(System.currentTimeMillis()))
+                        .signature(new ObjectKey(new File(f.getPath()).lastModified()))
                         .placeholder(R.drawable.picture_icon)
                         .error(R.drawable.picture_icon)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -690,10 +687,9 @@ ImageViewFragment extends Fragment {
             } else if (f.getFileObjectType() == FileObjectType.USB_TYPE) {
                 GlideApp.with(context).load(data).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
             } else if (f.getFileObjectType() == FileObjectType.ROOT_TYPE) {
-                //GlideApp.with(context).load(new File(f.getPath())).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.imageview);
                 GlideApp.with(context)
                         .load(new File(f.getPath()))
-                        .signature(new ObjectKey(System.currentTimeMillis()))
+                        .signature(new ObjectKey(new File(f.getPath()).lastModified()))
                         .placeholder(R.drawable.picture_icon)
                         .error(R.drawable.picture_icon)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

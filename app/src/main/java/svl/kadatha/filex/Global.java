@@ -1081,7 +1081,6 @@ public class Global {
         } catch (NumberFormatException e) {
             id = 0;
         }
-
         return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), id);
     }
 
