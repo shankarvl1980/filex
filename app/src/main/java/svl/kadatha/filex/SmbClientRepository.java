@@ -31,7 +31,7 @@ import timber.log.Timber;
 public class SmbClientRepository {
     private static final String TAG = "Smb-SmbClientRepository";
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
-    private static final int MAX_IDLE_SESSIONS = 5;
+    private static final int MAX_IDLE_SESSIONS = 4;
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
     private static SmbClientRepository instance;
@@ -111,7 +111,7 @@ public class SmbClientRepository {
     }
 
     private void initializeSessions() {
-        initialSessions = Math.min(MAX_IDLE_SESSIONS, 5);
+        initialSessions = Math.min(MAX_IDLE_SESSIONS, 4);
         // Initialize the first session
         try {
             Session session = createAndConnectSession();

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 public class SftpChannelRepository {
-    private static final int MAX_IDLE_CONNECTIONS = 5;
+    private static final int MAX_IDLE_CONNECTIONS = 4;
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
     private static final String TAG = "Sftp-sftpchannel";
     private static SftpChannelRepository instance;
@@ -49,7 +49,7 @@ public class SftpChannelRepository {
     }
 
     private void initializeChannels() {
-        initialChannels = Math.min(MAX_IDLE_CONNECTIONS, 5);
+        initialChannels = Math.min(MAX_IDLE_CONNECTIONS, 4);
         // Initialize the first channel
         try {
             ChannelSftp channel = createAndConnectSftpChannel();

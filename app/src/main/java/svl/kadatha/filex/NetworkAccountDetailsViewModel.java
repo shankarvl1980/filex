@@ -39,6 +39,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> changeNetworkAccountDisplayAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> checkDuplicateNetworkAccountDisplayAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> testServiceConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> disconnectNetworkConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
     private final NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
     public List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOList;
@@ -58,6 +59,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     private Future<?> future7;
     private Future<?> future8;
     private Future<?> future9;
+    private Future<?> future10;
 
     public NetworkAccountDetailsViewModel(@NonNull Application application) {
         super(application);
@@ -82,6 +84,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         if (future7 != null) future7.cancel(mayInterruptRunning);
         if (future8 != null) future8.cancel(mayInterruptRunning);
         if (future9 != null) future9.cancel(mayInterruptRunning);
+        if (future10 != null) future10.cancel(mayInterruptRunning);
         isCancelled = true;
     }
 
@@ -403,6 +406,42 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     isNetworkConnected = SmbClientRepository.getInstance(SMB_NETWORK_ACCOUNT_POJO).testSmbServerConnection();
                 }
                 testServiceConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void disconnectNetworkConnection() {
+        if (disconnectNetworkConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
+        disconnectNetworkConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future9 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                switch (type) {
+                    case NetworkAccountsDetailsDialog.FTP:
+                        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJO);
+                        ftpClientRepository.shutdown();
+                        break;
+                    case NetworkAccountsDetailsDialog.SFTP:
+                        SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJO);
+                        sftpChannelRepository.shutdown();
+                        break;
+                    case NetworkAccountsDetailsDialog.WebDAV:
+                        WebDavClientRepository webDavClientRepository;
+                        try {
+                            webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJO);
+                            webDavClientRepository.shutdown();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        break;
+                    case NetworkAccountsDetailsDialog.SMB:
+                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
+                        smbClientRepository.shutdown();
+                        break;
+                }
+                disconnectNetworkConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }

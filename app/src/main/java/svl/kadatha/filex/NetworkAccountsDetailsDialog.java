@@ -292,7 +292,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-
         viewModel.replaceNetworkAccountAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -337,8 +336,27 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     if (!viewModel.isNetworkConnected) {
                         disconnect_btn.setAlpha(Global.DISABLE_ALFA);
                         disconnect_btn.setEnabled(false);
+                        connected_network_account_pojo = null;
+                        clear_selection();
                     }
                     viewModel.testServiceConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                }
+            }
+        });
+
+        viewModel.disconnectNetworkConnectionAsyncTaskStatus.observe(this,new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
+                    progress_bar.setVisibility(View.VISIBLE);
+                } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
+                    progress_bar.setVisibility(View.GONE);
+                    disconnect_btn.setAlpha(Global.DISABLE_ALFA);
+                    disconnect_btn.setEnabled(false);
+                    connected_network_account_pojo = null;
+                    clear_selection();
+                    Global.print(context, getString(R.string.network_connection_disconnected));
+                    viewModel.disconnectNetworkConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
         });
@@ -728,34 +746,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 }
             } else if (id == R.id.toolbar_btn_3) {
                 if (connected_network_account_pojo == null) return;
-                switch (type) {
-                    case FTP:
-                        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(viewModel.networkAccountPOJO);
-                        ftpClientRepository.shutdown();
-                        break;
-                    case SFTP:
-                        SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(viewModel.networkAccountPOJO);
-                        sftpChannelRepository.shutdown();
-                        break;
-                    case WebDAV:
-                        WebDavClientRepository webDavClientRepository = null;
-                        try {
-                            webDavClientRepository = WebDavClientRepository.getInstance(viewModel.networkAccountPOJO);
-                            webDavClientRepository.shutdown();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        break;
-                    case SMB:
-                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(viewModel.networkAccountPOJO);
-                        smbClientRepository.shutdown();
-                        break;
-                }
-                disconnect_btn.setAlpha(Global.DISABLE_ALFA);
-                disconnect_btn.setEnabled(false);
-                connected_network_account_pojo = null;
-                clear_selection();
-                Global.print(context, getString(R.string.network_connection_disconnected));
+                progress_bar.setVisibility(View.VISIBLE);
+                viewModel.disconnectNetworkConnection();
             } else if (id == R.id.toolbar_btn_4) {
                 int s = viewModel.mselecteditems.size();
                 if (s == 1) {
