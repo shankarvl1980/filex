@@ -145,28 +145,32 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
-
-        x = Global.FOURTEEN_DP;
+        int x = Global.FOURTEEN_DP;
+        int y = Global.RECYCLERVIEW_ITEM_SPACING;
         int margin_offset_icon, max_height_second_line;
 
         int d = (itemHeight - imageview_dimension) / 2;
 
-        View v = overlay_fileimageview;
-        int measuredHeight = v.getMeasuredHeight();
-        int measuredWidth = v.getMeasuredWidth();
-        v.layout(x, d, x + measuredWidth, d + measuredHeight);
+        View v = fileimageview;
+        int fileMeasuredWidth = v.getMeasuredWidth();
+        int fileMeasuredHeight = v.getMeasuredHeight();
+        v.layout(x, d, x + fileMeasuredWidth, d + fileMeasuredHeight);
 
-        v = fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, d, x + measuredWidth, d + measuredHeight);
-        x += measuredWidth + Global.TEN_DP;
+        // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+        v = overlay_fileimageview;
+        int overlayMeasuredWidth = v.getMeasuredWidth();
+        int overlayMeasuredHeight = v.getMeasuredHeight();
+
+        int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
+        int overlayY = d + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        x += fileMeasuredWidth + Global.TEN_DP;
         margin_offset_icon = x;
 
         v = file_select_indicator;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
+        int measuredHeight = v.getMeasuredHeight();
+        int measuredWidth = v.getMeasuredWidth();
         int a = itemWidth - select_indicator_offset_linear;
         int file_select_indicator_height = measuredHeight;
         int c = (itemHeight - file_select_indicator_height) / 2;
@@ -190,7 +194,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;//Math.max(x,itemWidth/2);
+        x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         max_height_second_line = Math.max(max_height_second_line, measuredHeight);
 
@@ -207,6 +211,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         y += Global.RECYCLERVIEW_ITEM_SPACING;
         v.layout(Global.FOURTEEN_DP, y, measuredWidth - Global.FOURTEEN_DP, y + measuredHeight);
     }
+
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {

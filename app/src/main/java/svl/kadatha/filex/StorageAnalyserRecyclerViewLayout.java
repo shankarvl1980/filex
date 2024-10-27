@@ -156,34 +156,42 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
         int top_for_icon = (itemHeight - imageview_dimension) / 2;
 
-        View v = overlay_fileimageview;
-        int measuredHeight = v.getMeasuredHeight();
-        int measuredWidth = v.getMeasuredWidth();
-        v.layout(x, top_for_icon, x + measuredWidth, top_for_icon + measuredHeight);
+        // Lay out the fileimageview first
+        View v = fileimageview;
+        int fileMeasuredHeight = v.getMeasuredHeight();
+        int fileMeasuredWidth = v.getMeasuredWidth();
+        v.layout(x, top_for_icon, x + fileMeasuredWidth, top_for_icon + fileMeasuredHeight);
 
-        v = fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, top_for_icon, x + measuredWidth, top_for_icon + measuredHeight);
-        x += measuredWidth + Global.TEN_DP;
+        // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+        v = overlay_fileimageview;
+        int overlayMeasuredHeight = v.getMeasuredHeight();
+        int overlayMeasuredWidth = v.getMeasuredWidth();
 
+        int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
+        int overlayY = top_for_icon + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
+        x += fileMeasuredWidth + Global.TEN_DP;
+
+        // Layout itemlinebackground
         v = itemlinebackground;
         v.layout(x, y, itemWidth - Global.TEN_DP, y + itemHeight);
 
+        // Layout itemlineforeground
         v = itemlineforeground;
         v.layout(x, y, itemWidth - Global.TEN_DP, y + itemHeight);
 
+        // Layout file_select_indicator
         v = file_select_indicator;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
+        int measuredHeight = v.getMeasuredHeight();
+        int measuredWidth = v.getMeasuredWidth();
         int a = (itemWidth - imageview_dimension) / 2;
         a += a / 2 - (measuredWidth / 2) + imageview_dimension - Global.FOUR_DP;
         int file_select_indicator_height = measuredHeight;
         int c = (itemHeight - file_select_indicator_height) / 2;
         v.layout(a, c, a + measuredWidth, c + file_select_indicator_height);
 
-
+        // Layout filenametextview
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
@@ -191,32 +199,35 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         v.layout(x, y, itemWidth - Global.TEN_DP, y + measuredHeight);
         y += measuredHeight;
 
-
+        // Layout filesizetextview
         v = filesizetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        x += measuredWidth;
+        int tempX = x + measuredWidth;
 
+        // Layout filesizepercentagetextview
         v = filesizepercentagetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        x = (itemWidth + imageview_dimension + Global.TEN_DP - measuredWidth) / 2;
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
+        int centerX = (itemWidth + imageview_dimension + Global.TEN_DP - measuredWidth) / 2;
+        v.layout(centerX, y, centerX + measuredWidth, y + measuredHeight);
 
-
+        // Layout filesubfilecounttextview
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        x = itemWidth - measuredWidth - Global.TEN_DP;
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
+        int endX = itemWidth - measuredWidth - Global.TEN_DP;
+        v.layout(endX, y, endX + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
+        // Layout item_separator
         v = item_separator;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(Global.FOURTEEN_DP, itemHeight - measuredHeight, Global.FOURTEEN_DP + measuredWidth, itemHeight);
     }
+
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {

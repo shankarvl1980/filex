@@ -144,16 +144,21 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         int a = grid_width - ((grid_width - imageview_dimension) / 2) - Global.SELECTOR_ICON_DIMENSION;
         v.layout(a, y, a + measuredWidth, y + measuredHeight);
 
-        v = overlay_fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
-
         v = fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight;
+        int fileMeasuredHeight = v.getMeasuredHeight();
+        int fileMeasuredWidth = v.getMeasuredWidth();
+        v.layout(x, y, x + fileMeasuredWidth, y + fileMeasuredHeight);
+
+        // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+        v = overlay_fileimageview;
+        int overlayMeasuredHeight = v.getMeasuredHeight();
+        int overlayMeasuredWidth = v.getMeasuredWidth();
+
+        int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
+        int overlayY = y + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        y += fileMeasuredHeight;
 
 
         x = Global.FOUR_DP;

@@ -135,27 +135,34 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
 
-        int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / Global.GRID_COUNT; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
+        int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / Global.GRID_COUNT; // Deducting padding
         x += (grid_width - imageview_dimension) / 2;
 
+        // Lay out the file_select_indicator
         View v = file_select_indicator;
         int measuredHeight = v.getMeasuredHeight();
         int measuredWidth = v.getMeasuredWidth();
         int a = grid_width - ((grid_width - imageview_dimension) / 2) - Global.SELECTOR_ICON_DIMENSION;
         v.layout(a, y, a + measuredWidth, y + measuredHeight);
 
-        v = overlay_fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
-
+        // Lay out the fileimageview first
         v = fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight;
+        int fileMeasuredHeight = v.getMeasuredHeight();
+        int fileMeasuredWidth = v.getMeasuredWidth();
+        v.layout(x, y, x + fileMeasuredWidth, y + fileMeasuredHeight);
 
+        // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+        v = overlay_fileimageview;
+        int overlayMeasuredHeight = v.getMeasuredHeight();
+        int overlayMeasuredWidth = v.getMeasuredWidth();
 
+        int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
+        int overlayY = y + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        y += fileMeasuredHeight;
+
+        // Lay out the filenametextview
         x = Global.FOUR_DP;
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
@@ -163,12 +170,13 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
-
+        // Lay out the filesubfilecounttextview
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
     }
+
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {

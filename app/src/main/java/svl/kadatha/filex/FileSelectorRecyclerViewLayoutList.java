@@ -142,21 +142,26 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
 
         int d = (itemHeight - imageview_dimension) / 2;
 
-        View v = overlay_fileimageview;
-        int measuredHeight = v.getMeasuredHeight();
-        int measuredWidth = v.getMeasuredWidth();
-        v.layout(x, d, x + measuredWidth, d + measuredHeight);
+        View v = fileimageview;
+        int fileMeasuredWidth = v.getMeasuredWidth();
+        int fileMeasuredHeight = v.getMeasuredHeight();
+        v.layout(x, d, x + fileMeasuredWidth, d + fileMeasuredHeight);
 
-        v = fileimageview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(x, d, x + measuredWidth, d + measuredHeight);
-        x += measuredWidth + Global.TEN_DP;
+        // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+        v = overlay_fileimageview;
+        int overlayMeasuredWidth = v.getMeasuredWidth();
+        int overlayMeasuredHeight = v.getMeasuredHeight();
+
+        int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
+        int overlayY = d + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        x += fileMeasuredWidth + Global.TEN_DP;
         margin_offset_icon = x;
 
         v = file_select_indicator;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
+        int measuredHeight = v.getMeasuredHeight();
+        int measuredWidth = v.getMeasuredWidth();
         int a = itemWidth - select_indicator_offset_linear;
         int file_select_indicator_height = measuredHeight;
         int c = (itemHeight - file_select_indicator_height) / 2;
