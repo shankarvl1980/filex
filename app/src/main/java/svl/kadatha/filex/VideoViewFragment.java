@@ -40,7 +40,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     private boolean prepared, stopped;
     private Context context;
     private String file_path;
-    private boolean firststart;
+    private boolean firstStart;
 
     private VideoPositionListener videoPositionListener;
     private AudioManager audio_manager;
@@ -65,7 +65,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     private Group refresh_play_pause_group;
     private VideoViewActivity.VideoControlListener controlListener;
 
-    public static VideoViewFragment getNewInstance(FileObjectType fileObjectType, boolean fromThirdPartyApp, String file_path, Integer position, Integer idx, boolean firststart) {
+    public static VideoViewFragment getNewInstance(FileObjectType fileObjectType, boolean fromThirdPartyApp, String file_path, Integer position, Integer idx, boolean firstStart) {
         VideoViewFragment frag = new VideoViewFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE, fileObjectType);
@@ -73,7 +73,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         bundle.putString("file_path", file_path);
         bundle.putInt("position", position);
         bundle.putInt("idx", idx);
-        bundle.putBoolean("firststart", firststart);
+        bundle.putBoolean("firstStart", firstStart);
         frag.setArguments(bundle);
         return frag;
     }
@@ -97,6 +97,12 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        controlListener = null;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(VideoViewFragmentViewModel.class);
@@ -108,9 +114,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         if (savedInstanceState == null) {
             viewModel.position = bundle.getInt("position");
             viewModel.idx = bundle.getInt("idx");
-            firststart = bundle.getBoolean("firststart");
+            firstStart = bundle.getBoolean("firstStart");
         }
-
     }
 
     @Override
@@ -146,10 +151,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         play_pause_img_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (prepared && !viewModel.playmode) {
                     mp_start();
-
                 } else if (prepared && viewModel.playmode) {
                     mp_pause();
                 }
@@ -206,10 +209,8 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                         current_progress_tv.setText(current_progress + "/" + total_time);
                         handler.removeCallbacks(runnable);
                         handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
-
                     }
                 }
-
             }
 
             public void onStartTrackingTouch(SeekBar sb) {
@@ -219,7 +220,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             public void onStopTrackingTouch(SeekBar sb) {
 
             }
-
         });
 
         runnable = new Runnable() {
@@ -243,15 +243,12 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 }
             }
         });
-
         return v;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         if (mp != null) {
-            //viewModel.mp.setSurface(null);
-
             mp.setDisplay(holder);
             try {
                 Uri data = null;
@@ -272,7 +269,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
             }
         }
-
     }
 
     @Override
@@ -331,7 +327,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                     current_progress_tv.setText(current_progress + "/" + total_time);
                 }
 
-
                 if (viewModel.completed) {
                     play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
                     current_progress = isDurationMoreThanHour ? String.format("%d:%d:%d", 0, 0, 0) : String.format("%d:%d", 0, 0);
@@ -340,13 +335,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                     handler_seekbar_update.removeCallbacks(this);
                 }
                 handler_seekbar_update.postDelayed(this, 1000);
-
             }
-
         });
-
     }
-
 
     private String convertSecondsToHMmSs(int milliseconds) {
         int seconds = milliseconds / 1000;
@@ -375,7 +366,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         } else {
             orientation_change_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.full_screen_icon));
         }
-
     }
 
     private void initiateMediaPlayer() {
@@ -400,7 +390,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 viewModel.wasPlaying = mp.isPlaying();
             }
 
-            //viewModel.isPlaying=false;
             viewModel.position = mp.getCurrentPosition();
             if (prepared && viewModel.playmode) {
                 mp_pause();
@@ -409,17 +398,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             if (videoPositionListener != null) {
                 videoPositionListener.setPosition(viewModel.idx, viewModel.position);
             }
-
-
         }
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mp_stop();
-
     }
 
 
@@ -448,10 +433,10 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             mp.seekTo(Math.max(viewModel.position, 50));
         }
 
-        if (firststart || viewModel.wasPlaying) {
+        if (firstStart || viewModel.wasPlaying) {
             mp_start();
         }
-        firststart = false;
+        firstStart = false;
         if (activity instanceof VideoViewActivity) {
             ((VideoViewActivity) activity).viewModel.video_refreshed = false;
         }
@@ -539,6 +524,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         }
     }
 
+    public boolean isPlaying() {
+        return viewModel.playmode;
+    }
 
     private boolean request_focus() {
         if (audio_manager == null) {

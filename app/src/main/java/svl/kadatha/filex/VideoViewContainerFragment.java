@@ -298,17 +298,16 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
         runnable = new Runnable() {
             public void run() {
-                hideControls();
-//                if (!is_menu_opened) {
-//                    toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
-//                    floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-//                    //frag.toolbar.animate().translationY(toolbar.getHeight()).setInterpolator(new DecelerateInterpolator(1));
-//                    toolbar_visible = false;
-//                }
+                if (!is_menu_opened) {
+                    VideoViewFragment currentFragment = getCurrentVideoViewFragment();
+                    if (currentFragment != null) {
+                        if (currentFragment.isPlaying()) {
+                            hideControls();
+                        }
+                    }
+                }
             }
         };
-
-        handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
 
 
         getParentFragmentManager().setFragmentResultListener(DELETE_FILE_REQUEST_CODE, this, new FragmentResultListener() {
@@ -351,7 +350,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
         floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
         toolbar_visible = true;
         handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
     }
 
     @Override
@@ -437,7 +435,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                     }
                 }
             });
-
             return fragment;
         }
 
