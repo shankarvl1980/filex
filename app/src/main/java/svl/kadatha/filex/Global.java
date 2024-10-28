@@ -1178,8 +1178,8 @@ public class Global {
 
     public static void TOGGLE_VIEW(Context context, View view, boolean show) {
         // Load animations from XML
-        Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down);
-        Animation slideUp = AnimationUtils.loadAnimation(context, R.anim.slide_up);
+        Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_up_from_below_with_reverse_fade);
+        Animation slideUp = AnimationUtils.loadAnimation(context, R.anim.slide_down_from_normal_with_fade);
 
         Animation animation = show ? slideDown : slideUp;
 
