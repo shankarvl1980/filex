@@ -437,9 +437,9 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
 
         // Set custom animations based on the expansion value
         if (expansion) {
-            transaction.setCustomAnimations(R.anim.slide_up_with_fade, 0, 0, R.anim.slide_down_with_fade);
+            transaction.setCustomAnimations(R.anim.slide_up_from_below_with_reverse_fade, R.anim.slide_up_from_normal_with_fade, 0,0 );
         } else {
-            transaction.setCustomAnimations(R.anim.slide_down_with_fade, R.anim.slide_down_with_fade, 0, R.anim.slide_up_with_fade);
+            transaction.setCustomAnimations(R.anim.slide_down_from_above_with_reverse_fade, R.anim.slide_down_from_normal_with_fade, 0, 0);
         }
 
         // Replace the fragment
