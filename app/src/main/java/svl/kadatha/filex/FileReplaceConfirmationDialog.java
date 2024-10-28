@@ -80,29 +80,32 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.fragment_replace_confirmation, container, false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
-        Button yes_button = buttons_layout.findViewById(R.id.first_button);
-        yes_button.setText(R.string.yes);
-        Button no_button = buttons_layout.findViewById(R.id.second_button);
-        no_button.setText(R.string.no);
+        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 3, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
+        Button replace_button = buttons_layout.findViewById(R.id.first_button);
+        replace_button.setText(R.string.replace);
+        Button rename_button = buttons_layout.findViewById(R.id.second_button);
+        rename_button.setText(R.string.rename);
+        Button skip_button = buttons_layout.findViewById(R.id.third_button);
+        skip_button.setText(R.string.skip);
         apply_all_checkbox = v.findViewById(R.id.dialog_fragment_applyall_confirmationCheckBox);
         progress_bar = v.findViewById(R.id.file_replacement_dialog_progressbar);
 
-        yes_button.setOnClickListener(new View.OnClickListener() {
+        replace_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
+
                 if (apply_all_checkbox.isChecked()) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.filterFileSelectedArray(context, true, true, data_list);
+                    fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, true, data_list);
                 } else {
                     fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
                     fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.filterFileSelectedArray(context, true, false, data_list);
+                        fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
                     } else {
                         confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
                     }
@@ -110,18 +113,48 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
             }
         });
 
-        no_button.setOnClickListener(new View.OnClickListener() {
+        rename_button.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
+                    return;
+                }
+
                 if (apply_all_checkbox.isChecked()) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.filterFileSelectedArray(context, false, true, data_list);
+                    fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.RENAME, true, data_list);
+                } else {
+                    fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
+                    fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
+                    //fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
+                    if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
+                        progress_bar.setVisibility(View.VISIBLE);
+                        fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.RENAME, false, data_list);
+                    } else {
+                        confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                    }
+                }
+            }
+        });
+
+        skip_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    Global.print(context, getString(R.string.please_wait));
+                    return;
+                }
+
+                if (apply_all_checkbox.isChecked()) {
+                    progress_bar.setVisibility(View.VISIBLE);
+                    fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.SKIP, true, data_list);
                 } else {
                     fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
                     fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
                     fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.filterFileSelectedArray(context, false, false, data_list);
+                        fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.SKIP, false, data_list);
                     } else {
                         confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
                     }
@@ -153,7 +186,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (getActivity() instanceof CopyToActivity) {
-                        if (!fileDuplicationViewModel.yes && !fileDuplicationViewModel.apply_to_all) {
+                        if (!(fileDuplicationViewModel.fileOperationMode ==FileOperationMode.REPLACE) && !fileDuplicationViewModel.apply_to_all) {
                             if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                                 Bundle bundle = new Bundle();
                                 bundle.putParcelableArrayList("data_list", data_list);
@@ -172,7 +205,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         }
                     } else {
                         PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, sourceFileObjectType, dest_folder, destFileObjectType,
-                                fileDuplicationViewModel.files_selected_array, fileDuplicationViewModel.overwritten_file_path_list, cut);
+                                fileDuplicationViewModel.sourceDestNameMap, fileDuplicationViewModel.overwritten_file_path_list, cut);
                         pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
                     }
                     dismissAllowingStateLoss();

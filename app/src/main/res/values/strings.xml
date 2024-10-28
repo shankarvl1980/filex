@@ -506,5 +506,7 @@
     <string name="smb">SMB</string>
     <string name="network_connection_disconnected">Network connection disconnected</string>
     <string name="enter_share_name">Enter Share name</string>
+    <string name="replace">Replace</string>
+    <string name="skip">Skip</string>
 
 </resources>

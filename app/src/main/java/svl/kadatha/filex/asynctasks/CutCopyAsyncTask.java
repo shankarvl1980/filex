@@ -8,7 +8,9 @@ import androidx.core.util.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import svl.kadatha.filex.AlternativeAsyncTask;
@@ -17,6 +19,7 @@ import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.ParcelableStringStringLinkedMap;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 import timber.log.Timber;
@@ -29,7 +32,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final List<String> copied_source_file_path_list;
     private final List<String> overwritten_file_path_list;
     private final long[] counter_size_files = new long[1];
-    private final List<String> files_selected_array;
+    //private final List<String> files_selected_array;
     private final FileObjectType sourceFileObjectType;
     private final Uri tree_uri;
     private final String tree_uri_path;
@@ -39,15 +42,16 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final boolean cut;
     private final Uri source_uri;
     private final String source_uri_path;
+    private final ParcelableStringStringLinkedMap sourceDestNameMap;
     private int counter_no_files;
     private String copied_file_name;
     private String current_file_name;
     private FilePOJO filePOJO;
 
 
-    public CutCopyAsyncTask(ArrayList<String> files_selected_array, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,
+    public CutCopyAsyncTask(ParcelableStringStringLinkedMap sourceDestNameMap, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,
                             String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, boolean cut, List<String> overwritten_file_path_list, TaskProgressListener listener) {
-        this.files_selected_array = files_selected_array;
+        this.sourceDestNameMap = sourceDestNameMap;
         this.source_folder = source_folder;
         this.sourceFileObjectType = sourceFileObjectType;
         this.source_uri = source_uri;
@@ -63,6 +67,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         copied_source_file_path_list = new ArrayList<>();
     }
 
+
     @Override
     protected Boolean doInBackground(Void... params) {
         boolean copy_result = false;
@@ -73,7 +78,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
         }
 
-        FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
 
         // Create a handler for regular progress updates
@@ -86,33 +90,32 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
         };
         progressHandler.post(progressRunnable);
-        int size = sourceFileModels.length;
-        for (int i = 0; i < size; ++i) {
+
+        for (Map.Entry<String, String> entry : sourceDestNameMap.entrySet()) {
             if (isCancelled()) {
-                progressHandler.removeCallbacks(progressRunnable); // Stop the handler
+                progressHandler.removeCallbacks(progressRunnable);
                 return false;
             }
-            FileModel sourceFileModel = sourceFileModels[i];
-            String file_path = sourceFileModel.getPath();
+            String sourceFilePath = entry.getKey();
+            String destFileName = entry.getValue();
+
+            FileModel sourceFileModel = FileModelFactory.getFileModel(sourceFilePath, sourceFileObjectType, source_uri, source_uri_path);
             current_file_name = sourceFileModel.getName();
 
             if (whether_copy_between_network_file_systems) {
-                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, false);
-                if (copy_result && cut) {
-                    sourceFileModel.delete();
-                }
+                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, destFileName, cut, sourceDestNameMap);
             } else {
-                copy_result = CopyFileModel(sourceFileModel, destFileModel, false);
-                if (copy_result && cut) {
-                    sourceFileModel.delete();
-                }
+                copy_result = CopyFileModel(sourceFileModel, destFileModel, destFileName, cut);
+            }
+
+            if (copy_result && cut) {
+                sourceFileModel.delete();
             }
 
             if (copy_result) {
-                copied_files_name.add(current_file_name);
-                copied_source_file_path_list.add(file_path);
+                copied_files_name.add(destFileName);
+                copied_source_file_path_list.add(sourceFilePath);
             }
-            files_selected_array.remove(file_path);
         }
 
         if (counter_no_files > 0) {
@@ -155,7 +158,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
+    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String fileNameToCreate ,boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
         Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
         stack.push(new Pair<>(sourceFileModel, destFileModel));
@@ -174,11 +177,10 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             Timber.tag("CopyFileModel").d("Processing: " + source.getPath());
 
             if (source.isDirectory()) {
-                String newDirName = source.getName();
-                String destPath = Global.CONCATENATE_PARENT_CHILD_PATH(dest.getPath(), newDirName);
+                String destPath = Global.CONCATENATE_PARENT_CHILD_PATH(dest.getPath(), fileNameToCreate);
                 Timber.tag("CopyFileModel").d("Creating directory: " + destPath);
 
-                if (!dest.makeDirIfNotExists(newDirName)) {
+                if (!dest.makeDirIfNotExists(fileNameToCreate)) {
                     Timber.tag("CopyFileModel").e("Failed to create directory: " + destPath);
                     allCopiesSuccessful = false;
                     break;
@@ -200,7 +202,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 publishProgress(null);
             } else {
                 Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
-                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, source.getName(), cut, counter_size_files);
+                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, fileNameToCreate, cut, counter_size_files);
                 if (success) {
                     ++counter_no_files;
                     copied_file_name = source.getName();
@@ -226,7 +228,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
-    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, boolean cut) {
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut, ParcelableStringStringLinkedMap sourceDestNameMap) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
@@ -235,7 +237,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         boolean allCopiesSuccessful = true;
         String sourceRootPath = sourceFileModel.getPath();
-        String sourceName = new File(sourceRootPath).getName();
+        String destRootPath = Global.CONCATENATE_PARENT_CHILD_PATH(destFileModel.getPath(), destFileName);
 
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
@@ -243,8 +245,19 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 return false;
             }
 
-            String relativePath = getRelativePath(sourceRootPath, source.getPath());
-            String destPath = computeDestinationPath(sourceName, relativePath);
+            String sourcePath = source.getPath();
+            String relativePath = getRelativePath(sourceRootPath, sourcePath);
+
+            // Determine the destination path
+            String destPath;
+            if (sourceDestNameMap.containsKey(sourcePath)) {
+                // Use the specified destination name for the source path
+                String customDestName = sourceDestNameMap.get(sourcePath);
+                destPath = Global.CONCATENATE_PARENT_CHILD_PATH(destFileModel.getPath(), customDestName);
+            } else {
+                // For subfiles and subdirectories, retain original names
+                destPath = Global.CONCATENATE_PARENT_CHILD_PATH(destRootPath, relativePath);
+            }
 
             try {
                 if (source.isDirectory()) {
@@ -253,14 +266,13 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     publishProgress(null);
                 } else {
                     File destFile = new File(destPath);
-                    String parent_path_segment = Global.getParentPath(destPath);
-                    FileModel destParentModel = createDirectory(destFileModel, parent_path_segment, destFileObjectType);
+                    String parentPathSegment = Global.getParentPath(destPath);
+                    FileModel destParentModel = createDirectory(destFileModel, parentPathSegment, destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
                     if (success) {
                         Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
                         copied_file_name = source.getName();
-                        Timber.tag("published").d("this is published: %s", source.getName());
                         publishProgress(null);
                     }
                 }
@@ -271,6 +283,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
         }
 
+        // Handle deletion if cutting
         if (cut && allCopiesSuccessful) {
             try {
                 sourceFileModel.delete();
@@ -284,9 +297,9 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
+
     private void collectFilesToCopy(FileModel sourceFileModel, List<FileModel> filesToCopy) {
         filesToCopy.add(sourceFileModel);
-
         if (sourceFileModel.isDirectory()) {
             FileModel[] children = sourceFileModel.list();
             if (children != null) {
