@@ -417,7 +417,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     df.progress_bar.setVisibility(View.GONE);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.sourceDestNameMap, fileDuplicationViewModel.overwritten_file_path_list,
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.sourceFileDestNameMap, fileDuplicationViewModel.overwritten_file_path_list,
                                 fileDuplicationViewModel.cut);
                         pasteSetUpDialog.show(fm, "paste_dialog");
                     } else {

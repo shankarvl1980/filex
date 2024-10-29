@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import timber.log.Timber;
+
 public class FileDuplicationViewModel extends ViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -32,8 +34,11 @@ public class FileDuplicationViewModel extends ViewModel {
     public String source_folder, dest_folder;
     public FileObjectType sourceFileObjectType, destFileObjectType;
     public ArrayList<String> files_selected_array;
-    public ParcelableStringStringLinkedMap sourceDestNameMap=new ParcelableStringStringLinkedMap();
-    public ParcelableStringStringLinkedMap duplicateSourceDestNameSourceMap=new ParcelableStringStringLinkedMap();
+    public ParcelableStringStringLinkedMap sourceFileDestNameMap =new ParcelableStringStringLinkedMap();
+    public ParcelableStringStringLinkedMap duplicateSourceFileDestNameSourceMap =new ParcelableStringStringLinkedMap();
+    public ParcelableUriStringLinkedMap uriDestNameMap =new ParcelableUriStringLinkedMap();
+    public ParcelableUriStringLinkedMap duplicateUriDestNameMap =new ParcelableUriStringLinkedMap();
+    public final ArrayList<String> uri_name_list = new ArrayList<>();
     public ArrayList<Uri> data_list = new ArrayList<>();
     public boolean apply_to_all;
     boolean cut;
@@ -133,13 +138,14 @@ public class FileDuplicationViewModel extends ViewModel {
                     }
                 }
 
-                sourceDestNameMap=new ParcelableStringStringLinkedMap();
-                duplicateSourceDestNameSourceMap=new ParcelableStringStringLinkedMap();
+                sourceFileDestNameMap =new ParcelableStringStringLinkedMap();
+                duplicateSourceFileDestNameSourceMap =new ParcelableStringStringLinkedMap();
 
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array, sourceFileObjectType, dest_folder, destFileObjectType);
                 for(String f_path:files_selected_array){
-                    sourceDestNameMap.put(f_path,new File(f_path).getName());
+                    sourceFileDestNameMap.put(f_path,new File(f_path).getName());
                 }
+
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 filePOJOS = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
                 if (filePOJOS == null) {
@@ -181,7 +187,7 @@ public class FileDuplicationViewModel extends ViewModel {
                                     break;
                                 }
                             }
-                            duplicateSourceDestNameSourceMap.put(file_path,unique_file_name);
+                            duplicateSourceFileDestNameSourceMap.put(file_path,unique_file_name);
                             if (!findAllDuplicates) {
                                 stop_loop = true;
                                 break;
@@ -191,13 +197,134 @@ public class FileDuplicationViewModel extends ViewModel {
                     if (stop_loop) break;
                 }
 
-                for(Map.Entry<String,String> element:duplicateSourceDestNameSourceMap.entrySet()){
-                    sourceDestNameMap.put(element.getKey(),element.getValue());
+                for(Map.Entry<String,String> element: duplicateSourceFileDestNameSourceMap.entrySet()){
+                    sourceFileDestNameMap.put(element.getKey(),element.getValue());
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
+
+    public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, boolean cut, boolean findAllDuplicates, ArrayList<Uri> data_list) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        this.source_folder = source_folder;
+        this.sourceFileObjectType = sourceFileObjectType;
+        this.dest_folder = dest_folder;
+        this.destFileObjectType = destFileObjectType;
+        this.cut = cut;
+        source_duplicate_file_path_array = new ArrayList<>();
+        not_to_be_replaced_files_path_array = new ArrayList<>();
+        destination_duplicate_file_path_array = new ArrayList<>();
+        overwritten_file_path_list = new ArrayList<>();
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future1 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+                    boolean to_remove_directories = data_list != null;
+                    if (to_remove_directories) {
+                        Iterator<Uri> data_list_iterator = data_list.iterator();
+                        while (data_list_iterator.hasNext()) {
+                            Uri data = data_list_iterator.next();
+                            if (isDirectoryUri(App.getAppContext(), data)) {
+                                data_list_iterator.remove();
+                                directoriesRemoved = true;
+                            }
+                        }
+                    }
+
+                    //process to have only files with unique file names
+//                    Set<String> file_name_set = new HashSet<>();
+//                    Iterator<String> iterator = files_selected_array.iterator();
+//
+//                    while (iterator.hasNext()) {
+//                        String file_path = iterator.next();
+//                        boolean inserted = file_name_set.add(new File(file_path).getName());
+//                        if (!inserted) {
+//                            iterator.remove();
+//                        }
+//                    }
+                }
+
+                //sourceFileDestNameMap =new ParcelableStringStringLinkedMap();
+                //duplicateSourceFileDestNameSourceMap =new ParcelableStringStringLinkedMap();
+
+                uriDestNameMap =new ParcelableUriStringLinkedMap();
+                duplicateUriDestNameMap =new ParcelableUriStringLinkedMap();
+
+                //Global.REMOVE_RECURSIVE_PATHS(files_selected_array, sourceFileObjectType, dest_folder, destFileObjectType);
+//                for(String f_path:files_selected_array){
+//                    sourceFileDestNameMap.put(f_path,new File(f_path).getName());
+//                }
+
+                if(data_list!=null){
+                    for(Uri uri:data_list){
+                        String name=CopyToActivity.getFileNameOfUri(App.getAppContext(),uri);
+                        uriDestNameMap.put(uri,name);
+                        uri_name_list.add(name);
+                    }
+                }
+
+                RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+                filePOJOS = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
+                if (filePOJOS == null) {
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                }
+                ArrayList<String> destinationFileNames=new ArrayList<>();
+                for(FilePOJO filePOJO:filePOJOS){
+                    destinationFileNames.add(filePOJO.getName());
+                }
+                int filePojoSize = filePOJOS.size();
+                int uriSelectedSize = uriDestNameMap.size();
+                FilePOJO filePOJO;
+                String uri_name;
+                boolean stop_loop = false;
+                for (int i = 0; i < filePojoSize; ++i) {
+                    filePOJO = filePOJOS.get(i);
+                    for (int j = 0; j < uriSelectedSize; ++j) {
+                        uri_name = uriDestNameMap.getValueAtIndex(j);
+                        if (filePOJO.getName().equals(uri_name)) {
+                            source_duplicate_file_path_array.add(uri_name);
+                            destination_duplicate_file_path_array.add(filePOJO.getPath());
+                            String unique_file_name, name_prefix, extension;
+                            //File originalFile = new File(file_path);
+                            String originalFileName = uri_name;
+
+                            int lastDotIndex = originalFileName.lastIndexOf(".");
+                            if (lastDotIndex != -1) {
+                                name_prefix = originalFileName.substring(0, lastDotIndex);
+                                extension = originalFileName.substring(lastDotIndex); // includes the dot
+                            } else {
+                                name_prefix = originalFileName;
+                                extension = "";
+                            }
+
+                            for (int k = 1; true; ++k) {
+                                // Add number suffix before extension
+                                unique_file_name = name_prefix + " (" + k + ")" + extension;
+                                if (!destinationFileNames.contains(unique_file_name)) {
+                                    break;
+                                }
+                            }
+                            duplicateUriDestNameMap.put(uriDestNameMap.getKeyAtIndex(j),unique_file_name);
+                            if (!findAllDuplicates) {
+                                stop_loop = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (stop_loop) break;
+                }
+
+                for(Map.Entry<Uri,String> element: duplicateUriDestNameMap.entrySet()){
+                    uriDestNameMap.put(element.getKey(),element.getValue());
+                }
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
 
     public void filterFileSelectedArray(Context context, FileOperationMode fileOperationMode, boolean apply_to_all, ArrayList<Uri> data_list) {
         if (filterSelectedArrayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
@@ -215,7 +342,7 @@ public class FileDuplicationViewModel extends ViewModel {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
                         overwritten_file_path_list.addAll(destination_duplicate_file_path_array);
                         for(String file_path:source_duplicate_file_path_array){
-                            sourceDestNameMap.put(file_path,new File(file_path).getName());
+                            sourceFileDestNameMap.put(file_path,new File(file_path).getName());
                         }
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
@@ -240,11 +367,19 @@ public class FileDuplicationViewModel extends ViewModel {
                     }
                 }
 
-                Iterator<Map.Entry<String, String>> iterator=sourceDestNameMap.iterator();
+                Iterator<Map.Entry<String, String>> iterator= sourceFileDestNameMap.iterator();
                 while(iterator.hasNext()){
                     Map.Entry<String, String> element=iterator.next();
                     if(!files_selected_array.contains(element.getKey())){
                         iterator.remove();
+                    }
+                }
+
+                Iterator<Map.Entry<Uri, String>> iterator1= uriDestNameMap.iterator();
+                while(iterator1.hasNext()){
+                    Map.Entry<Uri, String> element=iterator1.next();
+                    if(!files_selected_array.contains(element.getValue())){
+                        iterator1.remove();
                     }
                 }
                 filterSelectedArrayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -252,12 +387,13 @@ public class FileDuplicationViewModel extends ViewModel {
         });
     }
 
-    private void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
+    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
         if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
         Iterator<Uri> iterator = data_list.iterator();
         while (iterator.hasNext()) {
             String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
             for (String f_name : file_path_list) {
+                Timber.tag("removeNotTobeCopiedUris").d("uri_name: " + name + " not_tobe_removed_file_path: " + f_name);
                 if (name.equals(f_name)) {
                     iterator.remove();
                     break;

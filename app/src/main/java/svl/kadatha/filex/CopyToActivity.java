@@ -40,7 +40,6 @@ public class CopyToActivity extends BaseActivity {
     private final static String ARCHIVE_REPLACE_REQUEST_CODE = "activity_copy_to_replace_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE = "activity_copy_to_saf_permission_request_code";
     private final static String COPY_TO_ACTION = CopyToAsyncTask.TASK_TYPE;
-    private final ArrayList<String> file_name_list = new ArrayList<>();
     public boolean clear_cache;
     private Context context;
     private String tree_uri_path = "";
@@ -73,7 +72,7 @@ public class CopyToActivity extends BaseActivity {
     private CopyToActivityViewModel viewModel;
     private FileDuplicationViewModel fileDuplicationViewModel;
     private FrameLayout progress_bar;
-    private ArrayList<String> overwritten_file_path_list = new ArrayList<>();
+    //private ArrayList<String> overwritten_file_path_list = new ArrayList<>();
 
     public static String getFileNameOfUri(Context context, Uri uri) {
         String result = null;
@@ -132,11 +131,11 @@ public class CopyToActivity extends BaseActivity {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-                        overwritten_file_path_list = fileDuplicationViewModel.overwritten_file_path_list;
+                        //overwritten_file_path_list = fileDuplicationViewModel.overwritten_file_path_list;
                         launchService();
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, data_list, fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list, fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(getSupportFragmentManager(), "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -174,10 +173,10 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
-                if (!file_name.isEmpty()) {
-                    file_name_list.clear();
-                    file_name_list.add(file_name);
-                }
+//                if (!file_name.isEmpty()) {
+//                    file_name_list.clear();
+//                    file_name_list.add(file_name);
+//                }
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(destFileObjectType + folderclickselected);
                 final String full_path = Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected, file_name);
@@ -205,23 +204,24 @@ public class CopyToActivity extends BaseActivity {
                 }
 
                 if (data_list.size() == 1) {
-                    if (Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType, full_path, viewModel.destFilePOJOs)) {
-                        if (!ArchiveSetUpDialog.isFilePathDirectory(full_path, destFileObjectType, viewModel.destFilePOJOs)) {
-                            final Bundle bundle = new Bundle();
-                            bundle.putString("file_name", file_name);
-                            bundle.putString("new_name", file_name);
-                            ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE, bundle);
-                            archiveReplaceConfirmationDialog.show(getSupportFragmentManager(), null);
-                        } else {
-                            Global.print(context, getString(R.string.a_directory_with_output_file_name_already_exists) + " '" + file_name + "'");
-                        }
-                    } else {
+//                    if (Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType, full_path, viewModel.destFilePOJOs)) {
+//                        if (!ArchiveSetUpDialog.isFilePathDirectory(full_path, destFileObjectType, viewModel.destFilePOJOs)) {
+//                            final Bundle bundle = new Bundle();
+//                            bundle.putString("file_name", file_name);
+//                            bundle.putString("new_name", file_name);
+//                            ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE, bundle);
+//                            archiveReplaceConfirmationDialog.show(getSupportFragmentManager(), null);
+//                        } else {
+//                            Global.print(context, getString(R.string.a_directory_with_output_file_name_already_exists) + " '" + file_name + "'");
+//                        }
+//                    } else
+                    {
                         progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.checkForExistingFileWithSameName("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, file_name_list, false, false, data_list);
+                        fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, false, data_list);
                     }
                 } else {
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameName("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, file_name_list, false, false, data_list);
+                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, false, data_list);
                 }
             }
         });
@@ -249,7 +249,7 @@ public class CopyToActivity extends BaseActivity {
                     if (fileDuplicationViewModel.directoriesRemoved) {
                         Global.print(context, getString(R.string.removed_directories));
                     }
-                    overwritten_file_path_list = result.getStringArrayList("overwritten_file_path_list");
+//                    overwritten_file_path_list = result.getStringArrayList("overwritten_file_path_list");
                     data_list = result.getParcelableArrayList("data_list");
                     launchService();
                 }
@@ -260,7 +260,7 @@ public class CopyToActivity extends BaseActivity {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(ARCHIVE_REPLACE_REQUEST_CODE)) {
-                    overwritten_file_path_list = file_name_list;
+                    //overwritten_file_path_list = getFileNameOfUri(context,data_list.get(0));
                     launchService();
                 }
             }
@@ -279,7 +279,7 @@ public class CopyToActivity extends BaseActivity {
     }
 
     private void launchService() {
-        if (data_list.isEmpty()) {
+        if (data_list!=null && data_list.isEmpty()) {
             Global.print(context, getString(R.string.there_are_no_files_to_copy));
             finish();
         }
@@ -290,8 +290,8 @@ public class CopyToActivity extends BaseActivity {
         }
         String file_name = file_name_edit_text.getText().toString().trim();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("data_list", data_list);
-        bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
+        bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
+        bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
         bundle.putString("dest_folder", folderclickselected);
         bundle.putString("file_name", file_name);
         bundle.putString("new_name", file_name);
@@ -332,14 +332,14 @@ public class CopyToActivity extends BaseActivity {
                 data_list.add((Uri) bundle.get(Intent.EXTRA_STREAM));
             }
 
-            for (Uri data : data_list) {
-                file_name_list.add(getFileNameOfUri(context, data));
-            }
+//            for (Uri data : data_list) {
+//                file_name_list.add(getFileNameOfUri(context, data));
+//            }
 
             if (savedInstanceState == null) {
                 if (data_list != null && !data_list.isEmpty()) {
                     if (data_list.size() == 1) {
-                        String f_name = file_name_list.get(0);
+                        String f_name = getFileNameOfUri(context,data_list.get(0));//file_name_list.get(0);
                         file_name_edit_text.setText(f_name == null ? "" : f_name);
                     }
 

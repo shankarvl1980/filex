@@ -166,6 +166,21 @@ public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.En
     }
 
     /**
+     * Removes the entry at the specified index and returns the key.
+     *
+     * @param index the index of the entry to remove
+     * @return the key that was removed, or null if index is out of bounds
+     */
+    public Uri removeAtIndex(int index) {
+        if (index < 0 || index >= keyList.size()) {
+            return null; // Index out of bounds
+        }
+        Uri keyToRemove = keyList.remove(index); // Remove key from keyList
+        map.remove(keyToRemove); // Remove key from map
+        return keyToRemove;
+    }
+
+    /**
      * Returns the number of key-value mappings in this map.
      *
      * @return the size of the map
@@ -188,6 +203,20 @@ public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.En
     }
 
     /**
+     * Retrieves the value at the specified index.
+     *
+     * @param index the index
+     * @return the value at the specified index, or null if index is out of bounds
+     */
+    public String getValueAtIndex(int index) {
+        if (index < 0 || index >= keyList.size()) {
+            return null;
+        }
+        Uri key = keyList.get(index);
+        return map.get(key);
+    }
+
+    /**
      * Returns a copy of the underlying map.
      *
      * @return a LinkedHashMap containing the mappings
@@ -195,7 +224,6 @@ public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.En
     public LinkedHashMap<Uri, String> getMap() {
         return new LinkedHashMap<>(map);
     }
-
 
     /**
      * Returns an iterator over the entries in the map.
@@ -258,5 +286,4 @@ public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.En
             return new ParcelableUriStringLinkedMap[size];
         }
     };
-
 }

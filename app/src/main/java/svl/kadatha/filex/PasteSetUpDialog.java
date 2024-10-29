@@ -25,17 +25,17 @@ public class PasteSetUpDialog extends DialogFragment {
     private boolean isWritable, isSourceFromInternal, cut;
     private String tree_uri_path = "", source_uri_path = "", source_folder, dest_folder;
     private Uri tree_uri, source_uri;
-    private ParcelableStringStringLinkedMap files_selected_array = new ParcelableStringStringLinkedMap();
+    private ParcelableStringStringLinkedMap sourceFileDestNameMap = new ParcelableStringStringLinkedMap();
     private FileObjectType sourceFileObjectType, destFileObjectType;
     private int size;
     private boolean checkedSAFPermissionPasteSetUp = false;
 
     public static PasteSetUpDialog getInstance(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType,
-                                               ParcelableStringStringLinkedMap files_selected_array, ArrayList<String> overwritten_file_path_list, boolean cut_selected) {
+                                               ParcelableStringStringLinkedMap sourceFileDestNameMap, ArrayList<String> overwritten_file_path_list, boolean cut_selected) {
         PasteSetUpDialog pasteSetUpDialog = new PasteSetUpDialog();
         Bundle bundle = new Bundle();
         bundle.putString("source_folder", source_folder);
-        bundle.putParcelable("files_selected_array", files_selected_array);
+        bundle.putParcelable("sourceFileDestNameMap", sourceFileDestNameMap);
         bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
         bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
         bundle.putSerializable("destFileObjectType", destFileObjectType);
@@ -64,18 +64,18 @@ public class PasteSetUpDialog extends DialogFragment {
 
         bundle = getArguments();
         if (bundle != null) {
-            files_selected_array = bundle.getParcelable("files_selected_array");
+            sourceFileDestNameMap = bundle.getParcelable("sourceFileDestNameMap");
             cut = bundle.getBoolean("cut");
             source_folder = bundle.getString("source_folder");
             dest_folder = bundle.getString("dest_folder");
             sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
             destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
-            size = files_selected_array.size();
+            size = sourceFileDestNameMap.size();
         } else {
             dismissAllowingStateLoss();
         }
 
-        if (files_selected_array.isEmpty()) dismissAllowingStateLoss();
+        if (sourceFileDestNameMap.isEmpty()) dismissAllowingStateLoss();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class PasteSetUpDialog extends DialogFragment {
             }
         } else if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
             for (int n = 0; n < size; ++n) {
-                file_path = files_selected_array.getKeyAtIndex(n);
+                file_path = sourceFileDestNameMap.getKeyAtIndex(n);
                 if (!FileUtil.isFromInternal(FileObjectType.FILE_TYPE, file_path)) {
                     if (!check_SAF_permission_source(file_path, FileObjectType.FILE_TYPE))
                         return false;
@@ -233,7 +233,7 @@ public class PasteSetUpDialog extends DialogFragment {
 
 
     private void initiate_startActivity() {
-        if (files_selected_array.isEmpty()) {
+        if (sourceFileDestNameMap.isEmpty()) {
             Global.print(context, getString(R.string.could_not_perform_action));
             dismissAllowingStateLoss();
             return;

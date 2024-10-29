@@ -4,11 +4,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.core.util.Pair;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -42,16 +39,16 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final boolean cut;
     private final Uri source_uri;
     private final String source_uri_path;
-    private final ParcelableStringStringLinkedMap sourceDestNameMap;
+    private final ParcelableStringStringLinkedMap sourceFileDestNameMap;
     private int counter_no_files;
     private String copied_file_name;
     private String current_file_name;
     private FilePOJO filePOJO;
 
 
-    public CutCopyAsyncTask(ParcelableStringStringLinkedMap sourceDestNameMap, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,
+    public CutCopyAsyncTask(ParcelableStringStringLinkedMap sourceFileDestNameMap, String source_folder, FileObjectType sourceFileObjectType, Uri source_uri, String source_uri_path,
                             String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, boolean cut, List<String> overwritten_file_path_list, TaskProgressListener listener) {
-        this.sourceDestNameMap = sourceDestNameMap;
+        this.sourceFileDestNameMap = sourceFileDestNameMap;
         this.source_folder = source_folder;
         this.sourceFileObjectType = sourceFileObjectType;
         this.source_uri = source_uri;
@@ -91,7 +88,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         };
         progressHandler.post(progressRunnable);
 
-        for (Map.Entry<String, String> entry : sourceDestNameMap.entrySet()) {
+        for (Map.Entry<String, String> entry : sourceFileDestNameMap.entrySet()) {
             if (isCancelled()) {
                 progressHandler.removeCallbacks(progressRunnable);
                 return false;

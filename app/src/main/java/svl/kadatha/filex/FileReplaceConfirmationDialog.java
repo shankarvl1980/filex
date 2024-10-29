@@ -23,8 +23,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class FileReplaceConfirmationDialog extends DialogFragment {
     FileDuplicationViewModel fileDuplicationViewModel;
@@ -104,7 +104,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else {
                     String replacing_file_path=fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
                     fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
-                    fileDuplicationViewModel.sourceDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
+                    fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
+                    Uri uri=fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
+                    fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
@@ -152,6 +154,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else {
                     fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
                     fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+                    removeNotTobeCopiedUris(context, data_list, fileDuplicationViewModel.not_to_be_replaced_files_path_array);
                     fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
@@ -190,7 +193,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         if (!(fileDuplicationViewModel.fileOperationMode ==FileOperationMode.REPLACE) && !fileDuplicationViewModel.apply_to_all) {
                             if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                                 Bundle bundle = new Bundle();
-                                bundle.putParcelableArrayList("data_list", data_list);
+                                bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
                                 bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
                                 getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
                             } else {
@@ -200,20 +203,19 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                             }
                         } else {
                             Bundle bundle = new Bundle();
-                            bundle.putParcelableArrayList("data_list", data_list);
+                            bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
                             bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
                             getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
                         }
                     } else {
                         PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, sourceFileObjectType, dest_folder, destFileObjectType,
-                                fileDuplicationViewModel.sourceDestNameMap, fileDuplicationViewModel.overwritten_file_path_list, cut);
+                                fileDuplicationViewModel.sourceFileDestNameMap, fileDuplicationViewModel.overwritten_file_path_list, cut);
                         pasteSetUpDialog.show(getParentFragmentManager(), "paste_dialog");
                     }
                     dismissAllowingStateLoss();
                 }
             }
         });
-
         return v;
     }
 
@@ -223,5 +225,19 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
+        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        Iterator<Uri> iterator = data_list.iterator();
+        while (iterator.hasNext()) {
+            String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
+            for (String f_name : file_path_list) {
+                if (name.equals(f_name)) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 }

@@ -86,7 +86,7 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
 
         Uri source_uri;
         String source_uri_path = "";
-        final ParcelableStringStringLinkedMap sourceDestNameMap;
+        final ParcelableStringStringLinkedMap sourceFileDestNameMap;
         switch (intent_action) {
             case ArchiveAsyncTask.TASK_TYPE:
                 if (bundle != null) {
@@ -150,7 +150,7 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
             case CutCopyAsyncTask.TASK_TYPE_CUT:
             case CutCopyAsyncTask.TASK_TYPE_COPY:
                 if (bundle != null) {
-                    sourceDestNameMap =bundle.getParcelable("files_selected_array");
+                    sourceFileDestNameMap =bundle.getParcelable("files_selected_array");
                     overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
                     sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
                     dest_folder = bundle.getString("dest_folder");
@@ -162,9 +162,9 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
                     cut = bundle.getBoolean("cut");
                     boolean isWritable = bundle.getBoolean("isWritable");
                     source_folder = bundle.getString("source_folder");
-                    fileCountSize = new FileCountSize(context, new ArrayList<>(sourceDestNameMap.keySet()), sourceFileObjectType);
+                    fileCountSize = new FileCountSize(context, new ArrayList<>(sourceFileDestNameMap.keySet()), sourceFileObjectType);
                     fileCountSize.fileCount();
-                    cutCopyAsyncTask = new CutCopyAsyncTask(sourceDestNameMap, source_folder, sourceFileObjectType, source_uri, source_uri_path, dest_folder, destFileObjectType, tree_uri, tree_uri_path, cut, overwritten_file_path_list, this);
+                    cutCopyAsyncTask = new CutCopyAsyncTask(sourceFileDestNameMap, source_folder, sourceFileObjectType, source_uri, source_uri_path, dest_folder, destFileObjectType, tree_uri, tree_uri_path, cut, overwritten_file_path_list, this);
                     cutCopyAsyncTask.execute(null);
                     notification_content = (cut ? getString(R.string.moving_files) + " " + getString(R.string.to_symbol) + " " + dest_folder : getString(R.string.copying_files) + " " + getString(R.string.to_symbol) + " " + dest_folder);
                 }
@@ -172,16 +172,16 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
 
             case CopyToAsyncTask.TASK_TYPE:
                 if (bundle != null) {
-                    ParcelableUriStringLinkedMap data_list = bundle.getParcelable("data_list");
+                    ParcelableUriStringLinkedMap uriDestNameMap = bundle.getParcelable("uriDestNameMap");
                     overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
                     file_name = bundle.getString("file_name");
                     dest_folder = bundle.getString("dest_folder");
                     destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
                     tree_uri_path = bundle.getString("tree_uri_path");
                     tree_uri = bundle.getParcelable("tree_uri");
-                    fileCountSize = new FileCountSize(context, new ArrayList<>(data_list.keySet()));
+                    fileCountSize = new FileCountSize(context, new ArrayList<>(uriDestNameMap.keySet()));
                     fileCountSize.fileCountDatalist();
-                    copyToAsyncTask = new CopyToAsyncTask(context, data_list, dest_folder, destFileObjectType, tree_uri, tree_uri_path, overwritten_file_path_list, this);
+                    copyToAsyncTask = new CopyToAsyncTask(context, uriDestNameMap, dest_folder, destFileObjectType, tree_uri, tree_uri_path, overwritten_file_path_list, this);
                     copyToAsyncTask.execute(null);
                     notification_content = (getString(R.string.copying_files) + " " + getString(R.string.to_symbol) + " " + dest_folder);
                 }

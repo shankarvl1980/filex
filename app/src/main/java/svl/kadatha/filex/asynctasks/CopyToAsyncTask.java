@@ -8,7 +8,6 @@ import android.os.Looper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
     public static final String TASK_TYPE = "copy_to";
     private final TaskProgressListener listener;
-    private final ParcelableUriStringLinkedMap uriNameMap;
+    private final ParcelableUriStringLinkedMap uriDestNameMap;
     private final FileObjectType destFileObjectType;
     private final String dest_folder;
     private final Uri tree_uri;
@@ -41,9 +40,9 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     private String current_file_name;
     private String copied_file;
 
-    public CopyToAsyncTask(Context context, ParcelableUriStringLinkedMap uriNameMap, String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, List<String> overwritten_file_path_list, TaskProgressListener listener) {
+    public CopyToAsyncTask(Context context, ParcelableUriStringLinkedMap uriDestNameMap, String dest_folder, FileObjectType destFileObjectType, Uri tree_uri, String tree_uri_path, List<String> overwritten_file_path_list, TaskProgressListener listener) {
         this.context = context;
-        this.uriNameMap = uriNameMap;
+        this.uriDestNameMap = uriDestNameMap;
         this.dest_folder = dest_folder;
         this.destFileObjectType = destFileObjectType;
         this.tree_uri = tree_uri;
@@ -61,7 +60,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             return false;
         }
 
-        if (isCancelled() || uriNameMap == null || uriNameMap.isEmpty()) {
+        if (isCancelled() || uriDestNameMap == null || uriDestNameMap.isEmpty()) {
             return false;
         }
 
@@ -78,7 +77,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
         boolean copy_result = false;
 
-        for (Map.Entry<Uri, String> entry : uriNameMap.entrySet()) {
+        for (Map.Entry<Uri, String> entry : uriDestNameMap.entrySet()) {
             if (isCancelled()) {
                 progressHandler.removeCallbacks(progressRunnable);
                 return false;
