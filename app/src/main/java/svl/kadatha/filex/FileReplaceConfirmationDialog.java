@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FileReplaceConfirmationDialog extends DialogFragment {
     FileDuplicationViewModel fileDuplicationViewModel;
@@ -101,8 +102,9 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                     progress_bar.setVisibility(View.VISIBLE);
                     fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, true, data_list);
                 } else {
-                    fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
+                    String replacing_file_path=fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
                     fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
+                    fileDuplicationViewModel.sourceDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
@@ -127,7 +129,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else {
                     fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
                     fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
-                    //fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.RENAME, false, data_list);

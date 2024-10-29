@@ -26,6 +26,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
     public static FileObjectType SOURCE_FILE_OBJECT = null, DEST_FILE_OBJECT = null;
     static boolean SERVICE_COMPLETED = true;
     final List<String> overwritten_file_path_list = new ArrayList<>();
+    private final ArrayList<String> files_selected_array = new ArrayList<>();
     private final ArrayList<String> zip_entry_selected_array = new ArrayList<>();
     public int counter_no_files;
     public long counter_size_files;
@@ -85,7 +86,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
 
         Uri source_uri;
         String source_uri_path = "";
-        ParcelableStringStringLinkedMap files_selected_array;
+        final ParcelableStringStringLinkedMap sourceDestNameMap;
         switch (intent_action) {
             case ArchiveAsyncTask.TASK_TYPE:
                 if (bundle != null) {
@@ -98,11 +99,11 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                     archive_action = bundle.getString("archive_action");
                     tree_uri_path = bundle.getString("tree_uri_path");
                     tree_uri = bundle.getParcelable("tree_uri");
-                    files_selected_array =bundle.getParcelable("files_selected_array");
+                    files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
                     zip_file_name = zip_folder_name + ".zip";
-                    fileCountSize = new FileCountSize(context, new ArrayList<>(files_selected_array.keySet()), sourceFileObjectType);
+                    fileCountSize = new FileCountSize(context, files_selected_array, sourceFileObjectType);
                     fileCountSize.fileCount();
-                    archiveAsyncTask = new ArchiveAsyncTask(new ArrayList<>(files_selected_array.keySet()), zip_file_name, dest_folder, zip_file_path, destFileObjectType, sourceFileObjectType, tree_uri, tree_uri_path, this);
+                    archiveAsyncTask = new ArchiveAsyncTask(files_selected_array, zip_file_name, dest_folder, zip_file_path, destFileObjectType, sourceFileObjectType, tree_uri, tree_uri_path, this);
                     archiveAsyncTask.execute(null);
                     notification_content = getString(R.string.zipping) + " '" + zip_folder_name + ".zip " + getString(R.string.at) + " " + dest_folder;
                 }
@@ -119,7 +120,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                     archive_action = bundle.getString("archive_action");
                     tree_uri_path = bundle.getString("tree_uri_path");
                     tree_uri = bundle.getParcelable("tree_uri");
-                    files_selected_array =bundle.getParcelable("files_selected_array");
+                    files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
                     if (bundle.getStringArrayList("zip_entry_selected_array") != null) {
                         zip_entry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
                     }
@@ -134,13 +135,13 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                 if (bundle != null) {
                     source_uri_path = bundle.getString("source_uri_path");
                     source_uri = bundle.getParcelable("source_uri");
-                    files_selected_array =bundle.getParcelable("files_selected_array");
+                    files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
                     sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
                     source_folder = bundle.getString("source_folder");
                     storage_analyser_delete = bundle.getBoolean("storage_analyser_delete");
-                    fileCountSize = new FileCountSize(context, new ArrayList<>(files_selected_array.keySet()), sourceFileObjectType);
+                    fileCountSize = new FileCountSize(context, files_selected_array, sourceFileObjectType);
                     fileCountSize.fileCount();
-                    delete_async_task = new DeleteAsyncTask(new ArrayList<>(files_selected_array.keySet()), source_folder, source_uri, source_uri_path, sourceFileObjectType, this);
+                    delete_async_task = new DeleteAsyncTask(files_selected_array, source_folder, source_uri, source_uri_path, sourceFileObjectType, this);
                     delete_async_task.execute(null);
                     notification_content = getString(R.string.deleting_files) + " " + getString(R.string.at) + " " + source_folder;
                 }
@@ -149,7 +150,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
             case CutCopyAsyncTask.TASK_TYPE_CUT:
             case CutCopyAsyncTask.TASK_TYPE_COPY:
                 if (bundle != null) {
-                    files_selected_array =bundle.getParcelable("files_selected_array");
+                    sourceDestNameMap =bundle.getParcelable("files_selected_array");
                     overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
                     sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
                     dest_folder = bundle.getString("dest_folder");
@@ -161,9 +162,9 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
                     cut = bundle.getBoolean("cut");
                     boolean isWritable = bundle.getBoolean("isWritable");
                     source_folder = bundle.getString("source_folder");
-                    fileCountSize = new FileCountSize(context, new ArrayList<>(files_selected_array.keySet()), sourceFileObjectType);
+                    fileCountSize = new FileCountSize(context, new ArrayList<>(sourceDestNameMap.keySet()), sourceFileObjectType);
                     fileCountSize.fileCount();
-                    cutCopyAsyncTask = new CutCopyAsyncTask(files_selected_array, source_folder, sourceFileObjectType, source_uri, source_uri_path, dest_folder, destFileObjectType, tree_uri, tree_uri_path, cut, overwritten_file_path_list, this);
+                    cutCopyAsyncTask = new CutCopyAsyncTask(sourceDestNameMap, source_folder, sourceFileObjectType, source_uri, source_uri_path, dest_folder, destFileObjectType, tree_uri, tree_uri_path, cut, overwritten_file_path_list, this);
                     cutCopyAsyncTask.execute(null);
                     notification_content = (cut ? getString(R.string.moving_files) + " " + getString(R.string.to_symbol) + " " + dest_folder : getString(R.string.copying_files) + " " + getString(R.string.to_symbol) + " " + dest_folder);
                 }

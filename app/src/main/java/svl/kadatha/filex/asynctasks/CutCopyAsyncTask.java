@@ -103,7 +103,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             current_file_name = sourceFileModel.getName();
 
             if (whether_copy_between_network_file_systems) {
-                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, destFileName, cut, sourceDestNameMap);
+                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, destFileName,cut);
             } else {
                 copy_result = CopyFileModel(sourceFileModel, destFileModel, destFileName, cut);
             }
@@ -228,7 +228,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
-    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut, ParcelableStringStringLinkedMap sourceDestNameMap) {
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel,String fileNameTobeCopiedWith ,boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
@@ -237,7 +237,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         boolean allCopiesSuccessful = true;
         String sourceRootPath = sourceFileModel.getPath();
-        String destRootPath = Global.CONCATENATE_PARENT_CHILD_PATH(destFileModel.getPath(), destFileName);
+        String sourceName = fileNameTobeCopiedWith;//new File(sourceRootPath).getName();
 
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
@@ -245,19 +245,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 return false;
             }
 
-            String sourcePath = source.getPath();
-            String relativePath = getRelativePath(sourceRootPath, sourcePath);
-
-            // Determine the destination path
-            String destPath;
-            if (sourceDestNameMap.containsKey(sourcePath)) {
-                // Use the specified destination name for the source path
-                String customDestName = sourceDestNameMap.get(sourcePath);
-                destPath = Global.CONCATENATE_PARENT_CHILD_PATH(destFileModel.getPath(), customDestName);
-            } else {
-                // For subfiles and subdirectories, retain original names
-                destPath = Global.CONCATENATE_PARENT_CHILD_PATH(destRootPath, relativePath);
-            }
+            String relativePath = getRelativePath(sourceRootPath, source.getPath());
+            String destPath = computeDestinationPath(sourceName, relativePath);
 
             try {
                 if (source.isDirectory()) {
@@ -266,13 +255,14 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     publishProgress(null);
                 } else {
                     File destFile = new File(destPath);
-                    String parentPathSegment = Global.getParentPath(destPath);
-                    FileModel destParentModel = createDirectory(destFileModel, parentPathSegment, destFileObjectType);
+                    String parent_path_segment = Global.getParentPath(destPath);
+                    FileModel destParentModel = createDirectory(destFileModel, parent_path_segment, destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
                     if (success) {
                         Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
                         copied_file_name = source.getName();
+                        Timber.tag("published").d("this is published: %s", source.getName());
                         publishProgress(null);
                     }
                 }
@@ -283,7 +273,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
         }
 
-        // Handle deletion if cutting
         if (cut && allCopiesSuccessful) {
             try {
                 sourceFileModel.delete();

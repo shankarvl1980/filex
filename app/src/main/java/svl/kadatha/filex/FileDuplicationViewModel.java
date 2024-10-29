@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -31,7 +32,8 @@ public class FileDuplicationViewModel extends ViewModel {
     public String source_folder, dest_folder;
     public FileObjectType sourceFileObjectType, destFileObjectType;
     public ArrayList<String> files_selected_array;
-    public ParcelableStringStringLinkedMap sourceDestNameMap;
+    public ParcelableStringStringLinkedMap sourceDestNameMap=new ParcelableStringStringLinkedMap();
+    public ParcelableStringStringLinkedMap duplicateSourceDestNameSourceMap=new ParcelableStringStringLinkedMap();
     public ArrayList<Uri> data_list = new ArrayList<>();
     public boolean apply_to_all;
     boolean cut;
@@ -131,13 +133,22 @@ public class FileDuplicationViewModel extends ViewModel {
                     }
                 }
 
+                sourceDestNameMap=new ParcelableStringStringLinkedMap();
+                duplicateSourceDestNameSourceMap=new ParcelableStringStringLinkedMap();
+
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array, sourceFileObjectType, dest_folder, destFileObjectType);
+                for(String f_path:files_selected_array){
+                    sourceDestNameMap.put(f_path,new File(f_path).getName());
+                }
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 filePOJOS = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
                 if (filePOJOS == null) {
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-
+                ArrayList<String> destinationFileNames=new ArrayList<>();
+                for(FilePOJO filePOJO:filePOJOS){
+                    destinationFileNames.add(filePOJO.getName());
+                }
                 int filePojoSize = filePOJOS.size();
                 int fileSelectedSize = files_selected_array.size();
                 FilePOJO filePOJO;
@@ -147,19 +158,30 @@ public class FileDuplicationViewModel extends ViewModel {
                     filePOJO = filePOJOS.get(i);
                     for (int j = 0; j < fileSelectedSize; ++j) {
                         file_path = files_selected_array.get(j);
-                        sourceDestNameMap.put(file_path,new File(file_path).getName());
                         if (filePOJO.getName().equals(new File(file_path).getName())) {
                             source_duplicate_file_path_array.add(file_path);
                             destination_duplicate_file_path_array.add(filePOJO.getPath());
-                            String unique_file_name,name_prefix;
-                            name_prefix=new File(file_path).getName();
-                            for(int k = 1; true; ++k){
-                                  unique_file_name=name_prefix+"("+k+")";
-                                  if(!filePOJOS.contains(unique_file_name)){
-                                      break;
-                                  }
+                            String unique_file_name, name_prefix, extension;
+                            File originalFile = new File(file_path);
+                            String originalFileName = originalFile.getName();
+
+                            int lastDotIndex = originalFileName.lastIndexOf(".");
+                            if (lastDotIndex != -1) {
+                                name_prefix = originalFileName.substring(0, lastDotIndex);
+                                extension = originalFileName.substring(lastDotIndex); // includes the dot
+                            } else {
+                                name_prefix = originalFileName;
+                                extension = "";
                             }
 
+                            for (int k = 1; true; ++k) {
+                                // Add number suffix before extension
+                                unique_file_name = name_prefix + " (" + k + ")" + extension;
+                                if (!destinationFileNames.contains(unique_file_name)) {
+                                    break;
+                                }
+                            }
+                            duplicateSourceDestNameSourceMap.put(file_path,unique_file_name);
                             if (!findAllDuplicates) {
                                 stop_loop = true;
                                 break;
@@ -167,6 +189,10 @@ public class FileDuplicationViewModel extends ViewModel {
                         }
                     }
                     if (stop_loop) break;
+                }
+
+                for(Map.Entry<String,String> element:duplicateSourceDestNameSourceMap.entrySet()){
+                    sourceDestNameMap.put(element.getKey(),element.getValue());
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
@@ -188,6 +214,9 @@ public class FileDuplicationViewModel extends ViewModel {
                     if (apply_to_all) {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
                         overwritten_file_path_list.addAll(destination_duplicate_file_path_array);
+                        for(String file_path:source_duplicate_file_path_array){
+                            sourceDestNameMap.put(file_path,new File(file_path).getName());
+                        }
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
@@ -196,7 +225,6 @@ public class FileDuplicationViewModel extends ViewModel {
                 } else if (fileOperationMode == FileOperationMode.RENAME) {
                     if(apply_to_all){
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        overwritten_file_path_list.addAll(destination_duplicate_file_path_array);
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
@@ -211,9 +239,12 @@ public class FileDuplicationViewModel extends ViewModel {
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     }
                 }
-                for (String file_path : files_selected_array) {
-                    if(sourceDestNameMap.containsKey(file_path)){
-                        sourceDestNameMap.remove(file_path);
+
+                Iterator<Map.Entry<String, String>> iterator=sourceDestNameMap.iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<String, String> element=iterator.next();
+                    if(!files_selected_array.contains(element.getKey())){
+                        iterator.remove();
                     }
                 }
                 filterSelectedArrayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
