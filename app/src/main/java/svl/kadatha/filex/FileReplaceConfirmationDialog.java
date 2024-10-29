@@ -106,7 +106,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                     fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
                     fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
                     Uri uri=fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
-                    fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
+                    if(uri!=null) fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);

@@ -35,7 +35,7 @@ public class FileDuplicationViewModel extends ViewModel {
     public FileObjectType sourceFileObjectType, destFileObjectType;
     public ArrayList<String> files_selected_array;
     public ParcelableStringStringLinkedMap sourceFileDestNameMap =new ParcelableStringStringLinkedMap();
-    public ParcelableStringStringLinkedMap duplicateSourceFileDestNameSourceMap =new ParcelableStringStringLinkedMap();
+    public ParcelableStringStringLinkedMap duplicateSourceFileDestNameMap =new ParcelableStringStringLinkedMap();
     public ParcelableUriStringLinkedMap uriDestNameMap =new ParcelableUriStringLinkedMap();
     public ParcelableUriStringLinkedMap duplicateUriDestNameMap =new ParcelableUriStringLinkedMap();
     public final ArrayList<String> uri_name_list = new ArrayList<>();
@@ -139,7 +139,7 @@ public class FileDuplicationViewModel extends ViewModel {
                 }
 
                 sourceFileDestNameMap =new ParcelableStringStringLinkedMap();
-                duplicateSourceFileDestNameSourceMap =new ParcelableStringStringLinkedMap();
+                duplicateSourceFileDestNameMap =new ParcelableStringStringLinkedMap();
 
                 Global.REMOVE_RECURSIVE_PATHS(files_selected_array, sourceFileObjectType, dest_folder, destFileObjectType);
                 for(String f_path:files_selected_array){
@@ -187,7 +187,7 @@ public class FileDuplicationViewModel extends ViewModel {
                                     break;
                                 }
                             }
-                            duplicateSourceFileDestNameSourceMap.put(file_path,unique_file_name);
+                            duplicateSourceFileDestNameMap.put(file_path,unique_file_name);
                             if (!findAllDuplicates) {
                                 stop_loop = true;
                                 break;
@@ -197,7 +197,7 @@ public class FileDuplicationViewModel extends ViewModel {
                     if (stop_loop) break;
                 }
 
-                for(Map.Entry<String,String> element: duplicateSourceFileDestNameSourceMap.entrySet()){
+                for(Map.Entry<String,String> element: duplicateSourceFileDestNameMap.entrySet()){
                     sourceFileDestNameMap.put(element.getKey(),element.getValue());
                 }
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
