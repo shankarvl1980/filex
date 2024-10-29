@@ -113,17 +113,17 @@ public class FileDuplicationViewModel extends ViewModel {
             @Override
             public void run() {
                 if (sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
-                    boolean to_remove_directories = data_list != null;
-                    if (to_remove_directories) {
-                        Iterator<Uri> data_list_iterator = data_list.iterator();
-                        while (data_list_iterator.hasNext()) {
-                            Uri data = data_list_iterator.next();
-                            if (isDirectoryUri(App.getAppContext(), data)) {
-                                data_list_iterator.remove();
-                                directoriesRemoved = true;
-                            }
-                        }
-                    }
+//                    boolean to_remove_directories = data_list != null;
+//                    if (to_remove_directories) {
+//                        Iterator<Uri> data_list_iterator = data_list.iterator();
+//                        while (data_list_iterator.hasNext()) {
+//                            Uri data = data_list_iterator.next();
+//                            if (isDirectoryUri(App.getAppContext(), data)) {
+//                                data_list_iterator.remove();
+//                                directoriesRemoved = true;
+//                            }
+//                        }
+//                    }
 
                     //process to have only files with unique file names
                     Set<String> file_name_set = new HashSet<>();
