@@ -158,10 +158,25 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
     }
 
-    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String fileNameToCreate ,boolean cut) {
+    private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
-        Stack<Pair<FileModel, FileModel>> stack = new Stack<>();
-        stack.push(new Pair<>(sourceFileModel, destFileModel));
+
+        // Inner class to hold the copy pair and top-level flag
+        class CopyPair {
+            FileModel source;
+            FileModel dest;
+            boolean isTopLevel;
+
+            CopyPair(FileModel source, FileModel dest, boolean isTopLevel) {
+                this.source = source;
+                this.dest = dest;
+                this.isTopLevel = isTopLevel;
+            }
+        }
+
+        Stack<CopyPair> stack = new Stack<>();
+        // Push the initial pair with isTopLevel = true
+        stack.push(new CopyPair(sourceFileModel, destFileModel, true));
         boolean allCopiesSuccessful = true;
 
         while (!stack.isEmpty()) {
@@ -170,17 +185,20 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 return false;
             }
 
-            Pair<FileModel, FileModel> pair = stack.pop();
-            FileModel source = pair.first;
-            FileModel dest = pair.second;
+            CopyPair pair = stack.pop();
+            FileModel source = pair.source;
+            FileModel dest = pair.dest;
+            boolean isTopLevel = pair.isTopLevel;
 
             Timber.tag("CopyFileModel").d("Processing: " + source.getPath());
 
             if (source.isDirectory()) {
-                String destPath = Global.CONCATENATE_PARENT_CHILD_PATH(dest.getPath(), fileNameToCreate);
+                // Determine the destination path based on whether it's top-level
+                String currentDestName = isTopLevel ? destFileName : source.getName();
+                String destPath = Global.CONCATENATE_PARENT_CHILD_PATH(dest.getPath(), currentDestName);
                 Timber.tag("CopyFileModel").d("Creating directory: " + destPath);
 
-                if (!dest.makeDirIfNotExists(fileNameToCreate)) {
+                if (!dest.makeDirIfNotExists(currentDestName)) {
                     Timber.tag("CopyFileModel").e("Failed to create directory: " + destPath);
                     allCopiesSuccessful = false;
                     break;
@@ -192,7 +210,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 if (sourceChildFileModels != null) {
                     Timber.tag("CopyFileModel").d("Adding " + sourceChildFileModels.length + " child items to stack");
                     for (FileModel childSource : sourceChildFileModels) {
-                        stack.push(new Pair<>(childSource, childDestFileModel));
+                        stack.push(new CopyPair(childSource, childDestFileModel, false)); // Subsequent levels are not top-level
                     }
                 } else {
                     Timber.tag("CopyFileModel").w("No child items found in directory: " + source.getPath());
@@ -201,8 +219,10 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 ++counter_no_files;
                 publishProgress(null);
             } else {
-                Timber.tag("CopyFileModel").d("Copying file: " + source.getPath());
-                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, fileNameToCreate, cut, counter_size_files);
+                // Handle file copying
+                String currentDestName = isTopLevel ? destFileName : source.getName();
+                Timber.tag("CopyFileModel").d("Copying file: " + source.getPath() + " to " + currentDestName);
+                boolean success = FileUtil.copy_FileModel_FileModel(source, dest, currentDestName, cut, counter_size_files);
                 if (success) {
                     ++counter_no_files;
                     copied_file_name = source.getName();
@@ -228,7 +248,8 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         return allCopiesSuccessful;
     }
 
-    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel,String fileNameTobeCopiedWith ,boolean cut) {
+
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel,String destFileName ,boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
@@ -237,7 +258,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         boolean allCopiesSuccessful = true;
         String sourceRootPath = sourceFileModel.getPath();
-        String sourceName = fileNameTobeCopiedWith;//new File(sourceRootPath).getName();
 
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
@@ -246,7 +266,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
 
             String relativePath = getRelativePath(sourceRootPath, source.getPath());
-            String destPath = computeDestinationPath(sourceName, relativePath);
+            String destPath = computeDestinationPath(destFileName, relativePath);
 
             try {
                 if (source.isDirectory()) {
